@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@stud.uni-greifswald.de
-# Last Modification: 2023-03-23
+# Last Modification: 2024-11-07
 
 # Usage: Run this script with "bash test_argparser.sh".
 
@@ -35,7 +35,10 @@ args_definition=(
     [var_5]="-:var_5,var_E:E:-:1:Options:one value with default"
     [var_6]="f,F:var_6,var_F:false:-:0:Options:no value (flag) with default"
 )
+(set -o posix; set) > 1.txt
 source argparser.sh
+(set -o posix; set) > 2.txt
+diff --side-by-side --suppress-common-lines 1.txt 2.txt
 
 # 3.    The arguments can now be accessed as keys and values of the
 #       associative array "args".  Further, they are set as variables
@@ -46,5 +49,5 @@ for arg in "${!args[@]}"; do
 done | sort
 
 if [[ -n "$1" ]]; then
-    printf "%s" "$@"
+    printf "%s\n" "$@"
 fi
