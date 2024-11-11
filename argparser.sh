@@ -134,6 +134,8 @@ ARGPARSER_MAX_COL_WIDTH_2="${ARGPARSER_MAX_COL_WIDTH_2:-33}"
 ARGPARSER_MAX_COL_WIDTH_3="${ARGPARSER_MAX_COL_WIDTH_3:-39}"
 ARGPARSER_POSITIONAL_NAME="${ARGPARSER_POSITIONAL_NAME:-"Positional"}"
 
+set -o nounset
+
 # Define the argparser functions.
 function argparser_in_array() {
     # Check if an element occurs in an array.
@@ -154,7 +156,7 @@ function argparser_in_array() {
     # Read the query element and the array to search through.
     query="$1"
     shift
-    array=("$@")
+    read -a array <<< "$@"
 
     # Iterate through the array and compare each element to the query.
     # Return "0" on success, else "1".
@@ -335,7 +337,7 @@ function argparser_check_arg_value() {
         <<< "${arg_definition[3]}"
     arg_number="${arg_definition[4]}"
 
-    option_names="$(printf -- "--%s, " "${long_options[@]}" | sed "s/, $//" )"
+    option_names="$(printf -- "--%s, " "${long_options[@]}" | sed "s/, $//")"
 
     # Check the values.  If an argument hadn't been given, its value was
     # set to "-".
@@ -475,9 +477,8 @@ function argparser_check_arg_value() {
     if [[ "${choice_values[0]}" != "-" ]]; then
         # Check that flags have no choice values.
         if [[ "${arg_number}" == "0" ]]; then
-            choice_values="$(printf "%s${ARGPARSER_ARG_DELIMITER_3}" \
-                "${choice_values[@]}" \
-                | sed "s/${ARGPARSER_ARG_DELIMITER_3}$//")"
+            choice_values="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; printf "%s" \
+                "${choice_values[*]}")"
             printf "Error: The argument "
             printf "%s " "${option_names}"
             printf "accepts no choice values, but uses "
@@ -492,9 +493,8 @@ function argparser_check_arg_value() {
                 && "$(argparser_in_array "${default_value}" \
                 "${choice_values[@]}")" == 1 ]]
             then
-                choice_values="$(printf "%s${ARGPARSER_ARG_DELIMITER_3}" \
-                    "${choice_values[@]}" \
-                    | sed "s/${ARGPARSER_ARG_DELIMITER_3}$//")"
+                choice_values="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; \
+                    printf "%s" "${choice_values[*]}")"
                 printf "Error: The argument "
                 printf "%s " "${option_names}"
                 printf "accepts only the choice values "
@@ -511,9 +511,8 @@ function argparser_check_arg_value() {
             if [[ "$(argparser_in_array "${value}" "${choice_values[@]}")" == \
                 1 ]]
             then
-                choice_values="$(printf "%s${ARGPARSER_ARG_DELIMITER_3}" \
-                    "${choice_values[@]}" \
-                    | sed "s/${ARGPARSER_ARG_DELIMITER_3}$//")"
+                choice_values="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; \
+                    printf "%s" "${choice_values[*]}")"
                 printf "Error: The argument "
                 printf "%s " "${option_names}"
                 printf "must be in "
@@ -525,8 +524,7 @@ function argparser_check_arg_value() {
 
     # Return the checked values as
     # ${ARGPARSER_ARG_DELIMITER_3}-separated string.
-    value="$(printf "%s${ARGPARSER_ARG_DELIMITER_3}" "${values[@]}" \
-        | sed "s/${ARGPARSER_ARG_DELIMITER_3}$//")"
+    value="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; printf "%s" "${values[*]}")"
     printf "Value: %s\n" "${value}"
 }
 
@@ -578,12 +576,10 @@ function argparser_print_help_message() {
         if [[ "${line}" == @* ]]; then
             line_type="at_directive"
             at_directive="${line:1}"
-            args_keys="$(printf "%s${ARGPARSER_ARG_DELIMITER_1}" \
-                "${!args_definition[@]}" \
-                | sed "s/${ARGPARSER_ARG_DELIMITER_1}$//")"
-            args_values="$(printf "%s${ARGPARSER_ARG_DELIMITER_1}" \
-                "${args_definition[@]}" \
-                | sed "s/${ARGPARSER_ARG_DELIMITER_1}$//")"
+            args_keys="$(IFS="${ARGPARSER_ARG_DELIMITER_1}"; printf "%s" \
+                "${!args_definition[*]}")"
+            args_values="$(IFS="${ARGPARSER_ARG_DELIMITER_1}"; printf "%s" \
+                "${args_definition[*]}")"
 
             if [[ "${help_type}" == "help" ]]; then
                 argparser_create_help_message "${script_name}" \
@@ -1568,8 +1564,8 @@ function argparser_main() {
         # If the argument had been set before, assign the new value to
         # it (as ${ARGPARSER_ARG_DELIMITER_3}-separated list).
         if [[ -v arg_key ]]; then
-            args["${arg_key}"]="$(printf "%s${ARGPARSER_ARG_DELIMITER_3}" \
-                "${arg_value[@]}" | sed "s/${ARGPARSER_ARG_DELIMITER_3}$//")"
+            args["${arg_key}"]="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; \
+                printf "%s" "${arg_value[*]}")"
         fi
     done
 
@@ -1641,8 +1637,8 @@ function argparser_main() {
 if [[ "${ARGPARSER_AUTO_READ_ARGS}" == true ]]; then
     # Check if the variable that ${ARGPARSER_ARG_ARRAY_NAME} refers to
     # is defined.  If not, guess how it may be called by searching the
-    # set variables (not functions, hence the set POSIX mode) for one
-    # starting with "arg" for a better error message.
+    # set variables (not functions, hence the set POSIX mode) for a
+    # variable name starting with "arg" to give a clearer error message.
     if [[ ! -v "${ARGPARSER_ARG_ARRAY_NAME}" ]]; then
         args_name="$(set -o posix; set | grep "^arg" \
             | cut --delimiter="=" --fields=1)"
@@ -1688,10 +1684,10 @@ if [[ "${ARGPARSER_AUTO_READ_ARGS}" == true ]]; then
     fi
 
     # Concatenate the keys and values.
-    args_keys="$(printf "%s${ARGPARSER_ARG_DELIMITER_1}" \
-        "${!args_definition[@]}" | sed "s/${ARGPARSER_ARG_DELIMITER_1}$//")"
-    args_values="$(printf "%s${ARGPARSER_ARG_DELIMITER_1}" \
-        "${args_definition[@]}" | sed "s/${ARGPARSER_ARG_DELIMITER_1}$//")"
+    args_keys="$(IFS="${ARGPARSER_ARG_DELIMITER_1}"; printf "%s" \
+        "${!args_definition[*]}")"
+    args_values="$(IFS="${ARGPARSER_ARG_DELIMITER_1}"; printf "%s" \
+        "${args_definition[*]}")"
 
     # Parse the arguments.
     parsed_args="$(argparser_main "${args_keys}" "${args_values}" "$@")"
@@ -1745,3 +1741,8 @@ if [[ "${ARGPARSER_AUTO_SET_ARGS}" == true ]]; then
         fi
     done
 fi
+
+unset args_keys
+unset args_values
+unset parsed_arg
+unset parsed_args

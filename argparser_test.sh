@@ -48,6 +48,6 @@ for arg in "${!args[@]}"; do
     printf "The variable \"%s\" equals \"%s\".\n" "${arg}" "${args[${arg}]}"
 done | sort
 
-if [[ -n "$1" ]]; then
+if [[ -v 1 && -n "$1" ]]; then
     printf "%s\n" "$@"
 fi
