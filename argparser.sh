@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@stud.uni-greifswald.de
-# Last Modification: 2024-11-07
+# Last Modification: 2024-11-14
 
 # TODO: Correct auto-generated help message with erroneous line breaks.
 # TODO: Enable parsing of combined short option flags, i.e.
@@ -1469,7 +1469,6 @@ function argparser_main() {
     local arg_key
     local arg_value
     local args
-    local args_definition
     local args_keys
     local args_values
     local checked_arg
