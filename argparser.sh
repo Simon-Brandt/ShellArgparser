@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/false
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@stud.uni-greifswald.de
