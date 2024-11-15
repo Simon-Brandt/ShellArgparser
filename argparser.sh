@@ -170,6 +170,61 @@ function argparser_in_array() {
     printf "1"
 }
 
+function argparser_colorize() {
+    # Colorize the string using ANSI escape sequences.
+    #
+    # Arguments:
+    # - $1: the string to colorize
+    # - $2: the color to use
+    # - $2: the style to use
+    #
+    # Return values:
+    # - the colorized string
+
+    # Define the local variables.
+    local color
+    local colors
+    local string
+    local style
+    local styles
+
+    # Read the arguments.
+    string="$1"
+    color="$2"
+    style="$3"
+
+    # Define the associative array with colors and their corresponding
+    # Select Graphic Rendition (SGR) ANSI escape sequence codes.
+    declare -A colors
+    colors=(
+        [black]=30
+        [red]=31
+        [green]=32
+        [yellow]=33
+        [blue]=34
+        [magenta]=35
+        [cyan]=36
+        [white]=37
+    )
+
+    declare -A styles
+    styles=(
+        [normal]=22
+        [bold]=1
+        [faint]=2
+        [italic]=3
+        [underline]=4
+        [double]=21
+        [overline]=53
+        [crossed-out]=9
+        [blink]=5
+        [reverse]=7
+    )
+
+    printf "\e[%s;%sm%s\e[0m" "${colors["${color}"]}" "${styles["${style}"]}" \
+        "${string}"
+}
+
 function argparser_parse_args() {
     # Parse the script's given arguments.
     #
