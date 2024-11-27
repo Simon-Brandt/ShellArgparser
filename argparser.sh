@@ -411,7 +411,7 @@ function argparser_check_arg_value() {
 
     # Check the values.  If an argument hadn't been given, its value was
     # set to "-".
-    if [[ "${values[0]}" == "-" ]]; then
+    if [[ "${#values[@]}" > 0 && "${values[0]}" == "-" ]]; then
         # If the argument doesn't have a default value, it must have
         # been given, but is not.  Hence, return an error message.
         # Else, read the default values.  This is required for optional
