@@ -2,17 +2,18 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@stud.uni-greifswald.de
-# Last Modification: 2024-11-14
+# Last Modification: 2024-11-27
 
 # TODO: Correct auto-generated help message with erroneous line breaks.
 # TODO: Enable parsing of combined short option flags, i.e.
 # script.sh -ab instead of script.sh -a -b.
+# TODO: Use coloring function for help, usage, and error messages.
 
 # Usage: Source this script with "source argparser.sh" inside the script
-# whose arguments need to be parsed.  If ${ARGPARSER_AUTO_READ_ARGS} is
-# set to true (which per default is), the arguments will be parsed
-# upon sourcing, else, the respective functions need to be called.  If
-# ${ARGPARSER_AUTO_SET_ARGS} is set to true (which per default is), the
+# whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS} is set
+# to true (which per default is), the arguments will be parsed upon
+# sourcing, else, the respective functions need to be called.  If
+# ${ARGPARSER_SET_ARGS} is set to true (which per default is), the
 # arguments will be set to variables upon sourcing, else, the
 # associative array ${args} needs to be accessed.
 
@@ -99,8 +100,8 @@
 # usage message and "-h" and "--help" as call for a help message.  These
 # arguments are always added to the script's arguments.
 # Further, all values given after "--" are interpreted as values to
-# positional arguments and, if ${ARGPARSER_AUTO_SET_ARGS} is set to
-# true, are assigned to $@.
+# positional arguments and, if ${ARGPARSER_SET_ARGS} is set to true, are
+# assigned to $@.
 # As many arguments may be given as desired (i.e., the same argument can
 # be called multiple times), with the values given afterwards being all
 # assigned to the respective argument.
@@ -112,11 +113,27 @@
 #----------------------------------------------------------------------#
 
 # Set the argparser environment variables, as long as they aren't
-# already set by the calling script (to prevent overriding them).  If a
-# variable can have a zero-length string ("") as value, an explicit "if"
-# statement is used instead of parameter expansion as these don't make
-# a difference between unset variables and those set to NULL or the
-# empty string.
+# already set by the calling script (to prevent overriding them).  If
+# more complex comparisons are needed or a variable can have a
+# zero-length string ("") as value, an explicit "if" statement is used
+# instead of parameter expansion as these don't make a difference
+# between unset variables and those set to NULL or the empty string.
+if (( "$#" >= 2 )); then
+    if [[ "$2" == "--" ]]; then
+        case "$1" in
+            "--read") ARGPARSER_ACTION="read";;
+            "--set") ARGPARSER_ACTION="set";;
+            "--all") ARGPARSER_ACTION="all";;
+            *)
+                printf "Wrong action given: %s\n" "$1"
+                exit 1
+                ;;
+        esac
+        shift 2  # Get rid of the action specification.
+    fi
+    ARGPARSER_ACTION="${ARGPARSER_ACTION:-all}"
+fi
+
 ARGPARSER_ARG_ARRAY_NAME="${ARGPARSER_ARG_ARRAY_NAME:-"args"}"
 if [[ ! -v ARGPARSER_ARG_DEF_FILE ]]; then
     ARGPARSER_ARG_DEF_FILE="arguments.lst"
@@ -125,16 +142,14 @@ ARGPARSER_ARG_DELIMITER_1="${ARGPARSER_ARG_DELIMITER_1:-"|"}"
 ARGPARSER_ARG_DELIMITER_2="${ARGPARSER_ARG_DELIMITER_2:-":"}"
 ARGPARSER_ARG_DELIMITER_3="${ARGPARSER_ARG_DELIMITER_3:-","}"
 ARGPARSER_ARG_GROUP_DELIMITER="${ARGPARSER_ARG_GROUP_DELIMITER:-"#"}"
-ARGPARSER_AUTO_READ_ARGS="${ARGPARSER_AUTO_READ_ARGS:-true}"
-ARGPARSER_AUTO_SET_ARGS="${ARGPARSER_AUTO_SET_ARGS:-true}"
-ARGPARSER_AUTO_SET_ARRAYS="${ARGPARSER_AUTO_SET_ARRAYS:-true}"
-ARGPARSER_AUTO_UNSET_ARGS="${ARGPARSER_AUTO_UNSET_ARGS:-true}"
+# ARGPARSER_READ_ARGS="${ARGPARSER_READ_ARGS:-true}"
+# ARGPARSER_SET_ARGS="${ARGPARSER_SET_ARGS:-true}"
+ARGPARSER_SET_ARRAYS="${ARGPARSER_SET_ARRAYS:-true}"
+ARGPARSER_UNSET_ARGS="${ARGPARSER_UNSET_ARGS:-true}"
 ARGPARSER_MAX_COL_WIDTH_1="${ARGPARSER_MAX_COL_WIDTH_1:-5}"
 ARGPARSER_MAX_COL_WIDTH_2="${ARGPARSER_MAX_COL_WIDTH_2:-33}"
 ARGPARSER_MAX_COL_WIDTH_3="${ARGPARSER_MAX_COL_WIDTH_3:-39}"
 ARGPARSER_POSITIONAL_NAME="${ARGPARSER_POSITIONAL_NAME:-"Positional"}"
-
-set -o nounset
 
 # Define the argparser functions.
 function argparser_in_array() {
@@ -1503,7 +1518,7 @@ function argparser_prepare_help_message() {
     fi
 }
 
-function argparser_main() {
+function argparser_main2() {
     # Parse the script's given arguments and check if they accord to
     # their definition.  Give proper error messages for wrongly set
     # arguments and assign the values to the respective variables.
@@ -1684,18 +1699,20 @@ function argparser_main() {
     done | sed "s/${ARGPARSER_ARG_DELIMITER_1}$//"
 }
 
-# If ${ARGPARSER_AUTO_READ_ARGS} is set to true, read in the arguments
+# If ${ARGPARSER_READ_ARGS} is set to true, read in the arguments
 # definitions from the file defined by ${ARGPARSER_ARG_DEF_FILE}.
 # For ease of use, this part is not encapsulated inside a function, such
 # that the code automatically gets executed upon sourcing the argparser.
-if [[ "${ARGPARSER_AUTO_READ_ARGS}" == true ]]; then
+function argparser_main() {
     # Check if the variable that ${ARGPARSER_ARG_ARRAY_NAME} refers to
     # is defined.  If not, guess how it may be called by searching the
     # set variables (not functions, hence the set POSIX mode) for a
     # variable name starting with "arg" to give a clearer error message.
+    # If no such variable name is found, use "?" as default.
     if [[ ! -v "${ARGPARSER_ARG_ARRAY_NAME}" ]]; then
         args_name="$(set -o posix; set | grep "^arg" \
             | cut --delimiter="=" --fields=1)"
+        args_name="${args_name:-?}"
         printf "Error: The variable ARGPARSER_ARG_ARRAY_NAME refers to " >&2
         printf "\"%s\", " "${ARGPARSER_ARG_ARRAY_NAME}" >&2
         printf "but this variable is not defined.  Either you have given " >&2
@@ -1720,7 +1737,11 @@ if [[ "${ARGPARSER_AUTO_READ_ARGS}" == true ]]; then
     # yet.  This happens when it is defined in the script to add
     # individual arguments that don't exist in ${ARGPARSER_ARG_DEF_FILE}
     # or no such file is given.
-    if [[ ! -v args_definition ]]; then
+    # echo ${args_definition@a}
+    # if [[ ! -v args_definition || ! "${args_definition@a}" =~ A ]]; then
+    if [[ "$(declare -p args_definition &> /dev/null; \
+        printf "%s" "$?")" != 0 ]]
+    then
         declare -A args_definition
     fi
 
@@ -1744,28 +1765,34 @@ if [[ "${ARGPARSER_AUTO_READ_ARGS}" == true ]]; then
         "${args_definition[*]}")"
 
     # Parse the arguments.
-    parsed_args="$(argparser_main "${args_keys}" "${args_values}" "$@")"
+    parsed_args="$(argparser_main2 "${args_keys}" "${args_values}" "$@")"
     IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a parsed_args <<< "${parsed_args}"
     unset args
-    declare -A args
+    declare -Ag args
     for parsed_arg in "${parsed_args[@]}"; do
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_tuple \
             <<< "${parsed_arg}"
         args["${arg_tuple[0]}"]="${arg_tuple[1]}"
     done
+}
+
+# If ${ARGPARSER_ACTION} is set to "read" or "all", read the arguments.
+if [[ "$(argparser_in_array "${ARGPARSER_ACTION}" "read" "all")" == 0 ]]; then
+    argparser_main "$@"
 fi
 
-# If ${ARGPARSER_AUTO_SET_ARGS} is set to true, set the arguments as
-# variables to the current environment.  Set the positional arguments.
-# To prevent the keyword arguments from being included into the
-# environment as positional-like arguments, all positional arguments
-# given to the calling script are diabled, if
-# ${ARGPARSER_AUTO_UNSET_ARGS} is set to true.
-# For ease of use, this part is not encapsulated inside a function, such
-# that the code automatically gets executed upon sourcing the argparser.
-if [[ "${ARGPARSER_AUTO_SET_ARGS}" == true ]]; then
+# If ${ARGPARSER_ACTION} is set to true, set the arguments as variables
+# to the current environment.  Set the positional arguments.  To prevent
+# the keyword arguments from being included into the environment as
+# positional-like arguments, all positional arguments given to the
+# calling script are disabled, if ${ARGPARSER_UNSET_ARGS} is set to
+# true.
+# As setting positional variables inside a function makes them local to
+# the function, not the calling script, this part is not encapsulated
+# inside a function.
+if [[ "$(argparser_in_array "${ARGPARSER_ACTION}" "set" "all")" == 0 ]]; then
     # Unset all positional arguments.
-    if [[ "${ARGPARSER_AUTO_UNSET_ARGS}" == true ]]; then
+    if [[ "${ARGPARSER_UNSET_ARGS}" == true ]]; then
         set --
     fi
 
@@ -1780,7 +1807,7 @@ if [[ "${ARGPARSER_AUTO_SET_ARGS}" == true ]]; then
             unset positional
             unset "args[${ARGPARSER_POSITIONAL_NAME}]"
         elif [[ "${args[${arg}]}" == *"${ARGPARSER_ARG_DELIMITER_3}"*
-            && "${ARGPARSER_AUTO_SET_ARRAYS}" == true ]]
+            && "${ARGPARSER_SET_ARRAYS}" == true ]]
         then
             # Set the keyword argument, which includes the
             # ${ARGPARSER_ARG_DELIMITER_3} and hence is a sequence of
@@ -1800,3 +1827,12 @@ unset args_keys
 unset args_values
 unset parsed_arg
 unset parsed_args
+unset -f argparser_in_array
+unset -f argparser_colorize
+unset -f argparser_parse_args
+unset -f argparser_check_arg_value
+unset -f argparser_print_help_message
+unset -f argparser_create_help_message
+unset -f argparser_create_usage_message
+unset -f argparser_prepare_help_message
+unset -f argparser_main
