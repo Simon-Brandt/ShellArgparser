@@ -252,7 +252,7 @@ function argparser_parse_args() {
     # - the parsed argument as message or an error message, starting
     #   with "Help", "Usage", "Positional", "Error: ", "Argument: " or
     #   "Value: ", possibly concatenated with
-    #   ${ARGPARSER_ARG_DELIMITER_1} characters.
+    #   ${ARGPARSER_ARG_DELIMITER_1} characters
 
     # Define the local variables.
     local arg
@@ -383,7 +383,7 @@ function argparser_check_arg_value() {
     # Return values:
     # - the parsed argument as message or an error message, starting
     #   with "Error: ", "Warning: " or "Value: ", possibly concatenated
-    #   with ${ARGPARSER_ARG_DELIMITER_1} characters.
+    #   with ${ARGPARSER_ARG_DELIMITER_1} characters
 
     # Define the local variables.
     local arg_definition
@@ -1518,27 +1518,25 @@ function argparser_prepare_help_message() {
     fi
 }
 
-function argparser_main2() {
+# If ${ARGPARSER_READ_ARGS} is set to true, read in the arguments
+# definitions from the file defined by ${ARGPARSER_ARG_DEF_FILE}.
+function argparser_main() {
     # Parse the script's given arguments and check if they accord to
     # their definition.  Give proper error messages for wrongly set
     # arguments and assign the values to the respective variables.
     # Possibly, create and print a help message.
     #
     # Arguments:
-    # - $1: the associative array's keys for the argument definition
-    # - $2: the associative array's values for the argument definition
     # - $@: the arguments to parse
     #
     # Return values:
-    # - the parsed and checked arguments with key and value, separated
-    #   by ${ARGPARSER_ARG_DELIMITER_1} characters and concatenated with
-    #   ${ARGPARSER_ARG_DELIMITER_1} characters.
+    # - the parsed and checked arguments with key and value as
+    #   associative array
 
     # Define the local variables.
     local arg
     local arg_key
     local arg_value
-    local args
     local args_keys
     local args_values
     local checked_arg
@@ -1550,10 +1548,67 @@ function argparser_main2() {
     local parsed_arg
 
     # Read the arguments.
-    args_keys="$1"
-    args_values="$2"
-    shift 2
     read -a given_args <<< "$@"
+
+    # Check if the variable that ${ARGPARSER_ARG_ARRAY_NAME} refers to
+    # is defined.  If not, guess how it may be called by searching the
+    # set variables (not functions, hence the set POSIX mode) for a
+    # variable name starting with "arg" to give a clearer error message.
+    # If no such variable name is found, use "?" as default.
+    if [[ ! -v "${ARGPARSER_ARG_ARRAY_NAME}" ]]; then
+        args_name="$(set -o posix; set | grep "^arg" \
+            | cut --delimiter="=" --fields=1)"
+        args_name="${args_name:-?}"
+        printf "Error: The variable ARGPARSER_ARG_ARRAY_NAME refers to " >&2
+        printf "\"%s\", " "${ARGPARSER_ARG_ARRAY_NAME}" >&2
+        printf "but this variable is not defined.  Either you have given " >&2
+        printf "your arguments array another name (maybe " >&2
+        printf "\"%s\" -- " "${args_name}" >&2
+        printf "then change ARGPARSER_ARG_ARRAY_NAME accordingly) or you " >&2
+        printf "forgot defining the array at all (then define it).\n" >&2
+        exit 1
+    fi
+
+    # Read in the requested arguments.  ${ARGPARSER_ARG_ARRAY_NAME} is
+    # set to the name of the array holding the arguments in the script.
+    # This name gets concatenated with the string "[@]" to form a
+    # construct Bash interprets as array index.  By using variable
+    # indirection, this then gets expanded to the array's values.  As
+    # they are interpreted as string separated by spaces, read converts
+    # them back into an array.
+    args_keys="${ARGPARSER_ARG_ARRAY_NAME}[@]"
+    read -a args_keys <<< "${!args_keys}"
+
+    # Declare the variable ${args_definition} only if it doesn't exist
+    # yet.  This happens when it is defined in the script to add
+    # individual arguments that don't exist in ${ARGPARSER_ARG_DEF_FILE}
+    # or no such file is given.
+    # echo ${args_definition@a}
+    # if [[ ! -v args_definition || ! "${args_definition@a}" =~ A ]]; then
+    if [[ "$(declare -p args_definition &> /dev/null; \
+        printf "%s" "$?")" != 0 ]]
+    then
+        declare -A args_definition
+    fi
+
+    # If an arguments definition file is given (i.e.,
+    # ${ARGPARSER_ARG_DEF_FILE} isn't set to the empty string), read the
+    # arguments definitions from the list by discarding the respective
+    # key from the line using sed.
+    if [[ -n "${ARGPARSER_ARG_DEF_FILE}" ]]; then
+        for arg_key in "${args_keys[@]}"; do
+            arg_value="$(sed --regexp-extended --quiet \
+                "s/^\[${arg_key}\]=(.*)\"(.*)\"/\1\2/p" \
+                "${ARGPARSER_ARG_DEF_FILE}")"
+            args_definition["${arg_key}"]="${arg_value}"
+        done
+    fi
+
+    # Concatenate the keys and values.
+    args_keys="$(IFS="${ARGPARSER_ARG_DELIMITER_1}"; printf "%s" \
+        "${!args_definition[*]}")"
+    args_values="$(IFS="${ARGPARSER_ARG_DELIMITER_1}"; printf "%s" \
+        "${args_definition[*]}")"
 
     # Set the default argument key to ${ARGPARSER_POSITIONAL_NAME}, such
     # that initially, all arguments given before a keyword argument are
@@ -1563,7 +1618,9 @@ function argparser_main2() {
 
     error=false
     error_messages=( )
-    declare -A args
+
+    unset args
+    declare -Ag args
 
     # Parse the script's given arguments.
     for arg in "${given_args[@]}"; do
@@ -1688,92 +1745,6 @@ function argparser_main2() {
             "${args_values}" >&2
         exit 1
     fi
-
-    # Return all arguments and their values as long string, with each
-    # argument separated from its value by an
-    # ${ARGPARSER_ARG_DELIMITER_2} character and each key-value tuple
-    # separated by an ${ARGPARSER_ARG_DELIMITER_1} character.
-    for arg in "${!args[@]}"; do
-        printf "%s" "${arg}" "${ARGPARSER_ARG_DELIMITER_2}" "${args[${arg}]}" \
-            "${ARGPARSER_ARG_DELIMITER_1}"
-    done | sed "s/${ARGPARSER_ARG_DELIMITER_1}$//"
-}
-
-# If ${ARGPARSER_READ_ARGS} is set to true, read in the arguments
-# definitions from the file defined by ${ARGPARSER_ARG_DEF_FILE}.
-# For ease of use, this part is not encapsulated inside a function, such
-# that the code automatically gets executed upon sourcing the argparser.
-function argparser_main() {
-    # Check if the variable that ${ARGPARSER_ARG_ARRAY_NAME} refers to
-    # is defined.  If not, guess how it may be called by searching the
-    # set variables (not functions, hence the set POSIX mode) for a
-    # variable name starting with "arg" to give a clearer error message.
-    # If no such variable name is found, use "?" as default.
-    if [[ ! -v "${ARGPARSER_ARG_ARRAY_NAME}" ]]; then
-        args_name="$(set -o posix; set | grep "^arg" \
-            | cut --delimiter="=" --fields=1)"
-        args_name="${args_name:-?}"
-        printf "Error: The variable ARGPARSER_ARG_ARRAY_NAME refers to " >&2
-        printf "\"%s\", " "${ARGPARSER_ARG_ARRAY_NAME}" >&2
-        printf "but this variable is not defined.  Either you have given " >&2
-        printf "your arguments array another name (maybe " >&2
-        printf "\"%s\" -- " "${args_name}" >&2
-        printf "then change ARGPARSER_ARG_ARRAY_NAME accordingly) or you " >&2
-        printf "forgot defining the array at all (then define it).\n" >&2
-        exit 1
-    fi
-
-    # Read in the requested arguments.  ${ARGPARSER_ARG_ARRAY_NAME} is
-    # set to the name of the array holding the arguments in the script.
-    # This name gets concatenated with the string "[@]" to form a
-    # construct Bash interprets as array index.  By using variable
-    # indirection, this then gets expanded to the array's values.  As
-    # they are interpreted as string separated by spaces, read converts
-    # them back into an array.
-    args_keys="${ARGPARSER_ARG_ARRAY_NAME}[@]"
-    read -a args_keys <<< "${!args_keys}"
-
-    # Declare the variable ${args_definition} only if it doesn't exist
-    # yet.  This happens when it is defined in the script to add
-    # individual arguments that don't exist in ${ARGPARSER_ARG_DEF_FILE}
-    # or no such file is given.
-    # echo ${args_definition@a}
-    # if [[ ! -v args_definition || ! "${args_definition@a}" =~ A ]]; then
-    if [[ "$(declare -p args_definition &> /dev/null; \
-        printf "%s" "$?")" != 0 ]]
-    then
-        declare -A args_definition
-    fi
-
-    # If an arguments definition file is given (i.e.,
-    # ${ARGPARSER_ARG_DEF_FILE} isn't set to the empty string), read the
-    # arguments definitions from the list by discarding the respective
-    # key from the line using sed.
-    if [[ -n "${ARGPARSER_ARG_DEF_FILE}" ]]; then
-        for arg_key in "${args_keys[@]}"; do
-            arg_value="$(sed --regexp-extended --quiet \
-                "s/^\[${arg_key}\]=(.*)\"(.*)\"/\1\2/p" \
-                "${ARGPARSER_ARG_DEF_FILE}")"
-            args_definition["${arg_key}"]="${arg_value}"
-        done
-    fi
-
-    # Concatenate the keys and values.
-    args_keys="$(IFS="${ARGPARSER_ARG_DELIMITER_1}"; printf "%s" \
-        "${!args_definition[*]}")"
-    args_values="$(IFS="${ARGPARSER_ARG_DELIMITER_1}"; printf "%s" \
-        "${args_definition[*]}")"
-
-    # Parse the arguments.
-    parsed_args="$(argparser_main2 "${args_keys}" "${args_values}" "$@")"
-    IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a parsed_args <<< "${parsed_args}"
-    unset args
-    declare -Ag args
-    for parsed_arg in "${parsed_args[@]}"; do
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_tuple \
-            <<< "${parsed_arg}"
-        args["${arg_tuple[0]}"]="${arg_tuple[1]}"
-    done
 }
 
 # If ${ARGPARSER_ACTION} is set to "read" or "all", read the arguments.
