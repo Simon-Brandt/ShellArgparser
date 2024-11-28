@@ -19,15 +19,19 @@ The argparser:
 
 No actual installation isn necessary, as the argparser is just a Bash script that can be located in an arbitrary directory of your choice, like `/usr/local/bin`.  Thus, the "installation" is as simple as cloning the repository in this very directory:
 
-    # Switch to the installation directory of your choice, e.g., /usr/local/bin.
-    cd /path/to/directory
+```bash
+# Switch to the installation directory of your choice, e.g., /usr/local/bin.
+cd /path/to/directory
 
-    # Clone the repository.
-    git clone https://github.com/Steinedieb/shell_argparser.git
+# Clone the repository.
+git clone https://github.com/Steinedieb/shell_argparser.git
+```
 
 To be able to refer to the argparser directly by its name, without providing the entire path (which enhances the portability of your script), you may want to add
 
-    export PATH="/path/to/shell_argparser:${PATH}"
+```bash
+export PATH="/path/to/shell_argparser:${PATH}"
+```
 
 (replace the `/path/to` with your actual path) to either of the following files (see `man bash`):
 
@@ -44,46 +48,48 @@ Source the argparser with `source argparser.sh` (or `source argparser.sh --actio
 
 ## Example usage
 
-    # 1.    Source the argparser without reading the arguments from a file.
-    #       As the arguments have multiple short and long options, override
-    #       the default column widths for the help message.
-    export ARGPARSER_ARG_DEF_FILE=""
-    export ARGPARSER_MAX_COL_WIDTH_1=9
-    export ARGPARSER_MAX_COL_WIDTH_2=33
-    export ARGPARSER_MAX_COL_WIDTH_3=35
+```bash
+# 1.    Source the argparser without reading the arguments from a file.
+#       As the arguments have multiple short and long options, override
+#       the default column widths for the help message.
+export ARGPARSER_ARG_DEF_FILE=""
+export ARGPARSER_MAX_COL_WIDTH_1=9
+export ARGPARSER_MAX_COL_WIDTH_2=33
+export ARGPARSER_MAX_COL_WIDTH_3=35
 
-    # 2.    Define the arguments.
-    args=(
-        var_1
-        var_2
-        var_3
-        var_4
-        var_5
-        var_6
-    )
+# 2.    Define the arguments.
+args=(
+    var_1
+    var_2
+    var_3
+    var_4
+    var_5
+    var_6
+)
 
-    declare -A args_definition
-    args_definition=(
-        [var_1]="a,A:var_1,var_A:-:-:1:Arguments:one value without default or choice"
-        [var_2]="b,B:var_2,var_B:-:-:+:Arguments:at least one value without default or choice"
-        [var_3]="c,C:var_3,var_C:-:A,B:+:Arguments:at least one value with choice"
-        [var_4]="d,D:-:A:A,B,C:1:Options:one value with default and choice"
-        [var_5]="-:var_5,var_E:E:-:1:Options:one value with default"
-        [var_6]="f,F:var_6,var_F:false:-:0:Options:no value (flag) with default"
-    )
-    source argparser.sh
+declare -A args_definition
+args_definition=(
+    [var_1]="a,A:var_1,var_A:-:-:1:Arguments:one value without default or choice"
+    [var_2]="b,B:var_2,var_B:-:-:+:Arguments:at least one value without default or choice"
+    [var_3]="c,C:var_3,var_C:-:A,B:+:Arguments:at least one value with choice"
+    [var_4]="d,D:-:A:A,B,C:1:Options:one value with default and choice"
+    [var_5]="-:var_5,var_E:E:-:1:Options:one value with default"
+    [var_6]="f,F:var_6,var_F:false:-:0:Options:no value (flag) with default"
+)
+source argparser.sh
 
-    # 3.    The arguments can now be accessed as keys and values of the
-    #       associative array "args".  Further, they are set as variables
-    #       to the environment.  If positional arguments were given, they
-    #       are set to $@.
-    for arg in "${!args[@]}"; do
-        printf "The variable \"%s\" equals \"%s\".\n" "${arg}" "${args[${arg}]}"
-    done | sort
+# 3.    The arguments can now be accessed as keys and values of the
+#       associative array "args".  Further, they are set as variables
+#       to the environment.  If positional arguments were given, they
+#       are set to $@.
+for arg in "${!args[@]}"; do
+    printf "The variable \"%s\" equals \"%s\".\n" "${arg}" "${args[${arg}]}"
+done | sort
 
-    if [[ -n "$1" ]]; then
-        printf "%s\n" "$@"
-    fi
+if [[ -n "$1" ]]; then
+    printf "%s\n" "$@"
+fi
+```
 
 As you can see, you need to source the argparser, possibly after adjusting some of the argparser environment variables (here to prevent the auto-reading from the non-existent arguments definition file and to set the maximum column widths for the help message), and then define the arguments.  Even though you may choose another way, as long as the input to `argparser_main` keeps the same structure, this is the recommended way.
 
