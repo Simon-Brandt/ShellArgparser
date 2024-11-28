@@ -108,3 +108,28 @@ Further, all values given after `--` are interpreted as values to positional arg
 As many arguments may be given as desired (*i.e.*, the same argument can be called multiple times), with the values given afterwards being all assigned to the respective argument.
 
 The argparser will build the help and usage messages from the arguments, indicating the short and long names, the default and choice values, as well as the argument group, and print the help text from the arguments' definitions.
+
+## Environment variables
+
+| Variable name | Allowed values or type[^1] | Default value |
+| --- | --- | --- |
+| `ARGPARSER_ACTION` | `"read"` \| `"set"` \| `"all"` | `"all"` |
+| `ARGPARSER_ARG_ARRAY_NAME` | *str*[^2] | `"args"` |
+| `ARGPARSER_ARG_DEF_FILE` | *filepath* | `"arguments.lst"` |
+| `ARGPARSER_ARG_DELIMITER_1` | *str* | `"\|"`[^3] |
+| `ARGPARSER_ARG_DELIMITER_2` | *str* | `":"`[^3] |
+| `ARGPARSER_ARG_DELIMITER_3` | *str* | `","`[^3] |
+| `ARGPARSER_ARG_GROUP_DELIMITER` | *str* | `"#"`[^3] |
+| `ARGPARSER_READ_ARGS` | *bool* | `true` |
+| `ARGPARSER_SET_ARGS` | *bool* | `true` |
+| `ARGPARSER_SET_ARRAYS` | *bool* | `true` |
+| `ARGPARSER_UNSET_ARGS` | *bool* | `true` |
+| `ARGPARSER_MAX_COL_WIDTH_1` | *int* | `5` |
+| `ARGPARSER_MAX_COL_WIDTH_2` | *int* | `33` |
+| `ARGPARSER_MAX_COL_WIDTH_3` | *int* | `39` |
+| `ARGPARSER_POSITIONAL_NAME` | *str*[^4] | `"Positional"` |
+
+[^1]: Bash is weakly typed, hence the denoted types are just a guidance.
+[^2]: In fact, any legit Bash variable identifier.
+[^3]: Values must be different from each other.
+[^4]: Strings can optionally be enclosed by quotes.
