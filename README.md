@@ -113,7 +113,6 @@ The argparser will build the help and usage messages from the arguments, indicat
 
 | Variable name | Allowed values or type[^1] | Default value |
 | --- | --- | --- |
-| `ARGPARSER_ACTION` | `"read"` \| `"set"` \| `"all"` | `"all"` |
 | `ARGPARSER_ARG_ARRAY_NAME` | *str*[^2] | `"args"` |
 | `ARGPARSER_ARG_DEF_FILE` | *filepath* \| `""` | `"arguments.lst"` |
 | `ARGPARSER_ARG_DELIMITER_1` | *str* | `"\|"`[^3] |

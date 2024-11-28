@@ -30,9 +30,18 @@
 if (( "$#" >= 2 )); then
     if [[ "$2" == "--" ]]; then
         case "$1" in
-            "--read") ARGPARSER_ACTION="read";;
-            "--set") ARGPARSER_ACTION="set";;
-            "--all") ARGPARSER_ACTION="all";;
+            "--read")
+                ARGPARSER_READ_ARGS=true
+                ARGPARSER_SET_ARGS=false
+                ;;
+            "--set")
+                ARGPARSER_READ_ARGS=false
+                ARGPARSER_SET_ARGS=true
+                ;;
+            "--all")
+                ARGPARSER_READ_ARGS=true
+                ARGPARSER_SET_ARGS=true
+                ;;
             *)
                 printf "Wrong action given: %s\n" "$1"
                 exit 1
@@ -40,7 +49,8 @@ if (( "$#" >= 2 )); then
         esac
         shift 2  # Get rid of the action specification.
     fi
-    ARGPARSER_ACTION="${ARGPARSER_ACTION:-all}"
+    ARGPARSER_READ_ARGS="${ARGPARSER_READ_ARGS:-true}"
+    ARGPARSER_SET_ARGS="${ARGPARSER_SET_ARGS:-true}"
 fi
 
 ARGPARSER_ARG_ARRAY_NAME="${ARGPARSER_ARG_ARRAY_NAME:-"args"}"
@@ -51,8 +61,6 @@ ARGPARSER_ARG_DELIMITER_1="${ARGPARSER_ARG_DELIMITER_1:-"|"}"
 ARGPARSER_ARG_DELIMITER_2="${ARGPARSER_ARG_DELIMITER_2:-":"}"
 ARGPARSER_ARG_DELIMITER_3="${ARGPARSER_ARG_DELIMITER_3:-","}"
 ARGPARSER_ARG_GROUP_DELIMITER="${ARGPARSER_ARG_GROUP_DELIMITER:-"#"}"
-# ARGPARSER_READ_ARGS="${ARGPARSER_READ_ARGS:-true}"
-# ARGPARSER_SET_ARGS="${ARGPARSER_SET_ARGS:-true}"
 ARGPARSER_SET_ARRAYS="${ARGPARSER_SET_ARRAYS:-true}"
 ARGPARSER_UNSET_ARGS="${ARGPARSER_UNSET_ARGS:-true}"
 ARGPARSER_MAX_COL_WIDTH_1="${ARGPARSER_MAX_COL_WIDTH_1:-5}"
@@ -1427,8 +1435,6 @@ function argparser_prepare_help_message() {
     fi
 }
 
-# If ${ARGPARSER_READ_ARGS} is set to true, read in the arguments
-# definitions from the file defined by ${ARGPARSER_ARG_DEF_FILE}.
 function argparser_main() {
     # Parse the script's given arguments and check if they accord to
     # their definition.  Give proper error messages for wrongly set
@@ -1656,21 +1662,21 @@ function argparser_main() {
     fi
 }
 
-# If ${ARGPARSER_ACTION} is set to "read" or "all", read the arguments.
-if [[ "$(argparser_in_array "${ARGPARSER_ACTION}" "read" "all")" == 0 ]]; then
+# If ${ARGPARSER_READ_ARGS} is set to true, read the arguments.
+if [[ "${ARGPARSER_READ_ARGS}" == true ]]; then
     argparser_main "$@"
 fi
 
-# If ${ARGPARSER_ACTION} is set to true, set the arguments as variables
-# to the current environment.  Set the positional arguments.  To prevent
-# the keyword arguments from being included into the environment as
-# positional-like arguments, all positional arguments given to the
-# calling script are disabled, if ${ARGPARSER_UNSET_ARGS} is set to
-# true.
+# If ${ARGPARSER_SET_ARGS} is set to true, set the arguments as
+# variables to the current environment.  Set the positional arguments.
+# If ${ARGPARSER_UNSET_ARGS} is set to true, all positional arguments
+# given to the calling script are disabled to prevent the keyword
+# arguments from being included into the environment as positional-like
+# arguments.
 # As setting positional variables inside a function makes them local to
 # the function, not the calling script, this part is not encapsulated
 # inside a function.
-if [[ "$(argparser_in_array "${ARGPARSER_ACTION}" "set" "all")" == 0 ]]; then
+if [[ "${ARGPARSER_SET_ARGS}" == true ]]; then
     # Unset all positional arguments.
     if [[ "${ARGPARSER_UNSET_ARGS}" == true ]]; then
         set --
