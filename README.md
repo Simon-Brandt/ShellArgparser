@@ -111,24 +111,26 @@ The argparser will build the help and usage messages from the arguments, indicat
 
 ## Environment variables
 
-| Variable name | Allowed values or type[^1] | Default value |
+| Variable name | Allowed values or type[^1][^2][^3] | Default value |
 | --- | --- | --- |
-| `ARGPARSER_ARG_ARRAY_NAME` | *str*[^2] | `"args"` |
+| `ARGPARSER_ARG_ARRAY_NAME` | *str*[^4] | `"args"` |
 | `ARGPARSER_ARG_DEF_FILE` | *filepath* \| `""` | `"arguments.lst"` |
-| `ARGPARSER_ARG_DELIMITER_1` | *str* | `"\|"`[^3] |
-| `ARGPARSER_ARG_DELIMITER_2` | *str* | `":"`[^3] |
-| `ARGPARSER_ARG_DELIMITER_3` | *str* | `","`[^3] |
-| `ARGPARSER_ARG_GROUP_DELIMITER` | *str* | `"#"`[^3] |
+| `ARGPARSER_ARG_DELIMITER_1` | *str* | `"\|"`[^5] |
+| `ARGPARSER_ARG_DELIMITER_2` | *str* | `":"`[^5] |
+| `ARGPARSER_ARG_DELIMITER_3` | *str*| `","`[^5] |
+| `ARGPARSER_ARG_GROUP_DELIMITER` | *str* | `"#"`[^5] |
 | `ARGPARSER_READ_ARGS` | *bool* | `true` |
 | `ARGPARSER_SET_ARGS` | *bool* | `true` |
 | `ARGPARSER_SET_ARRAYS` | *bool* | `true` |
 | `ARGPARSER_UNSET_ARGS` | *bool* | `true` |
-| `ARGPARSER_MAX_COL_WIDTH_1` | *int* | `5` |
-| `ARGPARSER_MAX_COL_WIDTH_2` | *int* | `33` |
-| `ARGPARSER_MAX_COL_WIDTH_3` | *int* | `39` |
-| `ARGPARSER_POSITIONAL_NAME` | *str*[^4] | `"Positional"` |
+| `ARGPARSER_MAX_COL_WIDTH_1` | *int* | `5`[^6] |
+| `ARGPARSER_MAX_COL_WIDTH_2` | *int* | `33`[^6] |
+| `ARGPARSER_MAX_COL_WIDTH_3` | *int* | `39`[^6] |
+| `ARGPARSER_POSITIONAL_NAME` | *str* | `"Positional"` |
 
 [^1]: Bash is weakly typed, hence the denoted types are just a guidance.
-[^2]: In fact, any legit Bash variable identifier.
-[^3]: Values must be different from each other.
-[^4]: Strings can optionally be enclosed by quotes.
+[^2]: Strings can optionally be enclosed by quotes.
+[^3]: Bools must be lowercase, *i.e.*, `true` or `false`.
+[^4]: In fact, any legit Bash variable identifier.
+[^5]: Values must be different from each other.
+[^6]: Values must be positive integers of a reasonable magnitude (recommended sum: 79).
