@@ -115,7 +115,7 @@ The argparser will build the help and usage messages from the arguments, indicat
 | --- | --- | --- |
 | `ARGPARSER_ACTION` | `"read"` \| `"set"` \| `"all"` | `"all"` |
 | `ARGPARSER_ARG_ARRAY_NAME` | *str*[^2] | `"args"` |
-| `ARGPARSER_ARG_DEF_FILE` | *filepath* | `"arguments.lst"` |
+| `ARGPARSER_ARG_DEF_FILE` | *filepath* \| `""` | `"arguments.lst"` |
 | `ARGPARSER_ARG_DELIMITER_1` | *str* | `"\|"`[^3] |
 | `ARGPARSER_ARG_DELIMITER_2` | *str* | `":"`[^3] |
 | `ARGPARSER_ARG_DELIMITER_3` | *str* | `","`[^3] |
