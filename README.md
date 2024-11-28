@@ -1,6 +1,32 @@
 # Argparser
 
-The argparser is a designed to be a simple, yet powerful argument parser for Bash scripts, written in pure Bash (without invoking external commands).
+The argparser is a designed to be a simple, yet powerful argument parser for your Bash scripts. It is entirely written in pure Bash, without invoking external commands, reducing dependencies.
+
+## Installation
+
+> [!WARNING]
+> Requires Bash 5 or higher (try `bash --version`). Tested with `bash 5.2.21` (`GNU bash, Version 5.2.21(1)-release (x86_64-pc-linux-gnu)`).
+
+No actual installation isn necessary, as the argparser is just a Bash script that can be located in an arbitrary directory of your choice, like `/usr/local/bin`.  Thus, the "installation" is as simple as cloning the repository in this very directory:
+
+    # Switch to the installation directory of your choice, e.g., /usr/local/bin.
+    cd /path/to/directory
+
+    # Clone the repository.
+    git clone https://github.com/Steinedieb/shell_argparser.git
+
+To be able to refer to the argparser directly by its name, without providing the entire path (which enhances the portability of your script), you may want to add
+
+    export PATH="/path/to/shell_argparser:${PATH}"
+
+(replace the `/path/to` with your actual path) to either of the following files (see `man bash`):
+
+* `~/.profile` (local addition, for login shells)
+* `~/.bashrc` (local addition, for non-login shells)
+* `/etc/profile` (global addition, for login shells)
+* `/etc/bash.bashrc` (global addition, for non-login shells)
+
+Be wary not to forget the final `${PATH}` component in the above command, or else you will override the `PATH` for your active shell, meaning no other (non-builtin) command will be resolvable.
 
 ## Usage
 
