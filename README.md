@@ -2,6 +2,16 @@
 
 The argparser is a designed to be a simple, yet powerful argument parser for your Bash scripts. It is entirely written in pure Bash, without invoking external commands, reducing dependencies.
 
+## Features
+
+The argparser:
+
+* parses a script's arguments
+* gives proper error messages for wrongly set arguments
+* assigns the values to the respective variables
+* creates and prints a help or usage message
+* can be configured to your needs by a set of environment variables
+
 ## Installation
 
 > [!WARNING]
@@ -31,10 +41,6 @@ Be wary not to forget the final `${PATH}` component in the above command, or els
 ## Usage
 
 Source the argparser with `source argparser.sh` (or `source argparser.sh --action -- "$@"`, with `action` being either `read`, `set`, or `all`) inside the script whose arguments need to be parsed.  If `${ARGPARSER_READ_ARGS}` is set to `true` (which per default is), the arguments will be parsed upon sourcing, else, the respective functions need to be called.  If `${ARGPARSER_SET_ARGS}` is set to `true` (which per default is), the arguments will be set to variables upon sourcing, else, the associative array `${args}` needs to be accessed.
-
-## Purpose
-
-Parse a script's arguments, giving proper error messages for wrongly set arguments, assigning the values to the respective variables, as well as creating and printing a help or usage message.
 
 ## Example usage
 
