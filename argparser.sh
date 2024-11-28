@@ -1,8 +1,8 @@
 #!/bin/false
 
 # Author: Simon Brandt
-# E-Mail: simon.brandt@stud.uni-greifswald.de
-# Last Modification: 2024-11-27
+# E-Mail: simon.brandt@uni-greifswald.de
+# Last Modification: 2024-11-28
 
 # TODO: Correct auto-generated help message with erroneous line breaks.
 # TODO: Enable parsing of combined short option flags, i.e.

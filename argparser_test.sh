@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Author: Simon Brandt
-# E-Mail: simon.brandt@stud.uni-greifswald.de
-# Last Modification: 2024-11-23
+# E-Mail: simon.brandt@uni-greifswald.de
+# Last Modification: 2024-11-28
 
 # Usage: Run this script with "bash test_argparser.sh".
 
