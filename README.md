@@ -111,26 +111,128 @@ The argparser will build the help and usage messages from the arguments, indicat
 
 ## Environment variables
 
-| Variable name | Allowed values or type[^1][^2][^3] | Default value |
-| --- | --- | --- |
-| `ARGPARSER_ARG_ARRAY_NAME` | *str*[^4] | `"args"` |
-| `ARGPARSER_ARG_DEF_FILE` | *filepath* \| `""` | `"arguments.lst"` |
-| `ARGPARSER_ARG_DELIMITER_1` | *str* | `"\|"`[^5] |
-| `ARGPARSER_ARG_DELIMITER_2` | *str* | `":"`[^5] |
-| `ARGPARSER_ARG_DELIMITER_3` | *str*| `","`[^5] |
-| `ARGPARSER_ARG_GROUP_DELIMITER` | *str* | `"#"`[^5] |
-| `ARGPARSER_READ_ARGS` | *bool* | `true` |
-| `ARGPARSER_SET_ARGS` | *bool* | `true` |
-| `ARGPARSER_SET_ARRAYS` | *bool* | `true` |
-| `ARGPARSER_UNSET_ARGS` | *bool* | `true` |
-| `ARGPARSER_MAX_COL_WIDTH_1` | *int* | `5`[^6] |
-| `ARGPARSER_MAX_COL_WIDTH_2` | *int* | `33`[^6] |
-| `ARGPARSER_MAX_COL_WIDTH_3` | *int* | `39`[^6] |
-| `ARGPARSER_POSITIONAL_NAME` | *str* | `"Positional"` |
+### Overview
+
+| Variable name                                                     | Allowed values or type[^1][^2][^3] | Default value     |
+| ----------------------------------------------------------------- | ---------------------------------- | ----------------- |
+| [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name)           | *str*[^4]                          | `"args"`          |
+| [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file)               | *filepath* \| `""`                 | `"arguments.lst"` |
+| [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)         | *char*                             | `"\|"`[^5]        |
+| [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)         | *char*                             | `":"`[^5]         |
+| [`ARGPARSER_ARG_DELIMITER_3`](#argparser_arg_delimiter_3)         | *char*                             | `","`[^5]         |
+| [`ARGPARSER_ARG_GROUP_DELIMITER`](#argparser_arg_group_delimiter) | *char*                             | `"#"`[^5]         |
+| [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1)         | *int*                              | `5`[^6]           |
+| [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2)         | *int*                              | `33`[^6]          |
+| [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)         | *int*                              | `39`[^6]          |
+| [`ARGPARSER_POSITIONAL_NAME`](#argparser_positional_name)         | *str*                              | `"Positional"`    |
+| [`ARGPARSER_READ_ARGS`](#argparser_read_args)                     | *bool*                             | `true`            |
+| [`ARGPARSER_SET_ARGS`](#argparser_set_args)                       | *bool*                             | `true`            |
+| [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)                   | *bool*                             | `true`            |
+| [`ARGPARSER_UNSET_ARGS`](#argparser_unset_args)                   | *bool*                             | `true`            |
 
 [^1]: Bash is weakly typed, hence the denoted types are just a guidance.
 [^2]: Strings can optionally be enclosed by quotes.
 [^3]: Bools must be lowercase, *i.e.*, `true` or `false`.
 [^4]: In fact, any legit Bash variable identifier.
 [^5]: Values must be different from each other.
-[^6]: Values must be positive integers of a reasonable magnitude (recommended sum: 79).
+[^6]: Values must be positive integers of a reasonable magnitude (recommended sum: 77).
+
+### `ARGPARSER_ARG_ARRAY_NAME`
+
+* ***Type:*** *str* (String), but only characters allowed in a legit Bash variable identifier
+* ***Allowed values:*** Any legit Bash variable identifier
+* ***Default value:*** `"args"`
+* ***Description:*** The name of an associative array, under which the parsed arguments can be accessed.  The array stores the argument's identifier as key and its values as value. If [`ARGPARSER_SET_ARGS`](#argparser_set_args) is `true`, you usually don't need to access this array as the arguments will be set as variables.
+
+### `ARGPARSER_ARG_DEF_FILE`
+
+* ***Type:*** *filepath* (Filepath)
+* ***Allowed values:*** Any legit filepath or the empty string `""`
+* ***Default value:*** `"arguments.lst"`
+* ***Description:*** The path to a file holding the definition of the arguments. This file may be used by multiple scripts if they share some arguments. It is not necessary to use all arguments from there, as you need to specify which arguments you want to use. It is possible to set additional argument definitions within the script, which could come handy when scripts share some arguments (from the file), but also use some own arguments (from the script), whose names have another meaning in the companion script.
+
+### `ARGPARSER_ARG_DELIMITER_1`
+
+* ***Type:***  *char* (Character)
+* ***Allowed values:*** Any unique character that's not used as [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2), [`ARGPARSER_ARG_DELIMITER_3`](#argparser_arg_delimiter_3), or [`ARGPARSER_ARG_GROUP_DELIMITER`](#argparser_arg_group_delimiter)
+* ***Default value:*** `"|"`
+* ***Description:*** The primary delimiter that internally separates the arguments' keys and values from each other. Though you don't need to access this variable, you must ensure that it is set to a character or glyph that does not occur in the arguments definition or their values.
+
+### `ARGPARSER_ARG_DELIMITER_2`
+
+* ***Type:***  *char* (Character)
+* ***Allowed values:*** Any unique character that's not used as [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1), [`ARGPARSER_ARG_DELIMITER_3`](#argparser_arg_delimiter_3), or [`ARGPARSER_ARG_GROUP_DELIMITER`](#argparser_arg_group_delimiter)
+* ***Default value:*** `":"`
+* ***Description:*** The secondary delimiter that separates the fields in the arguments definition. Again, you don't need to access this variable, but you must ensure that it is set to a character or glyph that does not occur in the arguments definition or their values.
+
+### `ARGPARSER_ARG_DELIMITER_3`
+
+* ***Type:***  *char* (Character)
+* ***Allowed values:*** Any unique character that's not used as [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1), [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2), or [`ARGPARSER_ARG_GROUP_DELIMITER`](#argparser_arg_group_delimiter)
+* ***Default value:*** `","`
+* ***Description:*** The tertiary delimiter that separates the elements of sequences in the arguments definition. Also here, you don't need to access this variable, but you must ensure that it is set to a character or glyph that does not occur in the arguments definition or their values.
+
+### `ARGPARSER_ARG_GROUP_DELIMITER`
+
+* ***Type:***  *char* (Character)
+* ***Allowed values:*** Any unique character that's not used as [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1), [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2), or [`ARGPARSER_ARG_DELIMITER_3`](#argparser_arg_delimiter_3)
+* ***Default value:*** `"#"`
+* ***Description:*** The delimiter that internally separates argument groups from each other. Once more, you don't need to access this variable, but you must ensure that it is set to a character or glyph that does not occur in the arguments definition or their values.
+
+### `ARGPARSER_MAX_COL_WIDTH_1`
+
+* ***Type:*** *int* (Integer)
+* ***Allowed values:*** Any positive integer
+* ***Default value:*** `5`
+* ***Description:*** The maximum column width of the first column in the generated help message. This column holds the short options of the arguments, hence, it can be rather narrow. The column's content gets wrapped by line breaks if its width exceeds the `ARGPARSER_MAX_COL_WIDTH_1`. If it is less wide, the column is shrunk accordingly.  
+It is recommendable to have a total width of the help message of 79 characters. As one space is always inserted as seperation between the first and second, as well as the second and third column, the sum of `ARGPARSER_MAX_COL_WIDTH_1`, [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2), and [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3) should equal 77. As long options are longer than short options, the second column should be far wider than the first. The help text in the third column consists of human-readable words and is thus less bound to word wrapping restrictions. By this, it is easier to set the third column's width to 77 characters minus the total width of the first two columns to get an optimized help message layout.
+
+### `ARGPARSER_MAX_COL_WIDTH_2`
+
+* ***Type:*** *int* (Integer)
+* ***Allowed values:*** Any positive integer
+* ***Default value:*** `33`
+* ***Description:*** The maximum column width of the second column in the generated help message. This column holds the long options of the arguments, hence, it should be rather wide. The column's content gets wrapped by line breaks if its width exceeds the `ARGPARSER_MAX_COL_WIDTH_2`. If it is less wide, the column is shrunk accordingly. For details, refer to [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1).
+
+### `ARGPARSER_MAX_COL_WIDTH_3`
+
+* ***Type:*** *int* (Integer)
+* ***Allowed values:*** Any positive integer
+* ***Default value:*** `39`
+* ***Description:*** The maximum column width of the third column in the generated help message. This column holds the help text of the arguments, hence, it should be rather wide. The column's content gets wrapped by line breaks if its width exceeds the `ARGPARSER_MAX_COL_WIDTH_3`. If it is less wide, the column is shrunk accordingly. For details, refer to [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1).
+
+### `ARGPARSER_POSITIONAL_NAME`
+
+* ***Type:*** *str* (String)
+* ***Allowed values:*** Any string not used as argument identifier in the argument definition
+* ***Default value:*** `"Positional"`
+* ***Description:*** A unique key to store the positional arguments in the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name) sets. This name can be arbitrary, as long as it is not used as an identifier of any argument in the argument definition. Note, however, that you might want to use the associative array in you code and then might want to give the `ARGPARSER_POSITIONAL_NAME` a descriptive name.
+
+### `ARGPARSER_READ_ARGS`
+
+* ***Type:*** *bool* (Boolean)
+* ***Allowed values:*** `true` and `false` (case-sensitive)
+* ***Default value:*** `true`
+* ***Description:*** Whether to read the arguments from the command line (*i.e.*, from `"$@"`) and parse them to the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name) sets. Setting `ARGPARSER_READ_ARGS` is the same as calling `source argparser.sh --read -- "$@"`. If set along [`ARGPARSER_SET_ARGS`](#argparser_set_args), it is the same as calling `source argparser.sh --all -- "$@"` or a bare `source argparser.sh`.  
+The main difference is that, if you `export` (or `declare -x`) the variables to subshells (like scripts called from your master script), they will inherit these environment variables. If, in your child script, you use a bare `source argparser.sh`, *i.e.*, without specifying an action to the argparser, the setting from the inherited environment variables will be used. You can always override them by specifying an action. By this, you may set the environment variables in your master script and use the settings in some child scripts, with the others setting their own action.
+
+### `ARGPARSER_SET_ARGS`
+
+* ***Type:*** *bool* (Boolean)
+* ***Allowed values:*** `true` and `false` (case-sensitive)
+* ***Default value:*** `true`
+* ***Description:*** Whether to set the (read and parsed) arguments from the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name) sets to variables in the calling acript's scope. Setting `ARGPARSER_SET_ARGS` is the same as calling `source argparser.sh --set -- "$@"`. If set along [`ARGPARSER_READ_ARGS`](#argparser_read_args), it is the same as calling `source argparser.sh --all -- "$@"` or a bare `source argparser.sh`. For details, refer to [`ARGPARSER_READ_ARGS`](#argparser_read_args).
+
+### `ARGPARSER_SET_ARRAYS`
+
+* ***Type:*** *bool* (Boolean)
+* ***Allowed values:*** `true` and `false` (case-sensitive)
+* ***Default value:*** `true`
+* ***Description:*** Whether to set arguments intended to have multiple values as indexed array. This is only evaluated if [`ARGPARSER_SET_ARGS`](#argparser_set_args) is `true`. While it can be very helpful in a script to have the multiple values already set to an array that can be iterated over, the drawback is that arrays are hard to transfer to other scripts and may need to be serialized.
+
+### `ARGPARSER_UNSET_ARGS`
+
+* ***Type:*** *bool* (Boolean)
+* ***Allowed values:*** `true` and `false` (case-sensitive)
+* ***Default value:*** `true`
+* ***Description:*** Whether to unset (remove) all command-line arguments to the script. This is usually what you want, as the argparser re-sets these values in parsed form. Else, keyword arguments will be included as positional-like arguments. This is only evaluated if [`ARGPARSER_SET_ARGS`](#argparser_set_args) is `true`.
