@@ -47,9 +47,13 @@ source argparser.sh --set -- "$@"
 #       to the environment.  If positional arguments were given, they
 #       are set to $@.
 for arg in "${!args[@]}"; do
-    printf "The variable \"%s\" equals \"%s\".\n" "${arg}" "${args[${arg}]}"
+    printf "The keyword argument \"%s\" equals \"%s\".\n" \
+        "${arg}" "${args[${arg}]}"
 done | sort
 
-if [[ -v 1 && -n "$1" ]]; then
-    printf "%s\n" "$@"
-fi
+(( i = 1 ))
+for arg in "$@"; do
+    printf "The positional argument on index \"%s\" equals \"%s\".\n" \
+        "${i}" "${arg}"
+    (( i++ ))
+done
