@@ -129,6 +129,7 @@ The argparser will build the help and usage messages from the arguments, indicat
 | [`ARGPARSER_SET_ARGS`](#argparser_set_args)                       | *bool*                             | `true`            |
 | [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)                   | *bool*                             | `true`            |
 | [`ARGPARSER_UNSET_ARGS`](#argparser_unset_args)                   | *bool*                             | `true`            |
+| [`ARGPARSER_UNSET_ENV_VARS`](#argparser_unset_env_vars)           | *bool*                             | `true`            |
 
 [^1]: Bash is weakly typed, hence the denoted types are just a guidance.
 [^2]: Strings can optionally be enclosed by quotes.
@@ -236,3 +237,10 @@ The main difference is that, if you `export` (or `declare -x`) the variables to 
 * ***Allowed values:*** `true` and `false` (case-sensitive)
 * ***Default value:*** `true`
 * ***Description:*** Whether to unset (remove) all command-line arguments to the script. This is usually what you want, as the argparser re-sets these values in parsed form. Else, keyword arguments will be included as positional-like arguments. This is only evaluated if [`ARGPARSER_SET_ARGS`](#argparser_set_args) is `true`.
+
+### `ARGPARSER_UNSET_ENV_VARS`
+
+* ***Type:*** *bool* (Boolean)
+* ***Allowed values:*** `true` and `false` (case-sensitive)
+* ***Default value:*** `true`
+* ***Description:*** Whether to unset (remove) argparser environment variables from the environment. As long as you don't need these variables anymore or want to reset them prior to the next argparser invokation, this is usually what you want. This prevents accidental (but also deliberate) inheritance to child scripts when passing the entire environment to them.

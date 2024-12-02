@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2024-11-28
+# Last Modification: 2024-12-02
 
 # TODO: Correct auto-generated help message with erroneous line breaks.
 # TODO: Enable parsing of combined short option flags, i.e.
@@ -67,6 +67,7 @@ ARGPARSER_MAX_COL_WIDTH_3="${ARGPARSER_MAX_COL_WIDTH_3:-39}"
 ARGPARSER_POSITIONAL_NAME="${ARGPARSER_POSITIONAL_NAME:-"Positional"}"
 ARGPARSER_SET_ARRAYS="${ARGPARSER_SET_ARRAYS:-true}"
 ARGPARSER_UNSET_ARGS="${ARGPARSER_UNSET_ARGS:-true}"
+ARGPARSER_UNSET_ENV_VARS="${ARGPARSER_UNSET_ENV_VARS:-true}"
 
 # Define the argparser functions.
 function argparser_in_array() {
@@ -1722,3 +1723,25 @@ unset -f argparser_create_help_message
 unset -f argparser_create_usage_message
 unset -f argparser_prepare_help_message
 unset -f argparser_main
+
+# If ${ARGPARSER_UNSET_ENV_VARS} is set to true, unset all argparser
+# environment variables.  The names are used instead of a glob to limit
+# sid eeffects with potentially same-named variables from the calling
+# script that stand in no relation to the argparser.
+if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
+    unset ARGPARSER_ARG_ARRAY_NAME
+    unset ARGPARSER_ARG_DEF_FILE
+    unset ARGPARSER_ARG_DELIMITER_1
+    unset ARGPARSER_ARG_DELIMITER_2
+    unset ARGPARSER_ARG_DELIMITER_3
+    unset ARGPARSER_ARG_GROUP_DELIMITER
+    unset ARGPARSER_MAX_COL_WIDTH_1
+    unset ARGPARSER_MAX_COL_WIDTH_2
+    unset ARGPARSER_MAX_COL_WIDTH_3
+    unset ARGPARSER_POSITIONAL_NAME
+    unset ARGPARSER_READ_ARGS
+    unset ARGPARSER_SET_ARGS
+    unset ARGPARSER_SET_ARRAYS
+    unset ARGPARSER_UNSET_ARGS
+    unset ARGPARSER_UNSET_ENV_VARS
+fi
