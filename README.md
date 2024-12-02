@@ -78,9 +78,10 @@ There is one important exception to this rule, and that is configuration by envi
 
 As stated, `read` sets an associative array to store the arguments in. For maximum control over the variables in your script's scope, you can configure its name via [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name), defaulting to `"args"`.
 
-## Example usage
+## Example
 
 ```bash
+#!/bin/bash
 # 1.    Source the argparser without reading the arguments from a file.
 #       As the arguments have multiple short and long options, override
 #       the default column widths for the help message.
@@ -115,31 +116,100 @@ source argparser.sh
 #       to the environment.  If positional arguments were given, they
 #       are set to $@.
 for arg in "${!args[@]}"; do
-    printf "The variable \"%s\" equals \"%s\".\n" "${arg}" "${args[${arg}]}"
+    printf "The keyword argument \"%s\" equals \"%s\".\n" \
+        "${arg}" "${args[${arg}]}"
 done | sort
 
-if [[ -n "$1" ]]; then
-    printf "%s\n" "$@"
-fi
+(( i = 1 ))
+for arg in "$@"; do
+    printf "The positional argument on index \"%s\" equals \"%s\".\n" \
+        "${i}" "${arg}"
+    (( i++ ))
+done
 ```
 
-As you can see, you need to source the argparser, possibly after adjusting some of the argparser environment variables (here to prevent the auto-reading from the non-existent arguments definition file and to set the maximum column widths for the help message), and then define the arguments. Even though you may choose another way, as long as the input to `argparser_main` keeps the same structure, this is the recommended way.
+Given the above script to be saved as `argparser_test.sh` in the CWD, then you would obtain the following results upon running it:
 
-The argument-defining associative array consists of a key (which is nothing more than a unique identifier for the argparser functions) and a value. The latter consists of seven columns, each separated by a colon (":") from each other. The first column defines the short options (one hyphen), the second the long options (two hyphens), the third the default value, the fourth the choice values for options with a limited set of values to choose from, the fifth the number of required values (either numerical from 0 to infinity or "+", meaning to accept as many values as given, at least one), the sixth the argument group for grouping of arguments in the help text, and the seventh the help text for the `--help` flag.
+```console
+$ bash argparser_test.sh 3 2 1 -a 1 -b 2 -c A
+The keyword argument "var_1" equals "1".
+The keyword argument "var_2" equals "2".
+The keyword argument "var_3" equals "A".
+The keyword argument "var_4" equals "A".
+The keyword argument "var_5" equals "E".
+The keyword argument "var_6" equals "false".
+The positional argument on index "1" equals "3".
+The positional argument on index "2" equals "2".
+The positional argument on index "3" equals "1".
+```
 
-Arguments can have multiple short and/or long names, a default value and/or an arbitrary number of choice values.
+The single line `source argparser.sh` provides the argparser's main functionality. Prior to its invokation, some argparser environment variables are set to prevent the auto-reading from the (non-existent) arguments definition file and to set the maximum column widths for the help message. Then, the arguments are defined. Thereby, the indexed array `args` defines, which command-line arguments are acceptable for the script. The indexed array `args_definition`, which could alternatively be given as a separate file, indicated as [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file), defines all arguments in an argparser-specific tabular manner.
+
+The rationale for separating `args` from `args_definition` gets clear when you realize that it's possible to share an argument definition file across multiple scripts and only require a limited subset of them for the current script. Then, you can give these arguments a common definition, identical for any script using them. It is even possible to use an arguments definition file and `args_definition` together, with the latter expanding on the former, thus providing the opportunity to use arguments with the same name, but different definitions, in separate scripts.
+
+The argument-defining associative array `args_definition` consists of a key and a value for each argument. The key is a unique identifier for the argparser functions, and the name, under which the argument's value can be obtained from the associative array named by [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name), defaulting to `"args"`. The value provides the argument definition to the argparser.
+
+This argparser-specific tabular format consists of seven columns, each separated from each other by an [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1) character, defaulting to a colon (`":"`). The columns are defined as follows:
+
+1. the short options (one hyphen, like `-a` and `-A` for `var_1`)
+1. the long options (two hyphens, like `--var_1` and `--var_A` for `var_1`)
+1. the default value (like `A` for `var_4`)
+1. the choice values for options with a limited set of values to choose from (like `"A"`, `"B"`, and `"C"` for `var_4`)
+1. the number of required values (either numerical from 0 to infinity or `"+"`, meaning to accept as many values as given, at least one, like `1` for `var_4`)
+1. the argument group for grouping of arguments in the help text (like `"Options"` for `var_4`)
+1. the help text for the `--help` flag (like `"one value with default and choice"` for `var_4`)
+
+Arguments can have multiple short and/or long names, an optional default value, and/or an arbitrary number of choice values.
 
 The argparser will aggregate all values given after a word starting with a hyphen to this argument. If the number doesn't match the number of required values, an error is thrown instead of cutting the values. If an argument gets a wrong number of values, but has a default value, only a warning is thrown and the default value is taken.
 
-Even after errors occurred, the parsing continues and aggregates the error messages until the end, when all are printed, to simplify the correction of multiple mistakes.
+Thereby, errors abort the script, while warnings just write a message to `STDERR`. Even after errors occurred, the parsing continues and aggregates the error messages until the end, when all are printed, to simplify the correction of multiple mistakes.
 
-No matter how many arguments are defined (even with the same name), the argparser interprets the arguments `-u` and `--usage` as call for a usage message and `-h` and `--help` as call for a help message. These arguments are always added to the script's argument definition.
+No matter how many arguments are defined (even with the same name), the argparser interprets the arguments `-u` and `--usage` as call for a usage message and `-h` and `--help` as call for a help message. These arguments are always added to the script's argument definition and override any same-named argument name.
 
-Further, all values given after `--` are interpreted as values to positional arguments, and, if `${ARGPARSER_SET_ARGS}` is set to `true`, are assigned to the script's `$@`, with the previous values being discarded.
+Further, all values given before the first hyphenated value on the command line (*i.e.*, what is expected to be a keyword argument's name) or after the special argument `--` are interpreted as values to positional arguments, and, if [`ARGPARSER_SET_ARGS`](#argparser_set_args) is set to `true`, are assigned to the script's `$@`, with the previous values being overridden.
 
 As many arguments may be given as desired (*i.e.*, the same argument can be called multiple times), with the values given afterwards being all assigned to the respective argument.
 
 The argparser will build the help and usage messages from the arguments, indicating the short and long names, the default and choice values, as well as the argument group, and print the help text from the arguments' definitions.
+
+```console
+$ bash argparser_test.sh -u
+Usage: argparser_test.sh [--help] [--usage]
+                         -d[={A,B,C}]
+                         --var_1=VAR_1
+                         --var_2=VAR_2
+                         --var_3={A,B}
+                         --var_5[=VAR_5]
+                         [--var_6, --var_F]
+```
+
+The usage message summarizes the arguments, excluding name aliases (always taking the first long option, or, if absent, the first short option), indicates whether they're optional or mandatory, and specifies the choice values.
+
+```console
+$ bash argparser_test.sh -h
+Usage: argparser_test.sh ARGUMENTS
+
+Mandatory arguments to long options are mandatory for short options too.
+
+Arguments:
+-a, -A,   --var_1=VAR_1, --var_A=VAR_A     one value without default or choice
+-b, -B,   --var_2=VAR_2, --var_B=VAR_B     at least one value without default
+                                           or choice
+-c, -C,   --var_3={A,B}, --var_C={A,B}     at least one value with choice
+
+Options:
+-d, -D                                     one value with default and choice
+                                           (default: A)
+          --var_5[=VAR_5], --var_E[=VAR_E] one value with default (default: E)
+[-f, -F,] [--var_6, --var_F]               no value (flag) with default
+                                           (default: false)
+
+-h,       --help                           display this help and exit
+-u,       --usage                          display the usage and exit
+```
+
+The help message details all short and long options of the arguments, their optionality, and their choice values. Additionally, the help text from the arguments definition is given. The arguments are separated by their groups, thus structuring the help message. Finally, the default `--help` and `--usage` message are given as separate, yet unnamed group. The help message's structure aims at reproducing the commonly found structure in command-line programs. By setting [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1), [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2), and [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3), the column widths may be adapted to your needs, recommendably totalling 77 (thus 79 characters including the separating spaces). Note that columns are automatically shrunk, when their content is narrower, but they're not expanded, when their content is wider. This is to guarantee that the help message, when *e.g.* sent as logging output, nicely fits in the space you have.
 
 ## Environment variables
 
