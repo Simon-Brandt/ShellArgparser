@@ -44,7 +44,39 @@ Be wary not to forget the final `${PATH}` component in the above command, or els
 
 ## Usage
 
-Source the argparser with `source argparser.sh` (or `source argparser.sh --action -- "$@"`, with `action` being either `read`, `set`, or `all`) inside the script whose arguments need to be parsed.  If `${ARGPARSER_READ_ARGS}` is set to `true` (which per default is), the arguments will be parsed upon sourcing, else, the respective functions need to be called.  If `${ARGPARSER_SET_ARGS}` is set to `true` (which per default is), the arguments will be set to variables upon sourcing, else, the associative array `${args}` needs to be accessed.
+From your script whose command-line arguments you want to be parsed, all you need to do is to source the argparser:
+
+```bash
+source argparser.sh
+```
+
+This is the simplest form of invokation. It will read the command line, parse the arguments, and set them to variables in your script.
+
+More fine-grained control is provided by the longer form of the command:
+
+```bash
+source argparser.sh --action -- "$@"
+```
+
+with the `action` being either `read`, `set`, or `all`. If the `action` is `read`, then the argparser will only read the command-line arguments and parse them into an associative array you can access afterwards. If the `action` is `set`, the arguments from this array are set as variables to your script. *I.e.*, you need to `read` the arguments before you `set` them, but you can perform arbitrary steps in-between. If the `action` is `all`, both `read` and `set` will be executed.
+
+Invoking
+
+```bash
+source argparser.sh --all -- "$@"
+```
+
+is exactly identical to invoking a bare
+
+```bash
+source argparser.sh
+```
+
+but less legible. Thus, the latter form is preferred.
+
+There is one important exception to this rule, and that is configuration by environment variables. Specifying an `action` overrides the values of [`ARGPARSER_READ_ARGS`](#argparser_read_args) and [`ARGPARSER_SET_ARGS`](#argparser_set_args), which are else inherited from the sourcing script's environment (which, in turn, might inherit them from another calling script). Thus, to rule out any possible influence of the environment on `read` and `set`, the long invokation command is recommendable.
+
+As stated, `read` sets an associative array to store the arguments in. For maximum control over the variables in your script's scope, you can configure its name via [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name), defaulting to `"args"`.
 
 ## Example usage
 
