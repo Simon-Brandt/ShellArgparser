@@ -17,7 +17,7 @@ The argparser:
 > [!WARNING]
 > Requires Bash 5 or higher (try `bash --version`). Tested with `bash 5.2.21` (`GNU bash, Version 5.2.21(1)-release (x86_64-pc-linux-gnu)`).
 
-No actual installation isn necessary, as the argparser is just a Bash script that can be located in an arbitrary directory of your choice, like `/usr/local/bin`.  Thus, the "installation" is as simple as cloning the repository in this very directory:
+No actual installation is necessary, as the argparser is just a Bash script that can be located in an arbitrary directory of your choice, like `/usr/local/bin`.  Thus, the "installation" is as simple as cloning the repository in this very directory:
 
 ```bash
 # Switch to the installation directory of your choice, e.g., /usr/local/bin.
