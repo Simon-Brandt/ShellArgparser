@@ -1268,6 +1268,7 @@ function argparser_create_usage_message() {
     local args_values
     local choice_values
     local default_values
+    local fallback_values
     local header
     local i
     local long_option_args
@@ -1331,31 +1332,45 @@ function argparser_create_usage_message() {
             <<< "${arg_definition[0]}"
         IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a default_values \
             <<< "${arg_definition[2]}"
-        choice_values="${arg_definition[3]}"
+        IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a choice_values \
+            <<< "${arg_definition[3]}"
         arg_number="${arg_definition[4]}"
+
+        # Concatenate the short options and choice values for their
+        # printing style.  If the argument has no default value, a set
+        # of fallback s are printed.  Set these as the short options'
+        # names in capitalized form.
+        fallback_values="$(printf -- "%s${ARGPARSER_ARG_DELIMITER_3}" \
+            "${short_options[@]}")"
+        fallback_values="${fallback_values%?}"
+        fallback_values="${fallback_values^^}"
+        short_options="$(printf -- "-%s${ARGPARSER_ARG_DELIMITER_3}" \
+            "${short_options[@]}")"
+        short_options="${short_options%?}"
+        choice_values="$(printf -- "%s${ARGPARSER_ARG_DELIMITER_3}" \
+            "${choice_values[@]}")"
+        choice_values="${choice_values%?}"
 
         # Define the line for the current argument.  The argument may
         # have some short options, a default value and some choice
         # values or an argument number of 0 (i.e., it is a flag), with
         # the existence of each changing the look of the line.
         if [[ "${arg_number}" == 0 ]]; then  # Flag.
-            short_options="$(printf -- "-%s, " "${short_options[@]}" \
-                | sed "s/, $//")"
             printf "%s[%s]\n" "${whitespace}" "${short_options}"
         elif [[ "${choice_values[0]}" != "-" \
             && "${default_values[0]}" != "-" ]]
         then  # Choice and default.
-            printf "%s-%s[={%s}]\n" "${whitespace}" "${short_options}" \
+            printf "%s%s[={%s}]\n" "${whitespace}" "${short_options}" \
                 "${choice_values}"
         elif [[ "${choice_values[0]}" != "-" ]]; then  # Choice only.
-            printf "%s-%s={%s}\n" "${whitespace}" "${short_options}" \
+            printf "%s%s={%s}\n" "${whitespace}" "${short_options}" \
                 "${choice_values}"
         elif [[ "${default_values[0]}" != "-" ]]; then  # Default only.
-            printf "%s-%s[=%s]\n" "${whitespace}" "${short_options}" \
-                "${short_options^^}"
+            printf "%s%s[=%s]\n" "${whitespace}" "${short_options}" \
+                "${fallback_values}"
         else  # No choice nor default.
-            printf "%s-%s=%s\n" "${whitespace}" "${short_options}" \
-                "${short_options^^}"
+            printf "%s%s=%s\n" "${whitespace}" "${short_options}" \
+                "${fallback_values}"
         fi
     done | sort
 
@@ -1367,8 +1382,24 @@ function argparser_create_usage_message() {
             <<< "${arg_definition[1]}"
         IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a default_values \
             <<< "${arg_definition[2]}"
-        choice_values="${arg_definition[3]}"
+        IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a choice_values \
+            <<< "${arg_definition[3]}"
         arg_number="${arg_definition[4]}"
+
+        # Concatenate the long options and choice values for their
+        # printing style.  If the argument has no default value, a set
+        # of fallback s are printed.  Set these as the long options'
+        # names in capitalized form.
+        fallback_values="$(printf -- "%s${ARGPARSER_ARG_DELIMITER_3}" \
+            "${long_options[@]}")"
+        fallback_values="${fallback_values%?}"
+        fallback_values="${fallback_values^^}"
+        long_options="$(printf -- "--%s${ARGPARSER_ARG_DELIMITER_3}" \
+            "${long_options[@]}")"
+        long_options="${long_options%?}"
+        choice_values="$(printf -- "%s${ARGPARSER_ARG_DELIMITER_3}" \
+            "${choice_values[@]}")"
+        choice_values="${choice_values%?}"
 
         # Define the line for the current argument.  The argument may
         # have some long options (short options aren't printed), a
@@ -1376,23 +1407,21 @@ function argparser_create_usage_message() {
         # 0 (i.e., it is a flag), with the existence of each changing
         # the look of the line.
         if [[ "${arg_number}" == 0 ]]; then  # Flag.
-            long_options="$(printf -- "--%s, " "${long_options[@]}" \
-                | sed "s/, $//")"
             printf "%s[%s]\n" "${whitespace}" "${long_options}"
         elif [[ "${choice_values[0]}" != "-" \
             && "${default_values[0]}" != "-" ]]
         then  # Choice and default.
-            printf "%s--%s[={%s}]\n" "${whitespace}" "${long_options}" \
+            printf "%s%s[={%s}]\n" "${whitespace}" "${long_options}" \
                 "${choice_values}"
         elif [[ "${choice_values[0]}" != "-" ]]; then  # Choice only.
-            printf "%s--%s={%s}\n" "${whitespace}" "${long_options}" \
+            printf "%s%s={%s}\n" "${whitespace}" "${long_options}" \
                 "${choice_values}"
         elif [[ "${default_values[0]}" != "-" ]]; then  # Default only.
-            printf "%s--%s[=%s]\n" "${whitespace}" "${long_options}" \
-                "${long_options^^}"
+            printf "%s%s[=%s]\n" "${whitespace}" "${long_options}" \
+                "${fallback_values}"
         else  # No choice nor default.
-            printf "%s--%s=%s\n" "${whitespace}" "${long_options}" \
-                "${long_options^^}"
+            printf "%s%s=%s\n" "${whitespace}" "${long_options}" \
+                "${fallback_values}"
         fi
     done | sort
 }
