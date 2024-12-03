@@ -753,14 +753,12 @@ function argparser_create_help_message() {
                 new_col_1+=(" ")
             elif [[ "${arg_number}" == 0 ]]; then  # Flag.
                 new_col_1_value="["
-                if [[ "${long_options[0]}" == "-" ]]; then  # No long option.
-                    new_col_1_value+="$(printf -- "-%s, " \
-                        "${short_options[@]}" | sed "s/, $//")"
-                else  # Long option.
-                    new_col_1_value+="$(printf -- "-%s, " \
-                        "${short_options[@]}" | sed "s/ $//")"
-                fi
+                new_col_1_value+="$(printf -- "-%s, " "${short_options[@]}" \
+                    | sed "s/, $//")"
                 new_col_1_value+="]"
+                if [[ "${long_options[0]}" != "-" ]]; then  # Long option.
+                    new_col_1_value+=","
+                fi
                 new_col_1+=("${new_col_1_value}")
             else  # Non-flag.
                 if [[ "${long_options[0]}" == "-" ]]; then  # No long option.
