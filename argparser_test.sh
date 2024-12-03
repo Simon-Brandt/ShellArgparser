@@ -2,21 +2,21 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2024-11-29
+# Last Modification: 2024-12-03
 
 # Usage: Run this script with "bash argparser_test.sh".
 
 # Purpose: Test the functionality of the argparser.
 
-# 1.    Source the argparser without reading the arguments from a file.
-#       As the arguments have multiple short and long options, override
-#       the default column widths for the help message.
+# Source the argparser without reading the arguments from a file.  As
+# the arguments have multiple short and long options, override the
+# default column widths for the help message.
 export ARGPARSER_ARG_DEF_FILE=""
 export ARGPARSER_MAX_COL_WIDTH_1=9
 export ARGPARSER_MAX_COL_WIDTH_2=33
 export ARGPARSER_MAX_COL_WIDTH_3=35
 
-# 2.    Define the arguments.
+# Define the arguments.
 args=(
     var_1
     var_2
@@ -42,10 +42,9 @@ source argparser.sh --set -- "$@"
 (set -o posix; set) > 2.txt
 # diff --side-by-side --suppress-common-lines 1.txt 2.txt
 
-# 3.    The arguments can now be accessed as keys and values of the
-#       associative array "args".  Further, they are set as variables
-#       to the environment.  If positional arguments were given, they
-#       are set to $@.
+# The arguments can now be accessed as keys and values of the
+# associative array "args".  Further, they are set as variables to the
+# environment.  If positional arguments were given, they are set to $@.
 for arg in "${!args[@]}"; do
     printf "The keyword argument \"%s\" equals \"%s\".\n" \
         "${arg}" "${args[${arg}]}"
