@@ -128,10 +128,10 @@ for arg in "$@"; do
 done
 ```
 
-Given the above script to be saved as `argparser_test.sh` in the CWD, then you would obtain the following results upon running it:
+Given the above script to be saved as `test_basic.sh` in the CWD, then you would obtain the following results upon running it:
 
 ```console
-$ bash argparser_test.sh 3 2 1 -a 1 -b 2 -c A
+$ bash test_basic.sh 3 2 1 -a 1 -b 2 -c A
 The keyword argument "var_1" equals "1".
 The keyword argument "var_2" equals "2".
 The keyword argument "var_3" equals "A".
@@ -174,21 +174,21 @@ As many arguments may be given as desired (*i.e.*, the same argument can be call
 The argparser will build the help and usage messages from the arguments, indicating the short and long names, the default and choice values, as well as the argument group, and print the help text from the arguments' definitions.
 
 ```console
-$ bash argparser_test.sh -u
-Usage: argparser_test.sh [--help] [--usage]
-                         -d[={A,B,C}]
-                         --var_1=VAR_1
-                         --var_2=VAR_2
-                         --var_3={A,B}
-                         --var_5[=VAR_5]
-                         [--var_6, --var_F]
+$ bash test_basic.sh -u
+Usage: test_basic.sh [--help] [--usage]
+                     -d,-D[={A,B,C}]
+                     --var_1,--var_A=VAR_1,VAR_A
+                     --var_2,--var_B=VAR_2,VAR_B
+                     --var_3,--var_C={A,B}
+                     --var_5,--var_E[=VAR_5,VAR_E]
+                     [--var_6,--var_F]
 ```
 
-The usage message summarizes the arguments, excluding name aliases (always taking the first long option, or, if absent, the first short option), indicates whether they're optional or mandatory, and specifies the choice values.
+The usage message summarizes the arguments, including name aliases (always taking all long options, or, if absent, all short options), indicates whether they're optional or mandatory, and specifies the choice values. Short-option-only arguments precede any others, both groups being sorted alphabetically.
 
 ```console
-$ bash argparser_test.sh -h
-Usage: argparser_test.sh ARGUMENTS
+$ bash test_basic.sh -h
+Usage: test_basic.sh ARGUMENTS
 
 Mandatory arguments to long options are mandatory for short options too.
 
@@ -202,14 +202,16 @@ Options:
 -d, -D                                     one value with default and choice
                                            (default: A)
           --var_5[=VAR_5], --var_E[=VAR_E] one value with default (default: E)
-[-f, -F,] [--var_6, --var_F]               no value (flag) with default
+[-f, -F], [--var_6, --var_F]               no value (flag) with default
                                            (default: false)
 
 -h,       --help                           display this help and exit
 -u,       --usage                          display the usage and exit
 ```
 
-The help message details all short and long options of the arguments, their optionality, and their choice values. Additionally, the help text from the arguments definition is given. The arguments are separated by their groups, thus structuring the help message. Finally, the default `--help` and `--usage` message are given as separate, yet unnamed group. The help message's structure aims at reproducing the commonly found structure in command-line programs. By setting [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1), [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2), and [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3), the column widths may be adapted to your needs, recommendably totalling 77 (thus 79 characters including the separating spaces). Note that columns are automatically shrunk, when their content is narrower, but they're not expanded, when their content is wider. This is to guarantee that the help message, when *e.g.* sent as logging output, nicely fits in the space you have.
+The help message details all short and long options of the arguments, their optionality, and their choice values. Additionally, the help text from the arguments definition is given. The arguments are separated by their groups, thus structuring the help message. Finally, the default `--help` and `--usage` arguments are given as separate, yet unnamed group.
+
+The help message's structure aims at reproducing the commonly found structure in command-line programs. By setting [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1), [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2), and [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3), the column widths may be adapted to your needs, recommendably totalling 77 (thus 79 characters including the separating spaces). Note that columns are automatically shrunk, when their content is narrower, but they're not expanded, when their content is wider. This is to guarantee that the help message, when *e.g.* sent as logging output, nicely fits in the space you have.
 
 ## Environment variables
 
