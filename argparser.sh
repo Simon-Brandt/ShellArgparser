@@ -1540,9 +1540,9 @@ function argparser_main() {
     # key from the line using sed.
     if [[ -n "${ARGPARSER_ARG_DEF_FILE}" ]]; then
         for arg_key in "${args_keys[@]}"; do
-            arg_value="$(sed --regexp-extended --quiet \
-                "s/^\[${arg_key}\]=(.*)\"(.*)\"/\1\2/p" \
-                "${ARGPARSER_ARG_DEF_FILE}")"
+            lines="$(< "${ARGPARSER_ARG_DEF_FILE}")"
+            lines="${lines##*\[${arg_key}\]=\"}"
+            arg_value="${lines%%\"$'\n'*}"
             args_definition["${arg_key}"]="${arg_value}"
         done
     fi
