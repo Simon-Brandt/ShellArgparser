@@ -1,0 +1,6 @@
+[var_1]="a,A:var_1,var_A:-:-:1:Arguments:one value without default or choice"
+[var_2]="b,B:var_2,var_B:-:-:+:Arguments:at least one value without default or choice"
+[var_3]="c,C:var_3,var_C:-:A,B:+:Arguments:at least one value with choice"
+[var_4]="d,D:-:A:A,B,C:1:Options:one value with default and choice"
+[var_5]="-:var_5,var_E:E:-:1:Options:one value with default"
+[var_6]="f,F:var_6,var_F:false:-:0:Options:no value (flag) with default"
