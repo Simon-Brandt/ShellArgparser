@@ -49,10 +49,9 @@ if (( "$#" >= 2 )); then
         esac
         shift 2  # Get rid of the action specification.
     fi
-    ARGPARSER_READ_ARGS="${ARGPARSER_READ_ARGS:-true}"
-    ARGPARSER_SET_ARGS="${ARGPARSER_SET_ARGS:-true}"
 fi
-
+ARGPARSER_READ_ARGS="${ARGPARSER_READ_ARGS:-true}"
+ARGPARSER_SET_ARGS="${ARGPARSER_SET_ARGS:-true}"
 ARGPARSER_ARG_ARRAY_NAME="${ARGPARSER_ARG_ARRAY_NAME:-"args"}"
 if [[ ! -v ARGPARSER_ARG_DEF_FILE ]]; then
     ARGPARSER_ARG_DEF_FILE="arguments.lst"
