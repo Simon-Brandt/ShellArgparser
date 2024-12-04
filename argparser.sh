@@ -52,9 +52,6 @@ fi
 : "${ARGPARSER_READ_ARGS:=true}"
 : "${ARGPARSER_SET_ARGS:=true}"
 : "${ARGPARSER_ARG_ARRAY_NAME:="args"}"
-# if [[ ! -v ARGPARSER_ARG_DEF_FILE ]]; then
-#     ARGPARSER_ARG_DEF_FILE="arguments.lst"
-# fi
 : "${ARGPARSER_ARG_DEF_FILE:=""}"
 : "${ARGPARSER_ARG_DELIMITER_1:="|"}"
 : "${ARGPARSER_ARG_DELIMITER_2:=":"}"
@@ -1526,8 +1523,6 @@ function argparser_main() {
     # yet.  This happens when it is defined in the script to add
     # individual arguments that don't exist in ${ARGPARSER_ARG_DEF_FILE}
     # or no such file is given.
-    # echo ${args_definition@a}
-    # if [[ ! -v args_definition || ! "${args_definition@a}" =~ A ]]; then
     if [[ "$(declare -p args_definition &> /dev/null; \
         printf "%s" "$?")" != 0 ]]
     then

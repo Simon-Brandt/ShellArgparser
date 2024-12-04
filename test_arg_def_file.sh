@@ -8,7 +8,7 @@
 
 # Purpose: Test the functionality of the argparser.
 
-# Set the argparser to read the arguments definition from a file.
+# Set the argparser, reading the arguments definition from a file.
 export ARGPARSER_ARG_DEF_FILE="arguments.lst"
 
 # Set the arguments.
