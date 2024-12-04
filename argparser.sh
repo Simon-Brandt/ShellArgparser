@@ -26,28 +26,26 @@
 # overriding them).  The no-op command ":" is used for its side effect
 # to set the variables, if unset or null, as part of the parameter
 # expansion.
-if (( "$#" >= 2 )); then
-    if [[ "$2" == "--" ]]; then
-        case "$1" in
-            "--read")
-                ARGPARSER_READ_ARGS=true
-                ARGPARSER_SET_ARGS=false
-                ;;
-            "--set")
-                ARGPARSER_READ_ARGS=false
-                ARGPARSER_SET_ARGS=true
-                ;;
-            "--all")
-                ARGPARSER_READ_ARGS=true
-                ARGPARSER_SET_ARGS=true
-                ;;
-            *)
-                printf "Wrong action given: %s\n" "$1"
-                exit 1
-                ;;
-        esac
-        shift 2  # Get rid of the action specification.
-    fi
+if (( "$#" >= 2 )) && [[ "$2" == "--" ]]; then
+    case "$1" in
+        "--read")
+            ARGPARSER_READ_ARGS=true
+            ARGPARSER_SET_ARGS=false
+            ;;
+        "--set")
+            ARGPARSER_READ_ARGS=false
+            ARGPARSER_SET_ARGS=true
+            ;;
+        "--all")
+            ARGPARSER_READ_ARGS=true
+            ARGPARSER_SET_ARGS=true
+            ;;
+        *)
+            printf "Wrong action given: %s\n" "$1"
+            exit 1
+            ;;
+    esac
+    shift 2  # Get rid of the action specification.
 fi
 : "${ARGPARSER_READ_ARGS:=true}"
 : "${ARGPARSER_SET_ARGS:=true}"
