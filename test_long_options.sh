@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2024-12-03
+# Last Modification: 2024-12-04
 
 # Usage: Run this script with "bash test_long_options.sh".
 
@@ -35,12 +35,8 @@ args_definition=(
     [var_5]="-:var_5,var_E:E:-:1:Options:one value with default"
     [var_6]="-:var_6,var_F:false:-:0:Options:no value (flag) with default"
 )
-set -o nounset
-(set -o posix; set) > 1.txt
-source argparser.sh --read -- "$@"
-source argparser.sh --set -- "$@"
-(set -o posix; set) > 2.txt
-# diff --side-by-side --suppress-common-lines 1.txt 2.txt
+
+source argparser.sh
 
 # The arguments can now be accessed as keys and values of the
 # associative array "args".  Further, they are set as variables to the

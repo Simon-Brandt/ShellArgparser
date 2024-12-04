@@ -21,12 +21,7 @@ args=(
     var_6
 )
 
-set -o nounset
-(set -o posix; set) > 1.txt
-source argparser.sh --read -- "$@"
-source argparser.sh --set -- "$@"
-(set -o posix; set) > 2.txt
-# diff --side-by-side --suppress-common-lines 1.txt 2.txt
+source argparser.sh
 
 # The arguments can now be accessed as keys and values of the
 # associative array "args".  Further, they are set as variables to the
