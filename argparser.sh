@@ -52,9 +52,10 @@ fi
 : "${ARGPARSER_READ_ARGS:=true}"
 : "${ARGPARSER_SET_ARGS:=true}"
 : "${ARGPARSER_ARG_ARRAY_NAME:="args"}"
-if [[ ! -v ARGPARSER_ARG_DEF_FILE ]]; then
-    ARGPARSER_ARG_DEF_FILE="arguments.lst"
-fi
+# if [[ ! -v ARGPARSER_ARG_DEF_FILE ]]; then
+#     ARGPARSER_ARG_DEF_FILE="arguments.lst"
+# fi
+: "${ARGPARSER_ARG_DEF_FILE:=""}"
 : "${ARGPARSER_ARG_DELIMITER_1:="|"}"
 : "${ARGPARSER_ARG_DELIMITER_2:=":"}"
 : "${ARGPARSER_ARG_DELIMITER_3:=","}"

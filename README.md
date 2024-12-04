@@ -217,24 +217,24 @@ The help message's structure aims at reproducing the commonly found structure in
 
 ### Overview
 
-| Variable name                                                     | Allowed values or type[^1][^2][^3] | Default value     |
-|-------------------------------------------------------------------|------------------------------------|-------------------|
-| [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name)           | *str*[^4]                          | `"args"`          |
-| [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file)               | *filepath* \| `""`                 | `"arguments.lst"` |
-| [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)         | *char*                             | `"\|"`[^5]        |
-| [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)         | *char*                             | `":"`[^5]         |
-| [`ARGPARSER_ARG_DELIMITER_3`](#argparser_arg_delimiter_3)         | *char*                             | `","`[^5]         |
-| [`ARGPARSER_ARG_GROUP_DELIMITER`](#argparser_arg_group_delimiter) | *char*                             | `"#"`[^5]         |
-| [`ARGPARSER_HELP_FILE`](#argparser_help_file)                     | *filepath* \| `""`                 | `""`              |
-| [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1)         | *int*                              | `5`[^6]           |
-| [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2)         | *int*                              | `33`[^6]          |
-| [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)         | *int*                              | `39`[^6]          |
-| [`ARGPARSER_POSITIONAL_NAME`](#argparser_positional_name)         | *str*                              | `"Positional"`    |
-| [`ARGPARSER_READ_ARGS`](#argparser_read_args)                     | *bool*                             | `true`            |
-| [`ARGPARSER_SET_ARGS`](#argparser_set_args)                       | *bool*                             | `true`            |
-| [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)                   | *bool*                             | `true`            |
-| [`ARGPARSER_UNSET_ARGS`](#argparser_unset_args)                   | *bool*                             | `true`            |
-| [`ARGPARSER_UNSET_ENV_VARS`](#argparser_unset_env_vars)           | *bool*                             | `true`            |
+| Variable name                                                     | Allowed values or type[^1][^2][^3] | Default value  |
+|-------------------------------------------------------------------|------------------------------------|----------------|
+| [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name)           | *str*[^4]                          | `"args"`       |
+| [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file)               | *filepath* \| `""`                 | `""`           |
+| [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)         | *char*                             | `"\|"`[^5]     |
+| [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)         | *char*                             | `":"`[^5]      |
+| [`ARGPARSER_ARG_DELIMITER_3`](#argparser_arg_delimiter_3)         | *char*                             | `","`[^5]      |
+| [`ARGPARSER_ARG_GROUP_DELIMITER`](#argparser_arg_group_delimiter) | *char*                             | `"#"`[^5]      |
+| [`ARGPARSER_HELP_FILE`](#argparser_help_file)                     | *filepath* \| `""`                 | `""`           |
+| [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1)         | *int*                              | `5`[^6]        |
+| [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2)         | *int*                              | `33`[^6]       |
+| [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)         | *int*                              | `39`[^6]       |
+| [`ARGPARSER_POSITIONAL_NAME`](#argparser_positional_name)         | *str*                              | `"Positional"` |
+| [`ARGPARSER_READ_ARGS`](#argparser_read_args)                     | *bool*                             | `true`         |
+| [`ARGPARSER_SET_ARGS`](#argparser_set_args)                       | *bool*                             | `true`         |
+| [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)                   | *bool*                             | `true`         |
+| [`ARGPARSER_UNSET_ARGS`](#argparser_unset_args)                   | *bool*                             | `true`         |
+| [`ARGPARSER_UNSET_ENV_VARS`](#argparser_unset_env_vars)           | *bool*                             | `true`         |
 
 [^1]: Bash is weakly typed, hence the denoted types are just a guidance.
 [^2]: Strings can optionally be enclosed by quotes.
@@ -254,7 +254,7 @@ The help message's structure aims at reproducing the commonly found structure in
 
 - ***Type:*** *filepath* (Filepath)
 - ***Allowed values:*** Any legit filepath or the empty string `""`
-- ***Default value:*** `"arguments.lst"`
+- ***Default value:*** `""`
 - ***Description:*** The path to a file holding the definition of the arguments. This file may be used by multiple scripts if they share some arguments. It is not necessary to use all arguments from there, as you need to specify which arguments you want to use. It is possible to set additional argument definitions within the script, which could come handy when scripts share some arguments (from the file), but also use some own arguments (from the script), whose names have another meaning in the companion script.
 
 ### `ARGPARSER_ARG_DELIMITER_1`

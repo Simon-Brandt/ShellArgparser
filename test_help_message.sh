@@ -8,9 +8,7 @@
 
 # Purpose: Test the functionality of the argparser.
 
-# Source the argparser without reading the arguments from a file, but
-# reading the help message from a file.
-export ARGPARSER_ARG_DEF_FILE=""
+# Source the argparser, reading the help message from a file.
 export ARGPARSER_HELP_FILE="help_message.txt"
 
 # Define the arguments.
