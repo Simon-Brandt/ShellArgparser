@@ -9,14 +9,9 @@
 # Purpose: Test the functionality of the argparser.
 
 # Source the argparser without reading the arguments from a file, but
-# reading the help message from a file.  As the arguments have multiple
-# short and long options, override the default column widths for the
-# help message.
+# reading the help message from a file.
 export ARGPARSER_ARG_DEF_FILE=""
 export ARGPARSER_HELP_FILE="help_message.txt"
-export ARGPARSER_MAX_COL_WIDTH_1=9
-export ARGPARSER_MAX_COL_WIDTH_2=33
-export ARGPARSER_MAX_COL_WIDTH_3=35
 
 # Define the arguments.
 args=(
@@ -30,12 +25,12 @@ args=(
 
 declare -A args_definition
 args_definition=(
-    [var_1]="a,A:var_1,var_A:-:-:1:Arguments:one value without default or choice"
-    [var_2]="b,B:var_2,var_B:-:-:+:Arguments:at least one value without default or choice"
-    [var_3]="c,C:var_3,var_C:-:A,B:+:Arguments:at least one value with choice"
-    [var_4]="d,D:-:A:A,B,C:1:Options:one value with default and choice"
-    [var_5]="-:var_5,var_E:E:-:1:Options:one value with default"
-    [var_6]="f,F:var_6,var_F:false:-:0:Options:no value (flag) with default"
+    [var_1]="a:var_1:-:-:1:Arguments:one value without default or choice"
+    [var_2]="b:var_2:-:-:+:Arguments:at least one value without default or choice"
+    [var_3]="c:var_3:-:A,B:+:Arguments:at least one value with choice"
+    [var_4]="d:-:A:A,B,C:1:Options:one value with default and choice"
+    [var_5]="-:var_5:E:-:1:Options:one value with default"
+    [var_6]="f:var_6:false:-:0:Options:no value (flag) with default"
 )
 set -o nounset
 (set -o posix; set) > 1.txt

@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2024-12-03
+# Last Modification: 2024-12-04
 
 # Usage: Run this script with "bash test_arg_def_file.sh".
 
@@ -10,9 +10,6 @@
 
 # Set the argparser to read the arguments definition from a file.
 export ARGPARSER_ARG_DEF_FILE="arguments.lst"
-export ARGPARSER_MAX_COL_WIDTH_1=9
-export ARGPARSER_MAX_COL_WIDTH_2=33
-export ARGPARSER_MAX_COL_WIDTH_3=35
 
 # Set the arguments.
 args=(
