@@ -61,6 +61,7 @@ ARGPARSER_ARG_DELIMITER_1="${ARGPARSER_ARG_DELIMITER_1:-"|"}"
 ARGPARSER_ARG_DELIMITER_2="${ARGPARSER_ARG_DELIMITER_2:-":"}"
 ARGPARSER_ARG_DELIMITER_3="${ARGPARSER_ARG_DELIMITER_3:-","}"
 ARGPARSER_ARG_GROUP_DELIMITER="${ARGPARSER_ARG_GROUP_DELIMITER:-"#"}"
+ARGPARSER_HELP_FILE="${ARGPARSER_HELP_FILE:-""}"
 ARGPARSER_MAX_COL_WIDTH_1="${ARGPARSER_MAX_COL_WIDTH_1:-5}"
 ARGPARSER_MAX_COL_WIDTH_2="${ARGPARSER_MAX_COL_WIDTH_2:-33}"
 ARGPARSER_MAX_COL_WIDTH_3="${ARGPARSER_MAX_COL_WIDTH_3:-39}"
@@ -591,7 +592,7 @@ function argparser_print_help_message() {
         elif [[ "${line_type}" == "at_directive" ]]; then
             line_type="text"
         fi
-    done < "${script_name%.sh}.${help_type}"
+    done < "${ARGPARSER_HELP_FILE}"
 }
 
 function argparser_create_help_message() {
@@ -1451,7 +1452,7 @@ function argparser_prepare_help_message() {
     # Decide which message type to print to STDERR.  This is necessary
     # to keep the wanted output (the parsed arguments) strictly separate
     # from any other messages.
-    if [[ -f "${script_name%.sh}.${help_type}" ]]; then
+    if [[ -n "${ARGPARSER_HELP_FILE}" ]]; then
         argparser_print_help_message "${help_type}" "${script_name}" \
             "${args_keys}" "${args_values}"
     elif [[ "${help_type}" == "help" ]]; then
@@ -1762,6 +1763,7 @@ if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_ARG_DELIMITER_2
     unset ARGPARSER_ARG_DELIMITER_3
     unset ARGPARSER_ARG_GROUP_DELIMITER
+    unset ARGPARSER_HELP_FILE
     unset ARGPARSER_MAX_COL_WIDTH_1
     unset ARGPARSER_MAX_COL_WIDTH_2
     unset ARGPARSER_MAX_COL_WIDTH_3
