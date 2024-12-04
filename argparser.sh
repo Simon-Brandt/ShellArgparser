@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2024-12-02
+# Last Modification: 2024-12-04
 
 # TODO: Correct auto-generated help message with erroneous line breaks.
 # TODO: Enable parsing of combined short option flags, i.e.
@@ -22,11 +22,10 @@
 # variables, as well as creating and printing a help message.
 
 # Set the argparser environment variables, as long as they aren't
-# already set by the calling script (to prevent overriding them).  If
-# more complex comparisons are needed or a variable can have a
-# zero-length string ("") as value, an explicit "if" statement is used
-# instead of parameter expansion as these don't make a difference
-# between unset variables and those set to NULL or the empty string.
+# already set by the calling script or environment (to prevent
+# overriding them).  The no-op command ":" is used for its side effect
+# to set the variables, if unset or null, as part of the parameter
+# expansion.
 if (( "$#" >= 2 )); then
     if [[ "$2" == "--" ]]; then
         case "$1" in
@@ -50,24 +49,24 @@ if (( "$#" >= 2 )); then
         shift 2  # Get rid of the action specification.
     fi
 fi
-ARGPARSER_READ_ARGS="${ARGPARSER_READ_ARGS:-true}"
-ARGPARSER_SET_ARGS="${ARGPARSER_SET_ARGS:-true}"
-ARGPARSER_ARG_ARRAY_NAME="${ARGPARSER_ARG_ARRAY_NAME:-"args"}"
+: "${ARGPARSER_READ_ARGS:=true}"
+: "${ARGPARSER_SET_ARGS:=true}"
+: "${ARGPARSER_ARG_ARRAY_NAME:="args"}"
 if [[ ! -v ARGPARSER_ARG_DEF_FILE ]]; then
     ARGPARSER_ARG_DEF_FILE="arguments.lst"
 fi
-ARGPARSER_ARG_DELIMITER_1="${ARGPARSER_ARG_DELIMITER_1:-"|"}"
-ARGPARSER_ARG_DELIMITER_2="${ARGPARSER_ARG_DELIMITER_2:-":"}"
-ARGPARSER_ARG_DELIMITER_3="${ARGPARSER_ARG_DELIMITER_3:-","}"
-ARGPARSER_ARG_GROUP_DELIMITER="${ARGPARSER_ARG_GROUP_DELIMITER:-"#"}"
-ARGPARSER_HELP_FILE="${ARGPARSER_HELP_FILE:-""}"
-ARGPARSER_MAX_COL_WIDTH_1="${ARGPARSER_MAX_COL_WIDTH_1:-5}"
-ARGPARSER_MAX_COL_WIDTH_2="${ARGPARSER_MAX_COL_WIDTH_2:-33}"
-ARGPARSER_MAX_COL_WIDTH_3="${ARGPARSER_MAX_COL_WIDTH_3:-39}"
-ARGPARSER_POSITIONAL_NAME="${ARGPARSER_POSITIONAL_NAME:-"Positional"}"
-ARGPARSER_SET_ARRAYS="${ARGPARSER_SET_ARRAYS:-true}"
-ARGPARSER_UNSET_ARGS="${ARGPARSER_UNSET_ARGS:-true}"
-ARGPARSER_UNSET_ENV_VARS="${ARGPARSER_UNSET_ENV_VARS:-true}"
+: "${ARGPARSER_ARG_DELIMITER_1:="|"}"
+: "${ARGPARSER_ARG_DELIMITER_2:=":"}"
+: "${ARGPARSER_ARG_DELIMITER_3:=","}"
+: "${ARGPARSER_ARG_GROUP_DELIMITER:="#"}"
+: "${ARGPARSER_HELP_FILE:=""}"
+: "${ARGPARSER_MAX_COL_WIDTH_1:=5}"
+: "${ARGPARSER_MAX_COL_WIDTH_2:=33}"
+: "${ARGPARSER_MAX_COL_WIDTH_3:=39}"
+: "${ARGPARSER_POSITIONAL_NAME:="Positional"}"
+: "${ARGPARSER_SET_ARRAYS:=true}"
+: "${ARGPARSER_UNSET_ARGS:=true}"
+: "${ARGPARSER_UNSET_ENV_VARS:=true}"
 
 # Define the argparser functions.
 function argparser_in_array() {
@@ -1501,7 +1500,7 @@ function argparser_main() {
     if [[ ! -v "${ARGPARSER_ARG_ARRAY_NAME}" ]]; then
         args_name="$(set -o posix; set | grep "^arg" \
             | cut --delimiter="=" --fields=1)"
-        args_name="${args_name:-?}"
+        : "${args_name:=?}"
         printf "Error: The variable ARGPARSER_ARG_ARRAY_NAME refers to " >&2
         printf "\"%s\", " "${ARGPARSER_ARG_ARRAY_NAME}" >&2
         printf "but this variable is not defined.  Either you have given " >&2
