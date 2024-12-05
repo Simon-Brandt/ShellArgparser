@@ -235,6 +235,7 @@ The help message's structure aims at reproducing the commonly found structure in
 | [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)                   | *bool*                             | `true`         |
 | [`ARGPARSER_UNSET_ARGS`](#argparser_unset_args)                   | *bool*                             | `true`         |
 | [`ARGPARSER_UNSET_ENV_VARS`](#argparser_unset_env_vars)           | *bool*                             | `true`         |
+| [`ARGPARSER_UNSET_FUNCTIONS`](#argparser_unset_functions)         | *bool*                             | `true`         |
 
 [^1]: Bash is weakly typed, hence the denoted types are just a guidance.
 [^2]: Strings can optionally be enclosed by quotes.
@@ -356,3 +357,10 @@ The main difference is that, if you `export` (or `declare -x`) the variables to 
 - ***Allowed values:*** `true` and `false` (case-sensitive)
 - ***Default value:*** `true`
 - ***Description:*** Whether to unset (remove) argparser environment variables from the environment. As long as you don't need these variables anymore or want to reset them prior to the next argparser invokation, this is usually what you want. This prevents accidental (but also deliberate) inheritance to child scripts when passing the entire environment to them.
+
+### `ARGPARSER_UNSET_FUNCTIONS`
+
+- ***Type:*** *bool* (Boolean)
+- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Default value:*** `true`
+- ***Description:*** Whether to unset (remove) argparser functions from the environment. You should not need them separate from an argparser invokation, where they're automatically set upon sourcing it. By unsetting them, the namespace is kept clean.

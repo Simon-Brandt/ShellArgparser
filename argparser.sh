@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2024-12-04
+# Last Modification: 2024-12-05
 
 # TODO: Correct auto-generated help message with erroneous line breaks.
 # TODO: Enable parsing of combined short option flags, i.e.
@@ -20,6 +20,8 @@
 # Purpose: Parse a script's arguments, giving proper error messages for
 # wrongly set arguments, assigning the values to the respective
 # variables, as well as creating and printing a help message.
+
+########################################################################
 
 # Set the argparser environment variables, as long as they aren't
 # already set by the calling script or environment (to prevent
@@ -63,6 +65,7 @@ fi
 : "${ARGPARSER_SET_ARRAYS:=true}"
 : "${ARGPARSER_UNSET_ARGS:=true}"
 : "${ARGPARSER_UNSET_ENV_VARS:=true}"
+: "${ARGPARSER_UNSET_FUNCTIONS:=true}"
 
 # Define the argparser functions.
 function argparser_in_array() {
@@ -1734,20 +1737,27 @@ unset args_keys
 unset args_values
 unset parsed_arg
 unset parsed_args
-unset -f argparser_in_array
-unset -f argparser_colorize
-unset -f argparser_parse_args
-unset -f argparser_check_arg_value
-unset -f argparser_print_help_message
-unset -f argparser_create_help_message
-unset -f argparser_create_usage_message
-unset -f argparser_prepare_help_message
-unset -f argparser_main
+
+# If ${ARGPARSER_UNSET_FUNCTIONS} is set to true, unset all argparser
+# functions.  The names are used instead of a glob to limit side effects
+# with potentially same-named functions from the calling script that
+# stand in no relation to the argparser.
+if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
+    unset -f argparser_in_array
+    unset -f argparser_colorize
+    unset -f argparser_parse_args
+    unset -f argparser_check_arg_value
+    unset -f argparser_print_help_message
+    unset -f argparser_create_help_message
+    unset -f argparser_create_usage_message
+    unset -f argparser_prepare_help_message
+    unset -f argparser_main
+fi
 
 # If ${ARGPARSER_UNSET_ENV_VARS} is set to true, unset all argparser
-# environment variables.  The names are used instead of a glob to limit
-# sid eeffects with potentially same-named variables from the calling
-# script that stand in no relation to the argparser.
+# environment variables.  Again, the names are used instead of a glob to
+# limit side effects with potentially same-named variables from the
+# calling script that stand in no relation to the argparser.
 if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_ARG_ARRAY_NAME
     unset ARGPARSER_ARG_DEF_FILE
@@ -1765,4 +1775,5 @@ if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_SET_ARRAYS
     unset ARGPARSER_UNSET_ARGS
     unset ARGPARSER_UNSET_ENV_VARS
+    unset ARGPARSER_UNSET_FUNCTIONS
 fi
