@@ -545,7 +545,7 @@ function argparser_print_help_message() {
 
     while IFS="" read line; do
         # Set the line_type to "at_directive" if the line contains the
-        # "@<argument_group>" directive, to "comment" if the line is
+        # "@<ArgumentGroup>" directive, to "comment" if the line is
         # commented and ARGPARSER_HELP_FILE_KEEP_COMMENTS is false, and
         # to "text" if it is not empty (but not commented).  Thus, empty
         # lines following comments still have line_type set to
@@ -574,7 +574,7 @@ function argparser_print_help_message() {
         # If the line_type has been set to "text", print the current
         # line.  If it is set to "at_directive", reset it to "text" to
         # (possibly) print the next line, and only not the current
-        # "@<argument_group>" line.
+        # "@<ArgumentGroup>" line.
         if [[ "${line_type}" == "text" ]]; then
             printf "%s\n" "${line}"
         elif [[ "${line_type}" == "at_directive" ]]; then
