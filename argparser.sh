@@ -543,29 +543,17 @@ function argparser_print_help_message() {
     line_type="comment"
 
     while IFS="" read line; do
-        # Set the line_type to "arguments" if the line contains the
-        # "@Arguments" directive, to "comment" if the line is commented
-        # and to "text" if it is not empty (but not commented).  Thus,
-        # empty lines following comments still have line_type set to
-        # "comment".
+        # Set the line_type to "at_directive" if the line contains the
+        # "@<argument_group>" directive, to "comment" if the line is
+        # commented and to "text" if it is not empty (but not
+        # commented).  Thus, empty lines following comments still have
+        # line_type set to "comment".
         # TODO: Introduce an environment variable to override the
         # deletion of trailing blank lines (and perhaps even commented
         # lines?).
-        # TODO: Check if the following statement still holds when all
-        # variables are local.
-        # Both functions to create the help or usage message change
-        # args_keys and args_values to arrays, affecting the current
-        # scope.  To still be able to pass all arguments as single
-        # string to the respective function, concatenate them before.
-        # This is required for multiple "@Arguments" directives in the
-        # help file.
         if [[ "${line}" == @* ]]; then
             line_type="at_directive"
             at_directive="${line:1}"
-            args_keys="$(IFS="${ARGPARSER_ARG_DELIMITER_1}"; printf "%s" \
-                "${!args_definition[*]}")"
-            args_values="$(IFS="${ARGPARSER_ARG_DELIMITER_1}"; printf "%s" \
-                "${args_definition[*]}")"
 
             if [[ "${help_type}" == "help" ]]; then
                 argparser_create_help_message "${script_name}" \
@@ -581,9 +569,9 @@ function argparser_print_help_message() {
         fi
 
         # If the line_type has been set to "text", print the current
-        # line.  If it is set to "arguments", reset it to "text" to
+        # line.  If it is set to "at_directive", reset it to "text" to
         # (possibly) print the next line, and only not the current
-        # "@Arguments" line.
+        # "@<argument_group>" line.
         if [[ "${line_type}" == "text" ]]; then
             printf "%s\n" "${line}"
         elif [[ "${line_type}" == "at_directive" ]]; then
