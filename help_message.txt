@@ -12,6 +12,10 @@
 # ARGPARSER_HELP_FILE_KEEP_COMMENTS is set to "false".  The "@"
 # directives get replaced by the auto-generated help message components.
 
+# Print the header.
+A brief header summarizes the way how to interpret the help message.
+@Header
+
 # Print the arguments from the "arguments" group.
 The following arguments have no default value.
 @Arguments
