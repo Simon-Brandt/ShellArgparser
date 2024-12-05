@@ -269,7 +269,9 @@ The `@Help` directive prints the help text for the `--help` and `--usage` flags.
 
 ## Environment variables
 
-### Overview
+The argparser defines a large set of environment variables, each following the naming pattern `"ARGPARSER_*"`. They are used to control the behavior of the argument parsing and help message generation. Note that, if for some reason you're script or environment is using a variable with the same name as one of the argparser variables, the argparser might not work as expected. If you want to be 100 % safe, you can unset any variable following the given pattern prior setting any desired argparser variables and sourcing the argparser&mdash;with the caveat that in turn the program that set the variable might not work, anymore.
+
+### Overview over environment variables
 
 | Variable name                                                             | Allowed values or type[^1][^2][^3] | Default value  |
 |---------------------------------------------------------------------------|------------------------------------|----------------|
