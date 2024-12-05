@@ -75,7 +75,7 @@ function argparser_in_array() {
     # - $1: the element to search for
     # - $@: the array to search through
     #
-    # Return values:
+    # Output:
     # - 0, if the element exists in the array
     # - 1, else
 
@@ -90,7 +90,7 @@ function argparser_in_array() {
     read -a array <<< "$@"
 
     # Iterate through the array and compare each element to the query.
-    # Return "0" on success, else "1".
+    # Output"0" on success, else "1".
     for element in "${array[@]}"; do
         if [[ "${element}" == "${query}" ]]; then
             printf "0"
@@ -109,7 +109,7 @@ function argparser_colorize() {
     # - $2: the color to use
     # - $2: the style to use
     #
-    # Return values:
+    # Output:
     # - the colorized string
 
     # Define the local variables.
@@ -164,7 +164,7 @@ function argparser_parse_args() {
     # - $2: the associative array's keys for the argument definition
     # - $3: the associative array's values for the argument definition
     #
-    # Return values:
+    # Output:
     # - the parsed argument as message or an error message, starting
     #   with "Help", "Usage", "Positional", "Error: ", "Argument: " or
     #   "Value: ", possibly concatenated with
@@ -196,7 +196,7 @@ function argparser_parse_args() {
     done
 
     # If the argument is the positional arguments delimiter "--" or for
-    # help or usage, return the respective message.
+    # help or usage, output the respective message.
     if [[ "${given_arg}" == "--" ]]; then
         printf "Positional"
         return
@@ -219,7 +219,7 @@ function argparser_parse_args() {
 
     # If the argument doesn't start with a hyphen ("-"), it is
     # considered a value to a previous argument.  Split the value on
-    # ${ARGPARSER_ARG_DELIMITER_3} characters and return the respective
+    # ${ARGPARSER_ARG_DELIMITER_3} characters and output the respective
     # message for each value.
     if [[ "${given_arg}" != -* ]]; then
         IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a values <<< "${given_arg}"
@@ -230,7 +230,7 @@ function argparser_parse_args() {
     fi
 
     # Read all defined arguments and check whether the given argument is
-    # part of them.  If so, return the argument's name and possibly all
+    # part of them.  If so, output the argument's name and possibly all
     # values following the "=" character.
     for arg in "${!args[@]}"; do
         # Read the argument's definition.
@@ -244,11 +244,11 @@ function argparser_parse_args() {
         # Check the short options.
         for short_option in "${short_options[@]}"; do
             if [[ "${given_arg}" == "-${short_option}" ]]; then
-                # Return the argument.
+                # Output the argument.
                 printf "Argument: %s" "${arg}"
                 return
             elif [[ "${given_arg}" == "-${short_option}="* ]]; then
-                # Return the argument and all values split on
+                # Output the argument and all values split on
                 # ${ARGPARSER_ARG_DELIMITER_3} characters.
                 printf "Argument: %s%s" "${arg}" \
                     "${ARGPARSER_ARG_DELIMITER_1}"
@@ -265,11 +265,11 @@ function argparser_parse_args() {
         # Check the long options.
         for long_option in "${long_options[@]}"; do
             if [[ "${given_arg}" == "--${long_option}" ]]; then
-                # Return the argument.
+                # Output the argument.
                 printf "Argument: %s" "${arg}"
                 return
             elif [[ "${given_arg}" == "--${long_option}="* ]]; then
-                # Return the argument and all values split on
+                # Output the argument and all values split on
                 # ${ARGPARSER_ARG_DELIMITER_3} characters.
                 printf "Argument: %s%s" "${arg}" \
                     "${ARGPARSER_ARG_DELIMITER_1}"
@@ -284,7 +284,7 @@ function argparser_parse_args() {
         done
     done
 
-    # If the argument hasn't been found in the definition, return an
+    # If the argument hasn't been found in the definition, output an
     # error message.
     printf "Error: The argument %s is unknown." "$1"
 }
@@ -296,7 +296,7 @@ function argparser_check_arg_value() {
     # - $1: the associative array's values for the argument definition
     # - $2: the argument's values
     #
-    # Return values:
+    # Output:
     # - the parsed argument as message or an error message, starting
     #   with "Error: ", "Warning: " or "Value: ", possibly concatenated
     #   with ${ARGPARSER_ARG_DELIMITER_1} characters
@@ -329,7 +329,7 @@ function argparser_check_arg_value() {
     # set to "-".
     if [[ "${#values[@]}" > 0 && "${values[0]}" == "-" ]]; then
         # If the argument doesn't have a default value, it must have
-        # been given, but is not.  Hence, return an error message.
+        # been given, but is not.  Hence, output an error message.
         # Else, read the default values.  This is required for optional
         # arguments.
         if [[ "${default_values[0]}" == "-" ]]; then
@@ -346,7 +346,7 @@ function argparser_check_arg_value() {
         then
             # If the number of values doesn't equal the number of
             # required values, check if some default values are given.
-            # If not, return an error message indicating the number of
+            # If not, output an error message indicating the number of
             # required and given arguments.  Else, print a similar
             # warning message but set the values to the default values
             # and continue.
@@ -430,7 +430,7 @@ function argparser_check_arg_value() {
     # Check if the number of default values equals the number of
     # required values.  This should also always be true for production
     # scripts.  If there are default values and their number doesn't
-    # match, return an error message indicating the number of required
+    # match, output an error message indicating the number of required
     # and default arguments.  Ignore flags as long as they have the
     # only default value of true or false, but a number of required
     # values of 0.
@@ -459,7 +459,7 @@ function argparser_check_arg_value() {
     # Check if the given and default values accord to the choice values,
     # i.e., if each given or default value lies within the array of
     # choice values.  For default values, this should always be true for
-    # production scripts.  Else, return an error message.
+    # production scripts.  Else, output an error message.
     if [[ "${choice_values[0]}" != "-" ]]; then
         # Check that flags have no choice values.
         if [[ "${arg_number}" == "0" ]]; then
@@ -508,7 +508,7 @@ function argparser_check_arg_value() {
         done
     fi
 
-    # Return the checked values as
+    # Output the checked values as
     # ${ARGPARSER_ARG_DELIMITER_3}-separated string.
     value="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; printf "%s" "${values[*]}")"
     printf "Value: %s\n" "${value}"
@@ -1470,7 +1470,7 @@ function argparser_main() {
     # Arguments:
     # - $@: the arguments to parse
     #
-    # Return values:
+    # Output:
     # - the parsed and checked arguments with key and value as
     #   associative array
 
@@ -1569,7 +1569,7 @@ function argparser_main() {
         IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a parsed_arg \
             <<< "${parsed_arg}"
 
-        # Read the returned message and either print the help or usage
+        # Read the output message and either print the help or usage
         # message, append the message to the previous error messages or
         # set the argument's value.  In case of arguments given multiple
         # times, i.e., the key already exists in ${!args[@]}, add the
@@ -1647,7 +1647,7 @@ function argparser_main() {
                 "${args_definition[${arg_key}]}" "-")"
         fi
 
-        # Read the returned message and either append the message to the
+        # Read the output message and either append the message to the
         # previous error messages or set the argument's value.
         arg_value=""
         IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a checked_arg \
