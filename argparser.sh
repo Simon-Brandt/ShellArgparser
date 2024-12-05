@@ -58,6 +58,7 @@ fi
 : "${ARGPARSER_ARG_DELIMITER_3:=","}"
 : "${ARGPARSER_ARG_GROUP_DELIMITER:="#"}"
 : "${ARGPARSER_HELP_FILE:=""}"
+: "${ARGPARSER_HELP_FILE_KEEP_COMMENTS:=false}"
 : "${ARGPARSER_MAX_COL_WIDTH_1:=5}"
 : "${ARGPARSER_MAX_COL_WIDTH_2:=33}"
 : "${ARGPARSER_MAX_COL_WIDTH_3:=39}"
@@ -540,17 +541,15 @@ function argparser_print_help_message() {
     script_name="$2"
     args_keys="$3"
     args_values="$4"
-    line_type="comment"
+    line_type="text"
 
     while IFS="" read line; do
         # Set the line_type to "at_directive" if the line contains the
         # "@<argument_group>" directive, to "comment" if the line is
-        # commented and to "text" if it is not empty (but not
-        # commented).  Thus, empty lines following comments still have
-        # line_type set to "comment".
-        # TODO: Introduce an environment variable to override the
-        # deletion of trailing blank lines (and perhaps even commented
-        # lines?).
+        # commented and ARGPARSER_HELP_FILE_KEEP_COMMENTS is false, and
+        # to "text" if it is not empty (but not commented).  Thus, empty
+        # lines following comments still have line_type set to
+        # "comment".
         if [[ "${line}" == @* ]]; then
             line_type="at_directive"
             at_directive="${line:1}"
@@ -562,9 +561,13 @@ function argparser_print_help_message() {
                 argparser_create_usage_message "${script_name}" \
                     "${args_keys}" "${args_values}"
             fi
-        elif [[ "${line}" == \#* ]]; then
+        elif [[ "${line}" == \#* \
+            && "${ARGPARSER_HELP_FILE_KEEP_COMMENTS}" == false ]]
+        then
             line_type="comment"
-        elif [[ -n "${line}" ]]; then
+        elif [[ -n "${line}" \
+            || "${ARGPARSER_HELP_FILE_KEEP_COMMENTS}" == true ]]
+        then
             line_type="text"
         fi
 
@@ -1754,6 +1757,7 @@ if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_ARG_DELIMITER_3
     unset ARGPARSER_ARG_GROUP_DELIMITER
     unset ARGPARSER_HELP_FILE
+    unset ARGPARSER_HELP_FILE_KEEP_COMMENTS
     unset ARGPARSER_MAX_COL_WIDTH_1
     unset ARGPARSER_MAX_COL_WIDTH_2
     unset ARGPARSER_MAX_COL_WIDTH_3

@@ -217,25 +217,26 @@ The help message's structure aims at reproducing the commonly found structure in
 
 ### Overview
 
-| Variable name                                                     | Allowed values or type[^1][^2][^3] | Default value  |
-|-------------------------------------------------------------------|------------------------------------|----------------|
-| [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name)           | *str*[^4]                          | `"args"`       |
-| [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file)               | *filepath* \| `""`                 | `""`           |
-| [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)         | *char*                             | `"\|"`[^5]     |
-| [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)         | *char*                             | `":"`[^5]      |
-| [`ARGPARSER_ARG_DELIMITER_3`](#argparser_arg_delimiter_3)         | *char*                             | `","`[^5]      |
-| [`ARGPARSER_ARG_GROUP_DELIMITER`](#argparser_arg_group_delimiter) | *char*                             | `"#"`[^5]      |
-| [`ARGPARSER_HELP_FILE`](#argparser_help_file)                     | *filepath* \| `""`                 | `""`           |
-| [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1)         | *int*                              | `5`[^6]        |
-| [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2)         | *int*                              | `33`[^6]       |
-| [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)         | *int*                              | `39`[^6]       |
-| [`ARGPARSER_POSITIONAL_NAME`](#argparser_positional_name)         | *str*                              | `"Positional"` |
-| [`ARGPARSER_READ_ARGS`](#argparser_read_args)                     | *bool*                             | `true`         |
-| [`ARGPARSER_SET_ARGS`](#argparser_set_args)                       | *bool*                             | `true`         |
-| [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)                   | *bool*                             | `true`         |
-| [`ARGPARSER_UNSET_ARGS`](#argparser_unset_args)                   | *bool*                             | `true`         |
-| [`ARGPARSER_UNSET_ENV_VARS`](#argparser_unset_env_vars)           | *bool*                             | `true`         |
-| [`ARGPARSER_UNSET_FUNCTIONS`](#argparser_unset_functions)         | *bool*                             | `true`         |
+| Variable name                                                             | Allowed values or type[^1][^2][^3] | Default value  |
+|---------------------------------------------------------------------------|------------------------------------|----------------|
+| [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name)                   | *str*[^4]                          | `"args"`       |
+| [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file)                       | *filepath* \| `""`                 | `""`           |
+| [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)                 | *char*                             | `"\|"`[^5]     |
+| [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)                 | *char*                             | `":"`[^5]      |
+| [`ARGPARSER_ARG_DELIMITER_3`](#argparser_arg_delimiter_3)                 | *char*                             | `","`[^5]      |
+| [`ARGPARSER_ARG_GROUP_DELIMITER`](#argparser_arg_group_delimiter)         | *char*                             | `"#"`[^5]      |
+| [`ARGPARSER_HELP_FILE`](#argparser_help_file)                             | *filepath* \| `""`                 | `""`           |
+| [`ARGPARSER_HELP_FILE_KEEP_COMMENTS`](#argparser_help_file_keep_comments) | *bool*                             | `false`        |
+| [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1)                 | *int*                              | `5`[^6]        |
+| [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2)                 | *int*                              | `33`[^6]       |
+| [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)                 | *int*                              | `39`[^6]       |
+| [`ARGPARSER_POSITIONAL_NAME`](#argparser_positional_name)                 | *str*                              | `"Positional"` |
+| [`ARGPARSER_READ_ARGS`](#argparser_read_args)                             | *bool*                             | `true`         |
+| [`ARGPARSER_SET_ARGS`](#argparser_set_args)                               | *bool*                             | `true`         |
+| [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)                           | *bool*                             | `true`         |
+| [`ARGPARSER_UNSET_ARGS`](#argparser_unset_args)                           | *bool*                             | `true`         |
+| [`ARGPARSER_UNSET_ENV_VARS`](#argparser_unset_env_vars)                   | *bool*                             | `true`         |
+| [`ARGPARSER_UNSET_FUNCTIONS`](#argparser_unset_functions)                 | *bool*                             | `true`         |
 
 [^1]: Bash is weakly typed, hence the denoted types are just a guidance.
 [^2]: Strings can optionally be enclosed by quotes.
@@ -292,6 +293,13 @@ The help message's structure aims at reproducing the commonly found structure in
 - ***Allowed values:*** Any legit filepath or the empty string `""`
 - ***Default value:*** `""`
 - ***Description:*** The path to a file holding the extended help message. This file may be used by multiple scripts, even if they share no arguments. By this, the default structure and content of the auto-generated help or usage message (invoked with the flags `--help` or `--usage`, respectively) can be overridden for all scripts in a project in the same way, without repeating yourself upon specifying the look.
+
+### `ARGPARSER_HELP_FILE_KEEP_COMMENTS`
+
+- ***Type:*** *bool* (Boolean)
+- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Default value:*** `false`
+- ***Description:*** Whether to keep commented lines (and their trailing blank lines) in the help file. By this, you can choose whether you want to include lines serving as a comment (starting with a hashmark, *i.e.* `"#"`) in the help file also in the help message. This is only evaluated if an [`ARGPARSER_HELP_FILE`](#argparser_help_file) is given.
 
 ### `ARGPARSER_MAX_COL_WIDTH_1`
 
