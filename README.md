@@ -213,6 +213,60 @@ The help message details all short and long options of the arguments, their opti
 
 The help message's structure aims at reproducing the commonly found structure in command-line programs. By setting [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1), [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2), and [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3), the column widths may be adapted to your needs, recommendably totalling 77 (thus 79 characters including the separating spaces). Note that columns are automatically shrunk, when their content is narrower, but they're not expanded, when their content is wider. This is to guarantee that the help message, when *e.g.* sent as logging output, nicely fits in the space you have.
 
+## Help file
+
+The argparser automatically generates a help message when its calling script is invoked with `--help` on its command line. The message's structure is intended to reproduce the usual look of command-line programs' help texts.
+
+However, to a certain degree, you can customize its look by moving the blocks the message consists of around and enriching it by arbitrary text. To this end, provide the argparser with an [`ARGPARSER_HELP_FILE`](#argparser_help_file), a plain-text file containing arbitrary content. Therein, you can include the sections from the auto-generated help message by prefixing their names with an `"@"` character. Generally speaking, an `"@"` directive, as the commands are internally referred to, like `@Section` includes the section entitled `"Section"`.
+
+> [!NOTE]
+> The file [`ARGPARSER_HELP_FILE`](#argparser_help_file) refers to **must** end with a newline character (*i.e.*, the character `x0A` encoded as `$'\n'` in Bash). Else, the `read` builtin fails to read the last line, leading to a truncated help message.
+
+### Overview over `"@"` directives
+
+The following section names (`"@"` directives) are supported:
+
+- [`@All`](#all-directive)
+- [`@<ArgumentGroup>`](#argumentgroup-directive)
+- [`@Header`](#header-directive)
+- [`@Help`](#help-directive)
+
+Thereby, in `@<ArgumentGroup>`, the `"<ArgumentGroup>"` can be the name of any argument group given in the arguments definition, like `"Arguments"` for the `"@"` directive `@Arguments` or `"Options"` for the `"@"` directive `@Options`.
+
+### `@All` directive
+
+The `@All` directive comprises all `"@"` directives in the following oder: [`@Header`](#header-directive), [`@<ArgumentGroup>`](#argumentgroup-directive), and [`@Help`](#help-directive), separated from each other by a blank line.
+
+Consequently, the help message generated from the [`ARGPARSER_HELP_FILE`](#argparser_help_file) with the following content:
+
+```text
+@All
+```
+
+is exactly identical to the one from the following content:
+
+```text
+@Header
+
+@<ArgumentGroup>
+
+@Help
+```
+
+(note the blank lines), and indentical to the auto-generated help message.
+
+### `@<ArgumentGroup>` directive
+
+The `@<ArgumentGroup>` directive prints the help text for the respective `"<ArgumentGroup>"`, like `"Arguments"` for the `"@"` directive `@Arguments` or `"Options"` for the `"@"` directive `@Options`. Their order in the auto-generated help message would be alphabetically. Thus, if you have reasons for another structure, you need an [`ARGPARSER_HELP_FILE`](#argparser_help_file), denoting all arguments groups in the order preferred by you.
+
+### `@Header` directive
+
+The `@Header` directive prints the line `Usage: $0 ARGUMENTS` (with `$0` replaced by your script's name) and a note that mandatory arguments to long options are mandatory for short options too.  This should be given just before all arguments.
+
+### `@Help` directive
+
+The `@Help` directive prints the help text for the `--help` and `--usage` flags. Usually, you want to give this at the very end of all options.
+
 ## Environment variables
 
 ### Overview
