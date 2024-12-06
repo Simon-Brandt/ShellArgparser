@@ -2,9 +2,8 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2024-12-05
+# Last Modification: 2024-12-06
 
-# TODO: Correct auto-generated help message with erroneous line breaks.
 # TODO: Enable parsing of combined short option flags, i.e.
 # script.sh -ab instead of script.sh -a -b.
 # TODO: Use coloring function for help, usage, and error messages.
@@ -618,6 +617,8 @@ function argparser_create_help_message() {
     local i
     local index
     local joined_words
+    local len_word
+    local len_joined_words
     local line_count
     local line_count_1
     local line_count_2
@@ -858,7 +859,7 @@ function argparser_create_help_message() {
 
     # Limit the width of each column of the help message to
     # ${ARGPARSER_MAX_COL_WIDTH_*} by inserting line breaks.  For being
-    # better able of parsing the line breaks later on,
+    # better able to parse the line breaks later on,
     # ${ARGPARSER_ARG_DELIMITER_1} characters are used instead.
     col_width_1=0
     for i in "${!col_1[@]}"; do
@@ -868,34 +869,37 @@ function argparser_create_help_message() {
         joined_words=""
         col_width=0
         for word in "${words[@]}"; do
-            if (( "${#word}" > ARGPARSER_MAX_COL_WIDTH_1 \
-                && "${#joined_words}" == 0 ))
+            len_word="${#word}"
+            len_joined_words="${#joined_words}"
+            if (( len_word > ARGPARSER_MAX_COL_WIDTH_1 \
+                && len_joined_words == 0 ))
             then
                 # As the word is too long, print the word and introduce
                 # a line break.  Then, reset the column width.
                 joined_words+="$(printf "%s" "${word}" \
                     "${ARGPARSER_ARG_DELIMITER_1}")"
                 col_width=0
-            elif (( col_width + "${#word}" + 1 > ARGPARSER_MAX_COL_WIDTH_1 ))
+            elif (( col_width + len_word > ARGPARSER_MAX_COL_WIDTH_1 ))
             then
                 # As the line with the word appended would be too long,
-                # introduce a line break, print the word and introduce
-                # yet another line break  Then, reset the column width.
+                # introduce a line break and print the word.  Then, set
+                # the column width.
+                echo $col_width $len_word $ARGPARSER_MAX_COL_WIDTH_1
                 joined_words+="$(printf "%s" "${ARGPARSER_ARG_DELIMITER_1}" \
                     "${word}")"
-                col_width="${#word}"
-            elif (( "${#joined_words}" == 0 )); then
+                col_width="${len_word}"
+            elif (( len_joined_words == 0 )); then
                 # For the first word, add the word only.  Increase the
                 # column width by the word's length.
                 joined_words="${word}"
-                (( col_width += "${#word}" ))
+                (( col_width += len_word ))
             else
                 # For any other word, add the word and a leading space
                 # character, else, the words would be concatenated
                 # without separation (the splitting removed any
                 # whitespace).  Increase the column width appropriately.
                 joined_words+=" ${word}"
-                (( col_width += "${#word}" + 1 ))
+                (( col_width += len_word + 1 ))
             fi
 
             # If the current lines are wider than the previous ones, set
@@ -919,34 +923,36 @@ function argparser_create_help_message() {
         joined_words=""
         col_width=0
         for word in "${words[@]}"; do
-            if (( "${#word}" > ARGPARSER_MAX_COL_WIDTH_2 \
-                && "${#joined_words}" == 0 ))
+            len_word="${#word}"
+            len_joined_words="${#joined_words}"
+            if (( len_word > ARGPARSER_MAX_COL_WIDTH_2 \
+                && len_joined_words == 0 ))
             then
                 # As the word is too long, print the word and introduce
                 # a line break.  Then, reset the column width.
                 joined_words+="$(printf "%s" "${word}" \
                     "${ARGPARSER_ARG_DELIMITER_1}")"
                 col_width=0
-            elif (( col_width + "${#word}" + 1 > ARGPARSER_MAX_COL_WIDTH_2 ))
+            elif (( col_width + len_word > ARGPARSER_MAX_COL_WIDTH_2 ))
             then
                 # As the line with the word appended would be too long,
-                # introduce a line break, print the word and introduce
-                # yet another line break  Then, reset the column width.
+                # introduce a line break and print the word.  Then, set
+                # the column width.
                 joined_words+="$(printf "%s" "${ARGPARSER_ARG_DELIMITER_1}" \
                     "${word}")"
-                col_width="${#word}"
-            elif (( "${#joined_words}" == 0 )); then
+                col_width="${len_word}"
+            elif (( len_joined_words == 0 )); then
                 # For the first word, add the word only.  Increase the
                 # column width by the word's length.
                 joined_words="${word}"
-                (( col_width += "${#word}" ))
+                (( col_width += len_word ))
             else
                 # For any other word, add the word and a leading space
                 # character, else, the words would be concatenated
                 # without separation (the splitting removed any
                 # whitespace).  Increase the column width appropriately.
                 joined_words+=" ${word}"
-                (( col_width += "${#word}" + 1 ))
+                (( col_width += len_word + 1 ))
             fi
 
             # If the current lines are wider than the previous ones, set
@@ -970,34 +976,36 @@ function argparser_create_help_message() {
         joined_words=""
         col_width=0
         for word in "${words[@]}"; do
-            if (( "${#word}" > ARGPARSER_MAX_COL_WIDTH_3 \
-                && "${#joined_words}" == 0 ))
+            len_word="${#word}"
+            len_joined_words="${#joined_words}"
+            if (( len_word > ARGPARSER_MAX_COL_WIDTH_3 \
+                && len_joined_words == 0 ))
             then
                 # As the word is too long, print the word and introduce
                 # a line break.  Then, reset the column width.
                 joined_words+="$(printf "%s" "${word}" \
                     "${ARGPARSER_ARG_DELIMITER_1}")"
                 col_width=0
-            elif (( col_width + "${#word}" + 1 > ARGPARSER_MAX_COL_WIDTH_3 ))
+            elif (( col_width + len_word > ARGPARSER_MAX_COL_WIDTH_3 ))
             then
                 # As the line with the word appended would be too long,
-                # introduce a line break, print the word and introduce
-                # yet another line break  Then, reset the column width.
+                # introduce a line break and print the word.  Then, set
+                # the column width.
                 joined_words+="$(printf "%s" "${ARGPARSER_ARG_DELIMITER_1}" \
                     "${word}")"
-                col_width="${#word}"
-            elif (( "${#joined_words}" == 0 )); then
+                col_width="${len_word}"
+            elif (( len_joined_words == 0 )); then
                 # For the first word, add the word only.  Increase the
                 # column width by the word's length.
                 joined_words="${word}"
-                (( col_width += "${#word}" ))
+                (( col_width += len_word ))
             else
                 # For any other word, add the word and a leading space
                 # character, else, the words would be concatenated
                 # without separation (the splitting removed any
                 # whitespace).  Increase the column width appropriately.
                 joined_words+=" ${word}"
-                (( col_width += "${#word}" + 1 ))
+                (( col_width += len_word + 1 ))
             fi
 
             # If the current lines are wider than the previous ones, set
