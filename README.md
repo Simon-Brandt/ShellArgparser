@@ -219,7 +219,7 @@ The argparser automatically generates a help message when its calling script is 
 
 However, to a certain degree, you can customize its look by moving the blocks the message consists of around and enriching it by arbitrary text. To this end, provide the argparser with an [`ARGPARSER_HELP_FILE`](#argparser_help_file), a plain-text file containing arbitrary content. Therein, you can include the sections from the auto-generated help message by prefixing their names with an `"@"` character. Generally speaking, an `"@"` directive, as the commands are internally referred to, like `@Section` includes the section entitled `"Section"`.
 
-> [!NOTE]
+> [!IMPORTANT]
 > The file [`ARGPARSER_HELP_FILE`](#argparser_help_file) refers to **must** end with a newline character (*i.e.*, the character `x0A` encoded as `$'\n'` in Bash). Else, the `read` builtin fails to read the last line, leading to a truncated help message.
 
 ### Overview over `"@"` directives
