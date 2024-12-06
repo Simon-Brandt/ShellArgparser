@@ -222,7 +222,7 @@ However, to a certain degree, you can customize its look by moving the blocks th
 > [!IMPORTANT]
 > The file [`ARGPARSER_HELP_FILE`](#argparser_help_file) refers to **must** end with a newline character (*i.e.*, the character `x0A` encoded as `$'\n'` in Bash). Else, the `read` builtin fails to read the last line, leading to a truncated help message.
 
-It is even possible to localize your script's help message. All you need to do is to set the [`ARGPARSER_HELP_FILE`](#argparser_help_file) and [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file) environment variables to files containing the localized help message's structure and arguments definition. If their filename contains the structure of the `LANG` environment variable (or `LC_ALL` or `LANGUAGE`), like so:
+It is even possible to localize your script's help message. All you need to do is to set the [`ARGPARSER_HELP_FILE`](#argparser_help_file) and [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file) environment variables to files containing the localized help message's structure and arguments definition. If their filename contains the structure of the `LANG` (or `LC_ALL` or `LANGUAGE`) environment variable (the language, the country or territory, and the codeset), like so:
 
 ```console
 $ ls -1 arguments.*.lst help_message.*.txt
