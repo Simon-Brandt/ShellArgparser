@@ -222,6 +222,36 @@ However, to a certain degree, you can customize its look by moving the blocks th
 > [!IMPORTANT]
 > The file [`ARGPARSER_HELP_FILE`](#argparser_help_file) refers to **must** end with a newline character (*i.e.*, the character `x0A` encoded as `$'\n'` in Bash). Else, the `read` builtin fails to read the last line, leading to a truncated help message.
 
+It is even possible to localize your script's help message. All you need to do is to set the [`ARGPARSER_HELP_FILE`](#argparser_help_file) and [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file) environment variables to files containing the localized help message's structure and arguments definition. If their filename contains the structure of the `LANG` environment variable (or `LC_ALL` or `LANGUAGE`), like so:
+
+```console
+$ ls -1 arguments.*.lst help_message.*.txt
+arguments.de_DE.UTF-8.lst
+arguments.en_US.UTF-8.lst
+help_message.de_DE.UTF-8.txt
+help_message.en_US.UTF-8.txt
+```
+
+then, in your script, you can set `ARGPARSER_ARG_DEF_FILE` and `ARGPARSER_HELP_FILE` accordingly:
+
+```bash
+export ARGPARSER_ARG_DEF_FILE="arguments.${LANG}.lst"
+export ARGPARSER_HELP_FILE="help_message.${LANG}.txt"
+```
+
+Now, the argparser is provided with the arguments definition and help files for the current locale. Thus, the help message is generated in localized form, according to the user's `LANG`.
+
+You might also want to set the locale only for your script upon invokation from another script. Then, just prefix the invokation with the desired locale for the `LANG` variable. By this, you limit the effect of changing to the script call:
+
+```console
+$ LANG=en_US.UTF-8 bash test_localization.sh --help
+...
+$ LANG=de_DE.UTF-8 bash test_localization.sh --help
+...
+```
+
+The former command prints the American English help message, the latter its German translation.
+
 ### Overview over `"@"` directives
 
 The following section names (`"@"` directives) are supported:
