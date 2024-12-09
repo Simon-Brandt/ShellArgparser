@@ -40,7 +40,8 @@ export PATH="/path/to/shell_argparser:${PATH}"
 - `/etc/profile` (global addition, for login shells)
 - `/etc/bash.bashrc` (global addition, for non-login shells)
 
-Be wary not to forget the final `${PATH}` component in the above command, or else you will override the `PATH` for your active shell, meaning no other (non-builtin) command will be resolvable.
+> [!CAUTION]
+> Be wary not to forget the final `${PATH}` component in the above command, or else you will override the `PATH` for your active shell, meaning no other (non-builtin) command will be resolvable, anymore.
 
 ## Usage
 
