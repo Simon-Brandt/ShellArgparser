@@ -6,11 +6,11 @@ The argparser is a designed to be an easy-to-use, yet powerful command-line argu
 
 The argparser:
 
-- parses a script's positional and keyword arguments
-- gives proper error messages for wrongly set or unset arguments
-- assigns the values to corresponding variables
-- creates and prints a help or usage message
-- can be configured to your needs by a set of environment variables
+- parses a script's **positional** and **keyword arguments** (any number of short and long options is possible)
+- gives proper **error messages** for wrongly set or unset arguments, according to a brief definition provided by your script
+- assigns the arguments' values to **corresponding variables**
+- creates and prints a verbose **help** or brief **usage message**
+- can be widely **configured** to your needs by a set of environment variables
 
 ## Installation
 
