@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2024-12-06
+# Last Modification: 2024-12-09
 
 # TODO: Enable parsing of combined short option flags, i.e.
 # script.sh -ab instead of script.sh -a -b.
@@ -406,7 +406,8 @@ function argparser_check_arg_value() {
                 fi
                 read -a values <<< "${default_values[@]}"
             fi
-        elif [[ "${arg_number}" == 0 && "${values[0]}" == "" ]]; then
+        elif [[ "${arg_number}" == 0 && (! -v values || -z "${values[0]}") ]]
+        then
             # If no value is required nor given, the argument is a flag.
             # As it is set (present), set the value to true.
             values=true
