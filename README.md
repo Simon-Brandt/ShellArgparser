@@ -1,6 +1,6 @@
 # Bash argparser
 
-The argparser is a designed to be an easy-to-use, yet powerful command-line argument parser for your Bash scripts, superior to the traditionally used `getopt`/`getopts` or a suite of conditionals in a `case...esac` statement. It is entirely written in pure Bash, without invoking external commands, thus reducing dependencies of your script. It is inspired by the [Python argparse module](https://docs.python.org/3/library/argparse.html).
+The argparser is a designed to be an easy-to-use, yet powerful command-line argument parser for your Bash scripts, superior to the traditionally used `getopt`/`getopts` or a suite of conditionals in a `case...esac` statement. It is entirely written in pure Bash, without invoking external commands, thus reducing dependencies of your script. It is inspired by the [Python argparse module](https://docs.python.org/3/library/argparse.html "Python documentation &rightarrow; argparse module").
 
 ## Features
 
