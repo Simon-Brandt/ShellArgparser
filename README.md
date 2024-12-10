@@ -45,53 +45,26 @@ export PATH="/path/to/shell_argparser:${PATH}"
 
 ## Usage
 
-From your script whose command-line arguments you want to be parsed, all you need to do is to source the argparser:
+To give you an idea about the argparser's application, the following sections show some excerpts of scripts used for internal testing purposes, trying to guide you through the various features. Note that minimal command-line experience is needed to understand what's going on, but since you seemingly want to write your own shell scripts, you probably already have plenty of experience.
 
-```bash
-source argparser.sh
-```
+### Argument passing
 
-This is the simplest form of invokation. It will read the command line, parse the arguments, and set them to variables in your script.
+First, let's see how we can use the argparser to parse the arguments given to your script, here saved as `try_argparser.sh` in the CWD. You can uncover the script if you want to test and try it, but we'll come back to it in the next section. For now, only the output is relevant, when we call the script from the command line.
 
-More fine-grained control is provided by the longer form of the command:
+<details>
 
-```bash
-source argparser.sh --action -- "$@"
-```
-
-with the `action` being either `read`, `set`, or `all`. If the `action` is `read`, then the argparser will only read the command-line arguments and parse them into an associative array you can access afterwards. If the `action` is `set`, the arguments from this array are set as variables to your script. *I.e.*, you need to `read` the arguments before you `set` them, but you can perform arbitrary steps in-between. If the `action` is `all`, both `read` and `set` will be executed.
-
-Invoking
-
-```bash
-source argparser.sh --all -- "$@"
-```
-
-is exactly identical to invoking a bare
-
-```bash
-source argparser.sh
-```
-
-but less legible. Thus, the latter form is preferred.
-
-There is one important exception to this rule, and that is configuration by environment variables. Specifying an `action` overrides the values of [`ARGPARSER_READ_ARGS`](#argparser_read_args) and [`ARGPARSER_SET_ARGS`](#argparser_set_args), which are else inherited from the sourcing script's environment (which, in turn, might inherit them from another calling script). Thus, to rule out any possible influence of the environment on `read` and `set`, the long invokation command is recommendable.
-
-As stated, `read` sets an associative array to store the arguments in. For maximum control over the variables in your script's scope, you can configure its name via [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name), defaulting to `"args"`.
-
-## Example
+<summary>Contents of <code>try_argparser.sh</code></summary>
 
 ```bash
 #!/bin/bash
-# 1.    Source the argparser without reading the arguments from a file.
-#       As the arguments have multiple short and long options, override
-#       the default column widths for the help message.
-export ARGPARSER_ARG_DEF_FILE=""
+
+# Source the argparser.  As the arguments have multiple short and long
+# options, override the default column widths for the help message.
 export ARGPARSER_MAX_COL_WIDTH_1=9
 export ARGPARSER_MAX_COL_WIDTH_2=33
 export ARGPARSER_MAX_COL_WIDTH_3=35
 
-# 2.    Define the arguments.
+# Define the arguments.
 args=(
     var_1
     var_2
@@ -112,10 +85,9 @@ args_definition=(
 )
 source argparser.sh
 
-# 3.    The arguments can now be accessed as keys and values of the
-#       associative array "args".  Further, they are set as variables
-#       to the environment.  If positional arguments were given, they
-#       are set to $@.
+# The arguments can now be accessed as keys and values of the
+# associative array "args".  Further, they are set as variables to the
+# environment.  If positional arguments were given, they are set to $@.
 for arg in "${!args[@]}"; do
     printf "The keyword argument \"%s\" equals \"%s\".\n" \
         "${arg}" "${args[${arg}]}"
@@ -129,67 +101,13 @@ for arg in "$@"; do
 done
 ```
 
-Given the above script to be saved as `test_basic.sh` in the CWD, then you would obtain the following results upon running it:
+</details>
+
+When you (as a user) have to deal with unknown scripts or programs, maybe the first thing to try is to run the script with the `--help` flag. As we're currently seeing `try_argparser.sh` as sort of a "black box", we assume not to know any implementation detail. So we're trying to run:
 
 ```console
-$ bash test_basic.sh 3 2 1 -a 1 -b 2 -c A
-The keyword argument "var_1" equals "1".
-The keyword argument "var_2" equals "2".
-The keyword argument "var_3" equals "A".
-The keyword argument "var_4" equals "A".
-The keyword argument "var_5" equals "E".
-The keyword argument "var_6" equals "false".
-The positional argument on index "1" equals "3".
-The positional argument on index "2" equals "2".
-The positional argument on index "3" equals "1".
-```
-
-The single line `source argparser.sh` provides the argparser's main functionality. Prior to its invokation, some argparser environment variables are set to prevent the auto-reading from the (non-existent) arguments definition file and to set the maximum column widths for the help message. Then, the arguments are defined. Thereby, the indexed array `args` defines, which command-line arguments are acceptable for the script. The indexed array `args_definition`, which could alternatively be given as a separate file, indicated as [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file), defines all arguments in an argparser-specific tabular manner.
-
-The rationale for separating `args` from `args_definition` gets clear when you realize that it's possible to share an argument definition file across multiple scripts and only require a limited subset of them for the current script. Then, you can give these arguments a common definition, identical for any script using them. It is even possible to use an arguments definition file and `args_definition` together, with the latter expanding on the former, thus providing the opportunity to use arguments with the same name, but different definitions, in separate scripts.
-
-The argument-defining associative array `args_definition` consists of a key and a value for each argument. The key is a unique identifier for the argparser functions, and the name, under which the argument's value can be obtained from the associative array named by [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name), defaulting to `"args"`. The value provides the argument definition to the argparser.
-
-This argparser-specific tabular format consists of seven columns, each separated from each other by an [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1) character, defaulting to a colon (`":"`). The columns are defined as follows:
-
-1. the short options (one hyphen, like `-a` and `-A` for `var_1`)
-1. the long options (two hyphens, like `--var_1` and `--var_A` for `var_1`)
-1. the default value (like `A` for `var_4`)
-1. the choice values for options with a limited set of values to choose from (like `"A"`, `"B"`, and `"C"` for `var_4`)
-1. the number of required values (either numerical from 0 to infinity or `"+"`, meaning to accept as many values as given, at least one, like `1` for `var_4`)
-1. the argument group for grouping of arguments in the help text (like `"Options"` for `var_4`)
-1. the help text for the `--help` flag (like `"one value with default and choice"` for `var_4`)
-
-Arguments can have multiple short and/or long names, an optional default value, and/or an arbitrary number of choice values.
-
-The argparser will aggregate all values given after a word starting with a hyphen to this argument. If the number doesn't match the number of required values, an error is thrown instead of cutting the values. If an argument gets a wrong number of values, but has a default value, only a warning is thrown and the default value is taken.
-
-Thereby, errors abort the script, while warnings just write a message to `STDERR`. Even after errors occurred, the parsing continues and aggregates the error messages until the end, when all are printed, to simplify the correction of multiple mistakes.
-
-No matter how many arguments are defined (even with the same name), the argparser interprets the arguments `-u` and `--usage` as call for a usage message and `-h` and `--help` as call for a help message. These arguments are always added to the script's argument definition and override any same-named argument name.
-
-Further, all values given before the first hyphenated value on the command line (*i.e.*, what is expected to be a keyword argument's name) or after the special argument `--` are interpreted as values to positional arguments, and, if [`ARGPARSER_SET_ARGS`](#argparser_set_args) is set to `true`, are assigned to the script's `$@`, with the previous values being overridden.
-
-As many arguments may be given as desired (*i.e.*, the same argument can be called multiple times), with the values given afterwards being all assigned to the respective argument.
-
-The argparser will build the help and usage messages from the arguments, indicating the short and long names, the default and choice values, as well as the argument group, and print the help text from the arguments' definitions.
-
-```console
-$ bash test_basic.sh -u
-Usage: test_basic.sh [--help] [--usage]
-                     -d,-D[={A,B,C}]
-                     --var_1,--var_A=VAR_1,VAR_A
-                     --var_2,--var_B=VAR_2,VAR_B
-                     --var_3,--var_C={A,B}
-                     --var_5,--var_E[=VAR_5,VAR_E]
-                     [--var_6,--var_F]
-```
-
-The usage message summarizes the arguments, including name aliases (always taking all long options, or, if absent, all short options), indicates whether they're optional or mandatory, and specifies the choice values. Short-option-only arguments precede any others, both groups being sorted alphabetically.
-
-```console
-$ bash test_basic.sh -h
-Usage: test_basic.sh ARGUMENTS
+$ bash try_argparser.sh --help
+Usage: try_argparser.sh ARGUMENTS
 
 Mandatory arguments to long options are mandatory for short options too.
 
@@ -210,20 +128,481 @@ Options:
 -u,       --usage                          display the usage and exit
 ```
 
-The help message details all short and long options of the arguments, their optionality, and their choice values. Additionally, the help text from the arguments definition is given. The arguments are separated by their groups, thus structuring the help message. Finally, the default `--help` and `--usage` arguments are given as separate, yet unnamed group.
+This already gives us plenty of information. Even though we don't know yet where it comes from (its generated by the argparser, not hardcoded in the script), we can see that `try_argparser.sh` accepts six different arguments, (more or less) aptly names `--var_1` through `--var_6`. There are other names referring to the same options, but we'll come back to this later.
 
-The help message's structure aims at reproducing the commonly found structure in command-line programs. By setting [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1), [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2), and [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3), the column widths may be adapted to your needs, recommendably totalling 77 (thus 79 characters including the separating spaces). Note that columns are automatically shrunk, when their content is narrower, but they're not expanded, when their content is wider. This is to guarantee that the help message, when *e.g.* sent as logging output, nicely fits in the space you have.
+Now that we had a look at the arguments, we know that some (`--var_4` through `--var_6`, to be precise) have default arguments, so we try not to care about them. Instead, we run `try_argparser.sh` as follows:
 
-## Help file
+```console
+$ bash try_argparser.sh --var_1=a --var_2=b --var_3=A
+The keyword argument "var_1" equals "a".
+The keyword argument "var_2" equals "b".
+The keyword argument "var_3" equals "A".
+The keyword argument "var_4" equals "A".
+The keyword argument "var_5" equals "E".
+The keyword argument "var_6" equals "false".
+```
 
-The argparser automatically generates a help message when its calling script is invoked with `--help` on its command line. The message's structure is intended to reproduce the usual look of command-line programs' help texts.
+Even without fully understanding yet what the argparser does, you can see that we set *three* arguments on the command-line invokation of `test_argparser.sh`, *viz.* `--var_1`, `--var_2`, and `--var_3`. Nonetheless, the script reports *six* arguments to be given. This is due to `var_4` through `var_6` having said default values that are used when the argument is not given on the command line. For `var_1` through `var_3`, the reported values are exactly what we specified, *i.e.*, `"a"`, `"b"`, and `"A"`, respectively.
 
-However, to a certain degree, you can customize its look by moving the blocks the message consists of around and enriching it by arbitrary text. To this end, provide the argparser with an [`ARGPARSER_HELP_FILE`](#argparser_help_file), a plain-text file containing arbitrary content. Therein, you can include the sections from the auto-generated help message by prefixing their names with an `"@"` character. Generally speaking, an `"@"` directive, as the commands are internally referred to, like `@Section` includes the section entitled `"Section"`.
+Prior further explanation, let's see what happens with the following type of call:
+
+```console
+$ bash try_argparser.sh 3 2 1 -a 1 -b 2 -c A -- 4
+The keyword argument "var_1" equals "1".
+The keyword argument "var_2" equals "2".
+The keyword argument "var_3" equals "A".
+The keyword argument "var_4" equals "A".
+The keyword argument "var_5" equals "E".
+The keyword argument "var_6" equals "false".
+The positional argument on index "1" equals "3".
+The positional argument on index "2" equals "2".
+The positional argument on index "3" equals "1".
+The positional argument on index "4" equals "4".
+```
+
+Now, we gave three values&mdash;`3`, `2`, and `1`&mdash;before any option name, here `-a`. Further, we set three arguments, *viz.* `-a`, `-b`, and `c`, but none is reported in the script's output. Finally, we set a double hyphen (`--`) and yet another value, `4`.
+
+There are three features of the argparser visible here: First, values given before any hyphenated word (whitespace-delimited) are interpreted as positional arguments and are assigned to `$@` (if [`ARGPARSER_SET_ARGS`](#argparser_set_args) is set to `true`), overriding the previous values of `$@`, *i.e.*, the actual command line. Further, it is possible to give additional positional arguments after the special keyword argument `--`, *i.e.*, a double hyphen with no name behind. This is the usual way of saying "end of keyword arguments".
+
+Second, arguments can have name aliases, *i.e.*, any number of synonymous argument names pointing to the same entity (argument definition). Thereby, not only aliases with two hyphens (so-called long options) are possible, but also some with only one leading hyphen (short options). For quick command-line usage, short options are convenient to quickly write a command; but for scripts, the long options should be preferred as they carry more information due to their verbose name (like, what does `-v` mean&mdash;`--version`, `--verbose`, or even `--verbatim`?). The argparser allows an arbitrary number of short and/or long option names for an argument to be defined, and arguments can be provided by any alias on the command line.
+
+The third thing you may have noticed is that we didn't use an equals sign (`=`) to delimit option names and their values. Though it may seem as if it was related to the usage of short options, for the argparser, it is completely arbitrary whether you use spaces or equals signs. Again, typing spaces is faster on the command line, but using the explicit equals sign makes a script's code more legible. This has the additional advantage that it's clear to a user that the value belongs to the option name before, and that it's not a flag followed by a positional argument. As long as this user doesn't know that the argparser only treats values following option names as positional arguments when they're separated by a double hyphen, it may look confusing.
+
+Let's have a look at one final example invokation:
+
+```console
+$ bash test_basic.sh -a 1 -b 2 3 -c A,B -b 4 -f
+The keyword argument "var_1" equals "1".
+The keyword argument "var_2" equals "2,3,4".
+The keyword argument "var_3" equals "A,B".
+The keyword argument "var_4" equals "A".
+The keyword argument "var_5" equals "E".
+The keyword argument "var_6" equals "true".
+```
+
+Three things have changed in the invokation call: The `-b` option now appears twice, with the first of which being followed by two values instead of one. Then, the `-c` option has its value given as `A,B` (note the comma), and another argument, `-f` was given, but without value.
+
+From the report for the `-b` option, an alias of `--var_2`, you can see that all three values&mdash;`2`, `3`, and `4`&mdash;are passed to `var_2`. Thus, it is possible to define arguments to accept more than one value, with any given value being concatenated to the last given argument name (indicated as a hyphenated value). You can even call an argument multiple times, passing values at different positions to it, though it seems rather counterproductive (in terms of confusing and unnecessarily verbose) for use in scripts. On the command line, however, it may save you to go back when you realize you forgot to type a value. Another use case even for scripts would be to gather command-line arguments or values from different processes, like *via* command/process substitution. Then, you can just combine the two streams, without needing to care whether they pass mutually exclusive argument names or the same.
+
+As you can see from the `-c` option, you can also use commas (or rather: [`ARGPARSER_ARG_DELIMITER_3`](#argparser_arg_delimiter_3) characters, as you will see later on) to pass multiple values at the same time. As a stylistic advice, for scripts, use long options, the equals sign, and commas, as they tend to look clearer; whereas for simple command-line usage, take advantage of the short options and the ability to use spaces as delimiter, as both are faster to type.
+
+Finally, the option `-f`, aliased to `--var_6`, is a so-called flag: Its presence or absence on the command line changes the value in a boolean manner (though flags are less powerful than booleans). As you can see in the reported values, `var_6` has changed its value from `false` to `true`, just by giving the flag's *name*, instead of a real value. This means that you can check whether a flag had been set by evaluating the corresponding variable's value to `true` or `false`. Note that these are just mnemonics, they have no boolean meaning for the weakly typed Bash interpreter.
+
+### Argparser invokation
+
+Now that you have seen how the argparser serves in parsing and interpreting the command-line arguments given to your script, it's time to explain what you need to do to employ the argparser in your script. As promised, here's the code of `try_argparser.sh` again. You can cover it if you already read it above (and memorize the lines of code...).
+
+<details open>
+
+<summary>Contents of <code>try_argparser.sh</code></summary>
+
+```bash
+#!/bin/bash
+
+# Source the argparser.  As the arguments have multiple short and long
+# options, override the default column widths for the help message.
+export ARGPARSER_MAX_COL_WIDTH_1=9
+export ARGPARSER_MAX_COL_WIDTH_2=33
+export ARGPARSER_MAX_COL_WIDTH_3=35
+
+# Define the arguments.
+args=(
+    var_1
+    var_2
+    var_3
+    var_4
+    var_5
+    var_6
+)
+
+declare -A args_definition
+args_definition=(
+    [var_1]="a,A:var_1,var_A:-:-:1:Arguments:one value without default or choice"
+    [var_2]="b,B:var_2,var_B:-:-:+:Arguments:at least one value without default or choice"
+    [var_3]="c,C:var_3,var_C:-:A,B:+:Arguments:at least one value with choice"
+    [var_4]="d,D:-:A:A,B,C:1:Options:one value with default and choice"
+    [var_5]="-:var_5,var_E:E:-:1:Options:one value with default"
+    [var_6]="f,F:var_6,var_F:false:-:0:Options:no value (flag) with default"
+)
+source argparser.sh
+
+# The arguments can now be accessed as keys and values of the
+# associative array "args".  Further, they are set as variables to the
+# environment.  If positional arguments were given, they are set to $@.
+for arg in "${!args[@]}"; do
+    printf "The keyword argument \"%s\" equals \"%s\".\n" \
+        "${arg}" "${args[${arg}]}"
+done | sort
+
+(( i = 1 ))
+for arg in "$@"; do
+    printf "The positional argument on index \"%s\" equals \"%s\".\n" \
+        "${i}" "${arg}"
+    (( i++ ))
+done
+```
+
+</details>
+
+As you can see, there are three sections in the code that are specific to the argparser. The accession at the end only serves us to gain insights into the values of the arguments and are not necessary to include.
+
+The first section sets argparser-specific [environment variables](#environment-variables), which we'll investigate later. Then, the arguments are defined, and finally, the argparser is called. This call is central to the script as it is the only line strictly required to run the argparser. So, most simply, from your script whose command-line arguments you want to be parsed, all you need to do is to source the argparser ([sourcing](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "Bash builtins &rightarrow; source keyword") means in-place execution):
+
+```bash
+source argparser.sh
+```
+
+Alternatively, but not recommended for the lack of the command's clearness, you could use the synonymous [dot operator](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-_002e "Bash builtins &rightarrow; dot operator") inherited from the Bourne shell:
+
+```bash
+. argparser.sh
+```
+
+This is the simplest form of invoking the argparser. It will read your script's command line, parse the arguments, and set them to variables in your script. And this is the reason for sourcing instead of normal calling as in:
+
+```bash
+bash argparser.sh
+```
+
+or (deactivated by the shebang line):
+
+```bash
+./argparser.sh
+```
+
+since you don't want the arguments to be set in a subshell created after forking, as these will be gone when the argparser (and with it, the subshell) exits.
+
+You can obtain fine-grained control by the longer form of the command:
+
+```bash
+source argparser.sh --action -- "$@"
+```
+
+with `action` being either `read`, `set`, or `all`. If `action` is `read`, then the argparser will only read the command-line arguments and parse them into an associative array you can access afterwards. If the `action` is `set`, the arguments from this array are set as variables to your script. *I.e.*, you need to `read` the arguments before you `set` them, but you can perform arbitrary steps in-between. This could come handy when you want to use the variable names the argparser sets for some task or want to manipulate the associative array prior having the values set. Finally, if the `action` is `all`, both `read` and `set` will be executed (in this order).
+
+Due to the manner the `source` builtin is defined, you must explicitly state the `"$@"` to pass the arguments to the argparser. The `--` before is required to separate the argparser modification from the actual arguments&mdash;after all, it is not unlikely that some of your scripts might want to use one of the arguments `--read`, `--set`, and `--all`. To still be able to distinguish between an option for the argparser and an argument to your script, the double hyphen is used as delimiter.
+
+Further, writing
+
+```bash
+source argparser.sh --all -- "$@"
+```
+
+is exactly identical to writing a bare
+
+```bash
+source argparser.sh
+```
+
+but less legible. Thus, the latter form is preferred. There is one important exception to this rule, and that is configuration by environment variables. Specifying an `action` overrides the values of [`ARGPARSER_READ_ARGS`](#argparser_read_args) and [`ARGPARSER_SET_ARGS`](#argparser_set_args), which are else inherited from the sourcing script's environment (which, in turn, might inherit them from another calling script). Thus, to rule out any possible influence of the environment on `read` and `set`, the long invokation command is recommendable.
+
+As stated, `read` sets an associative array to store the arguments in. For maximum control over the variables in your script's scope, you can configure its name via [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name), defaulting to `"args"`. In `try_argparser.sh`, we obtained the report by accessing exactly this associative array, looping over its contents.
+
+While the single line `source argparser.sh` provides the argparser's main functionality, the arguments need to be defined somewhere. Thus, prior to the argparser's invokation (and, in our case, after setting some environment variables to set the maximum column widths for the help message), the arguments are defined. Thereby, the indexed array `args` defines which command-line arguments are acceptable for the script. The associative array `args_definition` defines all arguments in an argparser-specific tabular manner. Alternatively, it could be given as a separate file, indicated as [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file).
+
+The rationale for separating `args` from `args_definition` gets clear when you realize that it's possible to share an argument definition file across multiple scripts and only require a limited subset of them for the current script. Then, you can give these arguments a common definition, identical for any script using them. It is even possible to use an arguments definition file and `args_definition` together, with the latter expanding on the former, thus providing the opportunity to use arguments with the same name, but different definitions, in separate scripts.
+
+The argument-defining associative array `args_definition` consists of a key and a value for each argument. The key is a unique identifier for the argparser functions, and the name under which the argument's value can be obtained from the associative array named by [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name), defaulting to `"args"`. The corresponding value provides the argument definition to the argparser.
+
+This argparser-specific tabular format consists of seven columns, each separated from each other by an [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2) character, defaulting to a colon (`":"`). The columns are defined as follows:
+
+1. the short options (one hyphen, like `-a` and `-A` for `var_1`)
+1. the long options (two hyphens, like `--var_1` and `--var_A` for `var_1`)
+1. the default value (like `A` for `var_4`)
+1. the choice values for options with a limited set of values to choose from (like `"A"`, `"B"`, and `"C"` for `var_4`)
+1. the number of required values (either numerical from 0 to infinity or `"+"`, meaning to accept as many values as given, at least one, like `1` for `var_4`)
+1. the argument group for grouping of arguments in the help text (like `"Options"` for `var_4`)
+1. the help text for the `--help` flag (like `"one value with default and choice"` for `var_4`)
+
+Arguments can have multiple short and/or long names, an optional default value, and/or an arbitrary number of choice values.
+
+As you saw above, the argparser will aggregate all values given after a word starting with a hyphen to this argument. If the number doesn't match the number of required values, an error is thrown instead of cutting the values. If an argument gets a wrong number of values, but has a default value, only a warning is thrown and the default value is taken.
+
+Thereby, errors abort the script, while warnings just write a message to `STDERR`. Even after errors occurred, the parsing continues and aggregates the error messages until the end, when all are printed, to simplify the correction of multiple mistakes.
+
+### Help and usage messages
+
+No matter how many arguments are defined (even with the same name), the argparser interprets the arguments `-u` and `--usage` as call for a brief usage message and `-h` and `--help` as call for a verbose help message. These arguments are always added to the script's argument definition and override any same-named argument name. This is to ensure that the novice user of your script can do exactly what we did, above: Trying the most common variants to get some help over how to use a program or script by typing
+
+```bash
+try_argparser.sh --help
+```
+
+or
+
+```bash
+try_argparser.sh -h
+```
+
+Of course,
+
+```bash
+help try_argparser.sh
+```
+
+won't work as the `help` command only recognizes Bash builtins.
+
+As a huge convenience, the argparser will build the help and usage messages from the defined arguments for your script, if either of the `-u`, `--usage`, `-h`, or `--help` options is given (even along with others). These messages indicate the short and/or long names, as well as the default and choice values. In the case of the help message, the argument group and the help text from the arguments' definitions are printed, too.
+
+Our `try_argparser.sh` usage message looks as follows:
+
+```console
+$ bash try_argparser.sh -u
+Usage: try_argparser.sh [--help] [--usage]
+                        -d,-D[={A,B,C}]
+                        --var_1,--var_A=VAR_1,VAR_A
+                        --var_2,--var_B=VAR_2,VAR_B
+                        --var_3,--var_C={A,B}
+                        --var_5,--var_E[=VAR_5,VAR_E]
+                        [--var_6,--var_F]
+```
+
+Clearly, the usage message summarizes the arguments, including name aliases (always taking all long options, or, if absent, all short options), indicates whether they're optional or mandatory (optionals use square brackets), and specifies the choice values (in curly braces). Short option&ndash;only arguments precede any others, and both groups are sorted alphabetically by the first key.
+
+Likewise, we can investigate the help message (just as we did above, with the very same result):
+
+```console
+$ bash try_argparser.sh -h
+Usage: try_argparser.sh ARGUMENTS
+
+Mandatory arguments to long options are mandatory for short options too.
+
+Arguments:
+-a, -A,   --var_1=VAR_1, --var_A=VAR_A     one value without default or choice
+-b, -B,   --var_2=VAR_2, --var_B=VAR_B     at least one value without default
+                                           or choice
+-c, -C,   --var_3={A,B}, --var_C={A,B}     at least one value with choice
+
+Options:
+-d, -D                                     one value with default and choice
+                                           (default: A)
+          --var_5[=VAR_5], --var_E[=VAR_E] one value with default (default: E)
+[-f, -F], [--var_6, --var_F]               no value (flag) with default
+                                           (default: false)
+
+-h,       --help                           display this help and exit
+-u,       --usage                          display the usage and exit
+```
+
+The help message details all short and long options of the arguments, their optionality, and their choice values (using the same syntax as in the usage message). Additionally, the help text from the arguments definition is given. The arguments are separated by their groups, thus structuring the help message. Finally, the default `--help` and `--usage` arguments are given as separate, yet unnamed group.
+
+The help message's structure aims at reproducing the commonly found structure in command-line programs. By setting [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1), [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2), and [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3) (as done in `try_argparser.sh`), the column widths may be adapted to your needs, recommendably totalling 77 characters (thus 79 characters including the separating spaces). Note that columns are automatically shrunk, when their content is narrower, but they're not expanded, when their content is wider. This is to guarantee that the help message, when *e.g.* sent as logging output, nicely fits in the space you have.
+
+### Help message files
+
+The argparser is not only able to compile a help message, but can also be guided by a separate file. Using the [`ARGPARSER_HELP_FILE`](#argparser_help_file) environment variable, to a certain degree, you can customize the help message's look and structure  by moving the blocks the message consists of around and enriching it by arbitrary text.
+
+For demonstration, we take a stripped-down version of our `try_argparser.sh` script as `try_help_file.sh`, where we omit the alias names for the short and long options, for the sake of brevity.
+
+<details open>
+
+<summary>Contents of <code>try_help_file.sh</code></summary>
+
+```bash
+#!/bin/bash
+
+# Source the argparser, reading the help message from a file.
+export ARGPARSER_HELP_FILE="help_message.txt"
+
+# Define the arguments.
+args=(
+    var_1
+    var_2
+    var_3
+    var_4
+    var_5
+    var_6
+)
+
+declare -A args_definition
+args_definition=(
+    [var_1]="a:var_1:-:-:1:Arguments:one value without default or choice"
+    [var_2]="b:var_2:-:-:+:Arguments:at least one value without default or choice"
+    [var_3]="c:var_3:-:A,B:+:Arguments:at least one value with choice"
+    [var_4]="d:-:A:A,B,C:1:Options:one value with default and choice"
+    [var_5]="-:var_5:E:-:1:Options:one value with default"
+    [var_6]="f:var_6:false:-:0:Options:no value (flag) with default"
+)
+
+source argparser.sh
+
+# The arguments can now be accessed as keys and values of the
+# associative array "args".  Further, they are set as variables to the
+# environment.  If positional arguments were given, they are set to $@.
+for arg in "${!args[@]}"; do
+    printf "The keyword argument \"%s\" equals \"%s\".\n" \
+        "${arg}" "${args[${arg}]}"
+done | sort
+
+(( i = 1 ))
+for arg in "$@"; do
+    printf "The positional argument on index \"%s\" equals \"%s\".\n" \
+        "${i}" "${arg}"
+    (( i++ ))
+done
+```
+
+</details>
+
+Additionally, we need a separate file, which we'll call `help_message.txt` and have passed as value to [`ARGPARSER_HELP_FILE`](#argparser_help_file). This plain-text file stores the help message's structure and can contain arbitrary additional content.
 
 > [!IMPORTANT]
 > The file [`ARGPARSER_HELP_FILE`](#argparser_help_file) refers to **must** end with a newline character (*i.e.*, the character `x0A` encoded as `$'\n'` in Bash). Else, the `read` builtin fails to read the last line, leading to a truncated help message.
 
-It is even possible to localize your script's help message. All you need to do is to set the [`ARGPARSER_HELP_FILE`](#argparser_help_file) and [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file) environment variables to files containing the localized help message's structure and arguments definition. If their filename contains the structure of the `LANG` (or `LC_ALL` or `LANGUAGE`) environment variable (the language, the country or territory, and the codeset), like so:
+```console
+$ cat help_message.txt 
+# Print the header.
+A brief header summarizes the way how to interpret the help message.
+@Header
+
+# Print the arguments from the "arguments" group.
+The following arguments have no default value.
+@Arguments
+
+# Print the arguments from the "options" group.
+The following arguments have a default value.
+@Options
+
+# Print the two help options.
+There are always two options for the help messages.
+@Help
+```
+
+Now, we get the following help message:
+
+```console
+$ bash try_help_file.sh -h
+A brief header summarizes the way how to interpret the help message.
+Usage: try_help_file.sh ARGUMENTS
+
+Mandatory arguments to long options are mandatory for short options too.
+
+The following arguments have no default value.
+Arguments:
+-a, --var_1=VAR_1 one value without default or choice
+-b, --var_2=VAR_2 at least one value without default or
+                  choice
+-c, --var_3={A,B} at least one value with choice
+
+The following arguments have a default value.
+Options:
+-d                    one value with default and choice
+                      (default: A)
+      --var_5[=VAR_5] one value with default (default: E)
+[-f], [--var_6]       no value (flag) with default (default:
+                      false)
+
+There are always two options for the help messages.
+-h, --help  display this help and exit
+-u, --usage display the usage and exit
+```
+
+When you compare the structure of this help message with both the previous version and the help file, you see that there, you can include the sections from the auto-generated help message by prefixing their names with an `"@"` character. Generally speaking, an `"@"` directive, as the commands are internally referred to, like `@Section`, includes the section entitled `"Section"`.
+
+The following section names (`"@"` directives) are supported, explained in greater detail in the reference below:
+
+- [`@All`](#all-directive)
+- [`@<ArgumentGroup>`](#argumentgroup-directive)
+- [`@Header`](#header-directive)
+- [`@Help`](#help-directive)
+
+Thereby, in `@<ArgumentGroup>`, the `"<ArgumentGroup>"` can be the name of any argument group given in the arguments definition, like `"Arguments"` for the `"@"` directive `@Arguments` or `"Options"` for the `"@"` directive `@Options`. `@Header` prints the header, `@Help` the help and usage options. Finally, the shorthand `@All` means to use the header, all argument groups, and the help options, in this order.
+
+Further, lines starting with a `"#"` character in the help file aren't printed if [`ARGPARSER_HELP_FILE_KEEP_COMMENTS`](#argparser_help_file_keep_comments) is set to `false`. This allows you to comment your help file, perhaps to explain the structure&mdash;or just to write a header with your name inside.
+
+### Arguments definition files
+
+In the previous sections, we always provided the arguments definition directly in the script, right before we sourced the argparser. However, it is possible to "outsource" the definition (or part of it) in a bespoke file that is referred to by the [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file) environment variable.
+
+Using a separate argument definition file allows you to share the definition across multiple scripts that use partially or entirely identical arguments, a common case in program suites or when wrapper scripts are used. Should some scripts require an argument to have the same name, but different definitions, they can be given in their respective scripts, in addition to the remainder from the file. Further, this attempt allows a separation of concerns, as we can move the arguments definition (static) away from their manipulation (dynamic). This shrinks our trial file once more, yielding `try_arg_def_file.sh`.
+
+<details open>
+
+<summary>Contents of <code>try_arg_def_file.sh</code></summary>
+
+```bash
+#!/bin/bash
+
+# Set the argparser, reading the arguments definition from a file.
+export ARGPARSER_ARG_DEF_FILE="arguments.lst"
+
+# Set the arguments.
+args=(
+    var_1
+    var_2
+    var_3
+    var_4
+    var_5
+    var_6
+)
+
+source argparser.sh
+
+# The arguments can now be accessed as keys and values of the
+# associative array "args".  Further, they are set as variables to the
+# environment.  If positional arguments were given, they are set to $@.
+for arg in "${!args[@]}"; do
+    printf "The keyword argument \"%s\" equals \"%s\".\n" \
+        "${arg}" "${args[${arg}]}"
+done | sort
+
+(( i = 1 ))
+for arg in "$@"; do
+    printf "The positional argument on index \"%s\" equals \"%s\".\n" \
+        "${i}" "${arg}"
+    (( i++ ))
+done
+```
+
+</details>
+
+At the same time, we need an arguments definition file, aptly called `arguments.lst`.
+
+<!-- > [!IMPORTANT]
+> The file [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file) refers to **must** end with a newline character (*i.e.*, the character `x0A` encoded as `$'\n'` in Bash). Else, the `read` builtin fails to read the last line, leading to a missing argument. -->
+
+```console
+$ cat arguments.lst 
+[var_1]="a:var_1:-:-:1:Arguments:one value without default or choice"
+[var_2]="b:var_2:-:-:+:Arguments:at least one value without default or choice"
+[var_3]="c:var_3:-:A,B:+:Arguments:at least one value with choice"
+[var_4]="d:-:A:A,B,C:1:Options:one value with default and choice"
+[var_5]="-:var_5:E:-:1:Options:one value with default"
+[var_6]="f:var_6:false:-:0:Options:no value (flag) with default"
+```
+
+When passing the usual argument names and values, we see that all arguments are still recognized:
+
+```console
+$ bash try_arg_def_file.sh 3 2 1 -a 1 -b 2 -c A -- 4
+The keyword argument "var_1" equals "1".
+The keyword argument "var_2" equals "2".
+The keyword argument "var_3" equals "A".
+The keyword argument "var_4" equals "A".
+The keyword argument "var_5" equals "E".
+The keyword argument "var_6" equals "false".
+The positional argument on index "1" equals "3".
+The positional argument on index "2" equals "2".
+The positional argument on index "3" equals "1".
+The positional argument on index "4" equals "4".
+```
+
+Likewise, the usage (and help) message are completely unaffected:
+
+```console
+$ bash try_arg_def_file.sh -u
+Usage: try_arg_def_file.sh [--help] [--usage]
+                           -d[={A,B,C}]
+                           --var_1=VAR_1
+                           --var_2=VAR_2
+                           --var_3={A,B}
+                           --var_5[=VAR_5]
+                           [--var_6]
+```
+
+### Help message localization
+
+It is even possible to localize your script's help message. All you need to do is to set the [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file) and [`ARGPARSER_HELP_FILE`](#argparser_help_file) environment variables to files containing the localized help message's structure and arguments definition. If their filename contains the structure of the `LANG` (or `LC_ALL` or `LANGUAGE`) environment variable (the language, the country or territory, and the codeset), like so:
 
 ```console
 $ ls -1 arguments.*.lst help_message.*.txt
@@ -233,11 +612,82 @@ help_message.de_DE.UTF-8.txt
 help_message.en_US.UTF-8.txt
 ```
 
-then, in your script, you can set `ARGPARSER_ARG_DEF_FILE` and `ARGPARSER_HELP_FILE` accordingly:
+then, in your script, you can set `ARGPARSER_ARG_DEF_FILE` and `ARGPARSER_HELP_FILE` accordingly, as in our new file `try_localization`.
+
+<details open>
+
+<summary>Contents of <code>try_localization.sh</code></summary>
 
 ```bash
+#!/bin/bash
+
+# Set the argparser, reading the arguments definition from a file and
+# the help message from a file.
 export ARGPARSER_ARG_DEF_FILE="arguments.${LANG}.lst"
 export ARGPARSER_HELP_FILE="help_message.${LANG}.txt"
+
+# Set the arguments.
+args=(
+    var_1
+    var_2
+    var_3
+    var_4
+    var_5
+    var_6
+)
+
+source argparser.sh
+
+# The arguments can now be accessed as keys and values of the
+# associative array "args".  Further, they are set as variables to the
+# environment.  If positional arguments were given, they are set to $@.
+for arg in "${!args[@]}"; do
+    printf "The keyword argument \"%s\" equals \"%s\".\n" \
+        "${arg}" "${args[${arg}]}"
+done | sort
+
+(( i = 1 ))
+for arg in "$@"; do
+    printf "The positional argument on index \"%s\" equals \"%s\".\n" \
+        "${i}" "${arg}"
+    (( i++ ))
+done
+```
+
+</details>
+
+You need to manually translate the arguments definition (only the argument groups and the help texts) in the new arguments definition file:
+
+```console
+$ cat arguments.de_DE.UTF-8.lst
+[var_1]="a:var_1:-:-:1:Argumente:ein Wert ohne Vorgabe und Auswahl"
+[var_2]="b:var_2:-:-:+:Argumente:mindestens ein Wert ohne Vorgabe und Auswahl"
+[var_3]="c:var_3:-:A,B:+:Argumente:mindestens ein Wert mit Auswahl"
+[var_4]="d:-:A:A,B,C:1:Optionen:ein Wert mit Vorgabe und Auswahl"
+[var_5]="-:var_5:E:-:1:Optionen:ein Wert mit Vorgabe"
+[var_6]="f:var_6:false:-:0:Optionen:kein Wert (Flag) mit Vorgabe"
+```
+
+The same is necessary for the printable part of the help file:
+
+```console
+$ cat help_message.de_DE.UTF-8.txt 
+# Print the header.
+Eine kurze Kopfzeile fasst zusammen, wie die Hilfe-Meldung zu interpretieren
+ist.
+@Header
+
+# Print the arguments from the "arguments" group.
+Die folgenden Argumente haben keinen Vorgabewert.
+@Argumente
+
+# Print the arguments from the "options" group.
+Die folgenden Argumente haben einen Vorgabewert.
+@Optionen
+
+# Print the two help options.
+Es gibt grundsätzlich zwei Optionen für die Hilfe-Meldungen.
+@Help
 ```
 
 Now, the argparser is provided with the arguments definition and help files for the current locale. Thus, the help message is generated in localized form, according to the user's `LANG`.
@@ -245,15 +695,43 @@ Now, the argparser is provided with the arguments definition and help files for 
 You might also want to set the locale only for your script upon invokation from another script. Then, just prefix the invokation with the desired locale for the `LANG` variable. By this, you limit the effect of changing to the script call:
 
 ```console
-$ LANG=en_US.UTF-8 bash test_localization.sh --help
+$ LANG=en_US.UTF-8 bash try_localization.sh --help
 ...
-$ LANG=de_DE.UTF-8 bash test_localization.sh --help
+$ LANG=de_DE.UTF-8 bash try_localization.sh --help
 ...
 ```
 
-The former command prints the American English help message, the latter its German translation.
+The former command prints the American English help message, the latter its German translation, as you can see in full detail, here:
 
-### Overview over `"@"` directives
+```console
+$ LANG=de_DE.UTF-8 bash try_localization.sh -h
+Eine kurze Kopfzeile fasst zusammen, wie die Hilfe-Meldung zu interpretieren
+ist.
+Usage: try_localization.sh ARGUMENTS
+
+Mandatory arguments to long options are mandatory for short options too.
+
+Die folgenden Argumente haben keinen Vorgabewert.
+Argumente:
+-a, --var_1=VAR_1 ein Wert ohne Vorgabe und Auswahl
+-b, --var_2=VAR_2 mindestens ein Wert ohne Vorgabe und
+                  Auswahl
+-c, --var_3={A,B} mindestens ein Wert mit Auswahl
+
+Die folgenden Argumente haben einen Vorgabewert.
+Optionen:
+-d                    ein Wert mit Vorgabe und Auswahl
+                      (default: A)
+      --var_5[=VAR_5] ein Wert mit Vorgabe (default: E)
+[-f], [--var_6]       kein Wert (Flag) mit Vorgabe" (default:
+                      false)
+
+Es gibt grundsätzlich zwei Optionen für die Hilfe-Meldungen.
+-h, --help  display this help and exit
+-u, --usage display the usage and exit
+```
+
+## `"@"` directives
 
 The following section names (`"@"` directives) are supported:
 
