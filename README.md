@@ -556,19 +556,16 @@ done
 
 </details>
 
-At the same time, we need an arguments definition file, aptly called `arguments.lst`.
-
-<!-- > [!IMPORTANT]
-> The file [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file) refers to **must** end with a newline character (*i.e.*, the character `x0A` encoded as `$'\n'` in Bash). Else, the `read` builtin fails to read the last line, leading to a missing argument. -->
+At the same time, we need an arguments definition file, aptly called `arguments.lst`. Its structure is almost identical to the arguments definition we previously used, but this time, an additional column at index 0 is used that stores the target names for the variables.
 
 ```console
 $ cat arguments.lst 
-[var_1]="a:var_1:-:-:1:Arguments:one value without default or choice"
-[var_2]="b:var_2:-:-:+:Arguments:at least one value without default or choice"
-[var_3]="c:var_3:-:A,B:+:Arguments:at least one value with choice"
-[var_4]="d:-:A:A,B,C:1:Options:one value with default and choice"
-[var_5]="-:var_5:E:-:1:Options:one value with default"
-[var_6]="f:var_6:false:-:0:Options:no value (flag) with default"
+var_1:a:var_1:-:-:1:Arguments:one value without default or choice
+var_2:b:var_2:-:-:+:Arguments:at least one value without default or choice
+var_3:c:var_3:-:A,B:+:Arguments:at least one value with choice
+var_4:d:-:A:A,B,C:1:Options:one value with default and choice
+var_5:-:var_5:E:-:1:Options:one value with default
+var_6:f:var_6:false:-:0:Options:no value (flag) with default
 ```
 
 When passing the usual argument names and values, we see that all arguments are still recognized:
@@ -660,12 +657,12 @@ You need to manually translate the arguments definition (only the argument group
 
 ```console
 $ cat arguments.de_DE.UTF-8.lst
-[var_1]="a:var_1:-:-:1:Argumente:ein Wert ohne Vorgabe und Auswahl"
-[var_2]="b:var_2:-:-:+:Argumente:mindestens ein Wert ohne Vorgabe und Auswahl"
-[var_3]="c:var_3:-:A,B:+:Argumente:mindestens ein Wert mit Auswahl"
-[var_4]="d:-:A:A,B,C:1:Optionen:ein Wert mit Vorgabe und Auswahl"
-[var_5]="-:var_5:E:-:1:Optionen:ein Wert mit Vorgabe"
-[var_6]="f:var_6:false:-:0:Optionen:kein Wert (Flag) mit Vorgabe"
+var_1:a:var_1:-:-:1:Argumente:ein Wert ohne Vorgabe und Auswahl
+var_2:b:var_2:-:-:+:Argumente:mindestens ein Wert ohne Vorgabe und Auswahl
+var_3:c:var_3:-:A,B:+:Argumente:mindestens ein Wert mit Auswahl
+var_4:d:-:A:A,B,C:1:Optionen:ein Wert mit Vorgabe und Auswahl
+var_5:-:var_5:E:-:1:Optionen:ein Wert mit Vorgabe
+var_6:f:var_6:false:-:0:Optionen:kein Wert (Flag) mit Vorgabe
 ```
 
 The same is necessary for the printable part of the help file:

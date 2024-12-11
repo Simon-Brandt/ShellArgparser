@@ -2,11 +2,14 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2024-12-09
+# Last Modification: 2024-12-11
 
 # TODO: Enable parsing of combined short option flags, i.e.
 # script.sh -ab instead of script.sh -a -b.
 # TODO: Use coloring function for help, usage, and error messages.
+# BUG: Fix interpretation of keyword arguments after "--".
+# BUG: Fix the argparser using all arguments from the definition, not
+# just from the indexed array "args".
 
 # Usage: Source this script with "source argparser.sh" inside the script
 # whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS} is set
@@ -885,7 +888,6 @@ function argparser_create_help_message() {
                 # As the line with the word appended would be too long,
                 # introduce a line break and print the word.  Then, set
                 # the column width.
-                echo $col_width $len_word $ARGPARSER_MAX_COL_WIDTH_1
                 joined_words+="$(printf "%s" "${ARGPARSER_ARG_DELIMITER_1}" \
                     "${word}")"
                 col_width="${len_word}"
@@ -1485,6 +1487,8 @@ function argparser_main() {
     local error_message
     local error_messages
     local given_args
+    local line
+    local lines
     local message
     local parsed_arg
 
@@ -1532,14 +1536,17 @@ function argparser_main() {
 
     # If an arguments definition file is given (i.e.,
     # ${ARGPARSER_ARG_DEF_FILE} isn't set to the empty string), read the
-    # arguments definitions from the list by discarding the respective
-    # key from the line using sed.
+    # arguments definitions from the file.
     if [[ -n "${ARGPARSER_ARG_DEF_FILE}" ]]; then
-        for arg_key in "${args_keys[@]}"; do
-            lines="$(< "${ARGPARSER_ARG_DEF_FILE}")"
-            lines="${lines##*\[${arg_key}\]=\"}"
-            arg_value="${lines%%\"$'\n'*}"
-            args_definition["${arg_key}"]="${arg_value}"
+        mapfile -t lines < "${ARGPARSER_ARG_DEF_FILE}"
+        for line in "${lines[@]}"; do
+            arg_key="${line%%${ARGPARSER_ARG_DELIMITER_2}*}"
+            arg_value="${line#${arg_key}${ARGPARSER_ARG_DELIMITER_2}}"
+            if [[ "$(argparser_in_array "${arg_key}" "${args_keys[@]}")" \
+                == 0 ]]
+            then
+                args_definition["${arg_key}"]="${arg_value}"
+            fi
         done
     fi
 
