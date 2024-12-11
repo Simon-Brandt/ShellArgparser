@@ -5,11 +5,13 @@
 # Last Modification: 2024-12-11
 
 # TODO: Enable parsing of combined short option flags, i.e.
-# script.sh -ab instead of script.sh -a -b.
+#       script.sh -ab instead of script.sh -a -b.
 # TODO: Use coloring function for help, usage, and error messages.
 # BUG: Fix interpretation of keyword arguments after "--".
 # BUG: Fix the argparser using all arguments from the definition, not
-# just from the indexed array "args".
+#      just from the indexed array "args".
+# BUG: Fix short-option-only argument definitions giving faulty help
+#      messages.
 
 # Usage: Source this script with "source argparser.sh" inside the script
 # whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS} is set
@@ -1483,14 +1485,18 @@ function argparser_main() {
     local args_keys
     local args_values
     local checked_arg
+    local def_pattern
     local error
     local error_message
     local error_messages
+    local key_pattern
     local given_args
+    local i
     local line
     local lines
     local message
     local parsed_arg
+    local value_pattern
 
     # Read the arguments.
     read -a given_args <<< "$@"
@@ -1516,39 +1522,88 @@ function argparser_main() {
 
     # Read in the requested arguments.  ${ARGPARSER_ARG_ARRAY_NAME} is
     # set to the name of the array holding the arguments in the script.
-    # This name gets concatenated with the string "[@]" to form a
-    # construct Bash interprets as array index.  By using variable
-    # indirection, this then gets expanded to the array's values.  As
-    # they are interpreted as string separated by spaces, read converts
-    # them back into an array.
-    args_keys="${ARGPARSER_ARG_ARRAY_NAME}[@]"
-    read -a args_keys <<< "${!args_keys}"
-
-    # Declare the variable ${args_definition} only if it doesn't exist
-    # yet.  This happens when it is defined in the script to add
-    # individual arguments that don't exist in ${ARGPARSER_ARG_DEF_FILE}
-    # or no such file is given.
-    if [[ "$(declare -p args_definition &> /dev/null; \
-        printf "%s" "$?")" != 0 ]]
-    then
-        declare -A args_definition
+    # If it already is "args" (the default name), nothing needs to be
+    # done, but other variable names need to be mapped to "args" to be
+    # able to refer to the variable by name.  Thus, the array name
+    # stored in ${ARGPARSER_ARG_ARRAY_NAME} gets concatenated with the
+    # string "[@]" to form a construct Bash interprets as array index.
+    # By using variable indirection, this then gets expanded to the
+    # array's values and copied into the final "args" array.
+    if [[ "${ARGPARSER_ARG_ARRAY_NAME}" != "args" ]]; then
+        args="${ARGPARSER_ARG_ARRAY_NAME}[@]"
+        args=("${!args}")
     fi
 
-    # If an arguments definition file is given (i.e.,
-    # ${ARGPARSER_ARG_DEF_FILE} isn't set to the empty string), read the
-    # arguments definitions from the file.
+    # Read the argument definition, if given as a file (i.e.,
+    # ${ARGPARSER_ARG_DEF_FILE} isn't set to the empty string).
     if [[ -n "${ARGPARSER_ARG_DEF_FILE}" ]]; then
         mapfile -t lines < "${ARGPARSER_ARG_DEF_FILE}"
-        for line in "${lines[@]}"; do
-            arg_key="${line%%${ARGPARSER_ARG_DELIMITER_2}*}"
-            arg_value="${line#${arg_key}${ARGPARSER_ARG_DELIMITER_2}}"
-            if [[ "$(argparser_in_array "${arg_key}" "${args_keys[@]}")" \
-                == 0 ]]
-            then
-                args_definition["${arg_key}"]="${arg_value}"
-            fi
-        done
     fi
+
+    # Define the patterns how the arguments definition's keys and values
+    # look like, as well as the pattern of both.  For the default value
+    # of ${ARGPARSER_ARG_DELIMITER_2}, a colon, the value pattern
+    # describes alternating sequences of seven non-colons ("+([^:])")
+    # and six colons (":") in Bash's extglob syntax.  In PCRE syntax,
+    # the non-colon patten would be written as "[^:]+".  The key pattern
+    # only consists of one non-colon pattern and the joined definition
+    # pattern of the key pattern, a colon, and the value pattern, i.e.,
+    # of eight non-colons interspersed with seven colons.  This reflects
+    # the structure of the arguments definition.
+    key_pattern="+([^${ARGPARSER_ARG_DELIMITER_2}])"
+
+    value_pattern=""
+    for i in {1..6}; do
+        value_pattern+="+([^${ARGPARSER_ARG_DELIMITER_2}])"
+        value_pattern+="${ARGPARSER_ARG_DELIMITER_2}"
+    done
+    value_pattern+="+([^${ARGPARSER_ARG_DELIMITER_2}])"
+
+    def_pattern="${key_pattern}${ARGPARSER_ARG_DELIMITER_2}${value_pattern}"
+
+    # Read all arguments for the script.  The arguments may either be
+    # defined in the script, where they're given in the eight-column
+    # argparser syntax, or in a separate arguments definition file,
+    # where they're only given as their key.  If the structure differs,
+    # an error is printed and the script is aborted.
+    declare -A args_definition
+    for arg in "${args[@]}"; do
+        if [[ "${arg}" == ${def_pattern} ]]; then
+            # The argument matches the entire definition pattern.
+            # Separate its key and value from each other and store them.
+            arg_key="${arg%%${ARGPARSER_ARG_DELIMITER_2}*}"
+            arg_value="${arg#*${ARGPARSER_ARG_DELIMITER_2}}"
+            args_definition["${arg_key}"]="${arg_value}"
+        elif [[ "${arg}" == ${key_pattern} && -n "${ARGPARSER_ARG_DEF_FILE}" ]]
+        then
+            # The argument matches the key pattern and an arguments
+            # definition file is given. Iterate over all arguments
+            # definition lines from the file. When the argument key in
+            # one line matches the given key and the value matches the
+            # value pattern, store the argument's definition and
+            # continue the outer loop (with index 2).  If the inner loop
+            # doesn't get aborted by the continuation, it means that no
+            # fitting argument definition has been found.  Thus, print
+            # an error message and abort.
+            for line in "${lines[@]}"; do
+                arg_key="${line%%${ARGPARSER_ARG_DELIMITER_2}*}"
+                arg_value="${line#*${ARGPARSER_ARG_DELIMITER_2}}"
+                if [[ "${arg_key}" == "${arg}" \
+                    && "${arg_value}" == ${value_pattern} ]]
+                then
+                    args_definition["${arg_key}"]="${arg_value}"
+                    continue 2
+                fi
+            done
+            printf "Error: No argument definition for \"%s\"\n" "${arg}" >&2
+            exit 1
+        else
+            # The argument doesn't match any pattern and is thus deemed
+            # invalid.  Abort the script with an error message.
+            printf "Error: Invalid argument definition: \"%s\"\n" "${arg}" >&2
+            exit 1
+        fi
+    done
 
     # Concatenate the keys and values.
     args_keys="$(IFS="${ARGPARSER_ARG_DELIMITER_1}"; printf "%s" \

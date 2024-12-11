@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2024-12-04
+# Last Modification: 2024-12-11
 
 # Usage: Run this script with "bash test_basic.sh".
 
@@ -16,22 +16,12 @@ export ARGPARSER_MAX_COL_WIDTH_3=35
 
 # Define the arguments.
 args=(
-    var_1
-    var_2
-    var_3
-    var_4
-    var_5
-    var_6
-)
-
-declare -A args_definition
-args_definition=(
-    [var_1]="a,A:var_1,var_A:-:-:1:Arguments:one value without default or choice"
-    [var_2]="b,B:var_2,var_B:-:-:+:Arguments:at least one value without default or choice"
-    [var_3]="c,C:var_3,var_C:-:A,B:+:Arguments:at least one value with choice"
-    [var_4]="d,D:-:A:A,B,C:1:Options:one value with default and choice"
-    [var_5]="-:var_5,var_E:E:-:1:Options:one value with default"
-    [var_6]="f,F:var_6,var_F:false:-:0:Options:no value (flag) with default"
+    "var_1:a,A:var_1,var_A:-:-:1:Arguments:one value without default or choice"
+    "var_2:b,B:var_2,var_B:-:-:+:Arguments:at least one value without default or choice"
+    "var_3:c,C:var_3,var_C:-:A,B:+:Arguments:at least one value with choice"
+    "var_4:d,D:-:A:A,B,C:1:Options:one value with default and choice"
+    "var_5:-:var_5,var_E:E:-:1:Options:one value with default"
+    "var_6:f,F:var_6,var_F:false:-:0:Options:no value (flag) with default"
 )
 set -o nounset
 (set -o posix; set) > 1.txt
