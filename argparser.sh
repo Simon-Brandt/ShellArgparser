@@ -2,16 +2,14 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2024-12-11
+# Last Modification: 2024-12-12
 
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
 # TODO: Use coloring function for help, usage, and error messages.
 # BUG: Fix interpretation of keyword arguments after "--".
-# BUG: Fix the argparser using all arguments from the definition, not
-#      just from the indexed array "args".
 # BUG: Fix short-option-only argument definitions giving faulty help
-#      messages.
+#      and error messages.
 
 # Usage: Source this script with "source argparser.sh" inside the script
 # whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS} is set
@@ -602,8 +600,6 @@ function argparser_create_help_message() {
     local arg
     local arg_definition
     local arg_group
-    local arg_group
-    local arg_groups
     local arg_groups
     local arg_number
     local args
