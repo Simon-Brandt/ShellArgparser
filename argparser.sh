@@ -6,7 +6,7 @@
 
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
-# TODO: Use coloring function for help, usage, and error messages.
+# TODO: Use coloring function for help and usage messages.
 # BUG: Fix interpretation of keyword arguments after "--".
 # BUG: Fix short-option-only argument definitions giving faulty help
 #      and error messages.
@@ -59,6 +59,7 @@ fi
 : "${ARGPARSER_ARG_DELIMITER_2:=":"}"
 : "${ARGPARSER_ARG_DELIMITER_3:=","}"
 : "${ARGPARSER_ARG_GROUP_DELIMITER:="#"}"
+: "${ARGPARSER_ERROR_STYLE:="red,bold"}"
 : "${ARGPARSER_HELP_FILE:=""}"
 : "${ARGPARSER_HELP_FILE_KEEP_COMMENTS:=false}"
 : "${ARGPARSER_MAX_COL_WIDTH_1:=5}"
@@ -105,12 +106,11 @@ function argparser_in_array() {
 }
 
 function argparser_colorize() {
-    # Colorize the string using ANSI escape sequences.
+    # Colorize and format the string using ANSI escape sequences.
     #
     # Arguments:
-    # - $1: the string to colorize
-    # - $2: the color to use
-    # - $2: the style to use
+    # - $1: the color and/or style to use as comma-separated list
+    # - $2: the string to colorize
     #
     # Output:
     # - the colorized string
@@ -118,14 +118,15 @@ function argparser_colorize() {
     # Define the local variables.
     local color
     local colors
+    local request
+    local requests
     local string
     local style
     local styles
 
     # Read the arguments.
-    string="$1"
-    color="$2"
-    style="$3"
+    request="$1"
+    string="$2"
 
     # Define the associative array with colors and their corresponding
     # Select Graphic Rendition (SGR) ANSI escape sequence codes.
@@ -155,8 +156,25 @@ function argparser_colorize() {
         [reverse]=7
     )
 
-    printf "\e[%s;%sm%s\e[0m" "${colors["${color}"]}" "${styles["${style}"]}" \
-        "${string}"
+    # Split the requested color and/or style on commas and print any.
+    # Then, print the string and reset the color and style.  If a
+    # non-existing color or style is requested, abort the script with
+    # an error message.
+    IFS="," read -a requests <<< "${request}"
+    for request in "${requests[@]}"; do
+        if [[ "$(argparser_in_array "${request}" "${!colors[@]}")" == 0 ]]
+        then
+            printf "\e[%sm" "${colors["${request}"]}"
+        elif [[ "$(argparser_in_array "${request}" "${!styles[@]}")" == 0 ]]
+        then
+            printf "\e[%sm" "${styles["${request}"]}"
+        else
+            printf "\e[0mError: Wrong color or style \"%s\" specified.\n" \
+                "${request}" >&2
+        fi
+    done
+
+    printf "%s\e[0m" "${string}"
 }
 
 function argparser_parse_args() {
@@ -1729,8 +1747,10 @@ function argparser_main() {
         args["${arg_key}"]="${arg_value}"
     done
 
-    # Sort and print all error messages.
+    # Sort, colorize, and print all error messages.
     for error_message in "${error_messages[@]}"; do
+        error_message="$(argparser_colorize "${ARGPARSER_ERROR_STYLE}" \
+            "${error_message}")"
         printf "%s\n" "${error_message}"
     done | sort >&2
 
