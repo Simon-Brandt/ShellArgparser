@@ -1,6 +1,6 @@
 # Bash argparser
 
-The argparser is a designed to be an easy-to-use, yet powerful command-line argument parser for your Bash scripts, superior to the traditionally used `getopt`/`getopts` or a suite of conditionals in a `case...esac` statement. It is entirely written in pure Bash, without invoking external commands, thus reducing dependencies of your script. It is inspired by the [Python argparse module](https://docs.python.org/3/library/argparse.html "Python documentation &rightarrow; argparse module").
+The argparser is a designed to be an easy-to-use, yet powerful command-line argument parser for your Bash scripts, superior to the traditionally used `getopt`/`getopts` or a suite of conditionals in a `case...esac` statement. It is entirely written in pure Bash, without invoking external commands, thus reducing dependencies of your script. It is inspired by the [Python argparse module](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module").
 
 ## Features
 
@@ -228,13 +228,13 @@ done
 
 As you can see, there are three sections in the code that are specific to the argparser. The accession at the end only serves us to gain insights into the values of the arguments and are not necessary to include.
 
-The first section sets argparser-specific [environment variables](#environment-variables), which we'll investigate later. Then, the arguments are defined, and finally, the argparser is called. This call is central to the script as it is the only line strictly required to run the argparser. So, most simply, from your script whose command-line arguments you want to be parsed, all you need to do is to source the argparser ([sourcing](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "Bash builtins &rightarrow; source keyword") means in-place execution):
+The first section sets argparser-specific [environment variables](#environment-variables), which we'll investigate later. Then, the arguments are defined, and finally, the argparser is called. This call is central to the script as it is the only line strictly required to run the argparser. So, most simply, from your script whose command-line arguments you want to be parsed, all you need to do is to source the argparser ([sourcing](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash builtins &rightarrow; source keyword") means in-place execution):
 
 ```bash
 source argparser.sh
 ```
 
-Alternatively, but not recommended for the lack of the command's clearness, you could use the synonymous [dot operator](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-_002e "Bash builtins &rightarrow; dot operator") inherited from the Bourne shell:
+Alternatively, but not recommended for the lack of the command's clearness, you could use the synonymous [dot operator](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-_002e "gnu.org &rightarrow; Bash builtins &rightarrow; dot operator") inherited from the Bourne shell:
 
 ```bash
 . argparser.sh
@@ -828,7 +828,7 @@ The argparser defines a large set of environment variables, each following the n
 - ***Type:***  *str* (String)
 - ***Allowed values:*** Any comma-separated string consisting of a color and/or style, with the colors being `"black"`, `"red"`, `"green"`, `"yellow"`, `"blue"`, `"magenta"`, `"cyan"`, and `"white"`, and the styles being `"normal"`, `"bold"`, `"faint"`, `"italic"`, `"underline"`, `"double"`, `"overline"`, `"crossed-out"`, `"blink"`, and `"reverse"`
 - ***Default value:*** `"red,bold"`
-- ***Description:*** The color and style specification to use for error messages, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "ANSI escape code &rightarrow; Select Graphic Rendition parameters").
+- ***Description:*** The color and style specification to use for error messages, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters").
 
 ### `ARGPARSER_HELP_FILE`
 
