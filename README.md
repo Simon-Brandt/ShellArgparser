@@ -66,23 +66,14 @@ export ARGPARSER_MAX_COL_WIDTH_3=35
 
 # Define the arguments.
 args=(
-    var_1
-    var_2
-    var_3
-    var_4
-    var_5
-    var_6
+    "var_1:a,A:var_1,var_A:-:-:1:Arguments:one value without default or choice"
+    "var_2:b,B:var_2,var_B:-:-:+:Arguments:at least one value without default or choice"
+    "var_3:c,C:var_3,var_C:-:A,B:+:Arguments:at least one value with choice"
+    "var_4:d,D:-:A:A,B,C:1:Options:one value with default and choice"
+    "var_5:-:var_5,var_E:E:-:1:Options:one value with default"
+    "var_6:f,F:var_6,var_F:false:-:0:Options:no value (flag) with default"
 )
 
-declare -A args_definition
-args_definition=(
-    [var_1]="a,A:var_1,var_A:-:-:1:Arguments:one value without default or choice"
-    [var_2]="b,B:var_2,var_B:-:-:+:Arguments:at least one value without default or choice"
-    [var_3]="c,C:var_3,var_C:-:A,B:+:Arguments:at least one value with choice"
-    [var_4]="d,D:-:A:A,B,C:1:Options:one value with default and choice"
-    [var_5]="-:var_5,var_E:E:-:1:Options:one value with default"
-    [var_6]="f,F:var_6,var_F:false:-:0:Options:no value (flag) with default"
-)
 source argparser.sh
 
 # The arguments can now be accessed as keys and values of the
@@ -207,23 +198,14 @@ export ARGPARSER_MAX_COL_WIDTH_3=35
 
 # Define the arguments.
 args=(
-    var_1
-    var_2
-    var_3
-    var_4
-    var_5
-    var_6
+    "var_1:a,A:var_1,var_A:-:-:1:Arguments:one value without default or choice"
+    "var_2:b,B:var_2,var_B:-:-:+:Arguments:at least one value without default or choice"
+    "var_3:c,C:var_3,var_C:-:A,B:+:Arguments:at least one value with choice"
+    "var_4:d,D:-:A:A,B,C:1:Options:one value with default and choice"
+    "var_5:-:var_5,var_E:E:-:1:Options:one value with default"
+    "var_6:f,F:var_6,var_F:false:-:0:Options:no value (flag) with default"
 )
 
-declare -A args_definition
-args_definition=(
-    [var_1]="a,A:var_1,var_A:-:-:1:Arguments:one value without default or choice"
-    [var_2]="b,B:var_2,var_B:-:-:+:Arguments:at least one value without default or choice"
-    [var_3]="c,C:var_3,var_C:-:A,B:+:Arguments:at least one value with choice"
-    [var_4]="d,D:-:A:A,B,C:1:Options:one value with default and choice"
-    [var_5]="-:var_5,var_E:E:-:1:Options:one value with default"
-    [var_6]="f,F:var_6,var_F:false:-:0:Options:no value (flag) with default"
-)
 source argparser.sh
 
 # The arguments can now be accessed as keys and values of the
@@ -296,16 +278,17 @@ source argparser.sh
 
 but less legible. Thus, the latter form is preferred. There is one important exception to this rule, and that is configuration by environment variables. Specifying an `action` overrides the values of [`ARGPARSER_READ_ARGS`](#argparser_read_args) and [`ARGPARSER_SET_ARGS`](#argparser_set_args), which are else inherited from the sourcing script's environment (which, in turn, might inherit them from another calling script). Thus, to rule out any possible influence of the environment on `read` and `set`, the long invokation command is recommendable.
 
-As stated, `read` sets an associative array to store the arguments in. For maximum control over the variables in your script's scope, you can configure its name via [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name), defaulting to `"args"`. In `try_argparser.sh`, we obtained the report by accessing exactly this associative array, looping over its contents.
+As stated, `read` sets an associative array to store the arguments in. For maximum control over the variables in your script's scope, you can configure its name via [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name), defaulting to `"args"`. In `try_argparser.sh`, we obtained the report by accessing exactly this associative array, looping over its contents. At the same time, this variable name is used to provide the arguments definition.
 
-While the single line `source argparser.sh` provides the argparser's main functionality, the arguments need to be defined somewhere. Thus, prior to the argparser's invokation (and, in our case, after setting some environment variables to set the maximum column widths for the help message), the arguments are defined. Thereby, the indexed array `args` defines which command-line arguments are acceptable for the script. The associative array `args_definition` defines all arguments in an argparser-specific tabular manner. Alternatively, it could be given as a separate file, indicated as [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file).
+While the single line `source argparser.sh` provides the argparser's main functionality, the arguments need to be defined somewhere. Thus, prior to the argparser's invokation (and, in our case, after setting some environment variables to set the maximum column widths for the help message), the arguments are defined. Thereby, the indexed array `args` defines which command-line arguments are acceptable for the script, possibly giving an argument definition in an argparser-specific tabular manner. Alternatively, this definition could be given as a separate file, indicated as [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file).
 
-The rationale for separating `args` from `args_definition` gets clear when you realize that it's possible to share an argument definition file across multiple scripts and only require a limited subset of them for the current script. Then, you can give these arguments a common definition, identical for any script using them. It is even possible to use an arguments definition file and `args_definition` together, with the latter expanding on the former, thus providing the opportunity to use arguments with the same name, but different definitions, in separate scripts.
+The rationale for allowing `args` to store both the arguments alone and them along their definition gets clear when you realize that it's possible to share an argument definition file across multiple scripts and only require a limited subset of them for the current script. Then, you can give these arguments a common definition, identical for any script using them. Thus, it is even possible to use an arguments definition file and definitions in `args` together, with the latter expanding on the former, thus providing the opportunity to use arguments with the same name, but different definitions, in separate scripts.
 
-The argument-defining associative array `args_definition` consists of a key and a value for each argument. The key is a unique identifier for the argparser functions, and the name under which the argument's value can be obtained from the associative array named by [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name), defaulting to `"args"`. The corresponding value provides the argument definition to the argparser.
+The argument-defining entries in the indexed array named by [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name), defaulting to`"args"`, consist of a key and a value for each argument, but merged in one string (not as true keys and values in associative arrays). The key is a unique identifier for the argparser functions, and the name under which the argument's value can be obtained from the associative array `args`. The corresponding value provides the argument definition to the argparser.
 
-This argparser-specific tabular format consists of seven columns, each separated from each other by an [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2) character, defaulting to a colon (`":"`). The columns are defined as follows:
+This argparser-specific tabular format consists of eight columns, each separated from each other by an [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2) character, defaulting to a colon (`":"`). The columns are defined as follows:
 
+1. the unique argument identifier (like `var_1`)
 1. the short options (one hyphen, like `-a` and `-A` for `var_1`)
 1. the long options (two hyphens, like `--var_1` and `--var_A` for `var_1`)
 1. the default value (like `A` for `var_4`)
@@ -406,22 +389,12 @@ export ARGPARSER_HELP_FILE="help_message.txt"
 
 # Define the arguments.
 args=(
-    var_1
-    var_2
-    var_3
-    var_4
-    var_5
-    var_6
-)
-
-declare -A args_definition
-args_definition=(
-    [var_1]="a:var_1:-:-:1:Arguments:one value without default or choice"
-    [var_2]="b:var_2:-:-:+:Arguments:at least one value without default or choice"
-    [var_3]="c:var_3:-:A,B:+:Arguments:at least one value with choice"
-    [var_4]="d:-:A:A,B,C:1:Options:one value with default and choice"
-    [var_5]="-:var_5:E:-:1:Options:one value with default"
-    [var_6]="f:var_6:false:-:0:Options:no value (flag) with default"
+    "var_1:a:var_1:-:-:1:Arguments:one value without default or choice"
+    "var_2:b:var_2:-:-:+:Arguments:at least one value without default or choice"
+    "var_3:c:var_3:-:A,B:+:Arguments:at least one value with choice"
+    "var_4:d:-:A:A,B,C:1:Options:one value with default and choice"
+    "var_5:-:var_5:E:-:1:Options:one value with default"
+    "var_6:f:var_6:false:-:0:Options:no value (flag) with default"
 )
 
 source argparser.sh
@@ -556,7 +529,7 @@ done
 
 </details>
 
-At the same time, we need an arguments definition file, aptly called `arguments.lst`. Its structure is almost identical to the arguments definition we previously used, but this time, an additional column at index 0 is used that stores the target names for the variables.
+At the same time, we need an arguments definition file, aptly called `arguments.lst`. Its structure is identical to the arguments definition we previously used, allowing you to easily move a definition between your script and the separate file.
 
 ```console
 $ cat arguments.lst 
@@ -812,7 +785,7 @@ The argparser defines a large set of environment variables, each following the n
 - ***Type:*** *str* (String), but only characters allowed in a legit Bash variable identifier
 - ***Allowed values:*** Any legit Bash variable identifier
 - ***Default value:*** `"args"`
-- ***Description:*** The name of an associative array, under which the parsed arguments can be accessed. The array stores the argument's identifier as key and its values as value. If [`ARGPARSER_SET_ARGS`](#argparser_set_args) is `true`, you usually don't need to access this array as the arguments will be set as variables.
+- ***Description:*** The name of an indexed array, under which the arguments are provided, and of an associative array, under which the parsed arguments can be accessed. The former stores the argument's identifier as key and its definition as value, but joined to one string by an [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2) character, the latter stores the identifier as key its values as value. If [`ARGPARSER_SET_ARGS`](#argparser_set_args) is `true`, you usually don't need to access this array as the arguments will be set as variables.
 
 ### `ARGPARSER_ARG_DEF_FILE`
 
