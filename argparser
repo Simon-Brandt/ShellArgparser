@@ -1500,12 +1500,11 @@ function argparser_main() {
     # - the parsed and checked arguments with key and value as
     #   associative array
 
-    # Define the local variables.
-    local arg
-    local arg_key
-    local arg_value
-    local args_keys
-    local args_values
+    # Define the local variables.  If the variable that
+    # ${ARGPARSER_ARG_ARRAY_NAME} refers to is undefined, all variables
+    # prefixed with "arg" are searched, later.  In order to not shadow
+    # them by local variables, all locals starting with "arg" are set
+    # later.
     local checked_arg
     local def_pattern
     local error
@@ -1517,6 +1516,8 @@ function argparser_main() {
     local line
     local lines
     local message
+    local name
+    local names
     local parsed_arg
     local value_pattern
     local warning_message
@@ -1529,20 +1530,39 @@ function argparser_main() {
     # is defined.  If not, guess how it may be called by searching the
     # set variables (not functions, hence the set POSIX mode) for a
     # variable name starting with "arg" to give a clearer error message.
-    # If no such variable name is found, use "?" as default.
+    # If no such variable name is found, skip that part of the message.
     if [[ ! -v "${ARGPARSER_ARG_ARRAY_NAME}" ]]; then
-        args_name="$(set -o posix; set | grep "^arg" \
-            | cut --delimiter="=" --fields=1)"
-        : "${args_name:=?}"
-        printf "Error: The variable ARGPARSER_ARG_ARRAY_NAME refers to " >&2
-        printf "\"%s\", " "${ARGPARSER_ARG_ARRAY_NAME}" >&2
-        printf "but this variable is not defined.  Either you have given " >&2
-        printf "your arguments array another name (maybe " >&2
-        printf "\"%s\" -- " "${args_name}" >&2
-        printf "then change ARGPARSER_ARG_ARRAY_NAME accordingly) or you " >&2
-        printf "forgot defining the array at all (then define it).\n" >&2
+        mapfile -t names <<< "$(set -o posix; set)"
+        for name in "${names[@]}"; do
+            if [[ "${name}" == arg* ]]; then
+                name="${name%%=*}"
+                break
+            else
+                name=""
+            fi
+        done
+        error_message="Error: The variable ARGPARSER_ARG_ARRAY_NAME refers to "
+        error_message+="\"${ARGPARSER_ARG_ARRAY_NAME}\", but this variable is "
+        error_message+="not defined.  Either you have given your arguments "
+        error_message+="array another name ("
+        if [[ -n "${name}" ]]; then  # Include guessed variable name.
+            error_message+="maybe \"${name}\" -- "
+        fi
+        error_message+="then change ARGPARSER_ARG_ARRAY_NAME accordingly) or "
+        error_message+="you forgot defining the array at all (then define it)."
+
+        error_message="$(argparser_colorize "${ARGPARSER_ERROR_STYLE}" \
+            "${error_message}")"
+        printf "%s\n" "${error_message}" >&2
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
     fi
+
+    # Define the remaining local variables that start with "arg".
+    local arg
+    local arg_key
+    local arg_value
+    local args_keys
+    local args_values
 
     # Read in the requested arguments.  ${ARGPARSER_ARG_ARRAY_NAME} is
     # set to the name of the array holding the arguments in the script.
