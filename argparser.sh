@@ -6,6 +6,7 @@
 
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
+# TODO: Enable options starting with a "+" as crossed "-".
 # TODO: Use coloring function for help and usage messages.
 # BUG: Fix interpretation of keyword arguments after "--".
 # BUG: Fix short-option-only argument definitions giving faulty help
@@ -59,9 +60,11 @@ fi
 : "${ARGPARSER_ARG_DELIMITER_2:=":"}"
 : "${ARGPARSER_ARG_DELIMITER_3:=","}"
 : "${ARGPARSER_ARG_GROUP_DELIMITER:="#"}"
+: "${ARGPARSER_ERROR_EXIT_CODE:=1}"
 : "${ARGPARSER_ERROR_STYLE:="red,bold,reverse"}"
 : "${ARGPARSER_HELP_FILE:=""}"
 : "${ARGPARSER_HELP_FILE_KEEP_COMMENTS:=false}"
+: "${ARGPARSER_HELP_EXIT_CODE:=0}"
 : "${ARGPARSER_MAX_COL_WIDTH_1:=5}"
 : "${ARGPARSER_MAX_COL_WIDTH_2:=33}"
 : "${ARGPARSER_MAX_COL_WIDTH_3:=39}"
@@ -1538,7 +1541,7 @@ function argparser_main() {
         printf "\"%s\" -- " "${args_name}" >&2
         printf "then change ARGPARSER_ARG_ARRAY_NAME accordingly) or you " >&2
         printf "forgot defining the array at all (then define it).\n" >&2
-        exit 1
+        exit "${ARGPARSER_ERROR_EXIT_CODE}"
     fi
 
     # Read in the requested arguments.  ${ARGPARSER_ARG_ARRAY_NAME} is
@@ -1617,12 +1620,12 @@ function argparser_main() {
                 fi
             done
             printf "Error: No argument definition for \"%s\"\n" "${arg}" >&2
-            exit 1
+            exit "${ARGPARSER_ERROR_EXIT_CODE}"
         else
             # The argument doesn't match any pattern and is thus deemed
             # invalid.  Abort the script with an error message.
             printf "Error: Invalid argument definition: \"%s\"\n" "${arg}" >&2
-            exit 1
+            exit "${ARGPARSER_ERROR_EXIT_CODE}"
         fi
     done
 
@@ -1664,12 +1667,12 @@ function argparser_main() {
                 Help*)
                     argparser_prepare_help_message "help" "$0" "${args_keys}" \
                         "${args_values}" >&2
-                    exit 1
+                    exit "${ARGPARSER_HELP_EXIT_CODE}"
                     ;;
                 Usage*)
                     argparser_prepare_help_message "usage" "$0" \
                         "${args_keys}" "${args_values}" >&2
-                    exit 1
+                    exit "${ARGPARSER_HELP_EXIT_CODE}"
                     ;;
                 Error*)
                     error=true
@@ -1774,7 +1777,7 @@ function argparser_main() {
         printf "\n" >&2
         argparser_prepare_help_message "usage" "$0" "${args_keys}" \
             "${args_values}" >&2
-        exit 1
+        exit "${ARGPARSER_ERROR_EXIT_CODE}"
     fi
 }
 

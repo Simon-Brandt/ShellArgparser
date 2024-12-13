@@ -760,9 +760,11 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)                 | *char*                             | `":"`[^5]            |
 | [`ARGPARSER_ARG_DELIMITER_3`](#argparser_arg_delimiter_3)                 | *char*                             | `","`[^5]            |
 | [`ARGPARSER_ARG_GROUP_DELIMITER`](#argparser_arg_group_delimiter)         | *char*                             | `"#"`[^5]            |
+| [`ARGPARSER_ERROR_EXIT_CODE`](#argparser_error_exit_code)                 | *int*                              | `1`                  |
 | [`ARGPARSER_ERROR_STYLE`](#argparser_error_style)                         | *str*                              | `"red,bold,reverse"` |
 | [`ARGPARSER_HELP_FILE`](#argparser_help_file)                             | *filepath* \| `""`                 | `""`                 |
 | [`ARGPARSER_HELP_FILE_KEEP_COMMENTS`](#argparser_help_file_keep_comments) | *bool*                             | `false`              |
+| [`ARGPARSER_HELP_EXIT_CODE`](#argparser_help_exit_code)                   | *int*                              | `0`                  |
 | [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1)                 | *int*                              | `5`[^6]              |
 | [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2)                 | *int*                              | `33`[^6]             |
 | [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)                 | *int*                              | `39`[^6]             |
@@ -824,12 +826,26 @@ The argparser defines a large set of environment variables, each following the n
 - ***Default value:*** `"#"`
 - ***Description:*** The delimiter that internally separates argument groups from each other. Once more, you don't need to access this variable, but you must ensure that it is set to a character or glyph that does not occur in the arguments definition or their values.
 
+### `"ARGPARSER_ERROR_EXIT_CODE`
+
+- ***Type:***  *int* (Integer)
+- ***Allowed values:*** Any integer, usually not zero
+- ***Default value:*** `1`
+- ***Description:*** The exit code when errors occured upon parsing.
+
 ### `ARGPARSER_ERROR_STYLE`
 
 - ***Type:***  *str* (String)
 - ***Allowed values:*** Any comma-separated string consisting of a color and/or style, with the colors being `"black"`, `"red"`, `"green"`, `"yellow"`, `"blue"`, `"magenta"`, `"cyan"`, and `"white"`, and the styles being `"normal"`, `"bold"`, `"faint"`, `"italic"`, `"underline"`, `"double"`, `"overline"`, `"crossed-out"`, `"blink"`, and `"reverse"`
 - ***Default value:*** `"red,bold,reverse"`
 - ***Description:*** The color and style specification to use for error messages, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters").
+
+### `"ARGPARSER_HELP_EXIT_CODE`
+
+- ***Type:***  *int* (Integer)
+- ***Allowed values:*** Any integer, usually zero
+- ***Default value:*** `0`
+- ***Description:*** The exit code when a help or usage message was requested using the `-h`, `--help`, `-u`, or `--usage` flags.
 
 ### `ARGPARSER_HELP_FILE`
 
