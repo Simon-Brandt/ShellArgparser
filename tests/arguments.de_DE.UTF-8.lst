@@ -1,6 +1,6 @@
-var_1:a:var_1:-:-:1:Argumente:ein Wert ohne Vorgabe und Auswahl
-var_2:b:var_2:-:-:+:Argumente:mindestens ein Wert ohne Vorgabe und Auswahl
-var_3:c:var_3:-:A,B:+:Argumente:mindestens ein Wert mit Auswahl
+var_1:a:var-1:-:-:1:Argumente:ein Wert ohne Vorgabe und Auswahl
+var_2:b:var-2:-:-:+:Argumente:mindestens ein Wert ohne Vorgabe und Auswahl
+var_3:c:var-3:-:A,B:+:Argumente:mindestens ein Wert mit Auswahl
 var_4:d:-:A:A,B,C:1:Optionen:ein Wert mit Vorgabe und Auswahl
-var_5:-:var_5:E:-:1:Optionen:ein Wert mit Vorgabe
-var_6:f:var_6:false:-:0:Optionen:kein Wert (Flag) mit Vorgabe
+var_5:-:var-5:E:-:1:Optionen:ein Wert mit Vorgabe
+var_6:f:var-6:false:-:0:Optionen:kein Wert (Flag) mit Vorgabe
