@@ -752,27 +752,27 @@ The argparser defines a large set of environment variables, each following the n
 
 ### Overview over environment variables
 
-| Variable name                                                             | Allowed values or type[^1][^2][^3] | Default value  |
-|---------------------------------------------------------------------------|------------------------------------|----------------|
-| [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name)                   | *str*[^4]                          | `"args"`       |
-| [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file)                       | *filepath* \| `""`                 | `""`           |
-| [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)                 | *char*                             | `"\|"`[^5]     |
-| [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)                 | *char*                             | `":"`[^5]      |
-| [`ARGPARSER_ARG_DELIMITER_3`](#argparser_arg_delimiter_3)                 | *char*                             | `","`[^5]      |
-| [`ARGPARSER_ARG_GROUP_DELIMITER`](#argparser_arg_group_delimiter)         | *char*                             | `"#"`[^5]      |
-| [`ARGPARSER_ERROR_STYLE`](#argparser_error_style)                         | *str*                              | `"red,bold"`   |
-| [`ARGPARSER_HELP_FILE`](#argparser_help_file)                             | *filepath* \| `""`                 | `""`           |
-| [`ARGPARSER_HELP_FILE_KEEP_COMMENTS`](#argparser_help_file_keep_comments) | *bool*                             | `false`        |
-| [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1)                 | *int*                              | `5`[^6]        |
-| [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2)                 | *int*                              | `33`[^6]       |
-| [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)                 | *int*                              | `39`[^6]       |
-| [`ARGPARSER_POSITIONAL_NAME`](#argparser_positional_name)                 | *str*                              | `"Positional"` |
-| [`ARGPARSER_READ_ARGS`](#argparser_read_args)                             | *bool*                             | `true`         |
-| [`ARGPARSER_SET_ARGS`](#argparser_set_args)                               | *bool*                             | `true`         |
-| [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)                           | *bool*                             | `true`         |
-| [`ARGPARSER_UNSET_ARGS`](#argparser_unset_args)                           | *bool*                             | `true`         |
-| [`ARGPARSER_UNSET_ENV_VARS`](#argparser_unset_env_vars)                   | *bool*                             | `true`         |
-| [`ARGPARSER_UNSET_FUNCTIONS`](#argparser_unset_functions)                 | *bool*                             | `true`         |
+| Variable name                                                             | Allowed values or type[^1][^2][^3] | Default value        |
+|---------------------------------------------------------------------------|------------------------------------|----------------------|
+| [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name)                   | *str*[^4]                          | `"args"`             |
+| [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file)                       | *filepath* \| `""`                 | `""`                 |
+| [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)                 | *char*                             | `"\|"`[^5]           |
+| [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)                 | *char*                             | `":"`[^5]            |
+| [`ARGPARSER_ARG_DELIMITER_3`](#argparser_arg_delimiter_3)                 | *char*                             | `","`[^5]            |
+| [`ARGPARSER_ARG_GROUP_DELIMITER`](#argparser_arg_group_delimiter)         | *char*                             | `"#"`[^5]            |
+| [`ARGPARSER_ERROR_STYLE`](#argparser_error_style)                         | *str*                              | `"red,bold,reverse"` |
+| [`ARGPARSER_HELP_FILE`](#argparser_help_file)                             | *filepath* \| `""`                 | `""`                 |
+| [`ARGPARSER_HELP_FILE_KEEP_COMMENTS`](#argparser_help_file_keep_comments) | *bool*                             | `false`              |
+| [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1)                 | *int*                              | `5`[^6]              |
+| [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2)                 | *int*                              | `33`[^6]             |
+| [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)                 | *int*                              | `39`[^6]             |
+| [`ARGPARSER_POSITIONAL_NAME`](#argparser_positional_name)                 | *str*                              | `"Positional"`       |
+| [`ARGPARSER_READ_ARGS`](#argparser_read_args)                             | *bool*                             | `true`               |
+| [`ARGPARSER_SET_ARGS`](#argparser_set_args)                               | *bool*                             | `true`               |
+| [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)                           | *bool*                             | `true`               |
+| [`ARGPARSER_UNSET_ARGS`](#argparser_unset_args)                           | *bool*                             | `true`               |
+| [`ARGPARSER_UNSET_ENV_VARS`](#argparser_unset_env_vars)                   | *bool*                             | `true`               |
+| [`ARGPARSER_UNSET_FUNCTIONS`](#argparser_unset_functions)                 | *bool*                             | `true`               |
 
 [^1]: Bash is weakly typed, hence the denoted types are just a guidance.
 [^2]: Strings can optionally be enclosed by quotes.
@@ -827,7 +827,7 @@ The argparser defines a large set of environment variables, each following the n
 
 - ***Type:***  *str* (String)
 - ***Allowed values:*** Any comma-separated string consisting of a color and/or style, with the colors being `"black"`, `"red"`, `"green"`, `"yellow"`, `"blue"`, `"magenta"`, `"cyan"`, and `"white"`, and the styles being `"normal"`, `"bold"`, `"faint"`, `"italic"`, `"underline"`, `"double"`, `"overline"`, `"crossed-out"`, `"blink"`, and `"reverse"`
-- ***Default value:*** `"red,bold"`
+- ***Default value:*** `"red,bold,reverse"`
 - ***Description:*** The color and style specification to use for error messages, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters").
 
 ### `ARGPARSER_HELP_FILE`

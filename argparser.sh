@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2024-12-12
+# Last Modification: 2024-12-13
 
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
@@ -59,7 +59,7 @@ fi
 : "${ARGPARSER_ARG_DELIMITER_2:=":"}"
 : "${ARGPARSER_ARG_DELIMITER_3:=","}"
 : "${ARGPARSER_ARG_GROUP_DELIMITER:="#"}"
-: "${ARGPARSER_ERROR_STYLE:="red,bold"}"
+: "${ARGPARSER_ERROR_STYLE:="red,bold,reverse"}"
 : "${ARGPARSER_HELP_FILE:=""}"
 : "${ARGPARSER_HELP_FILE_KEEP_COMMENTS:=false}"
 : "${ARGPARSER_MAX_COL_WIDTH_1:=5}"
@@ -118,6 +118,7 @@ function argparser_colorize() {
     # Define the local variables.
     local color
     local colors
+    local error_message
     local request
     local requests
     local string
@@ -169,8 +170,11 @@ function argparser_colorize() {
         then
             printf "\e[%sm" "${styles["${request}"]}"
         else
-            printf "\e[0mError: Wrong color or style \"%s\" specified.\n" \
-                "${request}" >&2
+            error_message="$(printf \
+                "Error: Wrong color or style \"%s\" specified.\n" \
+                "${request}")"
+            printf "%s\n" "$(argparser_colorize "red,bold,reverse" \
+                "${error_message}")" >&2
         fi
     done
 
