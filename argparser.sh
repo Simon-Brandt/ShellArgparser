@@ -52,8 +52,6 @@ if (( "$#" >= 2 )) && [[ "$2" == "--" ]]; then
     esac
     shift 2  # Get rid of the action specification.
 fi
-: "${ARGPARSER_READ_ARGS:=true}"
-: "${ARGPARSER_SET_ARGS:=true}"
 : "${ARGPARSER_ARG_ARRAY_NAME:="args"}"
 : "${ARGPARSER_ARG_DEF_FILE:=""}"
 : "${ARGPARSER_ARG_DELIMITER_1:="|"}"
@@ -62,13 +60,15 @@ fi
 : "${ARGPARSER_ARG_GROUP_DELIMITER:="#"}"
 : "${ARGPARSER_ERROR_EXIT_CODE:=1}"
 : "${ARGPARSER_ERROR_STYLE:="red,bold,reverse"}"
+: "${ARGPARSER_HELP_EXIT_CODE:=0}"
 : "${ARGPARSER_HELP_FILE:=""}"
 : "${ARGPARSER_HELP_FILE_KEEP_COMMENTS:=false}"
-: "${ARGPARSER_HELP_EXIT_CODE:=0}"
 : "${ARGPARSER_MAX_COL_WIDTH_1:=5}"
 : "${ARGPARSER_MAX_COL_WIDTH_2:=33}"
 : "${ARGPARSER_MAX_COL_WIDTH_3:=39}"
 : "${ARGPARSER_POSITIONAL_NAME:="Positional"}"
+: "${ARGPARSER_READ_ARGS:=true}"
+: "${ARGPARSER_SET_ARGS:=true}"
 : "${ARGPARSER_SET_ARRAYS:=true}"
 : "${ARGPARSER_UNSET_ARGS:=true}"
 : "${ARGPARSER_UNSET_ENV_VARS:=true}"
