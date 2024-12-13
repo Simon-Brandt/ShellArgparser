@@ -762,9 +762,10 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_ARG_GROUP_DELIMITER`](#argparser_arg_group_delimiter)         | *char*                             | `"#"`[^5]            |
 | [`ARGPARSER_ERROR_EXIT_CODE`](#argparser_error_exit_code)                 | *int*                              | `1`                  |
 | [`ARGPARSER_ERROR_STYLE`](#argparser_error_style)                         | *str*                              | `"red,bold,reverse"` |
+| [`ARGPARSER_HELP_EXIT_CODE`](#argparser_help_exit_code)                   | *int*                              | `0`                  |
 | [`ARGPARSER_HELP_FILE`](#argparser_help_file)                             | *filepath* \| `""`                 | `""`                 |
 | [`ARGPARSER_HELP_FILE_KEEP_COMMENTS`](#argparser_help_file_keep_comments) | *bool*                             | `false`              |
-| [`ARGPARSER_HELP_EXIT_CODE`](#argparser_help_exit_code)                   | *int*                              | `0`                  |
+| [`ARGPARSER_HELP_STYLE`](#argparser_help_style)                           | *str*                              | `"italic"`           |
 | [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1)                 | *int*                              | `5`[^6]              |
 | [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2)                 | *int*                              | `33`[^6]             |
 | [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)                 | *int*                              | `39`[^6]             |
@@ -775,6 +776,7 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_UNSET_ARGS`](#argparser_unset_args)                           | *bool*                             | `true`               |
 | [`ARGPARSER_UNSET_ENV_VARS`](#argparser_unset_env_vars)                   | *bool*                             | `true`               |
 | [`ARGPARSER_UNSET_FUNCTIONS`](#argparser_unset_functions)                 | *bool*                             | `true`               |
+| [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style)                         | *str*                              | `"italic"`           |
 | [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style)                     | *str*                              | `"red,bold"`         |
 
 [^1]: Bash is weakly typed, hence the denoted types are just a guidance.
@@ -861,6 +863,13 @@ The argparser defines a large set of environment variables, each following the n
 - ***Default value:*** `false`
 - ***Description:*** Whether to keep commented lines (and their trailing blank lines) in the help file. By this, you can choose whether you want to include lines serving as a comment (starting with a hashmark, *i.e.* `"#"`) in the help file also in the help message. This is only evaluated if an [`ARGPARSER_HELP_FILE`](#argparser_help_file) is given.
 
+### `ARGPARSER_HELP_STYLE`
+
+- ***Type:***  *str* (String)
+- ***Allowed values:*** Any comma-separated string consisting of a color and/or style, with the colors being `"black"`, `"red"`, `"green"`, `"yellow"`, `"blue"`, `"magenta"`, `"cyan"`, and `"white"`, and the styles being `"normal"`, `"bold"`, `"faint"`, `"italic"`, `"underline"`, `"double"`, `"overline"`, `"crossed-out"`, `"blink"`, and `"reverse"`
+- ***Default value:*** `"italic"`
+- ***Description:*** The color and style specification to use for help messages, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters").
+
 ### `ARGPARSER_MAX_COL_WIDTH_1`
 
 - ***Type:*** *int* (Integer)
@@ -932,6 +941,13 @@ The main difference is that, if you `export` (or `declare -x`) the variables to 
 - ***Allowed values:*** `true` and `false` (case-sensitive)
 - ***Default value:*** `true`
 - ***Description:*** Whether to unset (remove) argparser functions from the environment. You should not need them separate from an argparser invokation, where they're automatically set upon sourcing it. By unsetting them, the namespace is kept clean.
+
+### `ARGPARSER_USAGE_STYLE`
+
+- ***Type:***  *str* (String)
+- ***Allowed values:*** Any comma-separated string consisting of a color and/or style, with the colors being `"black"`, `"red"`, `"green"`, `"yellow"`, `"blue"`, `"magenta"`, `"cyan"`, and `"white"`, and the styles being `"normal"`, `"bold"`, `"faint"`, `"italic"`, `"underline"`, `"double"`, `"overline"`, `"crossed-out"`, `"blink"`, and `"reverse"`
+- ***Default value:*** `"italic"`
+- ***Description:*** The color and style specification to use for usage messages, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters").
 
 ### `ARGPARSER_WARNING_STYLE`
 

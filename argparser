@@ -7,7 +7,6 @@
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
 # TODO: Enable options starting with a "+" as crossed "-".
-# TODO: Use coloring function for help and usage messages.
 # BUG: Fix interpretation of keyword arguments after "--".
 # BUG: Fix short-option-only argument definitions giving faulty help
 #      and error messages.
@@ -63,6 +62,7 @@ fi
 : "${ARGPARSER_HELP_EXIT_CODE:=0}"
 : "${ARGPARSER_HELP_FILE:=""}"
 : "${ARGPARSER_HELP_FILE_KEEP_COMMENTS:=false}"
+: "${ARGPARSER_HELP_STYLE:="italic"}"
 : "${ARGPARSER_MAX_COL_WIDTH_1:=5}"
 : "${ARGPARSER_MAX_COL_WIDTH_2:=33}"
 : "${ARGPARSER_MAX_COL_WIDTH_3:=39}"
@@ -73,6 +73,7 @@ fi
 : "${ARGPARSER_UNSET_ARGS:=true}"
 : "${ARGPARSER_UNSET_ENV_VARS:=true}"
 : "${ARGPARSER_UNSET_FUNCTIONS:=true}"
+: "${ARGPARSER_USAGE_STYLE:="italic"}"
 : "${ARGPARSER_WARNING_STYLE:="red,bold"}"
 
 # Define the argparser functions.
@@ -1510,15 +1511,17 @@ function argparser_main() {
     local error
     local error_message
     local error_messages
-    local key_pattern
     local given_args
+    local help_message
     local i
+    local key_pattern
     local line
     local lines
     local message
     local name
     local names
     local parsed_arg
+    local usage_message
     local value_pattern
     local warning_message
     local warning_messages
@@ -1685,13 +1688,19 @@ function argparser_main() {
         for message in "${parsed_arg[@]}"; do
             case "${message}" in
                 Help*)
-                    argparser_prepare_help_message "help" "$0" "${args_keys}" \
-                        "${args_values}" >&2
+                    help_message="$(argparser_prepare_help_message "help" \
+                        "$0" "${args_keys}" "${args_values}")"
+                    help_message="$(argparser_colorize \
+                        "${ARGPARSER_HELP_STYLE}" "${help_message}")"
+                    printf "%s\n" "${help_message}" >&2
                     exit "${ARGPARSER_HELP_EXIT_CODE}"
                     ;;
                 Usage*)
-                    argparser_prepare_help_message "usage" "$0" \
-                        "${args_keys}" "${args_values}" >&2
+                    usage_message="$(argparser_prepare_help_message "usage" \
+                        "$0" "${args_keys}" "${args_values}")"
+                    usage_message="$(argparser_colorize \
+                        "${ARGPARSER_USAGE_STYLE}" "${usage_message}")"
+                    printf "%s\n" "${usage_message}" >&2
                     exit "${ARGPARSER_HELP_EXIT_CODE}"
                     ;;
                 Error*)
@@ -1795,8 +1804,11 @@ function argparser_main() {
     # then print a blank line and the usage message, then exit.
     if [[ "${error}" == true ]]; then
         printf "\n" >&2
-        argparser_prepare_help_message "usage" "$0" "${args_keys}" \
-            "${args_values}" >&2
+        usage_message="$(argparser_prepare_help_message "usage" "$0" \
+            "${args_keys}" "${args_values}")"
+        usage_message="$(argparser_colorize "${ARGPARSER_USAGE_STYLE}" \
+            "${usage_message}")"
+        printf "%s\n" "${usage_message}" >&2
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
     fi
 }
