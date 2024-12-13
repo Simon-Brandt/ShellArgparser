@@ -1,6 +1,6 @@
 # Bash argparser
 
-The argparser is a designed to be an easy-to-use, yet powerful command-line argument parser for your Bash scripts, superior to the traditionally used `getopt`/`getopts` or a suite of conditionals in a `case...esac` statement. It is entirely written in pure Bash, without invoking external commands, thus reducing dependencies of your script. It is inspired by the [Python argparse module](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module").
+The argparser is a designed to be an easy-to-use, yet powerful command-line argument parser for your Bash scripts, superior to the traditionally used [`getopt`](https://www.man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)")/[`getopts`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-getopts "gnu.org &rightarrow; Bourne Shell builtins &rightarrow; getopts") or a suite of conditionals in a `case...esac` statement. It is entirely written in pure Bash, without invoking external commands, thus reducing dependencies of your script. It is inspired by the [Python argparse module](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module").
 
 ## Features
 
@@ -234,7 +234,7 @@ The first section sets argparser-specific [environment variables](#environment-v
 source argparser.sh
 ```
 
-Alternatively, but not recommended for the lack of the command's clearness, you could use the synonymous [dot operator](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-_002e "gnu.org &rightarrow; Bash builtins &rightarrow; dot operator") inherited from the Bourne shell:
+Alternatively, but not recommended for the lack of the command's clearness, you could use the synonymous [dot operator](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-_002e "gnu.org &rightarrow; Bourne Shell builtins &rightarrow; dot operator") inherited from the Bourne shell:
 
 ```bash
 . argparser.sh
