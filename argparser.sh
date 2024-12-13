@@ -70,6 +70,7 @@ fi
 : "${ARGPARSER_UNSET_ARGS:=true}"
 : "${ARGPARSER_UNSET_ENV_VARS:=true}"
 : "${ARGPARSER_UNSET_FUNCTIONS:=true}"
+: "${ARGPARSER_WARNING_STYLE:="red,bold"}"
 
 # Define the argparser functions.
 function argparser_in_array() {
@@ -1515,6 +1516,8 @@ function argparser_main() {
     local message
     local parsed_arg
     local value_pattern
+    local warning_message
+    local warning_messages
 
     # Read the arguments.
     read -a given_args <<< "$@"
@@ -1637,6 +1640,7 @@ function argparser_main() {
 
     error=false
     error_messages=( )
+    warning_messages=( )
 
     unset args
     declare -Ag args
@@ -1672,7 +1676,7 @@ function argparser_main() {
                     error_messages+=("${message}")
                     ;;
                 Warning*)
-                    error_messages+=("${message}")
+                    warning_messages+=("${message}")
                     ;;
                 Positional)
                     arg_key="${ARGPARSER_POSITIONAL_NAME}"
@@ -1739,7 +1743,7 @@ function argparser_main() {
                     error_messages+=("${message}")
                     ;;
                 Warning*)
-                    error_messages+=("${message}")
+                    warning_messages+=("${message}")
                     ;;
                 Value*)
                     arg_value="${message#Value: }"
@@ -1751,11 +1755,17 @@ function argparser_main() {
         args["${arg_key}"]="${arg_value}"
     done
 
-    # Sort, colorize, and print all error messages.
+    # Sort, colorize, and print all error and warning messages.
     for error_message in "${error_messages[@]}"; do
         error_message="$(argparser_colorize "${ARGPARSER_ERROR_STYLE}" \
             "${error_message}")"
         printf "%s\n" "${error_message}"
+    done | sort >&2
+
+    for warning_message in "${warning_messages[@]}"; do
+        warning_message="$(argparser_colorize "${ARGPARSER_WARNING_STYLE}" \
+            "${warning_message}")"
+        printf "%s\n" "${warning_message}"
     done | sort >&2
 
     # If any argument was not or wrongly given, ${error} is set to true,

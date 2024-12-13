@@ -773,6 +773,7 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_UNSET_ARGS`](#argparser_unset_args)                           | *bool*                             | `true`               |
 | [`ARGPARSER_UNSET_ENV_VARS`](#argparser_unset_env_vars)                   | *bool*                             | `true`               |
 | [`ARGPARSER_UNSET_FUNCTIONS`](#argparser_unset_functions)                 | *bool*                             | `true`               |
+| [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style)                     | *str*                              | `"red,bold"`         |
 
 [^1]: Bash is weakly typed, hence the denoted types are just a guidance.
 [^2]: Strings can optionally be enclosed by quotes.
@@ -915,3 +916,10 @@ The main difference is that, if you `export` (or `declare -x`) the variables to 
 - ***Allowed values:*** `true` and `false` (case-sensitive)
 - ***Default value:*** `true`
 - ***Description:*** Whether to unset (remove) argparser functions from the environment. You should not need them separate from an argparser invokation, where they're automatically set upon sourcing it. By unsetting them, the namespace is kept clean.
+
+### `ARGPARSER_WARNING_STYLE`
+
+- ***Type:***  *str* (String)
+- ***Allowed values:*** Any comma-separated string consisting of a color and/or style, with the colors being `"black"`, `"red"`, `"green"`, `"yellow"`, `"blue"`, `"magenta"`, `"cyan"`, and `"white"`, and the styles being `"normal"`, `"bold"`, `"faint"`, `"italic"`, `"underline"`, `"double"`, `"overline"`, `"crossed-out"`, `"blink"`, and `"reverse"`
+- ***Default value:*** `"red,bold"`
+- ***Description:*** The color and style specification to use for warning messages, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters").
