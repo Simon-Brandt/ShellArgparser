@@ -21,7 +21,7 @@ args=(
     "var_6:f:var-6:false:-:0:Options:no value (flag) with default"
 )
 
-source argparser.sh
+source argparser
 
 # The arguments can now be accessed as keys and values of the
 # associative array "args".  Further, they are set as variables to the

@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2024-12-11
+# Last Modification: 2024-12-13
 
 # Usage: Run this script with "bash test_short_options.sh".
 
@@ -24,7 +24,7 @@ args=(
     "var_6:f,F:-:false:-:0:Options:no value (flag) with default"
 )
 
-source argparser.sh
+source argparser
 
 # The arguments can now be accessed as keys and values of the
 # associative array "args".  Further, they are set as variables to the

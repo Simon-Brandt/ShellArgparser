@@ -12,7 +12,7 @@
 # BUG: Fix short-option-only argument definitions giving faulty help
 #      and error messages.
 
-# Usage: Source this script with "source argparser.sh" inside the script
+# Usage: Source this script with "source argparser" inside the script
 # whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS} is set
 # to true (which per default is), the arguments will be parsed upon
 # sourcing, else, the respective functions need to be called.  If

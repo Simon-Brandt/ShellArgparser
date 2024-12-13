@@ -74,7 +74,7 @@ args=(
     "var_6:f,F:var-6,var-F:false:-:0:Options:no value (flag) with default"
 )
 
-source argparser.sh
+source argparser
 
 # The arguments can now be accessed as keys and values of the
 # associative array "args".  Further, they are set as variables to the
@@ -133,7 +133,7 @@ The keyword argument "var_5" equals "E".
 The keyword argument "var_6" equals "false".
 ```
 
-Even without fully understanding yet what the argparser does, you can see that we set *three* arguments on the command-line invokation of `test_argparser.sh`, *viz.* `--var-1`, `--var-2`, and `--var-3`. Nonetheless, the script reports *six* arguments to be given. This is due to `var_4` through `var_6` (note that the *identifiers* use underscores, while the *option names* use hyphens, here) having said default values that are used when the argument is not given on the command line. For `var_1` through `var_3`, the reported values are exactly what we specified, *i.e.*, `"a"`, `"b"`, and `"A"`, respectively.
+Even without fully understanding yet what the argparser does, you can see that we set *three* arguments on the command-line invokation of `try_argparser.sh`, *viz.* `--var-1`, `--var-2`, and `--var-3`. Nonetheless, the script reports *six* arguments to be given. This is due to `var_4` through `var_6` (note that the *identifiers* use underscores, while the *option names* use hyphens, here) having said default values that are used when the argument is not given on the command line. For `var_1` through `var_3`, the reported values are exactly what we specified, *i.e.*, `"a"`, `"b"`, and `"A"`, respectively.
 
 Prior further explanation, let's see what happens with the following type of call:
 
@@ -206,7 +206,7 @@ args=(
     "var_6:f,F:var-6,var-F:false:-:0:Options:no value (flag) with default"
 )
 
-source argparser.sh
+source argparser
 
 # The arguments can now be accessed as keys and values of the
 # associative array "args".  Further, they are set as variables to the
@@ -231,25 +231,25 @@ As you can see, there are three sections in the code that are specific to the ar
 The first section sets argparser-specific [environment variables](#environment-variables), which we'll investigate later. Then, the arguments are defined, and finally, the argparser is called. This call is central to the script as it is the only line strictly required to run the argparser. So, most simply, from your script whose command-line arguments you want to be parsed, all you need to do is to source the argparser ([sourcing](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash builtins &rightarrow; source keyword") means in-place execution):
 
 ```bash
-source argparser.sh
+source argparser
 ```
 
 Alternatively, but not recommended for the lack of the command's clearness, you could use the synonymous [dot operator](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-_002e "gnu.org &rightarrow; Bourne Shell builtins &rightarrow; dot operator") inherited from the Bourne shell:
 
 ```bash
-. argparser.sh
+. argparser
 ```
 
 This is the simplest form of invoking the argparser. It will read your script's command line, parse the arguments, and set them to variables in your script. And this is the reason for sourcing instead of normal calling as in:
 
 ```bash
-bash argparser.sh
+bash argparser
 ```
 
 or (deactivated by the shebang line):
 
 ```bash
-./argparser.sh
+./argparser
 ```
 
 since you don't want the arguments to be set in a subshell created after forking, as these will be gone when the argparser (and with it, the subshell) exits.
@@ -257,7 +257,7 @@ since you don't want the arguments to be set in a subshell created after forking
 You can obtain fine-grained control by the longer form of the command:
 
 ```bash
-source argparser.sh --action -- "$@"
+source argparser --action -- "$@"
 ```
 
 with `action` being either `read`, `set`, or `all`. If `action` is `read`, then the argparser will only read the command-line arguments and parse them into an associative array you can access afterwards. If the `action` is `set`, the arguments from this array are set as variables to your script. *I.e.*, you need to `read` the arguments before you `set` them, but you can perform arbitrary steps in-between. This could come handy when you want to use the variable names the argparser sets for some task or want to manipulate the associative array prior having the values set. Finally, if the `action` is `all`, both `read` and `set` will be executed (in this order).
@@ -267,20 +267,20 @@ Due to the manner the `source` builtin is defined, you must explicitly state the
 Further, writing
 
 ```bash
-source argparser.sh --all -- "$@"
+source argparser --all -- "$@"
 ```
 
 is exactly identical to writing a bare
 
 ```bash
-source argparser.sh
+source argparser
 ```
 
 but less legible. Thus, the latter form is preferred. There is one important exception to this rule, and that is configuration by environment variables. Specifying an `action` overrides the values of [`ARGPARSER_READ_ARGS`](#argparser_read_args) and [`ARGPARSER_SET_ARGS`](#argparser_set_args), which are else inherited from the sourcing script's environment (which, in turn, might inherit them from another calling script). Thus, to rule out any possible influence of the environment on `read` and `set`, the long invokation command is recommendable.
 
 As stated, `read` sets an associative array to store the arguments in. For maximum control over the variables in your script's scope, you can configure its name via [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name), defaulting to `"args"`. In `try_argparser.sh`, we obtained the report by accessing exactly this associative array, looping over its contents. At the same time, this variable name is used to provide the arguments definition.
 
-While the single line `source argparser.sh` provides the argparser's main functionality, the arguments need to be defined somewhere. Thus, prior to the argparser's invokation (and, in our case, after setting some environment variables to set the maximum column widths for the help message), the arguments are defined. Thereby, the indexed array `args` defines which command-line arguments are acceptable for the script, possibly giving an argument definition in an argparser-specific tabular manner. Alternatively, this definition could be given as a separate file, indicated as [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file).
+While the single line `source argparser` provides the argparser's main functionality, the arguments need to be defined somewhere. Thus, prior to the argparser's invokation (and, in our case, after setting some environment variables to set the maximum column widths for the help message), the arguments are defined. Thereby, the indexed array `args` defines which command-line arguments are acceptable for the script, possibly giving an argument definition in an argparser-specific tabular manner. Alternatively, this definition could be given as a separate file, indicated as [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file).
 
 The rationale for allowing `args` to store both the arguments alone and them along their definition gets clear when you realize that it's possible to share an argument definition file across multiple scripts and only require a limited subset of them for the current script. Then, you can give these arguments a common definition, identical for any script using them. Thus, it is even possible to use an arguments definition file and definitions in `args` together, with the latter expanding on the former, thus providing the opportunity to use arguments with the same name, but different definitions, in separate scripts.
 
@@ -397,7 +397,7 @@ args=(
     "var_6:f:var-6:false:-:0:Options:no value (flag) with default"
 )
 
-source argparser.sh
+source argparser
 
 # The arguments can now be accessed as keys and values of the
 # associative array "args".  Further, they are set as variables to the
@@ -509,7 +509,7 @@ args=(
     var_6
 )
 
-source argparser.sh
+source argparser
 
 # The arguments can now be accessed as keys and values of the
 # associative array "args".  Further, they are set as variables to the
@@ -606,7 +606,7 @@ args=(
     var_6
 )
 
-source argparser.sh
+source argparser
 
 # The arguments can now be accessed as keys and values of the
 # associative array "args".  Further, they are set as variables to the
@@ -895,15 +895,15 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false` (case-sensitive)
 - ***Default value:*** `true`
-- ***Description:*** Whether to read the arguments from the command line (*i.e.*, from `"$@"`) and parse them to the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name) sets. Setting `ARGPARSER_READ_ARGS` is the same as calling `source argparser.sh --read -- "$@"`. If set along [`ARGPARSER_SET_ARGS`](#argparser_set_args), it is the same as calling `source argparser.sh --all -- "$@"` or a bare `source argparser.sh`.  
-The main difference is that, if you `export` (or `declare -x`) the variables to subshells (like scripts called from your master script), they will inherit these environment variables. If, in your child script, you use a bare `source argparser.sh`, *i.e.*, without specifying an action to the argparser, the setting from the inherited environment variables will be used. You can always override them by specifying an action. By this, you may set the environment variables in your master script and use the settings in some child scripts, with the others setting their own action.
+- ***Description:*** Whether to read the arguments from the command line (*i.e.*, from `"$@"`) and parse them to the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name) sets. Setting `ARGPARSER_READ_ARGS` is the same as calling `source argparser --read -- "$@"`. If set along [`ARGPARSER_SET_ARGS`](#argparser_set_args), it is the same as calling `source argparser --all -- "$@"` or a bare `source argparser`.  
+The main difference is that, if you `export` (or `declare -x`) the variables to subshells (like scripts called from your master script), they will inherit these environment variables. If, in your child script, you use a bare `source argparser`, *i.e.*, without specifying an action to the argparser, the setting from the inherited environment variables will be used. You can always override them by specifying an action. By this, you may set the environment variables in your master script and use the settings in some child scripts, with the others setting their own action.
 
 ### `ARGPARSER_SET_ARGS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false` (case-sensitive)
 - ***Default value:*** `true`
-- ***Description:*** Whether to set the (read and parsed) arguments from the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name) sets to variables in the calling acript's scope. Setting `ARGPARSER_SET_ARGS` is the same as calling `source argparser.sh --set -- "$@"`. If set along [`ARGPARSER_READ_ARGS`](#argparser_read_args), it is the same as calling `source argparser.sh --all -- "$@"` or a bare `source argparser.sh`. For details, refer to [`ARGPARSER_READ_ARGS`](#argparser_read_args).
+- ***Description:*** Whether to set the (read and parsed) arguments from the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name) sets to variables in the calling acript's scope. Setting `ARGPARSER_SET_ARGS` is the same as calling `source argparser --set -- "$@"`. If set along [`ARGPARSER_READ_ARGS`](#argparser_read_args), it is the same as calling `source argparser --all -- "$@"` or a bare `source argparser`. For details, refer to [`ARGPARSER_READ_ARGS`](#argparser_read_args).
 
 ### `ARGPARSER_SET_ARRAYS`
 

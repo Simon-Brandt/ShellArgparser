@@ -25,8 +25,8 @@ args=(
 )
 set -o nounset
 (set -o posix; set) > 1.txt
-source argparser.sh --read -- "$@"
-source argparser.sh --set -- "$@"
+source argparser --read -- "$@"
+source argparser --set -- "$@"
 (set -o posix; set) > 2.txt
 # diff --side-by-side --suppress-common-lines 1.txt 2.txt
 
