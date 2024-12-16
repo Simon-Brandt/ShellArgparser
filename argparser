@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2024-12-13
+# Last Modification: 2024-12-19
 
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
@@ -53,6 +53,7 @@ if (( "$#" >= 2 )) && [[ "$2" == "--" ]]; then
 fi
 : "${ARGPARSER_ARG_ARRAY_NAME:="args"}"
 : "${ARGPARSER_ARG_DEF_FILE:=""}"
+: "${ARGPARSER_ARG_DEF_FILE_HAS_HEADER:=false}"
 : "${ARGPARSER_ARG_DELIMITER_1:="|"}"
 : "${ARGPARSER_ARG_DELIMITER_2:=":"}"
 : "${ARGPARSER_ARG_DELIMITER_3:=","}"
@@ -1584,7 +1585,11 @@ function argparser_main() {
     # Read the argument definition, if given as a file (i.e.,
     # ${ARGPARSER_ARG_DEF_FILE} isn't set to the empty string).
     if [[ -n "${ARGPARSER_ARG_DEF_FILE}" ]]; then
-        mapfile -t lines < "${ARGPARSER_ARG_DEF_FILE}"
+        if [[ "${ARGPARSER_ARG_DEF_FILE_HAS_HEADER}" == true ]]; then
+            mapfile -s 1 -t lines < "${ARGPARSER_ARG_DEF_FILE}"
+        else
+            mapfile -t lines < "${ARGPARSER_ARG_DEF_FILE}"
+        fi
     fi
 
     # Define the patterns how the arguments definition's keys and values

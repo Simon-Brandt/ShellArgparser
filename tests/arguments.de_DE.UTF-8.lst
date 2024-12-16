@@ -1,3 +1,4 @@
+Identifikator:Kurze Optionen:Lange Optionen:Vorgabewerte:Auswahlwerte:Anzahl Werte:Argumentgruppe:Hilfetext
 var_1:a:var-1:-:-:1:Argumente:ein Wert ohne Vorgabe und Auswahl
 var_2:b:var-2:-:-:+:Argumente:mindestens ein Wert ohne Vorgabe und Auswahl
 var_3:c:var-3:-:A,B:+:Argumente:mindestens ein Wert mit Auswahl

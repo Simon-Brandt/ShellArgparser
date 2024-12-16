@@ -531,6 +531,8 @@ done
 
 At the same time, we need an arguments definition file, aptly called `arguments.lst`. Its structure is identical to the arguments definition we previously used, allowing you to easily move a definition between your script and the separate file.
 
+You could even add a header to explain the fields, which is shown in the [localization](#help-message-localization) section. Then, you can set your text editor to interpret the data as CSV file, possibly syntax-highlighting the columns with the given header or visually aligning the columns (as done by the [Rainbow CSV](https://marketplace.visualstudio.com/items?itemName=mechatroner.rainbow-csv "Visual Studio Code &rightarrow; marketplace &rightarrow; Rainbow CSV extension") extension in [Visual Studio Code](https://code.visualstudio.com/ "Visual Studio Code")).
+
 ```console
 $ cat arguments.lst 
 var_1:a:var-1:-:-:1:Arguments:one value without default or choice
@@ -594,6 +596,7 @@ then, in your script, you can set `ARGPARSER_ARG_DEF_FILE` and `ARGPARSER_HELP_F
 # Set the argparser, reading the arguments definition from a file and
 # the help message from a file.
 export ARGPARSER_ARG_DEF_FILE="arguments.${LANG}.lst"
+export ARGPARSER_ARG_DEF_FILE_HAS_HEADER=true
 export ARGPARSER_HELP_FILE="help_message.${LANG}.txt"
 
 # Set the arguments.
@@ -626,10 +629,11 @@ done
 
 </details>
 
-You need to manually translate the arguments definition (only the argument groups and the help texts) in the new arguments definition file:
+You need to manually translate the arguments definition (only the argument groups and the help texts) in the new arguments definition file, here using a header for clarity (given as [`ARGPARSER_ARG_DEF_FILE_HAS_HEADER`](#argparser_arg_def_file_has_header) environment variable):
 
 ```console
 $ cat arguments.de_DE.UTF-8.lst
+Identifikator:Kurze Optionen:Lange Optionen:Vorgabewerte:Auswahlwerte:Anzahl Werte:Argumentgruppe:Hilfetext
 var_1:a:var-1:-:-:1:Argumente:ein Wert ohne Vorgabe und Auswahl
 var_2:b:var-2:-:-:+:Argumente:mindestens ein Wert ohne Vorgabe und Auswahl
 var_3:c:var-3:-:A,B:+:Argumente:mindestens ein Wert mit Auswahl
@@ -788,6 +792,7 @@ The argparser defines a large set of environment variables, each following the n
 |---------------------------------------------------------------------------|------------------------------------|----------------------|
 | [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name)                   | *str*[^4]                          | `"args"`             |
 | [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file)                       | *filepath* \| `""`                 | `""`                 |
+| [`ARGPARSER_ARG_DEF_FILE_HAS_HEADER`](#argparser_arg_def_file_has_header) | *bool*                             | `false`              |
 | [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)                 | *char*                             | `"\|"`[^5]           |
 | [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)                 | *char*                             | `":"`[^5]            |
 | [`ARGPARSER_ARG_DELIMITER_3`](#argparser_arg_delimiter_3)                 | *char*                             | `","`[^5]            |
@@ -831,6 +836,13 @@ The argparser defines a large set of environment variables, each following the n
 - ***Allowed values:*** Any legit filepath or the empty string `""`
 - ***Default value:*** `""`
 - ***Description:*** The path to a file holding the definition of the arguments. This file may be used by multiple scripts if they share some arguments. It is not necessary to use all arguments from there, as you need to specify which arguments you want to use. It is possible to set additional argument definitions within the script, which could come handy when scripts share some arguments (from the file), but also use some own arguments (from the script), whose names have another meaning in the companion script.
+
+### `ARGPARSER_ARG_DEF_FILE_HAS_HEADER`
+
+- ***Type:*** *bool* (Boolean)
+- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Default value:*** `false`
+- ***Description:*** Whether the arguments definition file has a header explaining the columns. This is only evaluated if an [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file) is given.
 
 ### `ARGPARSER_ARG_DELIMITER_1`
 

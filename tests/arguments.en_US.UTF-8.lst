@@ -1,3 +1,4 @@
+Identifier:Short options:Long Options:Default value:Choice values:Number of values:Argument group:Help text
 var_1:a:var-1:-:-:1:Arguments:one value without default or choice
 var_2:b:var-2:-:-:+:Arguments:at least one value without default or choice
 var_3:c:var-3:-:A,B:+:Arguments:at least one value with choice
