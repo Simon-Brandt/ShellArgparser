@@ -703,33 +703,33 @@ Es gibt grundsätzlich zwei Optionen für die Hilfe-Meldungen.
 
 ### Message styles
 
-It is possible to customize the appearance of error, warning, help, and usage messages using the respective environment variable, *viz.*, [`ARGPARSER_ERROR_STYLE`](#argparser_error_style), [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style), [`ARGPARSER_HELP_STYLE`](#argparser_help_style), and [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style).  Using [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters"), messages can be colorized and stylized. This is especially useful to quickly see errors when logging, but requires that the terminal or text editor, with which you opened the log file, support interpreting the escape codes. This is, *e.g.*, supported by `less --raw-control-chars <filename>`.
+It is possible to customize the appearance of error, warning, help, and usage messages using the respective environment variable, *viz.*, [`ARGPARSER_ERROR_STYLE`](#argparser_error_style), [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style), [`ARGPARSER_HELP_STYLE`](#argparser_help_style), and [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style).  Using [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters"), messages can be colorized and stylized. This is especially useful to quickly see errors when logging, but requires that the terminal or text editor, with which you opened the log file, supports interpreting the escape codes. This is, *e.g.*, supported by `less --raw-control-chars <filename>`.
 
-A number of colors and styles is available:
+A number of colors and styles is available. Note that you don't need to remember the SGR codes, they're only internally used and given here for reference, what to expect from the keywords for the colors and styles. Further note that the actual RGB/Hex color values will depend on the output device.
 
-| color       | SGR code |
-|-------------|----------|
-| `"black"`   | `30`     |
-| `"red"`     | `31`     |
-| `"green"`   | `32`     |
-| `"yellow"`  | `33`     |
-| `"blue"`    | `34`     |
-| `"magenta"` | `35`     |
-| `"cyan"`    | `36`     |
-| `"white"`   | `37`     |
+| color                                   | SGR code |
+|-----------------------------------------|----------|
+| $\small\textsf{\color{black}black}$     | `30`     |
+| $\small\textsf{\color{red}red}$         | `31`     |
+| $\small\textsf{\color{green}green}$     | `32`     |
+| $\small\textsf{\color{orange}yellow}$   | `33`     |
+| $\small\textsf{\color{blue}blue}$       | `34`     |
+| $\small\textsf{\color{magenta}magenta}$ | `35`     |
+| $\small\textsf{\color{cyan}cyan}$       | `36`     |
+| $\small\textsf{\color{lightgray}white}$ | `37`     |
 
-| style           | SGR code |
-|-----------------|----------|
-| `"normal"`      | `22`     |
-| `"bold"`        | `1`      |
-| `"faint"`       | `2`      |
-| `"italic"`      | `3`      |
-| `"underline"`   | `4`      |
-| `"double"`      | `21`     |
-| `"overline"`    | `53`     |
-| `"crossed-out"` | `9`      |
-| `"blink"`       | `5`      |
-| `"reverse"`     | `7`      |
+| style         | SGR code |
+|---------------|----------|
+| `normal`      | `22`     |
+| `bold`        | `1`      |
+| `faint`       | `2`      |
+| `italic`      | `3`      |
+| `underline`   | `4`      |
+| `double`      | `21`     |
+| `overline`    | `53`     |
+| `crossed-out` | `9`      |
+| `blink`       | `5`      |
+| `reverse`     | `7`      |
 
 While colors overwrite each other, some styles can be combined. For instance, the default value for `ARGPARSER_ERROR_STYLE` is `"red,bold,reverse"`, meaning to colorize the message in red and to format it in bold font, using reverse video. Other useful combinations may include `"faint"` and `"italic"` or `"bold"` and `"underline"`. The order of giving the colors and styles in the environment variables' values does only matter if multiple colors are given, when the last one "wins". Else, the colors and styles are simply composed.
 
