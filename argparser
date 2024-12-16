@@ -1871,6 +1871,7 @@ if [[ "${ARGPARSER_SET_ARGS}" == true ]]; then
     done
 fi
 
+unset arg
 unset args_keys
 unset args_values
 unset parsed_arg
