@@ -1647,12 +1647,18 @@ function argparser_main() {
                     continue 2
                 fi
             done
-            printf "Error: No argument definition for \"%s\"\n" "${arg}" >&2
+            error_message="Error: No argument definition for \"${arg}\""
+            error_message="$(argparser_colorize "${ARGPARSER_ERROR_STYLE}" \
+                "${error_message}")"
+            printf "%s\n" "${error_message}" >&2
             exit "${ARGPARSER_ERROR_EXIT_CODE}"
         else
             # The argument doesn't match any pattern and is thus deemed
             # invalid.  Abort the script with an error message.
-            printf "Error: Invalid argument definition: \"%s\"\n" "${arg}" >&2
+            error_message="Error: Invalid argument definition: \"${arg}\""
+            error_message="$(argparser_colorize "${ARGPARSER_ERROR_STYLE}" \
+                "${error_message}")"
+            printf "%s\n" "${error_message}" >&2
             exit "${ARGPARSER_ERROR_EXIT_CODE}"
         fi
     done
