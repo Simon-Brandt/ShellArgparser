@@ -797,6 +797,7 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)                 | *char*                             | `":"`[^5]            |
 | [`ARGPARSER_ARG_DELIMITER_3`](#argparser_arg_delimiter_3)                 | *char*                             | `","`[^5]            |
 | [`ARGPARSER_ARG_GROUP_DELIMITER`](#argparser_arg_group_delimiter)         | *char*                             | `"#"`[^5]            |
+| [`ARGPARSER_CHECK_ARG_DEFINITION`](#argparser_check_arg_definition)       | *bool*                             | `false`              |
 | [`ARGPARSER_ERROR_EXIT_CODE`](#argparser_error_exit_code)                 | *int*                              | `1`                  |
 | [`ARGPARSER_ERROR_STYLE`](#argparser_error_style)                         | *str*                              | `"red,bold,reverse"` |
 | [`ARGPARSER_HELP_EXIT_CODE`](#argparser_help_exit_code)                   | *int*                              | `0`                  |
@@ -871,6 +872,13 @@ The argparser defines a large set of environment variables, each following the n
 - ***Allowed values:*** Any unique character that's not used as [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1), [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2), or [`ARGPARSER_ARG_DELIMITER_3`](#argparser_arg_delimiter_3)
 - ***Default value:*** `"#"`
 - ***Description:*** The delimiter that internally separates argument groups from each other. Once more, you don't need to access this variable, but you must ensure that it is set to a character or glyph that does not occur in the arguments definition or their values.
+
+### `ARGPARSER_CHECK_ARG_DEFINITION`
+
+- ***Type:*** *bool* (Boolean)
+- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Default value:*** `false`
+- ***Description:*** Whether to check if the arguments definition is consistent, *i.e.*, if the number of default values equals the number of required values, if the default values lie in the choice values, and if flags have a default value of `true` or `false` and no choice values. This should only be turned on (set to `true`) for testing purposes, while in production environments, keeping it deactivated can save (minimal) computation time. Still, if the user can modify the arguments definition at some point, you should activate it.
 
 ### `"ARGPARSER_ERROR_EXIT_CODE`
 

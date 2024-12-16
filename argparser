@@ -58,6 +58,7 @@ fi
 : "${ARGPARSER_ARG_DELIMITER_2:=":"}"
 : "${ARGPARSER_ARG_DELIMITER_3:=","}"
 : "${ARGPARSER_ARG_GROUP_DELIMITER:="#"}"
+: "${ARGPARSER_CHECK_ARG_DEFINITION:=false}"
 : "${ARGPARSER_ERROR_EXIT_CODE:=1}"
 : "${ARGPARSER_ERROR_STYLE:="red,bold,reverse"}"
 : "${ARGPARSER_HELP_EXIT_CODE:=0}"
@@ -431,10 +432,12 @@ function argparser_check_arg_value() {
         fi
     fi
 
-    # Check if the default value for flags is either true or false.
-    # This should always be true for production scripts, but maybe not
-    # while testing.
-    if [[ "${arg_number}" == "0" && "${default_values[0]}" != true \
+    # If ${ARGPARSER_CHECK_ARG_DEFINITION} is set to true, check if the
+    # default value for flags is either true or false.  This should
+    # always be true for production scripts, but maybe not while
+    # testing.
+    if [[ "${ARGPARSER_CHECK_ARG_DEFINITION}" == true \
+        && "${arg_number}" == "0" && "${default_values[0]}" != true \
         && "${default_values[0]}" != false ]]
     then
         error_message="Error: The argument ${option_names} must be true or "
@@ -443,16 +446,17 @@ function argparser_check_arg_value() {
         return
     fi
 
-    # Check if the number of default values equals the number of
-    # required values.  This should also always be true for production
-    # scripts.  If there are default values and their number doesn't
-    # match, output an error message indicating the number of required
-    # and default arguments.  Ignore flags as long as they have the
-    # only default value of true or false, but a number of required
-    # values of 0.
-    if [[ "${arg_number}" != "+" && "${default_values[0]}" != "-" \
-        && "${#default_values[@]}" != "${arg_number}" ]] \
-        && [[ "${arg_number}" != "0" && "${#default_values[@]}" != 1 ]]
+    # If ${ARGPARSER_CHECK_ARG_DEFINITION} is set to true, check if the
+    # number of default values equals the number of required values.
+    # This should also always be true for production scripts.  If there
+    # are default values and their number doesn't match, output an error
+    # message indicating the number of required and default arguments.
+    # Ignore flags as long as they have the only default value of true
+    # or false, but a number of required values of 0.
+    if [[ "${ARGPARSER_CHECK_ARG_DEFINITION}" == true \
+        && "${arg_number}" != "+" && "${default_values[0]}" != "-" \
+        && "${#default_values[@]}" != "${arg_number}" \
+        && "${arg_number}" != "0" && "${#default_values[@]}" != 1 ]]
     then
         if [[ "${arg_number}" == 1 ]]; then
             error_message="Error: The argument ${option_names} requires 1 "
@@ -473,33 +477,35 @@ function argparser_check_arg_value() {
     # choice values.  For default values, this should always be true for
     # production scripts.  Else, output an error message.
     if [[ "${choice_values[0]}" != "-" ]]; then
-        # Check that flags have no choice values.
-        if [[ "${arg_number}" == "0" ]]; then
-            choice_values="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; printf "%s" \
-                "${choice_values[*]}")"
-            error_message="Error: The argument ${option_names} accepts no "
-            error_message+="choice values, but uses {${choice_values}} per"
-            error_message+="default."
-            printf '%s' "${error_message}"
-            return
-        fi
-
-        # Check the default values.
-        for default_value in "${default_values[@]}"; do
-            if [[ "${default_value}" != "-" \
-                && "$(argparser_in_array "${default_value}" \
-                "${choice_values[@]}")" == 1 ]]
-            then
+        if [[ "${ARGPARSER_CHECK_ARG_DEFINITION}" == true ]]; then
+            # Check that flags have no choice values.
+            if [[ "${arg_number}" == "0" ]]; then
                 choice_values="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; \
                     printf "%s" "${choice_values[*]}")"
-                error_message="Error: The argument ${option_names} accepts "
-                error_message+="only the choice values {${choice_values}}, "
-                error_message+="but has {${default_values[@]}} given per "
+                error_message="Error: The argument ${option_names} accepts no "
+                error_message+="choice values, but uses {${choice_values}} per"
                 error_message+="default."
                 printf '%s' "${error_message}"
                 return
             fi
-        done
+
+            # Check the default values.
+            for default_value in "${default_values[@]}"; do
+                if [[ "${default_value}" != "-" \
+                    && "$(argparser_in_array "${default_value}" \
+                    "${choice_values[@]}")" == 1 ]]
+                then
+                    choice_values="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; \
+                        printf "%s" "${choice_values[*]}")"
+                    error_message="Error: The argument ${option_names} "
+                    error_message+="accepts only the choice values "
+                    error_message+="{${choice_values}}, but has "
+                    error_message+="{${default_values[@]}} given per default."
+                    printf '%s' "${error_message}"
+                    return
+                fi
+            done
+        fi
 
         # Check the given values.
         for value in "${values[@]}"; do
