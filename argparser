@@ -9,7 +9,7 @@
 # TODO: Enable options starting with a "+" as crossed "-".
 # BUG: Fix interpretation of keyword arguments after "--".
 # BUG: Fix short-option-only argument definitions giving faulty help
-#      and error messages.
+#      messages.
 
 # Usage: Source this script with "source argparser" inside the script
 # whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS} is set
@@ -335,6 +335,7 @@ function argparser_check_arg_value() {
     local error_message
     local long_options
     local option_names
+    local short_options
     local value
     local values
     local warning_message
@@ -346,6 +347,8 @@ function argparser_check_arg_value() {
     # Read the argument's definition.
     IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_definition \
         <<< "${args_definition[${arg_key}]}"
+    IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a short_options \
+        <<< "${arg_definition[0]}"
     IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a long_options \
         <<< "${arg_definition[1]}"
     IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a default_values \
@@ -354,8 +357,17 @@ function argparser_check_arg_value() {
         <<< "${arg_definition[3]}"
     arg_number="${arg_definition[4]}"
 
-    option_names="$(printf -- "--%s, " "${long_options[@]}")"
-    option_names="${option_names%, }"
+    # Concatenate the name of all short and long options for the error
+    # and warning messages.
+    if [[ "${short_options[0]}" != "-" && "${long_options[0]}" != "-" ]]; then
+        option_names="$(printf -- '-%s,' "${short_options[@]}")"
+        option_names+="$(printf -- '--%s,' "${long_options[@]}")"
+    elif [[ "${short_options[0]}" != "-" ]]; then
+        option_names="$(printf -- '-%s,' "${short_options[@]}")"
+    else
+        option_names="$(printf -- '--%s,' "${long_options[@]}")"
+    fi
+    option_names="${option_names%,}"
 
     # Check the values.  If an argument hadn't been given, its value was
     # set to "-".
