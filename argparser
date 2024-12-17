@@ -190,8 +190,9 @@ function argparser_parse_args() {
     #
     # Arguments:
     # - $1: the argument to parse
-    # - $2: the associative array's keys for the argument definition
-    # - $3: the associative array's values for the argument definition
+    #
+    # Nonlocals:
+    # - args_definition: the arguments definition
     #
     # Output:
     # - the parsed argument as message or an error message, starting
@@ -199,13 +200,9 @@ function argparser_parse_args() {
     #   "Value: ", possibly concatenated with null characters
 
     # Define the local variables.
-    local arg
+    local arg_key
     local arg_definition
-    local -A args
-    local args_keys
-    local args_values
     local given_arg
-    local i
     local long_option
     local long_options
     local short_option
@@ -213,14 +210,8 @@ function argparser_parse_args() {
     local value
     local values
 
-    # Read the arguments.
+    # Read the argument.
     given_arg="$1"
-    IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a args_keys <<< "$2"
-    IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a args_values <<< "$3"
-
-    for i in "${!args_keys[@]}"; do
-        args["${args_keys[${i}]}"]="${args_values[${i}]}"
-    done
 
     # If the argument is the positional arguments delimiter "--" or for
     # help or usage, output the respective message.
@@ -259,10 +250,10 @@ function argparser_parse_args() {
     # Read all defined arguments and check whether the given argument is
     # part of them.  If so, output the argument's name and possibly all
     # values following the "=" character.
-    for arg in "${!args[@]}"; do
+    for arg_key in "${!args_definition[@]}"; do
         # Read the argument's definition.
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_definition \
-            <<< "${args[${arg}]}"
+            <<< "${args_definition[${arg_key}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a short_options \
             <<< "${arg_definition[0]}"
         IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a long_options \
@@ -272,12 +263,12 @@ function argparser_parse_args() {
         for short_option in "${short_options[@]}"; do
             if [[ "${given_arg}" == "-${short_option}" ]]; then
                 # Output the argument.
-                printf "Argument: %s" "${arg}"
+                printf "Argument: %s" "${arg_key}"
                 return
             elif [[ "${given_arg}" == "-${short_option}="* ]]; then
                 # Output the argument and all values split on
                 # ${ARGPARSER_ARG_DELIMITER_3} characters.
-                printf 'Argument: %s\0' "${arg}"
+                printf 'Argument: %s\0' "${arg_key}"
 
                 IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a values \
                     <<< "${given_arg#*=}"
@@ -292,12 +283,12 @@ function argparser_parse_args() {
         for long_option in "${long_options[@]}"; do
             if [[ "${given_arg}" == "--${long_option}" ]]; then
                 # Output the argument.
-                printf "Argument: %s" "${arg}"
+                printf "Argument: %s" "${arg_key}"
                 return
             elif [[ "${given_arg}" == "--${long_option}="* ]]; then
                 # Output the argument and all values split on
                 # ${ARGPARSER_ARG_DELIMITER_3} characters.
-                printf 'Argument: %s\0' "${arg}"
+                printf 'Argument: %s\0' "${arg_key}"
 
                 IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a values \
                     <<< "${given_arg#*=}"
@@ -318,8 +309,11 @@ function argparser_check_arg_value() {
     # Check if a script's argument accords to its definition.
     #
     # Arguments:
-    # - $1: the associative array's values for the argument definition
+    # - $1: the argument's name (key)
     # - $2: the argument's values
+    #
+    # Nonlocals:
+    # - args_definition: the arguments definition
     #
     # Output:
     # - the parsed argument as message or an error message, starting
@@ -328,6 +322,7 @@ function argparser_check_arg_value() {
 
     # Define the local variables.
     local arg_definition
+    local arg_key
     local arg_number
     local choice_values
     local default_value
@@ -340,8 +335,12 @@ function argparser_check_arg_value() {
     local warning_message
 
     # Read the arguments.
-    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_definition <<< "$1"
+    arg_key="$1"
     IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a values <<< "$2"
+
+    # Read the argument's definition.
+    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_definition \
+        <<< "${args_definition[${arg_key}]}"
     IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a long_options \
         <<< "${arg_definition[1]}"
     IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a default_values \
@@ -524,34 +523,18 @@ function argparser_check_arg_value() {
     printf "Value: %s" "${value}"
 }
 
-function argparser_print_help_message() {
-    # Print a help or usage message from a file without commented lines
+function argparser_print_help_file() {
+    # Print a help message from a file, possibly without commented lines
     # (i.e., lines starting with "#") and their trailing blank lines
-    # inside the message. "@Arguments" lines will be replaced by the
-    # auto-generated help or usage message.
-    #
-    # Arguments:
-    # - $1: the help type ("help" or "usage")
-    # - $2: the script's name
-    # - $3: the associative array's keys for the argument definition
-    # - $4: the associative array's values for the argument definition
+    # inside the message. Lines starting with "@" will be replaced by
+    # the auto-generated help message.
 
     # Define the local variables.
-    local args_keys
-    local args_values
     local at_directive
-    local help_type
     local line
     local line_type
-    local script_name
 
-    # Read the arguments.
-    help_type="$1"
-    script_name="$2"
-    args_keys="$3"
-    args_values="$4"
     line_type="text"
-
     while IFS="" read line; do
         # Set the line_type to "at_directive" if the line contains the
         # "@<ArgumentGroup>" directive, to "comment" if the line is
@@ -562,14 +545,7 @@ function argparser_print_help_message() {
         if [[ "${line}" == @* ]]; then
             line_type="at_directive"
             at_directive="${line:1}"
-
-            if [[ "${help_type}" == "help" ]]; then
-                argparser_create_help_message "${script_name}" \
-                    "${at_directive}" "${args_keys}" "${args_values}"
-            else
-                argparser_create_usage_message "${script_name}" \
-                    "${args_keys}" "${args_values}"
-            fi
+            argparser_create_help_message "${at_directive}"
         elif [[ "${line}" == \#* \
             && "${ARGPARSER_HELP_FILE_KEEP_COMMENTS}" == false ]]
         then
@@ -596,21 +572,19 @@ function argparser_create_help_message() {
     # Create a help message for the script's arguments.
     #
     # Arguments:
-    # - $1: the script's name
-    # - $2: the "@" directive ("All", "Header", "Help", or any argument
+    # - $1: the "@" directive ("All", "Header", "Help", or any argument
     #       group)
-    # - $3: the associative array's keys for the argument definition
-    # - $4: the associative array's values for the argument definition
+    #
+    # Nonlocals:
+    # - args_definition: the arguments definition
+    # - script_name: the script's name
 
     # Define the local variables.
-    local arg
     local arg_definition
     local arg_group
     local -a arg_groups
+    local arg_key
     local arg_number
-    local -A args
-    local args_keys
-    local args_values
     local at_directive
     local choice_values
     local -a col_1
@@ -651,7 +625,6 @@ function argparser_create_help_message() {
     local newlines_1
     local newlines_2
     local newlines_3
-    local script_name
     local short_options
     local -A sorted_col_1
     local sorted_col_2
@@ -663,23 +636,16 @@ function argparser_create_help_message() {
     local word
     local words
 
-    # Read the arguments.
-    script_name="$1"
-    at_directive="$2"
-    IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a args_keys <<< "$3"
-    IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a args_values <<< "$4"
-
-    for i in "${!args_keys[@]}"; do
-        args["${args_keys[${i}]}"]="${args_values[${i}]}"
-    done
+    # Read the argument.
+    at_directive="$1"
 
     # Read the arguments' groups to sort the arguments by group in the
     # help message.  To this end, sort the groups alphabetically and
     # compare each argument's group later upon iterating over them.
     arg_groups=( )
-    for arg in "${!args[@]}"; do
+    for arg_key in "${!args_definition[@]}"; do
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_definition \
-            <<< "${args[${arg}]}"
+            <<< "${args_definition[${arg_key}]}"
         arg_group="${arg_definition[5]}"
         if [[ "$(argparser_in_array "${arg_group}" "${arg_groups[@]}")" == 1 ]]
         then
@@ -713,11 +679,11 @@ function argparser_create_help_message() {
         new_col_2=( )
         new_col_3=( )
 
-        for arg in "${!args[@]}"; do
+        for arg_key in "${!args_definition[@]}"; do
             # Read the argument's group to check whether it belongs to
             # the current group.
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_definition \
-                <<< "${args[${arg}]}"
+                <<< "${args_definition[${arg_key}]}"
             if [[ "${arg_definition[5]}" != "${arg_group}" ]]; then
                 continue
             fi
@@ -1253,39 +1219,25 @@ function argparser_create_help_message() {
 function argparser_create_usage_message() {
     # Create a usage message for the script's arguments.
     #
-    # Arguments:
-    # - $1: the script's name
-    # - $2: the associative array's keys for the argument definition
-    # - $3: the associative array's values for the argument definition
+    # Nonlocals:
+    # - args_definition: the arguments definition
+    # - script_name: the script's name
+
 
     # Define the local variables.
-    local arg
     local arg_definition
+    local arg_key
     local arg_number
-    local -A args
-    local args_keys
-    local args_values
     local choice_values
     local default_values
     local fallback_values
     local header
-    local i
     local -a long_option_args
     local long_options
-    local script_name
     local -a short_option_args
     local short_options
     local whitespace
     local whitespace_len
-
-    # Read the arguments.
-    script_name="$1"
-    IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a args_keys <<< "$2"
-    IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a args_values <<< "$3"
-
-    for i in "${!args_keys[@]}"; do
-        args["${args_keys[${i}]}"]="${args_values[${i}]}"
-    done
 
     # Print the usage message's header, giving the script's name and
     # the existence of the --help and --usage arguments.  To keep all
@@ -1303,10 +1255,10 @@ function argparser_create_usage_message() {
     # these won't get printed).
     short_option_args=( )
     long_option_args=( )
-    for arg in "${!args[@]}"; do
+    for arg_key in "${!args_definition[@]}"; do
         # Read the argument's definition.
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_definition \
-            <<< "${args[${arg}]}"
+            <<< "${args_definition[${arg_key}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a short_options \
             <<< "${arg_definition[0]}"
         IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a long_options \
@@ -1314,18 +1266,18 @@ function argparser_create_usage_message() {
 
         # Add the argument to the respective array.
         if [[ "${long_options[0]}" == "-" ]]; then  # No long option.
-            short_option_args+=("${arg}")
+            short_option_args+=("${arg_key}")
         else  # Long option.
-            long_option_args+=("${arg}")
+            long_option_args+=("${arg_key}")
         fi
     done
 
     # Print each argument having only short options with the short
     # options and possibly choice values and sort them alphabetically.
-    for arg in "${short_option_args[@]}"; do
+    for arg_key in "${short_option_args[@]}"; do
         # Read the argument's definition.
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_definition \
-            <<< "${args[${arg}]}"
+            <<< "${args_definition[${arg_key}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a short_options \
             <<< "${arg_definition[0]}"
         IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a default_values \
@@ -1372,10 +1324,10 @@ function argparser_create_usage_message() {
         fi
     done | sort
 
-    for arg in "${long_option_args[@]}"; do
+    for arg_key in "${long_option_args[@]}"; do
         # Read the argument's definition.
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_definition \
-            <<< "${args[${arg}]}"
+            <<< "${args_definition[${arg_key}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a long_options \
             <<< "${arg_definition[1]}"
         IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a default_values \
@@ -1424,42 +1376,15 @@ function argparser_create_usage_message() {
     done | sort
 }
 
-function argparser_prepare_help_message() {
-    # Print a help or usage message.  If a file with such exists, print
-    # the file, else, create a message for the script's arguments.  The
-    # file must be named like the script, with either ".help" or
-    # ".usage" as ending instead of the script's ".sh".
-    #
-    # Arguments:
-    # - $1: the help type ("help" or "usage")
-    # - $2: the script's name
-    # - $3: the associative array's keys for the argument definition
-    # - $4: the associative array's values for the argument definition
+function argparser_choose_help_message() {
+    # Print a help message.  If a file with such is given, print the
+    # file, else, create a message for the script's arguments.
 
-    # Define the local variables.
-    local args_keys
-    local args_values
-    local help_type
-    local script_name
-
-    # Read the arguments.
-    help_type="$1"
-    script_name="$2"
-    args_keys="$3"
-    args_values="$4"
-
-    # Decide which message type to print to STDERR.  This is necessary
-    # to keep the wanted output (the parsed arguments) strictly separate
-    # from any other messages.
+    # Decide which message type to print.
     if [[ -n "${ARGPARSER_HELP_FILE}" ]]; then
-        argparser_print_help_message "${help_type}" "${script_name}" \
-            "${args_keys}" "${args_values}"
-    elif [[ "${help_type}" == "help" ]]; then
-        argparser_create_help_message "${script_name}" "All" "${args_keys}" \
-            "${args_values}"
+        argparser_print_help_file
     else
-        argparser_create_usage_message "${script_name}" "${args_keys}" \
-            "${args_values}"
+        argparser_create_help_message "All"
     fi
 }
 
@@ -1487,7 +1412,7 @@ function argparser_main() {
     local error_message
     local -a error_messages
     local given_arg
-    local given_args
+    local -a given_args
     local help_message
     local i
     local key_pattern
@@ -1497,12 +1422,14 @@ function argparser_main() {
     local name
     local names
     local parsed_arg
+    local script_name
     local usage_message
     local value_pattern
     local warning_message
     local -a warning_messages
 
     # Read the arguments.
+    readonly script_name="$0"
     read -a given_args <<< "$@"
 
     # Check if the variable that ${ARGPARSER_ARG_ARRAY_NAME} refers to
@@ -1541,8 +1468,6 @@ function argparser_main() {
     local arg_key
     local -a arg_value
     local -A args_definition
-    local args_keys
-    local args_values
 
     # Read in the requested arguments.  ${ARGPARSER_ARG_ARRAY_NAME} is
     # set to the name of the array holding the arguments in the script.
@@ -1637,12 +1562,7 @@ function argparser_main() {
             exit "${ARGPARSER_ERROR_EXIT_CODE}"
         fi
     done
-
-    # Concatenate the keys and values.
-    args_keys="$(IFS="${ARGPARSER_ARG_DELIMITER_1}"; printf "%s" \
-        "${!args_definition[*]}")"
-    args_values="$(IFS="${ARGPARSER_ARG_DELIMITER_1}"; printf "%s" \
-        "${args_definition[*]}")"
+    readonly -A args_definition
 
     # Set the default argument key to ${ARGPARSER_POSITIONAL_NAME}, such
     # that initially, all arguments given before a keyword argument are
@@ -1660,8 +1580,7 @@ function argparser_main() {
     # Parse the script's given arguments.
     for given_arg in "${given_args[@]}"; do
         # Parse the argument.
-        mapfile -d "" -t parsed_arg < <(argparser_parse_args "${given_arg}" \
-            "${args_keys}" "${args_values}")
+        mapfile -d "" -t parsed_arg < <(argparser_parse_args "${given_arg}")
 
         # Read the output message and either print the help or usage
         # message, append the message to the previous error messages or
@@ -1672,16 +1591,14 @@ function argparser_main() {
         for message in "${parsed_arg[@]}"; do
             case "${message}" in
                 Help*)
-                    help_message="$(argparser_prepare_help_message "help" \
-                        "$0" "${args_keys}" "${args_values}")"
+                    help_message="$(argparser_choose_help_message)"
                     help_message="$(argparser_colorize \
                         "${ARGPARSER_HELP_STYLE}" "${help_message}")"
                     printf "%s\n" "${help_message}" >&2
                     exit "${ARGPARSER_HELP_EXIT_CODE}"
                     ;;
                 Usage*)
-                    usage_message="$(argparser_prepare_help_message "usage" \
-                        "$0" "${args_keys}" "${args_values}")"
+                    usage_message="$(argparser_create_usage_message)"
                     usage_message="$(argparser_colorize \
                         "${ARGPARSER_USAGE_STYLE}" "${usage_message}")"
                     printf "%s\n" "${usage_message}" >&2
@@ -1737,15 +1654,15 @@ function argparser_main() {
     # Check the arguments' values.
     for arg_key in "${!args_definition[@]}"; do
         # Check which defined argument is given to the script.  Omitted
-        # arguments are assigned a hypen ("-") as value.  Check the
+        # arguments are assigned a hyphen ("-") as value.  Check the
         # value.
         if [[ "$(argparser_in_array "${arg_key}" "${!args[@]}")" == 0 ]]; then
-            mapfile -d "" -t checked_arg < <(argparser_check_arg_value \
-                "${args_definition[${arg_key}]}" "${args[${arg_key}]}")
+            arg_value="${args[${arg_key}]}"
         else
-            mapfile -d "" -t checked_arg < <(argparser_check_arg_value \
-                "${args_definition[${arg_key}]}" "-")
+            arg_value="-"
         fi
+        mapfile -d "" -t checked_arg < <(argparser_check_arg_value \
+            "${arg_key}" "${arg_value}")
 
         # Read the output message and either append the message to the
         # previous error messages or set the argument's value.
@@ -1785,8 +1702,7 @@ function argparser_main() {
     # If any argument was not or wrongly given, ${error} is set to true,
     # then print a blank line and the usage message, then exit.
     if [[ "${error}" == true ]]; then
-        usage_message="$(argparser_prepare_help_message "usage" "$0" \
-            "${args_keys}" "${args_values}")"
+        usage_message="$(argparser_create_usage_message)"
         usage_message="$(argparser_colorize "${ARGPARSER_USAGE_STYLE}" \
             "${usage_message}")"
         printf "\n%s\n" "${usage_message}" >&2
@@ -1839,28 +1755,24 @@ if [[ "${ARGPARSER_SET_ARGS}" == true ]]; then
             declare "${arg}"="${args[${arg}]}"
         fi
     done
+    unset arg
 fi
 
-unset arg
-unset args_keys
-unset args_values
-unset parsed_arg
-unset parsed_args
 
 # If ${ARGPARSER_UNSET_FUNCTIONS} is set to true, unset all argparser
 # functions.  The names are used instead of a glob to limit side effects
 # with potentially same-named functions from the calling script that
 # stand in no relation to the argparser.
 if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
-    unset -f argparser_in_array
-    unset -f argparser_colorize
-    unset -f argparser_parse_args
     unset -f argparser_check_arg_value
-    unset -f argparser_print_help_message
+    unset -f argparser_choose_help_message
+    unset -f argparser_colorize
     unset -f argparser_create_help_message
     unset -f argparser_create_usage_message
-    unset -f argparser_prepare_help_message
+    unset -f argparser_in_array
     unset -f argparser_main
+    unset -f argparser_parse_args
+    unset -f argparser_print_help_file
 fi
 
 # If ${ARGPARSER_UNSET_ENV_VARS} is set to true, unset all argparser
