@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2024-12-13
+# Last Modification: 2024-12-17
 
 # Usage: Run this script with "bash test_long_options.sh".
 
@@ -16,12 +16,12 @@ export ARGPARSER_MAX_COL_WIDTH_3=35
 
 # Define the arguments.
 args=(
-    "var_1:-:var-1,var-A:-:-:1:Arguments:one value without default or choice"
-    "var_2:-:var-2,var-B:-:-:+:Arguments:at least one value without default or choice"
-    "var_3:-:var-3,var-C:-:A,B:+:Arguments:at least one value with choice"
-    "var_4:-:var-4,var-D:A:A,B,C:1:Options:one value with default and choice"
-    "var_5:-:var-5,var-E:E:-:1:Options:one value with default"
-    "var_6:-:var-6,var-F:false:-:0:Options:no value (flag) with default"
+    "var_1:-:var-1,var-a:-:-:1:Arguments:one value without default or choice"
+    "var_2:-:var-2,var-b:-:-:+:Arguments:at least one value without default or choice"
+    "var_3:-:var-3,var-c:-:A,B:+:Arguments:at least one value with choice"
+    "var_4:-:var-4,var-d:A:A,B,C:1:Options:one value with default and choice"
+    "var_5:-:var-5,var-e:E:-:1:Options:one value with default"
+    "var_6:-:var-6,var-f:false:-:0:Options:no value (flag) with default"
 )
 
 source argparser

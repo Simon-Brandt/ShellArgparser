@@ -66,12 +66,12 @@ export ARGPARSER_MAX_COL_WIDTH_3=35
 
 # Define the arguments.
 args=(
-    "var_1:a,A:var-1,var-A:-:-:1:Arguments:one value without default or choice"
-    "var_2:b,B:var-2,var-B:-:-:+:Arguments:at least one value without default or choice"
-    "var_3:c,C:var-3,var-C:-:A,B:+:Arguments:at least one value with choice"
+    "var_1:a,A:var-1,var-a:-:-:1:Arguments:one value without default or choice"
+    "var_2:b,B:var-2,var-b:-:-:+:Arguments:at least one value without default or choice"
+    "var_3:c,C:var-3,var-c:-:A,B:+:Arguments:at least one value with choice"
     "var_4:d,D:-:A:A,B,C:1:Options:one value with default and choice"
-    "var_5:-:var-5,var-E:E:-:1:Options:one value with default"
-    "var_6:f,F:var-6,var-F:false:-:0:Options:no value (flag) with default"
+    "var_5:-:var-5,var-e:E:-:1:Options:one value with default"
+    "var_6:f,F:var-6,var-f:false:-:0:Options:no value (flag) with default"
 )
 
 source argparser
@@ -103,16 +103,16 @@ Usage: try_argparser.sh ARGUMENTS
 Mandatory arguments to long options are mandatory for short options too.
 
 Arguments:
--a, -A,   --var-1=VAR-1, --var-A=VAR-A     one value without default or choice
--b, -B,   --var-2=VAR-2, --var-B=VAR-B     at least one value without default
+-a, -A,   --var-1=VAR-1, --var-a=VAR-A     one value without default or choice
+-b, -B,   --var-2=VAR-2, --var-b=VAR-B     at least one value without default
                                            or choice
--c, -C,   --var-3={A,B}, --var-C={A,B}     at least one value with choice
+-c, -C,   --var-3={A,B}, --var-c={A,B}     at least one value with choice
 
 Options:
 -d, -D                                     one value with default and choice
                                            (default: A)
-          --var-5[=VAR-5], --var-E[=VAR-E] one value with default (default: E)
-[-f, -F], [--var-6, --var-F]               no value (flag) with default
+          --var-5[=VAR-5], --var-e[=VAR-E] one value with default (default: E)
+[-f, -F], [--var-6, --var-f]               no value (flag) with default
                                            (default: false)
 
 -h,       --help                           display this help and exit
@@ -198,12 +198,12 @@ export ARGPARSER_MAX_COL_WIDTH_3=35
 
 # Define the arguments.
 args=(
-    "var_1:a,A:var-1,var-A:-:-:1:Arguments:one value without default or choice"
-    "var_2:b,B:var-2,var-B:-:-:+:Arguments:at least one value without default or choice"
-    "var_3:c,C:var-3,var-C:-:A,B:+:Arguments:at least one value with choice"
+    "var_1:a,A:var-1,var-a:-:-:1:Arguments:one value without default or choice"
+    "var_2:b,B:var-2,var-b:-:-:+:Arguments:at least one value without default or choice"
+    "var_3:c,C:var-3,var-c:-:A,B:+:Arguments:at least one value with choice"
     "var_4:d,D:-:A:A,B,C:1:Options:one value with default and choice"
-    "var_5:-:var-5,var-E:E:-:1:Options:one value with default"
-    "var_6:f,F:var-6,var-F:false:-:0:Options:no value (flag) with default"
+    "var_5:-:var-5,var-e:E:-:1:Options:one value with default"
+    "var_6:f,F:var-6,var-f:false:-:0:Options:no value (flag) with default"
 )
 
 source argparser
@@ -290,7 +290,7 @@ This argparser-specific tabular format consists of eight columns, each separated
 
 1. the unique argument identifier (like `var_1`)
 1. the short options (one hyphen, like `-a` and `-A` for `var_1`)
-1. the long options (two hyphens, like `--var-1` and `--var-A` for `var_1`)
+1. the long options (two hyphens, like `--var-1` and `--var-a` for `var_1`)
 1. the default value (like `A` for `var_4`)
 1. the choice values for options with a limited set of values to choose from (like `"A"`, `"B"`, and `"C"` for `var_4`)
 1. the number of required values (either numerical from 0 to infinity or `"+"`, meaning to accept as many values as given, at least one, like `1` for `var_4`)
@@ -333,11 +333,11 @@ Our `try_argparser.sh` usage message looks as follows:
 $ bash try_argparser.sh -u
 Usage: try_argparser.sh [--help] [--usage]
                         -d,-D[={A,B,C}]
-                        --var-1,--var-A=VAR-1,VAR-A
-                        --var-2,--var-B=VAR-2,VAR-B
-                        --var-3,--var-C={A,B}
-                        --var-5,--var-E[=VAR-5,VAR-E]
-                        [--var-6,--var-F]
+                        --var-1,--var-a=VAR-1,VAR-A
+                        --var-2,--var-b=VAR-2,VAR-B
+                        --var-3,--var-c={A,B}
+                        --var-5,--var-e[=VAR-5,VAR-E]
+                        [--var-6,--var-f]
 ```
 
 Clearly, the usage message summarizes the arguments, including name aliases (always taking all long options, or, if absent, all short options), indicates whether they're optional or mandatory (optionals use square brackets), and specifies the choice values (in curly braces). Short option&ndash;only arguments precede any others, and both groups are sorted alphabetically by the first key.
@@ -351,16 +351,16 @@ Usage: try_argparser.sh ARGUMENTS
 Mandatory arguments to long options are mandatory for short options too.
 
 Arguments:
--a, -A,   --var-1=VAR-1, --var-A=VAR-A     one value without default or choice
--b, -B,   --var-2=VAR-2, --var-B=VAR-B     at least one value without default
+-a, -A,   --var-1=VAR-1, --var-a=VAR-A     one value without default or choice
+-b, -B,   --var-2=VAR-2, --var-b=VAR-B     at least one value without default
                                            or choice
--c, -C,   --var-3={A,B}, --var-C={A,B}     at least one value with choice
+-c, -C,   --var-3={A,B}, --var-c={A,B}     at least one value with choice
 
 Options:
 -d, -D                                     one value with default and choice
                                            (default: A)
-          --var-5[=VAR-5], --var-E[=VAR-E] one value with default (default: E)
-[-f, -F], [--var-6, --var-F]               no value (flag) with default
+          --var-5[=VAR-5], --var-e[=VAR-E] one value with default (default: E)
+[-f, -F], [--var-6, --var-f]               no value (flag) with default
                                            (default: false)
 
 -h,       --help                           display this help and exit
