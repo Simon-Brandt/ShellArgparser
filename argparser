@@ -7,9 +7,11 @@
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
 # TODO: Enable options starting with a "+" as crossed "-".
-# BUG: Fix interpretation of keyword arguments after "--".
-# BUG: Fix short-option-only argument definitions giving faulty help
-#      messages.
+# TODO: Eliminate remaining calls to external commands, such as sed, tr,
+#       and sort.
+# BUG:  Fix interpretation of keyword arguments after "--".
+# BUG:  Fix short-option-only argument definitions giving faulty help
+#       messages.
 
 # Usage: Source this script with "source argparser" inside the script
 # whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS} is set
@@ -92,8 +94,8 @@ function argparser_in_array() {
     # - $@: the array to search through
     #
     # Output:
-    # - 0, if the element exists in the array
-    # - 1, else
+    # - true, if the element exists in the array
+    # - false, else
 
     # Define the local variables.
     local element
@@ -108,12 +110,12 @@ function argparser_in_array() {
     # Output 0 on success, else 1.
     for element in "$@"; do
         if [[ "${element}" == "${query}" ]]; then
-            printf 0
+            printf true
             return
         fi
     done
 
-    printf 1
+    printf false
 }
 
 function argparser_colorize() {
@@ -172,10 +174,10 @@ function argparser_colorize() {
     # an error message.
     IFS="," read -a requests <<< "${requests}"
     for request in "${requests[@]}"; do
-        if [[ "$(argparser_in_array "${request}" "${!colors[@]}")" == 0 ]]
+        if [[ "$(argparser_in_array "${request}" "${!colors[@]}")" == true ]]
         then
             printf "\e[%sm" "${colors["${request}"]}"
-        elif [[ "$(argparser_in_array "${request}" "${!styles[@]}")" == 0 ]]
+        elif [[ "$(argparser_in_array "${request}" "${!styles[@]}")" == true ]]
         then
             printf "\e[%sm" "${styles["${request}"]}"
         else
@@ -505,7 +507,7 @@ function argparser_check_arg_value() {
             for default_value in "${default_values[@]}"; do
                 if [[ "${default_value}" != "-" \
                     && "$(argparser_in_array "${default_value}" \
-                    "${choice_values[@]}")" == 1 ]]
+                    "${choice_values[@]}")" == false ]]
                 then
                     choice_values="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; \
                         printf "%s" "${choice_values[*]}")"
@@ -521,8 +523,8 @@ function argparser_check_arg_value() {
 
         # Check the given values.
         for value in "${values[@]}"; do
-            if [[ "$(argparser_in_array "${value}" "${choice_values[@]}")" == \
-                1 ]]
+            if [[ "$(argparser_in_array "${value}" \
+                "${choice_values[@]}")" == false ]]
             then
                 choice_values="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; \
                     printf "%s" "${choice_values[*]}")"
@@ -683,7 +685,8 @@ function argparser_create_help_message() {
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_definition \
             <<< "${args_definition[${arg_key}]}"
         arg_group="${arg_definition[5]}"
-        if [[ "$(argparser_in_array "${arg_group}" "${arg_groups[@]}")" == 1 ]]
+        if [[ "$(argparser_in_array "${arg_group}" \
+            "${arg_groups[@]}")" == false ]]
         then
             arg_groups+=("${arg_group}")
         fi
@@ -847,7 +850,7 @@ function argparser_create_help_message() {
         done
 
         # To mark the end of an argument group later upon printing, add
-        # an ARGPARSER_ARG_GROUP_DELIMITER character, that won't get
+        # an ${ARGPARSER_ARG_GROUP_DELIMITER} character, that won't get
         # printed.
         col_1+=("${ARGPARSER_ARG_GROUP_DELIMITER}")
         col_2+=("${ARGPARSER_ARG_GROUP_DELIMITER}")
@@ -1674,7 +1677,7 @@ function argparser_main() {
                     arg_key="${ARGPARSER_POSITIONAL_NAME}"
 
                     if [[ "$(argparser_in_array "${arg_key}" \
-                        "${!args[@]}")" == 0 ]]
+                        "${!args[@]}")" == true ]]
                     then
                         # Read the previously given values.
                         IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a arg_value \
@@ -1687,7 +1690,7 @@ function argparser_main() {
                     arg_key="${message#Argument: }"
 
                     if [[ "$(argparser_in_array "${arg_key}" \
-                        "${!args[@]}")" == 0 ]]
+                        "${!args[@]}")" == true ]]
                     then
                         # Read the previously given values.
                         IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a arg_value \
@@ -1715,7 +1718,8 @@ function argparser_main() {
         # Check which defined argument is given to the script.  Omitted
         # arguments are assigned a hyphen ("-") as value.  Check the
         # value.
-        if [[ "$(argparser_in_array "${arg_key}" "${!args[@]}")" == 0 ]]; then
+        if [[ "$(argparser_in_array "${arg_key}" "${!args[@]}")" == true ]]
+        then
             arg_value="${args[${arg_key}]}"
         else
             arg_value="-"
