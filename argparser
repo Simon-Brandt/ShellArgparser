@@ -75,6 +75,9 @@ fi
 : "${ARGPARSER_UNSET_ARGS:=true}"
 : "${ARGPARSER_UNSET_ENV_VARS:=true}"
 : "${ARGPARSER_UNSET_FUNCTIONS:=true}"
+: "${ARGPARSER_USAGE_EXIT_CODE:=0}"
+: "${ARGPARSER_USAGE_FILE:=""}"
+: "${ARGPARSER_USAGE_FILE_KEEP_COMMENTS:=false}"
 : "${ARGPARSER_USAGE_STYLE:="italic"}"
 : "${ARGPARSER_WARNING_STYLE:="red,bold"}"
 
@@ -523,36 +526,51 @@ function argparser_check_arg_value() {
     printf "Value: %s" "${value}"
 }
 
-function argparser_print_help_file() {
-    # Print a help message from a file, possibly without commented lines
-    # (i.e., lines starting with "#") and their trailing blank lines
-    # inside the message. Lines starting with "@" will be replaced by
-    # the auto-generated help message.
+function argparser_print_help_or_usage_file() {
+    # Print a help or usage message from a file, possibly without
+    # commented lines (i.e., lines starting with "#") and their trailing
+    # blank lines inside the message. Lines starting with "@" will be
+    # replaced by the auto-generated help or usage message.
+    #
+    # Arguments:
+    # - $1: the help type ("Help" or "Usage")
 
     # Define the local variables.
     local at_directive
+    local file
+    local help_type
+    local keep_comments
     local line
     local line_type
+
+    # Read the argument.
+    help_type="$1"
+    if [[ "${help_type}" == "Help" ]]; then
+        keep_comments="${ARGPARSER_HELP_FILE_KEEP_COMMENTS}"
+        file="${ARGPARSER_HELP_FILE}"
+    elif [[ "${help_type}" == "Usage" ]]; then
+        keep_comments="${ARGPARSER_USAGE_FILE_KEEP_COMMENTS}"
+        file="${ARGPARSER_USAGE_FILE}"
+    fi
 
     line_type="text"
     while IFS="" read line; do
         # Set the line_type to "at_directive" if the line contains the
         # "@<ArgumentGroup>" directive, to "comment" if the line is
-        # commented and ARGPARSER_HELP_FILE_KEEP_COMMENTS is false, and
-        # to "text" if it is not empty (but not commented).  Thus, empty
-        # lines following comments still have line_type set to
-        # "comment".
+        # commented and ${keep_comments} is false, and to "text" if it
+        # is not empty (but not commented).  Thus, empty lines following
+        # comments still have line_type set to "comment".
         if [[ "${line}" == @* ]]; then
             line_type="at_directive"
             at_directive="${line:1}"
-            argparser_create_help_message "${at_directive}"
-        elif [[ "${line}" == \#* \
-            && "${ARGPARSER_HELP_FILE_KEEP_COMMENTS}" == false ]]
-        then
+            if [[ "${help_type}" == "Help" ]]; then
+                argparser_create_help_message "${at_directive}"
+            elif [[ "${help_type}" == "Usage" ]]; then
+                argparser_create_usage_message "${at_directive}"
+            fi
+        elif [[ "${line}" == \#* && "${keep_comments}" == false ]]; then
             line_type="comment"
-        elif [[ -n "${line}" \
-            || "${ARGPARSER_HELP_FILE_KEEP_COMMENTS}" == true ]]
-        then
+        elif [[ -n "${line}" || "${keep_comments}" == true ]]; then
             line_type="text"
         fi
 
@@ -565,7 +583,7 @@ function argparser_print_help_file() {
         elif [[ "${line_type}" == "at_directive" ]]; then
             line_type="text"
         fi
-    done < "${ARGPARSER_HELP_FILE}"
+    done < "${file}"
 }
 
 function argparser_create_help_message() {
@@ -1223,7 +1241,6 @@ function argparser_create_usage_message() {
     # - args_definition: the arguments definition
     # - script_name: the script's name
 
-
     # Define the local variables.
     local arg_definition
     local arg_key
@@ -1376,15 +1393,32 @@ function argparser_create_usage_message() {
     done | sort
 }
 
-function argparser_choose_help_message() {
-    # Print a help message.  If a file with such is given, print the
-    # file, else, create a message for the script's arguments.
+function argparser_choose_help_or_usage_message() {
+    # Print a help or usage message.  If a file with such is given,
+    # print the file, else, create a message for the script's arguments.
+    #
+    # Arguments:
+    # - $1: the help type ("Help" or "Usage")
+
+    # Define the local variable.
+    local help_type
+
+    # Read the argument.
+    help_type="$1"
 
     # Decide which message type to print.
-    if [[ -n "${ARGPARSER_HELP_FILE}" ]]; then
-        argparser_print_help_file
-    else
-        argparser_create_help_message "All"
+    if [[ "${help_type}" == "Help" ]]; then
+        if [[ -n "${ARGPARSER_HELP_FILE}" ]]; then
+            argparser_print_help_or_usage_file "Help"
+        else
+            argparser_create_help_message "All"
+        fi
+    elif [[ "${help_type}" == "Usage" ]]; then
+        if [[ -n "${ARGPARSER_USAGE_FILE}" ]]; then
+            argparser_print_help_or_usage_file "Usage"
+        else
+            argparser_create_usage_message
+        fi
     fi
 }
 
@@ -1591,18 +1625,20 @@ function argparser_main() {
         for message in "${parsed_arg[@]}"; do
             case "${message}" in
                 Help*)
-                    help_message="$(argparser_choose_help_message)"
+                    help_message="$(argparser_choose_help_or_usage_message \
+                        "Help")"
                     help_message="$(argparser_colorize \
                         "${ARGPARSER_HELP_STYLE}" "${help_message}")"
                     printf "%s\n" "${help_message}" >&2
                     exit "${ARGPARSER_HELP_EXIT_CODE}"
                     ;;
                 Usage*)
-                    usage_message="$(argparser_create_usage_message)"
+                    usage_message="$(argparser_choose_help_or_usage_message \
+                        "Usage")"
                     usage_message="$(argparser_colorize \
                         "${ARGPARSER_USAGE_STYLE}" "${usage_message}")"
                     printf "%s\n" "${usage_message}" >&2
-                    exit "${ARGPARSER_HELP_EXIT_CODE}"
+                    exit "${ARGPARSER_USAGE_EXIT_CODE}"
                     ;;
                 Error*)
                     error=true
@@ -1702,7 +1738,7 @@ function argparser_main() {
     # If any argument was not or wrongly given, ${error} is set to true,
     # then print a blank line and the usage message, then exit.
     if [[ "${error}" == true ]]; then
-        usage_message="$(argparser_create_usage_message)"
+        usage_message="$(argparser_choose_usage_message)"
         usage_message="$(argparser_colorize "${ARGPARSER_USAGE_STYLE}" \
             "${usage_message}")"
         printf "\n%s\n" "${usage_message}" >&2
@@ -1765,14 +1801,14 @@ fi
 # stand in no relation to the argparser.
 if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_check_arg_value
-    unset -f argparser_choose_help_message
+    unset -f argparser_choose_help_or_usage_message
     unset -f argparser_colorize
     unset -f argparser_create_help_message
     unset -f argparser_create_usage_message
     unset -f argparser_in_array
     unset -f argparser_main
     unset -f argparser_parse_args
-    unset -f argparser_print_help_file
+    unset -f argparser_print_help_or_usage_file
 fi
 
 # If ${ARGPARSER_UNSET_ENV_VARS} is set to true, unset all argparser
