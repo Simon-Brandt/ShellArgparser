@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2024-12-16
+# Last Modification: 2024-12-17
 
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
@@ -101,15 +101,15 @@ function argparser_in_array() {
     read -a array <<< "$@"
 
     # Iterate through the array and compare each element to the query.
-    # Output"0" on success, else "1".
+    # Output 0 on success, else 1.
     for element in "${array[@]}"; do
         if [[ "${element}" == "${query}" ]]; then
-            printf "0"
+            printf 0
             return
         fi
     done
 
-    printf "1"
+    printf 1
 }
 
 function argparser_colorize() {
@@ -437,7 +437,7 @@ function argparser_check_arg_value() {
     # always be true for production scripts, but maybe not while
     # testing.
     if [[ "${ARGPARSER_CHECK_ARG_DEFINITION}" == true \
-        && "${arg_number}" == "0" && "${default_values[0]}" != true \
+        && "${arg_number}" == 0 && "${default_values[0]}" != true \
         && "${default_values[0]}" != false ]]
     then
         error_message="Error: The argument ${option_names} must be true or "
@@ -456,7 +456,7 @@ function argparser_check_arg_value() {
     if [[ "${ARGPARSER_CHECK_ARG_DEFINITION}" == true \
         && "${arg_number}" != "+" && "${default_values[0]}" != "-" \
         && "${#default_values[@]}" != "${arg_number}" \
-        && "${arg_number}" != "0" && "${#default_values[@]}" != 1 ]]
+        && "${arg_number}" != 0 && "${#default_values[@]}" != 1 ]]
     then
         if [[ "${arg_number}" == 1 ]]; then
             error_message="Error: The argument ${option_names} requires 1 "
@@ -479,7 +479,7 @@ function argparser_check_arg_value() {
     if [[ "${choice_values[0]}" != "-" ]]; then
         if [[ "${ARGPARSER_CHECK_ARG_DEFINITION}" == true ]]; then
             # Check that flags have no choice values.
-            if [[ "${arg_number}" == "0" ]]; then
+            if [[ "${arg_number}" == 0 ]]; then
                 choice_values="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; \
                     printf "%s" "${choice_values[*]}")"
                 error_message="Error: The argument ${option_names} accepts no "
