@@ -371,7 +371,7 @@ The help message details all short and long options of the arguments, their opti
 
 The help message's structure aims at reproducing the commonly found structure in command-line programs. By setting [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1), [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2), and [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3) (as done in `try_argparser.sh`), the column widths may be adapted to your needs, recommendably totalling 77 characters (thus 79 characters including the separating spaces). Note that columns are automatically shrunk, when their content is narrower, but they're not expanded, when their content is wider. This is to guarantee that the help message, when *e.g.* sent as logging output, nicely fits in the space you have.
 
-### Help message files
+### Help and usage message files
 
 The argparser is not only able to compile a help message, but can also be guided by a separate file. Using the [`ARGPARSER_HELP_FILE`](#argparser_help_file) environment variable, to a certain degree, you can customize the help message's look and structure  by moving the blocks the message consists of around and enriching it by arbitrary text.
 
@@ -482,6 +482,8 @@ The following section names (`"@"` directives) are supported, explained in great
 Thereby, in `@<ArgumentGroup>`, the `"<ArgumentGroup>"` can be the name of any argument group given in the arguments definition, like `"Arguments"` for the `"@"` directive `@Arguments` or `"Options"` for the `"@"` directive `@Options`. `@Header` prints the header, `@Help` the help and usage options. Finally, the shorthand `@All` means to use the header, all argument groups, and the help options, in this order.
 
 Further, lines starting with a `"#"` character in the help file aren't printed if [`ARGPARSER_HELP_FILE_KEEP_COMMENTS`](#argparser_help_file_keep_comments) is set to `false`. This allows you to comment your help file, perhaps to explain the structure&mdash;or just to write a header with your name inside.
+
+The same as for help messages can be done for usage messages, using the [`ARGPARSER_USAGE_FILE`](#argparser_usage_file) and [`ARGPARSER_USAGE_FILE_KEEP_COMMENTS`](#argparser_usage_file_keep_comments) environment variables. However there, only the `@All` directive is supported.
 
 ### Arguments definition files
 
@@ -788,34 +790,37 @@ The argparser defines a large set of environment variables, each following the n
 
 ### Overview over environment variables
 
-| Variable name                                                             | Allowed values or type[^1][^2][^3] | Default value        |
-|---------------------------------------------------------------------------|------------------------------------|----------------------|
-| [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name)                   | *str*[^4]                          | `"args"`             |
-| [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file)                       | *filepath* \| `""`                 | `""`                 |
-| [`ARGPARSER_ARG_DEF_FILE_HAS_HEADER`](#argparser_arg_def_file_has_header) | *bool*                             | `false`              |
-| [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)                 | *char*                             | `"\|"`[^5]           |
-| [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)                 | *char*                             | `":"`[^5]            |
-| [`ARGPARSER_ARG_DELIMITER_3`](#argparser_arg_delimiter_3)                 | *char*                             | `","`[^5]            |
-| [`ARGPARSER_ARG_GROUP_DELIMITER`](#argparser_arg_group_delimiter)         | *char*                             | `"#"`[^5]            |
-| [`ARGPARSER_CHECK_ARG_DEFINITION`](#argparser_check_arg_definition)       | *bool*                             | `false`              |
-| [`ARGPARSER_ERROR_EXIT_CODE`](#argparser_error_exit_code)                 | *int*                              | `1`                  |
-| [`ARGPARSER_ERROR_STYLE`](#argparser_error_style)                         | *str*                              | `"red,bold,reverse"` |
-| [`ARGPARSER_HELP_EXIT_CODE`](#argparser_help_exit_code)                   | *int*                              | `0`                  |
-| [`ARGPARSER_HELP_FILE`](#argparser_help_file)                             | *filepath* \| `""`                 | `""`                 |
-| [`ARGPARSER_HELP_FILE_KEEP_COMMENTS`](#argparser_help_file_keep_comments) | *bool*                             | `false`              |
-| [`ARGPARSER_HELP_STYLE`](#argparser_help_style)                           | *str*                              | `"italic"`           |
-| [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1)                 | *int*                              | `5`[^6]              |
-| [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2)                 | *int*                              | `33`[^6]             |
-| [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)                 | *int*                              | `39`[^6]             |
-| [`ARGPARSER_POSITIONAL_NAME`](#argparser_positional_name)                 | *str*                              | `"Positional"`       |
-| [`ARGPARSER_READ_ARGS`](#argparser_read_args)                             | *bool*                             | `true`               |
-| [`ARGPARSER_SET_ARGS`](#argparser_set_args)                               | *bool*                             | `true`               |
-| [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)                           | *bool*                             | `true`               |
-| [`ARGPARSER_UNSET_ARGS`](#argparser_unset_args)                           | *bool*                             | `true`               |
-| [`ARGPARSER_UNSET_ENV_VARS`](#argparser_unset_env_vars)                   | *bool*                             | `true`               |
-| [`ARGPARSER_UNSET_FUNCTIONS`](#argparser_unset_functions)                 | *bool*                             | `true`               |
-| [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style)                         | *str*                              | `"italic"`           |
-| [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style)                     | *str*                              | `"red,bold"`         |
+| Variable name                                                               | Allowed values or type[^1][^2][^3] | Default value        |
+|-----------------------------------------------------------------------------|------------------------------------|----------------------|
+| [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name)                     | *str*[^4]                          | `"args"`             |
+| [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file)                         | *filepath* \| `""`                 | `""`                 |
+| [`ARGPARSER_ARG_DEF_FILE_HAS_HEADER`](#argparser_arg_def_file_has_header)   | *bool*                             | `false`              |
+| [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)                   | *char*                             | `"\|"`[^5]           |
+| [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)                   | *char*                             | `":"`[^5]            |
+| [`ARGPARSER_ARG_DELIMITER_3`](#argparser_arg_delimiter_3)                   | *char*                             | `","`[^5]            |
+| [`ARGPARSER_ARG_GROUP_DELIMITER`](#argparser_arg_group_delimiter)           | *char*                             | `"#"`[^5]            |
+| [`ARGPARSER_CHECK_ARG_DEFINITION`](#argparser_check_arg_definition)         | *bool*                             | `false`              |
+| [`ARGPARSER_ERROR_EXIT_CODE`](#argparser_error_exit_code)                   | *int*                              | `1`                  |
+| [`ARGPARSER_ERROR_STYLE`](#argparser_error_style)                           | *str*                              | `"red,bold,reverse"` |
+| [`ARGPARSER_HELP_EXIT_CODE`](#argparser_help_exit_code)                     | *int*                              | `0`                  |
+| [`ARGPARSER_HELP_FILE`](#argparser_help_file)                               | *filepath* \| `""`                 | `""`                 |
+| [`ARGPARSER_HELP_FILE_KEEP_COMMENTS`](#argparser_help_file_keep_comments)   | *bool*                             | `false`              |
+| [`ARGPARSER_HELP_STYLE`](#argparser_help_style)                             | *str*                              | `"italic"`           |
+| [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1)                   | *int*                              | `5`[^6]              |
+| [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2)                   | *int*                              | `33`[^6]             |
+| [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)                   | *int*                              | `39`[^6]             |
+| [`ARGPARSER_POSITIONAL_NAME`](#argparser_positional_name)                   | *str*                              | `"Positional"`       |
+| [`ARGPARSER_READ_ARGS`](#argparser_read_args)                               | *bool*                             | `true`               |
+| [`ARGPARSER_SET_ARGS`](#argparser_set_args)                                 | *bool*                             | `true`               |
+| [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)                             | *bool*                             | `true`               |
+| [`ARGPARSER_UNSET_ARGS`](#argparser_unset_args)                             | *bool*                             | `true`               |
+| [`ARGPARSER_UNSET_ENV_VARS`](#argparser_unset_env_vars)                     | *bool*                             | `true`               |
+| [`ARGPARSER_UNSET_FUNCTIONS`](#argparser_unset_functions)                   | *bool*                             | `true`               |
+| [`ARGPARSER_USAGE_EXIT_CODE`](#argparser_usage_exit_code)                   | *int*                              | `0`                  |
+| [`ARGPARSER_USAGE_FILE`](#argparser_usage_file)                             | *filepath* \| `""`                 | `""`                 |
+| [`ARGPARSER_USAGE_FILE_KEEP_COMMENTS`](#argparser_usage_file_keep_comments) | *bool*                             | `false`              |
+| [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style)                           | *str*                              | `"italic"`           |
+| [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style)                       | *str*                              | `"red,bold"`         |
 
 [^1]: Bash is weakly typed, hence the denoted types are just a guidance.
 [^2]: Strings can optionally be enclosed by quotes.
@@ -899,14 +904,14 @@ The argparser defines a large set of environment variables, each following the n
 - ***Type:***  *int* (Integer)
 - ***Allowed values:*** Any integer, usually zero
 - ***Default value:*** `0`
-- ***Description:*** The exit code when a help or usage message was requested using the `-h`, `--help`, `-u`, or `--usage` flags.
+- ***Description:*** The exit code when a help message was requested using the `-h` or `--help` flag.
 
 ### `ARGPARSER_HELP_FILE`
 
 - ***Type:*** *filepath* (Filepath)
 - ***Allowed values:*** Any legit filepath or the empty string `""`
 - ***Default value:*** `""`
-- ***Description:*** The path to a file holding the extended help message. This file may be used by multiple scripts, even if they share no arguments. By this, the default structure and content of the auto-generated help or usage message (invoked with the flags `--help` or `--usage`, respectively) can be overridden for all scripts in a project in the same way, without repeating yourself upon specifying the look.
+- ***Description:*** The path to a file holding the extended help message. This file may be used by multiple scripts, even if they share no arguments. By this, the default structure and content of the auto-generated help message (invoked with the flag `-h` or `--help`) can be overridden for all scripts in a project in the same way, without repeating yourself upon specifying the look.
 
 ### `ARGPARSER_HELP_FILE_KEEP_COMMENTS`
 
@@ -993,6 +998,27 @@ The main difference is that, if you `export` (or `declare -x`) the variables to 
 - ***Allowed values:*** `true` and `false` (case-sensitive)
 - ***Default value:*** `true`
 - ***Description:*** Whether to unset (remove) argparser functions from the environment. You should not need them separate from an argparser invokation, where they're automatically set upon sourcing it. By unsetting them, the namespace is kept clean.
+
+### `"ARGPARSER_USAGE_EXIT_CODE`
+
+- ***Type:***  *int* (Integer)
+- ***Allowed values:*** Any integer, usually zero
+- ***Default value:*** `0`
+- ***Description:*** The exit code when a usage message was requested using the `-u` or `--usage` flag.
+
+### `ARGPARSER_USAGE_FILE`
+
+- ***Type:*** *filepath* (Filepath)
+- ***Allowed values:*** Any legit filepath or the empty string `""`
+- ***Default value:*** `""`
+- ***Description:*** The path to a file holding the extended usage message. This file may be used by multiple scripts, even if they share no arguments. By this, the default structure and content of the auto-generated usage message (invoked with the flag `-u` or `--usage`) can be overridden for all scripts in a project in the same way, without repeating yourself upon specifying the look.
+
+### `ARGPARSER_USAGE_FILE_KEEP_COMMENTS`
+
+- ***Type:*** *bool* (Boolean)
+- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Default value:*** `false`
+- ***Description:*** Whether to keep commented lines (and their trailing blank lines) in the usage file. By this, you can choose whether you want to include lines serving as a comment (starting with a hashmark, *i.e.* `"#"`) in the usage file also in the usage message. This is only evaluated if an [`ARGPARSER_USAGE_FILE`](#argparser_usage_file) is given.
 
 ### `ARGPARSER_USAGE_STYLE`
 
