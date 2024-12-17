@@ -1,15 +1,15 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2024-12-05
+# Last Modification: 2024-12-17
 
 # Purpose: Print a help message for test_help_message.sh, invoked by
 # test_help_message.sh --help.  Compared to the auto-generated help
 # message by the argparse functions, this one is enriched by the
-# explanation of the "@" directives.
+# explanation of the include directives.
 
 # Note: Neither commented lines nor their trailing blank lines get
 # printed when invoking test_help_message.sh --help, if
-# ARGPARSER_HELP_FILE_KEEP_COMMENTS is set to "false".  The "@"
+# ARGPARSER_HELP_FILE_KEEP_COMMENTS is set to "false".  The include
 # directives get replaced by the auto-generated help message components.
 
 # Print the header.

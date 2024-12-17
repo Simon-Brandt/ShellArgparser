@@ -470,20 +470,20 @@ There are always two options for the help messages.
 -u, --usage display the usage and exit
 ```
 
-When you compare the structure of this help message with both the previous version and the help file, you see that there, you can include the sections from the auto-generated help message by prefixing their names with an `"@"` character. Generally speaking, an `"@"` directive, as the commands are internally referred to, like `@Section`, includes the section entitled `"Section"`.
+When you compare the structure of this help message with both the previous version and the help file, you see that there, you can include the sections from the auto-generated help message by prefixing their names with an [`ARGPARSER_HELP_FILE_INCLUDE_CHAR`](#argparser_help_file_include_char) character, defaulting to an `"@"`. Generally speaking, an include directive, as the commands are internally referred to, like `@Section`, includes the section entitled `"Section"`.
 
-The following section names (`"@"` directives) are supported, explained in greater detail in the reference below:
+The following section names (include directives) are supported, explained in greater detail in the reference below:
 
 - [`@All`](#all-directive)
 - [`@<ArgumentGroup>`](#argumentgroup-directive)
 - [`@Header`](#header-directive)
 - [`@Help`](#help-directive)
 
-Thereby, in `@<ArgumentGroup>`, the `"<ArgumentGroup>"` can be the name of any argument group given in the arguments definition, like `"Arguments"` for the `"@"` directive `@Arguments` or `"Options"` for the `"@"` directive `@Options`. `@Header` prints the header, `@Help` the help and usage options. Finally, the shorthand `@All` means to use the header, all argument groups, and the help options, in this order.
+Thereby, `<ArgumentGroup>` can be the name of any argument group given in the arguments definition, like `"Arguments"` for the include directive `@Arguments` or `"Options"` for the include directive `@Options`. `@Header` prints the header, `@Help` the help and usage options. Finally, the shorthand `@All` means to use the header, all argument groups, and the help options, in this order.
 
 Further, lines starting with a `"#"` character in the help file aren't printed if [`ARGPARSER_HELP_FILE_KEEP_COMMENTS`](#argparser_help_file_keep_comments) is set to `false`. This allows you to comment your help file, perhaps to explain the structure&mdash;or just to write a header with your name inside.
 
-The same as for help messages can be done for usage messages, using the [`ARGPARSER_USAGE_FILE`](#argparser_usage_file) and [`ARGPARSER_USAGE_FILE_KEEP_COMMENTS`](#argparser_usage_file_keep_comments) environment variables. However there, only the `@All` directive is supported.
+The same as for help messages can be done for usage messages, using the [`ARGPARSER_USAGE_FILE`](#argparser_usage_file), [`ARGPARSER_USAGE_FILE_INCLUDE_CHAR`](#argparser_usage_file_include_char), and [`ARGPARSER_USAGE_FILE_KEEP_COMMENTS`](#argparser_usage_file_keep_comments) environment variables. However there, only the `@All` directive is supported.
 
 ### Arguments definition files
 
@@ -739,20 +739,20 @@ A number of colors and styles is available. Note that you don't need to remember
 
 While colors overwrite each other, some styles can be combined. For instance, the default value for `ARGPARSER_ERROR_STYLE` is `"red,bold,reverse"`, meaning to colorize the message in red and to format it in bold font, using reverse video. Other useful combinations may include `"faint"` and `"italic"` or `"bold"` and `"underline"`. The order of giving the colors and styles in the environment variables' values does only matter if multiple colors are given, when the last one "wins". Else, the colors and styles are simply composed.
 
-## `"@"` directives
+## Include directives
 
-The following section names (`"@"` directives) are supported:
+The following section names (include directives) are supported in the help and usage files (with `"@"` being the default character of the [`ARGPARSER_HELP_FILE_INCLUDE_CHAR`](#argparser_help_file_include_char) and [`ARGPARSER_USAGE_FILE_INCLUDE_CHAR`](#argparser_usage_file_include_char)):
 
 - [`@All`](#all-directive)
 - [`@<ArgumentGroup>`](#argumentgroup-directive)
 - [`@Header`](#header-directive)
 - [`@Help`](#help-directive)
 
-Thereby, in `@<ArgumentGroup>`, the `"<ArgumentGroup>"` can be the name of any argument group given in the arguments definition, like `"Arguments"` for the `"@"` directive `@Arguments` or `"Options"` for the `"@"` directive `@Options`.
+Thereby, `<ArgumentGroup>` can be the name of any argument group given in the arguments definition, like `"Arguments"` for the include directive `@Arguments` or `"Options"` for the include directive `@Options`.
 
 ### `@All` directive
 
-The `@All` directive comprises all `"@"` directives in the following oder: [`@Header`](#header-directive), [`@<ArgumentGroup>`](#argumentgroup-directive), and [`@Help`](#help-directive), separated from each other by a blank line.
+The `@All` directive comprises all include directives in the following oder: [`@Header`](#header-directive), [`@<ArgumentGroup>`](#argumentgroup-directive), and [`@Help`](#help-directive), separated from each other by a blank line.
 
 Consequently, the help message generated from the [`ARGPARSER_HELP_FILE`](#argparser_help_file) with the following content:
 
@@ -774,7 +774,7 @@ is exactly identical to the one from the following content:
 
 ### `@<ArgumentGroup>` directive
 
-The `@<ArgumentGroup>` directive prints the help text for the respective `"<ArgumentGroup>"`, like `"Arguments"` for the `"@"` directive `@Arguments` or `"Options"` for the `"@"` directive `@Options`. Their order in the auto-generated help message would be alphabetically. Thus, if you have reasons for another structure, you need an [`ARGPARSER_HELP_FILE`](#argparser_help_file), denoting all arguments groups in the order preferred by you.
+The `@<ArgumentGroup>` directive prints the help text for the respective `"<ArgumentGroup>"`, like `"Arguments"` for the include directive `@Arguments` or `"Options"` for the include directive `@Options`. Their order in the auto-generated help message would be alphabetically. Thus, if you have reasons for another structure, you need an [`ARGPARSER_HELP_FILE`](#argparser_help_file), denoting all arguments groups in the order preferred by you.
 
 ### `@Header` directive
 
@@ -804,6 +804,7 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_ERROR_STYLE`](#argparser_error_style)                           | *str*                              | `"red,bold,reverse"` |
 | [`ARGPARSER_HELP_EXIT_CODE`](#argparser_help_exit_code)                     | *int*                              | `0`                  |
 | [`ARGPARSER_HELP_FILE`](#argparser_help_file)                               | *filepath* \| `""`                 | `""`                 |
+| [`ARGPARSER_HELP_FILE_INCLUDE_CHAR`](#argparser_help_file_include_char)     | *char*                             | `"@"`                |
 | [`ARGPARSER_HELP_FILE_KEEP_COMMENTS`](#argparser_help_file_keep_comments)   | *bool*                             | `false`              |
 | [`ARGPARSER_HELP_STYLE`](#argparser_help_style)                             | *str*                              | `"italic"`           |
 | [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1)                   | *int*                              | `5`[^6]              |
@@ -818,6 +819,7 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_UNSET_FUNCTIONS`](#argparser_unset_functions)                   | *bool*                             | `true`               |
 | [`ARGPARSER_USAGE_EXIT_CODE`](#argparser_usage_exit_code)                   | *int*                              | `0`                  |
 | [`ARGPARSER_USAGE_FILE`](#argparser_usage_file)                             | *filepath* \| `""`                 | `""`                 |
+| [`ARGPARSER_USAGE_FILE_INCLUDE_CHAR`](#argparser_usage_file_include_char)   | *char*                             | `"@"`                |
 | [`ARGPARSER_USAGE_FILE_KEEP_COMMENTS`](#argparser_usage_file_keep_comments) | *bool*                             | `false`              |
 | [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style)                           | *str*                              | `"italic"`           |
 | [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style)                       | *str*                              | `"red,bold"`         |
@@ -912,6 +914,13 @@ The argparser defines a large set of environment variables, each following the n
 - ***Allowed values:*** Any legit filepath or the empty string `""`
 - ***Default value:*** `""`
 - ***Description:*** The path to a file holding the extended help message. This file may be used by multiple scripts, even if they share no arguments. By this, the default structure and content of the auto-generated help message (invoked with the flag `-h` or `--help`) can be overridden for all scripts in a project in the same way, without repeating yourself upon specifying the look.
+
+### `ARGPARSER_HELP_FILE_INCLUDE_CHAR`
+
+- ***Type:***  *char* (Character)
+- ***Allowed values:*** Any unique character that's not used as a line's first character in an [`ARGPARSER_HELP_FILE`](#argparser_help_file)
+- ***Default value:*** `"@"`
+- ***Description:*** The character that introduces an include directive in an [`ARGPARSER_HELP_FILE`](#argparser_help_file). You must ensure that it is set to a character or glyph that does not occur as first character in the help file, where it should not mean an include directive. This is only evaluated if an `ARGPARSER_HELP_FILE` is given.
 
 ### `ARGPARSER_HELP_FILE_KEEP_COMMENTS`
 
@@ -1012,6 +1021,13 @@ The main difference is that, if you `export` (or `declare -x`) the variables to 
 - ***Allowed values:*** Any legit filepath or the empty string `""`
 - ***Default value:*** `""`
 - ***Description:*** The path to a file holding the extended usage message. This file may be used by multiple scripts, even if they share no arguments. By this, the default structure and content of the auto-generated usage message (invoked with the flag `-u` or `--usage`) can be overridden for all scripts in a project in the same way, without repeating yourself upon specifying the look.
+
+### `ARGPARSER_USAGE_FILE_INCLUDE_CHAR`
+
+- ***Type:***  *char* (Character)
+- ***Allowed values:*** Any unique character that's not used as a line's first character in an [`ARGPARSER_USAGE_FILE`](#argparser_usage_file)
+- ***Default value:*** `"@"`
+- ***Description:*** The character that introduces an include directive in an [`ARGPARSER_USAGE_FILE`](#argparser_usage_file). You must ensure that it is set to a character or glyph that does not occur as first character in the usage file, where it should not mean an include directive. This is only evaluated if an `ARGPARSER_USAGE_FILE` is given.
 
 ### `ARGPARSER_USAGE_FILE_KEEP_COMMENTS`
 

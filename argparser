@@ -13,10 +13,10 @@
 
 # Usage: Source this script with "source argparser" inside the script
 # whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS} is set
-# to true (the default), the arguments will be parsed upon  sourcing.
-# If ${ARGPARSER_SET_ARGS} is set to true (the default), the arguments
-# will be set to variables upon sourcing, else, the associative array
-# ${args} needs to be accessed.  Refer to the README.md for details.
+# to true (the default), the arguments will be parsed upon sourcing.  If
+# ${ARGPARSER_SET_ARGS} is set to true (the default), the arguments will
+# be set to variables upon sourcing, else, the associative array ${args}
+# needs to be accessed.  Refer to the README.md for details.
 
 # Purpose: Parse a script's arguments, giving proper error messages for
 # wrongly set arguments, assigning the values to the respective
@@ -63,6 +63,7 @@ fi
 : "${ARGPARSER_ERROR_STYLE:="red,bold,reverse"}"
 : "${ARGPARSER_HELP_EXIT_CODE:=0}"
 : "${ARGPARSER_HELP_FILE:=""}"
+: "${ARGPARSER_HELP_FILE_INCLUDE_CHAR:="@"}"
 : "${ARGPARSER_HELP_FILE_KEEP_COMMENTS:=false}"
 : "${ARGPARSER_HELP_STYLE:="italic"}"
 : "${ARGPARSER_MAX_COL_WIDTH_1:=5}"
@@ -77,6 +78,7 @@ fi
 : "${ARGPARSER_UNSET_FUNCTIONS:=true}"
 : "${ARGPARSER_USAGE_EXIT_CODE:=0}"
 : "${ARGPARSER_USAGE_FILE:=""}"
+: "${ARGPARSER_USAGE_FILE_INCLUDE_CHAR:="@"}"
 : "${ARGPARSER_USAGE_FILE_KEEP_COMMENTS:=false}"
 : "${ARGPARSER_USAGE_STYLE:="italic"}"
 : "${ARGPARSER_WARNING_STYLE:="red,bold"}"
@@ -529,16 +531,18 @@ function argparser_check_arg_value() {
 function argparser_print_help_or_usage_file() {
     # Print a help or usage message from a file, possibly without
     # commented lines (i.e., lines starting with "#") and their trailing
-    # blank lines inside the message. Lines starting with "@" will be
-    # replaced by the auto-generated help or usage message.
+    # blank lines inside the message.  Lines starting with
+    # ${ARGPARSER_*_FILE_INCLUDE_CHAR} will be replaced by the
+    # auto-generated help or usage message.
     #
     # Arguments:
     # - $1: the help type ("Help" or "Usage")
 
     # Define the local variables.
-    local at_directive
+    local include_directive
     local file
     local help_type
+    local include_char
     local keep_comments
     local line
     local line_type
@@ -546,27 +550,29 @@ function argparser_print_help_or_usage_file() {
     # Read the argument.
     help_type="$1"
     if [[ "${help_type}" == "Help" ]]; then
-        keep_comments="${ARGPARSER_HELP_FILE_KEEP_COMMENTS}"
         file="${ARGPARSER_HELP_FILE}"
+        include_char="${ARGPARSER_HELP_FILE_INCLUDE_CHAR}"
+        keep_comments="${ARGPARSER_HELP_FILE_KEEP_COMMENTS}"
     elif [[ "${help_type}" == "Usage" ]]; then
-        keep_comments="${ARGPARSER_USAGE_FILE_KEEP_COMMENTS}"
         file="${ARGPARSER_USAGE_FILE}"
+        include_char="${ARGPARSER_USAGE_FILE_INCLUDE_CHAR}"
+        keep_comments="${ARGPARSER_USAGE_FILE_KEEP_COMMENTS}"
     fi
 
     line_type="text"
     while IFS="" read line; do
-        # Set the line_type to "at_directive" if the line contains the
-        # "@<ArgumentGroup>" directive, to "comment" if the line is
+        # Set the line_type to "include_directive" if the line contains
+        # the "<ArgumentGroup>" directive, to "comment" if the line is
         # commented and ${keep_comments} is false, and to "text" if it
         # is not empty (but not commented).  Thus, empty lines following
         # comments still have line_type set to "comment".
-        if [[ "${line}" == @* ]]; then
-            line_type="at_directive"
-            at_directive="${line:1}"
+        if [[ "${line}" == "${include_char}"* ]]; then
+            line_type="include_directive"
+            include_directive="${line:1}"
             if [[ "${help_type}" == "Help" ]]; then
-                argparser_create_help_message "${at_directive}"
+                argparser_create_help_message "${include_directive}"
             elif [[ "${help_type}" == "Usage" ]]; then
-                argparser_create_usage_message "${at_directive}"
+                argparser_create_usage_message "${include_directive}"
             fi
         elif [[ "${line}" == \#* && "${keep_comments}" == false ]]; then
             line_type="comment"
@@ -575,12 +581,12 @@ function argparser_print_help_or_usage_file() {
         fi
 
         # If the line_type has been set to "text", print the current
-        # line.  If it is set to "at_directive", reset it to "text" to
-        # (possibly) print the next line, and only not the current
-        # "@<ArgumentGroup>" line.
+        # line.  If it is set to "include_directive", reset it to "text"
+        # to (possibly) print the next line, and only not the current
+        # "<ArgumentGroup>" line.
         if [[ "${line_type}" == "text" ]]; then
             printf "%s\n" "${line}"
-        elif [[ "${line_type}" == "at_directive" ]]; then
+        elif [[ "${line_type}" == "include_directive" ]]; then
             line_type="text"
         fi
     done < "${file}"
@@ -590,8 +596,8 @@ function argparser_create_help_message() {
     # Create a help message for the script's arguments.
     #
     # Arguments:
-    # - $1: the "@" directive ("All", "Header", "Help", or any argument
-    #       group)
+    # - $1: the include directive ("All", "Header", "Help", or any
+    #       argument group)
     #
     # Nonlocals:
     # - args_definition: the arguments definition
@@ -603,7 +609,7 @@ function argparser_create_help_message() {
     local -a arg_groups
     local arg_key
     local arg_number
-    local at_directive
+    local include_directive
     local choice_values
     local -a col_1
     local -a col_2
@@ -655,7 +661,7 @@ function argparser_create_help_message() {
     local words
 
     # Read the argument.
-    at_directive="$1"
+    include_directive="$1"
 
     # Read the arguments' groups to sort the arguments by group in the
     # help message.  To this end, sort the groups alphabetically and
@@ -684,11 +690,12 @@ function argparser_create_help_message() {
     col_2=( )
     col_3=( )
     for arg_group in "${arg_groups[@]}"; do
-        # Only add the argument group that was requested by the "@"
-        # directive.  Skip the "@Header" and "@Help" directive, but not
-        # the "@All" directive.
-        if [[ "${at_directive}" == "Header" || "${at_directive}" == "Help" \
-            || ("${at_directive}" != "All" && "${arg_group}" != "${at_directive}") ]]
+        # Only add the argument group that was requested by the include
+        # directive.  Skip the "Header" and "Help" directive, but not
+        # the "All" directive.
+        if [[ "${include_directive}" == "Header" \
+            || "${include_directive}" == "Help" \
+            || ("${include_directive}" != "All" && "${arg_group}" != "${include_directive}") ]]
         then
             continue
         fi
@@ -835,9 +842,11 @@ function argparser_create_help_message() {
         col_3+=("${ARGPARSER_ARG_GROUP_DELIMITER}")
     done
 
-    # Add the help and usage flags that always exist if "@All" or
-    # "@Help" was requested.
-    if [[ "${at_directive}" == "All" || "${at_directive}" == "Help" ]]; then
+    # Add the help and usage flags that always exist if "All" or "Help"
+    # was requested.
+    if [[ "${include_directive}" == "All" \
+        || "${include_directive}" == "Help" ]]
+    then
         col_1+=("-h,")
         col_2+=("--help")
         col_3+=("display this help and exit")
@@ -1116,7 +1125,7 @@ function argparser_create_help_message() {
     # the first and the second column.  If a line is wider, set the
     # width to the respective value, as long as the width doesn't exceed
     # the limit set by ${ARGPARSER_MAX_COL_WIDTH_*}.
-    if [[ "${at_directive}" != "Header" ]]; then
+    if [[ "${include_directive}" != "Header" ]]; then
         col_width_1=0
         col_width_2=0
         for i in "${!col_1[@]}"; do
@@ -1165,15 +1174,15 @@ function argparser_create_help_message() {
         fi
     done
 
-    # If "@All" or "@Header" was requested, print the help message's
+    # If "All" or "Header" was requested, print the help message's
     # header, giving the script's name and instructions on how to
-    # interpret the arguments.  With "@All", print a trailing blank line
+    # interpret the arguments.  With "All", print a trailing blank line
     # to separate the block from the following arguments.
-    if [[ "${at_directive}" == "All" ]]; then
+    if [[ "${include_directive}" == "All" ]]; then
         printf "Usage: %s ARGUMENTS\n\n" "${script_name}"
         printf "Mandatory arguments to long options are mandatory for short "
         printf "options too.\n\n"
-    elif [[ "${at_directive}" == "Header" ]]; then
+    elif [[ "${include_directive}" == "Header" ]]; then
         printf "Usage: %s ARGUMENTS\n\n" "${script_name}"
         printf "Mandatory arguments to long options are mandatory for short "
         printf "options too.\n"
@@ -1183,9 +1192,9 @@ function argparser_create_help_message() {
     index=0
     for arg_group in "${arg_groups[@]}"; do
         # Only print the argument group's arguments if it was requested
-        # by the "@" directive.
-        if [[ "${at_directive}" != "All" \
-            && "${arg_group}" != "${at_directive}" ]]
+        # by the include directive.
+        if [[ "${include_directive}" != "All" \
+            && "${arg_group}" != "${include_directive}" ]]
         then
             continue
         fi
@@ -1208,9 +1217,9 @@ function argparser_create_help_message() {
             printf "\n"
         done
 
-        # If the "@All" directive is given, print a trailing blank line
-        # to separate the argument group blocks from each other.
-        if [[ "${at_directive}" == "All" ]]; then
+        # If "All" was requested, print a trailing blank line to
+        # separate the argument group blocks from each other.
+        if [[ "${include_directive}" == "All" ]]; then
             printf "\n"
         fi
 
@@ -1220,10 +1229,12 @@ function argparser_create_help_message() {
         (( index = i + 1 ))
     done
 
-    # If "@All" or "@Help" was requested, print the help and usage
+    # If "All" or "Help" was requested, print the help and usage
     # lines, which shall be the last two and hence were not used in the
     # sorting process.
-    if [[ "${at_directive}" == "All" || "${at_directive}" == "Help" ]]; then
+    if [[ "${include_directive}" == "All" \
+        || "${include_directive}" == "Help" ]]
+    then
         printf "%s" "${col_1[-2]}" "${whitespace_1[-2]}" "${col_2[-2]}" \
             "${whitespace_2[-2]}" "${col_3[-2]}"
         printf "\n"
@@ -1532,11 +1543,11 @@ function argparser_main() {
     # of ${ARGPARSER_ARG_DELIMITER_2}, a colon, the value pattern
     # describes alternating sequences of seven non-colons ("+([^:])")
     # and six colons (":") in Bash's extglob syntax.  In PCRE syntax,
-    # the non-colon patten would be written as "[^:]+".  The key pattern
-    # only consists of one non-colon pattern and the joined definition
-    # pattern of the key pattern, a colon, and the value pattern, i.e.,
-    # of eight non-colons interspersed with seven colons.  This reflects
-    # the structure of the arguments definition.
+    # the non-colon pattern would be written as "[^:]+".  The key
+    # pattern only consists of one non-colon pattern and the joined
+    # definition pattern of the key pattern, a colon, and the value
+    # pattern, i.e., of eight non-colons interspersed with seven colons.
+    # This reflects the structure of the arguments definition.
     key_pattern="+([^${ARGPARSER_ARG_DELIMITER_2}])"
 
     value_pattern=""
@@ -1801,7 +1812,6 @@ fi
 # stand in no relation to the argparser.
 if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_check_arg_value
-    unset -f argparser_print_help_or_usage_message
     unset -f argparser_colorize
     unset -f argparser_create_help_message
     unset -f argparser_create_usage_message
@@ -1809,6 +1819,7 @@ if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_main
     unset -f argparser_parse_args
     unset -f argparser_print_help_or_usage_file
+    unset -f argparser_print_help_or_usage_message
 fi
 
 # If ${ARGPARSER_UNSET_ENV_VARS} is set to true, unset all argparser
@@ -1828,6 +1839,7 @@ if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_ERROR_STYLE
     unset ARGPARSER_HELP_EXIT_CODE
     unset ARGPARSER_HELP_FILE
+    unset ARGPARSER_HELP_FILE_INCLUDE_CHAR
     unset ARGPARSER_HELP_FILE_KEEP_COMMENTS
     unset ARGPARSER_HELP_STYLE
     unset ARGPARSER_MAX_COL_WIDTH_1
@@ -1842,6 +1854,7 @@ if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_UNSET_FUNCTIONS
     unset ARGPARSER_USAGE_EXIT_CODE
     unset ARGPARSER_USAGE_FILE
+    unset ARGPARSER_USAGE_FILE_INCLUDE_CHAR
     unset ARGPARSER_USAGE_FILE_KEEP_COMMENTS
     unset ARGPARSER_USAGE_STYLE
     unset ARGPARSER_WARNING_STYLE
