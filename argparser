@@ -91,18 +91,17 @@ function argparser_in_array() {
     # - 1, else
 
     # Define the local variables.
-    local array
     local element
     local query
 
-    # Read the query element and the array to search through.
+    # Read the query element and shift the arguments such that only the
+    # array to search through remains.
     query="$1"
     shift
-    read -a array <<< "$@"
 
     # Iterate through the array and compare each element to the query.
     # Output 0 on success, else 1.
-    for element in "${array[@]}"; do
+    for element in "$@"; do
         if [[ "${element}" == "${query}" ]]; then
             printf 0
             return
@@ -124,13 +123,13 @@ function argparser_colorize() {
 
     # Define the local variables.
     local color
-    local colors
+    local -A colors
     local error_message
     local request
     local requests
     local string
     local style
-    local styles
+    local -A styles
 
     # Read the arguments.
     requests="$1"
@@ -138,7 +137,6 @@ function argparser_colorize() {
 
     # Define the associative array with colors and their corresponding
     # Select Graphic Rendition (SGR) ANSI escape sequence codes.
-    declare -A colors
     colors=(
         [black]=30
         [red]=31
@@ -150,7 +148,6 @@ function argparser_colorize() {
         [white]=37
     )
 
-    declare -A styles
     styles=(
         [normal]=22
         [bold]=1
@@ -204,7 +201,7 @@ function argparser_parse_args() {
     # Define the local variables.
     local arg
     local arg_definition
-    local args
+    local -A args
     local args_keys
     local args_values
     local given_arg
@@ -221,7 +218,6 @@ function argparser_parse_args() {
     IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a args_keys <<< "$2"
     IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a args_values <<< "$3"
 
-    declare -A args
     for i in "${!args_keys[@]}"; do
         args["${args_keys[${i}]}"]="${args_values[${i}]}"
     done
@@ -610,16 +606,16 @@ function argparser_create_help_message() {
     local arg
     local arg_definition
     local arg_group
-    local arg_groups
+    local -a arg_groups
     local arg_number
-    local args
+    local -A args
     local args_keys
     local args_values
     local at_directive
     local choice_values
-    local col_1
-    local col_2
-    local col_3
+    local -a col_1
+    local -a col_2
+    local -a col_3
     local col_width
     local col_width_1
     local col_width_2
@@ -643,11 +639,11 @@ function argparser_create_help_message() {
     local long_option
     local long_options
     local max_line_count
-    local new_col_1
+    local -a new_col_1
     local new_col_1_value
-    local new_col_2
+    local -a new_col_2
     local new_col_2_value
-    local new_col_3
+    local -a new_col_3
     local new_col_3_value
     local newline_count_1
     local newline_count_2
@@ -657,11 +653,11 @@ function argparser_create_help_message() {
     local newlines_3
     local script_name
     local short_options
-    local sorted_col_1
+    local -A sorted_col_1
     local sorted_col_2
-    local sorted_col_3
-    local whitespace_1
-    local whitespace_2
+    local -A sorted_col_3
+    local -a whitespace_1
+    local -a whitespace_2
     local whitespace_len_1
     local whitespace_len_2
     local word
@@ -673,7 +669,6 @@ function argparser_create_help_message() {
     IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a args_keys <<< "$3"
     IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a args_values <<< "$4"
 
-    declare -A args
     for i in "${!args_keys[@]}"; do
         args["${args_keys[${i}]}"]="${args_values[${i}]}"
     done
@@ -834,8 +829,6 @@ function argparser_create_help_message() {
         # the yet unsorted other columns.  As a consequence, all columns
         # are sorted as if they would have been sorted together (which
         # appears not be feasible).
-        declare -A sorted_col_1
-        declare -A sorted_col_3
         for i in "${!new_col_2[@]}"; do
             sorted_col_1["${new_col_2[${i}]}"]="${new_col_1[${i}]}"
             sorted_col_3["${new_col_2[${i}]}"]="${new_col_3[${i}]}"
@@ -1269,7 +1262,7 @@ function argparser_create_usage_message() {
     local arg
     local arg_definition
     local arg_number
-    local args
+    local -A args
     local args_keys
     local args_values
     local choice_values
@@ -1277,10 +1270,10 @@ function argparser_create_usage_message() {
     local fallback_values
     local header
     local i
-    local long_option_args
+    local -a long_option_args
     local long_options
     local script_name
-    local short_option_args
+    local -a short_option_args
     local short_options
     local whitespace
     local whitespace_len
@@ -1290,7 +1283,6 @@ function argparser_create_usage_message() {
     IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a args_keys <<< "$2"
     IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a args_values <<< "$3"
 
-    declare -A args
     for i in "${!args_keys[@]}"; do
         args["${args_keys[${i}]}"]="${args_values[${i}]}"
     done
@@ -1493,7 +1485,7 @@ function argparser_main() {
     local def_pattern
     local error
     local error_message
-    local error_messages
+    local -a error_messages
     local given_arg
     local given_args
     local help_message
@@ -1508,7 +1500,7 @@ function argparser_main() {
     local usage_message
     local value_pattern
     local warning_message
-    local warning_messages
+    local -a warning_messages
 
     # Read the arguments.
     read -a given_args <<< "$@"
@@ -1547,7 +1539,8 @@ function argparser_main() {
     # Define the remaining local variables that start with "arg".
     local arg
     local arg_key
-    local arg_value
+    local -a arg_value
+    local -A args_definition
     local args_keys
     local args_values
 
@@ -1601,7 +1594,6 @@ function argparser_main() {
     # argparser syntax, or in a separate arguments definition file,
     # where they're only given as their key.  If the structure differs,
     # an error is printed and the script is aborted.
-    declare -A args_definition
     for arg in "${args[@]}"; do
         if [[ "${arg}" == ${def_pattern} ]]; then
             # The argument matches the entire definition pattern.
