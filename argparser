@@ -13,15 +13,15 @@
 
 # Usage: Source this script with "source argparser" inside the script
 # whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS} is set
-# to true (which per default is), the arguments will be parsed upon
-# sourcing, else, the respective functions need to be called.  If
-# ${ARGPARSER_SET_ARGS} is set to true (which per default is), the
-# arguments will be set to variables upon sourcing, else, the
-# associative array ${args} needs to be accessed.
+# to true (the default), the arguments will be parsed upon  sourcing.
+# If ${ARGPARSER_SET_ARGS} is set to true (the default), the arguments
+# will be set to variables upon sourcing, else, the associative array
+# ${args} needs to be accessed.  Refer to the README.md for details.
 
 # Purpose: Parse a script's arguments, giving proper error messages for
 # wrongly set arguments, assigning the values to the respective
-# variables, as well as creating and printing a help message.
+# variables, as well as creating and printing a help message.  Refer to
+# the README.md for details.
 
 ########################################################################
 
@@ -1793,12 +1793,11 @@ function argparser_main() {
     # If any argument was not or wrongly given, ${error} is set to true,
     # then print a blank line and the usage message, then exit.
     if [[ "${error}" == true ]]; then
-        printf "\n" >&2
         usage_message="$(argparser_prepare_help_message "usage" "$0" \
             "${args_keys}" "${args_values}")"
         usage_message="$(argparser_colorize "${ARGPARSER_USAGE_STYLE}" \
             "${usage_message}")"
-        printf "%s\n" "${usage_message}" >&2
+        printf "\n%s\n" "${usage_message}" >&2
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
     fi
 }
