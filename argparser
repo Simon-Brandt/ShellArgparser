@@ -1393,7 +1393,7 @@ function argparser_create_usage_message() {
     done | sort
 }
 
-function argparser_choose_help_or_usage_message() {
+function argparser_print_help_or_usage_message() {
     # Print a help or usage message.  If a file with such is given,
     # print the file, else, create a message for the script's arguments.
     #
@@ -1625,7 +1625,7 @@ function argparser_main() {
         for message in "${parsed_arg[@]}"; do
             case "${message}" in
                 Help*)
-                    help_message="$(argparser_choose_help_or_usage_message \
+                    help_message="$(argparser_print_help_or_usage_message \
                         "Help")"
                     help_message="$(argparser_colorize \
                         "${ARGPARSER_HELP_STYLE}" "${help_message}")"
@@ -1633,7 +1633,7 @@ function argparser_main() {
                     exit "${ARGPARSER_HELP_EXIT_CODE}"
                     ;;
                 Usage*)
-                    usage_message="$(argparser_choose_help_or_usage_message \
+                    usage_message="$(argparser_print_help_or_usage_message \
                         "Usage")"
                     usage_message="$(argparser_colorize \
                         "${ARGPARSER_USAGE_STYLE}" "${usage_message}")"
@@ -1801,7 +1801,7 @@ fi
 # stand in no relation to the argparser.
 if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_check_arg_value
-    unset -f argparser_choose_help_or_usage_message
+    unset -f argparser_print_help_or_usage_message
     unset -f argparser_colorize
     unset -f argparser_create_help_message
     unset -f argparser_create_usage_message
