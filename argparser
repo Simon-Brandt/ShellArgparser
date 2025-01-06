@@ -175,10 +175,10 @@ function argparser_colorize() {
     for request in "${requests[@]}"; do
         if [[ "$(argparser_in_array "${request}" "${!colors[@]}")" == true ]]
         then
-            printf "\e[%sm" "${colors["${request}"]}"
+            printf "\e[%sm" "${colors[${request}]}"
         elif [[ "$(argparser_in_array "${request}" "${!styles[@]}")" == true ]]
         then
-            printf "\e[%sm" "${styles["${request}"]}"
+            printf "\e[%sm" "${styles[${request}]}"
         else
             error_message="$(printf \
                 "Error: Wrong color or style \"%s\" specified.\n" \
@@ -221,7 +221,7 @@ function argparser_quicksort() {
         # leftmost element as pivot.
         (( i = "${left}" - 1 ))
         (( j = "${right}" + 1 ))
-        pivot="${array[${left}]}"
+        pivot="${array[left]}"
 
         while :; do
             # Traverse the array from the left, until a larger element
@@ -932,17 +932,17 @@ function argparser_create_help_message() {
         # sorted as if they would have been sorted together (which
         # appears not be feasible).
         for i in "${!new_col_2[@]}"; do
-            sorted_col_1["${new_col_2[${i}]}"]="${new_col_1[${i}]}"
-            sorted_col_3["${new_col_2[${i}]}"]="${new_col_3[${i}]}"
+            sorted_col_1[${new_col_2[i]}]="${new_col_1[i]}"
+            sorted_col_3[${new_col_2[i]}]="${new_col_3[i]}"
         done
 
         mapfile -d "" -t sorted_col_2 \
             < <(argparser_sort false "${new_col_2[@]}")
 
         for i in "${!sorted_col_2[@]}"; do
-            col_1+=("${sorted_col_1[${sorted_col_2[${i}]}]}")
-            col_2+=("${sorted_col_2[${i}]}")
-            col_3+=("${sorted_col_3[${sorted_col_2[${i}]}]}")
+            col_1+=("${sorted_col_1[${sorted_col_2[i]}]}")
+            col_2+=("${sorted_col_2[i]}")
+            col_3+=("${sorted_col_3[${sorted_col_2[i]}]}")
         done
 
         # To mark the end of an argument group later upon printing, add
@@ -974,7 +974,7 @@ function argparser_create_help_message() {
     for i in "${!col_1[@]}"; do
         # Split the element of column 1 word by word (on whitespace),
         # such that line breaks aren't inserted into entire words.
-        read -a words <<< "${col_1[${i}]}"
+        read -a words <<< "${col_1[i]}"
         joined_words=""
         col_width=0
         for word in "${words[@]}"; do
@@ -1020,14 +1020,14 @@ function argparser_create_help_message() {
         done
 
         # Set the column's element to the joined line.
-        col_1["${i}"]="${joined_words}"
+        col_1[i]="${joined_words}"
     done
 
     col_width_2=0
     for i in "${!col_2[@]}"; do
         # Split the element of column 2 word by word (on whitespace),
         # such that line breaks aren't inserted into entire words.
-        read -a words <<< "${col_2[${i}]}"
+        read -a words <<< "${col_2[i]}"
         joined_words=""
         col_width=0
         for word in "${words[@]}"; do
@@ -1073,14 +1073,14 @@ function argparser_create_help_message() {
         done
 
         # Set the column's element to the joined line.
-        col_2["${i}"]="${joined_words}"
+        col_2[i]="${joined_words}"
     done
 
     col_width_3=0
     for i in "${!col_3[@]}"; do
         # Split the element of column 3 word by word (on whitespace),
         # such that line breaks aren't inserted into entire words.
-        read -a words <<< "${col_3[${i}]}"
+        read -a words <<< "${col_3[i]}"
         joined_words=""
         col_width=0
         for word in "${words[@]}"; do
@@ -1126,7 +1126,7 @@ function argparser_create_help_message() {
         done
 
         # Set the column's element to the joined line.
-        col_3["${i}"]="${joined_words}"
+        col_3[i]="${joined_words}"
     done
 
     # Adjust the number of line breaks between each column's rows, such
@@ -1134,15 +1134,15 @@ function argparser_create_help_message() {
     for i in "${!col_1[@]}"; do
         # Count the number of rows for each element.
         IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a lines_col_1 \
-            <<< "${col_1[${i}]}"
+            <<< "${col_1[i]}"
         line_count_1="${#lines_col_1[@]}"
 
         IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a lines_col_2 \
-            <<< "${col_2[${i}]}"
+            <<< "${col_2[i]}"
         line_count_2="${#lines_col_2[@]}"
 
         IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a lines_col_3 \
-            <<< "${col_3[${i}]}"
+            <<< "${col_3[i]}"
         line_count_3="${#lines_col_3[@]}"
 
         # Get the largest line count.
@@ -1188,19 +1188,19 @@ function argparser_create_help_message() {
         for (( j = 1; j <= newline_count_1; j++ )); do
             newlines_1+="${ARGPARSER_ARG_DELIMITER_1}"
         done
-        col_1["${i}"]+="${newlines_1}"
+        col_1[i]+="${newlines_1}"
 
         newlines_2=""
         for (( j = 1; j <= newline_count_2; j++ )); do
             newlines_2+="${ARGPARSER_ARG_DELIMITER_1}"
         done
-        col_2["${i}"]+="${newlines_2}"
+        col_2[i]+="${newlines_2}"
 
         newlines_3=""
         for (( j = 1; j <= newline_count_3; j++ )); do
             newlines_3+="${ARGPARSER_ARG_DELIMITER_1}"
         done
-        col_3["${i}"]+="${newlines_3}"
+        col_3[i]+="${newlines_3}"
     done
 
     # Re-read in the columns' lines, such that each line makes up one
@@ -1212,17 +1212,17 @@ function argparser_create_help_message() {
     new_col_3=( )
     for i in "${!col_1[@]}"; do
         IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a lines_col_1 \
-            <<< "${col_1[${i}]}"
+            <<< "${col_1[i]}"
         IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a lines_col_2 \
-            <<< "${col_2[${i}]}"
+            <<< "${col_2[i]}"
         IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a lines_col_3 \
-            <<< "${col_3[${i}]}"
+            <<< "${col_3[i]}"
 
         line_count="${#lines_col_1[@]}"
         for (( line_index = 0; line_index < line_count; line_index++ )); do
-            new_col_1+=("${lines_col_1[${line_index}]}")
-            new_col_2+=("${lines_col_2[${line_index}]}")
-            new_col_3+=("${lines_col_3[${line_index}]}")
+            new_col_1+=("${lines_col_1[line_index]}")
+            new_col_2+=("${lines_col_2[line_index]}")
+            new_col_3+=("${lines_col_3[line_index]}")
         done
     done
 
@@ -1231,9 +1231,9 @@ function argparser_create_help_message() {
     col_2=( )
     col_3=( )
     for i in "${!new_col_1[@]}"; do
-        col_1+=("$(printf "%s" "${new_col_1[${i}]}")")
-        col_2+=("$(printf "%s" "${new_col_2[${i}]}")")
-        col_3+=("$(printf "%s" "${new_col_3[${i}]}")")
+        col_1+=("$(printf "%s" "${new_col_1[i]}")")
+        col_2+=("$(printf "%s" "${new_col_2[i]}")")
+        col_3+=("$(printf "%s" "${new_col_3[i]}")")
     done
 
     # For proper alignment of the columns, whitespace must be used as
@@ -1245,16 +1245,16 @@ function argparser_create_help_message() {
         col_width_1=0
         col_width_2=0
         for i in "${!col_1[@]}"; do
-            if (( "${#col_1[${i}]}" <= ARGPARSER_MAX_COL_WIDTH_1 \
-                && "${#col_1[${i}]}" > col_width_1 ))
+            if (( "${#col_1[i]}" <= ARGPARSER_MAX_COL_WIDTH_1 \
+                && "${#col_1[i]}" > col_width_1 ))
             then
-                col_width_1="${#col_1[${i}]}"
+                col_width_1="${#col_1[i]}"
             fi
 
-            if (( "${#col_2[${i}]}" <= ARGPARSER_MAX_COL_WIDTH_2 \
-                && "${#col_2[${i}]}" > col_width_2 ))
+            if (( "${#col_2[i]}" <= ARGPARSER_MAX_COL_WIDTH_2 \
+                && "${#col_2[i]}" > col_width_2 ))
             then
-                col_width_2="${#col_2[${i}]}"
+                col_width_2="${#col_2[i]}"
             fi
         done
     fi
@@ -1273,16 +1273,16 @@ function argparser_create_help_message() {
     whitespace_1=( )
     whitespace_2=( )
     for i in "${!col_1[@]}"; do
-        if (( "${#col_1[${i}]}" <= ARGPARSER_MAX_COL_WIDTH_1 )); then
-            (( whitespace_len_1 = col_width_1 - "${#col_1[${i}]}" + 1 ))
+        if (( "${#col_1[i]}" <= ARGPARSER_MAX_COL_WIDTH_1 )); then
+            (( whitespace_len_1 = col_width_1 - "${#col_1[i]}" + 1 ))
             whitespace_1+=("$(printf "%*s" "${whitespace_len_1}")")
         else
             (( whitespace_len_1 = col_width_1 + 1 ))
             whitespace_1+=("$(printf "\n%*s" "${whitespace_len_1}")")
         fi
 
-        if (( "${#col_2[${i}]}" <= ARGPARSER_MAX_COL_WIDTH_2 )); then
-            (( whitespace_len_2 = col_width_2 - "${#col_2[${i}]}" + 1 ))
+        if (( "${#col_2[i]}" <= ARGPARSER_MAX_COL_WIDTH_2 )); then
+            (( whitespace_len_2 = col_width_2 - "${#col_2[i]}" + 1 ))
             whitespace_2+=("$(printf "%*s" "${whitespace_len_2}")")
         else
             (( whitespace_len_2 = col_width_1 + col_width_2 + 2 ))
@@ -1323,13 +1323,12 @@ function argparser_create_help_message() {
         # characters denote the end of the current argument group and
         # don't get printed.
         for (( i = index; i < "${#col_1[@]}"; i++ )); do
-            if [[ "${col_1[${i}]}" == "${ARGPARSER_ARG_GROUP_DELIMITER}" ]]
-            then
+            if [[ "${col_1[i]}" == "${ARGPARSER_ARG_GROUP_DELIMITER}" ]]; then
                 break
             fi
 
-            printf "%s" "${col_1[${i}]}" "${whitespace_1[${i}]}" \
-                "${col_2[${i}]}" "${whitespace_2[${i}]}" "${col_3[${i}]}"
+            printf "%s" "${col_1[i]}" "${whitespace_1[i]}" "${col_2[i]}" \
+                "${whitespace_2[i]}" "${col_3[i]}"
             printf "\n"
         done
 
@@ -1697,7 +1696,7 @@ function argparser_main() {
             # Separate its key and value from each other and store them.
             arg_key="${arg%%${ARGPARSER_ARG_DELIMITER_2}*}"
             arg_value="${arg#*${ARGPARSER_ARG_DELIMITER_2}}"
-            args_definition["${arg_key}"]="${arg_value}"
+            args_definition[${arg_key}]="${arg_value}"
         elif [[ "${arg}" == ${key_pattern} && -n "${ARGPARSER_ARG_DEF_FILE}" ]]
         then
             # The argument matches the key pattern and an arguments
@@ -1715,7 +1714,7 @@ function argparser_main() {
                 if [[ "${arg_key}" == "${arg}" \
                     && "${arg_value}" == ${value_pattern} ]]
                 then
-                    args_definition["${arg_key}"]="${arg_value}"
+                    args_definition[${arg_key}]="${arg_value}"
                     continue 2
                 fi
             done
@@ -1820,7 +1819,7 @@ function argparser_main() {
         # If the argument had been set before, assign the new value to
         # it (as ${ARGPARSER_ARG_DELIMITER_3}-separated list).
         if [[ -v arg_key ]]; then
-            args["${arg_key}"]="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; \
+            args[${arg_key}]="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; \
                 printf "%s" "${arg_value[*]}")"
         fi
     done
@@ -1858,7 +1857,7 @@ function argparser_main() {
         done
 
         # Assign the checked value to the argument.
-        args["${arg_key}"]="${arg_value}"
+        args[${arg_key}]="${arg_value}"
     done
 
     # Colorize, sort, and print all error and warning messages.
