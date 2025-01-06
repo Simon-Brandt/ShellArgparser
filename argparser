@@ -7,8 +7,7 @@
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
 # TODO: Enable options starting with a "+" as crossed "-".
-# TODO: Eliminate remaining calls to external commands, such as sed and
-#       tr.
+# TODO: Eliminate remaining calls to external commands, such as sed.
 # BUG:  Fix interpretation of keyword arguments after "--".
 # BUG:  Fix short-option-only argument definitions giving faulty help
 #       messages.
@@ -733,6 +732,7 @@ function argparser_create_help_message() {
     local help_text
     local i
     local index
+    local j
     local joined_words
     local len_word
     local len_joined_words
@@ -1178,20 +1178,26 @@ function argparser_create_help_message() {
             (( newline_count_3 = max_line_count - line_count_3 + 1 ))
         fi
 
-        # Add as many line breaks as computed to each element.  To
+        # To each element, add as many line breaks as computed.  To
         # preserve the correct number of line breaks upon reading the
         # element into another array, later, one break is inserted for
         # sure (by the increment in the above compution).
-        newlines_1="$(printf "%*s" "${newline_count_1}" \
-            | tr " " "${ARGPARSER_ARG_DELIMITER_1}")"
+        newlines_1=""
+        for (( j = 1; j <= newline_count_1; j++ )); do
+            newlines_1+="${ARGPARSER_ARG_DELIMITER_1}"
+        done
         col_1["${i}"]+="${newlines_1}"
 
-        newlines_2="$(printf "%*s" "${newline_count_2}" \
-            | tr " " "${ARGPARSER_ARG_DELIMITER_1}")"
+        newlines_2=""
+        for (( j = 1; j <= newline_count_2; j++ )); do
+            newlines_2+="${ARGPARSER_ARG_DELIMITER_1}"
+        done
         col_2["${i}"]+="${newlines_2}"
 
-        newlines_3="$(printf "%*s" "${newline_count_3}" \
-            | tr " " "${ARGPARSER_ARG_DELIMITER_1}")"
+        newlines_3=""
+        for (( j = 1; j <= newline_count_3; j++ )); do
+            newlines_3+="${ARGPARSER_ARG_DELIMITER_1}"
+        done
         col_3["${i}"]+="${newlines_3}"
     done
 
@@ -1218,8 +1224,7 @@ function argparser_create_help_message() {
         done
     done
 
-    # Store the lines back in the original columns' variables.  Trim the
-    # trailing ${ARGPARSER_ARG_DELIMITER_2} characters.
+    # Store the lines back in the original columns' variables.
     col_1=( )
     col_2=( )
     col_3=( )
