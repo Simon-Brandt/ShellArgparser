@@ -7,7 +7,7 @@
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
 # TODO: Enable options starting with a "+" as crossed "-".
-# TODO: Eliminate remaining calls to external commands, such as sed.
+# TODO: Eliminate remaining calls to external commands.
 # BUG:  Fix interpretation of keyword arguments after "--".
 # BUG:  Fix short-option-only argument definitions giving faulty help
 #       messages.
@@ -850,8 +850,8 @@ function argparser_create_help_message() {
                 new_col_1+=(" ")
             elif [[ "${arg_number}" == 0 ]]; then  # Flag.
                 new_col_1_value="["
-                new_col_1_value+="$(printf -- "-%s, " "${short_options[@]}" \
-                    | sed "s/, $//")"
+                new_col_1_value+="$(printf -- "-%s, " "${short_options[@]}")"
+                new_col_1_value="${new_col_1_value%%, }"
                 new_col_1_value+="]"
                 if [[ "${long_options[0]}" != "-" ]]; then  # Long option.
                     new_col_1_value+=","
@@ -859,8 +859,10 @@ function argparser_create_help_message() {
                 new_col_1+=("${new_col_1_value}")
             else  # Non-flag.
                 if [[ "${long_options[0]}" == "-" ]]; then  # No long option.
-                    new_col_1+=("$(printf -- "-%s, " "${short_options[@]}" \
-                        | sed "s/, $//")")
+                    new_col_1_value="$(printf -- "-%s, " \
+                        "${short_options[@]}")"
+                    new_col_1_value="${new_col_1_value%%, }"
+                    new_col_1+=("${new_col_1_value}")
                 else  # Long option.
                     new_col_1+=("$(printf -- "-%s, " "${short_options[@]}")")
                 fi
@@ -871,8 +873,8 @@ function argparser_create_help_message() {
                 new_col_2+=(" ")
             elif [[ "${arg_number}" == 0 ]]; then  # Flag.
                 new_col_2_value="["
-                new_col_2_value+="$(printf -- "--%s, " "${long_options[@]}" \
-                    | sed "s/, $//")"
+                new_col_2_value+="$(printf -- "--%s, " "${long_options[@]}")"
+                new_col_2_value="${new_col_2_value%%, }"
                 new_col_2_value+="]"
                 new_col_2+=("${new_col_2_value}")
             elif [[ "${choice_values[0]}" != "-" \
@@ -883,7 +885,7 @@ function argparser_create_help_message() {
                     new_col_2_value+="$(printf -- "--%s[={%s}], " \
                         "${long_option}" "${choice_values}")"
                 done
-                new_col_2_value="$(sed "s/, $//" <<< "${new_col_2_value}")"
+                new_col_2_value="${new_col_2_value%%, }"
                 new_col_2+=("${new_col_2_value}")
             elif [[ "${choice_values[0]}" != "-" ]]; then  # Choice only.
                 new_col_2_value=""
@@ -891,7 +893,7 @@ function argparser_create_help_message() {
                     new_col_2_value+="$(printf -- "--%s={%s}, " \
                         "${long_option}" "${choice_values}")"
                 done
-                new_col_2_value="$(sed "s/, $//" <<< "${new_col_2_value}")"
+                new_col_2_value="${new_col_2_value%%, }"
                 new_col_2+=("${new_col_2_value}")
             elif [[ "${default_values[0]}" != "-" ]]; then  # Default only.
                 new_col_2_value=""
@@ -899,7 +901,7 @@ function argparser_create_help_message() {
                     new_col_2_value+="$(printf -- "--%s[=%s], " \
                         "${long_option}" "${long_option^^}")"
                 done
-                new_col_2_value="$(sed "s/, $//" <<< "${new_col_2_value}")"
+                new_col_2_value="${new_col_2_value%%, }"
                 new_col_2+=("${new_col_2_value}")
             else  # No choice nor default.
                 new_col_2_value=""
@@ -907,7 +909,7 @@ function argparser_create_help_message() {
                     new_col_2_value+="$(printf -- "--%s=%s, " \
                         "${long_option}" "${long_option^^}")"
                 done
-                new_col_2_value="$(sed "s/, $//" <<< "${new_col_2_value}")"
+                new_col_2_value="${new_col_2_value%%, }"
                 new_col_2+=("${new_col_2_value}")
             fi
 
