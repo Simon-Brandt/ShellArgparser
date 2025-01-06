@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2024-12-17
+# Last Modification: 2025-01-06
 
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
@@ -193,8 +193,8 @@ function argparser_colorize() {
 }
 
 function argparser_quicksort() {
-    # Use the recursive Quicksort algorithm with Tony Hoare's partition
-    # scheme to sort an array.
+    # Sort an array using the recursive Quicksort algorithm with Tony
+    # Hoare's partition scheme.
     #
     # Arguments:
     # - $1: the left boundary of the array bucket
@@ -267,15 +267,25 @@ function argparser_sort() {
     # Output:
     # - the sorted array as string concatenated with null characters
 
-    # Define the local variable.
+    # Define the local variables.
     local array
+    local i
+    local reverse
 
     # Read the arguments.
+    reverse="$1"
+    shift
     read -a array <<< "$@"
 
-    # Sort the array and output it.
+    # Sort the array and output it, possibly after reversing it.
     argparser_quicksort 0 "$(( "${#array[@]}" - 1 ))"
-    printf '%s\0' "${array[@]}"
+    if [[ "${reverse}" == true ]]; then
+        for (( i = "${#array[@]}" - 1; i >= 0; i-- )); do
+            printf '%s\0' "${array[i]}"
+        done
+    else
+        printf '%s\0' "${array[@]}"
+    fi
 }
 
 function argparser_parse_args() {
@@ -1922,6 +1932,8 @@ if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_parse_args
     unset -f argparser_print_help_or_usage_file
     unset -f argparser_print_help_or_usage_message
+    unset -f argparser_quicksort
+    unset -f argparser_sort
 fi
 
 # If ${ARGPARSER_UNSET_ENV_VARS} is set to true, unset all argparser
