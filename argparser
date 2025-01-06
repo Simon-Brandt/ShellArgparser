@@ -200,7 +200,7 @@ function argparser_quicksort() {
     # - $1: the left boundary of the array bucket
     # - $2: the right boundary of the array bucket
     #
-    # Globals:
+    # Nonlocals:
     # - array: the array to sort
 
     # Define the local variables.
@@ -262,6 +262,7 @@ function argparser_sort() {
     # Sort an array, internally using the Quicksort algorithm.
     #
     # Arguments:
+    # - $1: whether to reverse-sort the array
     # - $@: the array to sort
     #
     # Output:
@@ -275,7 +276,7 @@ function argparser_sort() {
     # Read the arguments.
     reverse="$1"
     shift
-    read -a array <<< "$@"
+    array=("$@")
 
     # Sort the array and output it, possibly after reversing it.
     argparser_quicksort 0 "$(( "${#array[@]}" - 1 ))"
