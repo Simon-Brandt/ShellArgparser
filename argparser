@@ -7,8 +7,8 @@
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
 # TODO: Enable options starting with a "+" as crossed "-".
-# TODO: Eliminate remaining calls to external commands, such as sed, tr,
-#       and sort.
+# TODO: Eliminate remaining calls to external commands, such as sed and
+#       tr.
 # BUG:  Fix interpretation of keyword arguments after "--".
 # BUG:  Fix short-option-only argument definitions giving faulty help
 #       messages.
@@ -790,10 +790,7 @@ function argparser_create_help_message() {
     done
 
     # Sort the argument groups.
-    IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a arg_groups \
-        <<< "$(printf "%s\n" "${arg_groups[@]}" \
-        | sort \
-        | tr "\n" "${ARGPARSER_ARG_DELIMITER_1}")"
+    mapfile -d "" -t arg_groups < <(argparser_sort false "${arg_groups[@]}")
 
     # The help message is structured in three columns: short options,
     # long options and the help text.  Populate these columns with the
@@ -926,19 +923,19 @@ function argparser_create_help_message() {
         # two associative arrays are defined that use the second
         # column's values as keys and the first or third column's values
         # as values.  Then, the second column's indexed array gets
-        # sorted by sort and the indexed arrays for the first and third
-        # columns are re-populated using the values from the associative
-        # array, such that the sorted second column defines the order of
-        # the yet unsorted other columns.  As a consequence, all columns
-        # are sorted as if they would have been sorted together (which
+        # sorted and the indexed arrays for the first and third columns
+        # are re-populated using the values from the associative array,
+        # such that the sorted second column defines the order of the
+        # yet unsorted other columns.  As a consequence, all columns are
+        # sorted as if they would have been sorted together (which
         # appears not be feasible).
         for i in "${!new_col_2[@]}"; do
             sorted_col_1["${new_col_2[${i}]}"]="${new_col_1[${i}]}"
             sorted_col_3["${new_col_2[${i}]}"]="${new_col_3[${i}]}"
         done
 
-        mapfile -t sorted_col_2 \
-            <<< "$(printf "%s\n" "${new_col_2[@]}" | sort)"
+        mapfile -d "" -t sorted_col_2 \
+            < <(argparser_sort false "${new_col_2[@]}")
 
         for i in "${!sorted_col_2[@]}"; do
             col_1+=("${sorted_col_1[${sorted_col_2[${i}]}]}")
@@ -1152,8 +1149,8 @@ function argparser_create_help_message() {
             "${line_count_2}"
             "${line_count_3}"
         )
-        mapfile -t line_counts \
-            <<< "$(printf "%s\n" "${line_counts[@]}" | sort --reverse)"
+        mapfile -d "" -t line_counts \
+            < <(argparser_sort true "${line_counts[@]}")
         max_line_count="${line_counts[0]}"
 
         # Set the number of required line breaks to align each line.  If
@@ -1372,6 +1369,7 @@ function argparser_create_usage_message() {
     local default_values
     local fallback_values
     local header
+    local -a lines
     local -a long_option_args
     local long_options
     local -a short_option_args
@@ -1414,6 +1412,7 @@ function argparser_create_usage_message() {
 
     # Print each argument having only short options with the short
     # options and possibly choice values and sort them alphabetically.
+    lines=( )
     for arg_key in "${short_option_args[@]}"; do
         # Read the argument's definition.
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_definition \
@@ -1428,7 +1427,7 @@ function argparser_create_usage_message() {
 
         # Concatenate the short options and choice values for their
         # printing style.  If the argument has no default value, a set
-        # of fallback s are printed.  Set these as the short options'
+        # of fallbacks are printed.  Set these as the short options'
         # names in capitalized form.
         fallback_values="$(printf -- "%s${ARGPARSER_ARG_DELIMITER_3}" \
             "${short_options[@]}")"
@@ -1446,24 +1445,30 @@ function argparser_create_usage_message() {
         # values or an argument number of 0 (i.e., it is a flag), with
         # the existence of each changing the look of the line.
         if [[ "${arg_number}" == 0 ]]; then  # Flag.
-            printf "%s[%s]\n" "${whitespace}" "${short_options}"
+            lines+=("$(printf "%s[%s]" "${whitespace}" "${short_options}")")
         elif [[ "${choice_values[0]}" != "-" \
             && "${default_values[0]}" != "-" ]]
         then  # Choice and default.
-            printf "%s%s[={%s}]\n" "${whitespace}" "${short_options}" \
-                "${choice_values}"
+            lines+=("$(printf "%s%s[={%s}]" "${whitespace}" \
+                "${short_options}" "${choice_values}")")
         elif [[ "${choice_values[0]}" != "-" ]]; then  # Choice only.
-            printf "%s%s={%s}\n" "${whitespace}" "${short_options}" \
-                "${choice_values}"
+            lines+=("$(printf "%s%s={%s}" "${whitespace}" "${short_options}" \
+                "${choice_values}")")
         elif [[ "${default_values[0]}" != "-" ]]; then  # Default only.
-            printf "%s%s[=%s]\n" "${whitespace}" "${short_options}" \
-                "${fallback_values}"
+            lines+=("$(printf "%s%s[=%s]" "${whitespace}" "${short_options}" \
+                "${fallback_values}")")
         else  # No choice nor default.
-            printf "%s%s=%s\n" "${whitespace}" "${short_options}" \
-                "${fallback_values}"
+            lines+=("$(printf "%s%s=%s" "${whitespace}" "${short_options}" \
+                "${fallback_values}")")
         fi
-    done | sort
+    done
 
+    mapfile -d "" -t lines < <(argparser_sort false "${lines[@]}")
+    printf '%s\n' "${lines[@]}"
+
+    # Print each argument having long options with the long options and
+    # possibly choice values and sort them alphabetically.
+    lines=( )
     for arg_key in "${long_option_args[@]}"; do
         # Read the argument's definition.
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_definition \
@@ -1497,23 +1502,26 @@ function argparser_create_usage_message() {
         # 0 (i.e., it is a flag), with the existence of each changing
         # the look of the line.
         if [[ "${arg_number}" == 0 ]]; then  # Flag.
-            printf "%s[%s]\n" "${whitespace}" "${long_options}"
+            lines+=("$(printf "%s[%s]" "${whitespace}" "${long_options}")")
         elif [[ "${choice_values[0]}" != "-" \
             && "${default_values[0]}" != "-" ]]
         then  # Choice and default.
-            printf "%s%s[={%s}]\n" "${whitespace}" "${long_options}" \
-                "${choice_values}"
+            lines+=("$(printf "%s%s[={%s}]" "${whitespace}" "${long_options}" \
+                "${choice_values}")")
         elif [[ "${choice_values[0]}" != "-" ]]; then  # Choice only.
-            printf "%s%s={%s}\n" "${whitespace}" "${long_options}" \
-                "${choice_values}"
+            lines+=("$(printf "%s%s={%s}" "${whitespace}" "${long_options}" \
+                "${choice_values}")")
         elif [[ "${default_values[0]}" != "-" ]]; then  # Default only.
-            printf "%s%s[=%s]\n" "${whitespace}" "${long_options}" \
-                "${fallback_values}"
+            lines+=("$(printf "%s%s[=%s]" "${whitespace}" "${long_options}" \
+                "${fallback_values}")")
         else  # No choice nor default.
-            printf "%s%s=%s\n" "${whitespace}" "${long_options}" \
-                "${fallback_values}"
+            lines+=("$(printf "%s%s=%s" "${whitespace}" "${long_options}" \
+                "${fallback_values}")")
         fi
-    done | sort
+    done
+
+    mapfile -d "" -t lines < <(argparser_sort false "${lines[@]}")
+    printf '%s\n' "${lines[@]}"
 }
 
 function argparser_print_help_or_usage_message() {
@@ -1846,18 +1854,28 @@ function argparser_main() {
         args["${arg_key}"]="${arg_value}"
     done
 
-    # Sort, colorize, and print all error and warning messages.
-    for error_message in "${error_messages[@]}"; do
-        error_message="$(argparser_colorize "${ARGPARSER_ERROR_STYLE}" \
-            "${error_message}")"
-        printf "%s\n" "${error_message}"
-    done | sort >&2
+    # Colorize, sort, and print all error and warning messages.
+    if (( "${#error_messages[@]}" > 0 )); then
+        for i in "${!error_messages[@]}"; do
+            error_messages[i]="$(argparser_colorize \
+                "${ARGPARSER_ERROR_STYLE}" "${error_messages[i]}")"
+        done
 
-    for warning_message in "${warning_messages[@]}"; do
-        warning_message="$(argparser_colorize "${ARGPARSER_WARNING_STYLE}" \
-            "${warning_message}")"
-        printf "%s\n" "${warning_message}"
-    done | sort >&2
+        mapfile -d "" -t error_messages \
+            < <(argparser_sort false "${error_messages[@]}")
+        printf "%s\n" "${error_messages[@]}" >&2
+    fi
+
+    if (( "${#warning_messages[@]}" > 0 )); then
+        for i in "${!warning_messages[@]}"; do
+            warning_messages[i]="$(argparser_colorize \
+                "${ARGPARSER_WARNING_STYLE}" "${warning_messages[i]}")"
+        done
+
+        mapfile -d "" -t warning_messages \
+            < <(argparser_sort false "${warning_messages[@]}")
+        printf "%s\n" "${warning_messages[@]}" >&2
+    fi
 
     # If any argument was not or wrongly given, ${error} is set to true,
     # then print a blank line and the usage message, then exit.
