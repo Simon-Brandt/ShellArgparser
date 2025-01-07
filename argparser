@@ -7,10 +7,7 @@
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
 # TODO: Enable options starting with a "+" as crossed "-".
-# TODO: Eliminate remaining calls to external commands.
 # BUG:  Fix interpretation of keyword arguments after "--".
-# BUG:  Fix short-option-only argument definitions giving faulty help
-#       messages.
 
 # Usage: Source this script with "source argparser" inside the script
 # whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS} is set
@@ -804,9 +801,10 @@ function argparser_create_help_message() {
     local newlines_1
     local newlines_2
     local newlines_3
+    local -a option_names
     local short_options
     local -A sorted_col_1
-    local sorted_col_2
+    local -A sorted_col_2
     local -A sorted_col_3
     local -a whitespace_1
     local -a whitespace_2
@@ -856,6 +854,7 @@ function argparser_create_help_message() {
         new_col_1=( )
         new_col_2=( )
         new_col_3=( )
+        option_names=( )
 
         for arg_key in "${!args_definition[@]}"; do
             # Read the argument's group to check whether it belongs to
@@ -876,6 +875,11 @@ function argparser_create_help_message() {
             choice_values="${arg_definition[3]}"
             arg_number="${arg_definition[4]}"
             help_text="${arg_definition[6]}"
+
+            # Concatenate the name of all short and long options for the
+            # sorting of all arguments, later.
+            option_names+=("$(argparser_get_option_names "${arg_key}" \
+                "long-short")")
 
             # Define the columns' next line, for the current argument.
             # The argument may have some short and long options, a
@@ -965,28 +969,29 @@ function argparser_create_help_message() {
             fi
         done
 
-        # Sort the arguments by the first long option.  To this end,
-        # two associative arrays are defined that use the second
-        # column's values as keys and the first or third column's values
-        # as values.  Then, the second column's indexed array gets
-        # sorted and the indexed arrays for the first and third columns
+        # Sort the arguments by the option names.  To this end, three
+        # associative arrays are defined that use the option names as
+        # keys and the first, second, or third column's values as
+        # values.  Then, the option names' indexed array gets sorted and
+        # the indexed arrays for the first, second, and third columns
         # are re-populated using the values from the associative array,
-        # such that the sorted second column defines the order of the
-        # yet unsorted other columns.  As a consequence, all columns are
-        # sorted as if they would have been sorted together (which
-        # appears not be feasible).
-        for i in "${!new_col_2[@]}"; do
-            sorted_col_1[${new_col_2[i]}]="${new_col_1[i]}"
-            sorted_col_3[${new_col_2[i]}]="${new_col_3[i]}"
+        # such that the sorted option names define the order of the yet
+        # unsorted columns.  As a consequence, all columns are sorted as
+        # if they would have been sorted together (which  appears not be
+        # feasible).
+        for i in "${!option_names[@]}"; do
+            sorted_col_1[${option_names[i]}]="${new_col_1[i]}"
+            sorted_col_2[${option_names[i]}]="${new_col_2[i]}"
+            sorted_col_3[${option_names[i]}]="${new_col_3[i]}"
         done
 
-        mapfile -d "" -t sorted_col_2 \
-            < <(argparser_sort false "${new_col_2[@]}")
+        mapfile -d "" -t option_names \
+            < <(argparser_sort false "${option_names[@]}")
 
-        for i in "${!sorted_col_2[@]}"; do
-            col_1+=("${sorted_col_1[${sorted_col_2[i]}]}")
-            col_2+=("${sorted_col_2[i]}")
-            col_3+=("${sorted_col_3[${sorted_col_2[i]}]}")
+        for i in "${!option_names[@]}"; do
+            col_1+=("${sorted_col_1[${option_names[i]}]}")
+            col_2+=("${sorted_col_2[${option_names[i]}]}")
+            col_3+=("${sorted_col_3[${option_names[i]}]}")
         done
 
         # To mark the end of an argument group later upon printing, add
