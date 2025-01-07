@@ -52,8 +52,8 @@ fi
 : "${ARGPARSER_ARG_ARRAY_NAME:="args"}"
 : "${ARGPARSER_ARG_DEF_FILE:=""}"
 : "${ARGPARSER_ARG_DEF_FILE_HAS_HEADER:=false}"
-: "${ARGPARSER_ARG_DELIMITER_2:=":"}"
-: "${ARGPARSER_ARG_DELIMITER_3:=","}"
+: "${ARGPARSER_ARG_DELIMITER_1:=":"}"
+: "${ARGPARSER_ARG_DELIMITER_2:=","}"
 : "${ARGPARSER_ARG_GROUP_DELIMITER:="#"}"
 : "${ARGPARSER_CHECK_ARG_DEFINITION:=false}"
 : "${ARGPARSER_ERROR_EXIT_CODE:=1}"
@@ -312,11 +312,11 @@ function argparser_get_option_names() {
     order="$2"
 
     # Read the argument's definition.
-    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_definition \
+    IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a arg_definition \
         <<< "${args_definition[${arg_key}]}"
-    IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a short_options \
+    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a short_options \
         <<< "${arg_definition[0]}"
-    IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a long_options \
+    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a long_options \
         <<< "${arg_definition[1]}"
 
     # Concatenate the name of all short and long options.
@@ -469,10 +469,10 @@ function argparser_parse_args() {
 
     # If the argument doesn't start with a hyphen ("-"), it is
     # considered a value to a previous argument.  Split the value on
-    # ${ARGPARSER_ARG_DELIMITER_3} characters and output the respective
+    # ${ARGPARSER_ARG_DELIMITER_2} characters and output the respective
     # message for each value.
     if [[ "${given_arg}" != -* ]]; then
-        IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a values <<< "${given_arg}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a values <<< "${given_arg}"
         for value in "${values[@]}"; do
             printf 'Value: %s\0' "${value}"
         done
@@ -484,11 +484,11 @@ function argparser_parse_args() {
     # values following the "=" character.
     for arg_key in "${!args_definition[@]}"; do
         # Read the argument's definition.
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_definition \
+        IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a arg_definition \
             <<< "${args_definition[${arg_key}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a short_options \
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a short_options \
             <<< "${arg_definition[0]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a long_options \
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a long_options \
             <<< "${arg_definition[1]}"
 
         # Check the short options.
@@ -499,10 +499,10 @@ function argparser_parse_args() {
                 return
             elif [[ "${given_arg}" == "-${short_option}="* ]]; then
                 # Output the argument and all values split on
-                # ${ARGPARSER_ARG_DELIMITER_3} characters.
+                # ${ARGPARSER_ARG_DELIMITER_2} characters.
                 printf 'Argument: %s\0' "${arg_key}"
 
-                IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a values \
+                IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a values \
                     <<< "${given_arg#*=}"
                 for value in "${values[@]}"; do
                     printf 'Value: %s\0' "${value}"
@@ -519,10 +519,10 @@ function argparser_parse_args() {
                 return
             elif [[ "${given_arg}" == "--${long_option}="* ]]; then
                 # Output the argument and all values split on
-                # ${ARGPARSER_ARG_DELIMITER_3} characters.
+                # ${ARGPARSER_ARG_DELIMITER_2} characters.
                 printf 'Argument: %s\0' "${arg_key}"
 
-                IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a values \
+                IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a values \
                     <<< "${given_arg#*=}"
                 for value in "${values[@]}"; do
                     printf 'Value: %s\0' "${value}"
@@ -567,14 +567,14 @@ function argparser_check_arg_value() {
 
     # Read the arguments.
     arg_key="$1"
-    IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a values <<< "$2"
+    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a values <<< "$2"
 
     # Read the argument's definition.
-    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_definition \
+    IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a arg_definition \
         <<< "${args_definition[${arg_key}]}"
-    IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a default_values \
+    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a default_values \
         <<< "${arg_definition[2]}"
-    IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a choice_values \
+    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a choice_values \
         <<< "${arg_definition[3]}"
     arg_number="${arg_definition[4]}"
 
@@ -705,7 +705,7 @@ function argparser_check_arg_value() {
         if [[ "${ARGPARSER_CHECK_ARG_DEFINITION}" == true ]]; then
             # Check that flags have no choice values.
             if [[ "${arg_number}" == 0 ]]; then
-                choice_values="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; \
+                choice_values="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
                     printf '%s' "${choice_values[*]}")"
                 error_message="Error: The argument ${option_names} accepts no "
                 error_message+="choice values, but uses {${choice_values}} per"
@@ -720,7 +720,7 @@ function argparser_check_arg_value() {
                     && "$(argparser_in_array "${default_value}" \
                     "${choice_values[@]}")" == false ]]
                 then
-                    choice_values="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; \
+                    choice_values="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
                         printf '%s' "${choice_values[*]}")"
                     error_message="Error: The argument ${option_names} "
                     error_message+="accepts only the choice values "
@@ -737,7 +737,7 @@ function argparser_check_arg_value() {
             if [[ "$(argparser_in_array "${value}" \
                 "${choice_values[@]}")" == false ]]
             then
-                choice_values="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; \
+                choice_values="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
                     printf '%s' "${choice_values[*]}")"
                 error_message="Error: The argument ${option_names} must be in "
                 error_message+="{${choice_values}}"
@@ -748,8 +748,8 @@ function argparser_check_arg_value() {
     fi
 
     # Output the checked values as
-    # ${ARGPARSER_ARG_DELIMITER_3}-separated string.
-    value="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; printf '%s' "${values[*]}")"
+    # ${ARGPARSER_ARG_DELIMITER_2}-separated string.
+    value="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; printf '%s' "${values[*]}")"
     printf 'Value: %s' "${value}"
 }
 
@@ -888,7 +888,7 @@ function argparser_create_help_message() {
     # compare each argument's group later upon iterating over them.
     arg_groups=( )
     for arg_key in "${!args_definition[@]}"; do
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_definition \
+        IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a arg_definition \
             <<< "${args_definition[${arg_key}]}"
         arg_group="${arg_definition[5]}"
         if [[ "$(argparser_in_array "${arg_group}" \
@@ -929,16 +929,16 @@ function argparser_create_help_message() {
         for arg_key in "${!args_definition[@]}"; do
             # Read the argument's group to check whether it belongs to
             # the current group.
-            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_definition \
+            IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a arg_definition \
                 <<< "${args_definition[${arg_key}]}"
             if [[ "${arg_definition[5]}" != "${arg_group}" ]]; then
                 continue
             fi
 
             # Read the argument's remaining definition.
-            IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a short_options \
+            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a short_options \
                 <<< "${arg_definition[0]}"
-            IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a long_options \
+            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a long_options \
                 <<< "${arg_definition[1]}"
             default_values="${arg_definition[2]}"
             choice_values="${arg_definition[3]}"
@@ -1374,11 +1374,11 @@ function argparser_create_usage_message() {
     long_option_args=( )
     for arg_key in "${!args_definition[@]}"; do
         # Read the argument's definition.
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_definition \
+        IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a arg_definition \
             <<< "${args_definition[${arg_key}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a short_options \
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a short_options \
             <<< "${arg_definition[0]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a long_options \
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a long_options \
             <<< "${arg_definition[1]}"
 
         # Add the argument to the respective array.
@@ -1394,13 +1394,13 @@ function argparser_create_usage_message() {
     lines=( )
     for arg_key in "${short_option_args[@]}"; do
         # Read the argument's definition.
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_definition \
+        IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a arg_definition \
             <<< "${args_definition[${arg_key}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a short_options \
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a short_options \
             <<< "${arg_definition[0]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a default_values \
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a default_values \
             <<< "${arg_definition[2]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a choice_values \
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a choice_values \
             <<< "${arg_definition[3]}"
         arg_number="${arg_definition[4]}"
 
@@ -1408,14 +1408,14 @@ function argparser_create_usage_message() {
         # printing style.  If the argument has no default value, a set
         # of fallbacks are printed.  Set these as the short options'
         # names in capitalized form.
-        fallback_values="$(printf -- "%s${ARGPARSER_ARG_DELIMITER_3}" \
+        fallback_values="$(printf -- "%s${ARGPARSER_ARG_DELIMITER_2}" \
             "${short_options[@]}")"
         fallback_values="${fallback_values%?}"
         fallback_values="${fallback_values^^}"
-        short_options="$(printf -- "-%s${ARGPARSER_ARG_DELIMITER_3}" \
+        short_options="$(printf -- "-%s${ARGPARSER_ARG_DELIMITER_2}" \
             "${short_options[@]}")"
         short_options="${short_options%?}"
-        choice_values="$(printf -- "%s${ARGPARSER_ARG_DELIMITER_3}" \
+        choice_values="$(printf -- "%s${ARGPARSER_ARG_DELIMITER_2}" \
             "${choice_values[@]}")"
         choice_values="${choice_values%?}"
 
@@ -1450,13 +1450,13 @@ function argparser_create_usage_message() {
     lines=( )
     for arg_key in "${long_option_args[@]}"; do
         # Read the argument's definition.
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_definition \
+        IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a arg_definition \
             <<< "${args_definition[${arg_key}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a long_options \
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a long_options \
             <<< "${arg_definition[1]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a default_values \
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a default_values \
             <<< "${arg_definition[2]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a choice_values \
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a choice_values \
             <<< "${arg_definition[3]}"
         arg_number="${arg_definition[4]}"
 
@@ -1464,14 +1464,14 @@ function argparser_create_usage_message() {
         # printing style.  If the argument has no default value, a set
         # of fallback s are printed.  Set these as the long options'
         # names in capitalized form.
-        fallback_values="$(printf -- "%s${ARGPARSER_ARG_DELIMITER_3}" \
+        fallback_values="$(printf -- "%s${ARGPARSER_ARG_DELIMITER_2}" \
             "${long_options[@]}")"
         fallback_values="${fallback_values%?}"
         fallback_values="${fallback_values^^}"
-        long_options="$(printf -- "--%s${ARGPARSER_ARG_DELIMITER_3}" \
+        long_options="$(printf -- "--%s${ARGPARSER_ARG_DELIMITER_2}" \
             "${long_options[@]}")"
         long_options="${long_options%?}"
-        choice_values="$(printf -- "%s${ARGPARSER_ARG_DELIMITER_3}" \
+        choice_values="$(printf -- "%s${ARGPARSER_ARG_DELIMITER_2}" \
             "${choice_values[@]}")"
         choice_values="${choice_values%?}"
 
@@ -1639,7 +1639,7 @@ function argparser_main() {
 
     # Define the patterns how the arguments definition's keys and values
     # look like, as well as the pattern of both.  For the default value
-    # of ${ARGPARSER_ARG_DELIMITER_2}, a colon, the value pattern
+    # of ${ARGPARSER_ARG_DELIMITER_1}, a colon, the value pattern
     # describes alternating sequences of seven non-colons ("+([^:])")
     # and six colons (":") in Bash's extglob syntax.  In PCRE syntax,
     # the non-colon pattern would be written as "[^:]+".  The key
@@ -1647,16 +1647,16 @@ function argparser_main() {
     # definition pattern of the key pattern, a colon, and the value
     # pattern, i.e., of eight non-colons interspersed with seven colons.
     # This reflects the structure of the arguments definition.
-    key_pattern="+([^${ARGPARSER_ARG_DELIMITER_2}])"
+    key_pattern="+([^${ARGPARSER_ARG_DELIMITER_1}])"
 
     value_pattern=""
     for i in {1..6}; do
-        value_pattern+="+([^${ARGPARSER_ARG_DELIMITER_2}])"
-        value_pattern+="${ARGPARSER_ARG_DELIMITER_2}"
+        value_pattern+="+([^${ARGPARSER_ARG_DELIMITER_1}])"
+        value_pattern+="${ARGPARSER_ARG_DELIMITER_1}"
     done
-    value_pattern+="+([^${ARGPARSER_ARG_DELIMITER_2}])"
+    value_pattern+="+([^${ARGPARSER_ARG_DELIMITER_1}])"
 
-    def_pattern="${key_pattern}${ARGPARSER_ARG_DELIMITER_2}${value_pattern}"
+    def_pattern="${key_pattern}${ARGPARSER_ARG_DELIMITER_1}${value_pattern}"
 
     # Read all arguments for the script.  The arguments may either be
     # defined in the script, where they're given in the eight-column
@@ -1667,8 +1667,8 @@ function argparser_main() {
         if [[ "${arg}" == ${def_pattern} ]]; then
             # The argument matches the entire definition pattern.
             # Separate its key and value from each other and store them.
-            arg_key="${arg%%${ARGPARSER_ARG_DELIMITER_2}*}"
-            arg_value="${arg#*${ARGPARSER_ARG_DELIMITER_2}}"
+            arg_key="${arg%%${ARGPARSER_ARG_DELIMITER_1}*}"
+            arg_value="${arg#*${ARGPARSER_ARG_DELIMITER_1}}"
             args_definition[${arg_key}]="${arg_value}"
         elif [[ "${arg}" == ${key_pattern} && -n "${ARGPARSER_ARG_DEF_FILE}" ]]
         then
@@ -1682,8 +1682,8 @@ function argparser_main() {
             # fitting argument definition has been found.  Thus, print
             # an error message and abort.
             for line in "${lines[@]}"; do
-                arg_key="${line%%${ARGPARSER_ARG_DELIMITER_2}*}"
-                arg_value="${line#*${ARGPARSER_ARG_DELIMITER_2}}"
+                arg_key="${line%%${ARGPARSER_ARG_DELIMITER_1}*}"
+                arg_value="${line#*${ARGPARSER_ARG_DELIMITER_1}}"
                 if [[ "${arg_key}" == "${arg}" \
                     && "${arg_value}" == ${value_pattern} ]]
                 then
@@ -1764,7 +1764,7 @@ function argparser_main() {
                         "${!args[@]}")" == true ]]
                     then
                         # Read the previously given values.
-                        IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a arg_value \
+                        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_value \
                             <<< "${args[${arg_key}]}"
                     else
                         arg_value=( )
@@ -1777,7 +1777,7 @@ function argparser_main() {
                         "${!args[@]}")" == true ]]
                     then
                         # Read the previously given values.
-                        IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a arg_value \
+                        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_value \
                             <<< "${args[${arg_key}]}"
                     else
                         arg_value=( )
@@ -1790,9 +1790,9 @@ function argparser_main() {
         done
 
         # If the argument had been set before, assign the new value to
-        # it (as ${ARGPARSER_ARG_DELIMITER_3}-separated list).
+        # it (as ${ARGPARSER_ARG_DELIMITER_2}-separated list).
         if [[ -v arg_key ]]; then
-            args[${arg_key}]="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; \
+            args[${arg_key}]="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
                 printf '%s' "${arg_value[*]}")"
         fi
     done
@@ -1892,19 +1892,19 @@ if [[ "${ARGPARSER_SET_ARGS}" == true ]]; then
         if [[ "${arg}" == "${ARGPARSER_POSITIONAL_NAME}" ]]; then
             # Set all positional arguments and remove the respective key
             # from ${args}.
-            IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a positional \
+            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a positional \
                 <<< "${args[${arg}]}"
             set -- "${positional[@]}"
             unset positional
             unset "args[${ARGPARSER_POSITIONAL_NAME}]"
-        elif [[ "${args[${arg}]}" == *"${ARGPARSER_ARG_DELIMITER_3}"*
+        elif [[ "${args[${arg}]}" == *"${ARGPARSER_ARG_DELIMITER_2}"*
             && "${ARGPARSER_SET_ARRAYS}" == true ]]
         then
             # Set the keyword argument, which includes the
-            # ${ARGPARSER_ARG_DELIMITER_3} and hence is a sequence of
+            # ${ARGPARSER_ARG_DELIMITER_2} and hence is a sequence of
             # elements, as indexed array variable, while keeping it in
             # ${args} for usage by the calling script.
-            IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a "${arg}" \
+            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a "${arg}" \
                 <<< "${args[${arg}]}"
         else
             # Set the keyword argument as variable, while keeping it in
@@ -1944,8 +1944,8 @@ if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_ARG_ARRAY_NAME
     unset ARGPARSER_ARG_DEF_FILE
     unset ARGPARSER_ARG_DEF_FILE_HAS_HEADER
+    unset ARGPARSER_ARG_DELIMITER_1
     unset ARGPARSER_ARG_DELIMITER_2
-    unset ARGPARSER_ARG_DELIMITER_3
     unset ARGPARSER_ARG_GROUP_DELIMITER
     unset ARGPARSER_CHECK_ARG_DEFINITION
     unset ARGPARSER_ERROR_EXIT_CODE

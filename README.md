@@ -175,7 +175,7 @@ Three things have changed in the invokation call: The `-b` option now appears tw
 
 From the report for the `-b` option, an alias of `--var-2`, you can see that all three values&mdash;`2`, `3`, and `4`&mdash;are passed to `var_2`. Thus, it is possible to define arguments to accept more than one value, with any given value being concatenated to the last given argument name (indicated as a hyphenated value). You can even call an argument multiple times, passing values at different positions to it, though it seems rather counterproductive (in terms of confusing and unnecessarily verbose) for use in scripts. On the command line, however, it may save you to go back when you realize you forgot to type a value. Another use case even for scripts would be to gather command-line arguments or values from different processes, like *via* command/process substitution. Then, you can just combine the two streams, without needing to care whether they pass mutually exclusive argument names or the same.
 
-As you can see from the `-c` option, you can also use commas (or rather: [`ARGPARSER_ARG_DELIMITER_3`](#argparser_arg_delimiter_3) characters, as you will see later on) to pass multiple values at the same time. As a stylistic advice, for scripts, use long options, the equals sign, and commas, as they tend to look clearer; whereas for simple command-line usage, take advantage of the short options and the ability to use spaces as delimiter, as both are faster to type.
+As you can see from the `-c` option, you can also use commas (or rather: [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2) characters, as you will see later on) to pass multiple values at the same time. As a stylistic advice, for scripts, use long options, the equals sign, and commas, as they tend to look clearer; whereas for simple command-line usage, take advantage of the short options and the ability to use spaces as delimiter, as both are faster to type.
 
 Finally, the option `-f`, aliased to `--var-6`, is a so-called flag: Its presence or absence on the command line changes the value in a boolean manner (though flags are less powerful than booleans). As you can see in the reported values, `var_6` has changed its value from `false` to `true`, just by giving the flag's *name*, instead of a real value. This means that you can check whether a flag had been set by evaluating the corresponding variable's value to `true` or `false`. Note that these are just mnemonics, they have no boolean meaning for the weakly typed Bash interpreter.
 
@@ -286,7 +286,7 @@ The rationale for allowing `args` to store both the arguments alone and them alo
 
 The argument-defining entries in the indexed array named by [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name), defaulting to`"args"`, consist of a key and a value for each argument, but merged in one string (not as true keys and values in associative arrays). The key is a unique identifier for the argparser functions, and the name under which the argument's value can be obtained from the associative array `args`. The corresponding value provides the argument definition to the argparser.
 
-This argparser-specific tabular format consists of eight columns, each separated from each other by an [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2) character, defaulting to a colon (`":"`). The columns are defined as follows:
+This argparser-specific tabular format consists of eight columns, each separated from each other by an [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1) character, defaulting to a colon (`":"`). The columns are defined as follows:
 
 1. the unique argument identifier (like `var_1`)
 1. the short options (one hyphen, like `-a` and `-A` for `var_1`)
@@ -795,8 +795,8 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name)                     | *str*[^4]                          | `"args"`             |
 | [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file)                         | *filepath* \| `""`                 | `""`                 |
 | [`ARGPARSER_ARG_DEF_FILE_HAS_HEADER`](#argparser_arg_def_file_has_header)   | *bool*                             | `false`              |
-| [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)                   | *char*                             | `":"`[^5]            |
-| [`ARGPARSER_ARG_DELIMITER_3`](#argparser_arg_delimiter_3)                   | *char*                             | `","`[^5]            |
+| [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)                   | *char*                             | `":"`[^5]            |
+| [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)                   | *char*                             | `","`[^5]            |
 | [`ARGPARSER_ARG_GROUP_DELIMITER`](#argparser_arg_group_delimiter)           | *char*                             | `"#"`[^5]            |
 | [`ARGPARSER_CHECK_ARG_DEFINITION`](#argparser_check_arg_definition)         | *bool*                             | `false`              |
 | [`ARGPARSER_ERROR_EXIT_CODE`](#argparser_error_exit_code)                   | *int*                              | `1`                  |
@@ -835,7 +835,7 @@ The argparser defines a large set of environment variables, each following the n
 - ***Type:*** *str* (String), but only characters allowed in a legit Bash variable identifier
 - ***Allowed values:*** Any legit Bash variable identifier
 - ***Default value:*** `"args"`
-- ***Description:*** The name of an indexed array, under which the arguments are provided, and of an associative array, under which the parsed arguments can be accessed. The former stores the argument's identifier as key and its definition as value, but joined to one string by an [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2) character, the latter stores the identifier as key its values as value. If [`ARGPARSER_SET_ARGS`](#argparser_set_args) is `true`, you usually don't need to access this array as the arguments will be set as variables.
+- ***Description:*** The name of an indexed array, under which the arguments are provided, and of an associative array, under which the parsed arguments can be accessed. The former stores the argument's identifier as key and its definition as value, but joined to one string by an [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1) character, the latter stores the identifier as key its values as value. If [`ARGPARSER_SET_ARGS`](#argparser_set_args) is `true`, you usually don't need to access this array as the arguments will be set as variables.
 
 ### `ARGPARSER_ARG_DEF_FILE`
 
@@ -851,26 +851,26 @@ The argparser defines a large set of environment variables, each following the n
 - ***Default value:*** `false`
 - ***Description:*** Whether the arguments definition file has a header explaining the columns. This is only evaluated if an [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file) is given.
 
-### `ARGPARSER_ARG_DELIMITER_2`
-
-- ***Type:***  *char* (Character)
-- ***Allowed values:*** Any unique character that's not used as [`ARGPARSER_ARG_DELIMITER_3`](#argparser_arg_delimiter_3) or [`ARGPARSER_ARG_GROUP_DELIMITER`](#argparser_arg_group_delimiter)
-- ***Default value:*** `":"`
-- ***Description:*** The secondary delimiter that separates the fields in the arguments definition. Again, you don't need to access this variable, but you must ensure that it is set to a character or glyph that does not occur in the arguments definition or their values.
-
-### `ARGPARSER_ARG_DELIMITER_3`
+### `ARGPARSER_ARG_DELIMITER_1`
 
 - ***Type:***  *char* (Character)
 - ***Allowed values:*** Any unique character that's not used as [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2) or [`ARGPARSER_ARG_GROUP_DELIMITER`](#argparser_arg_group_delimiter)
+- ***Default value:*** `":"`
+- ***Description:*** The primary delimiter that separates the fields in the arguments definition. Though you don't need to access this variable, you must ensure that it is set to a character or glyph that does not occur in the arguments definition or their values.
+
+### `ARGPARSER_ARG_DELIMITER_2`
+
+- ***Type:***  *char* (Character)
+- ***Allowed values:*** Any unique character that's not used as [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1) or [`ARGPARSER_ARG_GROUP_DELIMITER`](#argparser_arg_group_delimiter)
 - ***Default value:*** `","`
-- ***Description:*** The tertiary delimiter that separates the elements of sequences in the arguments definition. Also here, you don't need to access this variable, but you must ensure that it is set to a character or glyph that does not occur in the arguments definition or their values.
+- ***Description:*** The secondary delimiter that separates the elements of sequences in the arguments definition. Again, you don't need to access this variable, but you must ensure that it is set to a character or glyph that does not occur in the arguments definition or their values.
 
 ### `ARGPARSER_ARG_GROUP_DELIMITER`
 
 - ***Type:***  *char* (Character)
-- ***Allowed values:*** Any unique character that's not used as [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2) or [`ARGPARSER_ARG_DELIMITER_3`](#argparser_arg_delimiter_3)
+- ***Allowed values:*** Any unique character that's not used as [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1) or [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)
 - ***Default value:*** `"#"`
-- ***Description:*** The delimiter that internally separates argument groups from each other. Once more, you don't need to access this variable, but you must ensure that it is set to a character or glyph that does not occur in the arguments definition or their values.
+- ***Description:*** The delimiter that internally separates argument groups from each other. Also here, you don't need to access this variable, but you must ensure that it is set to a character or glyph that does not occur in the arguments definition or their values.
 
 ### `ARGPARSER_CHECK_ARG_DEFINITION`
 
