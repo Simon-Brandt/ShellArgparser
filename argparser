@@ -288,6 +288,64 @@ function argparser_sort() {
     fi
 }
 
+function argparser_get_option_names() {
+    # Concatenate the name of all short and long options for the error
+    # and warning messages.
+    #
+    # Arguments:
+    # - $1: the argument's name (key)
+    # - $2: the order of the options (short-long or long-short)
+    #
+    # Nonlocals:
+    # - args_definition: the arguments definition
+    #
+    # Output:
+    # - the name of all short and long options as comma-separated string
+
+    # Define the local variables.
+    local arg_definition
+    local arg_key
+    local error_message
+    local long_options
+    local option_names
+    local order
+    local short_options
+
+    # Read the arguments.
+    arg_key="$1"
+    order="$2"
+
+    # Read the argument's definition.
+    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_definition \
+        <<< "${args_definition[${arg_key}]}"
+    IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a short_options \
+        <<< "${arg_definition[0]}"
+    IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a long_options \
+        <<< "${arg_definition[1]}"
+
+    # Concatenate the name of all short and long options.
+    if [[ "${short_options[0]}" != "-" && "${long_options[0]}" != "-" ]]; then
+        if [[ "${order}" == "short-long" ]]; then
+            option_names="$(printf -- '-%s,' "${short_options[@]}")"
+            option_names+="$(printf -- '--%s,' "${long_options[@]}")"
+        elif [[ "${order}" == "long-short" ]]; then
+            option_names="$(printf -- '--%s,' "${long_options[@]}")"
+            option_names+="$(printf -- '-%s,' "${short_options[@]}")"
+        else
+            error_message="$(printf 'Error: Wrong order "%s" specified.\n' \
+                "${order}")"
+            printf '%s\n' "$(argparser_colorize "${ARGPARSER_ERROR_STYLE}" \
+                "${error_message}")" >&2
+        fi
+    elif [[ "${short_options[0]}" != "-" ]]; then
+        option_names="$(printf -- '-%s,' "${short_options[@]}")"
+    else
+        option_names="$(printf -- '--%s,' "${long_options[@]}")"
+    fi
+    option_names="${option_names%,}"
+    printf '%s' "${option_names}"
+}
+
 function argparser_parse_args() {
     # Parse the script's given arguments.
     #
@@ -431,9 +489,7 @@ function argparser_check_arg_value() {
     local default_value
     local default_values
     local error_message
-    local long_options
     local option_names
-    local short_options
     local value
     local values
     local warning_message
@@ -445,10 +501,6 @@ function argparser_check_arg_value() {
     # Read the argument's definition.
     IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_definition \
         <<< "${args_definition[${arg_key}]}"
-    IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a short_options \
-        <<< "${arg_definition[0]}"
-    IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a long_options \
-        <<< "${arg_definition[1]}"
     IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a default_values \
         <<< "${arg_definition[2]}"
     IFS="${ARGPARSER_ARG_DELIMITER_3}" read -a choice_values \
@@ -457,15 +509,7 @@ function argparser_check_arg_value() {
 
     # Concatenate the name of all short and long options for the error
     # and warning messages.
-    if [[ "${short_options[0]}" != "-" && "${long_options[0]}" != "-" ]]; then
-        option_names="$(printf -- '-%s,' "${short_options[@]}")"
-        option_names+="$(printf -- '--%s,' "${long_options[@]}")"
-    elif [[ "${short_options[0]}" != "-" ]]; then
-        option_names="$(printf -- '-%s,' "${short_options[@]}")"
-    else
-        option_names="$(printf -- '--%s,' "${long_options[@]}")"
-    fi
-    option_names="${option_names%,}"
+    option_names="$(argparser_get_option_names "${arg_key}" "short-long")"
 
     # Check the values.  If an argument hadn't been given, its value was
     # set to "-".
