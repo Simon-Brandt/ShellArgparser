@@ -343,6 +343,85 @@ function argparser_get_option_names() {
     printf '%s' "${option_names}"
 }
 
+function argparser_insert_line_breaks() {
+    # Limit the width of a help message's column to max_col_width by
+    # inserting line breaks.  For being better able to parse the line
+    # breaks later on, ${ARGPARSER_ARG_DELIMITER_1} characters are used
+    # instead.
+    #
+    # Arguments:
+    # - $1: the line in the column in which to insert line breaks
+    # - $2: the maximum width a column may have
+    # - $3: the maximum width a column has yet
+    #
+    # Output:
+    # - the line with introduced line breaks and the width of the widest
+    #   line part as null-character-separated string
+
+    # Define the local variables.
+    local col_width
+    local joined_words
+    local largest_col_width
+    local len_joined_words
+    local len_word
+    local line
+    local max_col_width
+    local word
+    local words
+
+    # Read the arguments.
+    line="$1"
+    max_col_width="$2"
+    largest_col_width="$3"
+
+    # Split the column element word by word (on whitespace), such that
+    # line breaks aren't inserted into entire words.
+    joined_words=""
+    col_width=0
+    read -a words <<< "${line}"
+
+    for word in "${words[@]}"; do
+        len_word="${#word}"
+        len_joined_words="${#joined_words}"
+        if (( len_word > max_col_width && len_joined_words == 0 )); then
+            # As the word is too long, print the word and introduce a
+            # line break.  Then, reset the column width.
+            joined_words+="$(printf '%s' "${word}" \
+                "${ARGPARSER_ARG_DELIMITER_1}")"
+            col_width=0
+        elif (( col_width + len_word > max_col_width )); then
+            # As the line with the word appended would be too long,
+            # introduce a line break and print the word.  Then, set the
+            # column width.
+            joined_words+="$(printf '%s' "${ARGPARSER_ARG_DELIMITER_1}" \
+                "${word}")"
+            col_width="${len_word}"
+        elif (( len_joined_words == 0 )); then
+            # For the first word, add the word only.  Increase the
+            # column width by the word's length.
+            joined_words="${word}"
+            (( col_width += len_word ))
+        else
+            # For any other word, add the word and a leading space
+            # character, else, the words would be concatenated without
+            # separation (the splitting removed any whitespace).
+            # Increase the column width appropriately.
+            joined_words+=" ${word}"
+            (( col_width += len_word + 1 ))
+        fi
+
+        # If the current line is wider than the previous ones, set the
+        # largest_col_width correspondingly.  Later, this value is used
+        # to determine the amount of whitespace between the columns'
+        # elements.
+        if (( col_width > largest_col_width )); then
+            largest_col_width="${col_width}"
+        fi
+    done
+
+    printf '%s\0' "${joined_words}" "${largest_col_width}"
+}
+
 function argparser_parse_args() {
     # Parse the script's given arguments.
     #
@@ -765,7 +844,6 @@ function argparser_create_help_message() {
     local -a col_1
     local -a col_2
     local -a col_3
-    local col_width
     local col_width_1
     local col_width_2
     local col_width_3
@@ -774,10 +852,7 @@ function argparser_create_help_message() {
     local i
     local index
     local j
-    local joined_words
-    local len_word
-    local len_joined_words
-    local line_count
+    local -a line
     local line_count_1
     local line_count_2
     local line_count_3
@@ -809,8 +884,6 @@ function argparser_create_help_message() {
     local -a whitespace_2
     local whitespace_len_1
     local whitespace_len_2
-    local word
-    local words
 
     # Read the argument.
     include_directive="$1"
@@ -1019,160 +1092,34 @@ function argparser_create_help_message() {
     # ${ARGPARSER_MAX_COL_WIDTH_*} by inserting line breaks.  For being
     # better able to parse the line breaks later on,
     # ${ARGPARSER_ARG_DELIMITER_1} characters are used instead.
+    # Split the element of column 1.
     col_width_1=0
     for i in "${!col_1[@]}"; do
-        # Split the element of column 1 word by word (on whitespace),
-        # such that line breaks aren't inserted into entire words.
-        read -a words <<< "${col_1[i]}"
-        joined_words=""
-        col_width=0
-        for word in "${words[@]}"; do
-            len_word="${#word}"
-            len_joined_words="${#joined_words}"
-            if (( len_word > ARGPARSER_MAX_COL_WIDTH_1 \
-                && len_joined_words == 0 ))
-            then
-                # As the word is too long, print the word and introduce
-                # a line break.  Then, reset the column width.
-                joined_words+="$(printf '%s' "${word}" \
-                    "${ARGPARSER_ARG_DELIMITER_1}")"
-                col_width=0
-            elif (( col_width + len_word > ARGPARSER_MAX_COL_WIDTH_1 )); then
-                # As the line with the word appended would be too long,
-                # introduce a line break and print the word.  Then, set
-                # the column width.
-                joined_words+="$(printf '%s' "${ARGPARSER_ARG_DELIMITER_1}" \
-                    "${word}")"
-                col_width="${len_word}"
-            elif (( len_joined_words == 0 )); then
-                # For the first word, add the word only.  Increase the
-                # column width by the word's length.
-                joined_words="${word}"
-                (( col_width += len_word ))
-            else
-                # For any other word, add the word and a leading space
-                # character, else, the words would be concatenated
-                # without separation (the splitting removed any
-                # whitespace).  Increase the column width appropriately.
-                joined_words+=" ${word}"
-                (( col_width += len_word + 1 ))
-            fi
-
-            # If the current lines are wider than the previous ones, set
-            # the col_width_1 correspondingly.  Later, this value is
-            # used to determine the amount of whitespace between the
-            # columns' elements.
-            if (( col_width > col_width_1 )); then
-                col_width_1="${col_width}"
-            fi
-        done
-
-        # Set the column's element to the joined line.
-        col_1[i]="${joined_words}"
+        mapfile -d "" -t line \
+            < <(argparser_insert_line_breaks "${col_1[i]}" \
+                "${ARGPARSER_MAX_COL_WIDTH_1}" "${col_width_1}")
+        col_1[i]="${line[0]}"
+        col_width_1="${line[1]}"
     done
 
+    # Split the element of column 2.
     col_width_2=0
     for i in "${!col_2[@]}"; do
-        # Split the element of column 2 word by word (on whitespace),
-        # such that line breaks aren't inserted into entire words.
-        read -a words <<< "${col_2[i]}"
-        joined_words=""
-        col_width=0
-        for word in "${words[@]}"; do
-            len_word="${#word}"
-            len_joined_words="${#joined_words}"
-            if (( len_word > ARGPARSER_MAX_COL_WIDTH_2 \
-                && len_joined_words == 0 ))
-            then
-                # As the word is too long, print the word and introduce
-                # a line break.  Then, reset the column width.
-                joined_words+="$(printf '%s' "${word}" \
-                    "${ARGPARSER_ARG_DELIMITER_1}")"
-                col_width=0
-            elif (( col_width + len_word > ARGPARSER_MAX_COL_WIDTH_2 )); then
-                # As the line with the word appended would be too long,
-                # introduce a line break and print the word.  Then, set
-                # the column width.
-                joined_words+="$(printf '%s' "${ARGPARSER_ARG_DELIMITER_1}" \
-                    "${word}")"
-                col_width="${len_word}"
-            elif (( len_joined_words == 0 )); then
-                # For the first word, add the word only.  Increase the
-                # column width by the word's length.
-                joined_words="${word}"
-                (( col_width += len_word ))
-            else
-                # For any other word, add the word and a leading space
-                # character, else, the words would be concatenated
-                # without separation (the splitting removed any
-                # whitespace).  Increase the column width appropriately.
-                joined_words+=" ${word}"
-                (( col_width += len_word + 1 ))
-            fi
-
-            # If the current lines are wider than the previous ones, set
-            # the col_width_2 correspondingly.  Later, this value is
-            # used to determine the amount of whitespace between the
-            # columns' elements.
-            if (( col_width > col_width_2 )); then
-                col_width_2="${col_width}"
-            fi
-        done
-
-        # Set the column's element to the joined line.
-        col_2[i]="${joined_words}"
+        mapfile -d "" -t line \
+            < <(argparser_insert_line_breaks "${col_2[i]}" \
+                "${ARGPARSER_MAX_COL_WIDTH_2}" "${col_width_2}")
+        col_2[i]="${line[0]}"
+        col_width_2="${line[1]}"
     done
 
+    # Split the element of column 3.
     col_width_3=0
     for i in "${!col_3[@]}"; do
-        # Split the element of column 3 word by word (on whitespace),
-        # such that line breaks aren't inserted into entire words.
-        read -a words <<< "${col_3[i]}"
-        joined_words=""
-        col_width=0
-        for word in "${words[@]}"; do
-            len_word="${#word}"
-            len_joined_words="${#joined_words}"
-            if (( len_word > ARGPARSER_MAX_COL_WIDTH_3 \
-                && len_joined_words == 0 ))
-            then
-                # As the word is too long, print the word and introduce
-                # a line break.  Then, reset the column width.
-                joined_words+="$(printf '%s' "${word}" \
-                    "${ARGPARSER_ARG_DELIMITER_1}")"
-                col_width=0
-            elif (( col_width + len_word > ARGPARSER_MAX_COL_WIDTH_3 )); then
-                # As the line with the word appended would be too long,
-                # introduce a line break and print the word.  Then, set
-                # the column width.
-                joined_words+="$(printf '%s' "${ARGPARSER_ARG_DELIMITER_1}" \
-                    "${word}")"
-                col_width="${len_word}"
-            elif (( len_joined_words == 0 )); then
-                # For the first word, add the word only.  Increase the
-                # column width by the word's length.
-                joined_words="${word}"
-                (( col_width += len_word ))
-            else
-                # For any other word, add the word and a leading space
-                # character, else, the words would be concatenated
-                # without separation (the splitting removed any
-                # whitespace).  Increase the column width appropriately.
-                joined_words+=" ${word}"
-                (( col_width += len_word + 1 ))
-            fi
-
-            # If the current lines are wider than the previous ones, set
-            # the col_width_3 correspondingly.  Later, this value is
-            # used to determine the amount of whitespace between the
-            # columns' elements.
-            if (( col_width > col_width_3 )); then
-                col_width_3="${col_width}"
-            fi
-        done
-
-        # Set the column's element to the joined line.
-        col_3[i]="${joined_words}"
+        mapfile -d "" -t line \
+            < <(argparser_insert_line_breaks "${col_3[i]}" \
+                "${ARGPARSER_MAX_COL_WIDTH_3}" "${col_width_3}")
+        col_3[i]="${line[0]}"
+        col_width_3="${line[1]}"
     done
 
     # Adjust the number of line breaks between each column's rows, such
@@ -1997,6 +1944,7 @@ if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_create_usage_message
     unset -f argparser_get_option_names
     unset -f argparser_in_array
+    unset -f argparser_insert_line_breaks
     unset -f argparser_main
     unset -f argparser_parse_args
     unset -f argparser_print_help_or_usage_file
