@@ -291,7 +291,7 @@ function argparser_get_option_names() {
     #
     # Arguments:
     # - $1: the argument's name (key)
-    # - $2: the order of the options (short-long or long-short)
+    # - $2: the order of the options ("short-long" or "long-short")
     #
     # Nonlocals:
     # - args_definition: the arguments definition
@@ -782,7 +782,6 @@ function argparser_create_help_message() {
     local line_count_2
     local line_count_3
     local line_counts
-    local line_index
     local lines_col_1
     local lines_col_2
     local lines_col_3
@@ -845,8 +844,11 @@ function argparser_create_help_message() {
         # directive.  Skip the "Header" and "Help" directive, but not
         # the "All" directive.
         if [[ "${include_directive}" == "Header" \
-            || "${include_directive}" == "Help" \
-            || ("${include_directive}" != "All" && "${arg_group}" != "${include_directive}") ]]
+            || "${include_directive}" == "Help"  ]]
+        then
+            continue
+        elif [[ "${include_directive}" != "All" \
+            && "${include_directive}" != "${arg_group}" ]]
         then
             continue
         fi
@@ -975,7 +977,7 @@ function argparser_create_help_message() {
         # are re-populated using the values from the associative array,
         # such that the sorted option names define the order of the yet
         # unsorted columns.  As a consequence, all columns are sorted as
-        # if they would have been sorted together (which  appears not be
+        # if they would have been sorted together (which appears not be
         # feasible).
         for i in "${!option_names[@]}"; do
             sorted_col_1[${option_names[i]}]="${new_col_1[i]}"
@@ -1000,8 +1002,8 @@ function argparser_create_help_message() {
         col_3+=("${ARGPARSER_ARG_GROUP_DELIMITER}")
     done
 
-    # Add the help and usage flags that always exist if "All" or "Help"
-    # was requested.
+    # Add the help and usage flags that always exist if the "All" or
+    # "Help" include directive was requested.
     if [[ "${include_directive}" == "All" \
         || "${include_directive}" == "Help" ]]
     then
@@ -1035,8 +1037,7 @@ function argparser_create_help_message() {
                 joined_words+="$(printf '%s' "${word}" \
                     "${ARGPARSER_ARG_DELIMITER_1}")"
                 col_width=0
-            elif (( col_width + len_word > ARGPARSER_MAX_COL_WIDTH_1 ))
-            then
+            elif (( col_width + len_word > ARGPARSER_MAX_COL_WIDTH_1 )); then
                 # As the line with the word appended would be too long,
                 # introduce a line break and print the word.  Then, set
                 # the column width.
@@ -1058,9 +1059,9 @@ function argparser_create_help_message() {
             fi
 
             # If the current lines are wider than the previous ones, set
-            # the col_width_1 respectively.  Later, this value is used
-            # to determine the amount of whitespace between the columns'
-            # elements.
+            # the col_width_1 correspondingly.  Later, this value is
+            # used to determine the amount of whitespace between the
+            # columns' elements.
             if (( col_width > col_width_1 )); then
                 col_width_1="${col_width}"
             fi
@@ -1088,8 +1089,7 @@ function argparser_create_help_message() {
                 joined_words+="$(printf '%s' "${word}" \
                     "${ARGPARSER_ARG_DELIMITER_1}")"
                 col_width=0
-            elif (( col_width + len_word > ARGPARSER_MAX_COL_WIDTH_2 ))
-            then
+            elif (( col_width + len_word > ARGPARSER_MAX_COL_WIDTH_2 )); then
                 # As the line with the word appended would be too long,
                 # introduce a line break and print the word.  Then, set
                 # the column width.
@@ -1111,9 +1111,9 @@ function argparser_create_help_message() {
             fi
 
             # If the current lines are wider than the previous ones, set
-            # the col_width_2 respectively.  Later, this value is used
-            # to determine the amount of whitespace between the columns'
-            # elements.
+            # the col_width_2 correspondingly.  Later, this value is
+            # used to determine the amount of whitespace between the
+            # columns' elements.
             if (( col_width > col_width_2 )); then
                 col_width_2="${col_width}"
             fi
@@ -1141,8 +1141,7 @@ function argparser_create_help_message() {
                 joined_words+="$(printf '%s' "${word}" \
                     "${ARGPARSER_ARG_DELIMITER_1}")"
                 col_width=0
-            elif (( col_width + len_word > ARGPARSER_MAX_COL_WIDTH_3 ))
-            then
+            elif (( col_width + len_word > ARGPARSER_MAX_COL_WIDTH_3 )); then
                 # As the line with the word appended would be too long,
                 # introduce a line break and print the word.  Then, set
                 # the column width.
@@ -1164,9 +1163,9 @@ function argparser_create_help_message() {
             fi
 
             # If the current lines are wider than the previous ones, set
-            # the col_width_3 respectively.  Later, this value is used
-            # to determine the amount of whitespace between the columns'
-            # elements.
+            # the col_width_3 correspondingly.  Later, this value is
+            # used to determine the amount of whitespace between the
+            # columns' elements.
             if (( col_width > col_width_3 )); then
                 col_width_3="${col_width}"
             fi
@@ -1265,11 +1264,10 @@ function argparser_create_help_message() {
         IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a lines_col_3 \
             <<< "${col_3[i]}"
 
-        line_count="${#lines_col_1[@]}"
-        for (( line_index = 0; line_index < line_count; line_index++ )); do
-            new_col_1+=("${lines_col_1[line_index]}")
-            new_col_2+=("${lines_col_2[line_index]}")
-            new_col_3+=("${lines_col_3[line_index]}")
+        for j in "${!lines_col_1[@]}"; do
+            new_col_1+=("${lines_col_1[j]}")
+            new_col_2+=("${lines_col_2[j]}")
+            new_col_3+=("${lines_col_3[j]}")
         done
     done
 
@@ -1278,9 +1276,9 @@ function argparser_create_help_message() {
     col_2=( )
     col_3=( )
     for i in "${!new_col_1[@]}"; do
-        col_1+=("$(printf '%s' "${new_col_1[i]}")")
-        col_2+=("$(printf '%s' "${new_col_2[i]}")")
-        col_3+=("$(printf '%s' "${new_col_3[i]}")")
+        col_1+=("${new_col_1[i]}")
+        col_2+=("${new_col_2[i]}")
+        col_3+=("${new_col_3[i]}")
     done
 
     # For proper alignment of the columns, whitespace must be used as
@@ -1337,10 +1335,11 @@ function argparser_create_help_message() {
         fi
     done
 
-    # If "All" or "Header" was requested, print the help message's
-    # header, giving the script's name and instructions on how to
-    # interpret the arguments.  With "All", print a trailing blank line
-    # to separate the block from the following arguments.
+    # If the "All" or "Header" include directive was requested, print
+    # the help message's header, giving the script's name and
+    # instructions on how to interpret the arguments.  With "All", print
+    # a trailing blank line to separate the block from the following
+    # arguments.
     if [[ "${include_directive}" == "All" ]]; then
         printf 'Usage: %s ARGUMENTS\n\n' "${script_name}"
         printf 'Mandatory arguments to long options are mandatory for short '
@@ -1357,7 +1356,7 @@ function argparser_create_help_message() {
         # Only print the argument group's arguments if it was requested
         # by the include directive.
         if [[ "${include_directive}" != "All" \
-            && "${arg_group}" != "${include_directive}" ]]
+            && "${include_directive}" != "${arg_group}" ]]
         then
             continue
         fi
@@ -1374,13 +1373,13 @@ function argparser_create_help_message() {
                 break
             fi
 
-            printf '%s' "${col_1[i]}" "${whitespace_1[i]}" "${col_2[i]}" \
-                "${whitespace_2[i]}" "${col_3[i]}"
-            printf '\n'
+            printf '%s%s%s%s%s\n' "${col_1[i]}" "${whitespace_1[i]}" \
+                "${col_2[i]}" "${whitespace_2[i]}" "${col_3[i]}"
         done
 
-        # If "All" was requested, print a trailing blank line to
-        # separate the argument group blocks from each other.
+        # If the "All" include directive was requested, print a trailing
+        # blank line to separate the argument group blocks from each
+        # other.
         if [[ "${include_directive}" == "All" ]]; then
             printf '\n'
         fi
@@ -1391,9 +1390,9 @@ function argparser_create_help_message() {
         (( index = i + 1 ))
     done
 
-    # If "All" or "Help" was requested, print the help and usage
-    # lines, which shall be the last two and hence were not used in the
-    # sorting process.
+    # If the "All" or "Help" include directive was requested, print the
+    # help and usage lines, which are the last two lines and hence were
+    # not used in the sorting process, before.
     if [[ "${include_directive}" == "All" \
         || "${include_directive}" == "Help" ]]
     then
@@ -1996,6 +1995,7 @@ if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_colorize
     unset -f argparser_create_help_message
     unset -f argparser_create_usage_message
+    unset -f argparser_get_option_names
     unset -f argparser_in_array
     unset -f argparser_main
     unset -f argparser_parse_args
