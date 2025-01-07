@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-06
+# Last Modification: 2025-01-07
 
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
@@ -46,7 +46,7 @@ if (( "$#" >= 2 )) && [[ "$2" == "--" ]]; then
             ARGPARSER_SET_ARGS=true
             ;;
         *)
-            printf "Wrong action given: %s\n" "$1"
+            printf 'Wrong action given: %s\n' "$1"
             exit 1
             ;;
     esac
@@ -175,20 +175,20 @@ function argparser_colorize() {
     for request in "${requests[@]}"; do
         if [[ "$(argparser_in_array "${request}" "${!colors[@]}")" == true ]]
         then
-            printf "\e[%sm" "${colors[${request}]}"
+            printf '\e[%sm' "${colors[${request}]}"
         elif [[ "$(argparser_in_array "${request}" "${!styles[@]}")" == true ]]
         then
-            printf "\e[%sm" "${styles[${request}]}"
+            printf '\e[%sm' "${styles[${request}]}"
         else
             error_message="$(printf \
-                "Error: Wrong color or style \"%s\" specified.\n" \
+                'Error: Wrong color or style "%s" specified.\n' \
                 "${request}")"
-            printf "%s\n" "$(argparser_colorize "red,bold,reverse" \
+            printf '%s\n' "$(argparser_colorize "red,bold,reverse" \
                 "${error_message}")" >&2
         fi
     done
 
-    printf "%s\e[0m" "${string}"
+    printf '%s\e[0m' "${string}"
 }
 
 function argparser_quicksort() {
@@ -319,22 +319,22 @@ function argparser_parse_args() {
     # If the argument is the positional arguments delimiter "--" or for
     # help or usage, output the respective message.
     if [[ "${given_arg}" == "--" ]]; then
-        printf "Positional"
+        printf 'Positional'
         return
     elif [[ "${given_arg}" == "--="* ]]; then
-        printf "Error: The special option \"--\" takes no value."
+        printf 'Error: The special option "--" takes no value.'
         return
     elif [[ "${given_arg}" == "-h" || "${given_arg}" == "--help" ]]; then
-        printf "Help"
+        printf 'Help'
         return
     elif [[ "${given_arg}" == "-h="* || "${given_arg}" == "--help="* ]]; then
-        printf "Error: The argument --help takes no value."
+        printf 'Error: The argument --help takes no value.'
         return
     elif [[ "${given_arg}" == "-u" || "${given_arg}" == "--usage" ]]; then
-        printf "Usage"
+        printf 'Usage'
         return
     elif [[ "${given_arg}" == "-u="* || "${given_arg}" == "--usage="* ]]; then
-        printf "Error: The argument --usage takes no value."
+        printf 'Error: The argument --usage takes no value.'
         return
     fi
 
@@ -366,7 +366,7 @@ function argparser_parse_args() {
         for short_option in "${short_options[@]}"; do
             if [[ "${given_arg}" == "-${short_option}" ]]; then
                 # Output the argument.
-                printf "Argument: %s" "${arg_key}"
+                printf 'Argument: %s' "${arg_key}"
                 return
             elif [[ "${given_arg}" == "-${short_option}="* ]]; then
                 # Output the argument and all values split on
@@ -386,7 +386,7 @@ function argparser_parse_args() {
         for long_option in "${long_options[@]}"; do
             if [[ "${given_arg}" == "--${long_option}" ]]; then
                 # Output the argument.
-                printf "Argument: %s" "${arg_key}"
+                printf 'Argument: %s' "${arg_key}"
                 return
             elif [[ "${given_arg}" == "--${long_option}="* ]]; then
                 # Output the argument and all values split on
@@ -405,7 +405,7 @@ function argparser_parse_args() {
 
     # If the argument hasn't been found in the definition, output an
     # error message.
-    printf "Error: The argument %s is unknown." "${given_arg}"
+    printf 'Error: The argument %s is unknown.' "${given_arg}"
 }
 
 function argparser_check_arg_value() {
@@ -591,7 +591,7 @@ function argparser_check_arg_value() {
             # Check that flags have no choice values.
             if [[ "${arg_number}" == 0 ]]; then
                 choice_values="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; \
-                    printf "%s" "${choice_values[*]}")"
+                    printf '%s' "${choice_values[*]}")"
                 error_message="Error: The argument ${option_names} accepts no "
                 error_message+="choice values, but uses {${choice_values}} per"
                 error_message+="default."
@@ -606,7 +606,7 @@ function argparser_check_arg_value() {
                     "${choice_values[@]}")" == false ]]
                 then
                     choice_values="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; \
-                        printf "%s" "${choice_values[*]}")"
+                        printf '%s' "${choice_values[*]}")"
                     error_message="Error: The argument ${option_names} "
                     error_message+="accepts only the choice values "
                     error_message+="{${choice_values}}, but has "
@@ -623,7 +623,7 @@ function argparser_check_arg_value() {
                 "${choice_values[@]}")" == false ]]
             then
                 choice_values="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; \
-                    printf "%s" "${choice_values[*]}")"
+                    printf '%s' "${choice_values[*]}")"
                 error_message="Error: The argument ${option_names} must be in "
                 error_message+="{${choice_values}}"
                 printf '%s' "${error_message}"
@@ -634,8 +634,8 @@ function argparser_check_arg_value() {
 
     # Output the checked values as
     # ${ARGPARSER_ARG_DELIMITER_3}-separated string.
-    value="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; printf "%s" "${values[*]}")"
-    printf "Value: %s" "${value}"
+    value="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; printf '%s' "${values[*]}")"
+    printf 'Value: %s' "${value}"
 }
 
 function argparser_print_help_or_usage_file() {
@@ -695,7 +695,7 @@ function argparser_print_help_or_usage_file() {
         # to (possibly) print the next line, and only not the current
         # "<ArgumentGroup>" line.
         if [[ "${line_type}" == "text" ]]; then
-            printf "%s\n" "${line}"
+            printf '%s\n' "${line}"
         elif [[ "${line_type}" == "include_directive" ]]; then
             line_type="text"
         fi
@@ -985,7 +985,7 @@ function argparser_create_help_message() {
             then
                 # As the word is too long, print the word and introduce
                 # a line break.  Then, reset the column width.
-                joined_words+="$(printf "%s" "${word}" \
+                joined_words+="$(printf '%s' "${word}" \
                     "${ARGPARSER_ARG_DELIMITER_1}")"
                 col_width=0
             elif (( col_width + len_word > ARGPARSER_MAX_COL_WIDTH_1 ))
@@ -993,7 +993,7 @@ function argparser_create_help_message() {
                 # As the line with the word appended would be too long,
                 # introduce a line break and print the word.  Then, set
                 # the column width.
-                joined_words+="$(printf "%s" "${ARGPARSER_ARG_DELIMITER_1}" \
+                joined_words+="$(printf '%s' "${ARGPARSER_ARG_DELIMITER_1}" \
                     "${word}")"
                 col_width="${len_word}"
             elif (( len_joined_words == 0 )); then
@@ -1038,7 +1038,7 @@ function argparser_create_help_message() {
             then
                 # As the word is too long, print the word and introduce
                 # a line break.  Then, reset the column width.
-                joined_words+="$(printf "%s" "${word}" \
+                joined_words+="$(printf '%s' "${word}" \
                     "${ARGPARSER_ARG_DELIMITER_1}")"
                 col_width=0
             elif (( col_width + len_word > ARGPARSER_MAX_COL_WIDTH_2 ))
@@ -1046,7 +1046,7 @@ function argparser_create_help_message() {
                 # As the line with the word appended would be too long,
                 # introduce a line break and print the word.  Then, set
                 # the column width.
-                joined_words+="$(printf "%s" "${ARGPARSER_ARG_DELIMITER_1}" \
+                joined_words+="$(printf '%s' "${ARGPARSER_ARG_DELIMITER_1}" \
                     "${word}")"
                 col_width="${len_word}"
             elif (( len_joined_words == 0 )); then
@@ -1091,7 +1091,7 @@ function argparser_create_help_message() {
             then
                 # As the word is too long, print the word and introduce
                 # a line break.  Then, reset the column width.
-                joined_words+="$(printf "%s" "${word}" \
+                joined_words+="$(printf '%s' "${word}" \
                     "${ARGPARSER_ARG_DELIMITER_1}")"
                 col_width=0
             elif (( col_width + len_word > ARGPARSER_MAX_COL_WIDTH_3 ))
@@ -1099,7 +1099,7 @@ function argparser_create_help_message() {
                 # As the line with the word appended would be too long,
                 # introduce a line break and print the word.  Then, set
                 # the column width.
-                joined_words+="$(printf "%s" "${ARGPARSER_ARG_DELIMITER_1}" \
+                joined_words+="$(printf '%s' "${ARGPARSER_ARG_DELIMITER_1}" \
                     "${word}")"
                 col_width="${len_word}"
             elif (( len_joined_words == 0 )); then
@@ -1231,9 +1231,9 @@ function argparser_create_help_message() {
     col_2=( )
     col_3=( )
     for i in "${!new_col_1[@]}"; do
-        col_1+=("$(printf "%s" "${new_col_1[i]}")")
-        col_2+=("$(printf "%s" "${new_col_2[i]}")")
-        col_3+=("$(printf "%s" "${new_col_3[i]}")")
+        col_1+=("$(printf '%s' "${new_col_1[i]}")")
+        col_2+=("$(printf '%s' "${new_col_2[i]}")")
+        col_3+=("$(printf '%s' "${new_col_3[i]}")")
     done
 
     # For proper alignment of the columns, whitespace must be used as
@@ -1275,18 +1275,18 @@ function argparser_create_help_message() {
     for i in "${!col_1[@]}"; do
         if (( "${#col_1[i]}" <= ARGPARSER_MAX_COL_WIDTH_1 )); then
             (( whitespace_len_1 = col_width_1 - "${#col_1[i]}" + 1 ))
-            whitespace_1+=("$(printf "%*s" "${whitespace_len_1}")")
+            whitespace_1+=("$(printf '%*s' "${whitespace_len_1}")")
         else
             (( whitespace_len_1 = col_width_1 + 1 ))
-            whitespace_1+=("$(printf "\n%*s" "${whitespace_len_1}")")
+            whitespace_1+=("$(printf '\n%*s' "${whitespace_len_1}")")
         fi
 
         if (( "${#col_2[i]}" <= ARGPARSER_MAX_COL_WIDTH_2 )); then
             (( whitespace_len_2 = col_width_2 - "${#col_2[i]}" + 1 ))
-            whitespace_2+=("$(printf "%*s" "${whitespace_len_2}")")
+            whitespace_2+=("$(printf '%*s' "${whitespace_len_2}")")
         else
             (( whitespace_len_2 = col_width_1 + col_width_2 + 2 ))
-            whitespace_2+=("$(printf "\n%*s" "${whitespace_len_2}")")
+            whitespace_2+=("$(printf '\n%*s' "${whitespace_len_2}")")
         fi
     done
 
@@ -1295,13 +1295,13 @@ function argparser_create_help_message() {
     # interpret the arguments.  With "All", print a trailing blank line
     # to separate the block from the following arguments.
     if [[ "${include_directive}" == "All" ]]; then
-        printf "Usage: %s ARGUMENTS\n\n" "${script_name}"
-        printf "Mandatory arguments to long options are mandatory for short "
-        printf "options too.\n\n"
+        printf 'Usage: %s ARGUMENTS\n\n' "${script_name}"
+        printf 'Mandatory arguments to long options are mandatory for short '
+        printf 'options too.\n\n'
     elif [[ "${include_directive}" == "Header" ]]; then
-        printf "Usage: %s ARGUMENTS\n\n" "${script_name}"
-        printf "Mandatory arguments to long options are mandatory for short "
-        printf "options too.\n"
+        printf 'Usage: %s ARGUMENTS\n\n' "${script_name}"
+        printf 'Mandatory arguments to long options are mandatory for short '
+        printf 'options too.\n'
     fi
 
     # For each argument group, print its arguments.
@@ -1316,7 +1316,7 @@ function argparser_create_help_message() {
         fi
 
         # Print the argument group's name.
-        printf "%s:\n" "${arg_group}"
+        printf '%s:\n' "${arg_group}"
 
         # For any argument line, print the three columns and their
         # delimiting whitespace.  ${ARGPARSER_ARG_GROUP_DELIMITER}
@@ -1327,15 +1327,15 @@ function argparser_create_help_message() {
                 break
             fi
 
-            printf "%s" "${col_1[i]}" "${whitespace_1[i]}" "${col_2[i]}" \
+            printf '%s' "${col_1[i]}" "${whitespace_1[i]}" "${col_2[i]}" \
                 "${whitespace_2[i]}" "${col_3[i]}"
-            printf "\n"
+            printf '\n'
         done
 
         # If "All" was requested, print a trailing blank line to
         # separate the argument group blocks from each other.
         if [[ "${include_directive}" == "All" ]]; then
-            printf "\n"
+            printf '\n'
         fi
 
         # Set the start index for the next argument group to the current
@@ -1350,13 +1350,10 @@ function argparser_create_help_message() {
     if [[ "${include_directive}" == "All" \
         || "${include_directive}" == "Help" ]]
     then
-        printf "%s" "${col_1[-2]}" "${whitespace_1[-2]}" "${col_2[-2]}" \
-            "${whitespace_2[-2]}" "${col_3[-2]}"
-        printf "\n"
-
-        printf "%s" "${col_1[-1]}" "${whitespace_1[-1]}" "${col_2[-1]}" \
-            "${whitespace_2[-1]}" "${col_3[-1]}"
-        printf "\n"
+        printf '%s%s%s%s%s\n' "${col_1[-2]}" "${whitespace_1[-2]}" \
+            "${col_2[-2]}" "${whitespace_2[-2]}" "${col_3[-2]}"
+        printf '%s%s%s%s%s\n' "${col_1[-1]}" "${whitespace_1[-1]}" \
+            "${col_2[-1]}" "${whitespace_2[-1]}" "${col_3[-1]}"
     fi
 }
 
@@ -1387,11 +1384,11 @@ function argparser_create_usage_message() {
     # the existence of the --help and --usage arguments.  To keep all
     # arguments aligned, the length of the script name and the leading
     # "Usage: " determines the amount of whitespace printed before them.
-    header="$(printf "Usage: %s" "${script_name}")"
-    printf "%s [--help] [--usage]\n" "${header}"
+    header="$(printf 'Usage: %s' "${script_name}")"
+    printf '%s [--help] [--usage]\n' "${header}"
     whitespace_len="${#header}"
     (( whitespace_len++ ))
-    whitespace="$(printf "%*s" "${whitespace_len}")"
+    whitespace="$(printf '%*s' "${whitespace_len}")"
 
     # Separate arguments with long options from those without to output
     # first the short option-only arguments, and afterwards those with
@@ -1451,20 +1448,20 @@ function argparser_create_usage_message() {
         # values or an argument number of 0 (i.e., it is a flag), with
         # the existence of each changing the look of the line.
         if [[ "${arg_number}" == 0 ]]; then  # Flag.
-            lines+=("$(printf "%s[%s]" "${whitespace}" "${short_options}")")
+            lines+=("$(printf '%s[%s]' "${whitespace}" "${short_options}")")
         elif [[ "${choice_values[0]}" != "-" \
             && "${default_values[0]}" != "-" ]]
         then  # Choice and default.
-            lines+=("$(printf "%s%s[={%s}]" "${whitespace}" \
+            lines+=("$(printf '%s%s[={%s}]' "${whitespace}" \
                 "${short_options}" "${choice_values}")")
         elif [[ "${choice_values[0]}" != "-" ]]; then  # Choice only.
-            lines+=("$(printf "%s%s={%s}" "${whitespace}" "${short_options}" \
+            lines+=("$(printf '%s%s={%s}' "${whitespace}" "${short_options}" \
                 "${choice_values}")")
         elif [[ "${default_values[0]}" != "-" ]]; then  # Default only.
-            lines+=("$(printf "%s%s[=%s]" "${whitespace}" "${short_options}" \
+            lines+=("$(printf '%s%s[=%s]' "${whitespace}" "${short_options}" \
                 "${fallback_values}")")
         else  # No choice nor default.
-            lines+=("$(printf "%s%s=%s" "${whitespace}" "${short_options}" \
+            lines+=("$(printf '%s%s=%s' "${whitespace}" "${short_options}" \
                 "${fallback_values}")")
         fi
     done
@@ -1508,20 +1505,20 @@ function argparser_create_usage_message() {
         # 0 (i.e., it is a flag), with the existence of each changing
         # the look of the line.
         if [[ "${arg_number}" == 0 ]]; then  # Flag.
-            lines+=("$(printf "%s[%s]" "${whitespace}" "${long_options}")")
+            lines+=("$(printf '%s[%s]' "${whitespace}" "${long_options}")")
         elif [[ "${choice_values[0]}" != "-" \
             && "${default_values[0]}" != "-" ]]
         then  # Choice and default.
-            lines+=("$(printf "%s%s[={%s}]" "${whitespace}" "${long_options}" \
+            lines+=("$(printf '%s%s[={%s}]' "${whitespace}" "${long_options}" \
                 "${choice_values}")")
         elif [[ "${choice_values[0]}" != "-" ]]; then  # Choice only.
-            lines+=("$(printf "%s%s={%s}" "${whitespace}" "${long_options}" \
+            lines+=("$(printf '%s%s={%s}' "${whitespace}" "${long_options}" \
                 "${choice_values}")")
         elif [[ "${default_values[0]}" != "-" ]]; then  # Default only.
-            lines+=("$(printf "%s%s[=%s]" "${whitespace}" "${long_options}" \
+            lines+=("$(printf '%s%s[=%s]' "${whitespace}" "${long_options}" \
                 "${fallback_values}")")
         else  # No choice nor default.
-            lines+=("$(printf "%s%s=%s" "${whitespace}" "${long_options}" \
+            lines+=("$(printf '%s%s=%s' "${whitespace}" "${long_options}" \
                 "${fallback_values}")")
         fi
     done
@@ -1630,7 +1627,7 @@ function argparser_main() {
 
         error_message="$(argparser_colorize "${ARGPARSER_ERROR_STYLE}" \
             "${error_message}")"
-        printf "%s\n" "${error_message}" >&2
+        printf '%s\n' "${error_message}" >&2
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
     fi
 
@@ -1721,7 +1718,7 @@ function argparser_main() {
             error_message="Error: No argument definition for \"${arg}\""
             error_message="$(argparser_colorize "${ARGPARSER_ERROR_STYLE}" \
                 "${error_message}")"
-            printf "%s\n" "${error_message}" >&2
+            printf '%s\n' "${error_message}" >&2
             exit "${ARGPARSER_ERROR_EXIT_CODE}"
         else
             # The argument doesn't match any pattern and is thus deemed
@@ -1729,7 +1726,7 @@ function argparser_main() {
             error_message="Error: Invalid argument definition: \"${arg}\""
             error_message="$(argparser_colorize "${ARGPARSER_ERROR_STYLE}" \
                 "${error_message}")"
-            printf "%s\n" "${error_message}" >&2
+            printf '%s\n' "${error_message}" >&2
             exit "${ARGPARSER_ERROR_EXIT_CODE}"
         fi
     done
@@ -1766,7 +1763,7 @@ function argparser_main() {
                         "Help")"
                     help_message="$(argparser_colorize \
                         "${ARGPARSER_HELP_STYLE}" "${help_message}")"
-                    printf "%s\n" "${help_message}" >&2
+                    printf '%s\n' "${help_message}" >&2
                     exit "${ARGPARSER_HELP_EXIT_CODE}"
                     ;;
                 Usage*)
@@ -1774,7 +1771,7 @@ function argparser_main() {
                         "Usage")"
                     usage_message="$(argparser_colorize \
                         "${ARGPARSER_USAGE_STYLE}" "${usage_message}")"
-                    printf "%s\n" "${usage_message}" >&2
+                    printf '%s\n' "${usage_message}" >&2
                     exit "${ARGPARSER_USAGE_EXIT_CODE}"
                     ;;
                 Error*)
@@ -1820,7 +1817,7 @@ function argparser_main() {
         # it (as ${ARGPARSER_ARG_DELIMITER_3}-separated list).
         if [[ -v arg_key ]]; then
             args[${arg_key}]="$(IFS="${ARGPARSER_ARG_DELIMITER_3}"; \
-                printf "%s" "${arg_value[*]}")"
+                printf '%s' "${arg_value[*]}")"
         fi
     done
 
@@ -1869,7 +1866,7 @@ function argparser_main() {
 
         mapfile -d "" -t error_messages \
             < <(argparser_sort false "${error_messages[@]}")
-        printf "%s\n" "${error_messages[@]}" >&2
+        printf '%s\n' "${error_messages[@]}" >&2
     fi
 
     if (( "${#warning_messages[@]}" > 0 )); then
@@ -1880,7 +1877,7 @@ function argparser_main() {
 
         mapfile -d "" -t warning_messages \
             < <(argparser_sort false "${warning_messages[@]}")
-        printf "%s\n" "${warning_messages[@]}" >&2
+        printf '%s\n' "${warning_messages[@]}" >&2
     fi
 
     # If any argument was not or wrongly given, ${error} is set to true,
@@ -1889,7 +1886,7 @@ function argparser_main() {
         usage_message="$(argparser_print_help_or_usage_message "Usage")"
         usage_message="$(argparser_colorize "${ARGPARSER_USAGE_STYLE}" \
             "${usage_message}")"
-        printf "\n%s\n" "${usage_message}" >&2
+        printf '\n%s\n' "${usage_message}" >&2
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
     fi
 }
