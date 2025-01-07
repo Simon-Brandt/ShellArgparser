@@ -1204,18 +1204,15 @@ function argparser_create_help_message() {
     new_col_2=( )
     new_col_3=( )
     for i in "${!col_1[@]}"; do
-        IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a lines_col_1 \
-            <<< "${col_1[i]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a lines_col_2 \
-            <<< "${col_2[i]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a lines_col_3 \
-            <<< "${col_3[i]}"
-
-        for j in "${!lines_col_1[@]}"; do
-            new_col_1+=("${lines_col_1[j]}")
-            new_col_2+=("${lines_col_2[j]}")
-            new_col_3+=("${lines_col_3[j]}")
-        done
+        mapfile -d "${ARGPARSER_ARG_DELIMITER_1}" -O "${#new_col_1[@]}" -t \
+            new_col_1 \
+            < <(printf '%s' "${col_1[i]}")
+        mapfile -d "${ARGPARSER_ARG_DELIMITER_1}" -O "${#new_col_2[@]}" -t \
+            new_col_2 \
+            < <(printf '%s' "${col_2[i]}")
+        mapfile -d "${ARGPARSER_ARG_DELIMITER_1}" -O "${#new_col_3[@]}" -t \
+            new_col_3 \
+            < <(printf '%s' "${col_3[i]}")
     done
 
     # Store the lines back in the original columns' variables.
