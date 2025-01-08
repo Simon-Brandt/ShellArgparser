@@ -65,7 +65,7 @@ fi
 : "${ARGPARSER_MAX_COL_WIDTH_1:=5}"
 : "${ARGPARSER_MAX_COL_WIDTH_2:=33}"
 : "${ARGPARSER_MAX_COL_WIDTH_3:=39}"
-: "${ARGPARSER_POSITIONAL_NAME:="Positional"}"
+: "${ARGPARSER_POSITIONAL_NAME:="positional"}"
 : "${ARGPARSER_READ_ARGS:=true}"
 : "${ARGPARSER_SET_ARGS:=true}"
 : "${ARGPARSER_SET_ARRAYS:=true}"
@@ -1891,11 +1891,29 @@ if [[ "${ARGPARSER_SET_ARGS}" == true ]]; then
     for arg in "${!args[@]}"; do
         if [[ "${arg}" == "${ARGPARSER_POSITIONAL_NAME}" ]]; then
             # Set all positional arguments and remove the respective key
-            # from ${args}.
-            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a positional \
+            # from ${args}.  In order to use the name
+            # ${ARGPARSER_POSITIONAL_NAME%% *} (only the characters til
+            # the first space) refers to as name for a variable to store
+            # the positional arguments in, upon setting the values, eval
+            # is used to access the values.  First, eval reads its
+            # arguments and expands them.  Thereby, the variable name
+            # ${ARGPARSER_POSITIONAL_NAME%% *} refers to is concatenated
+            # with an "[@]" as array subscript.  Then, this string is
+            # interpreted as second argument to printf, which expands
+            # the array and prints its values, separated with spaces.
+            # Then, the unquoted command substitution lets set expand
+            # these values as whitespace-delimited arguments, which are
+            # then set as positional arguments to the script.  This
+            # allows accessing the positional arguments from "args"
+            # without needing to introduce another variable name, which
+            # could collide with the user script for being on the global
+            # scope, here.
+            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a \
+                "${ARGPARSER_POSITIONAL_NAME%% *}" \
                 <<< "${args[${arg}]}"
-            set -- "${positional[@]}"
-            unset positional
+            set -- $(eval printf "'%s '" \
+                "\${${ARGPARSER_POSITIONAL_NAME%% *}[@]}")
+            unset "${ARGPARSER_POSITIONAL_NAME%% *}"
             unset "args[${ARGPARSER_POSITIONAL_NAME}]"
         elif [[ "${args[${arg}]}" == *"${ARGPARSER_ARG_DELIMITER_2}"*
             && "${ARGPARSER_SET_ARRAYS}" == true ]]

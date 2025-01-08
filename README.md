@@ -808,7 +808,7 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1)                   | *int*                              | `5`[^6]              |
 | [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2)                   | *int*                              | `33`[^6]             |
 | [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)                   | *int*                              | `39`[^6]             |
-| [`ARGPARSER_POSITIONAL_NAME`](#argparser_positional_name)                   | *str*                              | `"Positional"`       |
+| [`ARGPARSER_POSITIONAL_NAME`](#argparser_positional_name)                   | *str*                              | `"positional"`       |
 | [`ARGPARSER_READ_ARGS`](#argparser_read_args)                               | *bool*                             | `true`               |
 | [`ARGPARSER_SET_ARGS`](#argparser_set_args)                                 | *bool*                             | `true`               |
 | [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)                             | *bool*                             | `true`               |
@@ -946,8 +946,8 @@ It is recommendable to have a total width of the help message of 79 characters. 
 
 - ***Type:*** *str* (String)
 - ***Allowed values:*** Any string not used as argument identifier in the argument definition
-- ***Default value:*** `"Positional"`
-- ***Description:*** A unique key to store the positional arguments in the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name) sets. This name can be arbitrary, as long as it is not used as an identifier of any argument in the argument definition. Note, however, that you might want to use the associative array in you code and then might want to give the `ARGPARSER_POSITIONAL_NAME` a descriptive name.
+- ***Default value:*** `"positional"`
+- ***Description:*** A unique key to store the positional arguments in the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name) sets. This name can be arbitrary, as long as it is not used as an identifier of any argument in the argument definition. Note, however, that you might want to use the associative array in you code and then might want to give the `ARGPARSER_POSITIONAL_NAME` a descriptive name.  Further the name `ARGPARSER_POSITIONAL_NAME` refers to is temporarily used as variable name when setting the positional parameters, given [`ARGPARSER_SET_ARGS`](#argparser_set_args) is set to `true`.  As variable names cannot contain spaces, all characters starting from the first space character are stripped off the name.  Thus, if you log your script with the likes of `set -o xtrace` (or `set -x`), expect to see this variable name and not `ARGPARSER_POSITIONAL_NAME`.  However, as this variable is unset in due course, it won't affect your script.
 
 ### `ARGPARSER_READ_ARGS`
 
