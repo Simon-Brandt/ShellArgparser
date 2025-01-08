@@ -1206,14 +1206,9 @@ function argparser_create_help_message() {
     done
 
     # Store the lines back in the original columns' variables.
-    col_1=( )
-    col_2=( )
-    col_3=( )
-    for i in "${!new_col_1[@]}"; do
-        col_1+=("${new_col_1[i]}")
-        col_2+=("${new_col_2[i]}")
-        col_3+=("${new_col_3[i]}")
-    done
+    col_1=("${new_col_1[@]}")
+    col_2=("${new_col_2[@]}")
+    col_3=("${new_col_3[@]}")
 
     # For proper alignment of the columns, whitespace must be used as
     # separation between shorter elements.  Compute the width for both
