@@ -1625,7 +1625,7 @@ function argparser_main() {
     # stored in ${ARGPARSER_ARG_ARRAY_NAME} gets concatenated with the
     # string "[@]" to form a construct Bash interprets as array index.
     # By using variable indirection, this then gets expanded to the
-    # array's values and copied into the final "args" array.
+    # array's values and copied into the final ${args} array.
     if [[ "${ARGPARSER_ARG_ARRAY_NAME}" != "args" ]]; then
         args="${ARGPARSER_ARG_ARRAY_NAME}[@]"
         args=("${!args}")
@@ -1732,14 +1732,15 @@ function argparser_main() {
         mapfile -d "" -t parsed_arg < <(argparser_parse_args "${given_arg}")
 
         # Read the output message and either print the help or usage
-        # message, append the message to the previous error messages or
-        # set the argument's value.  In case of arguments given multiple
-        # times, i.e., the key already exists in ${!args[@]}, add the
-        # new values to the previously given by re-reading in the values
-        # into ${arg_value}.
+        # message, append the message to the previous error or warning
+        # messages or set the argument's value.  In case of arguments
+        # given multiple times, i.e., the key already exists in
+        # ${!args[@]}, add the new values to the previously given by
+        # re-reading in the values into ${arg_value}.
         for message in "${parsed_arg[@]}"; do
             case "${message}" in
                 Help*)
+                    # Print the help message.
                     help_message="$(argparser_print_help_or_usage_message \
                         "Help")"
                     help_message="$(argparser_colorize \
@@ -1748,6 +1749,7 @@ function argparser_main() {
                     exit "${ARGPARSER_HELP_EXIT_CODE}"
                     ;;
                 Usage*)
+                    # Print the usage message.
                     usage_message="$(argparser_print_help_or_usage_message \
                         "Usage")"
                     usage_message="$(argparser_colorize \
@@ -1756,13 +1758,21 @@ function argparser_main() {
                     exit "${ARGPARSER_USAGE_EXIT_CODE}"
                     ;;
                 Error*)
+                    # Append the message to the previous error messages.
                     error=true
                     error_messages+=("${message}")
                     ;;
                 Warning*)
+                    # Append the message to the previous warning
+                    # messages.
                     warning_messages+=("${message}")
                     ;;
                 Positional)
+                    # Set the current argument to the name
+                    # ${ARGPARSER_POSITIONAL_NAME} refers to.  Set the
+                    # flag that the positional arguments delimiter "--"
+                    # has been set, such that all following arguments
+                    # are interpreted as positional.
                     is_positional=true
                     arg_key="${ARGPARSER_POSITIONAL_NAME}"
 
@@ -1777,6 +1787,7 @@ function argparser_main() {
                     fi
                     ;;
                 Argument*)
+                    # Set the current argument name.
                     arg_key="${message#Argument: }"
 
                     if [[ "$(argparser_in_array "${arg_key}" \
@@ -1790,6 +1801,7 @@ function argparser_main() {
                     fi
                     ;;
                 Value*)
+                    # Set the current argument's value.
                     arg_value+=("${message#Value: }")
                     ;;
             esac
@@ -1823,13 +1835,17 @@ function argparser_main() {
         for message in "${checked_arg[@]}"; do
             case "${message}" in
                 Error*)
+                    # Append the message to the previous error messages.
                     error=true
                     error_messages+=("${message}")
                     ;;
                 Warning*)
+                    # Append the message to the previous warning
+                    # messages.
                     warning_messages+=("${message}")
                     ;;
                 Value*)
+                    # Set the current argument's value.
                     arg_value="${message#Value: }"
                     ;;
             esac
@@ -1910,7 +1926,7 @@ if [[ "${ARGPARSER_SET_ARGS}" == true ]]; then
             # Then, the unquoted command substitution lets set expand
             # these values as whitespace-delimited arguments, which are
             # then set as positional arguments to the script.  This
-            # allows accessing the positional arguments from "args"
+            # allows accessing the positional arguments from ${args}
             # without needing to introduce another variable name, which
             # could collide with the user script for being on the global
             # scope, here.
