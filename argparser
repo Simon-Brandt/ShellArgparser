@@ -472,13 +472,13 @@ function argparser_parse_args() {
         printf 'Help'
         return
     elif [[ "${given_arg}" == "-h="* || "${given_arg}" == "--help="* ]]; then
-        printf 'Error: The argument --help takes no value.'
+        printf 'Error: The option -h,--help takes no value.'
         return
     elif [[ "${given_arg}" == "-u" || "${given_arg}" == "--usage" ]]; then
         printf 'Usage'
         return
     elif [[ "${given_arg}" == "-u="* || "${given_arg}" == "--usage="* ]]; then
-        printf 'Error: The argument --usage takes no value.'
+        printf 'Error: The option -u,--usage takes no value.'
         return
     fi
 
