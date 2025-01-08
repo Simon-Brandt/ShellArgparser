@@ -282,6 +282,33 @@ function argparser_sort() {
     fi
 }
 
+function argparser_uniq() {
+    # Filter adjacent duplicate entries from an array.
+    #
+    # Arguments:
+    # - $@: the array to filter
+    #
+    # Output:
+    # - the filtered array as string concatenated with null characters
+
+    # Define the local variables.
+    local array
+    local element
+    local prev_element
+
+    # Read the arguments.
+    array=("$@")
+
+    # Filter the array and output it.
+    prev_element=""
+    for element in "${array[@]}"; do
+        if [[ "${element}" != "${prev_element}" ]]; then
+            printf '%s\0' "${element}"
+        fi
+        prev_element="${element}"
+    done
+}
+
 function argparser_get_option_names() {
     # Concatenate the name of all short and long options for the error
     # and warning messages.
@@ -1870,7 +1897,7 @@ function argparser_main() {
         args[${arg_key}]="${arg_value}"
     done
 
-    # Colorize, sort, and print all error and warning messages.
+    # Colorize, sort, filter, and print all error and warning messages.
     if (( "${#error_messages[@]}" > 0 )); then
         for i in "${!error_messages[@]}"; do
             error_messages[i]="$(argparser_colorize \
@@ -1879,6 +1906,8 @@ function argparser_main() {
 
         mapfile -d "" -t error_messages \
             < <(argparser_sort false "${error_messages[@]}")
+        mapfile -d "" -t error_messages \
+            < <(argparser_uniq "${error_messages[@]}")
         printf '%s\n' "${error_messages[@]}" >&2
     fi
 
@@ -1890,6 +1919,8 @@ function argparser_main() {
 
         mapfile -d "" -t warning_messages \
             < <(argparser_sort false "${warning_messages[@]}")
+        mapfile -d "" -t warning_messages \
+            < <(argparser_uniq "${warning_messages[@]}")
         printf '%s\n' "${warning_messages[@]}" >&2
     fi
 
@@ -1989,6 +2020,7 @@ if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_print_help_or_usage_message
     unset -f argparser_quicksort
     unset -f argparser_sort
+    unset -f argparser_uniq
 fi
 
 # If ${ARGPARSER_UNSET_ENV_VARS} is set to true, unset all argparser
