@@ -429,7 +429,7 @@ function argparser_parse_args() {
     # Output:
     # - the parsed argument as message or an error message, starting
     #   with "Help", "Usage", "Positional", "Error: ", "Argument: ", or
-    #   "Value: ", in the latter twwo cases possibly concatenated with
+    #   "Value: ", in the latter three cases possibly concatenated with
     #   null characters
 
     # Define the local variables.
@@ -461,24 +461,30 @@ function argparser_parse_args() {
     fi
 
     # If the argument is the positional arguments delimiter "--" or for
-    # help or usage, output the respective message.
+    # help or usage, output the respective message.  If an "=" character
+    # follows, output an error message and the argument, such that
+    # values following the unknown argument are assigned to this
+    # argument, not the last known one that got parsed.
     if [[ "${given_arg}" == "--" ]]; then
         printf 'Positional'
         return
     elif [[ "${given_arg}" == "--="* ]]; then
-        printf 'Error: The special option "--" takes no value.'
+        printf 'Error: The special option "--" takes no value.\0'
+        printf 'Argument: %s' "${given_arg}"
         return
     elif [[ "${given_arg}" == "-h" || "${given_arg}" == "--help" ]]; then
         printf 'Help'
         return
     elif [[ "${given_arg}" == "-h="* || "${given_arg}" == "--help="* ]]; then
-        printf 'Error: The option -h,--help takes no value.'
+        printf 'Error: The option -h,--help takes no value.\0'
+        printf 'Argument: %s' "${given_arg}"
         return
     elif [[ "${given_arg}" == "-u" || "${given_arg}" == "--usage" ]]; then
         printf 'Usage'
         return
     elif [[ "${given_arg}" == "-u="* || "${given_arg}" == "--usage="* ]]; then
-        printf 'Error: The option -u,--usage takes no value.'
+        printf 'Error: The option -u,--usage takes no value.\0'
+        printf 'Argument: %s' "${given_arg}"
         return
     fi
 
@@ -546,8 +552,11 @@ function argparser_parse_args() {
     done
 
     # If the argument hasn't been found in the definition, output an
-    # error message.
-    printf 'Error: The argument %s is unknown.' "${given_arg}"
+    # error message and the argument, such that values following the
+    # unknown argument are assigned to this argument, not the last known
+    # one that got parsed.
+    printf 'Error: The argument %s is unknown.\0' "${given_arg%%=*}"
+    printf 'Argument: %s' "${given_arg}"
 }
 
 function argparser_check_arg_value() {
