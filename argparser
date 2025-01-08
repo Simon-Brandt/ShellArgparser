@@ -1591,8 +1591,8 @@ function argparser_main() {
     # Arguments:
     # - $@: the arguments to parse
     #
-    # Output:
-    # - the parsed and checked arguments with key and value as
+    # Globals:
+    # - args: the parsed and checked arguments with key and value as
     #   associative array
 
     # Define the local variables.  If the variable that
