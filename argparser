@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-07
+# Last Modification: 2025-01-08
 
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
@@ -54,7 +54,6 @@ fi
 : "${ARGPARSER_ARG_DEF_FILE_HAS_HEADER:=false}"
 : "${ARGPARSER_ARG_DELIMITER_1:=":"}"
 : "${ARGPARSER_ARG_DELIMITER_2:=","}"
-: "${ARGPARSER_ARG_GROUP_DELIMITER:="#"}"
 : "${ARGPARSER_CHECK_ARG_DEFINITION:=false}"
 : "${ARGPARSER_ERROR_EXIT_CODE:=1}"
 : "${ARGPARSER_ERROR_STYLE:="red,bold,reverse"}"
@@ -851,7 +850,6 @@ function argparser_create_help_message() {
     local line_count_1
     local line_count_2
     local line_count_3
-    local line_counts
     local lines_col_1
     local lines_col_2
     local lines_col_3
@@ -1063,11 +1061,14 @@ function argparser_create_help_message() {
         done
 
         # To mark the end of an argument group later upon printing, add
-        # an ${ARGPARSER_ARG_GROUP_DELIMITER} character, that won't get
-        # printed.
-        col_1+=("${ARGPARSER_ARG_GROUP_DELIMITER}")
-        col_2+=("${ARGPARSER_ARG_GROUP_DELIMITER}")
-        col_3+=("${ARGPARSER_ARG_GROUP_DELIMITER}")
+        # an empty line in all three columns.  This cannot appear by
+        # chance, whereas empty lines for single columns emerge from the
+        # line break insertion when they are differently long.  Thus, a
+        # completely empty line can be used as safe argument group
+        # delimiter.
+        col_1+=("")
+        col_2+=("")
+        col_3+=("")
     done
 
     # Add the help and usage flags that always exist if the "All" or
@@ -1294,11 +1295,11 @@ function argparser_create_help_message() {
         printf '%s:\n' "${arg_group}"
 
         # For any argument line, print the three columns and their
-        # delimiting whitespace.  ${ARGPARSER_ARG_GROUP_DELIMITER}
-        # characters denote the end of the current argument group and
-        # don't get printed.
+        # delimiting whitespace.  If all three columns are empty, the
+        # end of the current argument group has been reached.
         for (( i = index; i < "${#col_1[@]}"; i++ )); do
-            if [[ "${col_1[i]}" == "${ARGPARSER_ARG_GROUP_DELIMITER}" ]]; then
+            if [[ -z "${col_1[i]}" && -z "${col_2[i]}" && -z "${col_3[i]}" ]]
+            then
                 break
             fi
 
@@ -1314,8 +1315,8 @@ function argparser_create_help_message() {
         fi
 
         # Set the start index for the next argument group to the current
-        # group's end index plus 1 (with the latter being the
-        # ${ARGPARSER_ARG_GROUP_DELIMITER}).
+        # group's end index plus 1 (with the latter being the empty line
+        # used as argument group delimiter).
         (( index = i + 1 ))
     done
 
@@ -1945,7 +1946,6 @@ if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_ARG_DEF_FILE_HAS_HEADER
     unset ARGPARSER_ARG_DELIMITER_1
     unset ARGPARSER_ARG_DELIMITER_2
-    unset ARGPARSER_ARG_GROUP_DELIMITER
     unset ARGPARSER_CHECK_ARG_DEFINITION
     unset ARGPARSER_ERROR_EXIT_CODE
     unset ARGPARSER_ERROR_STYLE

@@ -797,7 +797,6 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_ARG_DEF_FILE_HAS_HEADER`](#argparser_arg_def_file_has_header)   | *bool*                             | `false`              |
 | [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)                   | *char*                             | `":"`[^5]            |
 | [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)                   | *char*                             | `","`[^5]            |
-| [`ARGPARSER_ARG_GROUP_DELIMITER`](#argparser_arg_group_delimiter)           | *char*                             | `"#"`[^5]            |
 | [`ARGPARSER_CHECK_ARG_DEFINITION`](#argparser_check_arg_definition)         | *bool*                             | `false`              |
 | [`ARGPARSER_ERROR_EXIT_CODE`](#argparser_error_exit_code)                   | *int*                              | `1`                  |
 | [`ARGPARSER_ERROR_STYLE`](#argparser_error_style)                           | *str*                              | `"red,bold,reverse"` |
@@ -854,23 +853,16 @@ The argparser defines a large set of environment variables, each following the n
 ### `ARGPARSER_ARG_DELIMITER_1`
 
 - ***Type:***  *char* (Character)
-- ***Allowed values:*** Any unique character that's not used as [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2) or [`ARGPARSER_ARG_GROUP_DELIMITER`](#argparser_arg_group_delimiter)
+- ***Allowed values:*** Any unique character that's not used as [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)
 - ***Default value:*** `":"`
 - ***Description:*** The primary delimiter that separates the fields in the arguments definition. Though you don't need to access this variable, you must ensure that it is set to a character or glyph that does not occur in the arguments definition or their values.
 
 ### `ARGPARSER_ARG_DELIMITER_2`
 
 - ***Type:***  *char* (Character)
-- ***Allowed values:*** Any unique character that's not used as [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1) or [`ARGPARSER_ARG_GROUP_DELIMITER`](#argparser_arg_group_delimiter)
+- ***Allowed values:*** Any unique character that's not used as [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)
 - ***Default value:*** `","`
 - ***Description:*** The secondary delimiter that separates the elements of sequences in the arguments definition. Again, you don't need to access this variable, but you must ensure that it is set to a character or glyph that does not occur in the arguments definition or their values.
-
-### `ARGPARSER_ARG_GROUP_DELIMITER`
-
-- ***Type:***  *char* (Character)
-- ***Allowed values:*** Any unique character that's not used as [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1) or [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)
-- ***Default value:*** `"#"`
-- ***Description:*** The delimiter that internally separates argument groups from each other. Also here, you don't need to access this variable, but you must ensure that it is set to a character or glyph that does not occur in the arguments definition or their values.
 
 ### `ARGPARSER_CHECK_ARG_DEFINITION`
 
