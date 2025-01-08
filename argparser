@@ -966,7 +966,7 @@ function argparser_create_help_message() {
             elif [[ "${arg_number}" == 0 ]]; then  # Flag.
                 new_col_1_value="["
                 new_col_1_value+="$(printf -- "-%s, " "${short_options[@]}")"
-                new_col_1_value="${new_col_1_value%%, }"
+                new_col_1_value="${new_col_1_value%, }"
                 new_col_1_value+="]"
                 if [[ "${long_options[0]}" != "-" ]]; then  # Long option.
                     new_col_1_value+=","
@@ -976,7 +976,7 @@ function argparser_create_help_message() {
                 if [[ "${long_options[0]}" == "-" ]]; then  # No long option.
                     new_col_1_value="$(printf -- "-%s, " \
                         "${short_options[@]}")"
-                    new_col_1_value="${new_col_1_value%%, }"
+                    new_col_1_value="${new_col_1_value%, }"
                     new_col_1+=("${new_col_1_value}")
                 else  # Long option.
                     new_col_1+=("$(printf -- "-%s, " "${short_options[@]}")")
@@ -989,7 +989,7 @@ function argparser_create_help_message() {
             elif [[ "${arg_number}" == 0 ]]; then  # Flag.
                 new_col_2_value="["
                 new_col_2_value+="$(printf -- "--%s, " "${long_options[@]}")"
-                new_col_2_value="${new_col_2_value%%, }"
+                new_col_2_value="${new_col_2_value%, }"
                 new_col_2_value+="]"
                 new_col_2+=("${new_col_2_value}")
             elif [[ "${choice_values}" != "-" && "${default_values}" != "-" ]]
@@ -999,7 +999,7 @@ function argparser_create_help_message() {
                     new_col_2_value+="$(printf -- "--%s[={%s}], " \
                         "${long_option}" "${choice_values}")"
                 done
-                new_col_2_value="${new_col_2_value%%, }"
+                new_col_2_value="${new_col_2_value%, }"
                 new_col_2+=("${new_col_2_value}")
             elif [[ "${choice_values}" != "-" ]]; then  # Choice only.
                 new_col_2_value=""
@@ -1007,7 +1007,7 @@ function argparser_create_help_message() {
                     new_col_2_value+="$(printf -- "--%s={%s}, " \
                         "${long_option}" "${choice_values}")"
                 done
-                new_col_2_value="${new_col_2_value%%, }"
+                new_col_2_value="${new_col_2_value%, }"
                 new_col_2+=("${new_col_2_value}")
             elif [[ "${default_values}" != "-" ]]; then  # Default only.
                 new_col_2_value=""
@@ -1015,7 +1015,7 @@ function argparser_create_help_message() {
                     new_col_2_value+="$(printf -- "--%s[=%s], " \
                         "${long_option}" "${long_option^^}")"
                 done
-                new_col_2_value="${new_col_2_value%%, }"
+                new_col_2_value="${new_col_2_value%, }"
                 new_col_2+=("${new_col_2_value}")
             else  # No choice nor default.
                 new_col_2_value=""
@@ -1023,7 +1023,7 @@ function argparser_create_help_message() {
                     new_col_2_value+="$(printf -- "--%s=%s, " \
                         "${long_option}" "${long_option^^}")"
                 done
-                new_col_2_value="${new_col_2_value%%, }"
+                new_col_2_value="${new_col_2_value%, }"
                 new_col_2+=("${new_col_2_value}")
             fi
 
