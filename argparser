@@ -1129,14 +1129,19 @@ function argparser_create_help_message() {
         line_count_3="${#lines_col_3[@]}"
 
         # Get the largest line count.
-        line_counts=(
-            "${line_count_1}"
-            "${line_count_2}"
-            "${line_count_3}"
-        )
-        mapfile -d "" -t line_counts \
-            < <(argparser_sort true "${line_counts[@]}")
-        max_line_count="${line_counts[0]}"
+        if (( line_count_1 > line_count_2 )); then
+            if (( line_count_1 > line_count_3 )); then
+                max_line_count="${line_count_1}"
+            else
+                max_line_count="${line_count_3}"
+            fi
+        else
+            if (( line_count_2 > line_count_3 )); then
+                max_line_count="${line_count_2}"
+            else
+                max_line_count="${line_count_3}"
+            fi
+        fi
 
         # Set the number of required line breaks to align each line.  If
         # the line count is 0, 1 is subtracted from the maximum line
