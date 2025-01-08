@@ -1139,47 +1139,45 @@ function argparser_create_help_message() {
         max_line_count="${line_counts[0]}"
 
         # Set the number of required line breaks to align each line.  If
-        # the line count is greater than 0, 1 is added to the maximum
-        # line count to add a definitive line break.  The same holds
-        # true for a line count of 0, where normally 1 would have to be
-        # subtracted.  This is due to how Bash reads arrays, as the line
-        # break would yield a line too many.
+        # the line count is 0, 1 is subtracted from the maximum line
+        # count, such that the last line does not end in a line break.
+        # The same holds true for a line count of greater than 0, where
+        # normally 1 would have to be added.  This trailing newline
+        # character gets added by the here string upon re-reading the
+        # arrays, below.
         if (( line_count_1 == 0 )); then
-            (( newline_count_1 = max_line_count ))
+            (( newline_count_1 = max_line_count - 1 ))
         else
-            (( newline_count_1 = max_line_count - line_count_1 + 1 ))
+            (( newline_count_1 = max_line_count - line_count_1 ))
         fi
 
         if (( line_count_2 == 0 )); then
-            (( newline_count_2 = max_line_count ))
+            (( newline_count_2 = max_line_count - 1 ))
         else
-            (( newline_count_2 = max_line_count - line_count_2 + 1 ))
+            (( newline_count_2 = max_line_count - line_count_2 ))
         fi
 
         if (( line_count_3 == 0 )); then
-            (( newline_count_3 = max_line_count ))
+            (( newline_count_3 = max_line_count - 1 ))
         else
-            (( newline_count_3 = max_line_count - line_count_3 + 1 ))
+            (( newline_count_3 = max_line_count - line_count_3 ))
         fi
 
-        # To each element, add as many line breaks as computed.  To
-        # preserve the correct number of line breaks upon reading the
-        # element into another array, later, one break is inserted for
-        # sure (by the increment in the above compution).
+        # To each element, add as many line breaks as computed.
         newlines_1=""
-        for (( j = 1; j <= newline_count_1; j++ )); do
+        for (( j = 0; j < newline_count_1; j++ )); do
             newlines_1+=$'\n'
         done
         col_1[i]+="${newlines_1}"
 
         newlines_2=""
-        for (( j = 1; j <= newline_count_2; j++ )); do
+        for (( j = 0; j < newline_count_2; j++ )); do
             newlines_2+=$'\n'
         done
         col_2[i]+="${newlines_2}"
 
         newlines_3=""
-        for (( j = 1; j <= newline_count_3; j++ )); do
+        for (( j = 0; j < newline_count_3; j++ )); do
             newlines_3+=$'\n'
         done
         col_3[i]+="${newlines_3}"
@@ -1187,18 +1185,19 @@ function argparser_create_help_message() {
 
     # Re-read in the columns' lines, such that each line makes up one
     # element of the array.  To this end, split the lines on newline
-    # characters.  As the last character protects all former characters,
-    # the line count remains preserved.
+    # characters (that get stripped off the lines).  The here string
+    # adds a trailing newline that acts as additional delimiter.  Else,
+    # a line without line break would give the same number of lines
+    # (one) as a line with one line break as trailing newline, since
+    # line breaks act as trailing delimiters for mapfile, not as inner
+    # separators.
     new_col_1=( )
     new_col_2=( )
     new_col_3=( )
     for i in "${!col_1[@]}"; do
-        mapfile -O "${#new_col_1[@]}" -t new_col_1 \
-            < <(printf '%s' "${col_1[i]}")
-        mapfile -O "${#new_col_2[@]}" -t new_col_2 \
-            < <(printf '%s' "${col_2[i]}")
-        mapfile -O "${#new_col_3[@]}" -t new_col_3 \
-            < <(printf '%s' "${col_3[i]}")
+        mapfile -t -O "${#new_col_1[@]}" new_col_1 <<< "${col_1[i]}"
+        mapfile -t -O "${#new_col_2[@]}" new_col_2 <<< "${col_2[i]}"
+        mapfile -t -O "${#new_col_3[@]}" new_col_3 <<< "${col_3[i]}"
     done
 
     # Store the lines back in the original columns' variables.
