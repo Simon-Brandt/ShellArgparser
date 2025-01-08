@@ -495,6 +495,11 @@ function argparser_parse_args() {
 
         # Check the short options.
         for short_option in "${short_options[@]}"; do
+            if [[ "${short_option}" == "-" ]]; then
+                # Ignore arguments without short option name.
+                break
+            fi
+
             if [[ "${given_arg}" == "-${short_option}" ]]; then
                 # Output the argument.
                 printf 'Argument: %s' "${arg_key}"
@@ -515,6 +520,11 @@ function argparser_parse_args() {
 
         # Check the long options.
         for long_option in "${long_options[@]}"; do
+            if [[ "${long_option}" == "-" ]]; then
+                # Ignore arguments without long option name.
+                break
+            fi
+
             if [[ "${given_arg}" == "--${long_option}" ]]; then
                 # Output the argument.
                 printf 'Argument: %s' "${arg_key}"
