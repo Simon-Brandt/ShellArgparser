@@ -429,7 +429,8 @@ function argparser_parse_args() {
     # Output:
     # - the parsed argument as message or an error message, starting
     #   with "Help", "Usage", "Positional", "Error: ", "Argument: ", or
-    #   "Value: ", possibly concatenated with null characters
+    #   "Value: ", in the latter twwo cases possibly concatenated with
+    #   null characters
 
     # Define the local variables.
     local arg_key
@@ -1742,11 +1743,11 @@ function argparser_main() {
         mapfile -d "" -t parsed_arg < <(argparser_parse_args "${given_arg}")
 
         # Read the output message and either print the help or usage
-        # message, append the message to the previous error or warning
-        # messages or set the argument's value.  In case of arguments
-        # given multiple times, i.e., the key already exists in
-        # ${!args[@]}, add the new values to the previously given by
-        # re-reading in the values into ${arg_value}.
+        # message, append the message to the previous error messages or
+        # set the argument's value.  In case of arguments given multiple
+        # times, i.e., the key already exists in ${!args[@]}, add the
+        # new values to the previously given by re-reading in the values
+        # into ${arg_value}.
         for message in "${parsed_arg[@]}"; do
             case "${message}" in
                 Help*)
@@ -1771,11 +1772,6 @@ function argparser_main() {
                     # Append the message to the previous error messages.
                     error=true
                     error_messages+=("${message}")
-                    ;;
-                Warning*)
-                    # Append the message to the previous warning
-                    # messages.
-                    warning_messages+=("${message}")
                     ;;
                 Positional)
                     # Set the current argument to the name
