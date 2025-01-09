@@ -196,12 +196,12 @@ function argparser_quicksort() {
     # - array: the array to sort
 
     # Define the local variables.
-    local left
-    local right
     local i
     local j
+    local left
     local pivot
     local pivot_point
+    local right
     local swap
 
     # Read the arguments.
@@ -459,8 +459,8 @@ function argparser_parse_arg() {
     #   null characters
 
     # Define the local variables.
-    local arg_key
     local arg_definition
+    local arg_key
     local given_arg
     local long_option
     local long_options
@@ -842,10 +842,10 @@ function argparser_print_help_or_usage_file() {
     # - $1: the help type ("Help" or "Usage")
 
     # Define the local variables.
-    local include_directive
     local file
     local help_type
     local include_char
+    local include_directive
     local keep_comments
     local line
     local line_type
@@ -912,7 +912,6 @@ function argparser_create_help_message() {
     local -a arg_groups
     local arg_key
     local arg_number
-    local include_directive
     local choice_values
     local -a col_1
     local -a col_2
@@ -923,6 +922,7 @@ function argparser_create_help_message() {
     local default_values
     local help_text
     local i
+    local include_directive
     local index
     local j
     local -a line
