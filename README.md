@@ -962,7 +962,10 @@ The main difference is that, if you `export` (or `declare -x`) the variables to 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false` (case-sensitive)
 - ***Default value:*** `true`
-- ***Description:*** Whether to set the (read and parsed) arguments from the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name) sets to variables in the calling acript's scope. Setting `ARGPARSER_SET_ARGS` is the same as calling `source argparser --set -- "$@"`. If set along [`ARGPARSER_READ_ARGS`](#argparser_read_args), it is the same as calling `source argparser --all -- "$@"` or a bare `source argparser`. For details, refer to [`ARGPARSER_READ_ARGS`](#argparser_read_args).
+- ***Description:*** Whether to set the (read and parsed) arguments from the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name) sets to variables in the calling script's scope. Setting `ARGPARSER_SET_ARGS` is the same as calling `source argparser --set -- "$@"`. If set along [`ARGPARSER_READ_ARGS`](#argparser_read_args), it is the same as calling `source argparser --all -- "$@"` or a bare `source argparser`. For details, refer to [`ARGPARSER_READ_ARGS`](#argparser_read_args).
+
+> [!CAUTION]
+> The argparser performs no sanity checks for argument values! Automatically setting them as variables to the script is prone to command injection!
 
 ### `ARGPARSER_SET_ARRAYS`
 
