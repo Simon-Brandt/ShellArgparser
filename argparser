@@ -442,8 +442,8 @@ function argparser_insert_line_breaks() {
     printf '%s\0' "${joined_words}" "${largest_col_width}"
 }
 
-function argparser_parse_args() {
-    # Parse the script's given arguments.
+function argparser_parse_arg() {
+    # Parse an argument given to the script.
     #
     # Arguments:
     # - $1: the argument to parse
@@ -1776,7 +1776,7 @@ function argparser_main() {
     # Parse the script's given arguments.
     for given_arg in "${given_args[@]}"; do
         # Parse the argument.
-        mapfile -d "" -t parsed_arg < <(argparser_parse_args "${given_arg}")
+        mapfile -d "" -t parsed_arg < <(argparser_parse_arg "${given_arg}")
 
         # Read the output message and either print the help or usage
         # message, append the message to the previous error messages or
@@ -2014,7 +2014,7 @@ if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_in_array
     unset -f argparser_insert_line_breaks
     unset -f argparser_main
-    unset -f argparser_parse_args
+    unset -f argparser_parse_arg
     unset -f argparser_print_help_or_usage_file
     unset -f argparser_print_help_or_usage_message
     unset -f argparser_quicksort
