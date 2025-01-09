@@ -596,6 +596,120 @@ function argparser_parse_arg() {
     printf 'Argument: %s' "${given_arg}"
 }
 
+function argparser_check_arg_definition() {
+    # Check if a script's argument's' definition is consistent.  This
+    # should always be true for production scripts, but maybe not while
+    # testing.
+    #
+    # Arguments:
+    # - $1: the argument's name (key)
+    #
+    # Nonlocals:
+    # - args_definition: the arguments definition
+    #
+    # Output:
+    # - the error messages, starting with "Error: ", possibly
+    #   concatenated with null characters
+
+    # Define the local variables.
+    local arg_definition
+    local arg_key
+    local arg_number
+    local choice_values
+    local default_value
+    local default_values
+    local error_message
+    local option_names
+
+    # Read the argument.
+    arg_key="$1"
+
+    # Read the argument's definition.
+    IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a arg_definition \
+        <<< "${args_definition[${arg_key}]}"
+    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a short_options \
+        <<< "${arg_definition[0]}"
+    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a long_options \
+        <<< "${arg_definition[1]}"
+    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a default_values \
+        <<< "${arg_definition[2]}"
+    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a choice_values \
+        <<< "${arg_definition[3]}"
+    arg_number="${arg_definition[4]}"
+
+    # Concatenate the name of all short and long options for the error
+    # and warning messages.
+    option_names="$(argparser_get_option_names "${arg_key}" "short-long")"
+
+    # Check if the default value for flags is either true or false.  
+    if [[ "${arg_number}" == 0 && "${default_values[0]}" != true \
+        && "${default_values[0]}" != false ]]
+    then
+        default_values="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; printf '%s' \
+            "${default_values[*]}")"
+        error_message="Error: The argument ${option_names} must be true or "
+        error_message+="false, but is {${default_values}} as default."
+        printf '%s\0' "${error_message}"
+    fi
+
+    # Check if the number of default values equals the number of
+    # required values.  If there are default values and their number
+    # doesn't match, output an error message indicating the number of
+    # required and default arguments.  Ignore flags as long as they have
+    # the only default value of true or false, but a number of required
+    # values of 0.
+    if [[ "${arg_number}" != "+" && "${default_values[0]}" != "-" \
+        && "${#default_values[@]}" != "${arg_number}" && "${arg_number}" != 0 \
+        && "${#default_values[@]}" != 1 ]]
+    then
+        if [[ "${arg_number}" == 1 ]]; then
+            error_message="Error: The argument ${option_names} requires 1 "
+            error_message+="value, but has ${#default_values[@]} given per "
+            error_message+="default."
+            printf '%s\0' "${error_message}"
+        else
+            error_message="Error: The argument ${option_names} requires "
+            error_message+="${arg_number} values, but has "
+            error_message+="${#default_values[@]} given as default."
+            printf '%s\0' "${error_message}"
+        fi
+    fi
+
+    # Check if the default values accord to the choice values, i.e., if
+    # each default value lies within the array of choice values.  Else,
+    # output an error message.
+    if [[ "${choice_values[0]}" != "-" ]]; then
+        # Check that flags have no choice values.
+        if [[ "${arg_number}" == 0 ]]; then
+            choice_values="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
+                printf '%s' "${choice_values[*]}")"
+            error_message="Error: The argument ${option_names} accepts no "
+            error_message+="choice values, but uses {${choice_values}} per"
+            error_message+="default."
+            printf '%s\0' "${error_message}"
+        fi
+
+        # Check the default values.
+        for default_value in "${default_values[@]}"; do
+            if [[ "${default_value}" != "-" \
+                && "$(argparser_in_array "${default_value}" \
+                "${choice_values[@]}")" == false ]]
+            then
+                choice_values="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
+                    printf '%s' "${choice_values[*]}")"
+                default_values="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
+                    printf '%s' "${default_values[*]}")"
+                error_message="Error: The argument ${option_names} "
+                error_message+="accepts only the choice values "
+                error_message+="{${choice_values}}, but has "
+                error_message+="{${default_values}} given as default."
+                printf '%s\0' "${error_message}"
+                break
+            fi
+        done
+    fi
+}
+
 function argparser_check_arg_value() {
     # Check if a script's argument accords to its definition.
     #
@@ -617,7 +731,6 @@ function argparser_check_arg_value() {
     local arg_key
     local arg_number
     local choice_values
-    local default_value
     local default_values
     local error_message
     local option_names
@@ -690,6 +803,8 @@ function argparser_check_arg_value() {
                 # As some default values are given, print a similar
                 # warning message as for the absence case, but set the
                 # values to the default values and continue.
+                default_values="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
+                    printf '%s' "${default_values[*]}")"
                 if [[ "${arg_number}" == 1 ]]; then
                     warning_message="Warning: The argument ${option_names} "
                     warning_message+="requires 1 value, but has ${#values[@]} "
@@ -711,6 +826,8 @@ function argparser_check_arg_value() {
                     warning_message+="used."
                     printf '%s\0' "${warning_message}"
                 fi
+                IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a default_values \
+                    <<< "${arg_definition[2]}"
                 values=("${default_values[@]}")
             fi
         elif [[ "${arg_number}" == 0 && (! -v values || -z "${values[0]}") ]]
@@ -735,82 +852,10 @@ function argparser_check_arg_value() {
         return
     fi
 
-    # If ${ARGPARSER_CHECK_ARG_DEFINITION} is set to true, check if the
-    # default value for flags is either true or false.  This should
-    # always be true for production scripts, but maybe not while
-    # testing.
-    if [[ "${ARGPARSER_CHECK_ARG_DEFINITION}" == true \
-        && "${arg_number}" == 0 && "${default_values[0]}" != true \
-        && "${default_values[0]}" != false ]]
-    then
-        error_message="Error: The argument ${option_names} must be true or "
-        error_message+="false, but is {${default_values[@]}} per default."
-        printf '%s' "${error_message}"
-        return
-    fi
-
-    # If ${ARGPARSER_CHECK_ARG_DEFINITION} is set to true, check if the
-    # number of default values equals the number of required values.
-    # This should also always be true for production scripts.  If there
-    # are default values and their number doesn't match, output an error
-    # message indicating the number of required and default arguments.
-    # Ignore flags as long as they have the only default value of true
-    # or false, but a number of required values of 0.
-    if [[ "${ARGPARSER_CHECK_ARG_DEFINITION}" == true \
-        && "${arg_number}" != "+" && "${default_values[0]}" != "-" \
-        && "${#default_values[@]}" != "${arg_number}" \
-        && "${arg_number}" != 0 && "${#default_values[@]}" != 1 ]]
-    then
-        if [[ "${arg_number}" == 1 ]]; then
-            error_message="Error: The argument ${option_names} requires 1 "
-            error_message+="value, but has ${#default_values[@]} given per "
-            error_message+="default."
-            printf '%s' "${error_message}"
-        else
-            error_message="Error: The argument ${option_names} requires "
-            error_message+="${arg_number} values, but has "
-            error_message+="${#default_values[@]} given per default."
-            printf '%s' "${error_message}"
-        fi
-        return
-    fi
-
-    # Check if the given and default values accord to the choice values,
-    # i.e., if each given or default value lies within the array of
-    # choice values.  For default values, this should always be true for
-    # production scripts.  Else, output an error message.
+    # Check if the given values accord to the choice values, i.e., if
+    # each given value lies within the array of choice values.  Else,
+    # output an error message.
     if [[ "${choice_values[0]}" != "-" ]]; then
-        if [[ "${ARGPARSER_CHECK_ARG_DEFINITION}" == true ]]; then
-            # Check that flags have no choice values.
-            if [[ "${arg_number}" == 0 ]]; then
-                choice_values="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
-                    printf '%s' "${choice_values[*]}")"
-                error_message="Error: The argument ${option_names} accepts no "
-                error_message+="choice values, but uses {${choice_values}} per"
-                error_message+="default."
-                printf '%s' "${error_message}"
-                return
-            fi
-
-            # Check the default values.
-            for default_value in "${default_values[@]}"; do
-                if [[ "${default_value}" != "-" \
-                    && "$(argparser_in_array "${default_value}" \
-                    "${choice_values[@]}")" == false ]]
-                then
-                    choice_values="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
-                        printf '%s' "${choice_values[*]}")"
-                    error_message="Error: The argument ${option_names} "
-                    error_message+="accepts only the choice values "
-                    error_message+="{${choice_values}}, but has "
-                    error_message+="{${default_values[@]}} given per default."
-                    printf '%s' "${error_message}"
-                    return
-                fi
-            done
-        fi
-
-        # Check the given values.
         for value in "${values[@]}"; do
             if [[ "$(argparser_in_array "${value}" \
                 "${choice_values[@]}")" == false ]]
@@ -1788,21 +1833,47 @@ function argparser_main() {
     done
     readonly -A args_definition
 
+    # If ${ARGPARSER_CHECK_ARG_DEFINITION} is set to true, check the
+    # consistency of the arguments definition.
+    error_messages=( )
+    warning_messages=( )
+    if [[ "${ARGPARSER_CHECK_ARG_DEFINITION}" == true ]]; then
+        # Check the arguments definition.
+        for arg_key in "${!args_definition[@]}"; do
+            mapfile -d "" -t -O "${#error_messages[@]}" error_messages \
+                < <(argparser_check_arg_definition "${arg_key}")
+        done
+
+        # If there are error messages, colorize, sort, filter, and print
+        # them, then exit, as parsing the arguments with a faulty
+        # definition is useless or even impossible.
+        if (( "${#error_messages[@]}" > 0 )); then
+            for i in "${!error_messages[@]}"; do
+                error_messages[i]="$(argparser_colorize \
+                    "${ARGPARSER_ERROR_STYLE}" "${error_messages[i]}")"
+            done
+
+            mapfile -d "" -t error_messages \
+                < <(argparser_sort false "${error_messages[@]}")
+            mapfile -d "" -t error_messages \
+                < <(argparser_uniq "${error_messages[@]}")
+            printf '%s\n' "${error_messages[@]}" >&2
+            exit "${ARGPARSER_ERROR_EXIT_CODE}"
+        fi
+    fi
+
     # Set the default argument key to ${ARGPARSER_POSITIONAL_NAME}, such
     # that initially, all arguments given before a keyword argument are
     # recognized as positional.
     arg_key="${ARGPARSER_POSITIONAL_NAME}"
     arg_value=( )
 
+    # Parse the script's given arguments.
     is_positional=false
     error=false
-    error_messages=( )
-    warning_messages=( )
-
     unset args
     declare -Ag args
 
-    # Parse the script's given arguments.
     for given_arg in "${given_args[@]}"; do
         # Parse the argument.
         mapfile -d "" -t parsed_arg < <(argparser_parse_arg "${given_arg}")
