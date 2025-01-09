@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2024-12-13
+# Last Modification: 2025-01-09
 
 # Usage: Run this script with "bash test_short_options.sh".
 
@@ -22,6 +22,7 @@ args=(
     "var_4:d,D:-:A:A,B,C:1:Options:one value with default and choice"
     "var_5:e,E:-:E:-:1:Options:one value with default"
     "var_6:f,F:-:false:-:0:Options:no value (flag) with default"
+    "var_7:g,G:-:true:-:0:Options:no value (flag) with default"
 )
 
 source argparser

@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2024-12-13
+# Last Modification: 2025-01-09
 
 # Usage: Run this script with "bash test_help_message.sh".
 
@@ -19,6 +19,7 @@ args=(
     "var_4:d:-:A:A,B,C:1:Options:one value with default and choice"
     "var_5:-:var-5:E:-:1:Options:one value with default"
     "var_6:f:var-6:false:-:0:Options:no value (flag) with default"
+    "var_7:g,:var-7:true:-:0:Options:no value (flag) with default"
 )
 
 source argparser

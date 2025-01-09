@@ -5,3 +5,4 @@ var_3:c:var-3:-:A,B:+:Argumente:mindestens ein Wert mit Auswahl
 var_4:d:-:A:A,B,C:1:Optionen:ein Wert mit Vorgabe und Auswahl
 var_5:-:var-5:E:-:1:Optionen:ein Wert mit Vorgabe
 var_6:f:var-6:false:-:0:Optionen:kein Wert (Flag) mit Vorgabe
+var_7:g:var-7:true:-:0:Optionen:kein Wert (Flag) mit Vorgabe

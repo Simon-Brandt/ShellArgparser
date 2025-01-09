@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2024-12-19
+# Last Modification: 2025-01-09
 
 # Usage: Run this script with "bash test_help_message.sh".
 
@@ -22,6 +22,7 @@ args=(
     var_4
     var_5
     var_6
+    var_7
 )
 
 source argparser

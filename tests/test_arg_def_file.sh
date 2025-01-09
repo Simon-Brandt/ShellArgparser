@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2024-12-13
+# Last Modification: 2025-01-09
 
 # Usage: Run this script with "bash test_arg_def_file.sh".
 
@@ -19,6 +19,7 @@ args=(
     var_4
     var_5
     var_6
+    var_7
 )
 
 source argparser

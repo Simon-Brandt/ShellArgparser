@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2024-12-17
+# Last Modification: 2025-01-09
 
 # Usage: Run this script with "bash test_long_options.sh".
 
@@ -22,6 +22,7 @@ args=(
     "var_4:-:var-4,var-d:A:A,B,C:1:Options:one value with default and choice"
     "var_5:-:var-5,var-e:E:-:1:Options:one value with default"
     "var_6:-:var-6,var-f:false:-:0:Options:no value (flag) with default"
+    "var_7:-:var-7,var-g:true:-:0:Options:no value (flag) with default"
 )
 
 source argparser
