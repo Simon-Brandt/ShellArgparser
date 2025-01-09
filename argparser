@@ -6,7 +6,6 @@
 
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
-# TODO: Enable options starting with a "+" as crossed "-".
 
 # Usage: Source this script with "source argparser" inside the script
 # whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS} is set
@@ -465,6 +464,7 @@ function argparser_parse_arg() {
     local given_arg
     local long_option
     local long_options
+    local prefix
     local short_option
     local short_options
     local value
@@ -479,7 +479,7 @@ function argparser_parse_arg() {
     # value is considered a positional argument.  Split the value on
     # ${ARGPARSER_ARG_DELIMITER_2} characters and output the respective
     # message for each value.
-    if [[ "${given_arg}" != -* || "${is_positional}" == true ]]; then
+    if [[ "${given_arg}" != [-+]* || "${is_positional}" == true ]]; then
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a values <<< "${given_arg}"
         for value in "${values[@]}"; do
             printf 'Value: %s\0' "${value}"
@@ -534,14 +534,17 @@ function argparser_parse_arg() {
                 break
             fi
 
-            if [[ "${given_arg}" == "-${short_option}" ]]; then
-                # Output the argument.
-                printf 'Argument: %s' "${arg_key}"
+            if [[ "${given_arg}" == [-+]"${short_option}" ]]; then
+                # Output the argument and its prefix ("-" or "+").
+                prefix="${given_arg::1}"
+                printf 'Argument: %s%s' "${prefix}" "${arg_key}"
                 return
-            elif [[ "${given_arg}" == "-${short_option}="* ]]; then
-                # Output the argument and all values split on
-                # ${ARGPARSER_ARG_DELIMITER_2} characters.
-                printf 'Argument: %s\0' "${arg_key}"
+            elif [[ "${given_arg}" == [-+]"${short_option}="* ]]; then
+                # Output the argument, its prefix ("-" or "+"), and all
+                # values split on ${ARGPARSER_ARG_DELIMITER_2}
+                # characters.
+                prefix="${given_arg::1}"
+                printf 'Argument: %s%s\0' "${prefix}" "${arg_key}"
 
                 IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a values \
                     <<< "${given_arg#*=}"
@@ -559,14 +562,21 @@ function argparser_parse_arg() {
                 break
             fi
 
-            if [[ "${given_arg}" == "--${long_option}" ]]; then
-                # Output the argument.
-                printf 'Argument: %s' "${arg_key}"
+            if [[ "${given_arg}" == "--${long_option}" \
+                || "${given_arg}" == "++${long_option}" ]]
+            then
+                # Output the argument and its prefix ("-" or "+").
+                prefix="${given_arg::1}"
+                printf 'Argument: %s%s' "${prefix}" "${arg_key}"
                 return
-            elif [[ "${given_arg}" == "--${long_option}="* ]]; then
-                # Output the argument and all values split on
-                # ${ARGPARSER_ARG_DELIMITER_2} characters.
-                printf 'Argument: %s\0' "${arg_key}"
+            elif [[ "${given_arg}" == "--${long_option}="* \
+                || "${given_arg}" == "++${long_option}="* ]]
+            then
+                # Output the argument, its prefix ("-" or "+"), and all
+                # values split on ${ARGPARSER_ARG_DELIMITER_2}
+                # characters.
+                prefix="${given_arg::1}"
+                printf 'Argument: %s%s\0' "${prefix}" "${arg_key}"
 
                 IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a values \
                     <<< "${given_arg#*=}"
@@ -591,7 +601,8 @@ function argparser_check_arg_value() {
     #
     # Arguments:
     # - $1: the argument's name (key)
-    # - $2: the argument's values
+    # - $2: the argument's values, the first being the argument's prefix
+    #       ("-" or "+")
     #
     # Nonlocals:
     # - args_definition: the arguments definition
@@ -610,13 +621,15 @@ function argparser_check_arg_value() {
     local default_values
     local error_message
     local option_names
+    local prefix
     local value
     local values
     local warning_message
 
     # Read the arguments.
     arg_key="$1"
-    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a values <<< "$2"
+    prefix="${2::1}"
+    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a values <<< "${2:2}"
 
     # Read the argument's definition.
     IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a arg_definition \
@@ -632,11 +645,12 @@ function argparser_check_arg_value() {
     option_names="$(argparser_get_option_names "${arg_key}" "short-long")"
 
     # Check the values.  If an argument hadn't been given, its value was
-    # set to "-".
+    # set to "-", but not, if it was given without value (then,
+    # ${values} is empty).
     if [[ "${#values[@]}" > 0 && "${values[0]}" == "-" ]]; then
-        # If the argument doesn't have a default value, it must have
-        # been given, but is not.  Hence, output an error message.
-        # Else, read the default values.  This is required for optional
+        # The argument is not given, but must have been since it doesn't
+        # have a default value.  Hence, output an error message.  Else,
+        # read the default values.  This is required for optional
         # arguments.
         if [[ "${default_values[0]}" == "-" ]]; then
             error_message="Error: The argument ${option_names} is mandatory, "
@@ -644,7 +658,7 @@ function argparser_check_arg_value() {
             printf '%s' "${error_message}"
             return
         else
-            read -a values <<< "${default_values[@]}"
+            values=("${default_values[@]}")
         fi
     else
         if [[ "${arg_number}" != "+" && "${#values[@]}" != "${arg_number}" ]] \
@@ -652,11 +666,9 @@ function argparser_check_arg_value() {
         then
             # If the number of values doesn't equal the number of
             # required values, check if some default values are given.
-            # If not, output an error message indicating the number of
-            # required and given arguments.  Else, print a similar
-            # warning message but set the values to the default values
-            # and continue.
             if [[ "${default_values[0]}" == "-" ]]; then
+                # If no default value is given, output an error message
+                # indicating the number of required and given arguments.
                 if [[ "${arg_number}" == 1 ]]; then
                     error_message="Error: The argument ${option_names} "
                     error_message+="requires 1 value, but has ${#values[@]} "
@@ -675,6 +687,9 @@ function argparser_check_arg_value() {
                 fi
                 return
             else
+                # As some default values are given, print a similar
+                # warning message as for the absence case, but set the
+                # values to the default values and continue.
                 if [[ "${arg_number}" == 1 ]]; then
                     warning_message="Warning: The argument ${option_names} "
                     warning_message+="requires 1 value, but has ${#values[@]} "
@@ -696,14 +711,28 @@ function argparser_check_arg_value() {
                     warning_message+="used."
                     printf '%s\0' "${warning_message}"
                 fi
-                read -a values <<< "${default_values[@]}"
+                values=("${default_values[@]}")
             fi
         elif [[ "${arg_number}" == 0 && (! -v values || -z "${values[0]}") ]]
         then
             # If no value is required nor given, the argument is a flag.
-            # As it is set (present), set the value to true.
-            values=true
+            # As it is set (present), set the value to true for a "-"
+            # prefix and to false for a "+" prefix.
+            if [[ "${prefix}" == "-" ]]; then
+                values=true
+            else
+                values=false
+            fi
         fi
+    fi
+
+    # If a "+" prefix is given and the argument is no flag, output an
+    # error message.
+    if [[ "${prefix}" == "+" && "${arg_number}" != 0 ]]; then
+        error_message="Error: The argument ${option_names} is no flag and "
+        error_message+="thus cannot be given with a \"+\" prefix."
+        printf '%s' "${error_message}"
+        return
     fi
 
     # If ${ARGPARSER_CHECK_ARG_DEFINITION} is set to true, check if the
@@ -1830,16 +1859,21 @@ function argparser_main() {
                     ;;
                 Argument*)
                     # Set the current argument name.
-                    arg_key="${message#Argument: }"
+                    arg_key="${message#Argument: ?}"
 
                     if [[ "$(argparser_in_array "${arg_key}" \
                         "${!args[@]}")" == true ]]
                     then
-                        # Read the previously given values.
+                        # Read the previously given values and set the
+                        # argument's prefix ("-" or "+"), which is the
+                        # first value.
                         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_value \
                             <<< "${args[${arg_key}]}"
+                        arg_value[0]="${message#Argument: }"
+                        arg_value[0]="${arg_value::1}"
                     else
-                        arg_value=( )
+                        arg_value=("${message#Argument: }")
+                        arg_value[0]="${arg_value[0]::1}"
                     fi
                     ;;
                 Value*)
@@ -1860,13 +1894,15 @@ function argparser_main() {
     # Check the arguments' values.
     for arg_key in "${!args_definition[@]}"; do
         # Check which defined argument is given to the script.  Omitted
-        # arguments are assigned a hyphen ("-") as value.  Check the
-        # value.
+        # arguments are assigned two hyphens ("-") as value, separated
+        # by an ${ARGPARSER_ARG_DELIMITER_2} character.  The first
+        # hyphen is then interpreted as prefix, the second as hint for
+        # the argument's absence.  Check each argument's value.
         if [[ "$(argparser_in_array "${arg_key}" "${!args[@]}")" == true ]]
         then
             arg_value="${args[${arg_key}]}"
         else
-            arg_value="-"
+            arg_value="-${ARGPARSER_ARG_DELIMITER_2}-"
         fi
         mapfile -d "" -t checked_arg < <(argparser_check_arg_value \
             "${arg_key}" "${arg_value}")
