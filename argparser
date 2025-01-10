@@ -782,7 +782,7 @@ function argparser_check_arg_value() {
     # Check the values.  If an argument hadn't been given, its value was
     # set to "-", but not, if it was given without value (then,
     # ${values} is empty).
-    if [[ "${#values[@]}" > 0 && "${values[0]}" == "-" ]]; then
+    if (( "${#values[@]}" > 0 )) && [[ "${values[0]}" == "-" ]]; then
         # The argument is not given, but must have been since it doesn't
         # have a default value.  Hence, output an error message.  Else,
         # read the default values.  This is required for optional
