@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-09
+# Last Modification: 2025-01-10
 
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
@@ -637,11 +637,23 @@ function argparser_check_arg_definition() {
         <<< "${arg_definition[3]}"
     arg_number="${arg_definition[4]}"
 
-    # Concatenate the name of all short and long options for the error
-    # and warning messages.
-    option_names="$(argparser_get_option_names "${arg_key}" "short-long")"
+    # Check if at least one short or long option name is given.
+    if [[ "${short_options[0]}" != "-" || "${long_options[0]}" != "-" ]]; then
+        # Concatenate the name of all short and long options for the error
+        # and warning messages.
+        option_names="$(argparser_get_option_names "${arg_key}" "short-long")"
+    else
+        # No option name is given, so output an error message.  Set
+        # ${option_names} to "with the identifier ${arg_key}" to be able
+        # to give error messages for other properties (like the default
+        # values) with an understandable name.
+        option_names="with the identifier ${arg_key}" 
+        error_message="Error: The argument ${option_names} must have at least "
+        error_message+="one short or long option name."
+        printf '%s\0' "${error_message}"
+    fi
 
-    # Check if the default value for flags is either true or false.  
+    # Check if the default value for flags is either true or false.
     if [[ "${arg_number}" == 0 && "${default_values[0]}" != true \
         && "${default_values[0]}" != false ]]
     then
