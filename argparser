@@ -450,13 +450,13 @@ function argparser_parse_arg() {
     # Nonlocals:
     # - args_definition: the arguments definition
     # - is_positional: whether the positional arguments delimiter "--"
-    #   has already been set
+    #   has already been set and has not been unset by "++"
     #
     # Output:
     # - the parsed argument as message or an error message, starting
-    #   with "Help", "Usage", "Positional", "Error: ", "Argument: ", or
-    #   "Value: ", in the latter three cases possibly concatenated with
-    #   null characters
+    #   with "Help", "Usage", "Positional_Start", "Positional_End",
+    #   "Error: ", "Argument: ", or "Value: ", in the latter three cases
+    #   possibly concatenated with null characters
 
     # Define the local variables.
     local arg_definition
@@ -473,13 +473,16 @@ function argparser_parse_arg() {
     # Read the argument.
     given_arg="$1"
 
-    # If the argument doesn't start with a hyphen ("-"), it is
-    # considered a value to a previous argument.  Likewise, if the
-    # positional arguments delimiter "--" has already been set, any
-    # value is considered a positional argument.  Split the value on
-    # ${ARGPARSER_ARG_DELIMITER_2} characters and output the respective
-    # message for each value.
-    if [[ "${given_arg}" != [-+]* || "${is_positional}" == true ]]; then
+    # If the argument doesn't start with a hyphen ("-") or plus sign
+    # ("+"), it is considered a value to a previous argument.  Likewise,
+    # if the positional arguments delimiter "--" has already been set
+    # and has neither been unset by "++" not the current argument is
+    # this "++", then any value is considered a positional argument.
+    # Split the value on ${ARGPARSER_ARG_DELIMITER_2} characters and
+    # output the respective message for each value.
+    if [[ "${given_arg}" != "++"* \
+        && ("${given_arg}" != [-+]* || "${is_positional}" == true) ]]
+    then
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a values <<< "${given_arg}"
         for value in "${values[@]}"; do
             printf 'Value: %s\0' "${value}"
@@ -487,16 +490,23 @@ function argparser_parse_arg() {
         return
     fi
 
-    # If the argument is the positional arguments delimiter "--" or for
-    # help or usage, output the respective message.  If an "=" character
-    # follows, output an error message and the argument, such that
-    # values following the unknown argument are assigned to this
+    # If the argument is the positional arguments delimiter "--" or "++"
+    # or for help or usage, output the respective message.  If an "="
+    # character follows, output an error message and the argument, such
+    # that values following the unknown argument are assigned to this
     # argument, not the last known one that got parsed.
     if [[ "${given_arg}" == "--" ]]; then
-        printf 'Positional'
+        printf 'Positional_Start'
         return
     elif [[ "${given_arg}" == "--="* ]]; then
         printf 'Error: The special option "--" takes no value.\0'
+        printf 'Argument: %s' "${given_arg}"
+        return
+    elif [[ "${given_arg}" == "++" ]]; then
+        printf 'Positional_End'
+        return
+    elif [[ "${given_arg}" == "++="* ]]; then
+        printf 'Error: The special option "++" takes no value.\0'
         printf 'Argument: %s' "${given_arg}"
         return
     elif [[ "${given_arg}" == "-h" || "${given_arg}" == "--help" ]]; then
@@ -1732,7 +1742,7 @@ function argparser_main() {
         error_message+="\"${ARGPARSER_ARG_ARRAY_NAME}\", but this variable is "
         error_message+="not defined.  Either you have given your arguments "
         error_message+="array another name ("
-        if [[ -n "${name}" ]]; then  # Include guessed variable name.
+        if [[ -n "${name}" ]]; then  # Include the guessed variable name.
             error_message+="maybe \"${name}\" -- "
         fi
         error_message+="then change ARGPARSER_ARG_ARRAY_NAME accordingly) or "
@@ -1921,13 +1931,33 @@ function argparser_main() {
                     error=true
                     error_messages+=("${message}")
                     ;;
-                Positional)
+                Positional_Start)
                     # Set the current argument to the name
                     # ${ARGPARSER_POSITIONAL_NAME} refers to.  Set the
                     # flag that the positional arguments delimiter "--"
                     # has been set, such that all following arguments
                     # are interpreted as positional.
                     is_positional=true
+                    arg_key="${ARGPARSER_POSITIONAL_NAME}"
+
+                    if [[ "$(argparser_in_array "${arg_key}" \
+                        "${!args[@]}")" == true ]]
+                    then
+                        # Read the previously given values.
+                        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_value \
+                            <<< "${args[${arg_key}]}"
+                    else
+                        arg_value=( )
+                    fi
+                    ;;
+                Positional_End)
+                    # Set the current argument to the name
+                    # ${ARGPARSER_POSITIONAL_NAME} refers to.  Set the
+                    # flag that the positional arguments delimiter "++"
+                    # has been set (and thus "--" has been unset), such
+                    # that all following arguments are interpreted as
+                    # usual.
+                    is_positional=false
                     arg_key="${ARGPARSER_POSITIONAL_NAME}"
 
                     if [[ "$(argparser_in_array "${arg_key}" \
