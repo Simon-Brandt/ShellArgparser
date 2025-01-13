@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-10
+# Last Modification: 2025-01-13
 
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
@@ -306,6 +306,36 @@ function argparser_uniq() {
         fi
         prev_element="${element}"
     done
+}
+
+function argparser_count() {
+    # Count the number of occurences of an element in an array.
+    #
+    # Arguments:
+    # - $1: the element to count
+    # - $@: the array where to count the element
+    #
+    # Output:
+    # - the count of the element
+
+    # Define the local variables.
+    local count
+    local element
+    local query
+
+    # Read the query element and shift the arguments such that only the
+    # array to search through remains.
+    query="$1"
+    shift
+
+    # Count the number of occurences.
+    count=0
+    for element in "$@"; do
+        if [[ "${element}" == "${query}" ]]; then
+            (( count++ ))
+        fi
+    done
+    printf '%s' "${count}"
 }
 
 function argparser_get_option_names() {
