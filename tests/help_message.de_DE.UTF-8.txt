@@ -2,13 +2,13 @@
 # E-Mail: simon.brandt@uni-greifswald.de
 # Last Modification: 2025-01-13
 
-# Purpose: Print a help message for test_help_message.sh, invoked by
-# test_help_message.sh --help.  Compared to the auto-generated help
+# Purpose: Print a help message for test_localization.sh, invoked by
+# test_localization.sh --help.  Compared to the auto-generated help
 # message by the argparse functions, this one is enriched by the
 # explanation of the include directives.
 
 # Note: Neither commented lines nor their trailing blank lines get
-# printed when invoking test_help_message.sh --help, if
+# printed when invoking test_localization.sh --help, if
 # ARGPARSER_HELP_FILE_KEEP_COMMENTS is set to "false".  The include
 # directives get replaced by the auto-generated help message components.
 
