@@ -543,14 +543,14 @@ function argparser_parse_arg() {
         printf 'Help'
         return
     elif [[ "${given_arg}" == "-h="* || "${given_arg}" == "--help="* ]]; then
-        printf 'Error: The option -h,--help takes no value.\0'
+        printf 'Error: The option "-h,--help" takes no value.\0'
         printf 'Argument: %s' "${given_arg}"
         return
     elif [[ "${given_arg}" == "-u" || "${given_arg}" == "--usage" ]]; then
         printf 'Usage'
         return
     elif [[ "${given_arg}" == "-u="* || "${given_arg}" == "--usage="* ]]; then
-        printf 'Error: The option -u,--usage takes no value.\0'
+        printf 'Error: The option "-u,--usage" takes no value.\0'
         printf 'Argument: %s' "${given_arg}"
         return
     fi
@@ -632,7 +632,7 @@ function argparser_parse_arg() {
     # error message and the argument, such that values following the
     # unknown argument are assigned to this argument, not the last known
     # one that got parsed.
-    printf 'Error: The argument %s is unknown.\0' "${given_arg%%=*}"
+    printf 'Error: The argument "%s" is unknown.\0' "${given_arg%%=*}"
     printf 'Argument: %s' "${given_arg}"
 }
 
@@ -1006,8 +1006,8 @@ function argparser_check_arg_value() {
         # read the default values.  This is required for optional
         # arguments.
         if [[ "${default_values[0]}" == "-" ]]; then
-            error_message="Error: The argument ${option_names} is mandatory, "
-            error_message+="but not given."
+            error_message="Error: The argument \"${option_names}\" is "
+            error_message+="mandatory, but not given."
             printf '%s' "${error_message}"
             return
         else
@@ -1023,17 +1023,17 @@ function argparser_check_arg_value() {
                 # If no default value is given, output an error message
                 # indicating the number of required and given arguments.
                 if [[ "${arg_number}" == 1 ]]; then
-                    error_message="Error: The argument ${option_names} "
+                    error_message="Error: The argument \"${option_names}\" "
                     error_message+="requires 1 value, but has ${#values[@]} "
                     error_message+="given."
                     printf '%s' "${error_message}"
                 elif [[ "${arg_number}" == "+" ]]; then
-                    error_message="Error: The argument ${option_names} "
+                    error_message="Error: The argument \"${option_names}\" "
                     error_message+="requires at least 1 value, but has "
                     error_message+="${#values[@]} given."
                     printf '%s' "${error_message}"
                 else
-                    error_message="Error: The argument ${option_names} "
+                    error_message="Error: The argument \"${option_names}\" "
                     error_message+="requires ${arg_number} values, but has "
                     error_message+="${#values[@]} given."
                     printf '%s' "${error_message}"
@@ -1046,23 +1046,25 @@ function argparser_check_arg_value() {
                 default_values="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
                     printf '%s' "${default_values[*]}")"
                 if [[ "${arg_number}" == 1 ]]; then
-                    warning_message="Warning: The argument ${option_names} "
-                    warning_message+="requires 1 value, but has ${#values[@]} "
-                    warning_message+="given.  For convenience, the default "
-                    warning_message+="(${default_values[@]}) is used."
+                    warning_message="Warning: The argument "
+                    warning_message+="\"${option_names}\" requires 1 value,"
+                    warning_message+=" but has ${#values[@]} given.  For "
+                    warning_message+="convenience, the default "
+                    warning_message+="({${default_values[@]}}) is used."
                     printf '%s\0' "${warning_message}"
                 elif [[ "${arg_number}" == "+" ]]; then
-                    warning_message="Warning: The argument ${option_names} "
-                    warning_message+="requires at least 1 value, but has "
-                    warning_message+="${#values[@]} given.  For convenience, "
-                    warning_message+="the default (${default_values[@]}) is "
-                    warning_message+="used."
+                    warning_message="Warning: The argument "
+                    warning_message+="\"${option_names}\" requires at least 1 "
+                    warning_message+="value, but has ${#values[@]} given.  "
+                    warning_message+="For convenience, the default "
+                    warning_message+="({${default_values[@]}}) is used."
                     printf '%s\0' "${warning_message}"
                 else
-                    warning_message="Warning: The argument ${option_names} "
-                    warning_message+="requires ${arg_number} values, but has "
+                    warning_message="Warning: The argument "
+                    warning_message+="\"${option_names}\" requires "
+                    warning_message+="${arg_number} values, but has "
                     warning_message+="${#values[@]} given.  For convenience, "
-                    warning_message+="the default (${default_values[@]}) is "
+                    warning_message+="the default ({${default_values[@]}}) is "
                     warning_message+="used."
                     printf '%s\0' "${warning_message}"
                 fi
@@ -1086,7 +1088,7 @@ function argparser_check_arg_value() {
     # If a "+" prefix is given and the argument is no flag, output an
     # error message.
     if [[ "${prefix}" == "+" && "${arg_number}" != 0 ]]; then
-        error_message="Error: The argument ${option_names} is no flag and "
+        error_message="Error: The argument \"${option_names}\" is no flag and "
         error_message+="thus cannot be given with a \"+\" prefix."
         printf '%s' "${error_message}"
         return
@@ -1102,8 +1104,8 @@ function argparser_check_arg_value() {
             then
                 choice_values="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
                     printf '%s' "${choice_values[*]}")"
-                error_message="Error: The argument ${option_names} must be in "
-                error_message+="{${choice_values}}"
+                error_message="Error: The argument \"${option_names}\" must "
+                error_message+="be in {${choice_values}}."
                 printf '%s' "${error_message}"
                 return
             fi
