@@ -1317,16 +1317,11 @@ function argparser_create_help_message() {
             # default and some choice values or an argument number of 0
             # (i.e., it is a flag), with the existence of each changing
             # the look of the respective column, mostly the second one.
-            # If either no short or no long option is given, use a space
-            # character instead.  This makes it possible to sort the
-            # options later on by name.  Further, the space character's
-            # length of 1 is the minimum length of any option
-            # (especially due to the leading hyphen), so the adjustment
-            # of whitespace between the columns doesn't get affected.
-            # TODO: Remove this space character, if possible.
+            # If either no short or no long option is given, use the
+            # empty string instead.
             # Set the first column's value.
             if [[ "${short_options[0]}" == "-" ]]; then  # No short option.
-                new_col_1+=(" ")
+                new_col_1+=("")
             elif [[ "${arg_number}" == 0 ]]; then  # Flag.
                 new_col_1_value="["
                 new_col_1_value+="$(printf -- "-%s, " "${short_options[@]}")"
@@ -1349,7 +1344,7 @@ function argparser_create_help_message() {
 
             # Set the second column's value.
             if [[ "${long_options[0]}" == "-" ]]; then  # No long option.
-                new_col_2+=(" ")
+                new_col_2+=("")
             elif [[ "${arg_number}" == 0 ]]; then  # Flag.
                 new_col_2_value="["
                 new_col_2_value+="$(printf -- "--%s, " "${long_options[@]}")"
