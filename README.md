@@ -894,7 +894,7 @@ The argparser defines a large set of environment variables, each following the n
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false` (case-sensitive)
 - ***Default value:*** `false`
-- ***Description:*** Whether to check if the arguments definition is consistent, *i.e.*, if any argument has at least one short or long option name, the number of default values equals the number of required values, if the default values lie in the choice values, and if flags have a default value of `true` or `false` and no choice values. This should only be turned on (set to `true`) for testing purposes, while in production environments, keeping it deactivated can save (minimal) computation time. Still, if the user can modify the arguments definition at some point (not recommended as it may lead to code injection!), you should activate it.
+- ***Description:*** Whether to check if the arguments definition is consistent, *i.e.*, if any argument has at least one short or long option name and no duplicates (within its own definition and among all other arguments), if the number of default values equals the number of required values, if the default values lie in the choice values, and if flags have a default value of `true` or `false` and no choice values. This should only be turned on (set to `true`) for testing purposes, while in production environments, keeping it deactivated saves some (minimal) computation time. Still, if the user can modify the arguments definition at some point (not recommended as it may lead to code injection!), you should activate it.
 
 ### `"ARGPARSER_ERROR_EXIT_CODE`
 
