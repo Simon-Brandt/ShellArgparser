@@ -60,6 +60,7 @@ fi
 : "${ARGPARSER_HELP_FILE_INCLUDE_CHAR:="@"}"
 : "${ARGPARSER_HELP_FILE_KEEP_COMMENTS:=false}"
 : "${ARGPARSER_HELP_STYLE:="italic"}"
+: "${ARGPARSER_LANGUAGE:="en_US.UTF-8"}"
 : "${ARGPARSER_MAX_COL_WIDTH_1:=5}"
 : "${ARGPARSER_MAX_COL_WIDTH_2:=33}"
 : "${ARGPARSER_MAX_COL_WIDTH_3:=39}"
@@ -67,6 +68,7 @@ fi
 : "${ARGPARSER_READ_ARGS:=true}"
 : "${ARGPARSER_SET_ARGS:=true}"
 : "${ARGPARSER_SET_ARRAYS:=true}"
+: "${ARGPARSER_TRANSLATION_FILE:=""}"
 : "${ARGPARSER_UNSET_ARGS:=true}"
 : "${ARGPARSER_UNSET_ENV_VARS:=true}"
 : "${ARGPARSER_UNSET_FUNCTIONS:=true}"
@@ -1118,6 +1120,131 @@ function argparser_check_arg_value() {
     printf 'Value: %s' "${value}"
 }
 
+function argparser_read_translation() {
+    # Read the translation of the auto-generated text for help and usage
+    # messages into an associative array.
+    #
+    # Nonlocals:
+    # - dictionary: the associative array holding the translation text
+
+    # Define the local variables.
+    local column
+    local error_message
+    local -a header
+    local -a line
+    local source_column
+    local target_column
+    local warning_message
+
+    # Read the first line (the header) of ${ARGPARSER_TRANSLATION_FILE}
+    # to get the column indices for the source ("en_US.UTF-8") and
+    # target language (${ARGPARSER_LANGUAGE}).
+    IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a header \
+        < "${ARGPARSER_TRANSLATION_FILE}"
+
+    source_column=""
+    target_column=""
+    for column in "${!header[@]}"; do
+        if [[ "${header[column]}" == "en_US.UTF-8" ]]; then
+            source_column="${column}"
+        fi
+        if [[ "${header[column]}" == "${ARGPARSER_LANGUAGE}" ]]; then
+            target_column="${column}"
+        fi
+    done
+
+    # If the column for the source language isn't given, output an error
+    # message and exit.
+    if [[ -z "${source_column}" ]]; then
+        error_message="Error: In the translation file "
+        error_message+="\"${ARGPARSER_TRANSLATION_FILE}\", the column "
+        error_message+="\"en_US.UTF-8\" is missing, but required as source "
+        error_message+="for translation."
+
+        error_message="$(argparser_colorize "${ARGPARSER_ERROR_STYLE}" \
+            "${error_message}")"
+        printf '%s\n' "${error_message}" >&2
+        exit "${ARGPARSER_ERROR_EXIT_CODE}"
+    fi
+
+    # If the column for the target language isn't given, output a
+    # warning message and set the target language to the source language
+    # to be able to continue.
+    if [[ -z "${target_column}" ]]; then
+        warning_message="Warning: In the translation file "
+        warning_message+="\"${ARGPARSER_TRANSLATION_FILE}\", the column "
+        warning_message+="\"${ARGPARSER_LANGUAGE}\" is missing, but required "
+        warning_message+="as target for translation.  For convenience, the "
+        warning_message+="source language \"en_US.UTF-8\" is used, instead."
+
+        warning_message="$(argparser_colorize "${ARGPARSER_WARNING_STYLE}" \
+            "${warning_message}")"
+        printf '%s\n' "${warning_message}" >&2
+    fi
+
+    # Read all lines of the translation file and save the translation in
+    # the associative array ${dictionary}, using the source language as
+    # key and the target language as value.  Then, remove the header
+    # field from the array, which was also read.
+    while IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a line; do
+        dictionary[${line[${source_column}]}]="${line[${target_column}]}"
+    done < "${ARGPARSER_TRANSLATION_FILE}"
+
+    unset dictionary[${header[${source_column}]}]
+}
+
+function argparser_translate() {
+    # Translate the given string.
+    #
+    # Arguments:
+    # - $@: the string to translate, possibly given as substrings to
+    #       join
+    #
+    # Nonlocals:
+    # - dictionary: the associative array holding the translation text
+    #
+    # Output:
+    # - the translated string
+
+    # Define the local variable.
+    local string
+    local substring
+
+    # Read the argument.
+    string=""
+    for substring in "$@"; do
+        string+="${substring}"
+    done
+
+    # If an ${ARGPARSER_TRANSLATION_FILE} was given (and thus the
+    # translation was requested), translate the string by fetching its
+    # translation from the associative array ${dictionary}.  Else,
+    # output the untranslated string.  If the string does not exist in
+    # the dictionary, output a warning message and the untranslated
+    # string.
+    if [[ -n "${ARGPARSER_TRANSLATION_FILE}" ]]; then
+        if [[ "$(argparser_in_array "${string}" \
+            "${!dictionary[@]}")" == true ]]
+        then
+            printf '%s' "${dictionary[${string}]}"
+        else
+            warning_message="Warning: In the translation file "
+            warning_message+="\"${ARGPARSER_TRANSLATION_FILE}\", the source "
+            warning_message+="string \"${string}\" is missing. For "
+            warning_message+="convenience, the untranslated string is used, "
+            warning_message+="instead."
+
+            warning_message="$(argparser_colorize \
+                "${ARGPARSER_WARNING_STYLE}" "${warning_message}")"
+            printf '%s\n' "${warning_message}" >&2
+            
+            printf '%s' "${string}"
+        fi
+    else
+        printf '%s' "${string}"
+    fi
+}
+
 function argparser_print_help_or_usage_file() {
     # Print a help or usage message from a file, possibly without
     # commented lines (i.e., lines starting with "#") and their trailing
@@ -1207,6 +1334,7 @@ function argparser_create_help_message() {
     local col_width_2
     local col_width_3
     local default_values
+    local header
     local help_text
     local i
     local include_directive
@@ -1234,6 +1362,7 @@ function argparser_create_help_message() {
     local newlines_1
     local newlines_2
     local newlines_3
+    local note
     local -a option_names
     local short_options
     local -A sorted_col_1
@@ -1318,9 +1447,8 @@ function argparser_create_help_message() {
             # The argument may have some short and long options, some
             # default and some choice values or an argument number of 0
             # (i.e., it is a flag), with the existence of each changing
-            # the look of the respective column, mostly the second one.
-            # If either no short or no long option is given, use the
-            # empty string instead.
+            # the look of the respective column.  If either no short or
+            # no long option is given, use the empty string instead.
             # Set the first column's value.
             if [[ "${short_options[0]}" == "-" ]]; then  # No short option.
                 new_col_1+=("")
@@ -1389,8 +1517,16 @@ function argparser_create_help_message() {
             fi
 
             # Set the third column's value.
-            if [[ "${default_values}" != "-" ]]; then  # Default.
-                new_col_3+=("${help_text} (default: ${default_values})")
+            if [[ "${arg_number}" == 0 ]]; then  # Flag.
+                new_col_3_value="${help_text} ("
+                new_col_3_value+="$(argparser_translate "default"): "
+                new_col_3_value+="$(argparser_translate "${default_values}"))"
+                new_col_3+=("${new_col_3_value}")
+            elif [[ "${default_values}" != "-" ]]; then  # Default.
+                new_col_3_value="${help_text} ("
+                new_col_3_value+="$(argparser_translate "default"): "
+                new_col_3_value+="${default_values})"
+                new_col_3+=("${new_col_3_value}")
             else  # No default.
                 new_col_3+=("${help_text}")
             fi
@@ -1439,10 +1575,10 @@ function argparser_create_help_message() {
     then
         col_1+=("-h,")
         col_2+=("--help")
-        col_3+=("display this help and exit")
+        col_3+=("$(argparser_translate "display this help and exit")")
         col_1+=("-u,")
         col_2+=("--usage")
-        col_3+=("display the usage and exit")
+        col_3+=("$(argparser_translate "display the usage and exit")")
     fi
 
     # Limit the width of each column of the help message to
@@ -1632,13 +1768,21 @@ function argparser_create_help_message() {
     # a trailing blank line to separate the block from the following
     # arguments.
     if [[ "${include_directive}" == "All" ]]; then
-        printf 'Usage: %s ARGUMENTS\n\n' "${script_name}"
-        printf 'Mandatory arguments to long options are mandatory for short '
-        printf 'options too.\n\n'
+        header="$(argparser_translate "Usage"): ${script_name} "
+        header+="$(argparser_translate "ARGUMENTS")"
+        printf '%s\n\n' "${header}"
+
+        note="$(argparser_translate "Mandatory arguments to long options " \
+            "are mandatory for short options too")."
+        printf '%s\n\n' "${note}"
     elif [[ "${include_directive}" == "Header" ]]; then
-        printf 'Usage: %s ARGUMENTS\n\n' "${script_name}"
-        printf 'Mandatory arguments to long options are mandatory for short '
-        printf 'options too.\n'
+        header="$(argparser_translate "Usage"): ${script_name} "
+        header+="$(argparser_translate "ARGUMENTS")"
+        printf '%s\n\n' "${header}"
+
+        note="$(argparser_translate "Mandatory arguments to long options " \
+            "are mandatory for short options too")."
+        printf '%s\n' "${note}"
     fi
 
     # For each argument group, print its arguments.
@@ -1719,9 +1863,10 @@ function argparser_create_usage_message() {
 
     # Print the usage message's header, giving the script's name and
     # the existence of the --help and --usage arguments.  To keep all
-    # arguments aligned, the length of the script name and the leading
-    # "Usage: " determines the amount of whitespace printed before them.
-    header="$(printf 'Usage: %s' "${script_name}")"
+    # arguments aligned, the length of the script name and the
+    # (translated) leading "Usage: " determines the amount of whitespace
+    # printed before them.
+    header="$(argparser_translate "Usage"): ${script_name}"
     printf '%s [--help] [--usage]\n' "${header}"
     whitespace_len="${#header}"
     (( whitespace_len++ ))
@@ -1913,6 +2058,7 @@ function argparser_main() {
     # later.
     local checked_arg
     local def_pattern
+    local -A dictionary
     local error
     local error_message
     local -a error_messages
@@ -2098,6 +2244,12 @@ function argparser_main() {
             printf '%s\n' "${error_messages[@]}" >&2
             exit "${ARGPARSER_ERROR_EXIT_CODE}"
         fi
+    fi
+
+    # If ${ARGPARSER_TRANSLATION_FILE} isn't set to the empty string,
+    # read the translation file, 
+    if [[ -n "${ARGPARSER_TRANSLATION_FILE}" ]]; then
+        argparser_read_translation
     fi
 
     # Set the default argument key to ${ARGPARSER_POSITIONAL_NAME}, such
@@ -2385,7 +2537,9 @@ if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_print_help_or_usage_file
     unset -f argparser_print_help_or_usage_message
     unset -f argparser_quicksort
+    unset -f argparser_read_translation
     unset -f argparser_sort
+    unset -f argparser_translate
     unset -f argparser_uniq
 fi
 
@@ -2407,6 +2561,7 @@ if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_HELP_FILE_INCLUDE_CHAR
     unset ARGPARSER_HELP_FILE_KEEP_COMMENTS
     unset ARGPARSER_HELP_STYLE
+    unset ARGPARSER_LANGUAGE
     unset ARGPARSER_MAX_COL_WIDTH_1
     unset ARGPARSER_MAX_COL_WIDTH_2
     unset ARGPARSER_MAX_COL_WIDTH_3
@@ -2414,6 +2569,7 @@ if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_READ_ARGS
     unset ARGPARSER_SET_ARGS
     unset ARGPARSER_SET_ARRAYS
+    unset ARGPARSER_TRANSLATION_FILE
     unset ARGPARSER_UNSET_ARGS
     unset ARGPARSER_UNSET_ENV_VARS
     unset ARGPARSER_UNSET_FUNCTIONS
