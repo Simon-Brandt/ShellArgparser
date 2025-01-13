@@ -66,13 +66,13 @@ export ARGPARSER_MAX_COL_WIDTH_3=35
 
 # Define the arguments.
 args=(
-    "var_1:a,A:var-1,var-a:-:-:1:Arguments:one value without default or choice"
-    "var_2:b,B:var-2,var-b:-:-:+:Arguments:at least one value without default or choice"
-    "var_3:c,C:var-3,var-c:-:A,B:+:Arguments:at least one value with choice"
-    "var_4:d,D:-:A:A,B,C:1:Options:one value with default and choice"
-    "var_5:-:var-5,var-e:E:-:1:Options:one value with default"
-    "var_6:f,F:var-6,var-f:false:-:0:Options:no value (flag) with default"
-    "var_7:g,G:var-7,var-g:true:-:0:Options:no value (flag) with default"
+    "var_1:a,A:var-1,var-a:-:-:1:Mandatory options:one value without default or choice"
+    "var_2:b,B:var-2,var-b:-:-:+:Mandatory options:at least one value without default or choice"
+    "var_3:c,C:var-3,var-c:-:A,B:+:Mandatory options:at least one value with choice"
+    "var_4:d,D:-:A:A,B,C:1:Optional options:one value with default and choice"
+    "var_5:-:var-5,var-e:E:-:1:Optional options:one value with default"
+    "var_6:f,F:var-6,var-f:false:-:0:Optional options:no value (flag) with default"
+    "var_7:g,G:var-7,var-g:true:-:0:Optional options:no value (flag) with default"
 )
 
 source argparser
@@ -103,13 +103,13 @@ Usage: try_argparser.sh ARGUMENTS
 
 Mandatory arguments to long options are mandatory for short options too.
 
-Arguments:
+Mandatory options:
 -a, -A,   --var-1=VAR-1, --var-a=VAR-A     one value without default or choice
 -b, -B,   --var-2=VAR-2, --var-b=VAR-B     at least one value without default
                                            or choice
 -c, -C,   --var-3={A,B}, --var-c={A,B}     at least one value with choice
 
-Options:
+Optional options:
 -d, -D                                     one value with default and choice
                                            (default: A)
           --var-5[=VAR-5], --var-e[=VAR-E] one value with default (default: E)
@@ -208,13 +208,13 @@ export ARGPARSER_MAX_COL_WIDTH_3=35
 
 # Define the arguments.
 args=(
-    "var_1:a,A:var-1,var-a:-:-:1:Arguments:one value without default or choice"
-    "var_2:b,B:var-2,var-b:-:-:+:Arguments:at least one value without default or choice"
-    "var_3:c,C:var-3,var-c:-:A,B:+:Arguments:at least one value with choice"
-    "var_4:d,D:-:A:A,B,C:1:Options:one value with default and choice"
-    "var_5:-:var-5,var-e:E:-:1:Options:one value with default"
-    "var_6:f,F:var-6,var-f:false:-:0:Options:no value (flag) with default"
-    "var_7:g,G:var-7,var-g:true:-:0:Options:no value (flag) with default"
+    "var_1:a,A:var-1,var-a:-:-:1:Mandatory options:one value without default or choice"
+    "var_2:b,B:var-2,var-b:-:-:+:Mandatory options:at least one value without default or choice"
+    "var_3:c,C:var-3,var-c:-:A,B:+:Mandatory options:at least one value with choice"
+    "var_4:d,D:-:A:A,B,C:1:Optional options:one value with default and choice"
+    "var_5:-:var-5,var-e:E:-:1:Optional options:one value with default"
+    "var_6:f,F:var-6,var-f:false:-:0:Optional options:no value (flag) with default"
+    "var_7:g,G:var-7,var-g:true:-:0:Optional options:no value (flag) with default"
 )
 
 source argparser
@@ -305,7 +305,7 @@ This argparser-specific tabular format consists of eight columns, each separated
 1. the default value (like `A` for `var_4`)
 1. the choice values for options with a limited set of values to choose from (like `"A"`, `"B"`, and `"C"` for `var_4`)
 1. the number of required values (either numerical from 0 to infinity or `"+"`, meaning to accept as many values as given, at least one, like `1` for `var_4`)
-1. the argument group for grouping of arguments in the help text (like `"Options"` for `var_4`)
+1. the argument group for grouping of arguments in the help text (like `"Optional options"` for `var_4`)
 1. the help text for the `--help` flag (like `"one value with default and choice"` for `var_4`)
 
 Arguments can have multiple short and/or long names, an optional default value, and/or an arbitrary number of choice values.
@@ -362,13 +362,13 @@ Usage: try_argparser.sh ARGUMENTS
 
 Mandatory arguments to long options are mandatory for short options too.
 
-Arguments:
+Mandatory options:
 -a, -A,   --var-1=VAR-1, --var-a=VAR-A     one value without default or choice
 -b, -B,   --var-2=VAR-2, --var-b=VAR-B     at least one value without default
                                            or choice
 -c, -C,   --var-3={A,B}, --var-c={A,B}     at least one value with choice
 
-Options:
+Optional options:
 -d, -D                                     one value with default and choice
                                            (default: A)
           --var-5[=VAR-5], --var-e[=VAR-E] one value with default (default: E)
@@ -403,13 +403,13 @@ export ARGPARSER_HELP_FILE="help_message.txt"
 
 # Define the arguments.
 args=(
-    "var_1:a:var-1:-:-:1:Arguments:one value without default or choice"
-    "var_2:b:var-2:-:-:+:Arguments:at least one value without default or choice"
-    "var_3:c:var-3:-:A,B:+:Arguments:at least one value with choice"
-    "var_4:d:-:A:A,B,C:1:Options:one value with default and choice"
-    "var_5:-:var-5:E:-:1:Options:one value with default"
-    "var_6:f:var-6:false:-:0:Options:no value (flag) with default"
-    "var_7:g,:var-7:true:-:0:Options:no value (flag) with default"
+    "var_1:a:var-1:-:-:1:Mandatory options:one value without default or choice"
+    "var_2:b:var-2:-:-:+:Mandatory options:at least one value without default or choice"
+    "var_3:c:var-3:-:A,B:+:Mandatory options:at least one value with choice"
+    "var_4:d:-:A:A,B,C:1:Optional options:one value with default and choice"
+    "var_5:-:var-5:E:-:1:Optional options:one value with default"
+    "var_6:f:var-6:false:-:0:Optional options:no value (flag) with default"
+    "var_7:g,:var-7:true:-:0:Optional options:no value (flag) with default"
 )
 
 source argparser
@@ -443,13 +443,13 @@ $ cat help_message.txt
 A brief header summarizes the way how to interpret the help message.
 @Header
 
-# Print the arguments from the "arguments" group.
-The following arguments have no default value.
-@Arguments
+# Print the options from the "Mandatory options" group.
+The following options have no default value.
+@Mandatory options
 
-# Print the arguments from the "options" group.
-The following arguments have a default value.
-@Options
+# Print the options from the "Optional options" group.
+The following options have a default value.
+@Optional options
 
 # Print the two help options.
 There are always two options for the help messages.
@@ -465,15 +465,15 @@ Usage: try_help_file.sh ARGUMENTS
 
 Mandatory arguments to long options are mandatory for short options too.
 
-The following arguments have no default value.
-Arguments:
+The following options have no default value.
+Mandatory options:
 -a, --var-1=VAR-1 one value without default or choice
 -b, --var-2=VAR-2 at least one value without default or
                   choice
 -c, --var-3={A,B} at least one value with choice
 
-The following arguments have a default value.
-Options:
+The following options have a default value.
+Optional options:
 -d                    one value with default and choice
                       (default: A)
       --var-5[=VAR-5] one value with default (default: E)
@@ -496,7 +496,7 @@ The following section names (include directives) are supported, explained in gre
 - [`@Header`](#header-directive)
 - [`@Help`](#help-directive)
 
-Thereby, `<ArgumentGroup>` can be the name of any argument group given in the arguments definition, like `"Arguments"` for the include directive `@Arguments` or `"Options"` for the include directive `@Options`. `@Header` prints the header, `@Help` the help and usage options. Finally, the shorthand `@All` means to use the header, all argument groups, and the help options, in this order.
+Thereby, `<ArgumentGroup>` can be the name of any argument group given in the arguments definition, like `"Mandatory options"` for the include directive `@Mandatory options` or `"Optional options"` for the include directive `@Optional options`. `@Header` prints the header, `@Help` the help and usage options. Finally, the shorthand `@All` means to use the header, all argument groups, and the help options, in this order.
 
 Further, lines starting with a `"#"` character in the help file aren't printed if [`ARGPARSER_HELP_FILE_KEEP_COMMENTS`](#argparser_help_file_keep_comments) is set to `false`. This allows you to comment your help file, perhaps to explain the structure&mdash;or just to write a header with your name inside.
 
@@ -555,13 +555,13 @@ You could even add a header to explain the fields, which is shown in the [locali
 
 ```console
 $ cat arguments.lst 
-var_1:a:var-1:-:-:1:Arguments:one value without default or choice
-var_2:b:var-2:-:-:+:Arguments:at least one value without default or choice
-var_3:c:var-3:-:A,B:+:Arguments:at least one value with choice
-var_4:d:-:A:A,B,C:1:Options:one value with default and choice
-var_5:-:var-5:E:-:1:Options:one value with default
-var_6:f:var-6:false:-:0:Options:no value (flag) with default
-var_7:g:var-7:true:-:0:Options:no value (flag) with default
+var_1:a:var-1:-:-:1:Mandatory options:one value without default or choice
+var_2:b:var-2:-:-:+:Mandatory options:at least one value without default or choice
+var_3:c:var-3:-:A,B:+:Mandatory options:at least one value with choice
+var_4:d:-:A:A,B,C:1:Optional options:one value with default and choice
+var_5:-:var-5:E:-:1:Optional options:one value with default
+var_6:f:var-6:false:-:0:Optional options:no value (flag) with default
+var_7:g:var-7:true:-:0:Optional options:no value (flag) with default
 ```
 
 When passing the usual argument names and values, we see that all arguments are still recognized:
@@ -658,13 +658,13 @@ You need to manually translate the arguments definition (only the argument group
 ```console
 $ cat arguments.de_DE.UTF-8.lst
 Identifikator:Kurze Optionen:Lange Optionen:Vorgabewerte:Auswahlwerte:Anzahl Werte:Argumentgruppe:Hilfetext
-var_1:a:var-1:-:-:1:Argumente:ein Wert ohne Vorgabe und Auswahl
-var_2:b:var-2:-:-:+:Argumente:mindestens ein Wert ohne Vorgabe und Auswahl
-var_3:c:var-3:-:A,B:+:Argumente:mindestens ein Wert mit Auswahl
-var_4:d:-:A:A,B,C:1:Optionen:ein Wert mit Vorgabe und Auswahl
-var_5:-:var-5:E:-:1:Optionen:ein Wert mit Vorgabe
-var_6:f:var-6:false:-:0:Optionen:kein Wert (Flag) mit Vorgabe
-var_7:g:var-7:true:-:0:Optionen:kein Wert (Flag) mit Vorgabe
+var_1:a:var-1:-:-:1:Erforderliche Optionen:ein Wert ohne Vorgabe und Auswahl
+var_2:b:var-2:-:-:+:Erforderliche Optionen:mindestens ein Wert ohne Vorgabe und Auswahl
+var_3:c:var-3:-:A,B:+:Erforderliche Optionen:mindestens ein Wert mit Auswahl
+var_4:d:-:A:A,B,C:1:Optionale Optionen:ein Wert mit Vorgabe und Auswahl
+var_5:-:var-5:E:-:1:Optionale Optionen:ein Wert mit Vorgabe
+var_6:f:var-6:false:-:0:Optionale Optionen:kein Wert (Flag) mit Vorgabe
+var_7:g:var-7:true:-:0:Optionale Optionen:kein Wert (Flag) mit Vorgabe
 ```
 
 The same is necessary for the printable part of the help file:
@@ -676,13 +676,13 @@ Eine kurze Kopfzeile fasst zusammen, wie die Hilfe-Meldung zu interpretieren
 ist.
 @Header
 
-# Print the arguments from the "arguments" group.
-Die folgenden Argumente haben keinen Vorgabewert.
-@Argumente
+# Print the options from the "Erforderliche Optionen" group.
+Die folgenden Optionen haben keinen Vorgabewert.
+@Erforderliche Optionen
 
-# Print the arguments from the "options" group.
-Die folgenden Argumente haben einen Vorgabewert.
-@Optionen
+# Print the options from the "Optionale Optionen" group.
+Die folgenden Optionen haben einen Vorgabewert.
+@Optionale Optionen
 
 # Print the two help options.
 Es gibt grundsätzlich zwei Optionen für die Hilfe-Meldungen.
@@ -710,14 +710,14 @@ Usage: try_localization.sh ARGUMENTS
 
 Mandatory arguments to long options are mandatory for short options too.
 
-Die folgenden Argumente haben keinen Vorgabewert.
-Argumente:
+Die folgenden Optionen haben keinen Vorgabewert.
+Erforderliche Optionen:
 -a, --var-1=VAR-1 ein Wert ohne Vorgabe und Auswahl
 -b, --var-2=VAR-2 mindestens ein Wert ohne Vorgabe und
                   Auswahl
 -c, --var-3={A,B} mindestens ein Wert mit Auswahl
 
-Die folgenden Argumente haben einen Vorgabewert.
+Die folgenden Optionen haben einen Vorgabewert.
 Optionen:
 -d                    ein Wert mit Vorgabe und Auswahl
                       (default: A)
@@ -773,7 +773,7 @@ The following section names (include directives) are supported in the help and u
 - [`@Header`](#header-directive)
 - [`@Help`](#help-directive)
 
-Thereby, `<ArgumentGroup>` can be the name of any argument group given in the arguments definition, like `"Arguments"` for the include directive `@Arguments` or `"Options"` for the include directive `@Options`.
+Thereby, `<ArgumentGroup>` can be the name of any argument group given in the arguments definition, like `"Mandatory options"` for the include directive `@Mandatory options` or `"Optional options"` for the include directive `@Optional options`.
 
 ### `@All` directive
 
@@ -799,7 +799,7 @@ is exactly identical to the one from the following content:
 
 ### `@<ArgumentGroup>` directive
 
-The `@<ArgumentGroup>` directive prints the help text for the respective `"<ArgumentGroup>"`, like `"Arguments"` for the include directive `@Arguments` or `"Options"` for the include directive `@Options`. Their order in the auto-generated help message would be alphabetically. Thus, if you have reasons for another structure, you need an [`ARGPARSER_HELP_FILE`](#argparser_help_file), denoting all arguments groups in the order preferred by you.
+The `@<ArgumentGroup>` directive prints the help text for the respective `"<ArgumentGroup>"`, like `"Mandatory options"` for the include directive `@Mandatory options` or `"Optional options"` for the include directive `@Optional options`. Their order in the auto-generated help message would be alphabetically. Thus, if you have reasons for another structure, you need an [`ARGPARSER_HELP_FILE`](#argparser_help_file), denoting all arguments groups in the order preferred by you.
 
 ### `@Header` directive
 

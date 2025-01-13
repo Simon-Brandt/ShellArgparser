@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-09
+# Last Modification: 2025-01-13
 
 # Usage: Run this script with "bash test_short_options.sh".
 
@@ -16,13 +16,13 @@ export ARGPARSER_MAX_COL_WIDTH_3=35
 
 # Define the arguments.
 args=(
-    "var_1:a,A:-:-:-:1:Arguments:one value without default or choice"
-    "var_2:b,B:-:-:-:+:Arguments:at least one value without default or choice"
-    "var_3:c,C:-:-:A,B:+:Arguments:at least one value with choice"
-    "var_4:d,D:-:A:A,B,C:1:Options:one value with default and choice"
-    "var_5:e,E:-:E:-:1:Options:one value with default"
-    "var_6:f,F:-:false:-:0:Options:no value (flag) with default"
-    "var_7:g,G:-:true:-:0:Options:no value (flag) with default"
+    "var_1:a,A:-:-:-:1:Mandatory options:one value without default or choice"
+    "var_2:b,B:-:-:-:+:Mandatory options:at least one value without default or choice"
+    "var_3:c,C:-:-:A,B:+:Mandatory options:at least one value with choice"
+    "var_4:d,D:-:A:A,B,C:1:Optional options:one value with default and choice"
+    "var_5:e,E:-:E:-:1:Optional options:one value with default"
+    "var_6:f,F:-:false:-:0:Optional options:no value (flag) with default"
+    "var_7:g,G:-:true:-:0:Optional options:no value (flag) with default"
 )
 
 source argparser

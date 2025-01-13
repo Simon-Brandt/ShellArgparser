@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-09
+# Last Modification: 2025-01-13
 
 # Usage: Run this script with "bash test_help_message.sh".
 
@@ -13,13 +13,13 @@ export ARGPARSER_HELP_FILE="help_message.txt"
 
 # Define the arguments.
 args=(
-    "var_1:a:var-1:-:-:1:Arguments:one value without default or choice"
-    "var_2:b:var-2:-:-:+:Arguments:at least one value without default or choice"
-    "var_3:c:var-3:-:A,B:+:Arguments:at least one value with choice"
-    "var_4:d:-:A:A,B,C:1:Options:one value with default and choice"
-    "var_5:-:var-5:E:-:1:Options:one value with default"
-    "var_6:f:var-6:false:-:0:Options:no value (flag) with default"
-    "var_7:g,:var-7:true:-:0:Options:no value (flag) with default"
+    "var_1:a:var-1:-:-:1:Mandatory options:one value without default or choice"
+    "var_2:b:var-2:-:-:+:Mandatory options:at least one value without default or choice"
+    "var_3:c:var-3:-:A,B:+:Mandatory options:at least one value with choice"
+    "var_4:d:-:A:A,B,C:1:Optional options:one value with default and choice"
+    "var_5:-:var-5:E:-:1:Optional options:one value with default"
+    "var_6:f:var-6:false:-:0:Optional options:no value (flag) with default"
+    "var_7:g,:var-7:true:-:0:Optional options:no value (flag) with default"
 )
 
 source argparser
