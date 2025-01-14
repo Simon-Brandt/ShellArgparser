@@ -175,9 +175,8 @@ function argparser_colorize() {
         then
             printf '\e[%sm' "${styles[${request}]}"
         else
-            error_message="$(printf \
-                'Error: Wrong color or style "%s" specified.\n' \
-                "${request}")"
+            error_message="Error: Wrong color or style \"${request}\" "
+            error_message+="specified."
             printf '%s\n' "$(argparser_colorize "red,bold,reverse" \
                 "${error_message}")" >&2
         fi
@@ -384,8 +383,7 @@ function argparser_get_option_names() {
             option_names="$(printf -- '--%s,' "${long_options[@]}")"
             option_names+="$(printf -- '-%s,' "${short_options[@]}")"
         else
-            error_message="$(printf 'Error: Wrong order "%s" specified.\n' \
-                "${order}")"
+            error_message="Error: Wrong order \"${order}\" specified."
             printf '%s\n' "$(argparser_colorize "${ARGPARSER_ERROR_STYLE}" \
                 "${error_message}")" >&2
         fi
