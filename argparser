@@ -116,7 +116,7 @@ function argparser_colorize() {
     # Colorize and format the string using ANSI escape sequences.
     #
     # Arguments:
-    # - $1: the color and/or style to use as comma-separated list
+    # - $1: the colors and/or styles to use as comma-separated list
     # - $2: the string to colorize
     #
     # Output:
@@ -125,7 +125,6 @@ function argparser_colorize() {
     # Define the local variables.
     local color
     local -A colors
-    local error_message
     local request
     local requests
     local string
@@ -136,8 +135,9 @@ function argparser_colorize() {
     requests="$1"
     string="$2"
 
-    # Define the associative array with colors and their corresponding
-    # Select Graphic Rendition (SGR) ANSI escape sequence codes.
+    # Define the associative arrays with colors or styles, respectively,
+    # and their corresponding Select Graphic Rendition (SGR) ANSI escape
+    # sequence codes.
     colors=(
         [black]=30
         [red]=31
@@ -163,9 +163,7 @@ function argparser_colorize() {
     )
 
     # Split the requested color and/or style on commas and print any.
-    # Then, print the string and reset the color and style.  If a
-    # non-existing color or style is requested, abort the script with
-    # an error message.
+    # Then, print the string and reset the color and style.
     IFS="," read -a requests <<< "${requests}"
     for request in "${requests[@]}"; do
         if [[ "$(argparser_in_array "${request}" "${!colors[@]}")" == true ]]
@@ -174,11 +172,6 @@ function argparser_colorize() {
         elif [[ "$(argparser_in_array "${request}" "${!styles[@]}")" == true ]]
         then
             printf '\e[%sm' "${styles[${request}]}"
-        else
-            error_message="Error: Wrong color or style \"${request}\" "
-            error_message+="specified."
-            printf '%s\n' "$(argparser_colorize "red,bold,reverse" \
-                "${error_message}")" >&2
         fi
     done
 
