@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-13
+# Last Modification: 2025-01-14
 
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
@@ -60,7 +60,7 @@ fi
 : "${ARGPARSER_HELP_FILE_INCLUDE_CHAR:="@"}"
 : "${ARGPARSER_HELP_FILE_KEEP_COMMENTS:=false}"
 : "${ARGPARSER_HELP_STYLE:="italic"}"
-: "${ARGPARSER_LANGUAGE:="en_US.UTF-8"}"
+: "${ARGPARSER_LANGUAGE:="en"}"
 : "${ARGPARSER_MAX_COL_WIDTH_1:=5}"
 : "${ARGPARSER_MAX_COL_WIDTH_2:=33}"
 : "${ARGPARSER_MAX_COL_WIDTH_3:=39}"
@@ -1137,15 +1137,15 @@ function argparser_read_translation() {
     local warning_message
 
     # Read the first line (the header) of ${ARGPARSER_TRANSLATION_FILE}
-    # to get the column indices for the source ("en_US.UTF-8") and
-    # target language (${ARGPARSER_LANGUAGE}).
+    # to get the column indices for the source ("en") and target
+    # language (${ARGPARSER_LANGUAGE}).
     IFS="${ARGPARSER_ARG_DELIMITER_1}" read -a header \
         < "${ARGPARSER_TRANSLATION_FILE}"
 
     source_column=""
     target_column=""
     for column in "${!header[@]}"; do
-        if [[ "${header[column]}" == "en_US.UTF-8" ]]; then
+        if [[ "${header[column]}" == "en" ]]; then
             source_column="${column}"
         fi
         if [[ "${header[column]}" == "${ARGPARSER_LANGUAGE}" ]]; then
@@ -1158,8 +1158,8 @@ function argparser_read_translation() {
     if [[ -z "${source_column}" ]]; then
         error_message="Error: In the translation file "
         error_message+="\"${ARGPARSER_TRANSLATION_FILE}\", the column "
-        error_message+="\"en_US.UTF-8\" is missing, but required as source "
-        error_message+="for translation."
+        error_message+="\"en\" is missing, but required as source for "
+        error_message+="translation."
 
         error_message="$(argparser_colorize "${ARGPARSER_ERROR_STYLE}" \
             "${error_message}")"
@@ -1175,7 +1175,7 @@ function argparser_read_translation() {
         warning_message+="\"${ARGPARSER_TRANSLATION_FILE}\", the column "
         warning_message+="\"${ARGPARSER_LANGUAGE}\" is missing, but required "
         warning_message+="as target for translation.  For convenience, the "
-        warning_message+="source language \"en_US.UTF-8\" is used, instead."
+        warning_message+="source language \"en\" is used, instead."
 
         warning_message="$(argparser_colorize "${ARGPARSER_WARNING_STYLE}" \
             "${warning_message}")"

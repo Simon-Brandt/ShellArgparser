@@ -597,19 +597,19 @@ Usage: try_arg_def_file.sh [--help] [--usage]
 
 ### Help and usage message localization
 
-It is even possible to localize your script's help and usage message. For the usage message, all you need is an [`ARGPARSER_TRANSLATION_FILE`](#argparser_translation_file), a CSV file giving the translation of the auto-generated parts in the messages. The header gives the language identifier for each column, one of which being the default `en_US.UTF-8`, and another one the language you want the message to be translated to, *i.e.*, the [`ARGPARSER_LANGUAGE`](#argparser_language). For the usage message, this suffices, but in the help message, also non-auto-generated parts are included, especially each argument's help text. For them to be translated, you need a dedicated [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file) and possibly a localized [`ARGPARSER_HELP_FILE`](#argparser_help_file).
+It is even possible to localize your script's help and usage message. For the usage message, all you need is an [`ARGPARSER_TRANSLATION_FILE`](#argparser_translation_file), a CSV file giving the translation of the auto-generated parts in the messages. The header gives the language identifier for each column, one of which being the default `en`, and another one the language you want the message to be translated to, *i.e.*, the [`ARGPARSER_LANGUAGE`](#argparser_language). For the usage message, this suffices, but in the help message, also non-auto-generated parts are included, especially each argument's help text. For them to be translated, you need a dedicated [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file) and possibly a localized [`ARGPARSER_HELP_FILE`](#argparser_help_file).
 
-If you set these environment variables to files whose filename contains the structure of the `LANG` (or `LC_ALL` or `LANGUAGE`) environment variable (the language, the country or territory, and the codeset), like so:
+If you set these environment variables to files whose filename contains the language, like so:
 
 ```console
-$ ls -1 arguments.*.lst help_message.*.txt
-arguments.de_DE.UTF-8.lst
-arguments.en_US.UTF-8.lst
-help_message.de_DE.UTF-8.txt
-help_message.en_US.UTF-8.txt
+$ ls -1 arguments_*.lst help_message_*.txt
+arguments_de.lst
+arguments_en.lst
+help_message_de.txt
+help_message_en.txt
 ```
 
-then, in your script, you can set the `ARGPARSER_ARG_DEF_FILE` and `ARGPARSER_HELP_FILE` accordingly, as in our new script  `try_localization.sh`.
+then, in your script, you can set the `ARGPARSER_ARG_DEF_FILE` and `ARGPARSER_HELP_FILE` accordingly, as in our new script  `try_localization.sh`. There, we dynamically extract the language as the first two characters of the `LANG` (or, alternatively, `LC_ALL` or `LANGUAGE`) environment variable. Its value is defined as the language, the country or territory, and the codeset, like `"en_US.UTF-8"` or `"de_DE.UTF-8"`.
 
 <details open>
 
@@ -620,10 +620,10 @@ then, in your script, you can set the `ARGPARSER_ARG_DEF_FILE` and `ARGPARSER_HE
 
 # Set the argparser, reading the arguments definition from a file and
 # the help message from a file.
-export ARGPARSER_ARG_DEF_FILE="arguments.${LANG}.lst"
+export ARGPARSER_ARG_DEF_FILE="arguments_${LANG::2}.lst"
 export ARGPARSER_ARG_DEF_FILE_HAS_HEADER=true
-export ARGPARSER_HELP_FILE="help_message.${LANG}.txt"
-export ARGPARSER_LANGUAGE="${LANG}"
+export ARGPARSER_HELP_FILE="help_message_${LANG::2}.txt"
+export ARGPARSER_LANGUAGE="${LANG::2}"
 export ARGPARSER_TRANSLATION_FILE="translation.csv"
 
 # Set the arguments.
@@ -660,7 +660,7 @@ done
 You need to manually translate the arguments definition (only the argument groups and the help texts) in the new arguments definition file, here using a header for clarity (given as [`ARGPARSER_ARG_DEF_FILE_HAS_HEADER`](#argparser_arg_def_file_has_header) environment variable):
 
 ```console
-$ cat arguments.de_DE.UTF-8.lst
+$ cat arguments_de.lst
 Identifikator:Kurze Optionen:Lange Optionen:Vorgabewerte:Auswahlwerte:Anzahl Werte:Argumentgruppe:Hilfetext
 var_1:a:var-1:-:-:1:Erforderliche Optionen:ein Wert ohne Vorgabe und Auswahl
 var_2:b:var-2:-:-:+:Erforderliche Optionen:mindestens ein Wert ohne Vorgabe und Auswahl
@@ -674,7 +674,7 @@ var_7:g:var-7:true:-:0:Optionale Optionen:kein Wert (Flag) mit Vorgabe
 The same is necessary for the printable part of the help file:
 
 ```console
-$ cat help_message.de_DE.UTF-8.txt 
+$ cat help_message_de_.txt 
 # Print the header.
 Eine kurze Kopfzeile fasst zusammen, wie die Hilfe-Meldung zu interpretieren
 ist.
@@ -700,7 +700,7 @@ Finally, we need a translation file for the auto-generated parts. Note that here
 
 ```console
 $ cat translation.csv
-en_US.UTF-8:de_DE.UTF-8
+en:de
 Usage:Aufruf
 ARGUMENTS:ARGUMENTE
 Mandatory arguments to long options are mandatory for short options too:Erforderliche Argumente für lange Optionen sind auch für kurze erforderlich
@@ -866,7 +866,7 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_HELP_FILE_INCLUDE_CHAR`](#argparser_help_file_include_char)     | *char*                             | `"@"`                |
 | [`ARGPARSER_HELP_FILE_KEEP_COMMENTS`](#argparser_help_file_keep_comments)   | *bool*                             | `false`              |
 | [`ARGPARSER_HELP_STYLE`](#argparser_help_style)                             | *str*                              | `"italic"`           |
-| [`ARGPARSER_LANGUAGE`](#argparser_language)                                 | *str*                              | `"en_US.UTF-8"`      |
+| [`ARGPARSER_LANGUAGE`](#argparser_language)                                 | *str*                              | `"en"`               |
 | [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1)                   | *int*                              | `5`[^6]              |
 | [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2)                   | *int*                              | `33`[^6]             |
 | [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)                   | *int*                              | `39`[^6]             |
@@ -987,7 +987,7 @@ The argparser defines a large set of environment variables, each following the n
 
 - ***Type:***  *str* (String)
 - ***Allowed values:*** Any string
-- ***Default value:*** `"en_US.UTF-8"`
+- ***Default value:*** `"en"`
 - ***Description:*** The language in which to localize the help and usage messages.
 
 ### `ARGPARSER_MAX_COL_WIDTH_1`
@@ -1049,7 +1049,7 @@ The main difference is that, if you `export` (or `declare -x`) the variables to 
 - ***Type:*** *filepath* (Filepath)
 - ***Allowed values:*** Any legit filepath or the empty string `""`
 - ***Default value:*** `""`
-- ***Description:*** The path to a CSV file holding the translation of auto-generated parts in the help and usage messages. This file can be used by multiple scripts. As a CSV file, it contains the translation in a column-wise layout, separated by [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1) characters. The first row (the header) specifies the language identifier used for the [`ARGPARSER_LANGUAGE`](#argparser_language), thereby, one column must be the default `en_US.UTF-8`. As many languages as desired can be given, which allows the localization for multiple languages with just one `ARGPARSER_TRANSLATION_FILE`. The columns, including `en_US.UTF-8`, can be in any order.
+- ***Description:*** The path to a CSV file holding the translation of auto-generated parts in the help and usage messages. This file can be used by multiple scripts. As a CSV file, it contains the translation in a column-wise layout, separated by [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1) characters. The first row (the header) specifies the language identifier used for the [`ARGPARSER_LANGUAGE`](#argparser_language), thereby, one column must be the default `"en"`. As many languages as desired can be given, which allows the localization for multiple languages with just one `ARGPARSER_TRANSLATION_FILE`. The columns, including `"en"`, can be in any order.
 
 ### `ARGPARSER_UNSET_ARGS`
 

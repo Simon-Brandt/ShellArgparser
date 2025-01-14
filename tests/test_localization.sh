@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-13
+# Last Modification: 2025-01-14
 
 # Usage: Run this script with "bash test_help_message.sh".
 
@@ -10,10 +10,10 @@
 
 # Set the argparser, reading the arguments definition from a file and
 # the help message from a file.
-export ARGPARSER_ARG_DEF_FILE="arguments.${LANG}.lst"
+export ARGPARSER_ARG_DEF_FILE="arguments_${LANG::2}.lst"
 export ARGPARSER_ARG_DEF_FILE_HAS_HEADER=true
-export ARGPARSER_HELP_FILE="help_message.${LANG}.txt"
-export ARGPARSER_LANGUAGE="${LANG}"
+export ARGPARSER_HELP_FILE="help_message_${LANG::2}.txt"
+export ARGPARSER_LANGUAGE="${LANG::2}"
 export ARGPARSER_TRANSLATION_FILE="translation.csv"
 
 # Set the arguments.
