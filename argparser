@@ -390,7 +390,7 @@ function argparser_get_option_names() {
     printf '%s' "${option_names}"
 }
 
-function argparser_insert_line_breaks() {
+function argparser_fold() {
     # Limit the width of a help message's column to max_col_width by
     # inserting line breaks.
     #
@@ -1581,8 +1581,8 @@ function argparser_create_help_message() {
     col_width_1=0
     for i in "${!col_1[@]}"; do
         mapfile -d "" -t line \
-            < <(argparser_insert_line_breaks "${col_1[i]}" \
-                "${ARGPARSER_MAX_COL_WIDTH_1}" "${col_width_1}")
+            < <(argparser_fold "${col_1[i]}" "${ARGPARSER_MAX_COL_WIDTH_1}" \
+                "${col_width_1}")
         col_1[i]="${line[0]}"
         col_width_1="${line[1]}"
     done
@@ -1591,8 +1591,8 @@ function argparser_create_help_message() {
     col_width_2=0
     for i in "${!col_2[@]}"; do
         mapfile -d "" -t line \
-            < <(argparser_insert_line_breaks "${col_2[i]}" \
-                "${ARGPARSER_MAX_COL_WIDTH_2}" "${col_width_2}")
+            < <(argparser_fold "${col_2[i]}" "${ARGPARSER_MAX_COL_WIDTH_2}" \
+                "${col_width_2}")
         col_2[i]="${line[0]}"
         col_width_2="${line[1]}"
     done
@@ -1601,8 +1601,8 @@ function argparser_create_help_message() {
     col_width_3=0
     for i in "${!col_3[@]}"; do
         mapfile -d "" -t line \
-            < <(argparser_insert_line_breaks "${col_3[i]}" \
-                "${ARGPARSER_MAX_COL_WIDTH_3}" "${col_width_3}")
+            < <(argparser_fold "${col_3[i]}" "${ARGPARSER_MAX_COL_WIDTH_3}" \
+                "${col_width_3}")
         col_3[i]="${line[0]}"
         col_width_3="${line[1]}"
     done
@@ -2978,7 +2978,7 @@ if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_create_usage_message
     unset -f argparser_get_option_names
     unset -f argparser_in_array
-    unset -f argparser_insert_line_breaks
+    unset -f argparser_fold
     unset -f argparser_is_variable_boolean
     unset -f argparser_is_variable_character
     unset -f argparser_is_variable_identifier
