@@ -859,6 +859,7 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)                   | *char*                             | `":"`[^5]            |
 | [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)                   | *char*                             | `","`[^5]            |
 | [`ARGPARSER_CHECK_ARG_DEFINITION`](#argparser_check_arg_definition)         | *bool*                             | `false`              |
+| [`ARGPARSER_CHECK_ENV_VARS`](#argparser_check_env_vars)                     | *bool*                             | `false`              |
 | [`ARGPARSER_ERROR_EXIT_CODE`](#argparser_error_exit_code)                   | *int*                              | `1`                  |
 | [`ARGPARSER_ERROR_STYLE`](#argparser_error_style)                           | *str*                              | `"red,bold,reverse"` |
 | [`ARGPARSER_HELP_EXIT_CODE`](#argparser_help_exit_code)                     | *int*                              | `0`                  |
@@ -933,6 +934,13 @@ The argparser defines a large set of environment variables, each following the n
 - ***Allowed values:*** `true` and `false` (case-sensitive)
 - ***Default value:*** `false`
 - ***Description:*** Whether to check if the arguments definition is consistent, *i.e.*, if any argument has at least one short or long option name and no duplicates (within its own definition and among all other arguments), if the number of default values equals the number of required values, if the default values lie in the choice values, and if flags have a default value of `true` or `false` and no choice values. This should only be turned on (set to `true`) for testing purposes, while in production environments, keeping it deactivated saves some (minimal) computation time. Still, if the user can modify the arguments definition at some point (not recommended as it may lead to code injection!), you should activate it.
+
+### `ARGPARSER_CHECK_ENV_VARS`
+
+- ***Type:*** *bool* (Boolean)
+- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Default value:*** `false`
+- ***Description:*** Whether to check if the argparser environment variables accord to their definition. Again, this should only be turned on (set to `true`) for testing purposes, while in production environments, keeping it deactivated saves some (minimal) computation time. Still, if the user can modify the environment variables at some point (not recommended as it may lead to code injection!), you should activate it.
 
 ### `"ARGPARSER_ERROR_EXIT_CODE`
 

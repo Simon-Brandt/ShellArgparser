@@ -53,6 +53,7 @@ fi
 : "${ARGPARSER_ARG_DELIMITER_1:=":"}"
 : "${ARGPARSER_ARG_DELIMITER_2:=","}"
 : "${ARGPARSER_CHECK_ARG_DEFINITION:=false}"
+: "${ARGPARSER_CHECK_ENV_VARS:=false}"
 : "${ARGPARSER_ERROR_EXIT_CODE:=1}"
 : "${ARGPARSER_ERROR_STYLE:="red,bold,reverse"}"
 : "${ARGPARSER_HELP_EXIT_CODE:=0}"
@@ -2031,6 +2032,442 @@ function argparser_print_help_or_usage_message() {
     fi
 }
 
+function argparser_is_variable_boolean() {
+    # Check if a variable's value is a boolean.
+    #
+    # Arguments:
+    # - $1: the variable whose value to check
+    #
+    # Output:
+    # - true, if the variable's value is a boolean
+    # - false, else
+
+    # Define the local variable.
+    local var
+
+    # Read the argument.
+    var="$1"
+
+    # Check the variable's value.
+    if [[ "${var}" == true || "${var}" == false ]]; then
+        printf true
+    else
+        printf false
+    fi
+}
+
+function argparser_is_variable_character() {
+    # Check if a variable's value is a (printable) character.
+    #
+    # Arguments:
+    # - $1: the variable whose value to check
+    #
+    # Output:
+    # - true, if the variable's value is a character
+    # - false, else
+
+    # Define the local variable.
+    local var
+
+    # Read the argument.
+    var="$1"
+
+    # Check the variable's value.
+    if [[ "${var}" == [[:print:]] ]]; then
+        printf true
+    else
+        printf false
+    fi
+}
+
+function argparser_is_variable_identifier() {
+    # Check if a variable's value is usable as Bash variable identifier.
+    #
+    # Arguments:
+    # - $1: the variable whose value to check
+    #
+    # Output:
+    # - true, if the variable's value is usable as identifer
+    # - false, else
+
+    # Define the local variable.
+    local var
+
+    # Read the argument.
+    var="$1"
+
+    # Check the variable's value.
+    if [[ "${var}" == [[:alpha:]_]+([[:word:]]) ]]; then
+        printf true
+    else
+        printf false
+    fi
+}
+
+function argparser_is_variable_integer() {
+    # Check if a variable's value is an integer.
+    #
+    # Arguments:
+    # - $1: the variable whose value to check
+    #
+    # Output:
+    # - true, if the variable's value is an integer
+    # - false, else
+
+    # Define the local variable.
+    local var
+
+    # Read the argument.
+    var="$1"
+
+    # Check the variable's value.
+    if [[ "${var}" == ?([+-])+([[:digit:]]) ]]; then
+        printf true
+    else
+        printf false
+    fi
+}
+
+function argparser_check_file() {
+    # Check if a file exists, is a regular file, is readable, and has a
+    # size greater than 0 bytes.
+    #
+    # Arguments:
+    # - $1: the file to check
+    #
+    # Output:
+    # - a bit mask with four bits set to 0 (true) if the file exists
+    #   (first bit), is a regular file (second bit), is readable (third
+    #   bit), and/or has a size greater than 0 bytes (fourth bit), else
+    #   set to 1 (false)
+
+    # Define the local variable.
+    local file
+
+    # Read the argument.
+    file="$1"
+
+    # Check the variable's value.
+    if [[ -e "${file}" ]]; then
+        printf 0
+    else
+        printf 1
+    fi
+
+    if [[ -f "${file}" ]]; then
+        printf 0
+    else
+        printf 1
+    fi
+
+    if [[ -r "${file}" ]]; then
+        printf 0
+    else
+        printf 1
+    fi
+
+    if [[ -s "${file}" ]]; then
+        printf 0
+    else
+        printf 1
+    fi
+}
+
+function argparser_check_color_or_style() {
+    # Check if the specified colors and/or styles are implemented for
+    # argparser_colorize.
+    #
+    # Arguments:
+    # - $1: the colors and/or styles to use as comma-separated list
+    #
+    # Output:
+    # - true, if all colors and/or styles are implemented
+    # - false, else
+
+    # Define the local variables.
+    local color
+    local -a colors
+    local request
+    local requests
+    local style
+    local -a styles
+
+    # Read the argument.
+    requests="$1"
+
+    # Define the arrays of implemented colors and styles.
+    colors=(
+        black
+        red
+        green
+        yellow
+        blue
+        magenta
+        cyan
+        white
+    )
+
+    styles=(
+        normal
+        bold
+        faint
+        italic
+        underline
+        double
+        overline
+        crossed-out
+        blink
+        reverse
+    )
+
+    # Split the requested color and/or style on commas and print any.
+    # Then, print the string and reset the color and style.  If a
+    # non-existing color or style is requested, abort the script with
+    # an error message.
+    IFS="," read -a requests <<< "${requests}"
+    for request in "${requests[@]}"; do
+        if [[ "$(argparser_in_array "${request}" "${colors[@]}")" == false \
+            && "$(argparser_in_array "${request}" "${styles[@]}")" == false ]]
+        then
+            printf false
+            return
+        fi
+    done
+
+    printf true
+}
+
+function argparser_check_env_vars() {
+    # Check if the argparser envirnoment variables accord to their
+    # definition.  This should always be true for production scripts,
+    # but maybe not while testing, and also not if the user is allowed
+    # to set the variables himself.
+
+    # Define the local variables.
+    local attributes
+    local error_message
+    local -a error_messages
+    local file
+    local -a files
+    local var
+    local -a vars
+
+    # Check if all environment variables expected to be booleans are
+    # true or false.  Else, output an error message.
+    error_messages=( )
+    vars=(
+        ARGPARSER_ARG_DEF_FILE_HAS_HEADER
+        ARGPARSER_CHECK_ARG_DEFINITION
+        ARGPARSER_CHECK_ENV_VARS
+        ARGPARSER_HELP_FILE_KEEP_COMMENTS
+        ARGPARSER_READ_ARGS
+        ARGPARSER_SET_ARGS
+        ARGPARSER_SET_ARRAYS
+        ARGPARSER_UNSET_ARGS
+        ARGPARSER_UNSET_ENV_VARS
+        ARGPARSER_UNSET_FUNCTIONS
+        ARGPARSER_USAGE_FILE_KEEP_COMMENTS
+    )
+    for var in "${vars[@]}"; do
+        if [[ "$(argparser_is_variable_boolean "${!var}")" == false ]]; then
+            error_message="Error: The environment variable \"${var}\" is "
+            error_message+="set to \"${!var}\", but must be a boolean, i.e., "
+            error_message+="true or false."
+            error_messages+=("${error_message}")
+        fi
+    done
+
+    # Check if all environment variables expected to be characters are
+    # one-character strings.  Else, output an error message.
+    vars=(
+        ARGPARSER_ARG_DELIMITER_1
+        ARGPARSER_ARG_DELIMITER_2
+        ARGPARSER_HELP_FILE_INCLUDE_CHAR
+        ARGPARSER_USAGE_FILE_INCLUDE_CHAR
+    )
+    for var in "${vars[@]}"; do
+        if [[ "$(argparser_is_variable_character "${!var}")" == false ]]; then
+            error_message="Error: The environment variable \"${var}\" is "
+            error_message+="set to \"${!var}\", but must be a character, "
+            error_message+="i.e., a string comprising one printable ASCII "
+            error_message+="character."
+            error_messages+=("${error_message}")
+        fi
+    done
+
+    # Check if all environment variables to be used as Bash variable
+    # identifiers start with a letter or underscore and contain only
+    # letters, digits, and underscores.  Else, output an error message.
+    vars=(
+        ARGPARSER_ARG_ARRAY_NAME
+        ARGPARSER_POSITIONAL_NAME
+    )
+    for var in "${vars[@]}"; do
+        if [[ "$(argparser_is_variable_identifier "${!var}")" == false ]]; then
+            error_message="Error: The environment variable \"${var}\" is "
+            error_message+="set to \"${!var}\", but is designed to be used as "
+            error_message+="Bash variable identifier, i.e., must start with a "
+            error_message+="letter or underscore and contain only letters, "
+            error_message+="digits, and underscores."
+            error_messages+=("${error_message}")
+        fi
+    done
+
+    # Check if all environment variables expected to be integers are
+    # only digits, possibly with a leading sign.  Else, output an error
+    # message.
+    vars=(
+        ARGPARSER_ERROR_EXIT_CODE
+        ARGPARSER_HELP_EXIT_CODE
+        ARGPARSER_MAX_COL_WIDTH_1
+        ARGPARSER_MAX_COL_WIDTH_2
+        ARGPARSER_MAX_COL_WIDTH_3
+        ARGPARSER_USAGE_EXIT_CODE
+    )
+    for var in "${vars[@]}"; do
+        if [[ "$(argparser_is_variable_integer "${!var}")" == false ]]; then
+            error_message="Error: The environment variable \"${var}\" is "
+            error_message+="set to \"${!var}\", but must be an integer, i.e., "
+            error_message+="comprise only digits and possibly a leading sign."
+            error_messages+=("${error_message}")
+        fi
+    done
+
+    # Check if all environment variables expected to point to files has
+    # the referenced file existing, readable, and with a size greater
+    # than 0 bytes.  Else, output an error message.
+    vars=(
+        ARGPARSER_ARG_DEF_FILE
+        ARGPARSER_HELP_FILE
+        ARGPARSER_TRANSLATION_FILE
+        ARGPARSER_USAGE_FILE
+    )
+    for var in "${vars[@]}"; do
+        attributes="$(argparser_check_file "${!var}")"
+        if [[ -n "${!var}" && "${attributes}" != 0000 ]]
+        then
+            error_message="Error: The environment variable \"${var}\" is set "
+            error_message+="to \"${!var}\", but the referenced file "
+            case "${attributes}" in
+                0001) error_message+="is empty." ;;
+                0010) error_message+="is not readable." ;;
+                0011) error_message+="is not readable and empty." ;;
+                0100) error_message+="is not a regular file." ;;
+                0101) error_message+="is not a regular file and empty." ;;
+                0110)
+                    error_message+="is not a regular file and not readable."
+                    ;;
+                0111)
+                    error_message+="is not a regular file, not readable and "
+                    error_message+="empty."
+                    ;;
+                1*) error_message+="does not exist." ;;
+            esac
+            error_messages+=("${error_message}")
+        fi
+    done
+
+    # Check if all environment variables for styles only have values
+    # supported by argparser_colorize.  Else, output an error message.
+    vars=(
+        ARGPARSER_ERROR_STYLE
+        ARGPARSER_HELP_STYLE
+        ARGPARSER_USAGE_STYLE
+        ARGPARSER_WARNING_STYLE
+    )
+    for var in "${vars[@]}"; do
+        if [[ "$(argparser_check_color_or_style "${!var}")" == false ]]; then
+            error_message="Error: The environment variable \"${var}\" is "
+            error_message+="set to \"${!var}\", but the comma-separated "
+            error_message+="values must lie in {black,red,green,yellow,blue,"
+            error_message+="magenta,cyan,white} for colors and in {normal,"
+            error_message+="bold,faint,italic,underline,double,overline,"
+            error_message+="crossed-out,blink,reverse} for styles."
+            error_messages+=("${error_message}")
+        fi
+    done
+
+    # Check the environment variables with mutually exclusive values.
+    # First, check that the argument definition delimiters are
+    # different.
+    if [[ "${ARGPARSER_ARG_DELIMITER_1}" == "${ARGPARSER_ARG_DELIMITER_2}" ]]
+    then
+        error_message="Error: The environment variables "
+        error_message+="\"ARGPARSER_ARG_DELIMITER_1\" and "
+        error_message+="\"ARGPARSER_ARG_DELIMITER_2\" must be different."
+        error_messages+=("${error_message}")
+    fi
+
+    # Then, check that the language identifier is different from the
+    # delimiter in the translation file.
+    if [[ "${ARGPARSER_LANGUAGE}" == "${ARGPARSER_ARG_DELIMITER_1}" ]]; then
+        error_message="Error: The environment variables "
+        error_message+="\"ARGPARSER_LANGUAGE\" and "
+        error_message+="\"ARGPARSER_ARG_DELIMITER_1\" must be different."
+        error_messages+=("${error_message}")
+    fi
+
+    # Then, check that the variable names for the argument array and the
+    # positional arguments are different.
+    if [[ "${ARGPARSER_ARG_ARRAY_NAME}" == "${ARGPARSER_POSITIONAL_NAME}" ]]
+    then
+        error_message="Error: The environment variables "
+        error_message+="\"ARGPARSER_ARG_ARRAY_NAME\" and "
+        error_message+="\"ARGPARSER_POSITIONAL_NAME\" must be different."
+        error_messages+=("${error_message}")
+    fi
+
+    # Then, check that the arguments definition file, the help file, the
+    # translation file, and the usage file are different from each
+    # other, if given.
+    vars=(
+        ARGPARSER_ARG_DEF_FILE
+        ARGPARSER_HELP_FILE
+        ARGPARSER_TRANSLATION_FILE
+        ARGPARSER_USAGE_FILE
+    )
+    for i in "${!vars[@]}"; do
+        var_1="${vars[i]}"
+        for var_2 in "${vars[@]:$((i + 1))}"; do
+            if [[ -n "${!var_1}" && "${!var_1}" == "${!var_2}" ]]; then
+                error_message="Error: The environment variables \"${var_1}\" "
+                error_message+="and \"${var_2}\" point to the same file."
+                error_messages+=("${error_message}")
+            fi
+        done
+    done
+
+    # If there are error messages, colorize, sort, and print them, then
+    # exit, as parsing the arguments with a faulty environment variable
+    # configuration might be impossible.  If ${ARGPARSER_ERROR_STYLE} is
+    # among the faulty variables, the error messages cannot be properly
+    # colorized.  Thus, set the style to its default value.  The same
+    # holds true for ${ARGPARSER_ERROR_EXIT_CODE}.
+    if (( "${#error_messages[@]}" > 0 )); then
+        # Possibly, set the ${ARGPARSER_ERROR_STYLE} to its default
+        # value.
+        for error_message in "${error_messages[@]}"; do
+            if [[ "${error_messages}" == *"ARGPARSER_ERROR_STYLE"* ]]; then
+                ARGPARSER_ERROR_STYLE="red,bold,reverse"
+            elif [[ "${error_messages}" == *"ARGPARSER_ERROR_EXIT_CODE"* ]]
+            then
+                ARGPARSER_ERROR_EXIT_CODE=1
+            fi
+        done
+
+        # Colorize, sort, and print the error messages.
+        for i in "${!error_messages[@]}"; do
+            error_messages[i]="$(argparser_colorize \
+                "${ARGPARSER_ERROR_STYLE}" "${error_messages[i]}")"
+        done
+
+        mapfile -d "" -t error_messages \
+            < <(argparser_sort false "${error_messages[@]}")
+        printf '%s\n' "${error_messages[@]}" >&2
+        exit "${ARGPARSER_ERROR_EXIT_CODE}"
+    fi
+}
+
 function argparser_main() {
     # Parse the script's given arguments and check if they accord to
     # their definition.  Give proper error messages for wrongly set
@@ -2445,7 +2882,20 @@ function argparser_main() {
     fi
 }
 
-# If ${ARGPARSER_READ_ARGS} is set to true, read the arguments.
+# If ${ARGPARSER_CHECK_ENV_VARS} isn't set to false, check if the
+# environment variables accord to their definition.  Since
+# ${ARGPARSER_CHECK_ENV_VARS} is, as any other environment variable, yet
+# unchecked, its value may be different from the expected "true" or
+# "false".  Hence, testing for "not false" is not the exact opposite of
+# testing for "true".  Even more, if ${ARGPARSER_CHECK_ENV_VARS} is
+# different from "true" and "false", the test would be mandatory as it
+# shows the environment variables have been wrongly set.
+if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
+    argparser_check_env_vars
+fi
+
+# If ${ARGPARSER_READ_ARGS} is set to true, read and parse the
+# arguments.
 if [[ "${ARGPARSER_READ_ARGS}" == true ]]; then
     argparser_main "$@"
 fi
@@ -2519,12 +2969,20 @@ if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_check_arg_definition_names
     unset -f argparser_check_arg_definition_values
     unset -f argparser_check_arg_value
+    unset -f argparser_check_color_or_style
+    unset -f argparser_check_env_vars
+    unset -f argparser_check_file
     unset -f argparser_colorize
+    unset -f argparser_count
     unset -f argparser_create_help_message
     unset -f argparser_create_usage_message
     unset -f argparser_get_option_names
     unset -f argparser_in_array
     unset -f argparser_insert_line_breaks
+    unset -f argparser_is_variable_boolean
+    unset -f argparser_is_variable_character
+    unset -f argparser_is_variable_identifier
+    unset -f argparser_is_variable_integer
     unset -f argparser_main
     unset -f argparser_parse_arg
     unset -f argparser_print_help_or_usage_file
@@ -2547,6 +3005,7 @@ if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_ARG_DELIMITER_1
     unset ARGPARSER_ARG_DELIMITER_2
     unset ARGPARSER_CHECK_ARG_DEFINITION
+    unset ARGPARSER_CHECK_ENV_VARS
     unset ARGPARSER_ERROR_EXIT_CODE
     unset ARGPARSER_ERROR_STYLE
     unset ARGPARSER_HELP_EXIT_CODE
