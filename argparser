@@ -626,9 +626,10 @@ function argparser_check_env_vars() {
     local attributes
     local error_message
     local -a error_messages
-    local file
-    local -a files
+    local i
     local var
+    local var_1
+    local var_2
     local -a vars
 
     # Check if all environment variables expected to be booleans are
