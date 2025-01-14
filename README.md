@@ -695,6 +695,9 @@ Es gibt grundsätzlich zwei Optionen für die Hilfe-Meldungen.
 
 Finally, we need a translation file for the auto-generated parts. Note that here, only the German locale is used, while you may need to add further columns if your target users come from multiple countries.
 
+> [!IMPORTANT]
+> The file [`ARGPARSER_TRANSLATION_FILE`](#argparser_translation_file) refers to **must** end with a newline character (*i.e.*, the character `x0A` encoded as `$'\n'` in Bash). Else, the [`read`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-read "gnu.org &rightarrow; Bash builtins &rightarrow; read") builtin fails to read the last line, leading to a warning about a missing entry (the one in the last line).
+
 ```console
 $ cat translation.csv
 en_US.UTF-8:de_DE.UTF-8
