@@ -2278,7 +2278,7 @@ function argparser_main() {
         # into ${arg_value}.
         for message in "${parsed_arg[@]}"; do
             case "${message}" in
-                Help*)
+                Help)
                     # Print the help message.
                     help_message="$(argparser_print_help_or_usage_message \
                         "Help")"
@@ -2287,7 +2287,7 @@ function argparser_main() {
                     printf '%s\n' "${help_message}" >&2
                     exit "${ARGPARSER_HELP_EXIT_CODE}"
                     ;;
-                Usage*)
+                Usage)
                     # Print the usage message.
                     usage_message="$(argparser_print_help_or_usage_message \
                         "Usage")"
