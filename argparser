@@ -1180,6 +1180,8 @@ function argparser_read_translation() {
         warning_message="$(argparser_colorize "${ARGPARSER_WARNING_STYLE}" \
             "${warning_message}")"
         printf '%s\n' "${warning_message}" >&2
+
+        target_column="${source_column}"
     fi
 
     # Read all lines of the translation file and save the translation in
