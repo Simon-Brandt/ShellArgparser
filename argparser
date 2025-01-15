@@ -77,6 +77,7 @@ fi
 : "${ARGPARSER_MAX_COL_WIDTH_3:=39}"
 : "${ARGPARSER_POSITIONAL_NAME:="positional"}"
 : "${ARGPARSER_READ_ARGS:=true}"
+: "${ARGPARSER_SCRIPT_NAME:="${0##*/}"}"
 : "${ARGPARSER_SET_ARGS:=true}"
 : "${ARGPARSER_SET_ARRAYS:=true}"
 : "${ARGPARSER_TRANSLATION_FILE:=""}"
@@ -631,6 +632,9 @@ function argparser_check_env_vars() {
     # definition.  This should always be true for production scripts,
     # but maybe not while testing, and also not if the user is allowed
     # to set the variables himself.
+    #
+    # The following environment variables are unchecked:
+    # - ARGPARSER_SCRIPT_NAME
     #
     # Environment:
     # - ARGPARSER_ARG_ARRAY_NAME (read-only)
@@ -1843,7 +1847,6 @@ function argparser_create_help_message() {
     #
     # Nonlocals:
     # - args_definition: the arguments definition (read-only)
-    # - script_name: the script's name (read-only)
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_1 (read-only)
@@ -1851,6 +1854,7 @@ function argparser_create_help_message() {
     # - ARGPARSER_MAX_COL_WIDTH_1 (read-only)
     # - ARGPARSER_MAX_COL_WIDTH_2 (read-only)
     # - ARGPARSER_MAX_COL_WIDTH_3 (read-only)
+    # - ARGPARSER_SCRIPT_NAME (read-only)
 
     # Define the local variables.
     local arg_definition
@@ -2300,7 +2304,7 @@ function argparser_create_help_message() {
     # a trailing blank line to separate the block from the following
     # arguments.
     if [[ "${include_directive}" == "All" ]]; then
-        header="$(argparser_translate "Usage"): ${script_name} "
+        header="$(argparser_translate "Usage"): ${ARGPARSER_SCRIPT_NAME} "
         header+="$(argparser_translate "ARGUMENTS")"
         printf '%s\n\n' "${header}"
 
@@ -2308,7 +2312,7 @@ function argparser_create_help_message() {
             "are mandatory for short options too")."
         printf '%s\n\n' "${note}"
     elif [[ "${include_directive}" == "Header" ]]; then
-        header="$(argparser_translate "Usage"): ${script_name} "
+        header="$(argparser_translate "Usage"): ${ARGPARSER_SCRIPT_NAME} "
         header+="$(argparser_translate "ARGUMENTS")"
         printf '%s\n\n' "${header}"
 
@@ -2375,11 +2379,11 @@ function argparser_create_usage_message() {
     #
     # Nonlocals:
     # - args_definition: the arguments definition (read-only)
-    # - script_name: the script's name (read-only)
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_1 (read-only)
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+    # - ARGPARSER_SCRIPT_NAME (read-only)
 
     # Define the local variables.
     local arg_definition
@@ -2402,7 +2406,7 @@ function argparser_create_usage_message() {
     # arguments aligned, the length of the script name and the
     # (translated) leading "Usage: " determines the amount of whitespace
     # printed before them.
-    header="$(argparser_translate "Usage"): ${script_name}"
+    header="$(argparser_translate "Usage"): ${ARGPARSER_SCRIPT_NAME}"
     printf '%s [--help] [--usage]\n' "${header}"
     whitespace_len="${#header}"
     (( whitespace_len++ ))
@@ -2603,6 +2607,7 @@ function argparser_main() {
     # - ARGPARSER_HELP_EXIT_CODE (read-only)
     # - ARGPARSER_HELP_STYLE (read-only)
     # - ARGPARSER_POSITIONAL_NAME (read-only)
+    # - ARGPARSER_SCRIPT_NAME (read-only)
     # - ARGPARSER_TRANSLATION_FILE (read-only)
     # - ARGPARSER_USAGE_EXIT_CODE (read-only)
     # - ARGPARSER_USAGE_STYLE (read-only)
@@ -2631,14 +2636,12 @@ function argparser_main() {
     local name
     local names
     local parsed_arg
-    local script_name
     local usage_message
     local value_pattern
     local warning_message
     local -a warning_messages
 
     # Read the arguments.
-    readonly script_name="$0"
     read -a given_args <<< "$@"
 
     # Check if the variable that ${ARGPARSER_ARG_ARRAY_NAME} refers to
@@ -3146,6 +3149,7 @@ if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_MAX_COL_WIDTH_3
     unset ARGPARSER_POSITIONAL_NAME
     unset ARGPARSER_READ_ARGS
+    unset ARGPARSER_SCRIPT_NAME
     unset ARGPARSER_SET_ARGS
     unset ARGPARSER_SET_ARRAYS
     unset ARGPARSER_TRANSLATION_FILE

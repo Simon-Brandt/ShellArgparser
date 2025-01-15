@@ -873,6 +873,7 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)                   | *int*                              | `39`[^6]             |
 | [`ARGPARSER_POSITIONAL_NAME`](#argparser_positional_name)                   | *str*                              | `"positional"`       |
 | [`ARGPARSER_READ_ARGS`](#argparser_read_args)                               | *bool*                             | `true`               |
+| [`ARGPARSER_SCRIPT_NAME`](#argparser_script_name)                           | *str*                              | `"${0##*/}"`         |
 | [`ARGPARSER_SET_ARGS`](#argparser_set_args)                                 | *bool*                             | `true`               |
 | [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)                             | *bool*                             | `true`               |
 | [`ARGPARSER_TRANSLATION_FILE`](#argparser_translation_file)                 | *filepath* \| `""`                 | `""`                 |
@@ -1034,6 +1035,13 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Default value:*** `true`
 - ***Description:*** Whether to read the arguments from the command line (*i.e.*, from `"$@"`) and parse them to the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name) sets. Setting `ARGPARSER_READ_ARGS` is the same as calling `source argparser --read -- "$@"`. If set along [`ARGPARSER_SET_ARGS`](#argparser_set_args), it is the same as calling `source argparser --all -- "$@"` or a bare `source argparser`.  
 The main difference is that, if you `export` (or `declare -x`) the variables to subshells (like scripts called from your master script), they will inherit these environment variables. If, in your child script, you use a bare `source argparser`, *i.e.*, without specifying an action to the argparser, the setting from the inherited environment variables will be used. You can always override them by specifying an action. By this, you may set the environment variables in your master script and use the settings in some child scripts, with the others setting their own action.
+
+### `ARGPARSER_SCRIPT_NAME`
+
+- ***Type:*** *str* (String)
+- ***Allowed values:*** Any string
+- ***Default value:*** `"${0##*/}"`
+- ***Description:*** The name of your script as it should appear in the help and usage messages. By default, it is the name used upon invoking your script (`"$0"`), trimmed by everything before the last slash character (mimicking the behavior of `basename`). If, for example, you want to give your script a symlink, but don't want this symlink's name to be used in the help and usage messages, then you can provide a custom `ARGPARSER_SCRIPT_NAME`. Alternatively, if your script forms a sub-part of a larger program, it may be named `program_part.sh`, but should be called as `program name [ARGUMENTS]`.  Then, `program` could parse its positional argument `name` and call `program_part.sh`, but on the command line, you want to hide this implementation detail and refer to `program_part.sh` as `program name`, so you set `ARGPARSER_SCRIPT_NAME` accordingly.
 
 ### `ARGPARSER_SET_ARGS`
 
