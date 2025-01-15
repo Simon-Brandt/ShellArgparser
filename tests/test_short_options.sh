@@ -10,9 +10,9 @@
 
 # Source the argparser.  As the arguments have multiple short and long
 # options, override the default column widths for the help message.
-export ARGPARSER_MAX_COL_WIDTH_1=9
-export ARGPARSER_MAX_COL_WIDTH_2=33
-export ARGPARSER_MAX_COL_WIDTH_3=35
+ARGPARSER_MAX_COL_WIDTH_1=9
+ARGPARSER_MAX_COL_WIDTH_2=33
+ARGPARSER_MAX_COL_WIDTH_3=35
 
 # Define the arguments.
 args=(

@@ -9,7 +9,7 @@
 # Purpose: Test the functionality of the argparser.
 
 # Set the argparser, reading the arguments definition from a file.
-export ARGPARSER_ARG_DEF_FILE="arguments.lst"
+ARGPARSER_ARG_DEF_FILE="arguments.lst"
 
 # Set the arguments.
 args=(

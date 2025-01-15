@@ -9,7 +9,7 @@
 # Purpose: Test the functionality of the argparser.
 
 # Source the argparser, reading the help message from a file.
-export ARGPARSER_HELP_FILE="help_message.txt"
+ARGPARSER_HELP_FILE="help_message.txt"
 
 # Define the arguments.
 args=(

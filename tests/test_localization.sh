@@ -10,11 +10,11 @@
 
 # Set the argparser, reading the arguments definition from a file and
 # the help message from a file.
-export ARGPARSER_ARG_DEF_FILE="arguments_${LANG::2}.lst"
-export ARGPARSER_ARG_DEF_FILE_HAS_HEADER=true
-export ARGPARSER_HELP_FILE="help_message_${LANG::2}.txt"
-export ARGPARSER_LANGUAGE="${LANG::2}"
-export ARGPARSER_TRANSLATION_FILE="translation.csv"
+ARGPARSER_ARG_DEF_FILE="arguments_${LANG::2}.lst"
+ARGPARSER_ARG_DEF_FILE_HAS_HEADER=true
+ARGPARSER_HELP_FILE="help_message_${LANG::2}.txt"
+ARGPARSER_LANGUAGE="${LANG::2}"
+ARGPARSER_TRANSLATION_FILE="translation.csv"
 
 # Set the arguments.
 args=(

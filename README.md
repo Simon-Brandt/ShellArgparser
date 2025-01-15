@@ -30,7 +30,7 @@ git clone https://github.com/Steinedieb/shell_argparser.git
 To be able to refer to the argparser directly by its name, without providing the entire path (which enhances the portability of your script), you may want to add
 
 ```bash
-export PATH="/path/to/shell_argparser:${PATH}"
+PATH="/path/to/shell_argparser:${PATH}"
 ```
 
 (replace the `/path/to` with your actual path) to either of the following files (see `man bash`):
@@ -60,9 +60,9 @@ First, let's see how we can use the argparser to parse the arguments given to yo
 
 # Source the argparser.  As the arguments have multiple short and long
 # options, override the default column widths for the help message.
-export ARGPARSER_MAX_COL_WIDTH_1=9
-export ARGPARSER_MAX_COL_WIDTH_2=33
-export ARGPARSER_MAX_COL_WIDTH_3=35
+ARGPARSER_MAX_COL_WIDTH_1=9
+ARGPARSER_MAX_COL_WIDTH_2=33
+ARGPARSER_MAX_COL_WIDTH_3=35
 
 # Define the arguments.
 args=(
@@ -202,9 +202,9 @@ Now that you have seen how the argparser serves in parsing and interpreting the 
 
 # Source the argparser.  As the arguments have multiple short and long
 # options, override the default column widths for the help message.
-export ARGPARSER_MAX_COL_WIDTH_1=9
-export ARGPARSER_MAX_COL_WIDTH_2=33
-export ARGPARSER_MAX_COL_WIDTH_3=35
+ARGPARSER_MAX_COL_WIDTH_1=9
+ARGPARSER_MAX_COL_WIDTH_2=33
+ARGPARSER_MAX_COL_WIDTH_3=35
 
 # Define the arguments.
 args=(
@@ -399,7 +399,7 @@ For demonstration, we take a stripped-down version of our `try_argparser.sh` scr
 #!/bin/bash
 
 # Source the argparser, reading the help message from a file.
-export ARGPARSER_HELP_FILE="help_message.txt"
+ARGPARSER_HELP_FILE="help_message.txt"
 
 # Define the arguments.
 args=(
@@ -516,7 +516,7 @@ Using a separate argument definition file allows you to share the definition acr
 #!/bin/bash
 
 # Set the argparser, reading the arguments definition from a file.
-export ARGPARSER_ARG_DEF_FILE="arguments.lst"
+ARGPARSER_ARG_DEF_FILE="arguments.lst"
 
 # Set the arguments.
 args=(
@@ -620,11 +620,11 @@ then, in your script, you can set the `ARGPARSER_ARG_DEF_FILE` and `ARGPARSER_HE
 
 # Set the argparser, reading the arguments definition from a file and
 # the help message from a file.
-export ARGPARSER_ARG_DEF_FILE="arguments_${LANG::2}.lst"
-export ARGPARSER_ARG_DEF_FILE_HAS_HEADER=true
-export ARGPARSER_HELP_FILE="help_message_${LANG::2}.txt"
-export ARGPARSER_LANGUAGE="${LANG::2}"
-export ARGPARSER_TRANSLATION_FILE="translation.csv"
+ARGPARSER_ARG_DEF_FILE="arguments_${LANG::2}.lst"
+ARGPARSER_ARG_DEF_FILE_HAS_HEADER=true
+ARGPARSER_HELP_FILE="help_message_${LANG::2}.txt"
+ARGPARSER_LANGUAGE="${LANG::2}"
+ARGPARSER_TRANSLATION_FILE="translation.csv"
 
 # Set the arguments.
 args=(
@@ -1034,7 +1034,7 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Allowed values:*** `true` and `false` (case-sensitive)
 - ***Default value:*** `true`
 - ***Description:*** Whether to read the arguments from the command line (*i.e.*, from `"$@"`) and parse them to the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name) sets. Setting `ARGPARSER_READ_ARGS` is the same as calling `source argparser --read -- "$@"`. If set along [`ARGPARSER_SET_ARGS`](#argparser_set_args), it is the same as calling `source argparser --all -- "$@"` or a bare `source argparser`.  
-The main difference is that, if you `export` (or `declare -x`) the variables to subshells (like scripts called from your master script), they will inherit these environment variables. If, in your child script, you use a bare `source argparser`, *i.e.*, without specifying an action to the argparser, the setting from the inherited environment variables will be used. You can always override them by specifying an action. By this, you may set the environment variables in your master script and use the settings in some child scripts, with the others setting their own action.
+The main difference is that, if you `export` (or `declare -x`) the variables to child processes (like scripts called from your master script), they will inherit these environment variables. If, in your child script, you use a bare `source argparser`, *i.e.*, without specifying an action to the argparser, the setting from the inherited environment variables will be used. You can always override them by specifying an action. By this, you may set the environment variables in your master script and use the settings in some child scripts, with the others setting their own action.
 
 ### `ARGPARSER_SCRIPT_NAME`
 
