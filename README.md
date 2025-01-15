@@ -438,7 +438,7 @@ Additionally, we need a separate file, which we'll call `help_message.txt` and h
 > The file [`ARGPARSER_HELP_FILE`](#argparser_help_file) refers to **must** end with a newline character (*i.e.*, the character `x0A` encoded as `$'\n'` in Bash). Else, the [`read`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-read "gnu.org &rightarrow; Bash builtins &rightarrow; read") builtin fails to read the last line, leading to a truncated help message.
 
 ```console
-$ cat help_message.txt 
+$ cat help_message.txt
 # Print the header.
 A brief header summarizes the way how to interpret the help message.
 @Header
@@ -554,7 +554,7 @@ At the same time, we need an arguments definition file, aptly called `arguments.
 You could even add a header to explain the fields, which is shown in the [localization](#help-and-usage-message-localization) section. Then, you can set your text editor to interpret the data as CSV file, possibly syntax-highlighting the columns with the given header or visually aligning the columns (as done by the [Rainbow CSV](https://marketplace.visualstudio.com/items?itemName=mechatroner.rainbow-csv "Visual Studio Code &rightarrow; marketplace &rightarrow; Rainbow CSV extension") extension in [Visual Studio Code](https://code.visualstudio.com/ "Visual Studio Code")).
 
 ```console
-$ cat arguments.lst 
+$ cat arguments.lst
 var_1:a:var-1:-:-:1:Mandatory options:one value without default or choice
 var_2:b:var-2:-:-:+:Mandatory options:at least one value without default or choice
 var_3:c:var-3:-:A,B:+:Mandatory options:at least one value with choice
@@ -674,7 +674,7 @@ var_7:g:var-7:true:-:0:Optionale Optionen:kein Wert (Flag) mit Vorgabe
 The same is necessary for the printable part of the help file:
 
 ```console
-$ cat help_message_de_.txt 
+$ cat help_message_de.txt
 # Print the header.
 Eine kurze Kopfzeile fasst zusammen, wie die Hilfe-Meldung zu interpretieren
 ist.

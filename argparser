@@ -1744,7 +1744,7 @@ function argparser_translate() {
             warning_message="$(argparser_colorize \
                 "${ARGPARSER_WARNING_STYLE}" "${warning_message}")"
             printf '%s\n' "${warning_message}" >&2
-            
+
             printf '%s' "${string}"
         fi
     else
@@ -2794,7 +2794,7 @@ function argparser_main() {
     fi
 
     # If ${ARGPARSER_TRANSLATION_FILE} isn't set to the empty string,
-    # read the translation file, 
+    # read the translation file.
     if [[ -n "${ARGPARSER_TRANSLATION_FILE}" ]]; then
         argparser_read_translation
     fi
