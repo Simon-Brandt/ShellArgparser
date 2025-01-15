@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-14
+# Last Modification: 2025-01-15
 
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
@@ -621,6 +621,40 @@ function argparser_check_env_vars() {
     # definition.  This should always be true for production scripts,
     # but maybe not while testing, and also not if the user is allowed
     # to set the variables himself.
+    #
+    # Environment:
+    # - ARGPARSER_ARG_ARRAY_NAME
+    # - ARGPARSER_ARG_DEF_FILE
+    # - ARGPARSER_ARG_DEF_FILE_HAS_HEADER
+    # - ARGPARSER_ARG_DELIMITER_1
+    # - ARGPARSER_ARG_DELIMITER_2
+    # - ARGPARSER_CHECK_ARG_DEFINITION
+    # - ARGPARSER_CHECK_ENV_VARS
+    # - ARGPARSER_ERROR_EXIT_CODE
+    # - ARGPARSER_ERROR_STYLE
+    # - ARGPARSER_HELP_EXIT_CODE
+    # - ARGPARSER_HELP_FILE
+    # - ARGPARSER_HELP_FILE_INCLUDE_CHAR
+    # - ARGPARSER_HELP_FILE_KEEP_COMMENTS
+    # - ARGPARSER_HELP_STYLE
+    # - ARGPARSER_LANGUAGE
+    # - ARGPARSER_MAX_COL_WIDTH_1
+    # - ARGPARSER_MAX_COL_WIDTH_2
+    # - ARGPARSER_MAX_COL_WIDTH_3
+    # - ARGPARSER_POSITIONAL_NAME
+    # - ARGPARSER_READ_ARGS
+    # - ARGPARSER_SET_ARGS
+    # - ARGPARSER_SET_ARRAYS
+    # - ARGPARSER_TRANSLATION_FILE
+    # - ARGPARSER_UNSET_ARGS
+    # - ARGPARSER_UNSET_ENV_VARS
+    # - ARGPARSER_UNSET_FUNCTIONS
+    # - ARGPARSER_USAGE_EXIT_CODE
+    # - ARGPARSER_USAGE_FILE
+    # - ARGPARSER_USAGE_FILE_INCLUDE_CHAR
+    # - ARGPARSER_USAGE_FILE_KEEP_COMMENTS
+    # - ARGPARSER_USAGE_STYLE
+    # - ARGPARSER_WARNING_STYLE
 
     # Define the local variables.
     local attributes
@@ -856,6 +890,10 @@ function argparser_check_arg_definition_names() {
     # Nonlocals:
     # - args_definition: the arguments definition
     #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_1
+    # - ARGPARSER_ARG_DELIMITER_2
+    #
     # Output:
     # - the error messages, starting with "Error: ", possibly
     #   concatenated with null characters
@@ -1067,6 +1105,10 @@ function argparser_check_arg_definition_values() {
     # Nonlocals:
     # - args_definition: the arguments definition
     #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_1
+    # - ARGPARSER_ARG_DELIMITER_2
+    #
     # Output:
     # - the error messages, starting with "Error: ", possibly
     #   concatenated with null characters
@@ -1174,6 +1216,11 @@ function argparser_get_option_names() {
     # Nonlocals:
     # - args_definition: the arguments definition
     #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_1
+    # - ARGPARSER_ARG_DELIMITER_2
+    # - ARGPARSER_ERROR_STYLE
+    #
     # Output:
     # - the name of all short and long options as comma-separated string
 
@@ -1230,6 +1277,10 @@ function argparser_parse_arg() {
     # - args_definition: the arguments definition
     # - is_positional: whether the positional arguments delimiter "--"
     #   has already been set and has not been unset by "++"
+    #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_1
+    # - ARGPARSER_ARG_DELIMITER_2
     #
     # Output:
     # - the parsed argument as message or an error message, starting
@@ -1396,6 +1447,10 @@ function argparser_check_arg_value() {
     # Nonlocals:
     # - args_definition: the arguments definition
     #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_1
+    # - ARGPARSER_ARG_DELIMITER_2
+    #
     # Output:
     # - the parsed argument as message or an error message, starting
     #   with "Error: ", "Warning: ", or "Value: ", possibly concatenated
@@ -1561,6 +1616,14 @@ function argparser_read_translation() {
     #
     # Nonlocals:
     # - dictionary: the associative array holding the translation text
+    #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_1
+    # - ARGPARSER_ERROR_EXIT_CODE
+    # - ARGPARSER_ERROR_STYLE
+    # - ARGPARSER_LANGUAGE
+    # - ARGPARSER_TRANSLATION_FILE
+    # - ARGPARSER_WARNING_STYLE
 
     # Define the local variables.
     local column
@@ -1639,6 +1702,11 @@ function argparser_translate() {
     #
     # Nonlocals:
     # - dictionary: the associative array holding the translation text
+    #  
+    #
+    # Environment:
+    # - ARGPARSER_TRANSLATION_FILE
+    # - ARGPARSER_WARNING_STYLE
     #
     # Output:
     # - the translated string
@@ -1691,6 +1759,14 @@ function argparser_print_help_or_usage_file() {
     #
     # Arguments:
     # - $1: the help type ("Help" or "Usage")
+    #
+    # Environment:
+    # - ARGPARSER_HELP_FILE
+    # - ARGPARSER_HELP_FILE_INCLUDE_CHAR
+    # - ARGPARSER_HELP_FILE_KEEP_COMMENTS
+    # - ARGPARSER_USAGE_FILE
+    # - ARGPARSER_USAGE_FILE_INCLUDE_CHAR
+    # - ARGPARSER_USAGE_FILE_KEEP_COMMENTS
 
     # Define the local variables.
     local file
@@ -1756,6 +1832,13 @@ function argparser_create_help_message() {
     # Nonlocals:
     # - args_definition: the arguments definition
     # - script_name: the script's name
+    #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_1
+    # - ARGPARSER_ARG_DELIMITER_2
+    # - ARGPARSER_MAX_COL_WIDTH_1
+    # - ARGPARSER_MAX_COL_WIDTH_2
+    # - ARGPARSER_MAX_COL_WIDTH_3
 
     # Define the local variables.
     local arg_definition
@@ -2281,6 +2364,10 @@ function argparser_create_usage_message() {
     # Nonlocals:
     # - args_definition: the arguments definition
     # - script_name: the script's name
+    #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_1
+    # - ARGPARSER_ARG_DELIMITER_2
 
     # Define the local variables.
     local arg_definition
@@ -2452,6 +2539,10 @@ function argparser_print_help_or_usage_message() {
     #
     # Arguments:
     # - $1: the help type ("Help" or "Usage")
+    #
+    # Environment:
+    # - ARGPARSER_HELP_FILE
+    # - ARGPARSER_USAGE_FILE
 
     # Define the local variable.
     local help_type
@@ -2488,6 +2579,22 @@ function argparser_main() {
     # Globals:
     # - args: the parsed and checked arguments with key and value as
     #   associative array
+    #
+    # Environment:
+    # - ARGPARSER_ARG_ARRAY_NAME
+    # - ARGPARSER_ARG_DEF_FILE
+    # - ARGPARSER_ARG_DELIMITER_1
+    # - ARGPARSER_ARG_DELIMITER_2
+    # - ARGPARSER_CHECK_ARG_DEFINITION
+    # - ARGPARSER_ERROR_EXIT_CODE
+    # - ARGPARSER_ERROR_STYLE
+    # - ARGPARSER_HELP_EXIT_CODE
+    # - ARGPARSER_HELP_STYLE
+    # - ARGPARSER_POSITIONAL_NAME
+    # - ARGPARSER_TRANSLATION_FILE
+    # - ARGPARSER_USAGE_EXIT_CODE
+    # - ARGPARSER_USAGE_STYLE
+    # - ARGPARSER_WARNING_STYLE
 
     # Define the local variables.  If the variable that
     # ${ARGPARSER_ARG_ARRAY_NAME} refers to is undefined, all variables
