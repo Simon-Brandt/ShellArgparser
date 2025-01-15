@@ -6,6 +6,16 @@
 
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
+# TODO: Allow counting of flags, e.g., for -vv as doubled -v.
+# TODO: Add type checking for arguments.
+# TODO: Add support for names for keyword and positional arguments in
+#       help messages.
+# TODO: Add support for abbreviated long options, e.g., --verb for
+#       --verbose, if no collision with e.g., --verbatim arises.
+# TODO: Add ability to mark options as deprecated.
+# TODO: Add support for a header in arguments defintion files to allow
+#       changing their order.
+# TODO: Add support for a specific number of positional arguments.
 
 # Usage: Source this script with "source argparser" inside the script
 # whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS} is set
