@@ -623,38 +623,38 @@ function argparser_check_env_vars() {
     # to set the variables himself.
     #
     # Environment:
-    # - ARGPARSER_ARG_ARRAY_NAME
-    # - ARGPARSER_ARG_DEF_FILE
-    # - ARGPARSER_ARG_DEF_FILE_HAS_HEADER
-    # - ARGPARSER_ARG_DELIMITER_1
-    # - ARGPARSER_ARG_DELIMITER_2
-    # - ARGPARSER_CHECK_ARG_DEFINITION
-    # - ARGPARSER_CHECK_ENV_VARS
+    # - ARGPARSER_ARG_ARRAY_NAME (read-only)
+    # - ARGPARSER_ARG_DEF_FILE (read-only)
+    # - ARGPARSER_ARG_DEF_FILE_HAS_HEADER (read-only)
+    # - ARGPARSER_ARG_DELIMITER_1 (read-only)
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+    # - ARGPARSER_CHECK_ARG_DEFINITION (read-only)
+    # - ARGPARSER_CHECK_ENV_VARS (read-only)
     # - ARGPARSER_ERROR_EXIT_CODE
     # - ARGPARSER_ERROR_STYLE
-    # - ARGPARSER_HELP_EXIT_CODE
-    # - ARGPARSER_HELP_FILE
-    # - ARGPARSER_HELP_FILE_INCLUDE_CHAR
-    # - ARGPARSER_HELP_FILE_KEEP_COMMENTS
-    # - ARGPARSER_HELP_STYLE
-    # - ARGPARSER_LANGUAGE
-    # - ARGPARSER_MAX_COL_WIDTH_1
-    # - ARGPARSER_MAX_COL_WIDTH_2
-    # - ARGPARSER_MAX_COL_WIDTH_3
-    # - ARGPARSER_POSITIONAL_NAME
-    # - ARGPARSER_READ_ARGS
-    # - ARGPARSER_SET_ARGS
-    # - ARGPARSER_SET_ARRAYS
-    # - ARGPARSER_TRANSLATION_FILE
-    # - ARGPARSER_UNSET_ARGS
-    # - ARGPARSER_UNSET_ENV_VARS
-    # - ARGPARSER_UNSET_FUNCTIONS
-    # - ARGPARSER_USAGE_EXIT_CODE
-    # - ARGPARSER_USAGE_FILE
-    # - ARGPARSER_USAGE_FILE_INCLUDE_CHAR
-    # - ARGPARSER_USAGE_FILE_KEEP_COMMENTS
-    # - ARGPARSER_USAGE_STYLE
-    # - ARGPARSER_WARNING_STYLE
+    # - ARGPARSER_HELP_EXIT_CODE (read-only)
+    # - ARGPARSER_HELP_FILE (read-only)
+    # - ARGPARSER_HELP_FILE_INCLUDE_CHAR (read-only)
+    # - ARGPARSER_HELP_FILE_KEEP_COMMENTS (read-only)
+    # - ARGPARSER_HELP_STYLE (read-only)
+    # - ARGPARSER_LANGUAGE (read-only)
+    # - ARGPARSER_MAX_COL_WIDTH_1 (read-only)
+    # - ARGPARSER_MAX_COL_WIDTH_2 (read-only)
+    # - ARGPARSER_MAX_COL_WIDTH_3 (read-only)
+    # - ARGPARSER_POSITIONAL_NAME (read-only)
+    # - ARGPARSER_READ_ARGS (read-only)
+    # - ARGPARSER_SET_ARGS (read-only)
+    # - ARGPARSER_SET_ARRAYS (read-only)
+    # - ARGPARSER_TRANSLATION_FILE (read-only)
+    # - ARGPARSER_UNSET_ARGS (read-only)
+    # - ARGPARSER_UNSET_ENV_VARS (read-only)
+    # - ARGPARSER_UNSET_FUNCTIONS (read-only)
+    # - ARGPARSER_USAGE_EXIT_CODE (read-only)
+    # - ARGPARSER_USAGE_FILE (read-only)
+    # - ARGPARSER_USAGE_FILE_INCLUDE_CHAR (read-only)
+    # - ARGPARSER_USAGE_FILE_KEEP_COMMENTS (read-only)
+    # - ARGPARSER_USAGE_STYLE (read-only)
+    # - ARGPARSER_WARNING_STYLE (read-only)
 
     # Define the local variables.
     local attributes
@@ -888,11 +888,11 @@ function argparser_check_arg_definition_names() {
     # true for production scripts, but maybe not while testing.
     #
     # Nonlocals:
-    # - args_definition: the arguments definition
+    # - args_definition: the arguments definition (read-only)
     #
     # Environment:
-    # - ARGPARSER_ARG_DELIMITER_1
-    # - ARGPARSER_ARG_DELIMITER_2
+    # - ARGPARSER_ARG_DELIMITER_1 (read-only)
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     #
     # Output:
     # - the error messages, starting with "Error: ", possibly
@@ -1103,11 +1103,11 @@ function argparser_check_arg_definition_values() {
     # maybe not while testing.
     #
     # Nonlocals:
-    # - args_definition: the arguments definition
+    # - args_definition: the arguments definition (read-only)
     #
     # Environment:
-    # - ARGPARSER_ARG_DELIMITER_1
-    # - ARGPARSER_ARG_DELIMITER_2
+    # - ARGPARSER_ARG_DELIMITER_1 (read-only)
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     #
     # Output:
     # - the error messages, starting with "Error: ", possibly
@@ -1214,12 +1214,12 @@ function argparser_get_option_names() {
     # - $2: the order of the options ("short-long" or "long-short")
     #
     # Nonlocals:
-    # - args_definition: the arguments definition
+    # - args_definition: the arguments definition (read-only)
     #
     # Environment:
-    # - ARGPARSER_ARG_DELIMITER_1
-    # - ARGPARSER_ARG_DELIMITER_2
-    # - ARGPARSER_ERROR_STYLE
+    # - ARGPARSER_ARG_DELIMITER_1 (read-only)
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+    # - ARGPARSER_ERROR_STYLE (read-only)
     #
     # Output:
     # - the name of all short and long options as comma-separated string
@@ -1274,13 +1274,13 @@ function argparser_parse_arg() {
     # - $1: the argument to parse
     #
     # Nonlocals:
-    # - args_definition: the arguments definition
+    # - args_definition: the arguments definition (read-only)
     # - is_positional: whether the positional arguments delimiter "--"
-    #   has already been set and has not been unset by "++"
+    #   has already been set and has not been unset by "++" (read-only)
     #
     # Environment:
-    # - ARGPARSER_ARG_DELIMITER_1
-    # - ARGPARSER_ARG_DELIMITER_2
+    # - ARGPARSER_ARG_DELIMITER_1 (read-only)
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     #
     # Output:
     # - the parsed argument as message or an error message, starting
@@ -1445,11 +1445,11 @@ function argparser_check_arg_value() {
     #       ("-" or "+")
     #
     # Nonlocals:
-    # - args_definition: the arguments definition
+    # - args_definition: the arguments definition (read-only)
     #
     # Environment:
-    # - ARGPARSER_ARG_DELIMITER_1
-    # - ARGPARSER_ARG_DELIMITER_2
+    # - ARGPARSER_ARG_DELIMITER_1 (read-only)
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     #
     # Output:
     # - the parsed argument as message or an error message, starting
@@ -1618,12 +1618,12 @@ function argparser_read_translation() {
     # - dictionary: the associative array holding the translation text
     #
     # Environment:
-    # - ARGPARSER_ARG_DELIMITER_1
-    # - ARGPARSER_ERROR_EXIT_CODE
-    # - ARGPARSER_ERROR_STYLE
-    # - ARGPARSER_LANGUAGE
-    # - ARGPARSER_TRANSLATION_FILE
-    # - ARGPARSER_WARNING_STYLE
+    # - ARGPARSER_ARG_DELIMITER_1 (read-only)
+    # - ARGPARSER_ERROR_EXIT_CODE (read-only)
+    # - ARGPARSER_ERROR_STYLE (read-only)
+    # - ARGPARSER_LANGUAGE (read-only)
+    # - ARGPARSER_TRANSLATION_FILE (read-only)
+    # - ARGPARSER_WARNING_STYLE (read-only)
 
     # Define the local variables.
     local column
@@ -1702,11 +1702,11 @@ function argparser_translate() {
     #
     # Nonlocals:
     # - dictionary: the associative array holding the translation text
-    #  
+    #   (read-only)
     #
     # Environment:
-    # - ARGPARSER_TRANSLATION_FILE
-    # - ARGPARSER_WARNING_STYLE
+    # - ARGPARSER_TRANSLATION_FILE (read-only)
+    # - ARGPARSER_WARNING_STYLE (read-only)
     #
     # Output:
     # - the translated string
@@ -1761,12 +1761,12 @@ function argparser_print_help_or_usage_file() {
     # - $1: the help type ("Help" or "Usage")
     #
     # Environment:
-    # - ARGPARSER_HELP_FILE
-    # - ARGPARSER_HELP_FILE_INCLUDE_CHAR
-    # - ARGPARSER_HELP_FILE_KEEP_COMMENTS
-    # - ARGPARSER_USAGE_FILE
-    # - ARGPARSER_USAGE_FILE_INCLUDE_CHAR
-    # - ARGPARSER_USAGE_FILE_KEEP_COMMENTS
+    # - ARGPARSER_HELP_FILE (read-only)
+    # - ARGPARSER_HELP_FILE_INCLUDE_CHAR (read-only)
+    # - ARGPARSER_HELP_FILE_KEEP_COMMENTS (read-only)
+    # - ARGPARSER_USAGE_FILE (read-only)
+    # - ARGPARSER_USAGE_FILE_INCLUDE_CHAR (read-only)
+    # - ARGPARSER_USAGE_FILE_KEEP_COMMENTS (read-only)
 
     # Define the local variables.
     local file
@@ -1830,15 +1830,15 @@ function argparser_create_help_message() {
     #       argument group)
     #
     # Nonlocals:
-    # - args_definition: the arguments definition
-    # - script_name: the script's name
+    # - args_definition: the arguments definition (read-only)
+    # - script_name: the script's name (read-only)
     #
     # Environment:
-    # - ARGPARSER_ARG_DELIMITER_1
-    # - ARGPARSER_ARG_DELIMITER_2
-    # - ARGPARSER_MAX_COL_WIDTH_1
-    # - ARGPARSER_MAX_COL_WIDTH_2
-    # - ARGPARSER_MAX_COL_WIDTH_3
+    # - ARGPARSER_ARG_DELIMITER_1 (read-only)
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+    # - ARGPARSER_MAX_COL_WIDTH_1 (read-only)
+    # - ARGPARSER_MAX_COL_WIDTH_2 (read-only)
+    # - ARGPARSER_MAX_COL_WIDTH_3 (read-only)
 
     # Define the local variables.
     local arg_definition
@@ -2362,12 +2362,12 @@ function argparser_create_usage_message() {
     # Create a usage message for the script's arguments.
     #
     # Nonlocals:
-    # - args_definition: the arguments definition
-    # - script_name: the script's name
+    # - args_definition: the arguments definition (read-only)
+    # - script_name: the script's name (read-only)
     #
     # Environment:
-    # - ARGPARSER_ARG_DELIMITER_1
-    # - ARGPARSER_ARG_DELIMITER_2
+    # - ARGPARSER_ARG_DELIMITER_1 (read-only)
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
 
     # Define the local variables.
     local arg_definition
@@ -2541,8 +2541,8 @@ function argparser_print_help_or_usage_message() {
     # - $1: the help type ("Help" or "Usage")
     #
     # Environment:
-    # - ARGPARSER_HELP_FILE
-    # - ARGPARSER_USAGE_FILE
+    # - ARGPARSER_HELP_FILE (read-only)
+    # - ARGPARSER_USAGE_FILE (read-only)
 
     # Define the local variable.
     local help_type
@@ -2581,20 +2581,20 @@ function argparser_main() {
     #   associative array
     #
     # Environment:
-    # - ARGPARSER_ARG_ARRAY_NAME
-    # - ARGPARSER_ARG_DEF_FILE
-    # - ARGPARSER_ARG_DELIMITER_1
-    # - ARGPARSER_ARG_DELIMITER_2
-    # - ARGPARSER_CHECK_ARG_DEFINITION
-    # - ARGPARSER_ERROR_EXIT_CODE
-    # - ARGPARSER_ERROR_STYLE
-    # - ARGPARSER_HELP_EXIT_CODE
-    # - ARGPARSER_HELP_STYLE
-    # - ARGPARSER_POSITIONAL_NAME
-    # - ARGPARSER_TRANSLATION_FILE
-    # - ARGPARSER_USAGE_EXIT_CODE
-    # - ARGPARSER_USAGE_STYLE
-    # - ARGPARSER_WARNING_STYLE
+    # - ARGPARSER_ARG_ARRAY_NAME (read-only)
+    # - ARGPARSER_ARG_DEF_FILE (read-only)
+    # - ARGPARSER_ARG_DELIMITER_1 (read-only)
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+    # - ARGPARSER_CHECK_ARG_DEFINITION (read-only)
+    # - ARGPARSER_ERROR_EXIT_CODE (read-only)
+    # - ARGPARSER_ERROR_STYLE (read-only)
+    # - ARGPARSER_HELP_EXIT_CODE (read-only)
+    # - ARGPARSER_HELP_STYLE (read-only)
+    # - ARGPARSER_POSITIONAL_NAME (read-only)
+    # - ARGPARSER_TRANSLATION_FILE (read-only)
+    # - ARGPARSER_USAGE_EXIT_CODE (read-only)
+    # - ARGPARSER_USAGE_STYLE (read-only)
+    # - ARGPARSER_WARNING_STYLE (read-only)
 
     # Define the local variables.  If the variable that
     # ${ARGPARSER_ARG_ARRAY_NAME} refers to is undefined, all variables
