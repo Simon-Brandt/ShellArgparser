@@ -1150,8 +1150,10 @@ function argparser_check_arg_definition_values() {
         # required and default arguments.  Ignore flags as long as they have
         # the only default value of true or false, but a number of required
         # values of 0.
-        if [[ "${arg_number}" != "+" && "${default_values[0]}" != "-" \
-            && "${#default_values[@]}" != "${arg_number}" && "${arg_number}" != 0 \
+        if [[ "${arg_number}" != "+" \
+            && "${default_values[0]}" != "-" \
+            && "${#default_values[@]}" != "${arg_number}" \
+            && "${arg_number}" != 0 \
             && "${#default_values[@]}" != 1 ]]
         then
             if [[ "${arg_number}" == 1 ]]; then
