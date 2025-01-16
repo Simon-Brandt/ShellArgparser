@@ -2699,7 +2699,7 @@ function argparser_print_help_or_usage_message() {
 }
 
 # Define the main argparser function.
-function argparser_main() {
+function argparser_main() (
     # Parse the script's given arguments and check if they accord to
     # their definition.  Give proper error messages for wrongly set
     # arguments and assign the values to the respective variables.
@@ -2759,6 +2759,10 @@ function argparser_main() {
 
     # Read the arguments.
     read -a given_args <<< "$@"
+
+    # Enable extglob.  Since all functions relying on it being set are
+    # called from argparser_main(), they inherit the option.
+    shopt -s extglob
 
     # Check if the variable that ${ARGPARSER_ARG_ARRAY_NAME} refers to
     # is defined.  If not, guess how it may be called by searching the
@@ -3126,7 +3130,7 @@ function argparser_main() {
         printf '\n%s\n' "${usage_message}" >&2
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
     fi
-}
+)
 
 # If ${ARGPARSER_CHECK_ENV_VARS} isn't set to false, check if the
 # environment variables accord to their definition.  Since
