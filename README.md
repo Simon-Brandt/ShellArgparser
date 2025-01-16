@@ -770,7 +770,7 @@ Aufruf: try_localization.sh [--help] [--usage]
 
 ### Message styles
 
-It is possible to customize the appearance of error, warning, help, and usage messages using the respective environment variable, *viz.*, [`ARGPARSER_ERROR_STYLE`](#argparser_error_style), [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style), [`ARGPARSER_HELP_STYLE`](#argparser_help_style), and [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style).  Using [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters"), messages can be colorized and stylized. This is especially useful to quickly see errors when logging, but requires that the terminal or text editor, with which you opened the log file, supports interpreting the escape codes. This is, *e.g.*, supported by `less --raw-control-chars <filename>`.
+It is possible to customize the appearance of error, warning, help, and usage messages using the respective environment variable, *viz.*, [`ARGPARSER_ERROR_STYLE`](#argparser_error_style), [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style), [`ARGPARSER_HELP_STYLE`](#argparser_help_style), and [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style).  Using [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters"), messages can be colorized and stylized. This is especially useful to quickly see errors when logging, but requires that the terminal or text editor, with which you opened the log file, supports interpreting the escape codes. This is, *e.g.*, supported by `less --raw-control-chars <filename>`. When [`ARGPARSER_USE_STYLES_IN_FILES`](#argparser_use_styles_in_files) is set to `false`, the escape sequences are only included when `STDERR` is a terminal, keeping files plain ASCII for simpler parsing.
 
 A number of colors and styles is available. Note that you don't need to remember the SGR codes, they're only internally used and given here for reference, what to expect from the keywords for the colors and styles. Further note that the actual RGB/Hex color values will depend on the output device.
 
@@ -885,6 +885,7 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_USAGE_FILE_INCLUDE_CHAR`](#argparser_usage_file_include_char)   | *char*                             | `"@"`                |
 | [`ARGPARSER_USAGE_FILE_KEEP_COMMENTS`](#argparser_usage_file_keep_comments) | *bool*                             | `false`              |
 | [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style)                           | *str*                              | `"italic"`           |
+| [`ARGPARSER_USE_STYLES_IN_FILES`](#argparser_use_styles_in_files)           | *bool*                             | `"false"`            |
 | [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style)                       | *str*                              | `"red,bold"`         |
 
 [^1]: Bash is weakly typed, hence the denoted types are just a guidance.
@@ -1122,6 +1123,13 @@ The main difference is that, if you `export` (or `declare -x`) the variables to 
 - ***Allowed values:*** Any comma-separated string consisting of a color and/or style, with the colors being `"black"`, `"red"`, `"green"`, `"yellow"`, `"blue"`, `"magenta"`, `"cyan"`, and `"white"`, and the styles being `"normal"`, `"bold"`, `"faint"`, `"italic"`, `"underline"`, `"double"`, `"overline"`, `"crossed-out"`, `"blink"`, and `"reverse"`
 - ***Default value:*** `"italic"`
 - ***Description:*** The color and style specification to use for usage messages, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters").
+
+### `ARGPARSER_USE_STYLES_IN_FILES`
+
+- ***Type:*** *bool* (Boolean)
+- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Default value:*** `false`
+- ***Description:*** Whether to use the colors and styles from [`ARGPARSER_ERROR_STYLE`](#argparser_error_style), [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style), [`ARGPARSER_HELP_STYLE`](#argparser_help_style), and [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style) when `STDERR` is not a terminal (and thus perhaps a file). This is useful to get plain ASCII text output for files, while in interactive sessions, the escape sequences offer more user-friendly formatting and highlighting possibilities. By this, you can parse your files afterwards more easily. Still, using *e.g.* `less --raw-control-chars <filename>`, these escape sequences can be displayed from files, when included.
 
 ### `ARGPARSER_WARNING_STYLE`
 

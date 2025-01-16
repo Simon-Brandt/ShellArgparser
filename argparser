@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-15
+# Last Modification: 2025-01-16
 
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
@@ -89,6 +89,7 @@ fi
 : "${ARGPARSER_USAGE_FILE_INCLUDE_CHAR:="@"}"
 : "${ARGPARSER_USAGE_FILE_KEEP_COMMENTS:=false}"
 : "${ARGPARSER_USAGE_STYLE:="italic"}"
+: "${ARGPARSER_USE_STYLES_IN_FILES:=false}"
 : "${ARGPARSER_WARNING_STYLE:="red,bold"}"
 
 # Define the argparser functions used for general tests.
@@ -457,6 +458,9 @@ function argparser_colorize() {
     # - $1: the colors and/or styles to use as comma-separated list
     # - $2: the string to colorize
     #
+    # Environment:
+    # - ARGPARSER_USE_STYLES_IN_FILES (read-only)
+    #
     # Output:
     # - the colorized string
 
@@ -502,18 +506,24 @@ function argparser_colorize() {
 
     # Split the requested color and/or style on commas and print any.
     # Then, print the string and reset the color and style.
-    IFS="," read -a requests <<< "${requests}"
-    for request in "${requests[@]}"; do
-        if [[ "$(argparser_in_array "${request}" "${!colors[@]}")" == true ]]
-        then
-            printf '\e[%sm' "${colors[${request}]}"
-        elif [[ "$(argparser_in_array "${request}" "${!styles[@]}")" == true ]]
-        then
-            printf '\e[%sm' "${styles[${request}]}"
-        fi
-    done
+    if [[ "${ARGPARSER_USE_STYLES_IN_FILES}" == true || -t 2 ]]; then
+        IFS="," read -a requests <<< "${requests}"
+        for request in "${requests[@]}"; do
+            if [[ "$(argparser_in_array "${request}" \
+                "${!colors[@]}")" == true ]]
+            then
+                printf '\e[%sm' "${colors[${request}]}"
+            elif [[ "$(argparser_in_array "${request}" \
+                "${!styles[@]}")" == true ]]
+            then
+                printf '\e[%sm' "${styles[${request}]}"
+            fi
+        done
 
-    printf '%s\e[0m' "${string}"
+        printf '%s\e[0m' "${string}"
+    else
+        printf '%s' "${string}"
+    fi
 }
 
 # Define the argparser functions for checking the environment variables
@@ -668,6 +678,7 @@ function argparser_check_env_vars() {
     # - ARGPARSER_USAGE_FILE_INCLUDE_CHAR (read-only)
     # - ARGPARSER_USAGE_FILE_KEEP_COMMENTS (read-only)
     # - ARGPARSER_USAGE_STYLE (read-only)
+    # - ARGPARSER_USE_STYLES_IN_FILES (read-only)
     # - ARGPARSER_WARNING_STYLE (read-only)
 
     # Define the local variables.
@@ -695,6 +706,7 @@ function argparser_check_env_vars() {
         ARGPARSER_UNSET_ENV_VARS
         ARGPARSER_UNSET_FUNCTIONS
         ARGPARSER_USAGE_FILE_KEEP_COMMENTS
+        ARGPARSER_USE_STYLES_IN_FILES
     )
     for var in "${vars[@]}"; do
         if [[ "$(argparser_is_variable_boolean "${!var}")" == false ]]; then
@@ -3207,5 +3219,6 @@ if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_USAGE_FILE_INCLUDE_CHAR
     unset ARGPARSER_USAGE_FILE_KEEP_COMMENTS
     unset ARGPARSER_USAGE_STYLE
+    unset ARGPARSER_USE_STYLES_IN_FILES
     unset ARGPARSER_WARNING_STYLE
 fi
