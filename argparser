@@ -221,6 +221,115 @@ function argparser_is_variable_integer() {
     fi
 }
 
+function argparser_check_color_or_style() {
+    # Check if the specified colors and/or styles are implemented for
+    # argparser_colorize.
+    #
+    # Arguments:
+    # - $1: the colors and/or styles to use as comma-separated list
+    #
+    # Output:
+    # - true, if all colors and/or styles are implemented
+    # - false, else
+
+    # Define the local variables.
+    local color
+    local -a colors
+    local request
+    local requests
+    local style
+    local -a styles
+
+    # Read the argument.
+    requests="$1"
+
+    # Define the arrays of implemented colors and styles.
+    colors=(
+        black
+        red
+        green
+        yellow
+        blue
+        magenta
+        cyan
+        white
+    )
+
+    styles=(
+        normal
+        bold
+        faint
+        italic
+        underline
+        double
+        overline
+        crossed-out
+        blink
+        reverse
+    )
+
+    # Split the requested color and/or style on commas and print any.
+    # Then, print the string and reset the color and style.  If a
+    # non-existing color or style is requested, abort the script with
+    # an error message.
+    IFS="," read -a requests <<< "${requests}"
+    for request in "${requests[@]}"; do
+        if [[ "$(argparser_in_array "${request}" "${colors[@]}")" == false \
+            && "$(argparser_in_array "${request}" "${styles[@]}")" == false ]]
+        then
+            printf false
+            return
+        fi
+    done
+
+    printf true
+}
+
+function argparser_check_file() {
+    # Check if a file exists, is a regular file, is readable, and has a
+    # size greater than 0 bytes.
+    #
+    # Arguments:
+    # - $1: the file to check
+    #
+    # Output:
+    # - a bit mask with four bits set to 0 (true) if the file exists
+    #   (first bit), is a regular file (second bit), is readable (third
+    #   bit), and/or has a size greater than 0 bytes (fourth bit), else
+    #   set to 1 (false)
+
+    # Define the local variable.
+    local file
+
+    # Read the argument.
+    file="$1"
+
+    # Check the variable's value.
+    if [[ -e "${file}" ]]; then
+        printf 0
+    else
+        printf 1
+    fi
+
+    if [[ -f "${file}" ]]; then
+        printf 0
+    else
+        printf 1
+    fi
+
+    if [[ -r "${file}" ]]; then
+        printf 0
+    else
+        printf 1
+    fi
+
+    if [[ -s "${file}" ]]; then
+        printf 0
+    else
+        printf 1
+    fi
+}
+
 # Define the general argparser util functions.
 function argparser_fold() {
     # Limit the width of a help message's column to max_col_width by
@@ -528,115 +637,6 @@ function argparser_colorize() {
 
 # Define the argparser functions for checking the environment variables
 # and the arguments definition.
-function argparser_check_color_or_style() {
-    # Check if the specified colors and/or styles are implemented for
-    # argparser_colorize.
-    #
-    # Arguments:
-    # - $1: the colors and/or styles to use as comma-separated list
-    #
-    # Output:
-    # - true, if all colors and/or styles are implemented
-    # - false, else
-
-    # Define the local variables.
-    local color
-    local -a colors
-    local request
-    local requests
-    local style
-    local -a styles
-
-    # Read the argument.
-    requests="$1"
-
-    # Define the arrays of implemented colors and styles.
-    colors=(
-        black
-        red
-        green
-        yellow
-        blue
-        magenta
-        cyan
-        white
-    )
-
-    styles=(
-        normal
-        bold
-        faint
-        italic
-        underline
-        double
-        overline
-        crossed-out
-        blink
-        reverse
-    )
-
-    # Split the requested color and/or style on commas and print any.
-    # Then, print the string and reset the color and style.  If a
-    # non-existing color or style is requested, abort the script with
-    # an error message.
-    IFS="," read -a requests <<< "${requests}"
-    for request in "${requests[@]}"; do
-        if [[ "$(argparser_in_array "${request}" "${colors[@]}")" == false \
-            && "$(argparser_in_array "${request}" "${styles[@]}")" == false ]]
-        then
-            printf false
-            return
-        fi
-    done
-
-    printf true
-}
-
-function argparser_check_file() {
-    # Check if a file exists, is a regular file, is readable, and has a
-    # size greater than 0 bytes.
-    #
-    # Arguments:
-    # - $1: the file to check
-    #
-    # Output:
-    # - a bit mask with four bits set to 0 (true) if the file exists
-    #   (first bit), is a regular file (second bit), is readable (third
-    #   bit), and/or has a size greater than 0 bytes (fourth bit), else
-    #   set to 1 (false)
-
-    # Define the local variable.
-    local file
-
-    # Read the argument.
-    file="$1"
-
-    # Check the variable's value.
-    if [[ -e "${file}" ]]; then
-        printf 0
-    else
-        printf 1
-    fi
-
-    if [[ -f "${file}" ]]; then
-        printf 0
-    else
-        printf 1
-    fi
-
-    if [[ -r "${file}" ]]; then
-        printf 0
-    else
-        printf 1
-    fi
-
-    if [[ -s "${file}" ]]; then
-        printf 0
-    else
-        printf 1
-    fi
-}
-
 function argparser_check_env_vars() {
     # Check if the argparser envirnoment variables accord to their
     # definition.  This should always be true for production scripts,
