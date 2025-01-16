@@ -868,9 +868,9 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_HELP_FILE_KEEP_COMMENTS`](#argparser_help_file_keep_comments)   | *bool*                             | `false`              |
 | [`ARGPARSER_HELP_STYLE`](#argparser_help_style)                             | *str*                              | `"italic"`           |
 | [`ARGPARSER_LANGUAGE`](#argparser_language)                                 | *str*                              | `"en"`               |
-| [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1)                   | *int*                              | `5`[^6]              |
-| [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2)                   | *int*                              | `33`[^6]             |
-| [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)                   | *int*                              | `39`[^6]             |
+| [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1)                   | *uint*                             | `5`[^6]              |
+| [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2)                   | *uint*                             | `33`[^6]             |
+| [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)                   | *uint*                             | `39`[^6]             |
 | [`ARGPARSER_POSITIONAL_NAME`](#argparser_positional_name)                   | *str*                              | `"positional"`       |
 | [`ARGPARSER_READ_ARGS`](#argparser_read_args)                               | *bool*                             | `true`               |
 | [`ARGPARSER_SCRIPT_NAME`](#argparser_script_name)                           | *str*                              | `"${0##*/}"`         |
@@ -893,7 +893,7 @@ The argparser defines a large set of environment variables, each following the n
 [^3]: Bools must be lowercase, *i.e.*, `true` or `false`.
 [^4]: In fact, any legit Bash variable identifier.
 [^5]: Values must be different from each other.
-[^6]: Values must be positive integers of a reasonable magnitude (recommended sum: 77).
+[^6]: Sum of values is recommended to be 77.
 
 ### `ARGPARSER_ARG_ARRAY_NAME`
 
@@ -1002,7 +1002,7 @@ The argparser defines a large set of environment variables, each following the n
 
 ### `ARGPARSER_MAX_COL_WIDTH_1`
 
-- ***Type:*** *int* (Integer)
+- ***Type:*** *uint* (Unsigned integer)
 - ***Allowed values:*** Any positive integer
 - ***Default value:*** `5`
 - ***Description:*** The maximum column width of the first column in the generated help message. This column holds the short options of the arguments, hence, it can be rather narrow. The column's content gets wrapped by line breaks if its width exceeds the `ARGPARSER_MAX_COL_WIDTH_1`. If it is less wide, the column is shrunk accordingly.  
@@ -1010,14 +1010,14 @@ It is recommendable to have a total width of the help message of 79 characters. 
 
 ### `ARGPARSER_MAX_COL_WIDTH_2`
 
-- ***Type:*** *int* (Integer)
+- ***Type:*** *uint* (Unsigned integer)
 - ***Allowed values:*** Any positive integer
 - ***Default value:*** `33`
 - ***Description:*** The maximum column width of the second column in the generated help message. This column holds the long options of the arguments, hence, it should be rather wide. The column's content gets wrapped by line breaks if its width exceeds the `ARGPARSER_MAX_COL_WIDTH_2`. If it is less wide, the column is shrunk accordingly. For details, refer to [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1).
 
 ### `ARGPARSER_MAX_COL_WIDTH_3`
 
-- ***Type:*** *int* (Integer)
+- ***Type:*** *uint* (Unsigned integer)
 - ***Allowed values:*** Any positive integer
 - ***Default value:*** `39`
 - ***Description:*** The maximum column width of the third column in the generated help message. This column holds the help text of the arguments, hence, it should be rather wide. The column's content gets wrapped by line breaks if its width exceeds the `ARGPARSER_MAX_COL_WIDTH_3`. If it is less wide, the column is shrunk accordingly. For details, refer to [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1).

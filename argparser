@@ -221,6 +221,30 @@ function argparser_is_variable_integer() {
     fi
 }
 
+function argparser_is_variable_unsigned_integer() {
+    # Check if a variable's value is an unsigned integer.
+    #
+    # Arguments:
+    # - $1: the variable whose value to check
+    #
+    # Output:
+    # - true, if the variable's value is an unsigned integer
+    # - false, else
+
+    # Define the local variable.
+    local var
+
+    # Read the argument.
+    var="$1"
+
+    # Check the variable's value.
+    if [[ "${var}" == +([[:digit:]]) ]]; then
+        printf true
+    else
+        printf false
+    fi
+}
+
 function argparser_check_color_or_style() {
     # Check if the specified colors and/or styles are implemented for
     # argparser_colorize.
@@ -780,9 +804,6 @@ function argparser_check_env_vars() {
     vars=(
         ARGPARSER_ERROR_EXIT_CODE
         ARGPARSER_HELP_EXIT_CODE
-        ARGPARSER_MAX_COL_WIDTH_1
-        ARGPARSER_MAX_COL_WIDTH_2
-        ARGPARSER_MAX_COL_WIDTH_3
         ARGPARSER_USAGE_EXIT_CODE
     )
     for var in "${vars[@]}"; do
@@ -790,6 +811,23 @@ function argparser_check_env_vars() {
             error_message="Error: The environment variable \"${var}\" is "
             error_message+="set to \"${!var}\", but must be an integer, i.e., "
             error_message+="comprise only digits and possibly a leading sign."
+            error_messages+=("${error_message}")
+        fi
+    done
+
+    # Check if all environment variables expected to be unsigned
+    # integers are only digits.  Else, output an error message.
+    vars=(
+        ARGPARSER_MAX_COL_WIDTH_1
+        ARGPARSER_MAX_COL_WIDTH_2
+        ARGPARSER_MAX_COL_WIDTH_3
+    )
+    for var in "${vars[@]}"; do
+        if [[ "$(argparser_is_variable_unsigned_integer "${!var}")" == false ]]
+        then
+            error_message="Error: The environment variable \"${var}\" is "
+            error_message+="set to \"${!var}\", but must be an unsigned "
+            error_message+="integer, i.e., comprise only digits and no sign."
             error_messages+=("${error_message}")
         fi
     done
@@ -805,8 +843,7 @@ function argparser_check_env_vars() {
     )
     for var in "${vars[@]}"; do
         attributes="$(argparser_check_file "${!var}")"
-        if [[ -n "${!var}" && "${attributes}" != 0000 ]]
-        then
+        if [[ -n "${!var}" && "${attributes}" != 0000 ]]; then
             error_message="Error: The environment variable \"${var}\" is set "
             error_message+="to \"${!var}\", but the referenced file "
             case "${attributes}" in
@@ -3192,6 +3229,7 @@ if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_is_variable_character
     unset -f argparser_is_variable_identifier
     unset -f argparser_is_variable_integer
+    unset -f argparser_is_variable_unsigned_integer
     unset -f argparser_main
     unset -f argparser_parse_arg
     unset -f argparser_print_help_or_usage_file
