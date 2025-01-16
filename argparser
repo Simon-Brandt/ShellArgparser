@@ -331,6 +331,27 @@ function argparser_check_file() {
 }
 
 # Define the general argparser util functions.
+function argparser_trim() {
+    # Trim leading an trailing space characters from a string.
+    #
+    # Arguments:
+    # - $1: the string to trim
+    #
+    # Output:
+    # - the trimmed string
+
+    # Define the local variables.
+    local string
+
+    # Read the argument.
+    string="$1"
+
+    # Trim and output the string.
+    string="${string##+( )}"
+    string="${string%%+( )}"
+    printf '%s' "${string}"
+}
+
 function argparser_fold() {
     # Limit the width of a help message's column to max_col_width by
     # inserting line breaks.
@@ -3164,9 +3185,9 @@ if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_count
     unset -f argparser_create_help_message
     unset -f argparser_create_usage_message
+    unset -f argparser_fold
     unset -f argparser_get_option_names
     unset -f argparser_in_array
-    unset -f argparser_fold
     unset -f argparser_is_variable_boolean
     unset -f argparser_is_variable_character
     unset -f argparser_is_variable_identifier
@@ -3179,6 +3200,7 @@ if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_read_translation
     unset -f argparser_sort
     unset -f argparser_translate
+    unset -f argparser_trim
     unset -f argparser_uniq
 fi
 
