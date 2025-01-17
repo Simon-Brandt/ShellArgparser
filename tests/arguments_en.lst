@@ -1,4 +1,4 @@
-Identifier:Short options:Long Options:Default value:Choice values:Number of values:Argument group:Help text
+id:short_opts:long_opts:defaults:choices:arg_no:arg_group:help
 var_1:a:var-1:-:-:1:Mandatory options:one value without default or choice
 var_2:b:var-2:-:-:+:Mandatory options:at least one value without default or choice
 var_3:c:var-3:-:A,B:+:Mandatory options:at least one value with choice

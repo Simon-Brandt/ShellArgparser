@@ -1,4 +1,4 @@
-Identifikator:Kurze Optionen:Lange Optionen:Vorgabewerte:Auswahlwerte:Anzahl Werte:Argumentgruppe:Hilfetext
+id:short_opts:long_opts:defaults:choices:arg_no:arg_group:help
 var_1:a:var-1:-:-:1:Erforderliche Optionen:ein Wert ohne Vorgabe und Auswahl
 var_2:b:var-2:-:-:+:Erforderliche Optionen:mindestens ein Wert ohne Vorgabe und Auswahl
 var_3:c:var-3:-:A,B:+:Erforderliche Optionen:mindestens ein Wert mit Auswahl
