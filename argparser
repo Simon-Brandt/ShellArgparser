@@ -126,7 +126,7 @@ function argparser_in_array() {
     printf false
 }
 
-function argparser_is_variable_boolean() {
+function argparser_is_variable_bool() {
     # Check if a variable's value is a boolean.
     #
     # Arguments:
@@ -150,7 +150,7 @@ function argparser_is_variable_boolean() {
     fi
 }
 
-function argparser_is_variable_character() {
+function argparser_is_variable_char() {
     # Check if a variable's value is a (printable) character.
     #
     # Arguments:
@@ -198,7 +198,7 @@ function argparser_is_variable_identifier() {
     fi
 }
 
-function argparser_is_variable_integer() {
+function argparser_is_variable_int() {
     # Check if a variable's value is an integer.
     #
     # Arguments:
@@ -222,7 +222,7 @@ function argparser_is_variable_integer() {
     fi
 }
 
-function argparser_is_variable_unsigned_integer() {
+function argparser_is_variable_uint() {
     # Check if a variable's value is an unsigned integer.
     #
     # Arguments:
@@ -757,7 +757,7 @@ function argparser_check_env_vars() {
         ARGPARSER_USE_STYLES_IN_FILES
     )
     for var in "${vars[@]}"; do
-        if [[ "$(argparser_is_variable_boolean "${!var}")" == false ]]; then
+        if [[ "$(argparser_is_variable_bool "${!var}")" == false ]]; then
             error_message="Error: The environment variable \"${var}\" is "
             error_message+="set to \"${!var}\", but must be a boolean, i.e., "
             error_message+="true or false."
@@ -774,7 +774,7 @@ function argparser_check_env_vars() {
         ARGPARSER_USAGE_FILE_INCLUDE_CHAR
     )
     for var in "${vars[@]}"; do
-        if [[ "$(argparser_is_variable_character "${!var}")" == false ]]; then
+        if [[ "$(argparser_is_variable_char "${!var}")" == false ]]; then
             error_message="Error: The environment variable \"${var}\" is "
             error_message+="set to \"${!var}\", but must be a character, "
             error_message+="i.e., a string comprising one printable ASCII "
@@ -810,7 +810,7 @@ function argparser_check_env_vars() {
         ARGPARSER_USAGE_EXIT_CODE
     )
     for var in "${vars[@]}"; do
-        if [[ "$(argparser_is_variable_integer "${!var}")" == false ]]; then
+        if [[ "$(argparser_is_variable_int "${!var}")" == false ]]; then
             error_message="Error: The environment variable \"${var}\" is "
             error_message+="set to \"${!var}\", but must be an integer, i.e., "
             error_message+="comprise only digits and possibly a leading sign."
@@ -826,8 +826,7 @@ function argparser_check_env_vars() {
         ARGPARSER_MAX_COL_WIDTH_3
     )
     for var in "${vars[@]}"; do
-        if [[ "$(argparser_is_variable_unsigned_integer "${!var}")" == false ]]
-        then
+        if [[ "$(argparser_is_variable_uint "${!var}")" == false ]]; then
             error_message="Error: The environment variable \"${var}\" is "
             error_message+="set to \"${!var}\", but must be an unsigned "
             error_message+="integer, i.e., comprise only digits and no sign."
@@ -3478,11 +3477,11 @@ if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_fold
     unset -f argparser_get_option_names
     unset -f argparser_in_array
-    unset -f argparser_is_variable_boolean
-    unset -f argparser_is_variable_character
+    unset -f argparser_is_variable_bool
+    unset -f argparser_is_variable_char
     unset -f argparser_is_variable_identifier
-    unset -f argparser_is_variable_integer
-    unset -f argparser_is_variable_unsigned_integer
+    unset -f argparser_is_variable_int
+    unset -f argparser_is_variable_uint
     unset -f argparser_main
     unset -f argparser_parse_arg
     unset -f argparser_parse_args_definition
