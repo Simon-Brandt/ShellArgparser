@@ -2438,24 +2438,59 @@ function argparser_create_help_message() {
             # Set the first column's value.
             if [[ "${short_options[0]}" == "-" ]]; then  # No short option.
                 new_col_1+=("")
-            elif [[ "${arg_number}" == 0 ]]; then  # Flag.
+            elif [[ "${long_options[0]}" == "-" ]]; then  # No long option.
+                if [[ "${arg_number}" == 0 ]]; then  # Flag.
+                    new_col_1_value="["
+                    new_col_1_value+="$(printf -- "-%s, " \
+                        "${short_options[@]}")"
+                    new_col_1_value="${new_col_1_value%, }"
+                    new_col_1_value+="]"
+                    new_col_1+=("${new_col_1_value}")
+                elif [[ "${choice_values}" != "-" \
+                    && "${default_values}" != "-" ]]
+                then  # Choice and default.
+                    new_col_1_value=""
+                    for short_option in "${short_options[@]}"; do
+                        new_col_1_value+="$(printf -- "-%s[={%s}], " \
+                            "${short_option}" "${choice_values}")"
+                    done
+                    new_col_1_value="${new_col_1_value%, }"
+                    new_col_1+=("${new_col_1_value}")
+                elif [[ "${choice_values}" != "-" ]]; then  # Choice only.
+                    new_col_1_value=""
+                    for short_option in "${short_options[@]}"; do
+                        new_col_1_value+="$(printf -- "-%s={%s}, " \
+                            "${short_option}" "${choice_values}")"
+                    done
+                    new_col_1_value="${new_col_1_value%, }"
+                    new_col_1+=("${new_col_1_value}")
+                elif [[ "${default_values}" != "-" ]]; then  # Default only.
+                    new_col_1_value=""
+                    for i in "${!short_options[@]}"; do
+                        new_col_1_value+="$(printf -- "-%s[=%s], " \
+                            "${short_options[i]}" \
+                            "${value_names[i]:-${short_options[i]^^}}")"
+                    done
+                    new_col_1_value="${new_col_1_value%, }"
+                    new_col_1+=("${new_col_1_value}")
+                else  # No choice nor default.
+                    new_col_1_value=""
+                    for i in "${!short_options[@]}"; do
+                        new_col_1_value+="$(printf -- "-%s=%s, " \
+                            "${short_options[i]}" \
+                            "${value_names[i]:-${short_options[i]^^}}")"
+                    done
+                    new_col_1_value="${new_col_1_value%, }"
+                    new_col_1+=("${new_col_1_value}")
+                fi
+            elif [[ "${arg_number}" == 0 ]]; then  # Long option, flag.
                 new_col_1_value="["
                 new_col_1_value+="$(printf -- "-%s, " "${short_options[@]}")"
                 new_col_1_value="${new_col_1_value%, }"
-                new_col_1_value+="]"
-                if [[ "${long_options[0]}" != "-" ]]; then  # Long option.
-                    new_col_1_value+=","
-                fi
+                new_col_1_value+="],"
                 new_col_1+=("${new_col_1_value}")
-            else  # Non-flag.
-                if [[ "${long_options[0]}" == "-" ]]; then  # No long option.
-                    new_col_1_value="$(printf -- "-%s, " \
-                        "${short_options[@]}")"
-                    new_col_1_value="${new_col_1_value%, }"
-                    new_col_1+=("${new_col_1_value}")
-                else  # Long option.
-                    new_col_1+=("$(printf -- "-%s, " "${short_options[@]}")")
-                fi
+            else  # Long option, non-flag.
+                new_col_1+=("$(printf -- "-%s, " "${short_options[@]}")")
             fi
 
             # Set the second column's value.
