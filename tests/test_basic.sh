@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-13
+# Last Modification: 2025-01-20
 
 # Usage: Run this script with "bash test_basic.sh".
 
@@ -16,13 +16,14 @@ ARGPARSER_MAX_COL_WIDTH_3=35
 
 # Define the arguments.
 args=(
-    "var_1:a,A:var-1,var-a:-:-:1:Mandatory options:one value without default or choice"
-    "var_2:b,B:var-2,var-b:-:-:+:Mandatory options:at least one value without default or choice"
-    "var_3:c,C:var-3,var-c:-:A,B:+:Mandatory options:at least one value with choice"
-    "var_4:d,D:-:A:A,B,C:1:Optional options:one value with default and choice"
-    "var_5:-:var-5,var-e:E:-:1:Optional options:one value with default"
-    "var_6:f,F:var-6,var-f:false:-:0:Optional options:no value (flag) with default"
-    "var_7:g,G:var-7,var-g:true:-:0:Optional options:no value (flag) with default"
+    "id:short_opts:long_opts:val_names:defaults:choices:type:arg_no:arg_group:help"
+    "var_1:a,A:var-1,var-a:VAL_1:-:-:uint:1:Mandatory options:one value without default or choice"
+    "var_2:b,B:var-2,var-b:VAL_2:-:-:int:+:Mandatory options:at least one value without default or choice"
+    "var_3:c,C:var-3,var-c:VAL_3:-:A,B:char:+:Mandatory options:at least one value with choice"
+    "var_4:d,D:-:VAL_4:A:A,B,C:char:1:Optional options:one value with default and choice"
+    "var_5:-:var-5,var-e:VAL_5:E:-:str:1:Optional options:one value with default"
+    "var_6:f,F:var-6,var-f:VAL_6:false:-:bool:0:Optional options:no value (flag) with default"
+    "var_7:g,G:var-7,var-g:VAL_7:true:-:bool:0:Optional options:no value (flag) with default"
 )
 set -o nounset
 (set -o posix; set) > 1.txt
