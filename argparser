@@ -2888,9 +2888,9 @@ function argparser_create_usage_message() {
     local header
     local -a lines
     local -a long_option_args
-    local long_options
+    local -a long_options
     local -a short_option_args
-    local short_options
+    local -a short_options
     local value_names
     local whitespace
     local whitespace_len
@@ -2908,20 +2908,19 @@ function argparser_create_usage_message() {
     whitespace="$(printf '%*s' "${whitespace_len}")"
 
     # Separate arguments with long options from those without to output
-    # first the short option-only arguments, and afterwards those with
+    # first the short-option-only arguments, and afterwards those with
     # long options (no matter whether they also have short options as
     # these won't get printed).
     short_option_args=( )
     long_option_args=( )
     for arg_key in "${!all_short_options[@]}"; do
         # Read the argument's definition.
-        short_options="${all_short_options[${arg_key}]}"
         long_options="${all_long_options[${arg_key}]}"
 
         # Add the argument to the respective array.
-        if [[ "${long_options}" == "-" ]]; then  # No long option.
+        if [[ "${long_options}" == "-" ]]; then
             short_option_args+=("${arg_key}")
-        else  # Long option.
+        else
             long_option_args+=("${arg_key}")
         fi
     done
@@ -2942,6 +2941,14 @@ function argparser_create_usage_message() {
         if [[ "${value_names}" == "-" ]]; then
             value_names="${short_options^^}"
         fi
+
+        # Prefix the short options with one hyphen for their printing
+        # style.
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a short_options \
+            <<< "${short_options}"
+        short_options="$(printf -- "-%s${ARGPARSER_ARG_DELIMITER_2}" \
+            "${short_options[@]}")"
+        short_options="${short_options%?}"
 
         # Define the line for the current argument.  The argument may
         # have some short options, a default value and some choice
@@ -2984,6 +2991,14 @@ function argparser_create_usage_message() {
         if [[ "${value_names}" == "-" ]]; then
             value_names="${long_options^^}"
         fi
+
+        # Prefix the long options with two hyphens for their printing
+        # style.
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a long_options \
+            <<< "${long_options}"
+        long_options="$(printf -- "--%s${ARGPARSER_ARG_DELIMITER_2}" \
+            "${long_options[@]}")"
+        long_options="${long_options%?}"
 
         # Define the line for the current argument.  The argument may
         # have some long options (short options aren't printed), a
