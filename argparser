@@ -7,14 +7,11 @@
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
 # TODO: Allow counting of flags, e.g., for -vv as doubled -v.
-# TODO: Add type checking for arguments.
 # TODO: Add support for names for keyword and positional arguments in
 #       help messages.
 # TODO: Add support for abbreviated long options, e.g., --verb for
 #       --verbose, if no collision with e.g., --verbatim arises.
 # TODO: Add ability to mark options as deprecated.
-# TODO: Add support for a header in arguments definition files to allow
-#       changing their order.
 # TODO: Add support for a specific number of positional arguments.
 
 # Usage: Source this script with "source argparser" inside the script
@@ -1003,15 +1000,15 @@ function argparser_read_args_definition() {
     # Define the pattern how the arguments definition's keys look like,
     # as well as the pattern of the entire definition.  For the default
     # value of ${ARGPARSER_ARG_DELIMITER_1}, a colon, the definition
-    # pattern describes alternating sequences of eight non-colons, i.e.,
-    # "+([^:])", and seven colons, i.e., ":" in Bash's extglob syntax.
+    # pattern describes alternating sequences of nine non-colons, i.e.,
+    # "+([^:])", and eight colons, i.e., ":" in Bash's extglob syntax.
     # In PCRE syntax, the non-colon pattern would be written as "[^:]+".
     # The key pattern only consists of one non-colon pattern.  This
     # reflects the structure of the arguments definition irrespective of
     # the order of the columns.
     key_pattern="+([^${ARGPARSER_ARG_DELIMITER_1}])"
     def_pattern="${key_pattern}"
-    for i in {1..7}; do
+    for i in {1..8}; do
         def_pattern+="${ARGPARSER_ARG_DELIMITER_1}${key_pattern}"
     done
 
@@ -1024,7 +1021,7 @@ function argparser_read_args_definition() {
         || "${args[0]}" != ${def_pattern} ]]
     then
         args=( )
-        args[0]="id:short_opts:long_opts:defaults:choices:arg_no:"
+        args[0]="id:short_opts:long_opts:defaults:choices:type:arg_no:"
         args[0]+="arg_group:help"
         for arg in "$@"; do
             args+=("${arg}")
@@ -1041,7 +1038,7 @@ function argparser_read_args_definition() {
             mapfile -t lines < "${ARGPARSER_ARG_DEF_FILE}"
         else
             mapfile -t -O 1 lines < "${ARGPARSER_ARG_DEF_FILE}"
-            lines[0]="id:short_opts:long_opts:defaults:choices:arg_no:"
+            lines[0]="id:short_opts:long_opts:defaults:choices:type:arg_no:"
             lines[0]+="arg_group:help"
         fi
         header="${lines[0]}"
@@ -1112,6 +1109,7 @@ function argparser_parse_args_definition() {
     #   names
     # - all_short_options: the associative array holding the short
     #   option names
+    # - all_types: the associative array holding the argument types
     #
     # Environment:
     # - ARGPARSER_ARG_DEF_FILE (read-only)
@@ -1164,7 +1162,7 @@ function argparser_parse_args_definition() {
         # [val_names]=""
         [defaults]=""
         [choices]=""
-        # [type]=""
+        [type]=""
         [arg_no]=""
         [arg_group]=""
         [help]=""
@@ -1228,6 +1226,9 @@ function argparser_parse_args_definition() {
 
         choice_values="$(argparser_trim "${line[${fields["choices"]}]}")"
         all_choice_values[${arg_key}]="${choice_values}"
+
+        type="$(argparser_trim "${line[${fields["type"]}]}")"
+        all_types[${arg_key}]="${type}"
 
         arg_number="$(argparser_trim "${line[${fields["arg_no"]}]}")"
         all_arg_numbers[${arg_key}]="${arg_number}"
@@ -1855,25 +1856,27 @@ function argparser_check_arg_value() {
     #   values (read-only)
     # - all_default_values: the associative array holding the default
     #   values (read-only)
+    # - all_types: the associative array holding the argument types
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     #
     # Output:
-    # - the parsed argument as message or an error message, starting
-    #   with "Error: ", "Warning: ", or "Value: ", possibly concatenated
-    #   with null characters
+    # - the parsed argument as message or an error or warning message,
+    #   starting with "Error: ", "Warning: ", or "Value: ", possibly
+    #   concatenated with null characters
 
     # Define the local variables.
     local arg_key
     local arg_number
-    local choice_values
-    local default_values
+    local -a choice_values
+    local -a default_values
     local error_message
     local option_names
     local prefix
+    local type
     local value
-    local values
+    local -a values
     local warning_message
 
     # Read the arguments.
@@ -1886,26 +1889,38 @@ function argparser_check_arg_value() {
         <<< "${all_default_values[${arg_key}]}"
     IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a choice_values \
         <<< "${all_choice_values[${arg_key}]}"
+    type="${all_types[${arg_key}]}"
     arg_number="${all_arg_numbers[${arg_key}]}"
 
     # Concatenate the name of all short and long options for the error
     # and warning messages.
     option_names="$(argparser_get_option_names "${arg_key}" "short-long")"
 
-    # Check the values.  If an argument hadn't been given, its value was
-    # set to "-", but not, if it was given without value (then,
-    # ${values} is empty).
+    # If a "+" prefix is given and the argument is no flag, output an
+    # error message.
+    if [[ "${prefix}" == "+" && "${arg_number}" != 0 ]]; then
+        error_message="Error: The argument \"${option_names}\" is no flag and "
+        error_message+="thus cannot be given with a \"+\" prefix."
+        printf '%s' "${error_message}"
+        return
+    fi
+
+    # Check if the correct number of values is given.  If an argument
+    # hadn't been given, its value was set to "-", but not, if it was
+    # given without value (then, ${values} is empty).
     if (( "${#values[@]}" > 0 )) && [[ "${values[0]}" == "-" ]]; then
-        # The argument is not given, but must have been since it doesn't
-        # have a default value.  Hence, output an error message.  Else,
-        # read the default values.  This is required for optional
-        # arguments.
         if [[ "${default_values[0]}" == "-" ]]; then
+            # The argument is not given, but must have been since it
+            # doesn't have a default value.  Hence, output an error
+            # message.
             error_message="Error: The argument \"${option_names}\" is "
             error_message+="mandatory, but not given."
             printf '%s' "${error_message}"
             return
         else
+            # The argument is not given, but it has default values.
+            # Hence, read them.  This is required for optional
+            # arguments, which don't need to be set.
             values=("${default_values[@]}")
         fi
     else
@@ -1921,18 +1936,16 @@ function argparser_check_arg_value() {
                     error_message="Error: The argument \"${option_names}\" "
                     error_message+="requires 1 value, but has ${#values[@]} "
                     error_message+="given."
-                    printf '%s' "${error_message}"
                 elif [[ "${arg_number}" == "+" ]]; then
                     error_message="Error: The argument \"${option_names}\" "
                     error_message+="requires at least 1 value, but has "
                     error_message+="${#values[@]} given."
-                    printf '%s' "${error_message}"
                 else
                     error_message="Error: The argument \"${option_names}\" "
                     error_message+="requires ${arg_number} values, but has "
                     error_message+="${#values[@]} given."
-                    printf '%s' "${error_message}"
                 fi
+                printf '%s' "${error_message}"
                 return
             else
                 # As some default values are given, print a similar
@@ -1946,14 +1959,12 @@ function argparser_check_arg_value() {
                     warning_message+=" but has ${#values[@]} given.  For "
                     warning_message+="convenience, the default "
                     warning_message+="({${default_values}}) is used."
-                    printf '%s\0' "${warning_message}"
                 elif [[ "${arg_number}" == "+" ]]; then
                     warning_message="Warning: The argument "
                     warning_message+="\"${option_names}\" requires at least 1 "
                     warning_message+="value, but has ${#values[@]} given.  "
                     warning_message+="For convenience, the default "
                     warning_message+="({${default_values}}) is used."
-                    printf '%s\0' "${warning_message}"
                 else
                     warning_message="Warning: The argument "
                     warning_message+="\"${option_names}\" requires "
@@ -1961,8 +1972,9 @@ function argparser_check_arg_value() {
                     warning_message+="${#values[@]} given.  For convenience, "
                     warning_message+="the default ({${default_values}}) is "
                     warning_message+="used."
-                    printf '%s\0' "${warning_message}"
                 fi
+                printf '%s\0' "${warning_message}"
+
                 IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a default_values \
                     <<< "${all_default_values[${arg_key}]}"
                 values=("${default_values[@]}")
@@ -1978,15 +1990,6 @@ function argparser_check_arg_value() {
                 values=false
             fi
         fi
-    fi
-
-    # If a "+" prefix is given and the argument is no flag, output an
-    # error message.
-    if [[ "${prefix}" == "+" && "${arg_number}" != 0 ]]; then
-        error_message="Error: The argument \"${option_names}\" is no flag and "
-        error_message+="thus cannot be given with a \"+\" prefix."
-        printf '%s' "${error_message}"
-        return
     fi
 
     # Check if the given values accord to the choice values, i.e., if
@@ -2007,8 +2010,52 @@ function argparser_check_arg_value() {
         done
     fi
 
-    # Output the checked values as
-    # ${ARGPARSER_ARG_DELIMITER_2}-separated string.
+    # Check if the given values accord to the type.
+    for value in "${values[@]}"; do
+        if [[ "${type}" == "-" ]]; then
+            # No type is given, so abort the loop.
+            break
+        elif [[ "${type}" == "bool" \
+            && "$(argparser_is_variable_bool "${value}")" == false ]]
+        then
+            # Check if the value is a boolean.
+            error_message="Error: The argument \"${option_names}\" is set to "
+            error_message+="\"${value}\", but must be a boolean, i.e., true "
+            error_message+="or false."
+            printf '%s' "${error_message}"
+            return
+        elif [[ "${type}" == "char" \
+            && "$(argparser_is_variable_char "${value}")" == false ]]
+        then
+            # Check if the value is a character.
+            error_message="Error: The argument \"${option_names}\" is set to "
+            error_message+="\"${value}\", but must be a character, i.e., a "
+            error_message+="string comprising one printable ASCII character."
+            printf '%s' "${error_message}"
+            return
+        elif [[ "${type}" == "int" \
+            && "$(argparser_is_variable_int "${value}")" == false ]]
+        then
+            # Check if the value is an integer.
+            error_message="Error: The argument \"${option_names}\" is set to "
+            error_message+="\"${value}\", but must be an integer, i.e., "
+            error_message+="comprise only digits and possibly a leading sign."
+            printf '%s' "${error_message}"
+            return
+        elif [[ "${type}" == "uint" \
+            && "$(argparser_is_variable_uint "${value}")" == false ]]
+        then
+            # Check if the value is an unsigned integer.
+            error_message="Error: The argument \"${option_names}\" is set to "
+            error_message+="\"${value}\", but must be an unsigned integer, "
+            error_message+="i.e., comprise only digits and no sign."
+            printf '%s' "${error_message}"
+            return
+        fi
+    done
+
+    # Output the checked values as ${ARGPARSER_ARG_DELIMITER_2}-
+    # separated string.
     value="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; printf '%s' "${values[*]}")"
     printf 'Value: %s' "${value}"
 }
@@ -3021,6 +3068,7 @@ function argparser_main() {
     local -A all_help_texts
     local -A all_long_options
     local -A all_short_options
+    local -A all_types
     local checked_arg
     local -A dictionary
     local error
