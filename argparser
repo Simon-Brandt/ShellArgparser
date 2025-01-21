@@ -1101,8 +1101,6 @@ function argparser_parse_args_definition() {
     # Environment:
     # - ARGPARSER_ARG_DEF_FILE (read-only)
     # - ARGPARSER_ARG_DELIMITER_1 (read-only)
-    # - ARGPARSER_ERROR_EXIT_CODE (read-only)
-    # - ARGPARSER_ERROR_STYLE (read-only)
     # - ARGPARSER_SCRIPT_NAME (read-only)
 
     # Define the local variables.
@@ -1609,7 +1607,6 @@ function argparser_get_option_names() {
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
-    # - ARGPARSER_ERROR_STYLE (read-only)
     #
     # Output:
     # - the name of all short and long options as comma-separated string
@@ -2049,11 +2046,8 @@ function argparser_read_translation() {
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_1 (read-only)
-    # - ARGPARSER_ERROR_EXIT_CODE (read-only)
-    # - ARGPARSER_ERROR_STYLE (read-only)
     # - ARGPARSER_LANGUAGE (read-only)
     # - ARGPARSER_TRANSLATION_FILE (read-only)
-    # - ARGPARSER_WARNING_STYLE (read-only)
 
     # Define the local variables.
     local column
@@ -2133,7 +2127,6 @@ function argparser_translate() {
     #
     # Environment:
     # - ARGPARSER_TRANSLATION_FILE (read-only)
-    # - ARGPARSER_WARNING_STYLE (read-only)
     #
     # Output:
     # - the translated string
@@ -2849,6 +2842,7 @@ function argparser_create_usage_message() {
     # - all_value_names: the associative array holding the value names
     #
     # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_SCRIPT_NAME (read-only)
 
     # Define the local variables.
@@ -3007,8 +3001,12 @@ function argparser_print_help_or_usage_message() {
     # - $2: whether to exit after printing
     #
     # Environment:
+    # - ARGPARSER_HELP_EXIT_CODE (read-only)
     # - ARGPARSER_HELP_FILE (read-only)
+    # - ARGPARSER_HELP_STYLE (read-only)
+    # - ARGPARSER_USAGE_EXIT_CODE (read-only)
     # - ARGPARSER_USAGE_FILE (read-only)
+    # - ARGPARSER_USAGE_STYLE (read-only)
 
     # Define the local variables.
     local exit
@@ -3124,26 +3122,17 @@ function argparser_main() {
     #
     # Environment:
     # - ARGPARSER_ARG_ARRAY_NAME (read-only)
-    # - ARGPARSER_ARG_DEF_FILE (read-only)
-    # - ARGPARSER_ARG_DELIMITER_1 (read-only)
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_CHECK_ARG_DEFINITION (read-only)
     # - ARGPARSER_ERROR_EXIT_CODE (read-only)
-    # - ARGPARSER_ERROR_STYLE (read-only)
-    # - ARGPARSER_HELP_EXIT_CODE (read-only)
-    # - ARGPARSER_HELP_STYLE (read-only)
     # - ARGPARSER_POSITIONAL_NAME (read-only)
-    # - ARGPARSER_SCRIPT_NAME (read-only)
     # - ARGPARSER_TRANSLATION_FILE (read-only)
-    # - ARGPARSER_USAGE_EXIT_CODE (read-only)
-    # - ARGPARSER_USAGE_STYLE (read-only)
-    # - ARGPARSER_WARNING_STYLE (read-only)
 
     # Define the local variables.  If the variable that
     # ${ARGPARSER_ARG_ARRAY_NAME} refers to is undefined, all variables
     # prefixed with "arg" are searched, later.  In order to not shadow
-    # them by local variables, all locals starting with "arg" are set
-    # later.
+    # them by local variables, all locals starting with "arg" are
+    # defined later.
     local -A all_arg_groups
     local -A all_arg_numbers
     local -A all_choice_values
