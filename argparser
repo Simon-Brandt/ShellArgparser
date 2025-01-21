@@ -3012,30 +3012,50 @@ function argparser_print_help_or_usage_message() {
     #
     # Arguments:
     # - $1: the help type ("Help" or "Usage")
+    # - $2: whether to exit after printing
     #
     # Environment:
     # - ARGPARSER_HELP_FILE (read-only)
     # - ARGPARSER_USAGE_FILE (read-only)
 
-    # Define the local variable.
+    # Define the local variables.
+    local exit
+    local exit_code
     local help_type
+    local message
+    local style
 
-    # Read the argument.
+    # Read the arguments.
     help_type="$1"
+    exit="$2"
 
-    # Decide which message type to print.
+    # Decide which message type to print and set the colorization style
+    # and the exit code.
     if [[ "${help_type}" == "Help" ]]; then
         if [[ -n "${ARGPARSER_HELP_FILE}" ]]; then
-            argparser_print_help_or_usage_file "Help"
+            message="$(argparser_print_help_or_usage_file "Help")"
         else
-            argparser_create_help_message "All"
+            message="$(argparser_create_help_message "All")"
         fi
+        style="${ARGPARSER_HELP_STYLE}"
+        exit_code="${ARGPARSER_HELP_EXIT_CODE}"
     elif [[ "${help_type}" == "Usage" ]]; then
         if [[ -n "${ARGPARSER_USAGE_FILE}" ]]; then
-            argparser_print_help_or_usage_file "Usage"
+            message="$(argparser_print_help_or_usage_file "Usage")"
         else
-            argparser_create_usage_message
+            message="$(argparser_create_usage_message)"
         fi
+        style="${ARGPARSER_USAGE_STYLE}"
+        exit_code="${ARGPARSER_USAGE_EXIT_CODE}"
+    fi
+
+    # Colorize and print the help or usage message, then exit, if
+    # requested.
+    message="$(argparser_colorize "${style}" "${message}")"
+    printf '%s\n' "${message}" >&2
+
+    if [[ "${exit}" == true ]]; then
+        exit "${exit_code}"
     fi
 }
 
@@ -3299,21 +3319,11 @@ function argparser_main() {
             case "${message}" in
                 Help)
                     # Print the help message.
-                    help_message="$(argparser_print_help_or_usage_message \
-                        "Help")"
-                    help_message="$(argparser_colorize \
-                        "${ARGPARSER_HELP_STYLE}" "${help_message}")"
-                    printf '%s\n' "${help_message}" >&2
-                    exit "${ARGPARSER_HELP_EXIT_CODE}"
+                    argparser_print_help_or_usage_message "Help" true
                     ;;
                 Usage)
                     # Print the usage message.
-                    usage_message="$(argparser_print_help_or_usage_message \
-                        "Usage")"
-                    usage_message="$(argparser_colorize \
-                        "${ARGPARSER_USAGE_STYLE}" "${usage_message}")"
-                    printf '%s\n' "${usage_message}" >&2
-                    exit "${ARGPARSER_USAGE_EXIT_CODE}"
+                    argparser_print_help_or_usage_message "Usage" true
                     ;;
                 Error*)
                     # Append the message to the previous error messages.
@@ -3434,10 +3444,8 @@ function argparser_main() {
     # and not just warnings), then print a blank line and the usage
     # message and abort the script.
     if (( "${#error_messages[@]}" > 0 )); then
-        usage_message="$(argparser_print_help_or_usage_message "Usage")"
-        usage_message="$(argparser_colorize "${ARGPARSER_USAGE_STYLE}" \
-            "${usage_message}")"
-        printf '\n%s\n' "${usage_message}" >&2
+        printf '\n' >&2
+        argparser_print_help_or_usage_message "Usage" false
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
     fi
 
