@@ -2937,8 +2937,10 @@ function argparser_create_usage_message() {
         fi
     done
 
-    mapfile -d "" -t lines < <(argparser_sort false "${lines[@]}")
-    printf '%s\n' "${lines[@]}"
+    if (( "${#lines[@]}" > 0 )); then
+        mapfile -d "" -t lines < <(argparser_sort false "${lines[@]}")
+        printf '%s\n' "${lines[@]}"
+    fi
 
     # Print each argument having long options with the long options and
     # possibly choice values and sort them alphabetically.
@@ -2988,8 +2990,10 @@ function argparser_create_usage_message() {
         fi
     done
 
-    mapfile -d "" -t lines < <(argparser_sort false "${lines[@]}")
-    printf '%s\n' "${lines[@]}"
+    if (( "${#lines[@]}" > 0 )); then
+        mapfile -d "" -t lines < <(argparser_sort false "${lines[@]}")
+        printf '%s\n' "${lines[@]}"
+    fi
 }
 
 function argparser_print_help_or_usage_message() {
