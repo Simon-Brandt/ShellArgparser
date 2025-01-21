@@ -1640,10 +1640,6 @@ function argparser_get_option_names() {
         elif [[ "${order}" == "long-short" ]]; then
             option_names="$(printf -- '--%s,' "${long_options[@]}")"
             option_names+="$(printf -- '-%s,' "${short_options[@]}")"
-        else
-            error_message="Error: Wrong order \"${order}\" specified."
-            printf '%s\n' "$(argparser_colorize "${ARGPARSER_ERROR_STYLE}" \
-                "${error_message}")" >&2
         fi
     elif [[ "${short_options[0]}" != "-" ]]; then
         option_names="$(printf -- '-%s,' "${short_options[@]}")"
