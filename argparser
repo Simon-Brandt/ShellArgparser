@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-20
+# Last Modification: 2025-01-21
 
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
@@ -939,29 +939,16 @@ function argparser_check_env_vars() {
     # among the faulty variables, the error messages cannot be properly
     # colorized.  Thus, set the style to its default value.  The same
     # holds true for ${ARGPARSER_ERROR_EXIT_CODE}.
-    if (( "${#error_messages[@]}" > 0 )); then
-        # Possibly, set the ${ARGPARSER_ERROR_STYLE} to its default
-        # value.
-        for error_message in "${error_messages[@]}"; do
-            if [[ "${error_messages}" == *"ARGPARSER_ERROR_STYLE"* ]]; then
-                ARGPARSER_ERROR_STYLE="red,bold,reverse"
-            elif [[ "${error_messages}" == *"ARGPARSER_ERROR_EXIT_CODE"* ]]
-            then
-                ARGPARSER_ERROR_EXIT_CODE=1
-            fi
-        done
+    for error_message in "${error_messages[@]}"; do
+        if [[ "${error_message}" == *"ARGPARSER_ERROR_STYLE"* ]]; then
+            ARGPARSER_ERROR_STYLE="red,bold,reverse"
+        elif [[ "${error_message}" == *"ARGPARSER_ERROR_EXIT_CODE"* ]]; then
+            ARGPARSER_ERROR_EXIT_CODE=1
+        fi
+    done
 
-        # Colorize, sort, and print the error messages.
-        for i in "${!error_messages[@]}"; do
-            error_messages[i]="$(argparser_colorize \
-                "${ARGPARSER_ERROR_STYLE}" "${error_messages[i]}")"
-        done
-
-        mapfile -d "" -t error_messages \
-            < <(argparser_sort false "${error_messages[@]}")
-        printf '%s\n' "${error_messages[@]}" >&2
-        exit "${ARGPARSER_ERROR_EXIT_CODE}"
-    fi
+    argparser_print_error_or_warning_message "Error" false true \
+        "${error_messages[@]}"
 }
 
 function argparser_read_args_definition() {
@@ -1196,17 +1183,8 @@ function argparser_parse_args_definition() {
 
     # If there are error messages, colorize, sort, and print them, then
     # exit.
-    if (( "${#error_messages[@]}" > 0 )); then
-        for i in "${!error_messages[@]}"; do
-            error_messages[i]="$(argparser_colorize \
-                "${ARGPARSER_ERROR_STYLE}" "${error_messages[i]}")"
-        done
-
-        mapfile -d "" -t error_messages \
-            < <(argparser_sort false "${error_messages[@]}")
-        printf '%s\n' "${error_messages[@]}" >&2
-        exit "${ARGPARSER_ERROR_EXIT_CODE}"
-    fi
+    argparser_print_error_or_warning_message "Error" false true \
+        "${error_messages[@]}"
 
     # Read all lines of the arguments definition and save the fields in
     # an associative array per column, using the argument identifier as
@@ -2064,7 +2042,8 @@ function argparser_check_arg_value() {
 }
 
 # Define the argparser functions for creating and printing the help and
-# usage messages, including their translation.
+# usage messages, including their translation, as well as for printing
+# error messages.
 function argparser_read_translation() {
     # Read the translation of the auto-generated text for help and usage
     # messages into an associative array.
@@ -3060,6 +3039,63 @@ function argparser_print_help_or_usage_message() {
     fi
 }
 
+function argparser_print_error_or_warning_message() {
+    # Colorize, sort, filter, and print all error or warning messages.
+    #
+    # Arguments:
+    # - $1: the error type ("Error" or "Warning")
+    # - $2: whether to filter the messages (by argparser_uniq)
+    # - $3: whether to exit after printing
+    # - $@: the error or warning messages
+    #
+    # Environment:
+    # - ARGPARSER_ERROR_EXIT_CODE (read-only)
+    # - ARGPARSER_ERROR_STYLE (read-only)
+    # - ARGPARSER_WARNING_STYLE (read-only)
+
+    # Define the local variables.
+    local exit
+    local filter
+    local message
+    local -a messages
+    local style
+    local error_type
+
+    # Read the arguments.
+    error_type="$1"
+    filter="$2"
+    exit="$3"
+    shift 3
+    messages=("$@")
+
+    # Set the colorization style.
+    if [[ "${error_type}" == "Error" ]]; then
+        style="${ARGPARSER_ERROR_STYLE}"
+    elif [[ "${error_type}" == "Warning" ]]; then
+        style="${ARGPARSER_WARNING_STYLE}"
+    fi
+
+    # Colorize, sort, filter, and print all error or warning messages,
+    # then exit, if requested.
+    if (( "${#messages[@]}" > 0 )); then
+        for i in "${!messages[@]}"; do
+            messages[i]="$(argparser_colorize "${style}" "${messages[i]}")"
+        done
+
+        mapfile -d "" -t messages < <(argparser_sort false "${messages[@]}")
+
+        if [[ "${filter}" == true ]]; then
+            mapfile -d "" -t messages < <(argparser_uniq "${messages[@]}")
+        fi
+
+        printf '%s\n' "${messages[@]}" >&2
+
+        if [[ "${exit}" == true ]]; then
+            exit "${ARGPARSER_ERROR_EXIT_CODE}"
+        fi
+    fi
+}
+
 # Define the main argparser function.
 function argparser_main() {
     # Parse the script's given arguments and check if they accord to
@@ -3202,17 +3238,8 @@ function argparser_main() {
     # If there are error messages, colorize, sort, and print them, then
     # exit, as parsing the arguments definition with missing parts is
     # useless.
-    if (( "${#error_messages[@]}" > 0 )); then
-        for i in "${!error_messages[@]}"; do
-            error_messages[i]="$(argparser_colorize \
-                "${ARGPARSER_ERROR_STYLE}" "${error_messages[i]}")"
-        done
-
-        mapfile -d "" -t error_messages \
-            < <(argparser_sort false "${error_messages[@]}")
-        printf '%s\n' "${error_messages[@]}" >&2
-        exit "${ARGPARSER_ERROR_EXIT_CODE}"
-    fi
+    argparser_print_error_or_warning_message "Error" false true \
+        "${error_messages[@]}"
 
     # Parse the arguments definition.
     if (( "${#args_definition_file[@]}" > 0 )); then
@@ -3237,19 +3264,8 @@ function argparser_main() {
         # If there are error messages, colorize, sort, filter, and print
         # them, then exit, as parsing the arguments with a faulty
         # definition is useless or even impossible.
-        if (( "${#error_messages[@]}" > 0 )); then
-            for i in "${!error_messages[@]}"; do
-                error_messages[i]="$(argparser_colorize \
-                    "${ARGPARSER_ERROR_STYLE}" "${error_messages[i]}")"
-            done
-
-            mapfile -d "" -t error_messages \
-                < <(argparser_sort false "${error_messages[@]}")
-            mapfile -d "" -t error_messages \
-                < <(argparser_uniq "${error_messages[@]}")
-            printf '%s\n' "${error_messages[@]}" >&2
-            exit "${ARGPARSER_ERROR_EXIT_CODE}"
-        fi
+        argparser_print_error_or_warning_message "Error" true true \
+            "${error_messages[@]}"
     fi
 
     # If ${ARGPARSER_TRANSLATION_FILE} isn't set to the empty string,
@@ -3409,31 +3425,10 @@ function argparser_main() {
     done
 
     # Colorize, sort, filter, and print all error and warning messages.
-    if (( "${#error_messages[@]}" > 0 )); then
-        for i in "${!error_messages[@]}"; do
-            error_messages[i]="$(argparser_colorize \
-                "${ARGPARSER_ERROR_STYLE}" "${error_messages[i]}")"
-        done
-
-        mapfile -d "" -t error_messages \
-            < <(argparser_sort false "${error_messages[@]}")
-        mapfile -d "" -t error_messages \
-            < <(argparser_uniq "${error_messages[@]}")
-        printf '%s\n' "${error_messages[@]}" >&2
-    fi
-
-    if (( "${#warning_messages[@]}" > 0 )); then
-        for i in "${!warning_messages[@]}"; do
-            warning_messages[i]="$(argparser_colorize \
-                "${ARGPARSER_WARNING_STYLE}" "${warning_messages[i]}")"
-        done
-
-        mapfile -d "" -t warning_messages \
-            < <(argparser_sort false "${warning_messages[@]}")
-        mapfile -d "" -t warning_messages \
-            < <(argparser_uniq "${warning_messages[@]}")
-        printf '%s\n' "${warning_messages[@]}" >&2
-    fi
+    argparser_print_error_or_warning_message "Error" true false \
+        "${error_messages[@]}"
+    argparser_print_error_or_warning_message "Warning" true false \
+        "${warning_messages[@]}"
 
     # If any argument was not or wrongly given (i.e., there were errors
     # and not just warnings), then print a blank line and the usage
@@ -3557,6 +3552,7 @@ if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_main
     unset -f argparser_parse_arg
     unset -f argparser_parse_args_definition
+    unset -f argparser_print_error_or_warning_message
     unset -f argparser_print_help_or_usage_file
     unset -f argparser_print_help_or_usage_message
     unset -f argparser_quicksort
