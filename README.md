@@ -530,7 +530,7 @@ Using a separate argument definition file allows you to share the definition acr
 #!/bin/bash
 
 # Set the argparser, reading the arguments definition from a file.
-ARGPARSER_ARG_DEF_FILE="arguments.lst"
+ARGPARSER_ARG_DEF_FILE="arguments.csv"
 
 # Set the arguments.
 args=(
@@ -563,12 +563,12 @@ done
 
 </details>
 
-At the same time, we need an arguments definition file, aptly called `arguments.lst`. Its structure is identical to the arguments definition we previously used, allowing you to easily move a definition between your script and the separate file.
+At the same time, we need an arguments definition file, aptly called `arguments.csv`. Its structure is identical to the arguments definition we previously used, allowing you to easily move a definition between your script and the separate file.
 
 You can (and should) even add the header to explain the fields. Then, you can set your text editor to interpret the data as CSV file, possibly syntax-highlighting the columns with the given header or visually aligning the columns (as done by the [Rainbow CSV](https://marketplace.visualstudio.com/items?itemName=mechatroner.rainbow-csv "Visual Studio Code &rightarrow; marketplace &rightarrow; Rainbow CSV extension") extension in [Visual Studio Code](https://code.visualstudio.com/ "Visual Studio Code")). Since the argparser strips leading and trailing whitespace off the fields, you can save the file with this alignment:
 
 ```console
-$ cat arguments.lst
+$ cat arguments.csv
 id    :short_opts :long_opts :val_names :defaults :choices :type :arg_no :arg_group         :help
 var_1 :a          :var-1     :VAL_1     :-        :-       :uint :1      :Mandatory options :one value without default or choice
 var_2 :b          :var-2     :VAL_2     :-        :-       :int  :+      :Mandatory options :at least one value without default or choice
@@ -618,9 +618,9 @@ It is even possible to localize your script's help and usage message. For the us
 If you set these environment variables to files whose filename contains the language, like so:
 
 ```console
-$ ls -1 arguments_*.lst help_message_*.txt
-arguments_de.lst
-arguments_en.lst
+$ ls -1 arguments_*.csv help_message_*.txt
+arguments_de.csv
+arguments_en.csv
 help_message_de.txt
 help_message_en.txt
 ```
@@ -636,7 +636,7 @@ then, in your script, you can set the `ARGPARSER_ARG_DEF_FILE` and `ARGPARSER_HE
 
 # Set the argparser, reading the arguments definition from a file and
 # the help message from a file.
-ARGPARSER_ARG_DEF_FILE="arguments_${LANG::2}.lst"
+ARGPARSER_ARG_DEF_FILE="arguments_${LANG::2}.csv"
 ARGPARSER_ARG_DEF_FILE_HAS_HEADER=false
 ARGPARSER_HELP_FILE="help_message_${LANG::2}.txt"
 ARGPARSER_LANGUAGE="${LANG::2}"
@@ -676,7 +676,7 @@ done
 You need to manually translate the arguments definition (only the argument groups and the help texts) in the new arguments definition file, here using no header (stated by the [`ARGPARSER_ARG_DEF_FILE_HAS_HEADER`](#argparser_arg_def_file_has_header) environment variable):
 
 ```console
-$ cat arguments_de.lst
+$ cat arguments_de.csv
 var_1 :a :var-1 :VAL_1 :-     :-     :uint :1 :Erforderliche Optionen :ein Wert ohne Vorgabe und Auswahl
 var_2 :b :var-2 :VAL_2 :-     :-     :int  :+ :Erforderliche Optionen :mindestens ein Wert ohne Vorgabe und Auswahl
 var_3 :c :var-3 :VAL_3 :-     :A,B   :char :+ :Erforderliche Optionen :mindestens ein Wert mit Auswahl

@@ -10,7 +10,7 @@
 
 # Set the argparser, reading the arguments definition from a file and
 # the help message from a file.
-ARGPARSER_ARG_DEF_FILE="arguments_${LANG::2}.lst"
+ARGPARSER_ARG_DEF_FILE="arguments_${LANG::2}.csv"
 ARGPARSER_ARG_DEF_FILE_HAS_HEADER=false
 ARGPARSER_HELP_FILE="help_message_${LANG::2}.txt"
 ARGPARSER_LANGUAGE="${LANG::2}"
