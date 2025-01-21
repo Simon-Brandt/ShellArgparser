@@ -2089,10 +2089,8 @@ function argparser_read_translation() {
         error_message+="\"en\" is missing, but required as source for "
         error_message+="translation."
 
-        error_message="$(argparser_colorize "${ARGPARSER_ERROR_STYLE}" \
-            "${error_message}")"
-        printf '%s\n' "${error_message}" >&2
-        exit "${ARGPARSER_ERROR_EXIT_CODE}"
+        argparser_print_error_or_warning_message "Error" false true \
+            "${error_message}"
     fi
 
     # If the column for the target language isn't given, output a
@@ -2105,9 +2103,8 @@ function argparser_read_translation() {
         warning_message+="as target for translation.  For convenience, the "
         warning_message+="source language \"en\" is used, instead."
 
-        warning_message="$(argparser_colorize "${ARGPARSER_WARNING_STYLE}" \
-            "${warning_message}")"
-        printf '%s\n' "${warning_message}" >&2
+        argparser_print_error_or_warning_message "Warning" false false \
+            "${warning_message}"
 
         target_column="${source_column}"
     fi
@@ -2169,9 +2166,8 @@ function argparser_translate() {
             warning_message+="convenience, the untranslated string is used, "
             warning_message+="instead."
 
-            warning_message="$(argparser_colorize \
-                "${ARGPARSER_WARNING_STYLE}" "${warning_message}")"
-            printf '%s\n' "${warning_message}" >&2
+            argparser_print_error_or_warning_message "Warning" false false \
+                "${warning_message}"
 
             printf '%s' "${string}"
         fi
@@ -3209,10 +3205,8 @@ function argparser_main() {
         error_message+="then change ARGPARSER_ARG_ARRAY_NAME accordingly) or "
         error_message+="you forgot defining the array at all (then define it)."
 
-        error_message="$(argparser_colorize "${ARGPARSER_ERROR_STYLE}" \
-            "${error_message}")"
-        printf '%s\n' "${error_message}" >&2
-        exit "${ARGPARSER_ERROR_EXIT_CODE}"
+        argparser_print_error_or_warning_message "Error" false true \
+            "${error_message}"
     fi
 
     # Define the remaining local variables that start with "arg".
