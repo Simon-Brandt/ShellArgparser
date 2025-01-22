@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-21
+# Last Modification: 2025-01-22
 
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
@@ -1286,7 +1286,23 @@ function argparser_check_args_definition_names() {
         fi
 
         for short_option in "${short_options[@]}"; do
-            if [[ "${short_option}" != "-" ]]; then
+            if [[ "${short_option}" == "h" ]]; then
+                # Check if a short option name uses the reserved flag
+                # for the help message.
+                error_message="Error: The argument with the identifier "
+                error_message+="\"${arg_key}\" has the short option -h "
+                error_message+="defined, which is reserved for invoking the "
+                error_message+="help message."
+                printf '%s\0' "${error_message}"
+            elif [[ "${short_option}" == "u" ]]; then
+                # Check if a short option name uses the reserved flag
+                # for the usage message.
+                error_message="Error: The argument with the identifier "
+                error_message+="\"${arg_key}\" has the short option -u "
+                error_message+="defined, which is reserved for invoking the "
+                error_message+="usage message."
+                printf '%s\0' "${error_message}"
+            elif [[ "${short_option}" != "-" ]]; then
                 # Check if a short option name is more than one
                 # character long.
                 if (( "${#short_option}" > 1 )); then
@@ -1346,7 +1362,23 @@ function argparser_check_args_definition_names() {
         fi
 
         for long_option in "${long_options[@]}"; do
-            if [[ "${long_option}" != "-" ]]; then
+            if [[ "${long_option}" == "help" ]]; then
+                # Check if a long option name uses the reserved flag for
+                # the help message.
+                error_message="Error: The argument with the identifier "
+                error_message+="\"${arg_key}\" has the long option --help "
+                error_message+="defined, which is reserved for invoking the "
+                error_message+="help message."
+                printf '%s\0' "${error_message}"
+            elif [[ "${long_option}" == "usage" ]]; then
+                # Check if a long option name uses the reserved flag for
+                # the usage message.
+                error_message="Error: The argument with the identifier "
+                error_message+="\"${arg_key}\" has the long option --usage< "
+                error_message+="defined, which is reserved for invoking the "
+                error_message+="usage message."
+                printf '%s\0' "${error_message}"
+            elif [[ "${long_option}" != "-" ]]; then
                 # Check if a long option name is less than two
                 # characters long.
                 if (( "${#long_option}" < 2 )); then
