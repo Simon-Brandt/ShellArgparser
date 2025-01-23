@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-09
+# Last Modification: 2025-01-23
 
 # Usage: Run this script with "bash test_arg_def_file.sh".
 
@@ -13,6 +13,8 @@ ARGPARSER_ARG_DEF_FILE="arguments.csv"
 
 # Set the arguments.
 args=(
+    pos_1
+    pos_2
     var_1
     var_2
     var_3

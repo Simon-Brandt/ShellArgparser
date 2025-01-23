@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-22
+# Last Modification: 2025-01-23
 
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
@@ -1077,7 +1077,7 @@ function argparser_parse_args_definition() {
     # column.
     #
     # Arguments:
-    # - $1: the origin of the arguments definition ("script" or "file")
+    # - $1: the origin of the arguments definition ("Script" or "File")
     # - $@: the indexed array holding the arguments definition, the
     #       first line of which being the header
     #
@@ -1093,6 +1093,8 @@ function argparser_parse_args_definition() {
     # - all_help_texts: the associative array holding the help texts
     # - all_long_options: the associative array holding the long option
     #   names
+    # - all_positional_args: the indexed array holding the positional
+    #   argument names
     # - all_short_options: the associative array holding the short
     #   option names
     # - all_types: the associative array holding the argument types
@@ -1166,11 +1168,11 @@ function argparser_parse_args_definition() {
     for field in "${!fields[@]}"; do
         column_index="${fields[${field}]}"
         if [[ -z "${column_index}" ]]; then
-            if [[ "${definition_type}" == "script" ]]; then
+            if [[ "${definition_type}" == "Script" ]]; then
                 error_message="Error: In the arguments definition in "
                 error_message+="\"${ARGPARSER_SCRIPT_NAME}\", the column "
                 error_message+="\"${field}\" is missing."
-            elif [[ "${definition_type}" == "file" ]]; then
+            elif [[ "${definition_type}" == "File" ]]; then
                 error_message="Error: In the arguments definition file "
                 error_message+="\"${ARGPARSER_ARG_DEF_FILE}\", the column "
                 error_message+="\"${field}\" is missing."
@@ -1192,10 +1194,14 @@ function argparser_parse_args_definition() {
         arg_key="$(argparser_trim "${line[${fields["id"]}]}")"
 
         short_options="$(argparser_trim "${line[${fields["short_opts"]}]}")"
-        all_short_options[${arg_key}]="${short_options}"
-
         long_options="$(argparser_trim "${line[${fields["long_opts"]}]}")"
-        all_long_options[${arg_key}]="${long_options}"
+
+        if [[ "${short_options}" == "-" && "${long_options}" == "-" ]]; then
+            all_positional_args+=("${arg_key}")
+        else
+            all_short_options[${arg_key}]="${short_options}"
+            all_long_options[${arg_key}]="${long_options}"
+        fi
 
         value_names="$(argparser_trim "${line[${fields["val_names"]}]}")"
         all_value_names[${arg_key}]="${value_names}"
@@ -1420,16 +1426,6 @@ function argparser_check_args_definition_names() {
                 checked_long_options[${long_option}]="${arg_key}"
             fi
         done
-
-        # Check if at least one short or long option name is given.
-        if [[ "${short_options[0]}" == "-" && "${long_options[0]}" == "-" ]]
-        then
-            # No option name is given, so output an error message.
-            error_message="Error: The argument with the identifier "
-            error_message+="\"${arg_key}\" must have at least one short or "
-            error_message+="long option name."
-            printf '%s\0' "${error_message}"
-        fi
     done
 }
 
@@ -1558,6 +1554,7 @@ function argparser_get_option_names() {
     #   names (read-only)
     # - all_short_options: the associative array holding the short
     #   option names (read-only)
+    # - all_value_names: the associative array holding the value names
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
@@ -1567,21 +1564,33 @@ function argparser_get_option_names() {
 
     # Define the local variables.
     local arg_key
-    local error_message
-    local long_options
+    local -a long_options
     local option_names
     local order
-    local short_options
+    local -a short_options
+    local value_name
 
     # Read the arguments.
     arg_key="$1"
     order="$2"
 
-    # Read the argument's definition.
-    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a short_options \
-        <<< "${all_short_options[${arg_key}]}"
-    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a long_options \
-        <<< "${all_long_options[${arg_key}]}"
+    # Read the argument's definition.  As positional arguments aren't
+    # included in ${all_short_options} and ${all_long_options}, assign
+    # them the default value of a hyphen, indicating absence.  For the
+    # option name below, use the value name, of which positional
+    # arguments can only have one (thus using a string, not an array).
+    if [[ "$(argparser_in_array "${arg_key}" \
+        "${!all_short_options[@]}")" == true ]]
+    then
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a short_options \
+            <<< "${all_short_options[${arg_key}]}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a long_options \
+            <<< "${all_long_options[${arg_key}]}"
+    else
+        short_options=("-")
+        long_options=("-")
+        value_name="${all_value_names[${arg_key}]}"
+    fi
 
     # Concatenate the name of all short and long options.
     if [[ "${short_options[0]}" != "-" && "${long_options[0]}" != "-" ]]; then
@@ -1592,12 +1601,16 @@ function argparser_get_option_names() {
             option_names="$(printf -- '--%s,' "${long_options[@]}")"
             option_names+="$(printf -- '-%s,' "${short_options[@]}")"
         fi
+        option_names="${option_names%,}"
     elif [[ "${short_options[0]}" != "-" ]]; then
         option_names="$(printf -- '-%s,' "${short_options[@]}")"
-    else
+        option_names="${option_names%,}"
+    elif [[ "${long_options[0]}" != "-" ]]; then
         option_names="$(printf -- '--%s,' "${long_options[@]}")"
+        option_names="${option_names%,}"
+    else
+        option_names="${value_name}"
     fi
-    option_names="${option_names%,}"
     printf '%s' "${option_names}"
 }
 
@@ -1612,8 +1625,9 @@ function argparser_parse_arg() {
     #   names (read-only)
     # - all_short_options: the associative array holding the short
     #   option names (read-only)
-    # - is_positional: whether the positional arguments delimiter "--"
-    #   has already been set and has not been unset by "++" (read-only)
+    # - is_positional_only: whether the positional arguments delimiter
+    #   "--" has already been set and has not been unset by "++"
+    #   (read-only)
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
@@ -1639,14 +1653,15 @@ function argparser_parse_arg() {
     given_arg="$1"
 
     # If the argument doesn't start with a hyphen ("-") or plus sign
-    # ("+"), it is considered a value to a previous argument.  Likewise,
-    # if the positional arguments delimiter "--" has already been set
-    # and has neither been unset by "++" not the current argument is
-    # this "++", then any value is considered a positional argument.
-    # Split the value on ${ARGPARSER_ARG_DELIMITER_2} characters and
-    # output the respective message for each value.
+    # ("+"), it is considered a value to a previous keyword argument or
+    # a postional argument.  Likewise, if the positional arguments
+    # delimiter "--" has already been set and has neither been unset by
+    # "++" nor the current argument is this "++", then any value is
+    # considered a positional argument.  Split the value on
+    # ${ARGPARSER_ARG_DELIMITER_2} characters and output the respective
+    # message for each value.
     if [[ "${given_arg}" != "++"* \
-        && ("${given_arg}" != [-+]* || "${is_positional}" == true) ]]
+        && ("${given_arg}" != [-+]* || "${is_positional_only}" == true) ]]
     then
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a values <<< "${given_arg}"
         for value in "${values[@]}"; do
@@ -1769,7 +1784,7 @@ function argparser_parse_arg() {
     printf 'Argument: %s' "${given_arg}"
 }
 
-function argparser_check_arg_value() {
+function argparser_check_arg_values() {
     # Check if a script's argument accords to its definition.
     #
     # Arguments:
@@ -1784,6 +1799,8 @@ function argparser_check_arg_value() {
     #   values (read-only)
     # - all_default_values: the associative array holding the default
     #   values (read-only)
+    # - all_positional_args: the indexed array holding the positional
+    #   argument names
     # - all_types: the associative array holding the argument types
     #
     # Environment:
@@ -1807,10 +1824,20 @@ function argparser_check_arg_value() {
     local -a values
     local warning_message
 
-    # Read the arguments.
+    # Read the arguments.  Since positional arguments have no prefix,
+    # set the empty string as default value, such that testing on its
+    # value is possible, below.
     arg_key="$1"
-    prefix="${2::1}"
-    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a values <<< "${2:2}"
+
+    if [[ "$(argparser_in_array "${arg_key}" \
+        "${all_positional_args[@]}")" == true ]]
+    then
+        prefix=""
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a values <<< "${2}"
+    else
+        prefix="${2::1}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a values <<< "${2:2}"
+    fi
 
     # Read the argument's definition.
     IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a default_values \
@@ -1914,7 +1941,7 @@ function argparser_check_arg_value() {
             # prefix and to false for a "+" prefix.
             if [[ "${prefix}" == "-" ]]; then
                 values=true
-            else
+            elif [[ "${prefix}" == "+" ]]; then
                 values=false
             fi
         fi
@@ -3097,6 +3124,7 @@ function argparser_main() {
     local -A all_default_values
     local -A all_help_texts
     local -A all_long_options
+    local -a all_positional_args
     local -A all_short_options
     local -A all_types
     local -A all_value_names
@@ -3110,11 +3138,13 @@ function argparser_main() {
     local i
     local is_extglob_set
     local is_positional
+    local is_positional_only
     local message
     local -a messages
     local name
     local names
     local parsed_arg
+    local positional_index
     local usage_message
     local warning_message
     local -a warning_messages
@@ -3159,7 +3189,8 @@ function argparser_main() {
     # Define the remaining local variables that start with "arg".
     local arg
     local arg_key
-    local -a arg_value
+    local arg_value
+    local -a arg_values
     local -a args_definition_file
     local -a args_definition_script
 
@@ -3199,11 +3230,12 @@ function argparser_main() {
         "${error_messages[@]}"
 
     # Parse the arguments definition.
+    all_positional_args=( )
     if (( "${#args_definition_file[@]}" > 0 )); then
-        argparser_parse_args_definition "file" "${args_definition_file[@]}"
+        argparser_parse_args_definition "File" "${args_definition_file[@]}"
     fi
     if (( "${#args_definition_script[@]}" > 0 )); then
-        argparser_parse_args_definition "script" "${args_definition_script[@]}"
+        argparser_parse_args_definition "Script" "${args_definition_script[@]}"
     fi
 
     # If ${ARGPARSER_CHECK_ARG_DEFINITION} is set to true, check the
@@ -3231,14 +3263,18 @@ function argparser_main() {
         argparser_read_translation
     fi
 
-    # Set the default argument key to ${ARGPARSER_POSITIONAL_NAME}, such
-    # that initially, all arguments given before a keyword argument are
-    # recognized as positional.
-    arg_key="${ARGPARSER_POSITIONAL_NAME}"
-    arg_value=( )
+    # Set the default argument key to the first defined positional
+    # argument name, or, if null or unset, to the name
+    # ${ARGPARSER_POSITIONAL_NAME} refers to, such that initially, all
+    # arguments given before a keyword argument are recognized as
+    # positional.
+    arg_key="${all_positional_args[0]:-${ARGPARSER_POSITIONAL_NAME}}"
 
     # Parse the script's given arguments.
-    is_positional=false
+    is_positional=true
+    is_positional_only=false
+    positional_index=0
+
     unset args
     declare -Ag args
 
@@ -3250,8 +3286,7 @@ function argparser_main() {
         # message, append the message to the previous error messages or
         # set the argument's value.  In case of arguments given multiple
         # times, i.e., the key already exists in ${!args[@]}, add the
-        # new values to the previously given by re-reading in the values
-        # into ${arg_value}.
+        # new values to the previously given ones.
         for message in "${parsed_arg[@]}"; do
             case "${message}" in
                 Help)
@@ -3267,80 +3302,86 @@ function argparser_main() {
                     error_messages+=("${message}")
                     ;;
                 Positional_Start)
-                    # Set the current argument to the name
-                    # ${ARGPARSER_POSITIONAL_NAME} refers to.  Set the
-                    # flag that the positional arguments delimiter "--"
-                    # has been set, such that all following arguments
-                    # are interpreted as positional.
+                    # Set the flag that the positional-only arguments
+                    # delimiter "--" has been set, such that all
+                    # following arguments are interpreted as positional.
+                    # Advance to the next defined positional argument.
+                    # If the array has been exhausted, assign the future
+                    # positional arguments to the name
+                    # ${ARGPARSER_POSITIONAL_NAME} refers to.  Since the
+                    # line continuation introduces leading whitespace,
+                    # strip it from ${arg_key} to give a valid variable
+                    # identifier.
                     is_positional=true
-                    arg_key="${ARGPARSER_POSITIONAL_NAME}"
-
-                    if [[ "$(argparser_in_array "${arg_key}" \
-                        "${!args[@]}")" == true ]]
-                    then
-                        # Read the previously given values.
-                        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_value \
-                            <<< "${args[${arg_key}]}"
-                    else
-                        arg_value=( )
-                    fi
+                    is_positional_only=true
+                    arg_key="${all_positional_args[positional_index]:- \
+                        ${ARGPARSER_POSITIONAL_NAME}}"
+                    arg_key="$(argparser_trim "${arg_key}")"
                     ;;
                 Positional_End)
-                    # Set the current argument to the name
-                    # ${ARGPARSER_POSITIONAL_NAME} refers to.  Set the
-                    # flag that the positional arguments delimiter "++"
-                    # has been set (and thus "--" has been unset), such
-                    # that all following arguments are interpreted as
-                    # usual.
-                    is_positional=false
-                    arg_key="${ARGPARSER_POSITIONAL_NAME}"
-
-                    if [[ "$(argparser_in_array "${arg_key}" \
-                        "${!args[@]}")" == true ]]
-                    then
-                        # Read the previously given values.
-                        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_value \
-                            <<< "${args[${arg_key}]}"
-                    else
-                        arg_value=( )
-                    fi
+                    # Set the flag that the positional-only arguments
+                    # delimiter "++" has been set (and thus "--" has
+                    # been unset), such that all following arguments are
+                    # interpreted as usual.  Advance to the next defined
+                    # positional argument.  Again, if the array has been
+                    # exhausted, assign the future positional arguments
+                    # to the name ${ARGPARSER_POSITIONAL_NAME} refers
+                    # to.  Since the line continuation introduces
+                    # leading whitespace, strip it from ${arg_key} to
+                    # give a valid variable identifier.
+                    is_positional=true
+                    is_positional_only=false
+                    arg_key="${all_positional_args[positional_index]:- \
+                        ${ARGPARSER_POSITIONAL_NAME}}"
+                    arg_key="$(argparser_trim "${arg_key}")"
                     ;;
                 Argument*)
                     # Set the current argument name.
+                    is_positional=false
                     arg_key="${message#Argument: ?}"
 
                     if [[ "$(argparser_in_array "${arg_key}" \
-                        "${!args[@]}")" == true ]]
+                        "${!args[@]}")" == false ]]
                     then
-                        # Read the previously given values and set the
-                        # argument's prefix ("-" or "+"), which is the
+                        # Set the argument's prefix ("-" or "+"), as the
                         # first value.
-                        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -a arg_value \
-                            <<< "${args[${arg_key}]}"
-                        arg_value[0]="${message#Argument: }"
-                        arg_value[0]="${arg_value::1}"
-                    else
-                        arg_value=("${message#Argument: }")
-                        arg_value[0]="${arg_value[0]::1}"
+                        args[${arg_key}]="${message#Argument: }"
+                        args[${arg_key}]="${args[${arg_key}]::1}"
                     fi
                     ;;
                 Value*)
                     # Set the current argument's value.
-                    arg_value+=("${message#Value: }")
+                    if [[ "$(argparser_in_array "${arg_key}" \
+                        "${!args[@]}")" == false ]]
+                    then
+                        args[${arg_key}]="${message#Value: }"
+                    else
+                        args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                        args[${arg_key}]+="${message#Value: }"
+                    fi
+
+                    # If the argument is positional, advance to the next
+                    # defined positional argument.   Again, if the array
+                    # has been exhausted, assign the future positional
+                    # arguments to the name ${ARGPARSER_POSITIONAL_NAME}
+                    # refers to.  Since the line continuation introduces
+                    # leading whitespace, strip it from ${arg_key} to
+                    # give a valid variable identifier.
+                    if [[ "${is_positional}" == true \
+                        && "${arg_key}" != "${ARGPARSER_POSITIONAL_NAME}" ]]
+                    then
+                        (( positional_index++ ))
+                        arg_key="${all_positional_args[positional_index]:- \
+                            ${ARGPARSER_POSITIONAL_NAME}}"
+                        arg_key="$(argparser_trim "${arg_key}")"
+                    fi
                     ;;
             esac
         done
-
-        # If the argument had been set before, assign the new value to
-        # it (as ${ARGPARSER_ARG_DELIMITER_2}-separated list).
-        if [[ -v arg_key ]]; then
-            args[${arg_key}]="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
-                printf '%s' "${arg_value[*]}")"
-        fi
     done
 
     # Check the arguments' values.
-    for arg_key in "${!all_short_options[@]}"; do
+    for arg_key in "${!all_short_options[@]}" "${all_positional_args[@]}"; do
         # Check which defined argument is given to the script.  Omitted
         # arguments are assigned two hyphens ("-") as value, separated
         # by an ${ARGPARSER_ARG_DELIMITER_2} character.  The first
@@ -3348,27 +3389,27 @@ function argparser_main() {
         # the argument's absence.  Check each argument's value.
         if [[ "$(argparser_in_array "${arg_key}" "${!args[@]}")" == true ]]
         then
-            arg_value="${args[${arg_key}]}"
+            arg_values="${args[${arg_key}]}"
         else
-            arg_value="-${ARGPARSER_ARG_DELIMITER_2}-"
+            arg_values="-${ARGPARSER_ARG_DELIMITER_2}-"
         fi
-        mapfile -d "" -t checked_arg < <(argparser_check_arg_value \
-            "${arg_key}" "${arg_value}")
+        mapfile -d "" -t checked_arg < <(argparser_check_arg_values \
+            "${arg_key}" "${arg_values}")
 
         # Read the output message and either append the message to the
         # previous error or warning messages or set the argument's
         # value.
-        arg_value=""
+        arg_values=""
         for message in "${checked_arg[@]}"; do
             case "${message}" in
                 Error*) error_messages+=("${message}") ;;
                 Warning*) warning_messages+=("${message}") ;;
-                Value*) arg_value="${message#Value: }" ;;
+                Value*) arg_values="${message#Value: }" ;;
             esac
         done
 
         # Assign the checked value to the argument.
-        args[${arg_key}]="${arg_value}"
+        args[${arg_key}]="${arg_values}"
     done
 
     # Colorize, sort, filter, and print all error and warning messages.
@@ -3478,7 +3519,7 @@ fi
 if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_check_args_definition_names
     unset -f argparser_check_args_definition_values
-    unset -f argparser_check_arg_value
+    unset -f argparser_check_arg_values
     unset -f argparser_check_color_or_style
     unset -f argparser_check_env_vars
     unset -f argparser_check_file
