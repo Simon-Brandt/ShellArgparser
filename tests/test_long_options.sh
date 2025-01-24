@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-20
+# Last Modification: 2025-01-24
 
 # Usage: Run this script with "bash test_long_options.sh".
 
@@ -15,6 +15,7 @@ ARGPARSER_MAX_COL_WIDTH_2=33
 ARGPARSER_MAX_COL_WIDTH_3=35
 
 # Define the arguments.
+# shellcheck disable=SC2190  # Indexed, not associative array.
 args=(
     "id:short_opts:long_opts:val_names:defaults:choices:type:arg_no:arg_group:help"
     "var_1:-:var-1,var-a:VAL_1:-:-:uint:1:Mandatory options:one value without default or choice"
