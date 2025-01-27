@@ -1,6 +1,6 @@
 id    :short_opts :long_opts :val_names :defaults :choices :type :arg_no :arg_group            :help
-pos_1 :-          :-         :POS_1     :-        :-       :int  :1      :Positional arguments :one positional arguments without default
-pos_2 :-          :-         :POS_2     :2        :-       :int  :1      :Positional arguments :one positional arguments with default
+pos_1 :-          :-         :POS_1     :2        :1,2     :int  :1      :Positional arguments :one positional arguments with default and choice
+pos_2 :-          :-         :POS_2     :-        :-       :int  :1      :Positional arguments :one positional arguments without default
 var_1 :a          :var-1     :VAL_1     :-        :-       :uint :1      :Mandatory options    :one value without default or choice
 var_2 :b          :var-2     :VAL_2     :-        :-       :int  :+      :Mandatory options    :at least one value without default or choice
 var_3 :c          :var-3     :VAL_3     :-        :A,B     :char :+      :Mandatory options    :at least one value with choice
