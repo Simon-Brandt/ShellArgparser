@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-24
+# Last Modification: 2025-01-27
 
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
@@ -72,6 +72,7 @@ fi
 : "${ARGPARSER_MAX_COL_WIDTH_1:=5}"
 : "${ARGPARSER_MAX_COL_WIDTH_2:=33}"
 : "${ARGPARSER_MAX_COL_WIDTH_3:=39}"
+: "${ARGPARSER_POSITIONAL_GROUP_NAME:="Positional arguments"}"
 : "${ARGPARSER_POSITIONAL_NAME:="positional"}"
 : "${ARGPARSER_READ_ARGS:=true}"
 : "${ARGPARSER_SCRIPT_NAME:="${0##*/}"}"
@@ -686,6 +687,7 @@ function argparser_check_env_vars() {
     # to set the variables himself.
     #
     # The following environment variables are unchecked:
+    # - ARGPARSER_POSITIONAL_GROUP_NAME
     # - ARGPARSER_SCRIPT_NAME
     #
     # Environment:
@@ -2318,8 +2320,9 @@ function argparser_create_help_message() {
     # compare each argument's group later upon iterating over them.
     arg_groups=( )
     for arg_group in "${all_arg_groups[@]}"; do
-        if [[ "$(argparser_in_array "${arg_group}" \
-            "${arg_groups[@]}")" == false ]]
+        if [[ "${arg_group}" != "${ARGPARSER_POSITIONAL_GROUP_NAME}" \
+            && "$(argparser_in_array "${arg_group}" \
+                "${arg_groups[@]}")" == false ]]
         then
             arg_groups+=("${arg_group}")
         fi
@@ -3581,6 +3584,7 @@ if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_MAX_COL_WIDTH_1
     unset ARGPARSER_MAX_COL_WIDTH_2
     unset ARGPARSER_MAX_COL_WIDTH_3
+    unset ARGPARSER_POSITIONAL_GROUP_NAME
     unset ARGPARSER_POSITIONAL_NAME
     unset ARGPARSER_READ_ARGS
     unset ARGPARSER_SCRIPT_NAME
