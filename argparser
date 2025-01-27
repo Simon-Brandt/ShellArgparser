@@ -2855,6 +2855,8 @@ function argparser_create_usage_message() {
     #   values (read-only)
     # - all_long_options: the associative array holding the long option
     #   names (read-only)
+    # - all_positional_args: the indexed array holding the positional
+    #   argument names
     # - all_short_options: the associative array holding the short
     #   option names (read-only)
     # - all_value_names: the associative array holding the value names
@@ -2875,6 +2877,8 @@ function argparser_create_usage_message() {
     local -a long_option_default_args
     local -a long_option_required_args
     local -a long_options
+    local -a positional_default_args
+    local -a positional_required_args
     local -a short_option_default_args
     local -a short_option_required_args
     local -a short_options
@@ -3141,6 +3145,52 @@ function argparser_create_usage_message() {
         else  # No choice nor default.
             lines+=("$(printf '%s%s=%s' "${whitespace}" "${long_options[0]}" \
                 "${value_names}")")
+        fi
+    done
+
+    if (( "${#lines[@]}" > 0 )); then
+        mapfile -d "" -t lines < <(argparser_sort false "${lines[@]}")
+        usage_message+="$(printf '%s' "${lines[@]}")"
+    fi
+
+    # Output each positional argument with default values and sort them
+    # alphabetically.
+    lines=( )
+    for arg_key in "${positional_default_args[@]}"; do
+        # Read the argument's definition.
+        value_names="${all_value_names[${arg_key}]}"
+        choice_values="${all_choice_values[${arg_key}]}"
+
+        # Define the line for the current argument.  The argument has
+        # some default values and may have some choice values, with the
+        # existence of each changing the look of the line.
+        if [[ "${choice_values}" != "-" ]]; then  # Choice and default.
+            lines+=("$(printf '%s[{%s}]' "${whitespace}" "${choice_values}")")
+        else  # Default only.
+            lines+=("$(printf '%s[%s]' "${whitespace}" "${value_names}")")
+        fi
+    done
+
+    if (( "${#lines[@]}" > 0 )); then
+        mapfile -d "" -t lines < <(argparser_sort false "${lines[@]}")
+        usage_message+="$(printf '%s' "${lines[@]}")"
+    fi
+
+    # Output each positional argument without default values and sort
+    # them alphabetically.
+    lines=( )
+    for arg_key in "${positional_required_args[@]}"; do
+        # Read the argument's definition.
+        value_names="${all_value_names[${arg_key}]}"
+        choice_values="${all_choice_values[${arg_key}]}"
+
+        # Define the line for the current argument.  The argument has no
+        # default values and may have some choice values, with the
+        # existence of each changing the look of the line.
+        if [[ "${choice_values}" != "-" ]]; then  # Choice only.
+            lines+=("$(printf '%s{%s}' "${whitespace}" "${choice_values}")")
+        else  # No choice nor default.
+            lines+=("$(printf '%s%s' "${whitespace}" "${value_names}")")
         fi
     done
 
