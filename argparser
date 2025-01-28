@@ -2301,6 +2301,7 @@ function argparser_create_help_message() {
     local col_width_2
     local col_width_3
     local default_values
+    local has_defaults
     local header
     local help_text
     local i
@@ -2366,6 +2367,9 @@ function argparser_create_help_message() {
     col_1=( )
     col_2=( )
     col_3=( )
+
+    has_defaults=false
+
     for arg_group in "${arg_groups[@]}"; do
         # Only add the argument group that was requested by the include
         # directive.  Skip the "Header" and "Help" directive, but not
@@ -2408,6 +2412,12 @@ function argparser_create_help_message() {
             # sorting of all arguments, later.
             option_names+=("$(argparser_get_option_names "${arg_key}" \
                 "long-short")")
+
+            # If the option has default values, set a flag for
+            # adjustment of the help message header, later.
+            if [[ "${default_values}" != "-" ]]; then
+                has_defaults=true
+            fi
 
             # Define the columns' next line, for the current argument.
             # The argument may have some short and long options, along
@@ -2768,26 +2778,27 @@ function argparser_create_help_message() {
     done
 
     # If the "All" or "Header" include directive was requested, print
-    # the help message's header, giving the script's name and
+    # the help message's header, giving the script's name and usage
     # instructions on how to interpret the arguments.  With "All", print
     # a trailing blank line to separate the block from the following
     # arguments.
-    if [[ "${include_directive}" == "All" ]]; then
+    if [[ "${include_directive}" == "All" \
+        || "${include_directive}" == "Header"  ]]
+    then
         header="$(argparser_translate "Usage"): ${ARGPARSER_SCRIPT_NAME} "
-        header+="$(argparser_translate "ARGUMENTS")"
-        printf '%s\n\n' "${header}"
-
-        note="$(argparser_translate "Mandatory arguments to long options " \
-            "are mandatory for short options too")."
-        printf '%s\n\n' "${note}"
-    elif [[ "${include_directive}" == "Header" ]]; then
-        header="$(argparser_translate "Usage"): ${ARGPARSER_SCRIPT_NAME} "
+        if [[ "${has_defaults}" == true ]]; then
+            header+="[$(argparser_translate "OPTIONS")] "
+        fi
         header+="$(argparser_translate "ARGUMENTS")"
         printf '%s\n\n' "${header}"
 
         note="$(argparser_translate "Mandatory arguments to long options " \
             "are mandatory for short options too")."
         printf '%s\n' "${note}"
+    fi
+
+    if [[ "${include_directive}" == "All" ]]; then
+        printf '\n'
     fi
 
     # For each argument group, print its arguments.

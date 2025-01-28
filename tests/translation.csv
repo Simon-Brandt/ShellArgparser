@@ -1,6 +1,7 @@
 en:de
 Usage:Aufruf
 ARGUMENTS:ARGUMENTE
+OPTIONS:OPTIONEN
 Mandatory arguments to long options are mandatory for short options too:Erforderliche Argumente für lange Optionen sind auch für kurze erforderlich
 display this help and exit:diese Hilfe anzeigen und beenden
 display the usage and exit:den Aufruf anzeigen und beenden
