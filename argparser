@@ -3012,11 +3012,21 @@ function argparser_create_usage_message() {
         if [[ "${arg_number}" == 0 ]]; then  # Flag.
             lines+=("$(printf '%s[%s]' "${whitespace}" "${short_options[0]}")")
         elif [[ "${choice_values}" != "-" ]]; then  # Choice and default.
-            lines+=("$(printf '%s[%s={%s}]' "${whitespace}" \
-                "${short_options[0]}" "${choice_values}")")
+            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+                lines+=("$(printf '%s[%s={%s}...]' "${whitespace}" \
+                    "${short_options[0]}" "${choice_values}")")
+            else
+                lines+=("$(printf '%s[%s={%s}]' "${whitespace}" \
+                    "${short_options[0]}" "${choice_values}")")
+            fi
         else  # Default only.
-            lines+=("$(printf '%s[%s=%s]' "${whitespace}" \
-                "${short_options[0]}" "${value_names}")")
+            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+                lines+=("$(printf '%s[%s=%s...]' "${whitespace}" \
+                    "${short_options[0]}" "${value_names}")")
+            else
+                lines+=("$(printf '%s[%s=%s]' "${whitespace}" \
+                    "${short_options[0]}" "${value_names}")")
+            fi
         fi
     done
 
@@ -3056,11 +3066,21 @@ function argparser_create_usage_message() {
         if [[ "${arg_number}" == 0 ]]; then  # Flag.
             lines+=("$(printf '%s[%s]' "${whitespace}" "${long_options[0]}")")
         elif [[ "${choice_values}" != "-" ]]; then  # Choice and default.
-            lines+=("$(printf '%s[%s={%s}]' "${whitespace}" \
-                "${long_options[0]}" "${choice_values}")")
+            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+                lines+=("$(printf '%s[%s={%s}...]' "${whitespace}" \
+                    "${long_options[0]}" "${choice_values}")")
+            else
+                lines+=("$(printf '%s[%s={%s}]' "${whitespace}" \
+                    "${long_options[0]}" "${choice_values}")")
+            fi
         else  # Default only.
-            lines+=("$(printf '%s[%s=%s]' "${whitespace}" \
-                "${long_options[0]}" "${value_names}")")
+            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+                lines+=("$(printf '%s[%s=%s...]' "${whitespace}" \
+                    "${long_options[0]}" "${value_names}")")
+            else
+                lines+=("$(printf '%s[%s=%s]' "${whitespace}" \
+                    "${long_options[0]}" "${value_names}")")
+            fi
         fi
     done
 
@@ -3098,11 +3118,21 @@ function argparser_create_usage_message() {
         # choice values, with the existence of each changing the look of
         # the line.
         if [[ "${choice_values}" != "-" ]]; then  # Choice only.
-            lines+=("$(printf '%s%s={%s}' "${whitespace}" \
-                "${short_options[0]}" "${choice_values}")")
+            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+                lines+=("$(printf '%s%s={%s}...' "${whitespace}" \
+                    "${short_options[0]}" "${choice_values}")")
+            else
+                lines+=("$(printf '%s%s={%s}' "${whitespace}" \
+                    "${short_options[0]}" "${choice_values}")")
+            fi
         else  # No choice nor default.
-            lines+=("$(printf '%s%s=%s' "${whitespace}" "${short_options[0]}" \
-                "${value_names}")")
+            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+                lines+=("$(printf '%s%s=%s...' "${whitespace}" \
+                    "${short_options[0]}" "${value_names}")")
+            else
+                lines+=("$(printf '%s%s=%s' "${whitespace}" \
+                    "${short_options[0]}" "${value_names}")")
+            fi
         fi
     done
 
@@ -3140,11 +3170,21 @@ function argparser_create_usage_message() {
         # choice values, with the existence of each changing the look of
         # the line.
         if [[ "${choice_values}" != "-" ]]; then  # Choice only.
-            lines+=("$(printf '%s%s={%s}' "${whitespace}" \
-                "${long_options[0]}" "${choice_values}")")
+            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+                lines+=("$(printf '%s%s={%s}...' "${whitespace}" \
+                    "${long_options[0]}" "${choice_values}")")
+            else
+                lines+=("$(printf '%s%s={%s}' "${whitespace}" \
+                    "${long_options[0]}" "${choice_values}")")
+            fi
         else  # No choice nor default.
-            lines+=("$(printf '%s%s=%s' "${whitespace}" "${long_options[0]}" \
-                "${value_names}")")
+            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+                lines+=("$(printf '%s%s=%s...' "${whitespace}" \
+                    "${long_options[0]}" "${value_names}")")
+            else
+                lines+=("$(printf '%s%s=%s' "${whitespace}" \
+                    "${long_options[0]}" "${value_names}")")
+            fi
         fi
     done
 
@@ -3160,14 +3200,26 @@ function argparser_create_usage_message() {
         # Read the argument's definition.
         value_names="${all_value_names[${arg_key}]}"
         choice_values="${all_choice_values[${arg_key}]}"
+        arg_number="${all_arg_numbers[${arg_key}]}"
 
         # Define the line for the current argument.  The argument has
         # some default values and may have some choice values, with the
         # existence of each changing the look of the line.
         if [[ "${choice_values}" != "-" ]]; then  # Choice and default.
-            lines+=("$(printf '%s[{%s}]' "${whitespace}" "${choice_values}")")
+            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+                lines+=("$(printf '%s[{%s}...]' "${whitespace}" \
+                    "${choice_values}")")
+            else
+                lines+=("$(printf '%s[{%s}]' "${whitespace}" \
+                    "${choice_values}")")
+            fi
         else  # Default only.
-            lines+=("$(printf '%s[%s]' "${whitespace}" "${value_names}")")
+            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+                lines+=("$(printf '%s[%s...]' "${whitespace}" \
+                    "${value_names}")")
+            else
+                lines+=("$(printf '%s[%s]' "${whitespace}" "${value_names}")")
+            fi
         fi
     done
 
@@ -3183,14 +3235,25 @@ function argparser_create_usage_message() {
         # Read the argument's definition.
         value_names="${all_value_names[${arg_key}]}"
         choice_values="${all_choice_values[${arg_key}]}"
+        arg_number="${all_arg_numbers[${arg_key}]}"
 
         # Define the line for the current argument.  The argument has no
         # default values and may have some choice values, with the
         # existence of each changing the look of the line.
         if [[ "${choice_values}" != "-" ]]; then  # Choice only.
-            lines+=("$(printf '%s{%s}' "${whitespace}" "${choice_values}")")
+            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+                lines+=("$(printf '%s{%s}...' "${whitespace}" \
+                    "${choice_values}")")
+            else
+                lines+=("$(printf '%s{%s}' "${whitespace}" \
+                    "${choice_values}")")
+            fi
         else  # No choice nor default.
-            lines+=("$(printf '%s%s' "${whitespace}" "${value_names}")")
+            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+                lines+=("$(printf '%s%s...' "${whitespace}" "${value_names}")")
+            else
+                lines+=("$(printf '%s%s' "${whitespace}" "${value_names}")")
+            fi
         fi
     done
 
