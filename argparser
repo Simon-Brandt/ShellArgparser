@@ -53,6 +53,8 @@ if (( "$#" >= 2 )) && [[ "$2" == "--" ]]; then
     esac
     shift 2  # Get rid of the action specification.
 fi
+: "${ARGPARSER_ADD_HELP:="true"}"
+: "${ARGPARSER_ADD_USAGE:="true"}"
 : "${ARGPARSER_ARG_ARRAY_NAME:="args"}"
 : "${ARGPARSER_ARG_DEF_FILE:=""}"
 : "${ARGPARSER_ARG_DEF_FILE_HAS_HEADER:=true}"
@@ -693,6 +695,8 @@ function argparser_check_env_vars() {
     # - ARGPARSER_SCRIPT_NAME
     #
     # Environment:
+    # - ARGPARSER_ADD_HELP (read-only)
+    # - ARGPARSER_ADD_USAGE (read-only)
     # - ARGPARSER_ARG_ARRAY_NAME (read-only)
     # - ARGPARSER_ARG_DEF_FILE (read-only)
     # - ARGPARSER_ARG_DEF_FILE_HAS_HEADER (read-only)
@@ -744,6 +748,8 @@ function argparser_check_env_vars() {
     # true or false.  Else, output an error message.
     error_messages=( )
     vars=(
+        ARGPARSER_ADD_HELP
+        ARGPARSER_ADD_USAGE
         ARGPARSER_ARG_DEF_FILE_HAS_HEADER
         ARGPARSER_ARG_DEF_HAS_HEADER
         ARGPARSER_CHECK_ARG_DEFINITION
@@ -1273,6 +1279,8 @@ function argparser_check_args_definition_names() {
     #   option names (read-only)
     #
     # Environment:
+    # - ARGPARSER_ADD_HELP (read-only)
+    # - ARGPARSER_ADD_USAGE (read-only)
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     #
     # Output:
@@ -1327,7 +1335,9 @@ function argparser_check_args_definition_names() {
         fi
 
         for short_option in "${short_options[@]}"; do
-            if [[ "${short_option}" == "h" ]]; then
+            if [[ "${ARGPARSER_ADD_HELP}" == true \
+                && "${short_option}" == "h" ]]
+            then
                 # Check if a short option name uses the reserved flag
                 # for the help message.
                 error_message="Error: The argument with the identifier "
@@ -1335,7 +1345,9 @@ function argparser_check_args_definition_names() {
                 error_message+="defined, which is reserved for invoking the "
                 error_message+="help message."
                 printf '%s\0' "${error_message}"
-            elif [[ "${short_option}" == "u" ]]; then
+            elif [[ "${ARGPARSER_ADD_USAGE}" == true \
+                && "${short_option}" == "u" ]]
+            then
                 # Check if a short option name uses the reserved flag
                 # for the usage message.
                 error_message="Error: The argument with the identifier "
@@ -1403,7 +1415,9 @@ function argparser_check_args_definition_names() {
         fi
 
         for long_option in "${long_options[@]}"; do
-            if [[ "${long_option}" == "help" ]]; then
+            if [[ "${ARGPARSER_ADD_HELP}" == true \
+                && "${long_option}" == "help" ]]
+            then
                 # Check if a long option name uses the reserved flag for
                 # the help message.
                 error_message="Error: The argument with the identifier "
@@ -1411,11 +1425,13 @@ function argparser_check_args_definition_names() {
                 error_message+="defined, which is reserved for invoking the "
                 error_message+="help message."
                 printf '%s\0' "${error_message}"
-            elif [[ "${long_option}" == "usage" ]]; then
+            elif [[ "${ARGPARSER_ADD_USAGE}" == true \
+                && "${long_option}" == "usage" ]]
+            then
                 # Check if a long option name uses the reserved flag for
                 # the usage message.
                 error_message="Error: The argument with the identifier "
-                error_message+="\"${arg_key}\" has the long option --usage< "
+                error_message+="\"${arg_key}\" has the long option --usage "
                 error_message+="defined, which is reserved for invoking the "
                 error_message+="usage message."
                 printf '%s\0' "${error_message}"
@@ -1665,6 +1681,8 @@ function argparser_parse_arg() {
     #   (read-only)
     #
     # Environment:
+    # - ARGPARSER_ADD_HELP (read-only)
+    # - ARGPARSER_ADD_USAGE (read-only)
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     #
     # Output:
@@ -1724,17 +1742,25 @@ function argparser_parse_arg() {
         printf 'Error: The special option "++" takes no value.\0'
         printf 'Argument: %s' "${given_arg}"
         return
-    elif [[ "${given_arg}" == "-h" || "${given_arg}" == "--help" ]]; then
+    elif [[ "${ARGPARSER_ADD_HELP}" == true && \
+        ("${given_arg}" == "-h" || "${given_arg}" == "--help") ]]
+    then
         printf 'Help'
         return
-    elif [[ "${given_arg}" == "-h="* || "${given_arg}" == "--help="* ]]; then
+    elif [[ "${ARGPARSER_ADD_HELP}" == true && \
+        ( "${given_arg}" == "-h="* || "${given_arg}" == "--help="*) ]]
+    then
         printf 'Error: The option "-h,--help" takes no value.\0'
         printf 'Argument: %s' "${given_arg}"
         return
-    elif [[ "${given_arg}" == "-u" || "${given_arg}" == "--usage" ]]; then
+    elif [[ "${ARGPARSER_ADD_USAGE}" == true && \
+        ( "${given_arg}" == "-u" || "${given_arg}" == "--usage") ]]
+    then
         printf 'Usage'
         return
-    elif [[ "${given_arg}" == "-u="* || "${given_arg}" == "--usage="* ]]; then
+    elif [[ "${ARGPARSER_ADD_USAGE}" == true && \
+        ( "${given_arg}" == "-u="* || "${given_arg}" == "--usage="*) ]]
+    then
         printf 'Error: The option "-u,--usage" takes no value.\0'
         printf 'Argument: %s' "${given_arg}"
         return
@@ -2282,6 +2308,8 @@ function argparser_create_help_message() {
     # - all_value_names: the associative array holding the value names
     #
     # Environment:
+    # - ARGPARSER_ADD_HELP (read-only)
+    # - ARGPARSER_ADD_USAGE (read-only)
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_MAX_COL_WIDTH_1 (read-only)
     # - ARGPARSER_MAX_COL_WIDTH_2 (read-only)
@@ -2646,13 +2674,17 @@ function argparser_create_help_message() {
     if [[ "${include_directive}" == "All" \
         || "${include_directive}" == "Help" ]]
     then
-        col_1+=("-h,")
-        col_2+=("--help")
-        col_3+=("$(argparser_translate "display this help and exit")")
+        if [[ "${ARGPARSER_ADD_HELP}" == true ]]; then
+            col_1+=("-h,")
+            col_2+=("--help")
+            col_3+=("$(argparser_translate "display this help and exit")")
+        fi
 
-        col_1+=("-u,")
-        col_2+=("--usage")
-        col_3+=("$(argparser_translate "display the usage and exit")")
+        if [[ "${ARGPARSER_ADD_USAGE}" == true ]]; then
+            col_1+=("-u,")
+            col_2+=("--usage")
+            col_3+=("$(argparser_translate "display the usage and exit")")
+        fi
     fi
 
     # Limit the width of each column of the help message to
@@ -2953,6 +2985,8 @@ function argparser_create_usage_message() {
     # - all_value_names: the associative array holding the value names
     #
     # Environment:
+    # - ARGPARSER_ADD_HELP (read-only)
+    # - ARGPARSER_ADD_USAGE (read-only)
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_SCRIPT_NAME (read-only)
     # - ARGPARSER_USAGE_MESSAGE_OPTION_TYPE(read-only)
@@ -2982,9 +3016,25 @@ function argparser_create_usage_message() {
     # the existence of the -h | --help and -u | --usage arguments.
     header="$(argparser_translate "Usage"): ${ARGPARSER_SCRIPT_NAME}"
     if [[ "${ARGPARSER_USAGE_MESSAGE_OPTION_TYPE}" == "short" ]]; then
-        usage_message="${header} [-h | -u]"
+        if [[ "${ARGPARSER_ADD_HELP}" == true \
+            && "${ARGPARSER_ADD_USAGE}" == true ]]
+        then
+            usage_message="${header} [-h | -u]"
+        elif [[ "${ARGPARSER_ADD_HELP}" == true ]]; then
+            usage_message="${header} [-h]"
+        elif [[ "${ARGPARSER_ADD_USAGE}" == true ]]; then
+            usage_message="${header} [-u]"
+        fi
     else
-        usage_message="${header} [--help | --usage]"
+        if [[ "${ARGPARSER_ADD_HELP}" == true \
+            && "${ARGPARSER_ADD_USAGE}" == true ]]
+        then
+            usage_message="${header} [--help | --usage]"
+        elif [[ "${ARGPARSER_ADD_HELP}" == true ]]; then
+            usage_message="${header} [--help]"
+        elif [[ "${ARGPARSER_ADD_USAGE}" == true ]]; then
+            usage_message="${header} [--usage]"
+        fi
     fi
 
     # To keep all arguments aligned in columnar output, compute the
@@ -3934,6 +3984,8 @@ fi
 # limit side effects with potentially same-named variables from the
 # calling script that stand in no relation to the argparser.
 if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
+    unset ARGPARSER_ADD_HELP
+    unset ARGPARSER_ADD_USAGE
     unset ARGPARSER_ARG_ARRAY_NAME
     unset ARGPARSER_ARG_DEF_FILE
     unset ARGPARSER_ARG_DEF_FILE_HAS_HEADER

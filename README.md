@@ -869,6 +869,8 @@ The argparser defines a large set of environment variables, each following the n
 
 | Variable name                                                               | Allowed values or type[^1][^2][^3] | Default value        |
 |-----------------------------------------------------------------------------|------------------------------------|----------------------|
+| [`ARGPARSER_ADD_HELP`](#argparser_add_help)                                | *bool*                             | `true`               |
+| [`ARGPARSER_ADD_USAGE`](#argparser_add_usage)                                | *bool*                             | `true`               |
 | [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name)                     | *str*[^4]                          | `"args"`             |
 | [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file)                         | *filepath* \| `""`                 | `""`                 |
 | [`ARGPARSER_ARG_DEF_FILE_HAS_HEADER`](#argparser_arg_def_file_has_header)   | *bool*                             | `true`               |
@@ -911,6 +913,20 @@ The argparser defines a large set of environment variables, each following the n
 [^4]: In fact, any legit Bash variable identifier.
 [^5]: Values must be different from each other.
 [^6]: Sum of values is recommended to be 77.
+
+### `ARGPARSER_ADD_HELP`
+
+- ***Type:*** *bool* (Boolean)
+- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Default value:*** `true`
+- ***Description:*** Whether to add `-h` and `--help` as flags to call the help message.
+
+### `ARGPARSER_ADD_USAGE`
+
+- ***Type:*** *bool* (Boolean)
+- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Default value:*** `true`
+- ***Description:*** Whether to add `-u` and `--usage` as flags to call the usage message.
 
 ### `ARGPARSER_ARG_ARRAY_NAME`
 
