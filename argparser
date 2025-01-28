@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-27
+# Last Modification: 2025-01-28
 
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
@@ -3362,8 +3362,10 @@ function argparser_main() {
     local -a given_args
     local i
     local is_extglob_set
+    local is_help
     local is_positional
     local is_positional_only
+    local is_usage
     local message
     local -a messages
     local name
@@ -3496,6 +3498,8 @@ function argparser_main() {
     arg_key="${all_positional_args[0]:-${ARGPARSER_POSITIONAL_NAME}}"
 
     # Parse the script's given arguments.
+    is_help=false
+    is_usage=false
     is_positional=true
     is_positional_only=false
     positional_index=0
@@ -3507,25 +3511,16 @@ function argparser_main() {
         # Parse the argument.
         mapfile -d "" -t parsed_arg < <(argparser_parse_arg "${given_arg}")
 
-        # Read the output message and either print the help or usage
-        # message, append the message to the previous error messages or
-        # set the argument's value.  In case of arguments given multiple
-        # times, i.e., the key already exists in ${!args[@]}, add the
-        # new values to the previously given ones.
+        # Read the output message and either set the help or usage
+        # message for printing, append the message to the previous error
+        # messages or set the argument's value.  In case of arguments
+        # given multiple times, i.e., the key already exists in
+        # ${!args[@]}, add the new values to the previously given ones.
         for message in "${parsed_arg[@]}"; do
             case "${message}" in
-                Help)
-                    # Print the help message.
-                    argparser_print_help_or_usage_message "Help" true
-                    ;;
-                Usage)
-                    # Print the usage message.
-                    argparser_print_help_or_usage_message "Usage" true
-                    ;;
-                Error*)
-                    # Append the message to the previous error messages.
-                    error_messages+=("${message}")
-                    ;;
+                Help) is_help=true ;;
+                Usage) is_usage=true ;;
+                Error*) error_messages+=("${message}") ;;
                 Positional_Start)
                     # Set the flag that the positional-only arguments
                     # delimiter "--" has been set, such that all
@@ -3604,6 +3599,14 @@ function argparser_main() {
             esac
         done
     done
+
+    # If the help message was requested, print it.  If the usage message
+    # was requested, but not the help message, print the usage message.
+    if [[ "${is_help}" == true ]]; then
+        argparser_print_help_or_usage_message "Help" true
+    elif [[ "${is_usage}" == true ]]; then
+        argparser_print_help_or_usage_message "Usage" true
+    fi
 
     # Check the arguments' values.
     for arg_key in "${!all_short_options[@]}" "${all_positional_args[@]}"; do
