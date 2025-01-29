@@ -869,8 +869,9 @@ The argparser defines a large set of environment variables, each following the n
 
 | Variable name                                                               | Allowed values or type[^1][^2][^3] | Default value        |
 |-----------------------------------------------------------------------------|------------------------------------|----------------------|
-| [`ARGPARSER_ADD_HELP`](#argparser_add_help)                                | *bool*                             | `true`               |
-| [`ARGPARSER_ADD_USAGE`](#argparser_add_usage)                                | *bool*                             | `true`               |
+| [`ARGPARSER_ADD_HELP`](#argparser_add_help)                                 | *bool*                             | `true`               |
+| [`ARGPARSER_ADD_USAGE`](#argparser_add_usage)                               | *bool*                             | `true`               |
+| [`ARGPARSER_ALLOW_ABBREVIATION`](#argparser_allow_abbreviation)             | *bool*                             | `false`               |
 | [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name)                     | *str*[^4]                          | `"args"`             |
 | [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file)                         | *filepath* \| `""`                 | `""`                 |
 | [`ARGPARSER_ARG_DEF_FILE_HAS_HEADER`](#argparser_arg_def_file_has_header)   | *bool*                             | `true`               |
@@ -927,6 +928,13 @@ The argparser defines a large set of environment variables, each following the n
 - ***Allowed values:*** `true` and `false` (case-sensitive)
 - ***Default value:*** `true`
 - ***Description:*** Whether to add `-u` and `--usage` as flags to call the usage message.
+
+### `ARGPARSER_ALLOW_ABBREVIATION`
+
+- ***Type:*** *bool* (Boolean)
+- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Default value:*** `false`
+- ***Description:*** Whether to allow the user to give long option names in abbreviated form, *e.g.*, `--verb` for `--verbatim`, as long as no collision with *e.g.* `--verbose` arises. Short option names only span one character and thus can never be abbreviated.
 
 ### `ARGPARSER_ARG_ARRAY_NAME`
 
