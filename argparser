@@ -1497,6 +1497,7 @@ function argparser_check_args_definition_values() {
     #   argument names
     # - all_short_options: the associative array holding the short
     #   option names (read-only)
+    # - all_types: the associative array holding the argument types
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
@@ -1508,12 +1509,14 @@ function argparser_check_args_definition_values() {
     # Define the local variables.
     local arg_key
     local arg_number
+    local choice_value
     local -a choice_values
     local default_value
     local -a default_values
     local error_message
     local infinite_arg_number_arg
     local optional_arg
+    local type
 
     # Check the consistency of all positional arguments.
     infinite_arg_number_arg=""
@@ -1524,6 +1527,7 @@ function argparser_check_args_definition_values() {
             <<< "${all_default_values[${arg_key}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values \
             <<< "${all_choice_values[${arg_key}]}"
+        type="${all_types[${arg_key}]}"
         arg_number="${all_arg_numbers[${arg_key}]}"
 
         # Check if the number of default values equals the number of
@@ -1607,6 +1611,67 @@ function argparser_check_args_definition_values() {
                 infinite_arg_number_arg="${arg_key}"
             fi
         fi
+
+        # Check the data type.
+        if [[ "$(argparser_in_array "${type}" "-" "bool" "char" "int" "str" \
+            "uint")" == false ]]
+        then
+            error_message="Error: The positional argument with the "
+            error_message+="identifier \"${arg_key}\" has \"${type}\" given "
+            error_message+="as data type, but only \"bool\", \"char\", "
+            error_message+="\"int\", \"str\", and \"uint\" are supported."
+            printf '%s\0' "${error_message}"
+        fi
+
+        # Check if the choice values accord to the type.
+        for choice_value in "${choice_values[@]}"; do
+            if [[ "${choice_value}" == "-" || "${type}" == "-" ]]; then
+                # No choice value or type is given, so abort the loop.
+                break
+            elif [[ "${type}" == "bool" \
+                && "$(argparser_is_variable_bool \
+                    "${choice_value}")" == false ]]
+            then
+                # Check if the choice value is a boolean.
+                error_message="Error: The positional argument with the "
+                error_message+="identifier \"${arg_key}\" has "
+                error_message+="\"${choice_value}\" given as choice value, "
+                error_message+="which must be a boolean, i.e., true or false."
+                printf '%s\0' "${error_message}"
+            elif [[ "${type}" == "char" \
+                && "$(argparser_is_variable_char \
+                    "${choice_value}")" == false ]]
+            then
+                # Check if the choice value is a character.
+                error_message="Error: The positional argument with the "
+                error_message+="identifier \"${arg_key}\" has "
+                error_message+="\"${choice_value}\" given as choice value, "
+                error_message+="which must be a character, i.e., a string "
+                error_message+="comprising one printable ASCII character."
+                printf '%s\0' "${error_message}"
+            elif [[ "${type}" == "int" \
+                && "$(argparser_is_variable_int "${choice_value}")" == false ]]
+            then
+                # Check if the choice value is an integer.
+                error_message="Error: The positional argument with the "
+                error_message+="identifier \"${arg_key}\" has "
+                error_message+="\"${choice_value}\" given as choice value, "
+                error_message+="which must be an integer, i.e., comprise only "
+                error_message+="digits and possibly a leading sign."
+                printf '%s\0' "${error_message}"
+            elif [[ "${type}" == "uint" \
+                && "$(argparser_is_variable_uint \
+                    "${choice_value}")" == false ]]
+            then
+                # Check if the choice value is an unsigned integer.
+                error_message="Error: The positional argument with the "
+                error_message+="identifier \"${arg_key}\" has "
+                error_message+="\"${choice_value}\" given as choice value, "
+                error_message+="which must be an unsigned integer, i.e., "
+                error_message+="comprise only digits and no sign."
+                printf '%s\0' "${error_message}"
+            fi
+        done
     done
 
     # Check the consistency of all keyword arguments.
@@ -1616,6 +1681,7 @@ function argparser_check_args_definition_values() {
             <<< "${all_default_values[${arg_key}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values \
             <<< "${all_choice_values[${arg_key}]}"
+        type="${all_types[${arg_key}]}"
         arg_number="${all_arg_numbers[${arg_key}]}"
 
         # Check if the default value for flags is either true or false.
@@ -1688,6 +1754,67 @@ function argparser_check_args_definition_values() {
                 fi
             done
         fi
+
+        # Check the data type.
+        if [[ "$(argparser_in_array "${type}" "-" "bool" "char" "int" "str" \
+            "uint")" == false ]]
+        then
+            error_message="Error: The argument with the identifier "
+            error_message+="\"${arg_key}\" has \"${type}\" given as data "
+            error_message+="type, but only \"bool\", \"char\", \"int\", "
+            error_message+="\"str\", and \"uint\" are supported."
+            printf '%s\0' "${error_message}"
+        fi
+
+        # Check if the choice values accord to the type.
+        for choice_value in "${choice_values[@]}"; do
+            if [[ "${choice_value}" == "-" || "${type}" == "-" ]]; then
+                # No choice value or type is given, so abort the loop.
+                break
+            elif [[ "${type}" == "bool" \
+                && "$(argparser_is_variable_bool \
+                    "${choice_value}")" == false ]]
+            then
+                # Check if the choice value is a boolean.
+                error_message="Error: The argument with the identifier "
+                error_message+="\"${arg_key}\" has \"${choice_value}\" given "
+                error_message+="as choice value, which must be a boolean, "
+                error_message+="i.e., true or false."
+                printf '%s\0' "${error_message}"
+            elif [[ "${type}" == "char" \
+                && "$(argparser_is_variable_char \
+                    "${choice_value}")" == false ]]
+            then
+                # Check if the choice value is a character.
+                error_message="Error: The argument with the identifier "
+                error_message+="\"${arg_key}\" has \"${choice_value}\" given "
+                error_message+="as choice value, which must be a character, "
+                error_message+="i.e., a string comprising one printable ASCII "
+                error_message+="character."
+                printf '%s\0' "${error_message}"
+            elif [[ "${type}" == "int" \
+                && "$(argparser_is_variable_int "${choice_value}")" == false ]]
+            then
+                # Check if the choice value is an integer.
+                error_message="Error: The argument with the identifier "
+                error_message+="\"${arg_key}\" has \"${choice_value}\" given "
+                error_message+="as choice value, which must be an integer, "
+                error_message+="i.e., comprise only digits and possibly a "
+                error_message+="leading sign."
+                printf '%s\0' "${error_message}"
+            elif [[ "${type}" == "uint" \
+                && "$(argparser_is_variable_uint \
+                    "${choice_value}")" == false ]]
+            then
+                # Check if the choice value is an unsigned integer.
+                error_message="Error: The argument with the identifier "
+                error_message+="\"${arg_key}\" has \"${choice_value}\" given "
+                error_message+="as choice value, which must be an unsigned "
+                error_message+="integer, i.e., comprise only digits and no "
+                error_message+="sign."
+                printf '%s\0' "${error_message}"
+            fi
+        done
     done
 }
 
