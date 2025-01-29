@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-28
+# Last Modification: 2025-01-29
 
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
@@ -2889,16 +2889,19 @@ function argparser_create_help_message() {
         fi
 
         # Add the positional arguments, if existing.
-        for arg_key in "${all_positional_args[@]}"; do
-            value_names=("${all_value_names[${arg_key}]}")
-            default_values="${all_default_values[${arg_key}]}"
+        if (( "${#all_positional_args[@]}" > 0 )); then
+            header+=" [--]"
+            for arg_key in "${all_positional_args[@]}"; do
+                value_names=("${all_value_names[${arg_key}]}")
+                default_values="${all_default_values[${arg_key}]}"
 
-            if [[ "${default_values}" != "-" ]]; then
-                header+=" [${value_names[0]}]"
-            else
-                header+=" ${value_names[0]}"
-            fi
-        done
+                if [[ "${default_values}" != "-" ]]; then
+                    header+=" [${value_names[0]}]"
+                else
+                    header+=" ${value_names[0]}"
+                fi
+            done
+        fi
         printf '%s\n\n' "${header}"
 
         note="$(argparser_translate "Mandatory arguments to long options " \
