@@ -1493,6 +1493,10 @@ function argparser_check_args_definition_values() {
     #   values (read-only)
     # - all_default_values: the associative array holding the default
     #   values (read-only)
+    # - all_positional_args: the indexed array holding the positional
+    #   argument names
+    # - all_short_options: the associative array holding the short
+    #   option names (read-only)
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
@@ -1508,7 +1512,104 @@ function argparser_check_args_definition_values() {
     local default_value
     local -a default_values
     local error_message
+    local infinite_arg_number_arg
+    local optional_arg
 
+    # Check the consistency of all positional arguments.
+    infinite_arg_number_arg=""
+    optional_arg=""
+    for arg_key in "${all_positional_args[@]}"; do
+        # Read the argument's definition.
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a default_values \
+            <<< "${all_default_values[${arg_key}]}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values \
+            <<< "${all_choice_values[${arg_key}]}"
+        arg_number="${all_arg_numbers[${arg_key}]}"
+
+        # Check if the number of default values equals the number of
+        # required values.  Else, output an error message.
+        if [[ "${arg_number}" != "+" \
+            && "${default_values[0]}" != "-" \
+            && "${#default_values[@]}" != "${arg_number}" ]]
+        then
+            if [[ "${arg_number}" == 1 ]]; then
+                error_message="Error: The positional argument with the "
+                error_message+="identifier \"${arg_key}\" requires 1 value, "
+                error_message+="but has ${#default_values[@]} given as "
+                error_message+="default."
+                printf '%s\0' "${error_message}"
+            else
+                error_message="Error: The positional argument with the "
+                error_message+="identifier \"${arg_key}\" requires "
+                error_message+="${arg_number} values, but has "
+                error_message+="${#default_values[@]} given as default."
+                printf '%s\0' "${error_message}"
+            fi
+        fi
+
+        # Check if the default values accord to the choice values, i.e.,
+        # if each default value lies within the array of choice values.
+        # Else, output an error message.
+        if [[ "${choice_values[0]}" != "-" ]]; then
+            for default_value in "${default_values[@]}"; do
+                if [[ "${default_value}" != "-" \
+                    && "$(argparser_in_array "${default_value}" \
+                    "${choice_values[@]}")" == false ]]
+                then
+                    choice_values=("$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
+                        printf '%s' "${choice_values[*]}")")
+                    default_values=("$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
+                        printf '%s' "${default_values[*]}")")
+                    error_message="Error: The positional  argument with the "
+                    error_message+="identifier \"${arg_key}\" accepts only "
+                    error_message+="the choice values {${choice_values[0]}}, "
+                    error_message+="but has {${default_values[0]}} given as "
+                    error_message+="default."
+                    printf '%s\0' "${error_message}"
+                    break
+                fi
+            done
+        fi
+
+        # Check that no two positional arguments are optional, which
+        # would be impossible to parse.
+        if [[ "${default_values[0]}" != "-" ]]; then
+            if [[ -n "${optional_arg}" ]]; then
+                error_message="Error: The positional argument with the "
+                error_message+="identifier \"${arg_key}\" is optional, as is "
+                error_message+="\"${optional_arg}\", which renders parsing "
+                error_message+="impossible."
+                printf '%s\0' "${error_message}"
+            else
+                optional_arg="${arg_key}"
+            fi
+        fi
+
+        # Check the number of arguments.
+        if [[ "${arg_number}" == 0 ]]; then
+            # Since positional arguments can't be flags, output an error
+            # message.
+            error_message="Error: The positional argument with the identifier "
+            error_message+="\"${arg_key}\" accepts 0 arguments and thus could "
+            error_message+="never be given on the command line."
+            printf '%s\0' "${error_message}"
+        elif [[ "${arg_number}" == "+" ]]; then
+            # Check that no two positional arguments accept an infinite
+            # number of values, which would be impossible to parse.
+            if [[ -n "${infinite_arg_number_arg}" ]]; then
+                error_message="Error: The positional argument with the "
+                error_message+="identifier \"${arg_key}\" accepts an infinite "
+                error_message+="number of arguments, as does "
+                error_message+="\"${infinite_arg_number_arg}\", which renders "
+                error_message+="parsing impossible."
+                printf '%s\0' "${error_message}"
+            else
+                infinite_arg_number_arg="${arg_key}"
+            fi
+        fi
+    done
+
+    # Check the consistency of all keyword arguments.
     for arg_key in "${!all_short_options[@]}"; do
         # Read the argument's definition.
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a default_values \
@@ -1518,23 +1619,22 @@ function argparser_check_args_definition_values() {
         arg_number="${all_arg_numbers[${arg_key}]}"
 
         # Check if the default value for flags is either true or false.
-        if [[ "${arg_number}" == 0 && "${default_values[0]}" != true \
+        if [[ "${arg_number}" == 0 \
+            && "${default_values[0]}" != true \
             && "${default_values[0]}" != false ]]
         then
             default_values=("$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
                 printf '%s' "${default_values[*]}")")
             error_message="Error: The argument with the identifier "
-            error_message+="\"${arg_key}\" must be true or alse, but is "
-            error_message+="{${default_values[0]}} as default."
+            error_message+="\"${arg_key}\" must be true or false, but has "
+            error_message+="{${default_values[0]}} given as default."
             printf '%s\0' "${error_message}"
         fi
 
         # Check if the number of default values equals the number of
-        # required values.  If there are default values and their number
-        # doesn't match, output an error message indicating the number of
-        # required and default arguments.  Ignore flags as long as they have
-        # the only default value of true or false, but a number of required
-        # values of 0.
+        # required values.  Else, output an error message.  Ignore flags
+        # as long as they have the only default value of true or false,
+        # but a number of required values of 0.
         if [[ "${arg_number}" != "+" \
             && "${default_values[0]}" != "-" \
             && "${#default_values[@]}" != "${arg_number}" \
@@ -1544,7 +1644,7 @@ function argparser_check_args_definition_values() {
             if [[ "${arg_number}" == 1 ]]; then
                 error_message="Error: The argument with the identifier "
                 error_message+="\"${arg_key}\" requires 1 value, but has "
-                error_message+="${#default_values[@]} given per default."
+                error_message+="${#default_values[@]} given as default."
                 printf '%s\0' "${error_message}"
             else
                 error_message="Error: The argument with the identifier "
@@ -1555,9 +1655,9 @@ function argparser_check_args_definition_values() {
             fi
         fi
 
-        # Check if the default values accord to the choice values, i.e., if
-        # each default value lies within the array of choice values.  Else,
-        # output an error message.
+        # Check if the default values accord to the choice values, i.e.,
+        # if each default value lies within the array of choice values.
+        # Else, output an error message.
         if [[ "${choice_values[0]}" != "-" ]]; then
             # Check that flags have no choice values.
             if [[ "${arg_number}" == 0 ]]; then
@@ -1565,7 +1665,7 @@ function argparser_check_args_definition_values() {
                     printf '%s' "${choice_values[*]}")")
                 error_message="Error: The argument with the identifier "
                 error_message+="\"${arg_key}\" accepts no choice values, but "
-                error_message+="uses {${choice_values[0]}} per default."
+                error_message+="uses {${choice_values[0]}} as default."
                 printf '%s\0' "${error_message}"
             fi
 
@@ -2303,6 +2403,8 @@ function argparser_create_help_message() {
     #   (read-only)
     # - all_long_options: the associative array holding the long option
     #   names (read-only)
+    # - all_positional_args: the indexed array holding the positional
+    #   argument names
     # - all_short_options: the associative array holding the short
     #   option names (read-only)
     # - all_value_names: the associative array holding the value names
