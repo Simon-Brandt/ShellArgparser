@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-29
+# Last Modification: 2025-01-31
 
 # TODO: Enable parsing of combined short option flags, i.e.
 #       script.sh -ab instead of script.sh -a -b.
@@ -12,7 +12,6 @@
 #       arguments.
 # TODO: Support argparser configuration by command-line arguments and
 #       config file.
-# TODO: Add -V, --version to generate a version message.
 
 # Usage: Source this script with "source argparser" inside the script
 # whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS} is set
@@ -54,9 +53,10 @@ if (( "$#" >= 2 )) && [[ "$2" == "--" ]]; then
     esac
     shift 2  # Get rid of the action specification.
 fi
-: "${ARGPARSER_ADD_HELP:="true"}"
-: "${ARGPARSER_ADD_USAGE:="true"}"
-: "${ARGPARSER_ALLOW_ABBREVIATION:="false"}"
+: "${ARGPARSER_ADD_HELP:=true}"
+: "${ARGPARSER_ADD_USAGE:=true}"
+: "${ARGPARSER_ADD_VERSION:=true}"
+: "${ARGPARSER_ALLOW_ABBREVIATION:=false}"
 : "${ARGPARSER_ARG_ARRAY_NAME:="args"}"
 : "${ARGPARSER_ARG_DEF_FILE:=""}"
 : "${ARGPARSER_ARG_DEF_FILE_HAS_HEADER:=true}"
@@ -94,6 +94,9 @@ fi
 : "${ARGPARSER_USAGE_MESSAGE_ORIENTATION:="row"}"
 : "${ARGPARSER_USAGE_STYLE:="italic"}"
 : "${ARGPARSER_USE_STYLES_IN_FILES:=false}"
+: "${ARGPARSER_VERSION:="1.0.0"}"
+: "${ARGPARSER_VERSION_EXIT_CODE:=0}"
+: "${ARGPARSER_VERSION_STYLE:="bold"}"
 : "${ARGPARSER_WARNING_STYLE:="red,bold"}"
 
 # Define the argparser functions used for general tests.
@@ -695,10 +698,12 @@ function argparser_check_env_vars() {
     # The following environment variables are unchecked:
     # - ARGPARSER_POSITIONAL_GROUP_NAME
     # - ARGPARSER_SCRIPT_NAME
+    # - ARGPARSER_VERSION
     #
     # Environment:
     # - ARGPARSER_ADD_HELP (read-only)
     # - ARGPARSER_ADD_USAGE (read-only)
+    # - ARGPARSER_ADD_VERSION (read-only)
     # - ARGPARSER_ARG_ARRAY_NAME (read-only)
     # - ARGPARSER_ARG_DEF_FILE (read-only)
     # - ARGPARSER_ARG_DEF_FILE_HAS_HEADER (read-only)
@@ -734,6 +739,8 @@ function argparser_check_env_vars() {
     # - ARGPARSER_USAGE_MESSAGE_ORIENTATION (read-only)
     # - ARGPARSER_USAGE_STYLE (read-only)
     # - ARGPARSER_USE_STYLES_IN_FILES (read-only)
+    # - ARGPARSER_VERSION_EXIT_CODE (read-only)
+    # - ARGPARSER_VERSION_STYLE (read-only)
     # - ARGPARSER_WARNING_STYLE (read-only)
 
     # Define the local variables.
@@ -752,6 +759,7 @@ function argparser_check_env_vars() {
     vars=(
         ARGPARSER_ADD_HELP
         ARGPARSER_ADD_USAGE
+        ARGPARSER_ADD_VERSION
         ARGPARSER_ARG_DEF_FILE_HAS_HEADER
         ARGPARSER_ARG_DEF_HAS_HEADER
         ARGPARSER_CHECK_ARG_DEFINITION
@@ -818,6 +826,7 @@ function argparser_check_env_vars() {
         ARGPARSER_ERROR_EXIT_CODE
         ARGPARSER_HELP_EXIT_CODE
         ARGPARSER_USAGE_EXIT_CODE
+        ARGPARSER_VERSION_EXIT_CODE
     )
     for var in "${vars[@]}"; do
         if [[ "$(argparser_is_variable_int "${!var}")" == false ]]; then
@@ -886,6 +895,7 @@ function argparser_check_env_vars() {
         ARGPARSER_ERROR_STYLE
         ARGPARSER_HELP_STYLE
         ARGPARSER_USAGE_STYLE
+        ARGPARSER_VERSION_STYLE
         ARGPARSER_WARNING_STYLE
     )
     for var in "${vars[@]}"; do
@@ -1283,6 +1293,7 @@ function argparser_check_args_definition_names() {
     # Environment:
     # - ARGPARSER_ADD_HELP (read-only)
     # - ARGPARSER_ADD_USAGE (read-only)
+    # - ARGPARSER_ADD_VERSION (read-only)
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     #
     # Output:
@@ -1356,6 +1367,16 @@ function argparser_check_args_definition_names() {
                 error_message+="\"${arg_key}\" has the short option -u "
                 error_message+="defined, which is reserved for invoking the "
                 error_message+="usage message."
+                printf '%s\0' "${error_message}"
+            elif [[ "${ARGPARSER_ADD_VERSION}" == true \
+                && "${short_option}" == "V" ]]
+            then
+                # Check if a short option name uses the reserved flag
+                # for the version message.
+                error_message="Error: The argument with the identifier "
+                error_message+="\"${arg_key}\" has the short option -V "
+                error_message+="defined, which is reserved for invoking the "
+                error_message+="version message."
                 printf '%s\0' "${error_message}"
             elif [[ "${short_option}" != "-" ]]; then
                 # Check if a short option name is more than one
@@ -1436,6 +1457,16 @@ function argparser_check_args_definition_names() {
                 error_message+="\"${arg_key}\" has the long option --usage "
                 error_message+="defined, which is reserved for invoking the "
                 error_message+="usage message."
+                printf '%s\0' "${error_message}"
+            elif [[ "${ARGPARSER_ADD_VERSION}" == true \
+                && "${long_option}" == "version" ]]
+            then
+                # Check if a long option name uses the reserved flag for
+                # the version message.
+                error_message="Error: The argument with the identifier "
+                error_message+="\"${arg_key}\" has the long option --version "
+                error_message+="defined, which is reserved for invoking the "
+                error_message+="version message."
                 printf '%s\0' "${error_message}"
             elif [[ "${long_option}" != "-" ]]; then
                 # Check if a long option name is less than two
@@ -1912,14 +1943,15 @@ function argparser_parse_arg() {
     # Environment:
     # - ARGPARSER_ADD_HELP (read-only)
     # - ARGPARSER_ADD_USAGE (read-only)
+    # - ARGPARSER_ADD_VERSION (read-only)
     # - ARGPARSER_ALLOW_ABBREVIATION (read-only)
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     #
     # Output:
     # - the parsed argument as message or an error message, starting
-    #   with "Help", "Usage", "Positional_Start", "Positional_End",
-    #   "Error: ", "Argument: ", or "Value: ", in the latter three cases
-    #   possibly concatenated with null characters
+    #   with "Help", "Usage", "Version", "Positional_Start",
+    #   "Positional_End", "Error: ", "Argument: ", or "Value: ", in the
+    #   latter three cases possibly concatenated with null characters
 
     # Define the local variables.
     local abbr_long_option
@@ -1995,6 +2027,17 @@ function argparser_parse_arg() {
         ( "${given_arg}" == "-u="* || "${given_arg}" == "--usage="*) ]]
     then
         printf 'Error: The option "-u,--usage" takes no value.\0'
+        printf 'Argument: %s' "${given_arg}"
+        return
+    elif [[ "${ARGPARSER_ADD_VERSION}" == true && \
+        ( "${given_arg}" == "-V" || "${given_arg}" == "--version") ]]
+    then
+        printf 'Version'
+        return
+    elif [[ "${ARGPARSER_ADD_VERSION}" == true && \
+        ( "${given_arg}" == "-V="* || "${given_arg}" == "--version="*) ]]
+    then
+        printf 'Error: The option "-V,--version" takes no value.\0'
         printf 'Argument: %s' "${given_arg}"
         return
     fi
@@ -2626,6 +2669,7 @@ function argparser_create_help_message() {
     # Environment:
     # - ARGPARSER_ADD_HELP (read-only)
     # - ARGPARSER_ADD_USAGE (read-only)
+    # - ARGPARSER_ADD_VERSION (read-only)
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_MAX_COL_WIDTH_1 (read-only)
     # - ARGPARSER_MAX_COL_WIDTH_2 (read-only)
@@ -2985,8 +3029,8 @@ function argparser_create_help_message() {
         col_3+=("")
     done
 
-    # Add the help and usage flags that always exist if the "All" or
-    # "Help" include directive was requested.
+    # If the "All" or "Help" include directive was requested, add the
+    # help, usage, and version flags that always exist (if defined).
     if [[ "${include_directive}" == "All" \
         || "${include_directive}" == "Help" ]]
     then
@@ -3000,6 +3044,12 @@ function argparser_create_help_message() {
             col_1+=("-u,")
             col_2+=("--usage")
             col_3+=("$(argparser_translate "display the usage and exit")")
+        fi
+
+        if [[ "${ARGPARSER_ADD_VERSION}" == true ]]; then
+            col_1+=("-V,")
+            col_2+=("--version")
+            col_3+=("$(argparser_translate "display the version and exit")")
         fi
     fi
 
@@ -3273,11 +3323,15 @@ function argparser_create_help_message() {
     done
 
     # If the "All" or "Help" include directive was requested, print the
-    # help and usage lines, which are the last two lines and hence were
-    # not used in the sorting process, before.
+    # help, usage, and version lines, which are the last three lines and
+    # hence were not used in the sorting process, before.
     if [[ "${include_directive}" == "All" \
         || "${include_directive}" == "Help" ]]
     then
+        # TODO: Correct for case when ARGPARSER_ADD_HELP and/or
+        # ARGPARSER_ADD_USAGE and/or ARGPARSER_ADD_VERSION are false.
+        printf '%s%s%s%s%s\n' "${col_1[-3]}" "${whitespace_1[-3]}" \
+            "${col_2[-3]}" "${whitespace_2[-3]}" "${col_3[-3]}"
         printf '%s%s%s%s%s\n' "${col_1[-2]}" "${whitespace_1[-2]}" \
             "${col_2[-2]}" "${whitespace_2[-2]}" "${col_3[-2]}"
         printf '%s%s%s%s%s\n' "${col_1[-1]}" "${whitespace_1[-1]}" \
@@ -3306,6 +3360,7 @@ function argparser_create_usage_message() {
     # Environment:
     # - ARGPARSER_ADD_HELP (read-only)
     # - ARGPARSER_ADD_USAGE (read-only)
+    # - ARGPARSER_ADD_VERSION (read-only)
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_SCRIPT_NAME (read-only)
     # - ARGPARSER_USAGE_MESSAGE_OPTION_TYPE(read-only)
@@ -3332,27 +3387,58 @@ function argparser_create_usage_message() {
     local whitespace_len
 
     # Output the usage message's header, giving the script's name and
-    # the existence of the -h | --help and -u | --usage arguments.
+    # the existence of the -h | --help, -u | --usage, and -V | --version
+    # arguments.
     header="$(argparser_translate "Usage"): ${ARGPARSER_SCRIPT_NAME}"
     if [[ "${ARGPARSER_USAGE_MESSAGE_OPTION_TYPE}" == "short" ]]; then
         if [[ "${ARGPARSER_ADD_HELP}" == true \
+            && "${ARGPARSER_ADD_USAGE}" == true \
+            && "${ARGPARSER_ADD_VERSION}" == true ]]
+        then
+            usage_message="${header} [-h | -u | -V]"
+        elif [[ "${ARGPARSER_ADD_HELP}" == true \
             && "${ARGPARSER_ADD_USAGE}" == true ]]
         then
             usage_message="${header} [-h | -u]"
+        elif [[ "${ARGPARSER_ADD_HELP}" == true \
+            && "${ARGPARSER_ADD_VERSION}" == true ]]
+        then
+            usage_message="${header} [-h | -V]"
+        elif [[ "${ARGPARSER_ADD_USAGE}" == true \
+            && "${ARGPARSER_ADD_VERSION}" == true ]]
+        then
+            usage_message="${header} [-u | -V]"
         elif [[ "${ARGPARSER_ADD_HELP}" == true ]]; then
             usage_message="${header} [-h]"
         elif [[ "${ARGPARSER_ADD_USAGE}" == true ]]; then
             usage_message="${header} [-u]"
+        elif [[ "${ARGPARSER_ADD_VERSION}" == true ]]; then
+            usage_message="${header} [-V]"
         fi
     else
         if [[ "${ARGPARSER_ADD_HELP}" == true \
+            && "${ARGPARSER_ADD_USAGE}" == true \
+            && "${ARGPARSER_ADD_VERSION}" == true ]]
+        then
+            usage_message="${header} [--help | --usage | --version]"
+        elif [[ "${ARGPARSER_ADD_HELP}" == true \
             && "${ARGPARSER_ADD_USAGE}" == true ]]
         then
             usage_message="${header} [--help | --usage]"
+        elif [[ "${ARGPARSER_ADD_HELP}" == true \
+            && "${ARGPARSER_ADD_VERSION}" == true ]]
+        then
+            usage_message="${header} [--help | --version]"
+        elif [[ "${ARGPARSER_ADD_USAGE}" == true \
+            && "${ARGPARSER_ADD_VERSION}" == true ]]
+        then
+            usage_message="${header} [--usage | --version]"
         elif [[ "${ARGPARSER_ADD_HELP}" == true ]]; then
             usage_message="${header} [--help]"
         elif [[ "${ARGPARSER_ADD_USAGE}" == true ]]; then
             usage_message="${header} [--usage]"
+        elif [[ "${ARGPARSER_ADD_VERSION}" == true ]]; then
+            usage_message="${header} [--version]"
         fi
     fi
 
@@ -3778,6 +3864,35 @@ function argparser_print_help_or_usage_message() {
     fi
 }
 
+function argparser_print_version_message() {
+    # Create and print a version message.
+    #
+    # Arguments:
+    # - $1: whether to exit after printing
+    #
+    # Environment:
+    # - ARGPARSER_SCRIPT_NAME (read-only)
+    # - ARGPARSER_VERSION (read-only)
+    # - ARGPARSER_VERSION_EXIT_CODE (read-only)
+    # - ARGPARSER_VERSION_STYLE (read-only)
+
+    # Define the local variables.
+    local exit
+    local message
+
+    # Read the arguments.
+    exit="$1"
+
+    # Colorize and print the version message, then exit, if requested.
+    message="${ARGPARSER_SCRIPT_NAME} v${ARGPARSER_VERSION}"
+    message="$(argparser_colorize "${ARGPARSER_VERSION_STYLE}" "${message}")"
+    printf '%s\n' "${message}" >&2
+
+    if [[ "${exit}" == true ]]; then
+        exit "${ARGPARSER_VERSION_EXIT_CODE}"
+    fi
+}
+
 function argparser_print_error_or_warning_message() {
     # Colorize, sort, filter, and print all error or warning messages.
     #
@@ -3884,6 +3999,7 @@ function argparser_main() {
     local is_positional
     local is_positional_only
     local is_usage
+    local is_version
     local message
     local -a messages
     local name
@@ -4018,6 +4134,7 @@ function argparser_main() {
     # Parse the script's given arguments.
     is_help=false
     is_usage=false
+    is_version=false
     is_positional=true
     is_positional_only=false
     positional_index=0
@@ -4038,6 +4155,7 @@ function argparser_main() {
             case "${message}" in
                 Help) is_help=true ;;
                 Usage) is_usage=true ;;
+                Version) is_version=true ;;
                 Error*) error_messages+=("${message}") ;;
                 Positional_Start)
                     # Set the flag that the positional-only arguments
@@ -4120,10 +4238,13 @@ function argparser_main() {
 
     # If the help message was requested, print it.  If the usage message
     # was requested, but not the help message, print the usage message.
+    # Finally, if only the version message was requested, print that.
     if [[ "${is_help}" == true ]]; then
         argparser_print_help_or_usage_message "Help" true
     elif [[ "${is_usage}" == true ]]; then
         argparser_print_help_or_usage_message "Usage" true
+    elif [[ "${is_version}" == true ]]; then
+        argparser_print_version_message true
     fi
 
     # Check the arguments' values.
@@ -4305,6 +4426,7 @@ fi
 if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_ADD_HELP
     unset ARGPARSER_ADD_USAGE
+    unset ARGPARSER_ADD_VERSION
     unset ARGPARSER_ALLOW_ABBREVIATION
     unset ARGPARSER_ARG_ARRAY_NAME
     unset ARGPARSER_ARG_DEF_FILE
@@ -4343,5 +4465,8 @@ if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_USAGE_MESSAGE_ORIENTATION
     unset ARGPARSER_USAGE_STYLE
     unset ARGPARSER_USE_STYLES_IN_FILES
+    unset ARGPARSER_VERSION
+    unset ARGPARSER_VERSION_EXIT_CODE
+    unset ARGPARSER_VERSION_STYLE
     unset ARGPARSER_WARNING_STYLE
 fi

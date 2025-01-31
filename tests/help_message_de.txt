@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-13
+# Last Modification: 2025-01-31
 
 # Purpose: Print a help message for test_localization.sh, invoked by
 # test_localization.sh --help.  Compared to the auto-generated help
@@ -25,6 +25,6 @@ Die folgenden Optionen haben keinen Vorgabewert.
 Die folgenden Optionen haben einen Vorgabewert.
 @Optionale Optionen
 
-# Print the two help options.
-Es gibt grundsätzlich zwei Optionen für die Hilfe-Meldungen.
+# Print the three help options.
+Es gibt grundsätzlich drei Optionen für die Hilfe-Meldungen.
 @Help

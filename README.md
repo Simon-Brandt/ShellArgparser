@@ -11,14 +11,14 @@ The argparser:
 - gives proper **error** and **warning messages** for wrongly set arguments or unset mandatory options, according to a brief definition provided by your script
 - assigns the options' arguments (values) to **corresponding variables** in your script's scope
 - can use arguments definitions **shared across multiple scripts**
-- creates and prints a verbose **help** or a brief **usage message**
+- creates and prints a verbose **help** or a brief **usage message**, as well as a short **version message**
 - can give **localized** help and usage messages in any language
-- can be widely **configured** to your needs by a set of environment variables
+- can be widely **configured** to your needs by a set of environment variables and companion files to your script
 
 ## Installation
 
 > [!WARNING]
-> Requires Bash 5 or higher (try `bash --version`). Tested with `bash 5.2.21` (`GNU bash, Version 5.2.21(1)-release (x86_64-pc-linux-gnu)`).
+> Requires Bash 5 or higher (try `bash --version`). Tested with `GNU bash, Version 5.2.21(1)-release (x86_64-pc-linux-gnu)`.
 
 No actual installation is necessary, as the argparser is just a Bash script that can be located in an arbitrary directory of your choice, like `/usr/local/bin`. Thus, the "installation" is as simple as cloning the repository in this very directory:
 
@@ -169,7 +169,7 @@ There are four features of the argparser visible here: First, values given befor
 
 Second, another special keyword argument, `++`, is interpreted by the argparser to re-start the parsing of keyword arguments. You can imagine the plus signs as crossed hyphens, thus negating their meaning (as is done for flags in the next example). Setting `--` after the positional argument&ndash;only part has started (*i.e.*, after a previous `--`) makes this second `--` a positional argument. In contrast, setting `++` after `--` re-starts the usual parsing, so the following argument is parsed as keyword argument if it starts with a hyphen (or a plus sign, see below), and as positional argument, else. Setting `--` after `++` stops the parsing (possibly again), while setting `++` after `++` means to parse a following non-hyphenated argument as positional, instead of as value to the previous keyword argument. You may rarely need the `++`, but a possible use case for scripts would be to gather command-line arguments or values from different processes, like *via* command/process substitution. Then, you can just combine the two streams, without needing to care whether both may set a `--`. Just join them with a `++` and the parsing occurs as expected.
 
-Third, options can have name aliases, *i.e.*, any number of synonymous option names pointing to the same entity (argument definition). Thereby, not only aliases with two hyphens (so-called long options) are possible, but also some with only one leading hyphen (short options). For fast command-line usage, short options are convenient to quickly write a command; but for scripts, the long options should be preferred as they carry more information due to their verbose name (like, what does `-v` mean&mdash;is it `--version`, `--verbose`, or even `--verbatim`?). The argparser allows an arbitrary number of short and/or long option names for a keyword argument to be defined, and options can be provided by any alias on the command line.
+Third, options can have name aliases, *i.e.*, any number of synonymous option names pointing to the same entity (argument definition). Thereby, not only aliases with two hyphens (so-called long options) are possible, but also some with only one leading hyphen (short options). For fast command-line usage, short options are convenient to quickly write a command; but for scripts, the long options should be preferred as they carry more information due to their verbose name (like, what does `-v` mean&mdash;is it `--version`, `--verbose`, or even `--verbatim`?). The argparser allows an arbitrary number of short and/or long option names for a keyword argument to be defined, and options can be provided by any alias on the command line. Further, long option names can be abbreviated, as long as no collision with other names arises (like when giving `--verb` in the example above). This requires [`ARGPARSER_ALLOW_ABBREVIATION`](#argparser_allow_abbreviation) to be set to `true`.
 
 The fourth thing you may have noticed is that we didn't use an equals sign (`=`) to delimit option names and their values. Though it may seem as if it was related to the usage of short option names, for the argparser, it is completely arbitrary whether you use spaces or equals signs. Again, typing spaces is faster on the command line, but using the explicit equals sign makes a script's code more legible. This has the additional advantage that it's clear to a user that the value belongs to the option before, and that it's not a flag followed by a positional argument. As long as this user doesn't know that the argparser only treats values following option names as positional arguments when they're separated by a double hyphen, it may look confusing. Further, using an equals sign is the only way of providing arguments starting with a hyphen to an option, since a whitespace-separated word would be interpreted as (possibly nonexistent) option name. By this, you can give negative numbers on the command line.
 
@@ -328,7 +328,7 @@ Thereby, errors abort the script, while warnings just write a message to `STDERR
 
 ### Help and usage messages
 
-No matter how many keyword arguments are defined (even with the same name), the argparser interprets the flags `-u` and `--usage` as call for a brief usage message and `-h` and `--help` as call for a verbose help message. These options are always added to the script's argument definition and override any same-named argument name. This is to ensure that the novice user of your script can do exactly what we did, above: trying the most common variants to get some help over how to use a program or script by typing
+No matter how many keyword arguments are defined, as long as [`ARGPARSER_ADD_HELP`](#argparser_add_help) and [`ARGPARSER_ADD_USAGE`](#argparser_add_usage) are set to `true`, the argparser interprets the flags `-h` and `--help` as call for a verbose help message and `-u` and `--usage` as call for a brief usage message . These options are always added to the script's argument definition and override any same-named argument name (yielding an error message if [`ARGPARSER_CHECK_ARG_DEFINITION`](#argparser_check_arg_definition) is set to `true`). This is to ensure that the novice user of your script can do exactly what we did, above: trying the most common variants to get some help over how to use a program or script by typing
 
 ```bash
 try_argparser.sh --help
@@ -348,7 +348,7 @@ help try_argparser.sh
 
 won't work as the [`help`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-help "gnu.org &rightarrow; Bash builtins &rightarrow; help") command only recognizes Bash builtins.
 
-As a huge convenience, the argparser will build the help and usage messages from the defined arguments for your script, if either of the `-u`, `--usage`, `-h`, or `--help` options is given on the command line (even along with others). These messages indicate the short and/or long names, as well as the default and choice values. In the case of the help message, the argument group and the help text from the arguments' definitions are printed, too.
+As a huge convenience, the argparser will build the help and usage messages from the defined arguments for your script, if either of the `-h`, `--help`, `-u`, or `--usage` options is given on the command line (even along with others). These messages indicate the short and/or long names, as well as the default and choice values. In the case of the help message, the argument group and the help text from the arguments' definitions are printed, too.
 
 Our `try_argparser.sh` usage message looks as follows:
 
@@ -784,11 +784,15 @@ Aufruf: try_localization.sh [--help] [--usage]
                             [--var-7]
 ```
 
+### Version messages
+
+Besides the `-h`, `--help`, `-u`, and `--usage` flags, there is a third option intended to help the user, `-V` and `--version`. This option compiles a brief version message for your script, showing its canonical name (the [`ARGPARSER_SCRIPT_NAME`](#argparser_script_name)) and the version number (the [`ARGPARSER_VERSION`](#argparser_version)). Just as for the help and usage messages, you can disable the version message (and its corresponding flags) by setting [`ARGPARSER_ADD_VERSION`](#argparser_add_version) to `false`. Note that the short option name is an uppercase `V`, such that you can use the lowercase `v` (as `-v`) for your purposes, like `--verbatim` or `--verbose`. This is in line with the common behavior of command-line programs.
+
 ### Message styles
 
-It is possible to customize the appearance of error, warning, help, and usage messages using the respective environment variable, *viz.*, [`ARGPARSER_ERROR_STYLE`](#argparser_error_style), [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style), [`ARGPARSER_HELP_STYLE`](#argparser_help_style), and [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style).  Using [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters"), messages can be colorized and stylized. This is especially useful to quickly see errors when logging, but requires that the terminal or text editor, with which you opened the log file, supports interpreting the escape codes. This is, *e.g.*, supported by `less --raw-control-chars <filename>`. When [`ARGPARSER_USE_STYLES_IN_FILES`](#argparser_use_styles_in_files) is set to `false`, the escape sequences are only included when `STDERR` is a terminal, keeping files plain 7-bit ASCII for simpler parsing.
+It is possible to customize the appearance of error, warning, help, usage, and version messages using the respective environment variable, *viz.*, [`ARGPARSER_ERROR_STYLE`](#argparser_error_style), [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style), [`ARGPARSER_HELP_STYLE`](#argparser_help_style), [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style), and [`ARGPARSER_VERSION_STYLE`](#argparser_version_style).  Using [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters"), messages can be colorized and stylized. This is especially useful to quickly see errors when logging, but requires that the terminal or text editor, with which you opened the log file, supports interpreting the escape codes. This is, *e.g.*, supported by `less --raw-control-chars <filename>`. When [`ARGPARSER_USE_STYLES_IN_FILES`](#argparser_use_styles_in_files) is set to `false`, the escape sequences are only included when `STDERR` is a terminal, keeping files plain 7-bit ASCII for simpler parsing.
 
-A number of colors and styles is available. Note that you don't need to remember the SGR codes, they're only internally used and given here for reference of what to expect from the keywords for the colors and styles. Further note that the actual RGB/Hex color values will depend on the output device.
+A number of colors and styles is available. You don't need to remember the SGR codes, they're only internally used and given here for reference of what to expect from the keywords for the colors and styles. Further note that the actual RGB/Hex color values will depend on the output device.
 
 | color                                   | SGR code |
 |-----------------------------------------|----------|
@@ -871,6 +875,7 @@ The argparser defines a large set of environment variables, each following the n
 |-----------------------------------------------------------------------------|------------------------------------|----------------------|
 | [`ARGPARSER_ADD_HELP`](#argparser_add_help)                                 | *bool*                             | `true`               |
 | [`ARGPARSER_ADD_USAGE`](#argparser_add_usage)                               | *bool*                             | `true`               |
+| [`ARGPARSER_ADD_VERSION`](#argparser_add_version)                           | *bool*                             | `true`               |
 | [`ARGPARSER_ALLOW_ABBREVIATION`](#argparser_allow_abbreviation)             | *bool*                             | `false`               |
 | [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name)                     | *str*[^4]                          | `"args"`             |
 | [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file)                         | *filepath* \| `""`                 | `""`                 |
@@ -905,7 +910,10 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_USAGE_FILE_INCLUDE_CHAR`](#argparser_usage_file_include_char)   | *char*                             | `"@"`                |
 | [`ARGPARSER_USAGE_FILE_KEEP_COMMENTS`](#argparser_usage_file_keep_comments) | *bool*                             | `false`              |
 | [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style)                           | *str*                              | `"italic"`           |
-| [`ARGPARSER_USE_STYLES_IN_FILES`](#argparser_use_styles_in_files)           | *bool*                             | `false`            |
+| [`ARGPARSER_USE_STYLES_IN_FILES`](#argparser_use_styles_in_files)           | *bool*                             | `false`              |
+| [`ARGPARSER_VERSION`](#argparser_version)                                   | *str*                              | `"1.0.0"`            |
+| [`ARGPARSER_VERSION_EXIT_CODE`](#argparser_version_exit_code)               | *int*                              | `0`                  |
+| [`ARGPARSER_VERSION_STYLE`](#argparser_version_style)                       | *str*                              | `"bold"`             |
 | [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style)                       | *str*                              | `"red,bold"`         |
 
 [^1]: Bash is weakly typed, hence the denoted types are just a guidance.
@@ -928,6 +936,13 @@ The argparser defines a large set of environment variables, each following the n
 - ***Allowed values:*** `true` and `false` (case-sensitive)
 - ***Default value:*** `true`
 - ***Description:*** Whether to add `-u` and `--usage` as flags to call the usage message.
+
+### `ARGPARSER_ADD_VERSION`
+
+- ***Type:*** *bool* (Boolean)
+- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Default value:*** `true`
+- ***Description:*** Whether to add `-V` and `--version` as flags to call the version message.
 
 ### `ARGPARSER_ALLOW_ABBREVIATION`
 
@@ -1090,7 +1105,7 @@ The main difference is that, if you `export` (or `declare -x`) the variables to 
 - ***Type:*** *str* (String)
 - ***Allowed values:*** Any string
 - ***Default value:*** `"${0##*/}"`
-- ***Description:*** The name of your script as it should appear in the help and usage messages. By default, it is the name used upon invoking your script (`"$0"`), trimmed by everything before the last slash character (mimicking the behavior of `basename`). If, for example, you want to give your script a symlink, but don't want this symlink's name to be used in the help and usage messages, then you can provide a custom `ARGPARSER_SCRIPT_NAME`. Alternatively, if your script forms a sub-part of a larger program, it may be named `program_part.sh`, but should be called as `program name [ARGUMENTS]`.  Then, `program` could parse its positional argument `name` and call `program_part.sh`, but on the command line, you want to hide this implementation detail and refer to `program_part.sh` as `program name`, so you set `ARGPARSER_SCRIPT_NAME` accordingly.
+- ***Description:*** The name of your script as it should appear in the help, usage, and version messages. By default, it is the name used upon invoking your script (`"$0"`), trimmed by everything before the last slash character (mimicking the behavior of `basename`). If, for example, you want to give your script a symlink, but don't want this symlink's name to be used in the help and usage messages, then you can provide a custom, canonicalized `ARGPARSER_SCRIPT_NAME`. Alternatively, if your script forms a sub-part of a larger program, it may be named `program_part.sh`, but should be called as `program name [ARGUMENTS]`.  Then, `program.sh` could parse its positional argument `name` and call `program_part.sh`, but on the command line, you want to hide this implementation detail and refer to `program_part.sh` as `program name`, so you set `ARGPARSER_SCRIPT_NAME` accordingly.
 
 ### `ARGPARSER_SET_ARGS`
 
@@ -1177,7 +1192,28 @@ The main difference is that, if you `export` (or `declare -x`) the variables to 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false` (case-sensitive)
 - ***Default value:*** `false`
-- ***Description:*** Whether to use the colors and styles from [`ARGPARSER_ERROR_STYLE`](#argparser_error_style), [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style), [`ARGPARSER_HELP_STYLE`](#argparser_help_style), and [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style) when `STDERR` is not a terminal (and thus perhaps a file). This is useful to get plain 7-bit ASCII text output for files, while in interactive sessions, the escape sequences offer more user-friendly formatting and highlighting possibilities. By this, you can parse your files afterwards more easily. Still, using *e.g.* `less --raw-control-chars <filename>`, these escape sequences can be displayed from files, when included.
+- ***Description:*** Whether to use the colors and styles from [`ARGPARSER_ERROR_STYLE`](#argparser_error_style), [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style), [`ARGPARSER_HELP_STYLE`](#argparser_help_style), [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style), and [`ARGPARSER_VERSION_STYLE`](#argparser_version_style) when `STDERR` is not a terminal (and thus perhaps a file). This is useful to get plain 7-bit ASCII text output for files, while in interactive sessions, the escape sequences offer more user-friendly formatting and highlighting possibilities. By this, you can parse your files afterwards more easily. Still, using *e.g.* `less --raw-control-chars <filename>`, these escape sequences can be displayed from files, when included.
+
+### `ARGPARSER_VERSION`
+
+- ***Type:***  *str* (String)
+- ***Allowed values:*** Any string
+- ***Default value:*** `"1.0.0"`
+- ***Description:*** The version number of your script to be used in the version message. Prefer using [semantic versioning](https://semver.org/ "semver.org"), *i.e.*, give version numbers by major version, minor version, and patch, separated by dots.
+
+### `ARGPARSER_VERSION_EXIT_CODE`
+
+- ***Type:***  *int* (Integer)
+- ***Allowed values:*** Any integer, usually zero
+- ***Default value:*** `0`
+- ***Description:*** The exit code when a version message was requested using the `-V` or `--version` flag.
+
+### `ARGPARSER_VERSION_STYLE`
+
+- ***Type:***  *str* (String)
+- ***Allowed values:*** Any comma-separated string consisting of a color and/or style, with the colors being `"black"`, `"red"`, `"green"`, `"yellow"`, `"blue"`, `"magenta"`, `"cyan"`, and `"white"`, and the styles being `"normal"`, `"bold"`, `"faint"`, `"italic"`, `"underline"`, `"double"`, `"overline"`, `"crossed-out"`, `"blink"`, and `"reverse"`
+- ***Default value:*** `"bold"`
+- ***Description:*** The color and style specification to use for version messages, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters").
 
 ### `ARGPARSER_WARNING_STYLE`
 
