@@ -2688,6 +2688,7 @@ function argparser_create_help_message() {
     local col_width_1
     local col_width_2
     local col_width_3
+    local count
     local default_values
     local has_default_args
     local has_required_args
@@ -3323,19 +3324,31 @@ function argparser_create_help_message() {
     done
 
     # If the "All" or "Help" include directive was requested, print the
-    # help, usage, and version lines, which are the last three lines and
-    # hence were not used in the sorting process, before.
+    # help, usage, and version lines, which are the last three lines.
+    # Thereby, count the number of "true" as value of the respective
+    # environment variable, viz. ${ARGPARSER_ADD_HELP},
+    # ${ARGPARSER_ADD_USAGE}, and ${ARGPARSER_ADD_VERSION}.
     if [[ "${include_directive}" == "All" \
         || "${include_directive}" == "Help" ]]
     then
-        # TODO: Correct for case when ARGPARSER_ADD_HELP and/or
-        # ARGPARSER_ADD_USAGE and/or ARGPARSER_ADD_VERSION are false.
-        printf '%s%s%s%s%s\n' "${col_1[-3]}" "${whitespace_1[-3]}" \
-            "${col_2[-3]}" "${whitespace_2[-3]}" "${col_3[-3]}"
-        printf '%s%s%s%s%s\n' "${col_1[-2]}" "${whitespace_1[-2]}" \
-            "${col_2[-2]}" "${whitespace_2[-2]}" "${col_3[-2]}"
-        printf '%s%s%s%s%s\n' "${col_1[-1]}" "${whitespace_1[-1]}" \
-            "${col_2[-1]}" "${whitespace_2[-1]}" "${col_3[-1]}"
+        count="$(argparser_count true "${ARGPARSER_ADD_HELP}" \
+            "${ARGPARSER_ADD_USAGE}" "${ARGPARSER_ADD_VERSION}")"
+        if (( count == 3 )); then
+            printf '%s%s%s%s%s\n' "${col_1[-3]}" "${whitespace_1[-3]}" \
+                "${col_2[-3]}" "${whitespace_2[-3]}" "${col_3[-3]}"
+            printf '%s%s%s%s%s\n' "${col_1[-2]}" "${whitespace_1[-2]}" \
+                "${col_2[-2]}" "${whitespace_2[-2]}" "${col_3[-2]}"
+            printf '%s%s%s%s%s\n' "${col_1[-1]}" "${whitespace_1[-1]}" \
+                "${col_2[-1]}" "${whitespace_2[-1]}" "${col_3[-1]}"
+        elif (( count == 2 )); then
+            printf '%s%s%s%s%s\n' "${col_1[-2]}" "${whitespace_1[-2]}" \
+                "${col_2[-2]}" "${whitespace_2[-2]}" "${col_3[-2]}"
+            printf '%s%s%s%s%s\n' "${col_1[-1]}" "${whitespace_1[-1]}" \
+                "${col_2[-1]}" "${whitespace_2[-1]}" "${col_3[-1]}"
+        elif (( count == 1 )); then
+            printf '%s%s%s%s%s\n' "${col_1[-1]}" "${whitespace_1[-1]}" \
+                "${col_2[-1]}" "${whitespace_2[-1]}" "${col_3[-1]}"
+        fi
     fi
 }
 
