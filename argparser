@@ -619,6 +619,7 @@ function argparser_colorize() {
     # Arguments:
     # - $1: the colors and/or styles to use as comma-separated list
     # - $2: the string to colorize
+    # - $3: the target to write to ("file" or "tty").
     #
     # Environment:
     # - ARGPARSER_USE_STYLES_IN_FILES (read-only)
@@ -633,10 +634,12 @@ function argparser_colorize() {
     local string
     local style
     local -A styles
+    local write_target
 
     # Read the arguments.
     requests="$1"
     string="$2"
+    write_target="$3"
 
     # Define the associative arrays with colors or styles, respectively,
     # and their corresponding Select Graphic Rendition (SGR) ANSI escape
@@ -666,8 +669,15 @@ function argparser_colorize() {
     )
 
     # Split the requested color and/or style on commas and print any.
-    # Then, print the string and reset the color and style.
-    if [[ "${ARGPARSER_USE_STYLES_IN_FILES}" == true || -t 2 ]]; then
+    # Then, print the string and reset the color and style.  Possibly,
+    # only use styles when writing to a terminal.  As argparser_colorize
+    # is generally run through command substitution, [[ -t 1 ]] would
+    # always be false, i.e., it is impossible to see if the final STDOUT
+    # goes to a terminal.  Thus, the test is outsourced to the invoking
+    # function and passed as command-line argument.
+    if [[ "${ARGPARSER_USE_STYLES_IN_FILES}" == true \
+        || "${write_target}" == "tty" ]]
+    then
         IFS="," read -r -a requests <<< "${requests}"
         for request in "${requests[@]}"; do
             if [[ "$(argparser_in_array "${request}" \
@@ -3827,6 +3837,7 @@ function argparser_print_help_or_usage_message() {
     # Arguments:
     # - $1: the help type ("Help" or "Usage")
     # - $2: whether to exit after printing
+    # - $3: the target to write to ("file" or "tty").
     #
     # Environment:
     # - ARGPARSER_HELP_EXIT_CODE (read-only)
@@ -3842,10 +3853,12 @@ function argparser_print_help_or_usage_message() {
     local help_type
     local message
     local style
+    local write_target
 
     # Read the arguments.
     help_type="$1"
     exit="$2"
+    write_target="$3"
 
     # Decide which message type to print and set the colorization style
     # and the exit code.
@@ -3869,8 +3882,8 @@ function argparser_print_help_or_usage_message() {
 
     # Colorize and print the help or usage message, then exit, if
     # requested.
-    message="$(argparser_colorize "${style}" "${message}")"
-    printf '%s\n' "${message}" >&2
+    message="$(argparser_colorize "${style}" "${message}" "${write_target}")"
+    printf '%s\n' "${message}"
 
     if [[ "${exit}" == true ]]; then
         exit "${exit_code}"
@@ -3882,6 +3895,7 @@ function argparser_print_version_message() {
     #
     # Arguments:
     # - $1: whether to exit after printing
+    # - $3: the target to write to ("file" or "tty").
     #
     # Environment:
     # - ARGPARSER_SCRIPT_NAME (read-only)
@@ -3892,14 +3906,17 @@ function argparser_print_version_message() {
     # Define the local variables.
     local exit
     local message
+    local write_target
 
     # Read the arguments.
     exit="$1"
+    write_target="$2"
 
     # Colorize and print the version message, then exit, if requested.
     message="${ARGPARSER_SCRIPT_NAME} v${ARGPARSER_VERSION}"
-    message="$(argparser_colorize "${ARGPARSER_VERSION_STYLE}" "${message}")"
-    printf '%s\n' "${message}" >&2
+    message="$(argparser_colorize "${ARGPARSER_VERSION_STYLE}" "${message}" \
+        "${write_target}")"
+    printf '%s\n' "${message}"
 
     if [[ "${exit}" == true ]]; then
         exit "${ARGPARSER_VERSION_EXIT_CODE}"
@@ -3927,6 +3944,7 @@ function argparser_print_error_or_warning_message() {
     local -a messages
     local style
     local error_type
+    local write_target
 
     # Read the arguments.
     error_type="$1"
@@ -3945,8 +3963,15 @@ function argparser_print_error_or_warning_message() {
     # Colorize, sort, filter, and print all error or warning messages,
     # then exit, if requested.
     if (( "${#messages[@]}" > 0 )); then
+        if [[ -t 2 ]]; then
+            write_target="tty"
+        else
+            write_target="file"
+        fi
+
         for i in "${!messages[@]}"; do
-            messages[i]="$(argparser_colorize "${style}" "${messages[i]}")"
+            messages[i]="$(argparser_colorize "${style}" "${messages[i]}" \
+                "${write_target}")"
         done
 
         mapfile -d "" -t messages < <(argparser_sort false "${messages[@]}")
@@ -4021,12 +4046,13 @@ function argparser_main() {
     local positional_index
     local warning_message
     local -a warning_messages
+    local write_target
 
     # Read the arguments.
     read -r -a given_args <<< "$@"
 
     # Enable extglob.  Since all functions relying on it being set are
-    # called from argparser_main(), they inherit the option.
+    # called from argparser_main, they inherit the option.
     is_extglob_set="$(shopt -p extglob)"
     shopt -s extglob
 
@@ -4252,12 +4278,18 @@ function argparser_main() {
     # If the help message was requested, print it.  If the usage message
     # was requested, but not the help message, print the usage message.
     # Finally, if only the version message was requested, print that.
+    if [[ -t 1 ]]; then
+        write_target="tty"
+    else
+        write_target="file"
+    fi
+
     if [[ "${is_help}" == true ]]; then
-        argparser_print_help_or_usage_message "Help" true
+        argparser_print_help_or_usage_message "Help" true "${write_target}"
     elif [[ "${is_usage}" == true ]]; then
-        argparser_print_help_or_usage_message "Usage" true
+        argparser_print_help_or_usage_message "Usage" true "${write_target}"
     elif [[ "${is_version}" == true ]]; then
-        argparser_print_version_message true
+        argparser_print_version_message true "${write_target}"
     fi
 
     # Check the arguments' values.
@@ -4302,8 +4334,15 @@ function argparser_main() {
     # and not just warnings), then print a blank line and the usage
     # message and abort the script.
     if (( "${#error_messages[@]}" > 0 )); then
+        if [[ -t 2 ]]; then
+            write_target="tty"
+        else
+            write_target="file"
+        fi
+
         printf '\n' >&2
-        argparser_print_help_or_usage_message "Usage" false
+        argparser_print_help_or_usage_message "Usage" false "${write_target}" \
+            >&2
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
     fi
 
