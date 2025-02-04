@@ -2,10 +2,8 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-31
+# Last Modification: 2025-02-04
 
-# TODO: Enable parsing of combined short option flags, i.e.
-#       script.sh -ab instead of script.sh -a -b.
 # TODO: Allow counting of flags, e.g., for -vv as doubled -v.
 # TODO: Add ability to mark options as deprecated.
 # TODO: Add support for a specific number and names of positional
@@ -56,7 +54,8 @@ fi
 : "${ARGPARSER_ADD_HELP:=true}"
 : "${ARGPARSER_ADD_USAGE:=true}"
 : "${ARGPARSER_ADD_VERSION:=true}"
-: "${ARGPARSER_ALLOW_ABBREVIATION:=false}"
+: "${ARGPARSER_ALLOW_OPTION_ABBREVIATION:=false}"
+: "${ARGPARSER_ALLOW_OPTION_MERGING:=false}"
 : "${ARGPARSER_ARG_ARRAY_NAME:="args"}"
 : "${ARGPARSER_ARG_DEF_FILE:=""}"
 : "${ARGPARSER_ARG_DEF_FILE_HAS_HEADER:=true}"
@@ -714,6 +713,8 @@ function argparser_check_env_vars() {
     # - ARGPARSER_ADD_HELP (read-only)
     # - ARGPARSER_ADD_USAGE (read-only)
     # - ARGPARSER_ADD_VERSION (read-only)
+    # - ARGPARSER_ALLOW_OPTION_ABBREVIATION (read-only)
+    # - ARGPARSER_ALLOW_OPTION_MERGING (read-only)
     # - ARGPARSER_ARG_ARRAY_NAME (read-only)
     # - ARGPARSER_ARG_DEF_FILE (read-only)
     # - ARGPARSER_ARG_DEF_FILE_HAS_HEADER (read-only)
@@ -770,6 +771,8 @@ function argparser_check_env_vars() {
         ARGPARSER_ADD_HELP
         ARGPARSER_ADD_USAGE
         ARGPARSER_ADD_VERSION
+        ARGPARSER_ALLOW_OPTION_ABBREVIATION
+        ARGPARSER_ALLOW_OPTION_MERGING
         ARGPARSER_ARG_DEF_FILE_HAS_HEADER
         ARGPARSER_ARG_DEF_HAS_HEADER
         ARGPARSER_CHECK_ARG_DEFINITION
@@ -1862,6 +1865,81 @@ function argparser_check_args_definition_values() {
 }
 
 # Define the argparser functions for the argument parsing.
+function argparser_get_arg_key() {
+    # Get the argument identifier (key) for a given short or long option
+    # name.
+    #
+    # Arguments:
+    # - $1: the option name
+    #
+    # Nonlocals:
+    # - all_long_options: the associative array holding the long option
+    #   names (read-only)
+    # - all_short_options: the associative array holding the short
+    #   option names (read-only)
+    #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+    #
+    # Output:
+    # - the argument identifier, if the key exists
+    # - the empty string, else (when the option name is erroneous)
+
+    # Define the local variables.
+    local arg_key
+    local long_option
+    local -a long_options
+    local option_name
+    local short_option
+    local -a short_options
+
+    # Read the argument.
+    option_name="$1"
+
+    # Get the argument identifier.
+    if (( "${#option_name}" == 1 )); then
+        for arg_key in "${!all_short_options[@]}"; do
+            # Read the argument's definition.
+            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a short_options \
+                <<< "${all_short_options[${arg_key}]}"
+
+            # Ignore arguments without a short option name.
+            if [[ "${short_options[0]}" == "-" ]]; then
+                continue
+            fi
+
+            # Check the short options.
+            for short_option in "${short_options[@]}"; do
+                if [[ "${option_name}" == "${short_option}" ]]; then
+                    printf '%s' "${arg_key}"
+                    return
+                fi
+            done
+        done
+    else
+        for arg_key in "${!all_long_options[@]}"; do
+            # Read the argument's definition.
+            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a long_options \
+                <<< "${all_long_options[${arg_key}]}"
+
+            # Ignore arguments without a long option name.
+            if [[ "${long_options[0]}" == "-" ]]; then
+                continue
+            fi
+
+            # Check the long options.
+            for long_option in "${long_options[@]}"; do
+                if [[ "${option_name}" == "${long_option}" ]]; then
+                    printf '%s' "${arg_key}"
+                    return
+                fi
+            done
+        done
+    fi
+
+    printf ""
+}
+
 function argparser_get_option_names() {
     # Concatenate the name of all short and long options for the error
     # and warning messages.
@@ -1935,6 +2013,40 @@ function argparser_get_option_names() {
     printf '%s' "${option_names}"
 }
 
+function argparser_split_args() {
+    # Split all arguments given to the script on
+    # ${ARGPARSER_ARG_DELIMITER_2} characters.
+    #
+    # Arguments:
+    # - $@: the arguments to parse
+    #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+    #
+    # Output:
+    # - the split arguments as string concatenated with null characters
+
+    # Define the local variables.
+    local given_arg
+    local -a given_args
+    local value
+    local -a values
+
+    # Read the arguments.
+    given_args=("$@")
+
+    for given_arg in "${given_args[@]}"; do
+        # Split all arguments on ${ARGPARSER_ARG_DELIMITER_2}
+        # characters and output them.
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values \
+            <<< "${given_arg}"
+
+        for value in "${values[@]}"; do
+            printf '%s\0' "${value}"
+        done
+    done
+}
+
 function argparser_parse_arg() {
     # Parse an argument given to the script.
     #
@@ -1942,10 +2054,6 @@ function argparser_parse_arg() {
     # - $1: the argument to parse
     #
     # Nonlocals:
-    # - all_long_options: the associative array holding the long option
-    #   names (read-only)
-    # - all_short_options: the associative array holding the short
-    #   option names (read-only)
     # - is_positional_only: whether the positional arguments delimiter
     #   "--" has already been set and has not been unset by "++"
     #   (read-only)
@@ -1954,8 +2062,6 @@ function argparser_parse_arg() {
     # - ARGPARSER_ADD_HELP (read-only)
     # - ARGPARSER_ADD_USAGE (read-only)
     # - ARGPARSER_ADD_VERSION (read-only)
-    # - ARGPARSER_ALLOW_ABBREVIATION (read-only)
-    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     #
     # Output:
     # - the parsed argument as message or an error message, starting
@@ -1963,253 +2069,330 @@ function argparser_parse_arg() {
     #   "Positional_End", "Error: ", "Argument: ", or "Value: ", in the
     #   latter three cases possibly concatenated with null characters
 
+    # Define the local variable.
+    local given_arg
+
+    # Read the argument.
+    given_arg="$1"
+
+    # Output the argument, split into option names and values, or an
+    # error message.  In the latter case, output also the given
+    # argument, such that values following the unknown argument are
+    # assigned to this argument, not the last known one that got parsed.
+    if [[ "${given_arg}" != "++"* \
+        && ("${given_arg}" != [-+]* || "${is_positional_only}" == true) ]]
+    then
+        # The argument doesn't start with a hyphen ("-") or plus sign
+        # ("+"), so deem it a value to a previous keyword argument or a
+        # positional argument.  Likewise, if the positional arguments
+        # delimiter "--" has already been set and has neither been unset
+        # by "++" nor the current argument is this "++", then deem any
+        # value a positional argument.
+        printf 'Value: %s\0' "${given_arg}"
+    elif [[ "${given_arg}" == "--" ]]; then
+        # The argument is the positional arguments delimiter "--".
+        printf 'Positional_Start'
+    elif [[ "${given_arg}" == "--="* ]]; then
+        # The argument is the positional arguments delimiter "--", but
+        # followed by an illegal equals sign ("=").
+        printf 'Error: The special option "--" takes no value.\0'
+        printf 'Argument: %s' "${given_arg}"
+    elif [[ "${given_arg}" == "++" ]]; then
+        # The argument is the positional arguments delimiter "++".
+        printf 'Positional_End'
+    elif [[ "${given_arg}" == "++="* ]]; then
+        # The argument is the positional arguments delimiter "++", but
+        # followed by an illegal equals sign ("=").
+        printf 'Error: The special option "++" takes no value.\0'
+        printf 'Argument: %s' "${given_arg}"
+    elif [[ "${ARGPARSER_ADD_HELP}" == true && \
+        ("${given_arg}" == "-h" || "${given_arg}" == "--help") ]]
+    then
+        # The argument is for the help message.
+        printf 'Help'
+    elif [[ "${ARGPARSER_ADD_HELP}" == true && \
+        ( "${given_arg}" == "-h="* || "${given_arg}" == "--help="*) ]]
+    then
+        # The argument is for the help message, but followed by an
+        # illegal equals sign ("=").
+        printf 'Error: The option "-h,--help" takes no value.\0'
+        printf 'Argument: %s' "${given_arg}"
+    elif [[ "${ARGPARSER_ADD_USAGE}" == true && \
+        ( "${given_arg}" == "-u" || "${given_arg}" == "--usage") ]]
+    then
+        # The argument is for the usage message.
+        printf 'Usage'
+    elif [[ "${ARGPARSER_ADD_USAGE}" == true && \
+        ( "${given_arg}" == "-u="* || "${given_arg}" == "--usage="*) ]]
+    then
+        # The argument is for the usage message, but followed by an
+        # illegal equals sign ("=").
+        printf 'Error: The option "-u,--usage" takes no value.\0'
+        printf 'Argument: %s' "${given_arg}"
+    elif [[ "${ARGPARSER_ADD_VERSION}" == true && \
+        ( "${given_arg}" == "-V" || "${given_arg}" == "--version") ]]
+    then
+        # The argument is for the version message.
+        printf 'Version'
+    elif [[ "${ARGPARSER_ADD_VERSION}" == true && \
+        ( "${given_arg}" == "-V="* || "${given_arg}" == "--version="*) ]]
+    then
+        # The argument is for the version message, but followed by an
+        # illegal equals sign ("=").
+        printf 'Error: The option "-V,--version" takes no value.\0'
+        printf 'Argument: %s' "${given_arg}"
+    elif [[ "${given_arg::2}" == "--" || "${given_arg::2}" == "++" ]]; then
+        # The argument is a long option, so check whether the given
+        # argument is defined.
+        argparser_parse_long_option "${given_arg}"
+    elif [[ "${given_arg::2}" == [-+][!-+] ]]; then
+        # The argument is a short option, so check whether the given
+        # argument is defined.
+        argparser_parse_short_option "${given_arg}"
+    else
+        # The argument hasn't been matched by any condition, so deem it
+        # unknown.  This is true if the prefix is neither "--", "++", a
+        # single "-" nor a single "+", but e.g. "+-" or "-+".
+        printf 'Error: The argument "%s" is unknown.\0' "${given_arg%%=*}"
+        printf 'Argument: %s' "${given_arg}"
+    fi
+}
+
+function argparser_parse_long_option() {
+    # Parse a long-option argument given to the script.
+    #
+    # Arguments:
+    # - $1: the argument to parse
+    #
+    # Nonlocals:
+    # - all_long_options: the associative array holding the long option
+    #   names (read-only)
+    #
+    # Environment:
+    # - ARGPARSER_ALLOW_OPTION_ABBREVIATION (read-only)
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+    #
+    # Output:
+    # - the parsed argument as message or an error message, starting
+    #   with "Error: ", "Argument: ", or "Value: ", possibly
+    #   concatenated with null characters
+
     # Define the local variables.
     local abbr_long_option
     local -A abbr_long_options
     local arg_key
     local given_arg
-    local length
     local long_option
     local -a long_options
     local prefix
-    local short_option
-    local -a short_options
-    local value
-    local -a values
 
     # Read the argument.
     given_arg="$1"
 
-    # If the argument doesn't start with a hyphen ("-") or plus sign
-    # ("+"), it is considered a value to a previous keyword argument or
-    # a postional argument.  Likewise, if the positional arguments
-    # delimiter "--" has already been set and has neither been unset by
-    # "++" nor the current argument is this "++", then any value is
-    # considered a positional argument.  Split the value on
-    # ${ARGPARSER_ARG_DELIMITER_2} characters and output the respective
-    # message for each value.
-    if [[ "${given_arg}" != "++"* \
-        && ("${given_arg}" != [-+]* || "${is_positional_only}" == true) ]]
-    then
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values <<< "${given_arg}"
-        for value in "${values[@]}"; do
-            printf 'Value: %s\0' "${value}"
-        done
-        return
+    # Get the argument identifier for the given (and perhaps
+    # abbreviated) argument and output it, possibly along with the value
+    # following the equals sign ("=").
+    prefix="${given_arg::1}"
+    option_name="${given_arg:2}"
+    if [[ "${given_arg}" =~ "=" ]]; then
+        option_name="${option_name%%=*}"
+        value="${given_arg#*=}"
+    else
+        value=""
     fi
+    arg_key="$(argparser_get_arg_key "${option_name}")"
 
-    # If the argument is the positional arguments delimiter "--" or "++"
-    # or for help or usage, output the respective message.  If an "="
-    # character follows, output an error message and the argument, such
-    # that values following the unknown argument are assigned to this
-    # argument, not the last known one that got parsed.
-    if [[ "${given_arg}" == "--" ]]; then
-        printf 'Positional_Start'
-        return
-    elif [[ "${given_arg}" == "--="* ]]; then
-        printf 'Error: The special option "--" takes no value.\0'
-        printf 'Argument: %s' "${given_arg}"
-        return
-    elif [[ "${given_arg}" == "++" ]]; then
-        printf 'Positional_End'
-        return
-    elif [[ "${given_arg}" == "++="* ]]; then
-        printf 'Error: The special option "++" takes no value.\0'
-        printf 'Argument: %s' "${given_arg}"
-        return
-    elif [[ "${ARGPARSER_ADD_HELP}" == true && \
-        ("${given_arg}" == "-h" || "${given_arg}" == "--help") ]]
+    # Output the argument, split into the option name and value, or an
+    # error message.  In the latter case, output also the given
+    # argument, such that values following the unknown argument are
+    # assigned to this argument, not the last known one that got parsed.
+    if [[ "${ARGPARSER_ALLOW_OPTION_ABBREVIATION}" == true \
+        && -z "${arg_key}" ]]
     then
-        printf 'Help'
-        return
-    elif [[ "${ARGPARSER_ADD_HELP}" == true && \
-        ( "${given_arg}" == "-h="* || "${given_arg}" == "--help="*) ]]
-    then
-        printf 'Error: The option "-h,--help" takes no value.\0'
-        printf 'Argument: %s' "${given_arg}"
-        return
-    elif [[ "${ARGPARSER_ADD_USAGE}" == true && \
-        ( "${given_arg}" == "-u" || "${given_arg}" == "--usage") ]]
-    then
-        printf 'Usage'
-        return
-    elif [[ "${ARGPARSER_ADD_USAGE}" == true && \
-        ( "${given_arg}" == "-u="* || "${given_arg}" == "--usage="*) ]]
-    then
-        printf 'Error: The option "-u,--usage" takes no value.\0'
-        printf 'Argument: %s' "${given_arg}"
-        return
-    elif [[ "${ARGPARSER_ADD_VERSION}" == true && \
-        ( "${given_arg}" == "-V" || "${given_arg}" == "--version") ]]
-    then
-        printf 'Version'
-        return
-    elif [[ "${ARGPARSER_ADD_VERSION}" == true && \
-        ( "${given_arg}" == "-V="* || "${given_arg}" == "--version="*) ]]
-    then
-        printf 'Error: The option "-V,--version" takes no value.\0'
-        printf 'Argument: %s' "${given_arg}"
-        return
-    fi
-
-    # Read all defined keyword arguments and check whether the given
-    # argument is part of them.  If so, output the argument identifier
-    # and possibly all values following the equals sign ("=").
-    for arg_key in "${!all_short_options[@]}"; do
-        # Read the argument's definition.
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a short_options \
-            <<< "${all_short_options[${arg_key}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a long_options \
-            <<< "${all_long_options[${arg_key}]}"
-
-        # Check the short options.
-        for short_option in "${short_options[@]}"; do
-            if [[ "${short_option}" == "-" ]]; then
-                # Ignore arguments without short option name.
-                break
-            fi
-
-            if [[ "${given_arg}" == [-+]"${short_option}" ]]; then
-                # Output the argument identifier and the prefix ("-" or
-                # "+").
-                prefix="${given_arg::1}"
-                printf 'Argument: %s%s' "${prefix}" "${arg_key}"
-                return
-            elif [[ "${given_arg}" == [-+]"${short_option}="* ]]; then
-                # Output the argument identifier, the prefix ("-" or
-                # "+"), and all values split on
-                # ${ARGPARSER_ARG_DELIMITER_2} characters.
-                prefix="${given_arg::1}"
-                printf 'Argument: %s%s\0' "${prefix}" "${arg_key}"
-
-                IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values \
-                    <<< "${given_arg#*=}"
-                for value in "${values[@]}"; do
-                    printf 'Value: %s\0' "${value}"
-                done
-                return
-            fi
-        done
-
-        # Check the long options.
-        for long_option in "${long_options[@]}"; do
-            if [[ "${long_option}" == "-" ]]; then
-                # Ignore arguments without long option name.
-                break
-            fi
-
-            if [[ "${given_arg}" == "--${long_option}" \
-                || "${given_arg}" == "++${long_option}" ]]
-            then
-                # Output the argument identifier and the prefix ("-" or
-                # "+").
-                prefix="${given_arg::1}"
-                printf 'Argument: %s%s' "${prefix}" "${arg_key}"
-                return
-            elif [[ "${given_arg}" == "--${long_option}="* \
-                || "${given_arg}" == "++${long_option}="* ]]
-            then
-                # Output the argument identifier, the prefix ("-" or
-                # "+"), and all values split on
-                # ${ARGPARSER_ARG_DELIMITER_2} characters.
-                prefix="${given_arg::1}"
-                printf 'Argument: %s%s\0' "${prefix}" "${arg_key}"
-
-                IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values \
-                    <<< "${given_arg#*=}"
-                for value in "${values[@]}"; do
-                    printf 'Value: %s\0' "${value}"
-                done
-                return
-            fi
-        done
-    done
-
-    # Check if the argument is an abbreviated long option.
-    if [[ "${ARGPARSER_ALLOW_ABBREVIATION}" == true \
-        && ("${given_arg}" == "--"* || "${given_arg}" == "++"*) ]]
-    then
+        # Check if the argument is an abbreviated long option, since no
+        # argument identifier for the entire option name has been found.
         for arg_key in "${!all_long_options[@]}"; do
             # Read the argument's definition.
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a long_options \
                 <<< "${all_long_options[${arg_key}]}"
 
             # Abbreviate the long option names by shortening them to the
-            # length of the given argument (without prefix and value)
-            # and add them to the associative array.  Ignore arguments
-            # without long option name.
+            # length of the given option name and add them to the
+            # associative array.  Ignore arguments without long option
+            # name.
             for long_option in "${long_options[@]}"; do
                 if [[ "${long_option}" == "-" ]]; then
                     break
                 fi
-
-                length="${given_arg:2}"
-                length="${length%%=*}"
-                length="${#length}"
-                abbr_long_option="${long_option::${length}}"
-                abbr_long_options[${arg_key}]="${abbr_long_option}"
+                abbr_long_options[${arg_key}]="${long_option::${#option_name}}"
             done
         done
 
         # Count the number of matches of the argument among the
         # abbreviated long option names. If it matches once, output the
-        # argument identifier and possibly all values following the
-        # equals sign ("=").  If multiple option names are matched,
-        # output an error message, instead, as well as the argument,
-        # such that values following the unknown argument are assigned
-        # to this argument, not the last known one that got parsed.
-        abbr_long_option="${given_arg:2}"
-        abbr_long_option="${abbr_long_option%%=*}"
-        count="$(argparser_count "${abbr_long_option}" \
-            "${abbr_long_options[@]}")"
+        # argument identifier and possibly the value following the
+        # equals sign ("=").  If multiple or no option names are
+        # matched, output an error message, instead.
+        count="$(argparser_count "${option_name}" "${abbr_long_options[@]}")"
 
         if (( count == 1 )); then
             # Get the argument identifier for the abbreviated argument.
             for arg_key in "${!abbr_long_options[@]}"; do
                 abbr_long_option="${abbr_long_options[${arg_key}]}"
-                if [[ "${given_arg:2}" == "${abbr_long_option}"* ]]; then
+                if [[ "${option_name}" == "${abbr_long_option}"* ]]; then
                     break
                 fi
             done
 
-            if [[ "${given_arg}" == "--${abbr_long_option}" \
-                || "${given_arg}" == "++${abbr_long_option}" ]]
-            then
-                # Output the argument identifier and the prefix ("-" or
-                # "+").
-                prefix="${given_arg::1}"
-                printf 'Argument: %s%s' "${prefix}" "${arg_key}"
-                return
-            elif [[ "${given_arg}" == "--${abbr_long_option}="* \
-                || "${given_arg}" == "++${abbr_long_option}="* ]]
-            then
-                # Output the argument identifier, the prefix ("-" or
-                # "+"), and all values split on
-                # ${ARGPARSER_ARG_DELIMITER_2} characters.
-                prefix="${given_arg::1}"
+            if [[ -n "${value}" ]]; then
+                # Output the prefix ("-" or "+"), the argument
+                # identifier, and the value.
                 printf 'Argument: %s%s\0' "${prefix}" "${arg_key}"
-
-                IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values \
-                    <<< "${given_arg#*=}"
-                for value in "${values[@]}"; do
-                    printf 'Value: %s\0' "${value}"
-                done
-                return
+                printf 'Value: %s\0' "${value}"
+            else
+                # Output the prefix ("-" or "+") and the argument
+                # identifier.
+                printf 'Argument: %s%s' "${prefix}" "${arg_key}"
             fi
         elif (( count > 1 )); then
+            # Since multiple option names have been found in the
+            # definition, output an error message and the argument.
             printf 'Error: The argument "%s" matches multiple options.\0' \
                 "${given_arg%%=*}"
             printf 'Argument: %s' "${given_arg}"
-            return
+        else
+            # Since the argument hasn't been found in the definition,
+            # output an error message and the argument.
+            printf 'Error: The argument "%s" is unknown.\0' "${given_arg%%=*}"
+            printf 'Argument: %s' "${given_arg}"
+        fi
+    else
+        if [[ -n "${arg_key}" ]]; then
+            if [[ -n "${value}" ]]; then
+                # Output the prefix ("-" or "+"), the argument
+                # identifier, and the value.
+                printf 'Argument: %s%s\0' "${prefix}" "${arg_key}"
+                printf 'Value: %s\0' "${value}"
+            else
+                # Output the prefix ("-" or "+") and the argument
+                # identifier.
+                printf 'Argument: %s%s' "${prefix}" "${arg_key}"
+            fi
+        else
+            # Since the argument hasn't been found in the definition,
+            # output an error message and the argument.
+            printf 'Error: The argument "%s" is unknown.\0' "${given_arg%%=*}"
+            printf 'Argument: %s' "${given_arg}"
         fi
     fi
+}
 
-    # Since the argument hasn't been found in the definition, output an
-    # error message and the argument, such that values following the
-    # unknown argument are assigned to this argument, not the last known
-    # one that got parsed.
-    printf 'Error: The argument "%s" is unknown.\0' "${given_arg%%=*}"
-    printf 'Argument: %s' "${given_arg}"
+function argparser_parse_short_option() {
+    # Parse a short-option argument given to the script.
+    #
+    # Arguments:
+    # - $1: the argument to parse
+    #
+    # Nonlocals:
+    # - all_arg_numbers: the associative array holding the argument
+    #   numbers (read-only)
+    #
+    # Environment:
+    # - ARGPARSER_ALLOW_OPTION_MERGING (read-only)
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+    #
+    # Output:
+    # - the parsed argument as message or an error message, starting
+    #   with "Error: ", "Argument: ", or "Value: ", possibly
+    #   concatenated with null characters
+
+    # Define the local variables.
+    local arg_key
+    local arg_number
+    local char
+    local given_arg
+    local i
+    local prefix
+    local option_name
+    local value
+
+    # Read the argument.
+    given_arg="$1"
+
+    # Get the argument identifier for the given argument and output it,
+    # possibly along with the value following the equals sign ("=") or
+    # being merged with the option name(s).
+    prefix="${given_arg::1}"
+    option_name="${given_arg:1}"
+    if [[ "${given_arg}" =~ "=" ]]; then
+        option_name="${option_name%%=*}"
+        value="${given_arg#*=}"
+    else
+        value=""
+    fi
+    arg_key="$(argparser_get_arg_key "${option_name}")"
+
+    # Get the argument identifier for the given (and perhaps merged)
+    # rgument and output it, possibly along with the value following the
+    # equals sign ("=").
+    if [[ "${ARGPARSER_ALLOW_OPTION_MERGING}" == true ]]; then
+        # Split the combined short option name, which may end in a
+        # merged value, after any character.
+        for (( i = 0; i < "${#option_name}"; i++ )); do
+            char="${option_name:i:1}"
+            arg_key="$(argparser_get_arg_key "${char}")"
+            if [[ -z "${arg_key}" ]]; then
+                # Since the argument hasn't been found in the
+                # definition, output an error message and the argument.
+                printf 'Error: The argument "%s%s" is unknown.\0' "${prefix}" \
+                    "${char}"
+                printf 'Argument: %s' "${given_arg}"
+                return
+            fi
+
+            # Output the prefix ("-" or "+") and the argument identifier
+            # for the short option name character.
+            printf 'Argument: %s%s\0' "${prefix}" "${arg_key}"
+
+            # Get the number of required arguments to judge whether the
+            # following character is an argument to the current option
+            # or another option (i.e., the current option is a flag).
+            # If there is no following character, the value must have
+            # been given as next whitespace-delimited argument, thus
+            # don't output anything.
+            arg_number="${all_arg_numbers[${arg_key}]}"
+            if [[ "${arg_number}" != 0 ]] && (( i < "${#option_name}" - 1 ))
+            then
+                # Output the value, which is the argument's rest.
+                printf 'Value: %s\0' "${option_name:i+1}"
+                return
+            fi
+        done
+
+        if [[ -n "${value}" ]]; then
+            # Output the value, which is given after an equals sign
+            # ("=").
+            printf 'Value: %s\0' "${value}"
+        fi
+    else
+        if [[ -n "${arg_key}" ]]; then
+            if [[ -n "${value}" ]]; then
+                # Output the prefix ("-" or "+"), the argument
+                # identifier, and the value.
+                printf 'Argument: %s%s\0' "${prefix}" "${arg_key}"
+                printf 'Value: %s\0' "${value}"
+            else
+                # Output the prefix ("-" or "+") and the argument
+                # identifier.
+                printf 'Argument: %s%s' "${prefix}" "${arg_key}"
+            fi
+        else
+            # Since the argument hasn't been found in the definition,
+            # output an error message and the argument.
+            printf 'Error: The argument "%s" is unknown.\0' "${given_arg%%=*}"
+            printf 'Argument: %s' "${given_arg}"
+        fi
+    fi
 }
 
 function argparser_check_arg_values() {
@@ -4181,6 +4364,7 @@ function argparser_main() {
     unset args
     declare -Ag args
 
+    mapfile -d "" -t given_args < <(argparser_split_args "${given_args[@]}")
     for given_arg in "${given_args[@]}"; do
         # Parse the argument.
         mapfile -d "" -t parsed_arg < <(argparser_parse_arg "${given_arg}")
@@ -4438,9 +4622,9 @@ fi
 # with potentially same-named functions from the calling script that
 # stand in no relation to the argparser.
 if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
+    unset -f argparser_check_arg_values
     unset -f argparser_check_args_definition_names
     unset -f argparser_check_args_definition_values
-    unset -f argparser_check_arg_values
     unset -f argparser_check_color_or_style
     unset -f argparser_check_env_vars
     unset -f argparser_check_file
@@ -4449,6 +4633,7 @@ if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_create_help_message
     unset -f argparser_create_usage_message
     unset -f argparser_fold
+    unset -f argparser_get_arg_key
     unset -f argparser_get_option_names
     unset -f argparser_in_array
     unset -f argparser_is_variable_bool
@@ -4459,13 +4644,17 @@ if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_main
     unset -f argparser_parse_arg
     unset -f argparser_parse_args_definition
+    unset -f argparser_parse_long_option
+    unset -f argparser_parse_short_option
     unset -f argparser_print_error_or_warning_message
     unset -f argparser_print_help_or_usage_file
     unset -f argparser_print_help_or_usage_message
+    unset -f argparser_print_version_message
     unset -f argparser_quicksort
     unset -f argparser_read_args_definition
     unset -f argparser_read_translation
     unset -f argparser_sort
+    unset -f argparser_split_args
     unset -f argparser_translate
     unset -f argparser_trim
     unset -f argparser_uniq
@@ -4479,7 +4668,8 @@ if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_ADD_HELP
     unset ARGPARSER_ADD_USAGE
     unset ARGPARSER_ADD_VERSION
-    unset ARGPARSER_ALLOW_ABBREVIATION
+    unset ARGPARSER_ALLOW_OPTION_ABBREVIATION
+    unset ARGPARSER_ALLOW_OPTION_MERGING
     unset ARGPARSER_ARG_ARRAY_NAME
     unset ARGPARSER_ARG_DEF_FILE
     unset ARGPARSER_ARG_DEF_FILE_HAS_HEADER

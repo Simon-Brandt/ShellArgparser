@@ -169,7 +169,7 @@ There are four features of the argparser visible here: First, values given befor
 
 Second, another special keyword argument, `++`, is interpreted by the argparser to re-start the parsing of keyword arguments. You can imagine the plus signs as crossed hyphens, thus negating their meaning (as is done for flags in the next example). Setting `--` after the positional argument&ndash;only part has started (*i.e.*, after a previous `--`) makes this second `--` a positional argument. In contrast, setting `++` after `--` re-starts the usual parsing, so the following argument is parsed as keyword argument if it starts with a hyphen (or a plus sign, see below), and as positional argument, else. Setting `--` after `++` stops the parsing (possibly again), while setting `++` after `++` means to parse a following non-hyphenated argument as positional, instead of as value to the previous keyword argument. You may rarely need the `++`, but a possible use case for scripts would be to gather command-line arguments or values from different processes, like *via* command/process substitution. Then, you can just combine the two streams, without needing to care whether both may set a `--`. Just join them with a `++` and the parsing occurs as expected.
 
-Third, options can have name aliases, *i.e.*, any number of synonymous option names pointing to the same entity (argument definition). Thereby, not only aliases with two hyphens (so-called long options) are possible, but also some with only one leading hyphen (short options). For fast command-line usage, short options are convenient to quickly write a command; but for scripts, the long options should be preferred as they carry more information due to their verbose name (like, what does `-v` mean&mdash;is it `--version`, `--verbose`, or even `--verbatim`?). The argparser allows an arbitrary number of short and/or long option names for a keyword argument to be defined, and options can be provided by any alias on the command line. Further, long option names can be abbreviated, as long as no collision with other names arises (like when giving `--verb` in the example above). This requires [`ARGPARSER_ALLOW_ABBREVIATION`](#argparser_allow_abbreviation) to be set to `true`.
+Third, options can have name aliases, *i.e.*, any number of synonymous option names pointing to the same entity (argument definition). Thereby, not only aliases with two hyphens (so-called long options) are possible, but also some with only one leading hyphen (short options). For fast command-line usage, short options are convenient to quickly write a command; but for scripts, the long options should be preferred as they carry more information due to their verbose name (like, what does `-v` mean&mdash;is it `--version`, `--verbose`, or even `--verbatim`?). The argparser allows an arbitrary number of short and/or long option names for a keyword argument to be defined, and options can be provided by any alias on the command line. Further, long option names can be abbreviated, as long as no collision with other names arises (like when giving `--verb` in the example above). This requires [`ARGPARSER_ALLOW_OPTION_ABBREVIATION`](#argparser_allow_option_abbreviation) to be set to `true`.
 
 The fourth thing you may have noticed is that we didn't use an equals sign (`=`) to delimit option names and their values. Though it may seem as if it was related to the usage of short option names, for the argparser, it is completely arbitrary whether you use spaces or equals signs. Again, typing spaces is faster on the command line, but using the explicit equals sign makes a script's code more legible. This has the additional advantage that it's clear to a user that the value belongs to the option before, and that it's not a flag followed by a positional argument. As long as this user doesn't know that the argparser only treats values following option names as positional arguments when they're separated by a double hyphen, it may look confusing. Further, using an equals sign is the only way of providing arguments starting with a hyphen to an option, since a whitespace-separated word would be interpreted as (possibly nonexistent) option name. By this, you can give negative numbers on the command line.
 
@@ -871,50 +871,51 @@ The argparser defines a large set of environment variables, each following the n
 
 ### Overview over environment variables
 
-| Variable name                                                               | Allowed values or type[^1][^2][^3] | Default value        |
-|-----------------------------------------------------------------------------|------------------------------------|----------------------|
-| [`ARGPARSER_ADD_HELP`](#argparser_add_help)                                 | *bool*                             | `true`               |
-| [`ARGPARSER_ADD_USAGE`](#argparser_add_usage)                               | *bool*                             | `true`               |
-| [`ARGPARSER_ADD_VERSION`](#argparser_add_version)                           | *bool*                             | `true`               |
-| [`ARGPARSER_ALLOW_ABBREVIATION`](#argparser_allow_abbreviation)             | *bool*                             | `false`               |
-| [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name)                     | *str*[^4]                          | `"args"`             |
-| [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file)                         | *filepath* \| `""`                 | `""`                 |
-| [`ARGPARSER_ARG_DEF_FILE_HAS_HEADER`](#argparser_arg_def_file_has_header)   | *bool*                             | `true`               |
-| [`ARGPARSER_ARG_DEF_HAS_HEADER`](#argparser_arg_def_has_header)             | *bool*                             | `true`               |
-| [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)                   | *char*                             | `":"`[^5]            |
-| [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)                   | *char*                             | `","`[^5]            |
-| [`ARGPARSER_CHECK_ARG_DEFINITION`](#argparser_check_arg_definition)         | *bool*                             | `false`              |
-| [`ARGPARSER_CHECK_ENV_VARS`](#argparser_check_env_vars)                     | *bool*                             | `false`              |
-| [`ARGPARSER_ERROR_EXIT_CODE`](#argparser_error_exit_code)                   | *int*                              | `1`                  |
-| [`ARGPARSER_ERROR_STYLE`](#argparser_error_style)                           | *str*                              | `"red,bold,reverse"` |
-| [`ARGPARSER_HELP_EXIT_CODE`](#argparser_help_exit_code)                     | *int*                              | `0`                  |
-| [`ARGPARSER_HELP_FILE`](#argparser_help_file)                               | *filepath* \| `""`                 | `""`                 |
-| [`ARGPARSER_HELP_FILE_INCLUDE_CHAR`](#argparser_help_file_include_char)     | *char*                             | `"@"`                |
-| [`ARGPARSER_HELP_FILE_KEEP_COMMENTS`](#argparser_help_file_keep_comments)   | *bool*                             | `false`              |
-| [`ARGPARSER_HELP_STYLE`](#argparser_help_style)                             | *str*                              | `"italic"`           |
-| [`ARGPARSER_LANGUAGE`](#argparser_language)                                 | *str*                              | `"en"`               |
-| [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1)                   | *uint*                             | `5`[^6]              |
-| [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2)                   | *uint*                             | `33`[^6]             |
-| [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)                   | *uint*                             | `39`[^6]             |
-| [`ARGPARSER_POSITIONAL_NAME`](#argparser_positional_name)                   | *str*                              | `"positional"`       |
-| [`ARGPARSER_READ_ARGS`](#argparser_read_args)                               | *bool*                             | `true`               |
-| [`ARGPARSER_SCRIPT_NAME`](#argparser_script_name)                           | *str*                              | `"${0##*/}"`         |
-| [`ARGPARSER_SET_ARGS`](#argparser_set_args)                                 | *bool*                             | `true`               |
-| [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)                             | *bool*                             | `true`               |
-| [`ARGPARSER_TRANSLATION_FILE`](#argparser_translation_file)                 | *filepath* \| `""`                 | `""`                 |
-| [`ARGPARSER_UNSET_ARGS`](#argparser_unset_args)                             | *bool*                             | `true`               |
-| [`ARGPARSER_UNSET_ENV_VARS`](#argparser_unset_env_vars)                     | *bool*                             | `true`               |
-| [`ARGPARSER_UNSET_FUNCTIONS`](#argparser_unset_functions)                   | *bool*                             | `true`               |
-| [`ARGPARSER_USAGE_EXIT_CODE`](#argparser_usage_exit_code)                   | *int*                              | `0`                  |
-| [`ARGPARSER_USAGE_FILE`](#argparser_usage_file)                             | *filepath* \| `""`                 | `""`                 |
-| [`ARGPARSER_USAGE_FILE_INCLUDE_CHAR`](#argparser_usage_file_include_char)   | *char*                             | `"@"`                |
-| [`ARGPARSER_USAGE_FILE_KEEP_COMMENTS`](#argparser_usage_file_keep_comments) | *bool*                             | `false`              |
-| [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style)                           | *str*                              | `"italic"`           |
-| [`ARGPARSER_USE_STYLES_IN_FILES`](#argparser_use_styles_in_files)           | *bool*                             | `false`              |
-| [`ARGPARSER_VERSION`](#argparser_version)                                   | *str*                              | `"1.0.0"`            |
-| [`ARGPARSER_VERSION_EXIT_CODE`](#argparser_version_exit_code)               | *int*                              | `0`                  |
-| [`ARGPARSER_VERSION_STYLE`](#argparser_version_style)                       | *str*                              | `"bold"`             |
-| [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style)                       | *str*                              | `"red,bold"`         |
+| Variable name                                                                 | Allowed values or type[^1][^2][^3] | Default value        |
+|-------------------------------------------------------------------------------|------------------------------------|----------------------|
+| [`ARGPARSER_ADD_HELP`](#argparser_add_help)                                   | *bool*                             | `true`               |
+| [`ARGPARSER_ADD_USAGE`](#argparser_add_usage)                                 | *bool*                             | `true`               |
+| [`ARGPARSER_ADD_VERSION`](#argparser_add_version)                             | *bool*                             | `true`               |
+| [`ARGPARSER_ALLOW_OPTION_ABBREVIATION`](#argparser_allow_option_abbreviation) | *bool*                             | `false`              |
+| [`ARGPARSER_ALLOW_OPTION_MERGING`](#argparser_allow_option_merging)           | *bool*                             | `false`              |
+| [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name)                       | *str*[^4]                          | `"args"`             |
+| [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file)                           | *filepath* \| `""`                 | `""`                 |
+| [`ARGPARSER_ARG_DEF_FILE_HAS_HEADER`](#argparser_arg_def_file_has_header)     | *bool*                             | `true`               |
+| [`ARGPARSER_ARG_DEF_HAS_HEADER`](#argparser_arg_def_has_header)               | *bool*                             | `true`               |
+| [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)                     | *char*                             | `":"`[^5]            |
+| [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)                     | *char*                             | `","`[^5]            |
+| [`ARGPARSER_CHECK_ARG_DEFINITION`](#argparser_check_arg_definition)           | *bool*                             | `false`              |
+| [`ARGPARSER_CHECK_ENV_VARS`](#argparser_check_env_vars)                       | *bool*                             | `false`              |
+| [`ARGPARSER_ERROR_EXIT_CODE`](#argparser_error_exit_code)                     | *int*                              | `1`                  |
+| [`ARGPARSER_ERROR_STYLE`](#argparser_error_style)                             | *str*                              | `"red,bold,reverse"` |
+| [`ARGPARSER_HELP_EXIT_CODE`](#argparser_help_exit_code)                       | *int*                              | `0`                  |
+| [`ARGPARSER_HELP_FILE`](#argparser_help_file)                                 | *filepath* \| `""`                 | `""`                 |
+| [`ARGPARSER_HELP_FILE_INCLUDE_CHAR`](#argparser_help_file_include_char)       | *char*                             | `"@"`                |
+| [`ARGPARSER_HELP_FILE_KEEP_COMMENTS`](#argparser_help_file_keep_comments)     | *bool*                             | `false`              |
+| [`ARGPARSER_HELP_STYLE`](#argparser_help_style)                               | *str*                              | `"italic"`           |
+| [`ARGPARSER_LANGUAGE`](#argparser_language)                                   | *str*                              | `"en"`               |
+| [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1)                     | *uint*                             | `5`[^6]              |
+| [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2)                     | *uint*                             | `33`[^6]             |
+| [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)                     | *uint*                             | `39`[^6]             |
+| [`ARGPARSER_POSITIONAL_NAME`](#argparser_positional_name)                     | *str*                              | `"positional"`       |
+| [`ARGPARSER_READ_ARGS`](#argparser_read_args)                                 | *bool*                             | `true`               |
+| [`ARGPARSER_SCRIPT_NAME`](#argparser_script_name)                             | *str*                              | `"${0##*/}"`         |
+| [`ARGPARSER_SET_ARGS`](#argparser_set_args)                                   | *bool*                             | `true`               |
+| [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)                               | *bool*                             | `true`               |
+| [`ARGPARSER_TRANSLATION_FILE`](#argparser_translation_file)                   | *filepath* \| `""`                 | `""`                 |
+| [`ARGPARSER_UNSET_ARGS`](#argparser_unset_args)                               | *bool*                             | `true`               |
+| [`ARGPARSER_UNSET_ENV_VARS`](#argparser_unset_env_vars)                       | *bool*                             | `true`               |
+| [`ARGPARSER_UNSET_FUNCTIONS`](#argparser_unset_functions)                     | *bool*                             | `true`               |
+| [`ARGPARSER_USAGE_EXIT_CODE`](#argparser_usage_exit_code)                     | *int*                              | `0`                  |
+| [`ARGPARSER_USAGE_FILE`](#argparser_usage_file)                               | *filepath* \| `""`                 | `""`                 |
+| [`ARGPARSER_USAGE_FILE_INCLUDE_CHAR`](#argparser_usage_file_include_char)     | *char*                             | `"@"`                |
+| [`ARGPARSER_USAGE_FILE_KEEP_COMMENTS`](#argparser_usage_file_keep_comments)   | *bool*                             | `false`              |
+| [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style)                             | *str*                              | `"italic"`           |
+| [`ARGPARSER_USE_STYLES_IN_FILES`](#argparser_use_styles_in_files)             | *bool*                             | `false`              |
+| [`ARGPARSER_VERSION`](#argparser_version)                                     | *str*                              | `"1.0.0"`            |
+| [`ARGPARSER_VERSION_EXIT_CODE`](#argparser_version_exit_code)                 | *int*                              | `0`                  |
+| [`ARGPARSER_VERSION_STYLE`](#argparser_version_style)                         | *str*                              | `"bold"`             |
+| [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style)                         | *str*                              | `"red,bold"`         |
 
 [^1]: Bash is weakly typed, hence the denoted types are just a guidance.
 [^2]: Strings can optionally be enclosed by quotes.
@@ -926,30 +927,37 @@ The argparser defines a large set of environment variables, each following the n
 ### `ARGPARSER_ADD_HELP`
 
 - ***Type:*** *bool* (Boolean)
-- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
 - ***Description:*** Whether to add `-h` and `--help` as flags to call the help message.
 
 ### `ARGPARSER_ADD_USAGE`
 
 - ***Type:*** *bool* (Boolean)
-- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
 - ***Description:*** Whether to add `-u` and `--usage` as flags to call the usage message.
 
 ### `ARGPARSER_ADD_VERSION`
 
 - ***Type:*** *bool* (Boolean)
-- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
 - ***Description:*** Whether to add `-V` and `--version` as flags to call the version message.
 
-### `ARGPARSER_ALLOW_ABBREVIATION`
+### `ARGPARSER_ALLOW_OPTION_ABBREVIATION`
 
 - ***Type:*** *bool* (Boolean)
-- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
-- ***Description:*** Whether to allow the user to give long option names in abbreviated form, *e.g.*, `--verb` for `--verbatim`, as long as no collision with *e.g.* `--verbose` arises. Short option names only span one character and thus can never be abbreviated.
+- ***Description:*** Whether to allow the user to give long option names in abbreviated form, *e.g.*, `--verb` for `--verbatim`, as long as no collision with *e.g.* `--verbose` arises. Short option names only span one character and thus cannot be abbreviated.
+
+### `ARGPARSER_ALLOW_OPTION_MERGING`
+
+- ***Type:*** *bool* (Boolean)
+- ***Allowed values:*** `true` and `false`
+- ***Default value:*** `false`
+- ***Description:*** Whether to allow the user to give short option names in merged (concatenated) form, *e.g.*, `-ab1` or `-ab=1` for `-a -b 1`. The individual characters are interpreted as option names until an option has a number of required arguments greater than zero, *i.e.*, until an option is no flag. Long option names span multiple characters and thus cannot be merged in a meaningful way.
 
 ### `ARGPARSER_ARG_ARRAY_NAME`
 
@@ -968,14 +976,14 @@ The argparser defines a large set of environment variables, each following the n
 ### `ARGPARSER_ARG_DEF_FILE_HAS_HEADER`
 
 - ***Type:*** *bool* (Boolean)
-- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
 - ***Description:*** Whether the arguments definition file has a header explaining the columns. This is only evaluated if an [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file) is given.
 
 ### `ARGPARSER_ARG_DEF_HAS_HEADER`
 
 - ***Type:*** *bool* (Boolean)
-- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
 - ***Description:*** Whether the arguments definition in your script has a header explaining the columns.
 
@@ -996,14 +1004,14 @@ The argparser defines a large set of environment variables, each following the n
 ### `ARGPARSER_CHECK_ARG_DEFINITION`
 
 - ***Type:*** *bool* (Boolean)
-- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
 - ***Description:*** Whether to check if the arguments definition is consistent, *i.e.*, if there is at most one optional positional argument, if there is at most one positional argument with an infinite number of accepted values, if any keyword argument has at least one short or long option name given, with a length of exactly one or at least two characters, and no duplicate names (within its own definition and among all other arguments), if the number of default values equals the number of required values, if the default values lie in the choice values, if flags have a default value of `true` or `false` and no choice values, and if the choice and default values accord to the data type. This should only be turned on (set to `true`) for testing purposes, while in production environments, keeping it deactivated saves some (minimal) computation time. Still, if the user can modify the arguments definition at some point (not recommended as it may lead to code injection!), you should activate it.
 
 ### `ARGPARSER_CHECK_ENV_VARS`
 
 - ***Type:*** *bool* (Boolean)
-- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
 - ***Description:*** Whether to check if the argparser environment variables accord to their definition. Again, this should only be turned on (set to `true`) for testing purposes, while in production environments, keeping it deactivated saves some (minimal) computation time. Still, if the user can modify the environment variables at some point (not recommended as it may lead to code injection!), you should activate it.
 
@@ -1045,7 +1053,7 @@ The argparser defines a large set of environment variables, each following the n
 ### `ARGPARSER_HELP_FILE_KEEP_COMMENTS`
 
 - ***Type:*** *bool* (Boolean)
-- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
 - ***Description:*** Whether to keep commented lines (and their trailing blank lines) in the help file. By this, you can choose whether you want to include lines serving as a comment (starting with a hashmark, *i.e.* `#`) in the help file also in the help message. This is only evaluated if an [`ARGPARSER_HELP_FILE`](#argparser_help_file) is given.
 
@@ -1095,7 +1103,7 @@ It is recommendable to have a total width of the help message of 79 characters. 
 ### `ARGPARSER_READ_ARGS`
 
 - ***Type:*** *bool* (Boolean)
-- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
 - ***Description:*** Whether to read the arguments from the command line (*i.e.*, from `"$@"`) and parse them to the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name) sets. Setting `ARGPARSER_READ_ARGS` is the same as calling `source argparser --read -- "$@"`. If set along [`ARGPARSER_SET_ARGS`](#argparser_set_args), it is the same as calling `source argparser --all -- "$@"` or a bare `source argparser`.  
 The main difference is that, if you `export` (or `declare -x`) the variables to child processes (like scripts called from your master script), they will inherit these environment variables. If, in your child script, you use a bare `source argparser`, *i.e.*, without specifying an action to the argparser, the setting from the inherited environment variables will be used. You can always override them by specifying an action. By this, you may set the environment variables in your master script and use the settings in some child scripts, with the others setting their own action.
@@ -1110,7 +1118,7 @@ The main difference is that, if you `export` (or `declare -x`) the variables to 
 ### `ARGPARSER_SET_ARGS`
 
 - ***Type:*** *bool* (Boolean)
-- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
 - ***Description:*** Whether to set the (read and parsed) arguments from the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name) refers to as variables in the calling script's scope. Setting `ARGPARSER_SET_ARGS` is the same as calling `source argparser --set -- "$@"`. If set along [`ARGPARSER_READ_ARGS`](#argparser_read_args), it is the same as calling `source argparser --all -- "$@"` or a bare `source argparser`. For details, refer to [`ARGPARSER_READ_ARGS`](#argparser_read_args).
 
@@ -1120,7 +1128,7 @@ The main difference is that, if you `export` (or `declare -x`) the variables to 
 ### `ARGPARSER_SET_ARRAYS`
 
 - ***Type:*** *bool* (Boolean)
-- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
 - ***Description:*** Whether to set arguments intended to have multiple values as indexed array. This is only evaluated if [`ARGPARSER_SET_ARGS`](#argparser_set_args) is `true`. While it can be very helpful in a script to have the multiple values already set to an array that can be iterated over, the drawback is that arrays are hard to transfer to other scripts and may need to be serialized. Since they come in serialized form from the argparser, a temporary expansion to an array would be unnecessary.
 
@@ -1134,21 +1142,21 @@ The main difference is that, if you `export` (or `declare -x`) the variables to 
 ### `ARGPARSER_UNSET_ARGS`
 
 - ***Type:*** *bool* (Boolean)
-- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
 - ***Description:*** Whether to unset (remove) all command-line arguments given to the script. This is usually what you want, as the argparser re-sets these values in parsed form. Else, keyword arguments will be included as positional-like arguments. This is only evaluated if [`ARGPARSER_SET_ARGS`](#argparser_set_args) is `true`.
 
 ### `ARGPARSER_UNSET_ENV_VARS`
 
 - ***Type:*** *bool* (Boolean)
-- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
 - ***Description:*** Whether to unset (remove) argparser environment variables from the environment. As long as you don't need these variables anymore or want to reset them prior to the next argparser invokation, this is usually what you want. This prevents accidental (but also deliberate) inheritance to child scripts when passing the entire environment to them.
 
 ### `ARGPARSER_UNSET_FUNCTIONS`
 
 - ***Type:*** *bool* (Boolean)
-- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
 - ***Description:*** Whether to unset (remove) argparser functions from the environment. You should not need them separate from an argparser invokation, where they're automatically defined (set) upon sourcing it. By unsetting them, the namespace is kept clean.
 
@@ -1176,7 +1184,7 @@ The main difference is that, if you `export` (or `declare -x`) the variables to 
 ### `ARGPARSER_USAGE_FILE_KEEP_COMMENTS`
 
 - ***Type:*** *bool* (Boolean)
-- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
 - ***Description:*** Whether to keep commented lines (and their trailing blank lines) in the usage file. By this, you can choose whether you want to include lines serving as a comment (starting with a hashmark, *i.e.* `"#`) in the usage file also in the usage message. This is only evaluated if an [`ARGPARSER_USAGE_FILE`](#argparser_usage_file) is given.
 
@@ -1190,7 +1198,7 @@ The main difference is that, if you `export` (or `declare -x`) the variables to 
 ### `ARGPARSER_USE_STYLES_IN_FILES`
 
 - ***Type:*** *bool* (Boolean)
-- ***Allowed values:*** `true` and `false` (case-sensitive)
+- ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
 - ***Description:*** Whether to use the colors and styles from [`ARGPARSER_ERROR_STYLE`](#argparser_error_style), [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style), [`ARGPARSER_HELP_STYLE`](#argparser_help_style), [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style), and [`ARGPARSER_VERSION_STYLE`](#argparser_version_style) when `STDOUT`/`STDERR` is not a terminal (and thus perhaps a file). This is useful to get plain 7-bit ASCII text output for files, while in interactive sessions, the escape sequences offer more user-friendly formatting and highlighting possibilities. By this, you can parse your files afterwards more easily. Still, using *e.g.* `less --raw-control-chars <filename>`, these escape sequences can be displayed from files, when included.
 
