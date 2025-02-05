@@ -53,7 +53,7 @@ fi
 : "${ARGPARSER_ADD_USAGE:=true}"
 : "${ARGPARSER_ADD_VERSION:=true}"
 : "${ARGPARSER_ALLOW_OPTION_ABBREVIATION:=false}"
-: "${ARGPARSER_ALLOW_OPTION_MERGING:=true}"
+: "${ARGPARSER_ALLOW_OPTION_MERGING:=false}"
 : "${ARGPARSER_ARG_ARRAY_NAME:="args"}"
 : "${ARGPARSER_ARG_DEF_FILE:=""}"
 : "${ARGPARSER_ARG_DEF_FILE_HAS_HEADER:=true}"
@@ -1911,7 +1911,9 @@ function argparser_get_arg_key() {
     # name.
     #
     # Arguments:
-    # - $1: the option name
+    # - $1: whether the option is expected to be a short or long option
+    #   ("short" or "long")
+    # - $2: the option name
     #
     # Nonlocals:
     # - all_long_options: the associative array holding the long option
@@ -1930,15 +1932,17 @@ function argparser_get_arg_key() {
     local arg_key
     local long_option
     local -a long_options
+    local mode
     local option_name
     local short_option
     local -a short_options
 
-    # Read the argument.
-    option_name="$1"
+    # Read the arguments.
+    mode="$1"
+    option_name="$2"
 
     # Get the argument identifier.
-    if (( "${#option_name}" == 1 )); then
+    if [[ "${mode}" == "short" ]]; then
         for arg_key in "${!all_short_options[@]}"; do
             # Read the argument's definition.
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a short_options \
@@ -2241,7 +2245,7 @@ function argparser_parse_long_option() {
     else
         value=""
     fi
-    arg_key="$(argparser_get_arg_key "${option_name}")"
+    arg_key="$(argparser_get_arg_key "long" "${option_name}")"
 
     # Output the argument, split into the option name and value, or an
     # error message.  In the latter case, output also the given
@@ -2373,7 +2377,7 @@ function argparser_parse_short_option() {
     else
         value=""
     fi
-    arg_key="$(argparser_get_arg_key "${option_name}")"
+    arg_key="$(argparser_get_arg_key "short" "${option_name}")"
 
     # Get the argument identifier for the given (and perhaps merged)
     # rgument and output it, possibly along with the value following the
@@ -2383,7 +2387,7 @@ function argparser_parse_short_option() {
         # merged value, after any character.
         for (( i = 0; i < "${#option_name}"; i++ )); do
             char="${option_name:i:1}"
-            arg_key="$(argparser_get_arg_key "${char}")"
+            arg_key="$(argparser_get_arg_key "short" "${char}")"
             if [[ -z "${arg_key}" ]]; then
                 # Since the argument hasn't been found in the
                 # definition, output an error message and the argument.
