@@ -617,7 +617,7 @@ function argparser_colorize() {
     # Arguments:
     # - $1: the colors and/or styles to use as comma-separated list
     # - $2: the string to colorize
-    # - $3: the target to write to ("file" or "tty").
+    # - $3: the target to write to ("file" or "tty")
     #
     # Environment:
     # - ARGPARSER_USE_STYLES_IN_FILES (read-only)
@@ -1010,7 +1010,7 @@ function argparser_check_env_vars() {
         fi
     done
 
-    argparser_print_error_or_warning_message "Error" false true \
+    argparser_print_error_or_warning_message "error" false true \
         "${error_messages[@]}"
 }
 
@@ -1144,7 +1144,7 @@ function argparser_parse_args_definition() {
     # column.
     #
     # Arguments:
-    # - $1: the origin of the arguments definition ("Script" or "File")
+    # - $1: the origin of the arguments definition ("script" or "file")
     # - $@: the indexed array holding the arguments definition, the
     #       first line of which being the header
     #
@@ -1238,11 +1238,11 @@ function argparser_parse_args_definition() {
     for field in "${!fields[@]}"; do
         column_index="${fields[${field}]}"
         if [[ -z "${column_index}" ]]; then
-            if [[ "${definition_type}" == "Script" ]]; then
+            if [[ "${definition_type}" == "script" ]]; then
                 error_message="Error: In the arguments definition in "
                 error_message+="\"${ARGPARSER_SCRIPT_NAME}\", the column "
                 error_message+="\"${field}\" is missing."
-            elif [[ "${definition_type}" == "File" ]]; then
+            elif [[ "${definition_type}" == "file" ]]; then
                 error_message="Error: In the arguments definition file "
                 error_message+="\"${ARGPARSER_ARG_DEF_FILE}\", the column "
                 error_message+="\"${field}\" is missing."
@@ -1253,7 +1253,7 @@ function argparser_parse_args_definition() {
 
     # If there are error messages, colorize, sort, and print them, then
     # exit.
-    argparser_print_error_or_warning_message "Error" false true \
+    argparser_print_error_or_warning_message "error" false true \
         "${error_messages[@]}"
 
     # Read all lines of the arguments definition and save the fields in
@@ -2764,7 +2764,7 @@ function argparser_read_translation() {
         error_message+="\"en\" is missing, but required as source for "
         error_message+="translation."
 
-        argparser_print_error_or_warning_message "Error" false true \
+        argparser_print_error_or_warning_message "error" false true \
             "${error_message}"
     fi
 
@@ -2778,7 +2778,7 @@ function argparser_read_translation() {
         warning_message+="as target for translation.  For convenience, the "
         warning_message+="source language \"en\" is used, instead."
 
-        argparser_print_error_or_warning_message "Warning" false false \
+        argparser_print_error_or_warning_message "warning" false false \
             "${warning_message}"
 
         target_column="${source_column}"
@@ -2840,7 +2840,7 @@ function argparser_translate() {
             warning_message+="convenience, the untranslated string is used, "
             warning_message+="instead."
 
-            argparser_print_error_or_warning_message "Warning" false false \
+            argparser_print_error_or_warning_message "warning" false false \
                 "${warning_message}"
 
             printf '%s' "${string}"
@@ -2858,7 +2858,7 @@ function argparser_print_help_or_usage_file() {
     # auto-generated help or usage message.
     #
     # Arguments:
-    # - $1: the help type ("Help" or "Usage")
+    # - $1: the help type ("help" or "usage")
     #
     # Environment:
     # - ARGPARSER_HELP_FILE (read-only)
@@ -2879,11 +2879,11 @@ function argparser_print_help_or_usage_file() {
 
     # Read the argument.
     help_type="$1"
-    if [[ "${help_type}" == "Help" ]]; then
+    if [[ "${help_type}" == "help" ]]; then
         file="${ARGPARSER_HELP_FILE}"
         include_char="${ARGPARSER_HELP_FILE_INCLUDE_CHAR}"
         keep_comments="${ARGPARSER_HELP_FILE_KEEP_COMMENTS}"
-    elif [[ "${help_type}" == "Usage" ]]; then
+    elif [[ "${help_type}" == "usage" ]]; then
         file="${ARGPARSER_USAGE_FILE}"
         include_char="${ARGPARSER_USAGE_FILE_INCLUDE_CHAR}"
         keep_comments="${ARGPARSER_USAGE_FILE_KEEP_COMMENTS}"
@@ -2899,9 +2899,9 @@ function argparser_print_help_or_usage_file() {
         if [[ "${line}" == "${include_char}"* ]]; then
             line_type="include_directive"
             include_directive="${line:1}"
-            if [[ "${help_type}" == "Help" ]]; then
+            if [[ "${help_type}" == "help" ]]; then
                 argparser_create_help_message "${include_directive}"
-            elif [[ "${help_type}" == "Usage" ]]; then
+            elif [[ "${help_type}" == "usage" ]]; then
                 argparser_create_usage_message "${include_directive}"
             fi
         elif [[ "${line}" == \#* && "${keep_comments}" == false ]]; then
@@ -4160,9 +4160,9 @@ function argparser_print_help_or_usage_message() {
     # print the file, else, create a message for the script's arguments.
     #
     # Arguments:
-    # - $1: the help type ("Help" or "Usage")
+    # - $1: the help type ("help" or "usage")
     # - $2: whether to exit after printing
-    # - $3: the target to write to ("file" or "tty").
+    # - $3: the target to write to ("file" or "tty")
     #
     # Environment:
     # - ARGPARSER_HELP_EXIT_CODE (read-only)
@@ -4187,17 +4187,17 @@ function argparser_print_help_or_usage_message() {
 
     # Decide which message type to print and set the colorization style
     # and the exit code.
-    if [[ "${help_type}" == "Help" ]]; then
+    if [[ "${help_type}" == "help" ]]; then
         if [[ -n "${ARGPARSER_HELP_FILE}" ]]; then
-            message="$(argparser_print_help_or_usage_file "Help")"
+            message="$(argparser_print_help_or_usage_file "help")"
         else
             message="$(argparser_create_help_message "All")"
         fi
         style="${ARGPARSER_HELP_STYLE}"
         exit_code="${ARGPARSER_HELP_EXIT_CODE}"
-    elif [[ "${help_type}" == "Usage" ]]; then
+    elif [[ "${help_type}" == "usage" ]]; then
         if [[ -n "${ARGPARSER_USAGE_FILE}" ]]; then
-            message="$(argparser_print_help_or_usage_file "Usage")"
+            message="$(argparser_print_help_or_usage_file "usage")"
         else
             message="$(argparser_create_usage_message)"
         fi
@@ -4220,7 +4220,7 @@ function argparser_print_version_message() {
     #
     # Arguments:
     # - $1: whether to exit after printing
-    # - $3: the target to write to ("file" or "tty").
+    # - $2: the target to write to ("file" or "tty")
     #
     # Environment:
     # - ARGPARSER_SCRIPT_NAME (read-only)
@@ -4252,7 +4252,7 @@ function argparser_print_error_or_warning_message() {
     # Colorize, sort, filter, and print all error or warning messages.
     #
     # Arguments:
-    # - $1: the error type ("Error" or "Warning")
+    # - $1: the error type ("error" or "warning")
     # - $2: whether to filter the messages (by argparser_uniq)
     # - $3: whether to exit after printing
     # - $@: the error or warning messages
@@ -4279,9 +4279,9 @@ function argparser_print_error_or_warning_message() {
     messages=("$@")
 
     # Set the colorization style.
-    if [[ "${error_type}" == "Error" ]]; then
+    if [[ "${error_type}" == "error" ]]; then
         style="${ARGPARSER_ERROR_STYLE}"
-    elif [[ "${error_type}" == "Warning" ]]; then
+    elif [[ "${error_type}" == "warning" ]]; then
         style="${ARGPARSER_WARNING_STYLE}"
     fi
 
@@ -4411,7 +4411,7 @@ function argparser_main() {
         error_message+="then change ARGPARSER_ARG_ARRAY_NAME accordingly) or "
         error_message+="you forgot defining the array at all (then define it)."
 
-        argparser_print_error_or_warning_message "Error" false true \
+        argparser_print_error_or_warning_message "error" false true \
             "${error_message}"
     fi
 
@@ -4455,16 +4455,16 @@ function argparser_main() {
     # If there are error messages, colorize, sort, and print them, then
     # exit, as parsing the arguments definition with missing parts is
     # useless.
-    argparser_print_error_or_warning_message "Error" false true \
+    argparser_print_error_or_warning_message "error" false true \
         "${error_messages[@]}"
 
     # Parse the arguments definition.
     all_positional_args=( )
     if (( "${#args_definition_file[@]}" > 0 )); then
-        argparser_parse_args_definition "File" "${args_definition_file[@]}"
+        argparser_parse_args_definition "file" "${args_definition_file[@]}"
     fi
     if (( "${#args_definition_script[@]}" > 0 )); then
-        argparser_parse_args_definition "Script" "${args_definition_script[@]}"
+        argparser_parse_args_definition "script" "${args_definition_script[@]}"
     fi
 
     # If ${ARGPARSER_CHECK_ARG_DEFINITION} is set to true, check the
@@ -4482,7 +4482,7 @@ function argparser_main() {
         # If there are error messages, colorize, sort, filter, and print
         # them, then exit, as parsing the arguments with a faulty
         # definition is useless or even impossible.
-        argparser_print_error_or_warning_message "Error" true true \
+        argparser_print_error_or_warning_message "error" true true \
             "${error_messages[@]}"
     fi
 
@@ -4620,9 +4620,9 @@ function argparser_main() {
     fi
 
     if [[ "${is_help}" == true ]]; then
-        argparser_print_help_or_usage_message "Help" true "${write_target}"
+        argparser_print_help_or_usage_message "help" true "${write_target}"
     elif [[ "${is_usage}" == true ]]; then
-        argparser_print_help_or_usage_message "Usage" true "${write_target}"
+        argparser_print_help_or_usage_message "usage" true "${write_target}"
     elif [[ "${is_version}" == true ]]; then
         argparser_print_version_message true "${write_target}"
     fi
@@ -4668,9 +4668,9 @@ function argparser_main() {
     done
 
     # Colorize, sort, filter, and print all error and warning messages.
-    argparser_print_error_or_warning_message "Error" true false \
+    argparser_print_error_or_warning_message "error" true false \
         "${error_messages[@]}"
-    argparser_print_error_or_warning_message "Warning" true false \
+    argparser_print_error_or_warning_message "warning" true false \
         "${warning_messages[@]}"
 
     # If any argument was not or wrongly given (i.e., there were errors
@@ -4684,7 +4684,7 @@ function argparser_main() {
         fi
 
         printf '\n' >&2
-        argparser_print_help_or_usage_message "Usage" false "${write_target}" \
+        argparser_print_help_or_usage_message "usage" false "${write_target}" \
             >&2
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
     fi
