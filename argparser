@@ -4,7 +4,6 @@
 # E-Mail: simon.brandt@uni-greifswald.de
 # Last Modification: 2025-02-05
 
-# TODO: Add ability to mark options as deprecated.
 # TODO: Add support for a specific number and names of positional
 #       arguments.
 # TODO: Support argparser configuration by command-line arguments and
@@ -1051,15 +1050,15 @@ function argparser_read_args_definition() {
     # Define the pattern how the arguments definition's keys look like,
     # as well as the pattern of the entire definition.  For the default
     # value of ${ARGPARSER_ARG_DELIMITER_1}, a colon, the definition
-    # pattern describes alternating sequences of ten non-colons, i.e.,
-    # "+([^:])", and nine colons, i.e., ":" in Bash's extglob syntax.
-    # In PCRE syntax, the non-colon pattern would be written as "[^:]+".
-    # The key pattern only consists of one non-colon pattern.  This
-    # reflects the structure of the arguments definition irrespective of
-    # the order of the columns.
+    # pattern describes alternating sequences of eleven non-colons,
+    # i.e., "+([^:])", and ten colons, i.e., ":", in Bash's extglob
+    # syntax. In PCRE syntax, the non-colon pattern would be written as
+    # "[^:]+".  The key pattern only consists of one non-colon pattern.
+    # This reflects the structure of the arguments definition
+    # irrespective of the order of the columns.
     key_pattern="+([^${ARGPARSER_ARG_DELIMITER_1}])"
     def_pattern="${key_pattern}"
-    for i in {1..9}; do
+    for (( i = 0; i < 10; i++ )); do
         def_pattern+="${ARGPARSER_ARG_DELIMITER_1}${key_pattern}"
     done
 
@@ -1075,7 +1074,7 @@ function argparser_read_args_definition() {
     then
         args=( )
         args[0]="id:short_opts:long_opts:val_names:defaults:choices:type:"
-        args[0]+="arg_no:arg_group:help"
+        args[0]+="arg_no:arg_group:notes:help"
         for arg in "$@"; do
             args+=("${arg}")
         done
@@ -1092,7 +1091,7 @@ function argparser_read_args_definition() {
         else
             mapfile -t -O 1 lines < "${ARGPARSER_ARG_DEF_FILE}"
             lines[0]="id:short_opts:long_opts:val_names:defaults:choices:type:"
-            lines[0]+="arg_no:arg_group:help"
+            lines[0]+="arg_no:arg_group:notes:help"
         fi
         header="${lines[0]}"
         printf 'File: %s\0' "${header}"
@@ -1161,6 +1160,7 @@ function argparser_parse_args_definition() {
     # - all_help_texts: the associative array holding the help texts
     # - all_long_options: the associative array holding the long option
     #   names
+    # - all_notes: the associative array holding the notes
     # - all_positional_args: the indexed array holding the positional
     #   argument names
     # - all_short_options: the associative array holding the short
@@ -1191,6 +1191,7 @@ function argparser_parse_args_definition() {
     local i
     local -a line
     local long_options
+    local notes
     local short_options
     local type
     local value_names
@@ -1220,6 +1221,7 @@ function argparser_parse_args_definition() {
         [type]=""
         [arg_no]=""
         [arg_group]=""
+        [notes]=""
         [help]=""
     )
 
@@ -1256,7 +1258,9 @@ function argparser_parse_args_definition() {
 
     # Read all lines of the arguments definition and save the fields in
     # an associative array per column, using the argument identifier as
-    # key and the definition of the field as value.
+    # key and the definition in the field as value.  If neither a short
+    # nor a long option name is given, interpret the argument as
+    # positional and add it to the respective indexed array.
     for line in "${args_definition[@]:1}"; do
         IFS="${ARGPARSER_ARG_DELIMITER_1}" read -r -a line <<< "${line}"
         arg_key="$(argparser_trim "${line[${fields["id"]}]}")"
@@ -1288,6 +1292,9 @@ function argparser_parse_args_definition() {
 
         arg_group="$(argparser_trim "${line[${fields["arg_group"]}]}")"
         all_arg_groups[${arg_key}]="${arg_group}"
+
+        notes="$(argparser_trim "${line[${fields["notes"]}]}")"
+        all_notes[${arg_key}]="${notes}"
 
         help_text="$(argparser_trim "${line[${fields["help"]}]}")"
         all_help_texts[${arg_key}]="${help_text}"
@@ -1541,6 +1548,7 @@ function argparser_check_args_definition_values() {
     #   values (read-only)
     # - all_default_values: the associative array holding the default
     #   values (read-only)
+    # - all_notes: the associative array holding the notes
     # - all_positional_args: the indexed array holding the positional
     #   argument names
     # - all_short_options: the associative array holding the short
@@ -1563,6 +1571,8 @@ function argparser_check_args_definition_values() {
     local -a default_values
     local error_message
     local infinite_arg_number_arg
+    local note
+    local -a notes
     local optional_arg
     local type
 
@@ -1577,6 +1587,8 @@ function argparser_check_args_definition_values() {
             <<< "${all_choice_values[${arg_key}]}"
         type="${all_types[${arg_key}]}"
         arg_number="${all_arg_numbers[${arg_key}]}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
+            <<< "${all_notes[${arg_key}]}"
 
         # Check if the number of default values equals the number of
         # required values.  Else, output an error message.
@@ -1720,6 +1732,19 @@ function argparser_check_args_definition_values() {
                 printf '%s\0' "${error_message}"
             fi
         done
+
+        # Check the notes.
+        for note in "${notes[@]}"; do
+            if [[ "$(argparser_in_array "${note}" "-" \
+                "deprecated")" == false ]]
+            then
+                error_message="Error: The positional argument with the "
+                error_message+="identifier \"${arg_key}\" has \"${note}\" "
+                error_message+="given as note, but only \"deprecated\" is "
+                error_message+="supported."
+                printf '%s\0' "${error_message}"
+            fi
+        done
     done
 
     # Check the consistency of all keyword arguments.
@@ -1731,6 +1756,8 @@ function argparser_check_args_definition_values() {
             <<< "${all_choice_values[${arg_key}]}"
         type="${all_types[${arg_key}]}"
         arg_number="${all_arg_numbers[${arg_key}]}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
+            <<< "${all_notes[${arg_key}]}"
 
         # Check if the default value for flags is either true or false.
         if [[ "${arg_number}" == 0 \
@@ -1860,6 +1887,18 @@ function argparser_check_args_definition_values() {
                 error_message+="as choice value, which must be an unsigned "
                 error_message+="integer, i.e., comprise only digits and no "
                 error_message+="sign."
+                printf '%s\0' "${error_message}"
+            fi
+        done
+
+        # Check the notes.
+        for note in "${notes[@]}"; do
+            if [[ "$(argparser_in_array "${note}" "-" \
+                "deprecated")" == false ]]
+            then
+                error_message="Error: The argument with the identifier "
+                error_message+="\"${arg_key}\" has \"${note}\" given as note, "
+                error_message+="but only \"deprecated\" is supported."
                 printf '%s\0' "${error_message}"
             fi
         done
@@ -2416,6 +2455,7 @@ function argparser_check_arg_values() {
     #   values (read-only)
     # - all_default_values: the associative array holding the default
     #   values (read-only)
+    # - all_notes: the associative array holding the notes
     # - all_positional_args: the indexed array holding the positional
     #   argument names
     # - all_types: the associative array holding the argument types
@@ -2464,6 +2504,8 @@ function argparser_check_arg_values() {
         <<< "${all_choice_values[${arg_key}]}"
     type="${all_types[${arg_key}]}"
     arg_number="${all_arg_numbers[${arg_key}]}"
+    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
+        <<< "${all_notes[${arg_key}]}"
 
     # Concatenate the name of all short and long options for the error
     # and warning messages.
@@ -2652,8 +2694,19 @@ function argparser_check_arg_values() {
         fi
     done
 
-    # Output the checked values as ${ARGPARSER_ARG_DELIMITER_2}-
-    # separated string.
+    # Check the notes.
+    for note in "${notes[@]}"; do
+        if [[ "${note}" == "deprecated" && "${#prefixes[@]}" != 0 ]]; then
+            # Only output a deprecation warning if the argument had been
+            # given (and thus the prefix is non-empty), not when its
+            # default value has been used.
+            warning_message="Warning: The argument \"${option_names}\" is "
+            warning_message+="deprecated and will be removed in the future."
+            printf '%s\0' "${warning_message}"
+        fi
+    done
+
+    # Output the checked values.
     value="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; printf '%s' "${values[*]}")"
     printf 'Value: %s\0' "${value}"
 }
@@ -2885,6 +2938,7 @@ function argparser_create_help_message() {
     #   (read-only)
     # - all_long_options: the associative array holding the long option
     #   names (read-only)
+    # - all_notes: the associative array holding the notes
     # - all_positional_args: the indexed array holding the positional
     #   argument names
     # - all_short_options: the associative array holding the short
@@ -2922,6 +2976,7 @@ function argparser_create_help_message() {
     local i
     local include_directive
     local index
+    local is_deprecated
     local j
     local -a line
     local line_count_1
@@ -2946,7 +3001,9 @@ function argparser_create_help_message() {
     local newlines_2
     local newlines_3
     local note
+    local -a notes
     local -a option_names
+    local remark
     local short_options
     local -A sorted_col_1
     local -A sorted_col_2
@@ -2995,7 +3052,17 @@ function argparser_create_help_message() {
             value_names="${all_value_names[${arg_key}]}"
             default_values="${all_default_values[${arg_key}]}"
             choice_values="${all_choice_values[${arg_key}]}"
+            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
+                <<< "${all_notes[${arg_key}]}"
             help_text="${all_help_texts[${arg_key}]}"
+
+            # Set a flag whether the argument is deprecated.
+            is_deprecated=false
+            for note in "${notes[@]}"; do
+                if [[ "${note}" == "deprecated" ]]; then
+                    is_deprecated=true
+                fi
+            done
 
             # Define the columns' next line, for the current argument.
             # The argument may have some default and some choice values
@@ -3019,12 +3086,23 @@ function argparser_create_help_message() {
             col_2+=("")
 
             # Set the third column's value.
-            if [[ "${default_values}" != "-" ]]; then  # Default.
-                col_3_value="${help_text} ("
-                col_3_value+="$(argparser_translate "default"): "
-                col_3_value+="${default_values})"
-                col_3+=("${col_3_value}")
-            else  # No default.
+            if [[ "${default_values}" != "-" && "${is_deprecated}" == true ]]
+            then  # Default and deprecated.
+                new_col_3_value="($(argparser_translate "DEPRECATED")) "
+                new_col_3_value+="${help_text} ("
+                new_col_3_value+="$(argparser_translate "default"): "
+                new_col_3_value+="${default_values})"
+                col_3+=("${new_col_3_value}")
+            elif [[ "${default_values}" != "-" ]]; then  # Default only
+                new_col_3_value="${help_text} ("
+                new_col_3_value+="$(argparser_translate "default"): "
+                new_col_3_value+="${default_values})"
+                col_3+=("${new_col_3_value}")
+            elif [[ "${is_deprecated}" == true ]]; then  # Deprecated only.
+                new_col_3_value="($(argparser_translate "DEPRECATED")) "
+                new_col_3_value+="${help_text}"
+                col_3+=("${new_col_3_value}")
+            else  # No default nor deprecated.
                 col_3+=("${help_text}")
             fi
         done
@@ -3077,6 +3155,8 @@ function argparser_create_help_message() {
             default_values="${all_default_values[${arg_key}]}"
             choice_values="${all_choice_values[${arg_key}]}"
             arg_number="${all_arg_numbers[${arg_key}]}"
+            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
+                <<< "${all_notes[${arg_key}]}"
             help_text="${all_help_texts[${arg_key}]}"
 
             # Concatenate the name of all short and long options for the
@@ -3091,6 +3171,14 @@ function argparser_create_help_message() {
             else
                 has_required_args=true
             fi
+
+            # Set a flag whether the option is deprecated.
+            is_deprecated=false
+            for note in "${notes[@]}"; do
+                if [[ "${note}" == "deprecated" ]]; then
+                    is_deprecated=true
+                fi
+            done
 
             # Define the columns' next line, for the current argument.
             # The argument may have some short and long options, along
@@ -3204,17 +3292,35 @@ function argparser_create_help_message() {
             fi
 
             # Set the third column's value.
-            if [[ "${arg_number}" == 0 ]]; then  # Flag.
+            if [[ "${arg_number}" == 0  && "${is_deprecated}" == true ]]
+            then  # Flag and deprecated.
+                new_col_3_value="($(argparser_translate "DEPRECATED")) "
+                new_col_3_value+="${help_text} ("
+                new_col_3_value+="$(argparser_translate "default"): "
+                new_col_3_value+="$(argparser_translate "${default_values}"))"
+                new_col_3+=("${new_col_3_value}")
+            elif [[ "${arg_number}" == 0 ]]; then  # Flag only.
                 new_col_3_value="${help_text} ("
                 new_col_3_value+="$(argparser_translate "default"): "
                 new_col_3_value+="$(argparser_translate "${default_values}"))"
                 new_col_3+=("${new_col_3_value}")
-            elif [[ "${default_values}" != "-" ]]; then  # Default.
+            elif [[ "${default_values}" != "-" && "${is_deprecated}" == true ]]
+            then  # Default and deprecated.
+                new_col_3_value="($(argparser_translate "DEPRECATED")) "
+                new_col_3_value+="${help_text} ("
+                new_col_3_value+="$(argparser_translate "default"): "
+                new_col_3_value+="${default_values})"
+                new_col_3+=("${new_col_3_value}")
+            elif [[ "${default_values}" != "-" ]]; then  # Default only
                 new_col_3_value="${help_text} ("
                 new_col_3_value+="$(argparser_translate "default"): "
                 new_col_3_value+="${default_values})"
                 new_col_3+=("${new_col_3_value}")
-            else  # No default.
+            elif [[ "${is_deprecated}" == true ]]; then  # Deprecated only.
+                new_col_3_value="($(argparser_translate "DEPRECATED")) "
+                new_col_3_value+="${help_text}"
+                new_col_3+=("${new_col_3_value}")
+            else  # No default nor deprecated.
                 new_col_3+=("${help_text}")
             fi
         done
@@ -3496,9 +3602,9 @@ function argparser_create_help_message() {
         fi
         printf '%s\n\n' "${header}"
 
-        note="$(argparser_translate "Mandatory arguments to long options " \
+        remark="$(argparser_translate "Mandatory arguments to long options " \
             "are mandatory for short options too")."
-        printf '%s\n' "${note}"
+        printf '%s\n' "${remark}"
     fi
 
     if [[ "${include_directive}" == "All" ]]; then
@@ -4236,6 +4342,7 @@ function argparser_main() {
     local -A all_default_values
     local -A all_help_texts
     local -A all_long_options
+    local -A all_notes
     local -a all_positional_args
     local -A all_short_options
     local -A all_types
