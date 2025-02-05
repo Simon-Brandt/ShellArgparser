@@ -2588,19 +2588,19 @@ function argparser_check_arg_values() {
                     warning_message+="\"${option_names}\" requires 1 value,"
                     warning_message+=" but has ${#values[@]} given.  For "
                     warning_message+="convenience, the default "
-                    warning_message+="({${default_values[0]}}) is used."
+                    warning_message+="(${default_values[0]}) is used."
                 elif [[ "${arg_number}" == "+" ]]; then
                     warning_message="Warning: The argument "
                     warning_message+="\"${option_names}\" requires at least 1 "
                     warning_message+="value, but has ${#values[@]} given.  "
                     warning_message+="For convenience, the default "
-                    warning_message+="({${default_values[0]}}) is used."
+                    warning_message+="(${default_values[0]}) is used."
                 else
                     warning_message="Warning: The argument "
                     warning_message+="\"${option_names}\" requires "
                     warning_message+="${arg_number} values, but has "
                     warning_message+="${#values[@]} given.  For convenience, "
-                    warning_message+="the default ({${default_values[0]}}) is "
+                    warning_message+="the default (${default_values[0]}) is "
                     warning_message+="used."
                 fi
                 printf '%s\0' "${warning_message}"
