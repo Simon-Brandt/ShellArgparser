@@ -902,6 +902,8 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_READ_ARGS`](#argparser_read_args)                                 | *bool*                             | `true`               |
 | [`ARGPARSER_SCRIPT_NAME`](#argparser_script_name)                             | *str*                              | `"${0##*/}"`         |
 | [`ARGPARSER_SET_ARGS`](#argparser_set_args)                                   | *bool*                             | `true`               |
+| [`ARGPARSER_SILENCE_ERRORS`](#argparser_silence_errors)                       | *bool*                             | `false`              |
+| [`ARGPARSER_SILENCE_WARNINGS`](#argparser_silence_warnings)                   | *bool*                             | `false`              |
 | [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)                               | *bool*                             | `true`               |
 | [`ARGPARSER_TRANSLATION_FILE`](#argparser_translation_file)                   | *filepath* \| `""`                 | `""`                 |
 | [`ARGPARSER_UNSET_ARGS`](#argparser_unset_args)                               | *bool*                             | `true`               |
@@ -1139,6 +1141,20 @@ The main difference is that, if you `export` (or `declare -x`) the variables to 
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
 - ***Description:*** Whether to set arguments intended to have multiple values as indexed array. This is only evaluated if [`ARGPARSER_SET_ARGS`](#argparser_set_args) is `true`. While it can be very helpful in a script to have the multiple values already set to an array that can be iterated over, the drawback is that arrays are hard to transfer to other scripts and may need to be serialized. Since they come in serialized form from the argparser, a temporary expansion to an array would be unnecessary.
+
+### `ARGPARSER_SILENCE_ERRORS`
+
+- ***Type:*** *bool* (Boolean)
+- ***Allowed values:*** `true` and `false`
+- ***Default value:*** `false`
+- ***Description:*** Whether to silence the emission (output) of error messages. This should rarely be needed since the argparser still stops running after a critical failure (which is the reason for error messages), but may clean up your output when logging. See also [`ARGPARSER_SILENCE_WARNINGS`](#argparser_silence_warnings).
+
+### `ARGPARSER_SILENCE_WARNINGS`
+
+- ***Type:*** *bool* (Boolean)
+- ***Allowed values:*** `true` and `false`
+- ***Default value:*** `false`
+- ***Description:*** Whether to silence the emission (output) of warning messages. Like [`ARGPARSER_SILENCE_ERRORS`](#argparser_silence_errors), this should rarely be needed, but as the argparser continues running after a non-critical failure (which is the reason for warning messages), these messages may not strictly be required for your script's user.
 
 ### `ARGPARSER_TRANSLATION_FILE`
 

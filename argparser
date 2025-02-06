@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-05
+# Last Modification: 2025-02-06
 
 # TODO: Add support for a specific number and names of positional
 #       arguments.
@@ -80,6 +80,8 @@ fi
 : "${ARGPARSER_SCRIPT_NAME:="${0##*/}"}"
 : "${ARGPARSER_SET_ARGS:=true}"
 : "${ARGPARSER_SET_ARRAYS:=true}"
+: "${ARGPARSER_SILENCE_ERRORS:=false}"
+: "${ARGPARSER_SILENCE_WARNINGS:=false}"
 : "${ARGPARSER_TRANSLATION_FILE:=""}"
 : "${ARGPARSER_UNSET_ARGS:=true}"
 : "${ARGPARSER_UNSET_ENV_VARS:=true}"
@@ -738,6 +740,8 @@ function argparser_check_env_vars() {
     # - ARGPARSER_READ_ARGS (read-only)
     # - ARGPARSER_SET_ARGS (read-only)
     # - ARGPARSER_SET_ARRAYS (read-only)
+    # - ARGPARSER_SILENCE_ERRORS (read-only)
+    # - ARGPARSER_SILENCE_WARNINGS (read-only)
     # - ARGPARSER_TRANSLATION_FILE (read-only)
     # - ARGPARSER_UNSET_ARGS (read-only)
     # - ARGPARSER_UNSET_ENV_VARS (read-only)
@@ -782,6 +786,8 @@ function argparser_check_env_vars() {
         ARGPARSER_READ_ARGS
         ARGPARSER_SET_ARGS
         ARGPARSER_SET_ARRAYS
+        ARGPARSER_SILENCE_ERRORS
+        ARGPARSER_SILENCE_WARNINGS
         ARGPARSER_UNSET_ARGS
         ARGPARSER_UNSET_ENV_VARS
         ARGPARSER_UNSET_FUNCTIONS
@@ -4260,6 +4266,8 @@ function argparser_print_error_or_warning_message() {
     # Environment:
     # - ARGPARSER_ERROR_EXIT_CODE (read-only)
     # - ARGPARSER_ERROR_STYLE (read-only)
+    # - ARGPARSER_SILENCE_ERRORS (read-only)
+    # - ARGPARSER_SILENCE_WARNINGS (read-only)
     # - ARGPARSER_WARNING_STYLE (read-only)
 
     # Define the local variables.
@@ -4278,10 +4286,24 @@ function argparser_print_error_or_warning_message() {
     shift 3
     messages=("$@")
 
-    # Set the colorization style.
+    # Set the colorization style.  If the error or warning message shall
+    # not be emitted (output), return or exit, effectively silencing the
+    # message.
     if [[ "${error_type}" == "error" ]]; then
+        if [[ "${ARGPARSER_SILENCE_ERRORS}" == true ]]; then
+            if [[ "${exit}" == true ]]; then
+                exit "${ARGPARSER_ERROR_EXIT_CODE}"
+            else
+                return
+            fi
+        fi
+
         style="${ARGPARSER_ERROR_STYLE}"
     elif [[ "${error_type}" == "warning" ]]; then
+        if [[ "${ARGPARSER_SILENCE_WARNINGS}" == true ]]; then
+            return
+        fi
+
         style="${ARGPARSER_WARNING_STYLE}"
     fi
 
@@ -4333,6 +4355,7 @@ function argparser_main() {
     # - ARGPARSER_CHECK_ARG_DEFINITION (read-only)
     # - ARGPARSER_ERROR_EXIT_CODE (read-only)
     # - ARGPARSER_POSITIONAL_NAME (read-only)
+    # - ARGPARSER_SILENCE_ERRORS (read-only)
     # - ARGPARSER_TRANSLATION_FILE (read-only)
 
     # Define the local variables.  If the variable that
@@ -4674,8 +4697,8 @@ function argparser_main() {
         "${warning_messages[@]}"
 
     # If any argument was not or wrongly given (i.e., there were errors
-    # and not just warnings), then print a blank line and the usage
-    # message and abort the script.
+    # and not just warnings), print a blank line and the usage message
+    # and abort the script.
     if (( "${#error_messages[@]}" > 0 )); then
         if [[ -t 2 ]]; then
             write_target="tty"
@@ -4683,9 +4706,11 @@ function argparser_main() {
             write_target="file"
         fi
 
-        printf '\n' >&2
-        argparser_print_help_or_usage_message "usage" false "${write_target}" \
-            >&2
+        if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
+            printf '\n' >&2
+            argparser_print_help_or_usage_message "usage" false \
+                "${write_target}" >&2
+        fi
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
     fi
 
@@ -4855,6 +4880,8 @@ if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_SCRIPT_NAME
     unset ARGPARSER_SET_ARGS
     unset ARGPARSER_SET_ARRAYS
+    unset ARGPARSER_SILENCE_ERRORS
+    unset ARGPARSER_SILENCE_WARNINGS
     unset ARGPARSER_TRANSLATION_FILE
     unset ARGPARSER_UNSET_ARGS
     unset ARGPARSER_UNSET_ENV_VARS
