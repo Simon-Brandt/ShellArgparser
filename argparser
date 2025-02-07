@@ -4854,9 +4854,27 @@ function argparser_main() {
         esac
     done
 
-    # Colorize, sort, filter, and print all error messages, then exit.
+    # Colorize, sort, filter, and print all error messages.
     argparser_print_error_or_warning_message "error" true false \
         "${error_messages[@]}"
+
+    # If any argument was not or wrongly given (i.e., there were
+    # errors), print a blank line and the usage message and abort the
+    # script.
+    if (( "${#error_messages[@]}" > 0 )); then
+        if [[ -t 2 ]]; then
+            write_target="tty"
+        else
+            write_target="file"
+        fi
+
+        if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
+            printf '\n' >&2
+            argparser_print_help_or_usage_message "usage" false \
+                "${write_target}" >&2
+        fi
+        exit "${ARGPARSER_ERROR_EXIT_CODE}"
+    fi
 
     # Check the arguments' values.
     error_messages=( )
@@ -4900,8 +4918,7 @@ function argparser_main() {
         args[${arg_key}]="${values}"
     done
 
-    # Colorize, sort, filter, and print all error and warning messages,
-    # then exit.
+    # Colorize, sort, filter, and print all error and warning messages.
     argparser_print_error_or_warning_message "error" true false \
         "${error_messages[@]}"
     argparser_print_error_or_warning_message "warning" true false \
