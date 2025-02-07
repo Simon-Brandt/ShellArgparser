@@ -4674,7 +4674,6 @@ function argparser_main() {
     # If ${ARGPARSER_CHECK_ARG_DEFINITION} is set to true, check the
     # consistency of the arguments definition.
     error_messages=( )
-    warning_messages=( )
     if [[ "${ARGPARSER_CHECK_ARG_DEFINITION}" == true ]]; then
         # Check the arguments definition, first the short and long
         # option names, then the default and choice values.
@@ -4704,6 +4703,7 @@ function argparser_main() {
     is_version=false
     is_positional=true
     is_positional_only=false
+    error_messages=( )
 
     unset args
     declare -Ag args
@@ -4832,7 +4832,13 @@ function argparser_main() {
         esac
     done
 
+    # Colorize, sort, filter, and print all error messages, then exit.
+    argparser_print_error_or_warning_message "error" true false \
+        "${error_messages[@]}"
+
     # Check the arguments' values.
+    error_messages=( )
+    warning_messages=( )
     for arg_key in "${!all_short_options[@]}" "${all_positional_args[@]}"; do
         # Check which defined argument is given to the script.  Omitted
         # arguments or those without value are assigned the empty string
@@ -4872,7 +4878,8 @@ function argparser_main() {
         args[${arg_key}]="${values}"
     done
 
-    # Colorize, sort, filter, and print all error and warning messages.
+    # Colorize, sort, filter, and print all error and warning messages,
+    # then exit.
     argparser_print_error_or_warning_message "error" true false \
         "${error_messages[@]}"
     argparser_print_error_or_warning_message "warning" true false \
