@@ -4,8 +4,6 @@
 # E-Mail: simon.brandt@uni-greifswald.de
 # Last Modification: 2025-02-07
 
-# TODO: Add support for a specific number and names of positional
-#       arguments.
 # TODO: Support argparser configuration by command-line arguments and
 #       config file.
 
@@ -75,7 +73,6 @@ fi
 : "${ARGPARSER_MAX_COL_WIDTH_2:=33}"
 : "${ARGPARSER_MAX_COL_WIDTH_3:=39}"
 : "${ARGPARSER_POSITIONAL_GROUP_NAME:="Positional arguments"}"
-: "${ARGPARSER_POSITIONAL_NAME:="positional"}"
 : "${ARGPARSER_READ_ARGS:=true}"
 : "${ARGPARSER_SCRIPT_NAME:="${0##*/}"}"
 : "${ARGPARSER_SET_ARGS:=true}"
@@ -736,7 +733,6 @@ function argparser_check_env_vars() {
     # - ARGPARSER_MAX_COL_WIDTH_1 (read-only)
     # - ARGPARSER_MAX_COL_WIDTH_2 (read-only)
     # - ARGPARSER_MAX_COL_WIDTH_3 (read-only)
-    # - ARGPARSER_POSITIONAL_NAME (read-only)
     # - ARGPARSER_READ_ARGS (read-only)
     # - ARGPARSER_SET_ARGS (read-only)
     # - ARGPARSER_SET_ARRAYS (read-only)
@@ -826,7 +822,6 @@ function argparser_check_env_vars() {
     # letters, digits, and underscores.  Else, output an error message.
     vars=(
         ARGPARSER_ARG_ARRAY_NAME
-        ARGPARSER_POSITIONAL_NAME
     )
     for var in "${vars[@]}"; do
         if [[ "$(argparser_is_variable_identifier "${!var}")" == false ]]; then
@@ -969,16 +964,6 @@ function argparser_check_env_vars() {
         error_message="Error: The environment variables "
         error_message+="\"ARGPARSER_LANGUAGE\" and "
         error_message+="\"ARGPARSER_ARG_DELIMITER_1\" must be different."
-        error_messages+=("${error_message}")
-    fi
-
-    # Then, check that the variable names for the argument array and the
-    # positional arguments are different.
-    if [[ "${ARGPARSER_ARG_ARRAY_NAME}" == "${ARGPARSER_POSITIONAL_NAME}" ]]
-    then
-        error_message="Error: The environment variables "
-        error_message+="\"ARGPARSER_ARG_ARRAY_NAME\" and "
-        error_message+="\"ARGPARSER_POSITIONAL_NAME\" must be different."
         error_messages+=("${error_message}")
     fi
 
@@ -4537,7 +4522,6 @@ function argparser_main() {
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_CHECK_ARG_DEFINITION (read-only)
     # - ARGPARSER_ERROR_EXIT_CODE (read-only)
-    # - ARGPARSER_POSITIONAL_NAME (read-only)
     # - ARGPARSER_SILENCE_ERRORS (read-only)
     # - ARGPARSER_TRANSLATION_FILE (read-only)
 
@@ -4944,34 +4928,7 @@ if [[ "${ARGPARSER_SET_ARGS}" == true ]]; then
 
     # Set all arguments.
     for arg in "${!args[@]}"; do
-        if [[ "${arg}" == "${ARGPARSER_POSITIONAL_NAME}" ]]; then
-            # Set all positional arguments and remove the respective key
-            # from ${args}.  In order to use the name
-            # ${ARGPARSER_POSITIONAL_NAME%% *} (only the characters til
-            # the first space) refers to as name for a variable to store
-            # the positional arguments in, upon setting the values, eval
-            # is used to access the values.  First, eval reads its
-            # arguments and expands them.  Thereby, the variable name
-            # ${ARGPARSER_POSITIONAL_NAME%% *} refers to is concatenated
-            # with an "[@]" as array subscript.  Then, this string is
-            # interpreted as second argument to printf, which expands
-            # the array and prints its values, separated with spaces.
-            # Then, the unquoted command substitution lets set expand
-            # these values as whitespace-delimited arguments, which are
-            # then set as positional arguments to the script.  This
-            # allows accessing the positional arguments from ${args}
-            # without needing to introduce another variable name, which
-            # could collide with the user script for being on the global
-            # scope, here.
-            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a \
-                "${ARGPARSER_POSITIONAL_NAME%% *}" \
-                <<< "${args[${arg}]}"
-            # shellcheck disable=SC2046  # Intentional word splitting.
-            set -- $(eval printf "'%s '" \
-                "\${${ARGPARSER_POSITIONAL_NAME%% *}[@]}")
-            unset "${ARGPARSER_POSITIONAL_NAME%% *}"
-            unset "args[${ARGPARSER_POSITIONAL_NAME}]"
-        elif [[ "${args[${arg}]}" == *"${ARGPARSER_ARG_DELIMITER_2}"*
+        if [[ "${args[${arg}]}" == *"${ARGPARSER_ARG_DELIMITER_2}"*
             && "${ARGPARSER_SET_ARRAYS}" == true ]]
         then
             # Set the keyword argument, which includes the
@@ -5066,7 +5023,6 @@ if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_MAX_COL_WIDTH_2
     unset ARGPARSER_MAX_COL_WIDTH_3
     unset ARGPARSER_POSITIONAL_GROUP_NAME
-    unset ARGPARSER_POSITIONAL_NAME
     unset ARGPARSER_READ_ARGS
     unset ARGPARSER_SCRIPT_NAME
     unset ARGPARSER_SET_ARGS
