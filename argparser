@@ -2887,6 +2887,45 @@ function argparser_check_arg_values() {
     printf 'Value: %s\0' "${value}"
 }
 
+function argparser_set_args() {
+    # Set the keyword and positional arguments to global variables.
+    #
+    # Arguments:
+    # - $1: the argument's name (key)
+    #
+    # Globals:
+    # - args: the parsed and checked arguments with key and value as
+    #   associative array (read-only)
+    # - ${!args[@]}: all argument identifiers found in ${args[@]}
+    #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+    # - ARGPARSER_SET_ARRAYS (read-only)
+
+    # Define the local variable.
+    local arg_key
+
+    # Set the arguments.
+    for arg_key in "${!args[@]}"; do
+        if [[ "${args[${arg_key}]}" == *"${ARGPARSER_ARG_DELIMITER_2}"*
+            && "${ARGPARSER_SET_ARRAYS}" == true ]]
+        then
+            # Set the argument, which includes the
+            # ${ARGPARSER_ARG_DELIMITER_2} and hence is a sequence of
+            # elements, as indexed array variable, while keeping it in
+            # ${args} for usage by the calling script.
+            declare -g -a "${arg_key}"
+            # shellcheck disable=SC2229  # Indirect variable reference.
+            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a "${arg_key}" \
+                <<< "${args[${arg_key}]}"
+        else
+            # Set the keyword argument as variable, while keeping it in
+            # ${args} for potential usage by the calling script.
+            declare -g "${arg_key}"="${args[${arg_key}]}"
+        fi
+    done
+}
+
 # Define the argparser functions for creating and printing the help and
 # usage messages, including their translation, as well as for printing
 # error messages.
@@ -4917,28 +4956,9 @@ if [[ "${ARGPARSER_UNSET_ARGS}" == true ]]; then
 fi
 
 # If ${ARGPARSER_SET_ARGS} is set to true, set the arguments as
-# variables to the current environment.  As setting positional variables
-# inside a function makes them local to the function, not the calling
-# script, this part is not encapsulated inside a function.
+# variables to the current environment.
 if [[ "${ARGPARSER_SET_ARGS}" == true ]]; then
-    for arg_key in "${!args[@]}"; do
-        if [[ "${args[${arg_key}]}" == *"${ARGPARSER_ARG_DELIMITER_2}"*
-            && "${ARGPARSER_SET_ARRAYS}" == true ]]
-        then
-            # Set the keyword argument, which includes the
-            # ${ARGPARSER_ARG_DELIMITER_2} and hence is a sequence of
-            # elements, as indexed array variable, while keeping it in
-            # ${args} for usage by the calling script.
-            # shellcheck disable=SC2229  # Indirect variable reference.
-            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a "${arg_key}" \
-                <<< "${args[${arg_key}]}"
-        else
-            # Set the keyword argument as variable, while keeping it in
-            # ${args} for potential usage by the calling script.
-            declare "${arg_key}"="${args[${arg_key}]}"
-        fi
-    done
-    unset arg_key
+    argparser_set_args
 fi
 
 # If ${ARGPARSER_UNSET_FUNCTIONS} is set to true, unset all argparser
