@@ -72,7 +72,7 @@ fi
 : "${ARGPARSER_MAX_COL_WIDTH_1:=5}"
 : "${ARGPARSER_MAX_COL_WIDTH_2:=33}"
 : "${ARGPARSER_MAX_COL_WIDTH_3:=39}"
-: "${ARGPARSER_POSITIONAL_GROUP_NAME:="Positional arguments"}"
+: "${ARGPARSER_POSITIONAL_ARG_GROUP:="Positional arguments"}"
 : "${ARGPARSER_READ_ARGS:=true}"
 : "${ARGPARSER_SCRIPT_NAME:="${0##*/}"}"
 : "${ARGPARSER_SET_ARGS:=true}"
@@ -703,7 +703,7 @@ function argparser_check_env_vars() {
     # to set the variables himself.
     #
     # The following environment variables are unchecked:
-    # - ARGPARSER_POSITIONAL_GROUP_NAME
+    # - ARGPARSER_POSITIONAL_ARG_GROUP
     # - ARGPARSER_SCRIPT_NAME
     # - ARGPARSER_VERSION
     #
@@ -3199,7 +3199,7 @@ function argparser_create_help_message() {
     # compare each argument's group later upon iterating over them.
     arg_groups=( )
     for arg_group in "${all_arg_groups[@]}"; do
-        if [[ "${arg_group}" != "${ARGPARSER_POSITIONAL_GROUP_NAME}" \
+        if [[ "${arg_group}" != "${ARGPARSER_POSITIONAL_ARG_GROUP}" \
             && "$(argparser_in_array "${arg_group}" \
                 "${arg_groups[@]}")" == false ]]
         then
@@ -3222,7 +3222,7 @@ function argparser_create_help_message() {
 
     # Compute the columns for the positional arguments.
     if [[ "${include_directive}" == "All" \
-        || "${include_directive}" != "${ARGPARSER_POSITIONAL_GROUP_NAME}" ]]
+        || "${include_directive}" != "${ARGPARSER_POSITIONAL_ARG_GROUP}" ]]
     then
         for arg_key in "${all_positional_args[@]}"; do
             # Read the argument's definition.
@@ -3792,8 +3792,7 @@ function argparser_create_help_message() {
     # as first one, and the rest being sorted alphabetically, print its
     # arguments.
     index=0
-    for arg_group in "${ARGPARSER_POSITIONAL_GROUP_NAME}" "${arg_groups[@]}"
-    do
+    for arg_group in "${ARGPARSER_POSITIONAL_ARG_GROUP}" "${arg_groups[@]}"; do
         # Only print the argument group's arguments if it was requested
         # by the include directive.
         if [[ "${include_directive}" != "All" \
@@ -5022,7 +5021,7 @@ if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_MAX_COL_WIDTH_1
     unset ARGPARSER_MAX_COL_WIDTH_2
     unset ARGPARSER_MAX_COL_WIDTH_3
-    unset ARGPARSER_POSITIONAL_GROUP_NAME
+    unset ARGPARSER_POSITIONAL_ARG_GROUP
     unset ARGPARSER_READ_ARGS
     unset ARGPARSER_SCRIPT_NAME
     unset ARGPARSER_SET_ARGS
