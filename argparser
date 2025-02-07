@@ -4910,24 +4910,19 @@ if [[ "${ARGPARSER_READ_ARGS}" == true ]]; then
     argparser_main "$@"
 fi
 
-# If ${ARGPARSER_SET_ARGS} is set to true, set the arguments as
-# variables to the current environment.  Set the positional arguments.
-# If ${ARGPARSER_UNSET_ARGS} is set to true, all positional arguments
-# given to the calling script are disabled to prevent the keyword
-# arguments from being included into the environment as positional-like
-# arguments.
-# As setting positional variables inside a function makes them local to
-# the function, not the calling script, this part is not encapsulated
-# inside a function.
-if [[ "${ARGPARSER_SET_ARGS}" == true ]]; then
-    # Unset all positional arguments.
-    if [[ "${ARGPARSER_UNSET_ARGS}" == true ]]; then
-        set --
-    fi
+# If ${ARGPARSER_UNSET_ARGS} is set to true, disable all arguments given
+# to the calling script, effectively unsetting the command line.
+if [[ "${ARGPARSER_UNSET_ARGS}" == true ]]; then
+    set --
+fi
 
-    # Set all arguments.
-    for arg in "${!args[@]}"; do
-        if [[ "${args[${arg}]}" == *"${ARGPARSER_ARG_DELIMITER_2}"*
+# If ${ARGPARSER_SET_ARGS} is set to true, set the arguments as
+# variables to the current environment.  As setting positional variables
+# inside a function makes them local to the function, not the calling
+# script, this part is not encapsulated inside a function.
+if [[ "${ARGPARSER_SET_ARGS}" == true ]]; then
+    for arg_key in "${!args[@]}"; do
+        if [[ "${args[${arg_key}]}" == *"${ARGPARSER_ARG_DELIMITER_2}"*
             && "${ARGPARSER_SET_ARRAYS}" == true ]]
         then
             # Set the keyword argument, which includes the
@@ -4935,15 +4930,15 @@ if [[ "${ARGPARSER_SET_ARGS}" == true ]]; then
             # elements, as indexed array variable, while keeping it in
             # ${args} for usage by the calling script.
             # shellcheck disable=SC2229  # Indirect variable reference.
-            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a "${arg}" \
-                <<< "${args[${arg}]}"
+            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a "${arg_key}" \
+                <<< "${args[${arg_key}]}"
         else
             # Set the keyword argument as variable, while keeping it in
             # ${args} for potential usage by the calling script.
-            declare "${arg}"="${args[${arg}]}"
+            declare "${arg_key}"="${args[${arg_key}]}"
         fi
     done
-    unset arg
+    unset arg_key
 fi
 
 # If ${ARGPARSER_UNSET_FUNCTIONS} is set to true, unset all argparser
