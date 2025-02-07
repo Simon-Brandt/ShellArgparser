@@ -1554,12 +1554,11 @@ function argparser_check_args_definition_positional_values() {
     #   values (read-only)
     # - all_default_values: the associative array holding the default
     #   values (read-only)
-    # - all_notes: the associative array holding the notes
+    # - all_notes: the associative array holding the notes (read-only)
     # - all_positional_args: the indexed array holding the positional
-    #   argument names
-    # - all_short_options: the associative array holding the short
-    #   option names (read-only)
+    #   argument names (read-only)
     # - all_types: the associative array holding the argument types
+    #   (read-only)
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
@@ -2044,6 +2043,7 @@ function argparser_get_option_names() {
     # - all_short_options: the associative array holding the short
     #   option names (read-only)
     # - all_value_names: the associative array holding the value names
+    #   (read-only)
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
@@ -2279,9 +2279,8 @@ function argparser_parse_long_option() {
     # Read the argument.
     given_arg="$1"
 
-    # Get the argument identifier for the given (and perhaps
-    # abbreviated) argument and output it, possibly along with the value
-    # following the equals sign ("=").
+    # Get the prefix, option name, and possibly value for the given
+    # argument.
     prefix="${given_arg::1}"
     option_name="${given_arg:2}"
     if [[ "${given_arg}" =~ "=" ]]; then
@@ -2411,9 +2410,8 @@ function argparser_parse_short_option() {
     # Read the argument.
     given_arg="$1"
 
-    # Get the argument identifier for the given argument and output it,
-    # possibly along with the value following the equals sign ("=") or
-    # being merged with the option name(s).
+    # Get the prefix, option name, and possibly value for the given
+    # argument.
     prefix="${given_arg::1}"
     option_name="${given_arg:1}"
     if [[ "${given_arg}" =~ "=" ]]; then
@@ -2425,8 +2423,8 @@ function argparser_parse_short_option() {
     arg_key="$(argparser_get_arg_key "short" "${option_name}")"
 
     # Get the argument identifier for the given (and perhaps merged)
-    # rgument and output it, possibly along with the value following the
-    # equals sign ("=").
+    # argument and output it, possibly along with the value following
+    # the equals sign ("=").
     if [[ "${ARGPARSER_ALLOW_OPTION_MERGING}" == true ]]; then
         # Split the combined short option name, which may end in a
         # merged value, after any character.
@@ -2647,10 +2645,11 @@ function argparser_check_arg_values() {
     #   values (read-only)
     # - all_default_values: the associative array holding the default
     #   values (read-only)
-    # - all_notes: the associative array holding the notes
+    # - all_notes: the associative array holding the notes (read-only)
     # - all_positional_args: the indexed array holding the positional
-    #   argument names
+    #   argument names (read-only)
     # - all_types: the associative array holding the argument types
+    #   (read-only)
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
@@ -3130,12 +3129,13 @@ function argparser_create_help_message() {
     #   (read-only)
     # - all_long_options: the associative array holding the long option
     #   names (read-only)
-    # - all_notes: the associative array holding the notes
+    # - all_notes: the associative array holding the notes (read-only)
     # - all_positional_args: the indexed array holding the positional
-    #   argument names
+    #   argument names (read-only)
     # - all_short_options: the associative array holding the short
     #   option names (read-only)
     # - all_value_names: the associative array holding the value names
+    #   (read-only)
     #
     # Environment:
     # - ARGPARSER_ADD_HELP (read-only)
@@ -3888,10 +3888,11 @@ function argparser_create_usage_message() {
     # - all_long_options: the associative array holding the long option
     #   names (read-only)
     # - all_positional_args: the indexed array holding the positional
-    #   argument names
+    #   argument names (read-only)
     # - all_short_options: the associative array holding the short
     #   option names (read-only)
     # - all_value_names: the associative array holding the value names
+    #   (read-only)
     #
     # Environment:
     # - ARGPARSER_ADD_HELP (read-only)
