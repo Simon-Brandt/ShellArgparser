@@ -1541,11 +1541,11 @@ function argparser_check_args_definition_names() {
     done
 }
 
-function argparser_check_args_definition_values() {
+function argparser_check_args_definition_positional_values() {
     # Check if the script's arguments' definition is consistent
     # regarding the default and choice values, as well as the number of
-    # arguments.  This should always be true for production scripts, but
-    # maybe not while testing.
+    # arguments for positional arguments.  This should always be true
+    # for production scripts, but maybe not while testing.
     #
     # Nonlocals:
     # - all_arg_numbers: the associative array holding the argument
@@ -1669,7 +1669,7 @@ function argparser_check_args_definition_values() {
             if [[ -n "${infinite_arg_number_arg}" ]]; then
                 error_message="Error: The positional argument with the "
                 error_message+="identifier \"${arg_key}\" accepts an infinite "
-                error_message+="number of arguments, as does "
+                error_message+="number of values, as does "
                 error_message+="\"${infinite_arg_number_arg}\", which renders "
                 error_message+="parsing impossible."
                 printf '%s\0' "${error_message}"
@@ -1752,6 +1752,45 @@ function argparser_check_args_definition_values() {
             fi
         done
     done
+}
+
+function argparser_check_args_definition_option_values() {
+    # Check if the script's arguments' definition is consistent
+    # regarding the default and choice values, as well as the number of
+    # arguments for options (keyword arguments).  This should always be
+    # true for production scripts, but maybe not while testing.
+    #
+    # Nonlocals:
+    # - all_arg_numbers: the associative array holding the argument
+    #   numbers (read-only)
+    # - all_choice_values: the associative array holding the choice
+    #   values (read-only)
+    # - all_default_values: the associative array holding the default
+    #   values (read-only)
+    # - all_notes: the associative array holding the notes (read-only)
+    # - all_short_options: the associative array holding the short
+    #   option names (read-only)
+    # - all_types: the associative array holding the argument types
+    #   (read-only)
+    #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+    #
+    # Output:
+    # - the error messages, starting with "Error: ", possibly
+    #   concatenated with null characters
+
+    # Define the local variables.
+    local arg_key
+    local arg_number
+    local choice_value
+    local -a choice_values
+    local default_value
+    local -a default_values
+    local error_message
+    local note
+    local -a notes
+    local type
 
     # Check the consistency of all keyword arguments.
     for arg_key in "${!all_short_options[@]}"; do
@@ -4641,7 +4680,9 @@ function argparser_main() {
         mapfile -d "" -t error_messages \
             < <(argparser_check_args_definition_names)
         mapfile -d "" -t -O "${#error_messages[@]}" error_messages \
-            < <(argparser_check_args_definition_values)
+            < <(argparser_check_args_definition_positional_values)
+        mapfile -d "" -t -O "${#error_messages[@]}" error_messages \
+            < <(argparser_check_args_definition_option_values)
 
         # If there are error messages, colorize, sort, filter, and print
         # them, then exit, as parsing the arguments with a faulty
@@ -4948,7 +4989,8 @@ fi
 if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_check_arg_values
     unset -f argparser_check_args_definition_names
-    unset -f argparser_check_args_definition_values
+    unset -f argparser_check_args_definition_option_values
+    unset -f argparser_check_args_definition_positional_values
     unset -f argparser_check_color_or_style
     unset -f argparser_check_env_vars
     unset -f argparser_check_file
