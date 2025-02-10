@@ -2892,20 +2892,34 @@ function argparser_check_arg_values() {
 function argparser_set_args() {
     # Set the keyword and positional arguments to global variables.
     #
-    # Arguments:
-    # - $1: the argument's name (key)
-    #
     # Globals:
-    # - args: the parsed and checked arguments with key and value as
-    #   associative array (read-only)
-    # - ${!args[@]}: all argument identifiers found in ${args[@]}
+    # - ${${ARGPARSER_ARG_ARRAY_NAME}[@]}: the parsed and checked
+    #   arguments with key and value as associative array, which
+    #   ${ARGPARSER_ARG_ARRAY_NAME} refers to (read-only)
+    # - ${!${ARGPARSER_ARG_ARRAY_NAME}[@]}: all argument identifiers
+    #   found in ${${ARGPARSER_ARG_ARRAY_NAME}[@]}
     #
     # Environment:
+    # - ARGPARSER_ARG_ARRAY_NAME (read-only)
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_SET_ARRAYS (read-only)
 
     # Define the local variable.
     local arg_key
+
+    # Get the associative array ${ARGPARSER_ARG_ARRAY_NAME} refers to.
+    # If it is already "args" (the default name), nothing needs to be
+    # done, but other variable names need to be mapped to "args" to be
+    # able to refer to the variable by name.  Thus, declare prints the
+    # array contents stored in the variable ${ARGPARSER_ARG_ARRAY_NAME}
+    # refers to, which then gets stripped from the leading assignment
+    # (before the equals sign ("=")) and set to the new associative
+    # array ${args}.
+    if [[ "${ARGPARSER_ARG_ARRAY_NAME}" != "args" ]]; then
+        local args
+        args="$(declare -p "${ARGPARSER_ARG_ARRAY_NAME}")"
+        local -A args="${args#*=}"
+    fi
 
     # Set the arguments.
     for arg_key in "${!args[@]}"; do
@@ -4652,19 +4666,22 @@ function argparser_main() {
     local -a args_definition_script
 
     # Read in the requested arguments.  ${ARGPARSER_ARG_ARRAY_NAME} is
-    # set to the name of the array holding the arguments in the script.
-    # If it already is "args" (the default name), nothing needs to be
-    # done, but other variable names need to be mapped to "args" to be
-    # able to refer to the variable by name.  Thus, the array name
-    # stored in ${ARGPARSER_ARG_ARRAY_NAME} gets concatenated with the
-    # string "[@]" to form a construct Bash interprets as array index.
-    # By using variable indirection, this then gets expanded to the
-    # array's values and copied into the final ${args} array.
+    # set to the name of the indexed array holding the arguments in the
+    # script.  If it is already "args" (the default name), nothing needs
+    # to be done, but other variable names need to be mapped to "args"
+    # to be able to refer to the variable by name.  Thus, declare prints
+    # the array contents stored in the variable
+    # ${ARGPARSER_ARG_ARRAY_NAME} refers to, which then gets stripped
+    # from the leading assignment (before the equals sign ("=")) and set
+    # to the new indexed array ${args}.  Since later, the variable
+    # ${ARGPARSER_ARG_ARRAY_NAME} refers to is assigned an associative
+    # array, while being an indexed array, unset it.
     if [[ "${ARGPARSER_ARG_ARRAY_NAME}" != "args" ]]; then
-        # shellcheck disable=SC2178  # Intentional string, not array.
-        args="${ARGPARSER_ARG_ARRAY_NAME}[@]"
-        # shellcheck disable=SC2190  # Indexed, not associative array.
-        args=("${!args}")
+        local args
+        args="$(declare -p "${ARGPARSER_ARG_ARRAY_NAME}")"
+        local -a args="${args#*=}"
+
+        unset "${ARGPARSER_ARG_ARRAY_NAME}"
     fi
 
     # Read the arguments definition.
@@ -4732,7 +4749,7 @@ function argparser_main() {
     error_messages=( )
 
     unset args
-    declare -Ag args
+    local -A args
 
     mapfile -d "" -t given_args < <(argparser_split_args "${given_args[@]}")
     for given_arg in "${given_args[@]}"; do
@@ -4945,6 +4962,17 @@ function argparser_main() {
         fi
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
     fi
+
+    # Copy the values of the associative array ${args} to the variable
+    # ${ARGPARSER_ARG_ARRAY_NAME} refers to.  Thereby, declare prints
+    # the array contents stored in ${args}, which then gets stripped
+    # from the leading assignment (before the equals sign ("=")) and set
+    # to the new associative array with the name of
+    # ${ARGPARSER_ARG_ARRAY_NAME}.
+
+    # shellcheck disable=SC2178  # Intentional string, not array.
+    args="$(declare -p args)"
+    declare -g -A "${ARGPARSER_ARG_ARRAY_NAME}"="${args#*=}"
 
     # Depending on the value of ${is_extglob_set}, which uses shopt's
     # feature of storing the extglob state in a format reusable as
