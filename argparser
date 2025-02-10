@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-07
+# Last Modification: 2025-02-10
 
 # TODO: Support argparser configuration by command-line arguments and
 #       config file.
@@ -1058,6 +1058,7 @@ function argparser_read_args_definition() {
     # columnar argparser syntax matched by the definition pattern, then
     # assume a default header and re-read the arguments, leaving the
     # zeroth element, interpreted as header in the loop below, empty.
+
     # shellcheck disable=SC2053  # Intentional pattern matching.
     # shellcheck disable=SC2190  # Indexed, not associative array.
     if [[ "${ARGPARSER_ARG_DEF_HAS_HEADER}" == false \
@@ -1094,6 +1095,7 @@ function argparser_read_args_definition() {
     # syntax, or in a separate arguments definition file, so they're
     # only given as their key.  If the structure differs, output an
     # error message.
+
     # shellcheck disable=SC2053  # Intentional pattern matching.
     for arg in "${args[@]:1}"; do
         if [[ "${arg}" == ${def_pattern} ]]; then
@@ -2915,6 +2917,7 @@ function argparser_set_args() {
             # elements, as indexed array variable, while keeping it in
             # ${args} for usage by the calling script.
             declare -g -a "${arg_key}"
+
             # shellcheck disable=SC2229  # Indirect variable reference.
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a "${arg_key}" \
                 <<< "${args[${arg_key}]}"
@@ -4620,7 +4623,7 @@ function argparser_main() {
     if [[ ! -v "${ARGPARSER_ARG_ARRAY_NAME}" ]]; then
         mapfile -t names <<< "$(set -o posix; set)"
         for name in "${names[@]}"; do
-            if [[ "${name}" == arg* ]]; then
+            if [[ "${name}" == "arg"* ]]; then
                 name="${name%%=*}"
                 break
             else
@@ -4631,7 +4634,8 @@ function argparser_main() {
         error_message+="\"${ARGPARSER_ARG_ARRAY_NAME}\", but this variable is "
         error_message+="not defined.  Either you have given your arguments "
         error_message+="array another name ("
-        if [[ -n "${name}" ]]; then  # Include the guessed variable name.
+        if [[ -n "${name}" ]]; then
+            # Include the guessed variable name.
             error_message+="maybe \"${name}\" -- "
         fi
         error_message+="then change ARGPARSER_ARG_ARRAY_NAME accordingly) or "
