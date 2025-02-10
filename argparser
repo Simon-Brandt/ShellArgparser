@@ -6,6 +6,13 @@
 
 # TODO: Support argparser configuration by command-line arguments and
 #       config file.
+# TODO: Remove double meaning of "--" both for configuring the argparser
+#       and as normal command-line option.
+# TODO: Make help message's columns equally wide when using help files
+# TODO: Rewrite tests as correct test suites.
+# TODO: Speed up argparser by e.g. trying to remove command
+#       substitutions.
+# TODO: Add ability to translate error messages.
 
 # Usage: Source this script with "source argparser" inside the script
 # whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS} is set
