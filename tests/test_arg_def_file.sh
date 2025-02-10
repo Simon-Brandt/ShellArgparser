@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-24
+# Last Modification: 2025-02-10
 
 # Usage: Run this script with "bash test_arg_def_file.sh".
 
@@ -29,15 +29,15 @@ source argparser
 
 # The arguments can now be accessed as keys and values of the
 # associative array "args".  Further, they are set as variables to the
-# environment.  If positional arguments were given, they are set to $@.
-for arg in "${!args[@]}"; do
-    printf "The keyword argument \"%s\" equals \"%s\".\n" \
+# environment, from which they are expanded by globbing.
+for arg in "${!var@}"; do
+    printf 'The keyword argument "%s" is set to "%s".\n' \
         "${arg}" "${args[${arg}]}"
 done | sort
 
-(( i = 1 ))
-for arg in "$@"; do
-    printf "The positional argument on index \"%s\" equals \"%s\".\n" \
-        "${i}" "${arg}"
-    (( i++ ))
+index=1
+for arg in "${!pos@}"; do
+    printf 'The positional argument "%s" on index %s is set to "%s".\n' \
+        "${arg}" "${index}" "${args[${arg}]}"
+    (( index++ ))
 done
