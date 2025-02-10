@@ -1095,9 +1095,8 @@ function argparser_read_args_definition() {
     # syntax, or in a separate arguments definition file, so they're
     # only given as their key.  If the structure differs, output an
     # error message.
-
-    # shellcheck disable=SC2053  # Intentional pattern matching.
     for arg in "${args[@]:1}"; do
+        # shellcheck disable=SC2053  # Intentional pattern matching.
         if [[ "${arg}" == ${def_pattern} ]]; then
             # The argument matches the entire definition pattern.
             # Output its definition.
@@ -1627,9 +1626,10 @@ function argparser_check_args_definition_positional_values() {
             done
         fi
 
-        # Check that no two positional arguments are optional, which
-        # would be impossible to parse.
+        # Check the number of arguments with default values.
         if [[ "${default_values[0]}" != "-" ]]; then
+            # Check that no two positional arguments are optional, which
+            # would be impossible to parse.
             if [[ -n "${optional_arg}" ]]; then
                 error_message="Error: The positional argument with the "
                 error_message+="identifier \"${arg_key}\" is optional, as is "
@@ -1638,6 +1638,18 @@ function argparser_check_args_definition_positional_values() {
                 printf '%s\0' "${error_message}"
             else
                 optional_arg="${arg_key}"
+            fi
+
+            # Likewise, check that there is no positional argument
+            # accepting an infinite number of values along the optional
+            # one, which would also be impossible to parse.
+            if [[ -n "${infinite_arg_number_arg}" ]]; then
+                error_message="Error: The positional argument with the "
+                error_message+="identifier \"${arg_key}\" is optional, while "
+                error_message+="\"${infinite_arg_number_arg}\" accepts an "
+                error_message+="infinite number of values, which renders "
+                error_message+="parsing impossible."
+                printf '%s\0' "${error_message}"
             fi
         fi
 
@@ -1661,6 +1673,17 @@ function argparser_check_args_definition_positional_values() {
                 printf '%s\0' "${error_message}"
             else
                 infinite_arg_number_arg="${arg_key}"
+            fi
+
+            # Likewise, check that there is no optional positional
+            # argument along the one accepting an infinite number of
+            # values, which would also be impossible to parse.
+            if [[ -n "${optional_arg}" ]]; then
+                error_message="Error: The positional argument with the "
+                error_message+="identifier \"${arg_key}\" accepts an infinite "
+                error_message+="number of values, while \"${optional_arg}\" "
+                error_message+="is optional, which renders parsing impossible."
+                printf '%s\0' "${error_message}"
             fi
         fi
 
