@@ -7,4 +7,3 @@ var_4 :d :-     :VAL_4 :A     :A,B,C :char :1 :Optionale Optionen     :-        
 var_5 :- :var-5 :VAL_5 :E     :-     :str  :1 :Optionale Optionen     :-          :ein Wert mit Vorgabe
 var_6 :f :var-6 :VAL_6 :false :-     :bool :0 :Optionale Optionen     :-          :kein Wert (Flag) mit Vorgabe
 var_7 :g :var-7 :VAL_7 :true  :-     :bool :0 :Optionale Optionen     :deprecated :kein Wert (Flag) mit Vorgabe
-

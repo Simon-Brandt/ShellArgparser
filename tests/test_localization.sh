@@ -2,14 +2,14 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-10
+# Last Modification: 2025-02-11
 
 # Usage: Run this script with "bash test_help_message.sh".
 
 # Purpose: Test the functionality of the argparser.
 
-# Set the argparser, reading the arguments definition from a file and
-# the help message from a file.
+# Set the argparser, reading the arguments definition, help message, and
+# translation from a file.
 ARGPARSER_ARG_DEF_FILE="arguments_${LANG::2}.csv"
 ARGPARSER_ARG_DEF_FILE_HAS_HEADER=false
 ARGPARSER_HELP_FILE="help_message_${LANG::2}.txt"
@@ -19,6 +19,8 @@ ARGPARSER_TRANSLATION_FILE="translation.csv"
 # Set the arguments.
 # shellcheck disable=SC2190  # Indexed, not associative array.
 args=(
+    pos_1
+    pos_2
     var_1
     var_2
     var_3
