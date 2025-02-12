@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-01-31
+# Last Modification: 2025-02-12
 
 # Purpose: Print a help message for test_help_message.sh, invoked by
 # test_help_message.sh --help.  Compared to the auto-generated help
@@ -15,6 +15,10 @@
 # Print the header.
 A brief header summarizes the way how to interpret the help message.
 @Header
+
+# Print the positional arguments.
+The following arguments are positional.
+@Positional arguments
 
 # Print the options from the "Mandatory options" group.
 The following options have no default value.
