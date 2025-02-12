@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-10
+# Last Modification: 2025-02-12
 
 # TODO: Support argparser configuration by command-line arguments and
 #       config file.
@@ -3308,7 +3308,7 @@ function argparser_create_help_message() {
 
     # Compute the columns for the positional arguments.
     if [[ "${include_directive}" == "All" \
-        || "${include_directive}" != "${ARGPARSER_POSITIONAL_ARG_GROUP}" ]]
+        || "${include_directive}" == "${ARGPARSER_POSITIONAL_ARG_GROUP}" ]]
     then
         for arg_key in "${all_positional_args[@]}"; do
             # Read the argument's definition.
