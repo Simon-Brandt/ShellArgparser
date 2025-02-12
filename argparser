@@ -18,8 +18,9 @@
 # whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS} is set
 # to true (the default), the arguments will be parsed upon sourcing.  If
 # ${ARGPARSER_SET_ARGS} is set to true (the default), the arguments will
-# be set to variables upon sourcing, else, the associative array ${args}
-# needs to be accessed.  Refer to the README.md for details.
+# be set to variables upon sourcing, else, the associative array which
+# ${ARGPARSER_ARG_ARRAY_NAME} points to needs to be accessed.  Refer to
+# the README.md for details.
 
 # Purpose: Parse a script's arguments, giving proper error messages for
 # wrongly set arguments, assigning the values to the respective
@@ -3887,8 +3888,15 @@ function argparser_create_help_message() {
             continue
         fi
 
-        # Print the argument group's name.
-        printf '%s:\n' "${arg_group}"
+        # Print the argument group's name.  Translate the name of the
+        # positional arguments group, which cannot be provided in the
+        # translated help file as it is given by an environment
+        # variable.
+        if [[ "${arg_group}" == "${ARGPARSER_POSITIONAL_ARG_GROUP}" ]]; then
+            printf '%s:\n' "$(argparser_translate "${arg_group}")"
+        else
+            printf '%s:\n' "${arg_group}"
+        fi
 
         # For any argument line, print the three columns and their
         # delimiting whitespace.  If all three columns are empty, the

@@ -4,6 +4,7 @@ ARGUMENTS:ARGUMENTE
 DEPRECATED:VERALTET
 OPTIONS:OPTIONEN
 Mandatory arguments to long options are mandatory for short options too:Erforderliche Argumente für lange Optionen sind auch für kurze erforderlich
+Positional arguments:Positionale Argumente
 display this help and exit:diese Hilfe anzeigen und beenden
 display the usage and exit:den Aufruf anzeigen und beenden
 display the version and exit:die Version anzeigen und beenden
