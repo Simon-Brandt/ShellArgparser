@@ -2,17 +2,18 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-12
+# Last Modification: 2025-02-13
 
 # TODO: Support argparser configuration by command-line arguments and
 #       config file.
 # TODO: Remove double meaning of "--" both for configuring the argparser
 #       and as normal command-line option.
-# TODO: Make help message's columns equally wide when using help files
+# TODO: Output error message for unsupported include directives.
 # TODO: Rewrite tests as correct test suites.
 # TODO: Speed up argparser by e.g. trying to remove command
 #       substitutions.
 # TODO: Add ability to translate error messages.
+# BUG:  Negative values after commas are interpreted as option names.
 
 # Usage: Source this script with "source argparser" inside the script
 # whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS} is set
@@ -3109,84 +3110,8 @@ function argparser_translate() {
     fi
 }
 
-function argparser_print_help_or_usage_file() {
-    # Print a help or usage message from a file, possibly without
-    # commented lines (i.e., lines starting with "#") and their trailing
-    # blank lines inside the message.  Lines starting with
-    # ${ARGPARSER_*_FILE_INCLUDE_CHAR} will be replaced by the
-    # auto-generated help or usage message.
-    #
-    # Arguments:
-    # - $1: the help type ("help" or "usage")
-    #
-    # Environment:
-    # - ARGPARSER_HELP_FILE (read-only)
-    # - ARGPARSER_HELP_FILE_INCLUDE_CHAR (read-only)
-    # - ARGPARSER_HELP_FILE_KEEP_COMMENTS (read-only)
-    # - ARGPARSER_USAGE_FILE (read-only)
-    # - ARGPARSER_USAGE_FILE_INCLUDE_CHAR (read-only)
-    # - ARGPARSER_USAGE_FILE_KEEP_COMMENTS (read-only)
-
-    # Define the local variables.
-    local file
-    local help_type
-    local include_char
-    local include_directive
-    local keep_comments
-    local line
-    local line_type
-
-    # Read the argument.
-    help_type="$1"
-    if [[ "${help_type}" == "help" ]]; then
-        file="${ARGPARSER_HELP_FILE}"
-        include_char="${ARGPARSER_HELP_FILE_INCLUDE_CHAR}"
-        keep_comments="${ARGPARSER_HELP_FILE_KEEP_COMMENTS}"
-    elif [[ "${help_type}" == "usage" ]]; then
-        file="${ARGPARSER_USAGE_FILE}"
-        include_char="${ARGPARSER_USAGE_FILE_INCLUDE_CHAR}"
-        keep_comments="${ARGPARSER_USAGE_FILE_KEEP_COMMENTS}"
-    fi
-
-    line_type="text"
-    while IFS="" read -r line; do
-        # Set the line_type to "include_directive" if the line contains
-        # the "<ArgumentGroup>" directive, to "comment" if the line is
-        # commented and ${keep_comments} is false, and to "text" if it
-        # is not empty (but not commented).  Thus, empty lines following
-        # comments still have line_type set to "comment".
-        if [[ "${line}" == "${include_char}"* ]]; then
-            line_type="include_directive"
-            include_directive="${line:1}"
-            if [[ "${help_type}" == "help" ]]; then
-                argparser_create_help_message "${include_directive}"
-            elif [[ "${help_type}" == "usage" ]]; then
-                argparser_create_usage_message "${include_directive}"
-            fi
-        elif [[ "${line}" == \#* && "${keep_comments}" == false ]]; then
-            line_type="comment"
-        elif [[ -n "${line}" || "${keep_comments}" == true ]]; then
-            line_type="text"
-        fi
-
-        # If the line_type has been set to "text", print the current
-        # line.  If it is set to "include_directive", reset it to "text"
-        # to (possibly) print the next line, and only not the current
-        # "<ArgumentGroup>" line.
-        if [[ "${line_type}" == "text" ]]; then
-            printf '%s\n' "${line}"
-        elif [[ "${line_type}" == "include_directive" ]]; then
-            line_type="text"
-        fi
-    done < "${file}"
-}
-
 function argparser_create_help_message() {
     # Create a help message for the script's arguments.
-    #
-    # Arguments:
-    # - $1: the include directive ("All", "Header", "Help", or any
-    #       argument group)
     #
     # Nonlocals:
     # - all_arg_groups: the associative array holding the argument
@@ -3208,6 +3133,8 @@ function argparser_create_help_message() {
     #   option names (read-only)
     # - all_value_names: the associative array holding the value names
     #   (read-only)
+    # - help_message_groups: the associative array holding the help
+    #   message's groups usable as include directive
     #
     # Environment:
     # - ARGPARSER_ADD_HELP (read-only)
@@ -3235,10 +3162,9 @@ function argparser_create_help_message() {
     local default_values
     local has_default_args
     local has_required_args
-    local header
+    local help_message
     local help_text
     local i
-    local include_directive
     local index
     local is_deprecated
     local j
@@ -3272,18 +3198,16 @@ function argparser_create_help_message() {
     local -A sorted_col_1
     local -A sorted_col_2
     local -A sorted_col_3
+    local usage
     local -a value_names
     local -a whitespace_1
     local -a whitespace_2
     local whitespace_len_1
     local whitespace_len_2
 
-    # Read the argument.
-    include_directive="$1"
-
     # Read the arguments' groups to sort the arguments by group in the
-    # help message.  To this end, sort the groups alphabetically and
-    # compare each argument's group later upon iterating over them.
+    # help message.  To this end, compare each argument's group later
+    # upon iterating over them.
     arg_groups=( )
     for arg_group in "${all_arg_groups[@]}"; do
         if [[ "${arg_group}" != "${ARGPARSER_POSITIONAL_ARG_GROUP}" \
@@ -3293,9 +3217,6 @@ function argparser_create_help_message() {
             arg_groups+=("${arg_group}")
         fi
     done
-
-    # Sort the argument groups.
-    mapfile -d "" -t arg_groups < <(argparser_sort false "${arg_groups[@]}")
 
     # The help message is structured in three columns: short options,
     # long options and the help text.  Populate these columns with the
@@ -3308,95 +3229,75 @@ function argparser_create_help_message() {
     has_required_args=false
 
     # Compute the columns for the positional arguments.
-    if [[ "${include_directive}" == "All" \
-        || "${include_directive}" == "${ARGPARSER_POSITIONAL_ARG_GROUP}" ]]
-    then
-        for arg_key in "${all_positional_args[@]}"; do
-            # Read the argument's definition.
-            value_names="${all_value_names[${arg_key}]}"
-            default_values="${all_default_values[${arg_key}]}"
-            choice_values="${all_choice_values[${arg_key}]}"
-            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
-                <<< "${all_notes[${arg_key}]}"
-            help_text="${all_help_texts[${arg_key}]}"
+    for arg_key in "${all_positional_args[@]}"; do
+        # Read the argument's definition.
+        value_names="${all_value_names[${arg_key}]}"
+        default_values="${all_default_values[${arg_key}]}"
+        choice_values="${all_choice_values[${arg_key}]}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
+            <<< "${all_notes[${arg_key}]}"
+        help_text="${all_help_texts[${arg_key}]}"
 
-            # Set a flag whether the argument is deprecated.
-            is_deprecated=false
-            for note in "${notes[@]}"; do
-                if [[ "${note}" == "deprecated" ]]; then
-                    is_deprecated=true
-                fi
-            done
-
-            # Define the columns' next line, for the current argument.
-            # The argument may have some default and some choice values
-            # with the existence of each changing  the look of the first
-            # column.
-            # Set the first column's value.
-            if [[ "${choice_values}" != "-" && "${default_values}" != "-" ]]
-            then  # Choice and default.
-                col_1+=("$(printf "[%s={%s}]" "${value_names}" \
-                    "${choice_values}")")
-            elif [[ "${choice_values}" != "-" ]]; then  # Choice only.
-                col_1+=("$(printf "%s={%s}" "${value_names}" \
-                    "${choice_values}")")
-            elif [[ "${default_values}" != "-" ]]; then  # Default only.
-                col_1+=("$(printf "[%s]" "${value_names}")")
-            else  # No choice nor default.
-                col_1+=("$(printf "%s" "${value_names}")")
-            fi
-
-            # Set the second column's value.
-            col_2+=("")
-
-            # Set the third column's value.
-            if [[ "${default_values}" != "-" && "${is_deprecated}" == true ]]
-            then  # Default and deprecated.
-                new_col_3_value="($(argparser_translate "DEPRECATED")) "
-                new_col_3_value+="${help_text} ("
-                new_col_3_value+="$(argparser_translate "default"): "
-                new_col_3_value+="${default_values})"
-                col_3+=("${new_col_3_value}")
-            elif [[ "${default_values}" != "-" ]]; then  # Default only
-                new_col_3_value="${help_text} ("
-                new_col_3_value+="$(argparser_translate "default"): "
-                new_col_3_value+="${default_values})"
-                col_3+=("${new_col_3_value}")
-            elif [[ "${is_deprecated}" == true ]]; then  # Deprecated only.
-                new_col_3_value="($(argparser_translate "DEPRECATED")) "
-                new_col_3_value+="${help_text}"
-                col_3+=("${new_col_3_value}")
-            else  # No default nor deprecated.
-                col_3+=("${help_text}")
+        # Set a flag whether the argument is deprecated.
+        is_deprecated=false
+        for note in "${notes[@]}"; do
+            if [[ "${note}" == "deprecated" ]]; then
+                is_deprecated=true
             fi
         done
 
-        # To mark the end of an argument group later upon printing, add
-        # an empty line in all three columns.  This cannot appear by
-        # chance, whereas empty lines for single columns emerge from the
-        # line break insertion when they are differently long.  Thus, a
-        # completely empty line can be used as safe argument group
-        # delimiter.
-        col_1+=("")
+        # Define the columns' next line, for the current argument.  The
+        # argument may have some default and some choice values with the
+        # existence of each changing  the look of the first column.
+        # Set the first column's value.
+        if [[ "${choice_values}" != "-" && "${default_values}" != "-" ]]
+        then  # Choice and default.
+            col_1+=("$(printf "[%s={%s}]" "${value_names}" \
+                "${choice_values}")")
+        elif [[ "${choice_values}" != "-" ]]; then  # Choice only.
+            col_1+=("$(printf "%s={%s}" "${value_names}" "${choice_values}")")
+        elif [[ "${default_values}" != "-" ]]; then  # Default only.
+            col_1+=("$(printf "[%s]" "${value_names}")")
+        else  # No choice nor default.
+            col_1+=("$(printf "%s" "${value_names}")")
+        fi
+
+        # Set the second column's value.
         col_2+=("")
-        col_3+=("")
-    fi
+
+        # Set the third column's value.
+        if [[ "${default_values}" != "-" && "${is_deprecated}" == true ]]
+        then  # Default and deprecated.
+            new_col_3_value="($(argparser_translate "DEPRECATED")) "
+            new_col_3_value+="${help_text} ("
+            new_col_3_value+="$(argparser_translate "default"): "
+            new_col_3_value+="${default_values})"
+            col_3+=("${new_col_3_value}")
+        elif [[ "${default_values}" != "-" ]]; then  # Default only
+            new_col_3_value="${help_text} ("
+            new_col_3_value+="$(argparser_translate "default"): "
+            new_col_3_value+="${default_values})"
+            col_3+=("${new_col_3_value}")
+        elif [[ "${is_deprecated}" == true ]]; then  # Deprecated only.
+            new_col_3_value="($(argparser_translate "DEPRECATED")) "
+            new_col_3_value+="${help_text}"
+            col_3+=("${new_col_3_value}")
+        else  # No default nor deprecated.
+            col_3+=("${help_text}")
+        fi
+    done
+
+    # To mark the end of an argument group later upon printing, add an
+    # empty line in all three columns.  This cannot appear by chance,
+    # whereas empty lines for single columns emerge from the line break
+    # insertion when they are differently long.  Thus, a completely
+    # empty line can be used as safe argument group delimiter.
+    col_1+=("")
+    col_2+=("")
+    col_3+=("")
 
     # Compute the columns for the keyword arguments.
     for arg_group in "${arg_groups[@]}"; do
-        # Only add the argument group that was requested by the include
-        # directive.  Skip the "Header" and "Help" directive, but not
-        # the "All" directive.
-        if [[ "${include_directive}" == "Header" \
-            || "${include_directive}" == "Help"  ]]
-        then
-            continue
-        elif [[ "${include_directive}" != "All" \
-            && "${include_directive}" != "${arg_group}" ]]
-        then
-            continue
-        fi
-
         new_col_1=( )
         new_col_2=( )
         new_col_3=( )
@@ -3625,28 +3526,24 @@ function argparser_create_help_message() {
         col_3+=("")
     done
 
-    # If the "All" or "Help" include directive was requested, add the
-    # help, usage, and version flags that always exist (if defined).
-    if [[ "${include_directive}" == "All" \
-        || "${include_directive}" == "Help" ]]
-    then
-        if [[ "${ARGPARSER_ADD_HELP}" == true ]]; then
-            col_1+=("-h,")
-            col_2+=("--help")
-            col_3+=("$(argparser_translate "display this help and exit")")
-        fi
+    # Add the help, usage, and version flags that always exist (if
+    # defined).
+    if [[ "${ARGPARSER_ADD_HELP}" == true ]]; then
+        col_1+=("-h,")
+        col_2+=("--help")
+        col_3+=("$(argparser_translate "display this help and exit")")
+    fi
 
-        if [[ "${ARGPARSER_ADD_USAGE}" == true ]]; then
-            col_1+=("-u,")
-            col_2+=("--usage")
-            col_3+=("$(argparser_translate "display the usage and exit")")
-        fi
+    if [[ "${ARGPARSER_ADD_USAGE}" == true ]]; then
+        col_1+=("-u,")
+        col_2+=("--usage")
+        col_3+=("$(argparser_translate "display the usage and exit")")
+    fi
 
-        if [[ "${ARGPARSER_ADD_VERSION}" == true ]]; then
-            col_1+=("-V,")
-            col_2+=("--version")
-            col_3+=("$(argparser_translate "display the version and exit")")
-        fi
+    if [[ "${ARGPARSER_ADD_VERSION}" == true ]]; then
+        col_1+=("-V,")
+        col_2+=("--version")
+        col_3+=("$(argparser_translate "display the version and exit")")
     fi
 
     # Limit the width of each column of the help message to
@@ -3781,23 +3678,21 @@ function argparser_create_help_message() {
     # the first and the second column.  If a line is wider, set the
     # width to the respective value, as long as the width doesn't exceed
     # the limit set by ${ARGPARSER_MAX_COL_WIDTH_*}.
-    if [[ "${include_directive}" != "Header" ]]; then
-        col_width_1=0
-        col_width_2=0
-        for i in "${!col_1[@]}"; do
-            if (( "${#col_1[i]}" <= ARGPARSER_MAX_COL_WIDTH_1 \
-                && "${#col_1[i]}" > col_width_1 ))
-            then
-                col_width_1="${#col_1[i]}"
-            fi
+    col_width_1=0
+    col_width_2=0
+    for i in "${!col_1[@]}"; do
+        if (( "${#col_1[i]}" <= ARGPARSER_MAX_COL_WIDTH_1 \
+            && "${#col_1[i]}" > col_width_1 ))
+        then
+            col_width_1="${#col_1[i]}"
+        fi
 
-            if (( "${#col_2[i]}" <= ARGPARSER_MAX_COL_WIDTH_2 \
-                && "${#col_2[i]}" > col_width_2 ))
-            then
-                col_width_2="${#col_2[i]}"
-            fi
-        done
-    fi
+        if (( "${#col_2[i]}" <= ARGPARSER_MAX_COL_WIDTH_2 \
+            && "${#col_2[i]}" > col_width_2 ))
+        then
+            col_width_2="${#col_2[i]}"
+        fi
+    done
 
     # Compute the length of whitespace between column 1 and 2, as well
     # as between column 2 and 3.  This length equals the column's
@@ -3830,75 +3725,62 @@ function argparser_create_help_message() {
         fi
     done
 
-    # If the "All" or "Header" include directive was requested, print
-    # the help message's header, giving the script's name and usage
-    # instructions on how to interpret the arguments.  With "All", print
-    # a trailing blank line to separate the block from the following
-    # arguments.
-    if [[ "${include_directive}" == "All" \
-        || "${include_directive}" == "Header"  ]]
-    then
-        header="$(argparser_translate "Usage"): ${ARGPARSER_SCRIPT_NAME}"
+    # Set the help message's usage line, including the script's name.
+    usage="$(argparser_translate "Usage"): ${ARGPARSER_SCRIPT_NAME}"
 
-        # Add the optional keyword arguments (as summary), if existing.
-        if [[ "${has_default_args}" == true ]]; then
-            header+=" [$(argparser_translate "OPTIONS")]"
-        fi
-
-        # Add the mandatory keyword arguments (as summary), if existing.
-        if [[ "${has_required_args}" == true ]]; then
-            header+=" $(argparser_translate "ARGUMENTS")"
-        fi
-
-        # Add the positional arguments, if existing.
-        if (( "${#all_positional_args[@]}" > 0 )); then
-            header+=" [--]"
-            for arg_key in "${all_positional_args[@]}"; do
-                value_names=("${all_value_names[${arg_key}]}")
-                default_values="${all_default_values[${arg_key}]}"
-
-                if [[ "${default_values}" != "-" ]]; then
-                    header+=" [${value_names[0]}]"
-                else
-                    header+=" ${value_names[0]}"
-                fi
-            done
-        fi
-        printf '%s\n\n' "${header}"
-
-        remark="$(argparser_translate "Mandatory arguments to long options " \
-            "are mandatory for short options too")."
-        printf '%s\n' "${remark}"
+    # Add a hint for the optional keyword arguments (as summary), if
+    # existing.
+    if [[ "${has_default_args}" == true ]]; then
+        usage+=" [$(argparser_translate "OPTIONS")]"
     fi
 
-    if [[ "${include_directive}" == "All" ]]; then
-        printf '\n'
+    # Add a hint for the mandatory keyword arguments (as summary), if
+    # existing.
+    if [[ "${has_required_args}" == true ]]; then
+        usage+=" $(argparser_translate "ARGUMENTS")"
     fi
+
+    # Add the names of the positional arguments, if existing.
+    if (( "${#all_positional_args[@]}" > 0 )); then
+        usage+=" [--]"
+        for arg_key in "${all_positional_args[@]}"; do
+            value_names=("${all_value_names[${arg_key}]}")
+            default_values="${all_default_values[${arg_key}]}"
+
+            if [[ "${default_values}" != "-" ]]; then
+                usage+=" [${value_names[0]}]"
+            else
+                usage+=" ${value_names[0]}"
+            fi
+        done
+    fi
+
+    usage+=$'\n'
+    help_message_groups["Usage"]="${usage}"
+
+    # Set the remark.
+    remark="$(argparser_translate "Mandatory arguments to long options are " \
+        "mandatory for short options too")."
+    remark+=$'\n'
+    help_message_groups["Remark"]="${remark}"
 
     # For each argument group, including the positional argument group
     # as first one, and the rest being sorted alphabetically, print its
     # arguments.
     index=0
     for arg_group in "${ARGPARSER_POSITIONAL_ARG_GROUP}" "${arg_groups[@]}"; do
-        # Only print the argument group's arguments if it was requested
-        # by the include directive.
-        if [[ "${include_directive}" != "All" \
-            && "${include_directive}" != "${arg_group}" ]]
-        then
-            continue
-        fi
-
-        # Print the argument group's name.  Translate the name of the
-        # positional arguments group, which cannot be provided in the
-        # translated help file as it is given by an environment
+        # Set the argument group's name for output.  Translate the name
+        # of the positional arguments group, which cannot be provided in
+        # the translated help file as it is given by an environment
         # variable.
         if [[ "${arg_group}" == "${ARGPARSER_POSITIONAL_ARG_GROUP}" ]]; then
-            printf '%s:\n' "$(argparser_translate "${arg_group}")"
+            help_message="$(argparser_translate "${arg_group}"):"
         else
-            printf '%s:\n' "${arg_group}"
+            help_message="${arg_group}:"
         fi
+        help_message+=$'\n'
 
-        # For any argument line, print the three columns and their
+        # For any argument line, output the three columns and their
         # delimiting whitespace.  If all three columns are empty, the
         # end of the current argument group has been reached.
         for (( i = index; i < "${#col_1[@]}"; i++ )); do
@@ -3907,16 +3789,11 @@ function argparser_create_help_message() {
                 break
             fi
 
-            printf '%s%s%s%s%s\n' "${col_1[i]}" "${whitespace_1[i]}" \
-                "${col_2[i]}" "${whitespace_2[i]}" "${col_3[i]}"
+            help_message+="${col_1[i]}${whitespace_1[i]}${col_2[i]}"
+            help_message+="${whitespace_2[i]}${col_3[i]}"
+            help_message+=$'\n'
         done
-
-        # If the "All" include directive was requested, print a trailing
-        # blank line to separate the argument group blocks from each
-        # other.
-        if [[ "${include_directive}" == "All" ]]; then
-            printf '\n'
-        fi
+        help_message_groups[${arg_group}]="${help_message}"
 
         # Set the start index for the next argument group to the current
         # group's end index plus 1 (with the latter being the empty line
@@ -3924,33 +3801,29 @@ function argparser_create_help_message() {
         (( index = i + 1 ))
     done
 
-    # If the "All" or "Help" include directive was requested, print the
-    # help, usage, and version lines, which are the last three lines.
-    # Thereby, count the number of "true" as value of the respective
-    # environment variable, viz. ${ARGPARSER_ADD_HELP},
+    # Output the help, usage, and version lines, which are the last
+    # three lines.  Thereby, count the number of "true" as value of the
+    # respective environment variable, viz. ${ARGPARSER_ADD_HELP},
     # ${ARGPARSER_ADD_USAGE}, and ${ARGPARSER_ADD_VERSION}.
-    if [[ "${include_directive}" == "All" \
-        || "${include_directive}" == "Help" ]]
-    then
-        count="$(argparser_count true "${ARGPARSER_ADD_HELP}" \
-            "${ARGPARSER_ADD_USAGE}" "${ARGPARSER_ADD_VERSION}")"
-        if (( count == 3 )); then
-            printf '%s%s%s%s%s\n' "${col_1[-3]}" "${whitespace_1[-3]}" \
-                "${col_2[-3]}" "${whitespace_2[-3]}" "${col_3[-3]}"
-            printf '%s%s%s%s%s\n' "${col_1[-2]}" "${whitespace_1[-2]}" \
-                "${col_2[-2]}" "${whitespace_2[-2]}" "${col_3[-2]}"
-            printf '%s%s%s%s%s\n' "${col_1[-1]}" "${whitespace_1[-1]}" \
-                "${col_2[-1]}" "${whitespace_2[-1]}" "${col_3[-1]}"
-        elif (( count == 2 )); then
-            printf '%s%s%s%s%s\n' "${col_1[-2]}" "${whitespace_1[-2]}" \
-                "${col_2[-2]}" "${whitespace_2[-2]}" "${col_3[-2]}"
-            printf '%s%s%s%s%s\n' "${col_1[-1]}" "${whitespace_1[-1]}" \
-                "${col_2[-1]}" "${whitespace_2[-1]}" "${col_3[-1]}"
-        elif (( count == 1 )); then
-            printf '%s%s%s%s%s\n' "${col_1[-1]}" "${whitespace_1[-1]}" \
-                "${col_2[-1]}" "${whitespace_2[-1]}" "${col_3[-1]}"
-        fi
+    count="$(argparser_count true "${ARGPARSER_ADD_HELP}" \
+        "${ARGPARSER_ADD_USAGE}" "${ARGPARSER_ADD_VERSION}")"
+    help_message=""
+    if (( count == 3 )); then
+        help_message+="${col_1[-3]}${whitespace_1[-3]}${col_2[-3]}"
+        help_message+="${whitespace_2[-3]}${col_3[-3]}"
+        help_message+=$'\n'
     fi
+    if (( count >= 2 )); then
+        help_message+="${col_1[-2]}${whitespace_1[-2]}${col_2[-2]}"
+        help_message+="${whitespace_2[-2]}${col_3[-2]}"
+        help_message+=$'\n'
+    fi
+    if (( count >= 1 )); then
+        help_message+="${col_1[-1]}${whitespace_1[-1]}${col_2[-1]}"
+        help_message+="${whitespace_2[-1]}${col_3[-1]}"
+        help_message+=$'\n'
+    fi
+    help_message_groups["Help"]="${help_message}"
 }
 
 function argparser_create_usage_message() {
@@ -3971,6 +3844,8 @@ function argparser_create_usage_message() {
     #   option names (read-only)
     # - all_value_names: the associative array holding the value names
     #   (read-only)
+    # - usage_message_groups: the associative array holding the usage
+    #   message's groups usable as include directive
     #
     # Environment:
     # - ARGPARSER_ADD_HELP (read-only)
@@ -4418,31 +4293,58 @@ function argparser_create_usage_message() {
         usage_message+="$(printf "${whitespace}%s" "${lines[@]}")"
     fi
 
-    # Print the final usage message.
-    printf '%s\n' "${usage_message}"
+    # Output the final usage message.
+    usage_message+=$'\n'
+    usage_message_groups["Usage"]="${usage_message}"
 }
 
 function argparser_print_help_or_usage_message() {
     # Print a help or usage message.  If a file with such is given,
     # print the file, else, create a message for the script's arguments.
+    # For files, possibly skip commented lines (i.e., lines starting
+    # with "#") and their trailing blank lines.  Replace lines starting
+    # with ${ARGPARSER_*_FILE_INCLUDE_CHAR} by the auto-generated help
+    #   or usage message.
     #
     # Arguments:
     # - $1: the help type ("help" or "usage")
     # - $2: whether to exit after printing
     # - $3: the target to write to ("file" or "tty")
     #
+    # Nonlocals:
+    # - all_arg_groups: the associative array holding the argument
+    #   groups (read-only)
+    # - help_message_groups: the associative array holding the help
+    #   message's groups usable as include directive (read-only)
+    # - usage_message_groups: the associative array holding the usage
+    #   message's groups usable as include directive (read-only)
+    #
     # Environment:
     # - ARGPARSER_HELP_EXIT_CODE (read-only)
     # - ARGPARSER_HELP_FILE (read-only)
+    # - ARGPARSER_HELP_FILE_INCLUDE_CHAR (read-only)
+    # - ARGPARSER_HELP_FILE_KEEP_COMMENTS (read-only)
     # - ARGPARSER_HELP_STYLE (read-only)
+    # - ARGPARSER_POSITIONAL_ARG_GROUP (read-only)
     # - ARGPARSER_USAGE_EXIT_CODE (read-only)
     # - ARGPARSER_USAGE_FILE (read-only)
+    # - ARGPARSER_USAGE_FILE_INCLUDE_CHAR (read-only)
+    # - ARGPARSER_USAGE_FILE_KEEP_COMMENTS (read-only)
     # - ARGPARSER_USAGE_STYLE (read-only)
 
     # Define the local variables.
+    local arg_group
+    local -a arg_groups
     local exit
     local exit_code
+    local file
     local help_type
+    local include_char
+    local include_directive
+    local keep_comments
+    local line
+    local -a lines
+    local line_type
     local message
     local style
     local write_target
@@ -4452,30 +4354,115 @@ function argparser_print_help_or_usage_message() {
     exit="$2"
     write_target="$3"
 
-    # Decide which message type to print and set the colorization style
-    # and the exit code.
+    # Set the constants to the respective environment variables.
     if [[ "${help_type}" == "help" ]]; then
-        if [[ -n "${ARGPARSER_HELP_FILE}" ]]; then
-            message="$(argparser_print_help_or_usage_file "help")"
-        else
-            message="$(argparser_create_help_message "All")"
-        fi
+        file="${ARGPARSER_HELP_FILE}"
+        include_char="${ARGPARSER_HELP_FILE_INCLUDE_CHAR}"
+        keep_comments="${ARGPARSER_HELP_FILE_KEEP_COMMENTS}"
         style="${ARGPARSER_HELP_STYLE}"
         exit_code="${ARGPARSER_HELP_EXIT_CODE}"
-    elif [[ "${help_type}" == "usage" ]]; then
-        if [[ -n "${ARGPARSER_USAGE_FILE}" ]]; then
-            message="$(argparser_print_help_or_usage_file "usage")"
-        else
-            message="$(argparser_create_usage_message)"
-        fi
+    else
+        file="${ARGPARSER_USAGE_FILE}"
+        include_char="${ARGPARSER_USAGE_FILE_INCLUDE_CHAR}"
+        keep_comments="${ARGPARSER_USAGE_FILE_KEEP_COMMENTS}"
         style="${ARGPARSER_USAGE_STYLE}"
         exit_code="${ARGPARSER_USAGE_EXIT_CODE}"
     fi
 
+    # Read the arguments' groups to sort them for the help message.
+    arg_groups=( )
+    for arg_group in "${all_arg_groups[@]}"; do
+        if [[ "${arg_group}" != "${ARGPARSER_POSITIONAL_ARG_GROUP}" \
+            && "$(argparser_in_array "${arg_group}" \
+                "${arg_groups[@]}")" == false ]]
+        then
+            arg_groups+=("${arg_group}")
+        fi
+    done
+
+    # Sort the argument groups.
+    mapfile -d "" -t arg_groups < <(argparser_sort false "${arg_groups[@]}")
+
+    # Create the help or usage message groups, which are saved in an
+    # associative array using the include directives as keys.
+    if [[ "${help_type}" == "help" ]]; then
+        argparser_create_help_message
+    else
+        argparser_create_usage_message
+    fi
+
+    # Read the help or usage file, if given, or set the lines to just
+    # the include directive "All", meaning to create the entire help or
+    # usage message.
+    if [[ -n "${file}" ]]; then
+        mapfile -t lines < "${file}"
+    else
+        lines=("${include_char}All")
+    fi
+
+    # For each line, print the text and replace the include directives
+    # by the respective part from the help or usage message.  Possibly,
+    # skip comments.
+    line_type="text"
+    message=""
+    for line in "${lines[@]}"; do
+        # Set ${line_type} to "include directive" if the line contains
+        # an include directive, to "comment" if the line is commented
+        # and ${keep_comments} is false, and to "text" if it is not
+        # empty (but not commented).  Thus, empty lines following
+        # comments still have ${line_type} set to "comment".  For
+        # include directives, add the requested groups from the help or
+        # usage message.
+        if [[ "${line}" == "${include_char}"* ]]; then
+            line_type="include directive"
+            include_directive="${line:1}"
+            if [[ "${help_type}" == "help" ]]; then
+                if [[ "${include_directive}" == "All" ]]; then
+                    message+="${help_message_groups["Usage"]}"
+                    message+=$'\n'
+
+                    message+="${help_message_groups["Remark"]}"
+                    message+=$'\n'
+
+                    for arg_group in "${ARGPARSER_POSITIONAL_ARG_GROUP}" \
+                        "${arg_groups[@]}"
+                    do
+                        message+="${help_message_groups[${arg_group}]}"
+                        message+=$'\n'
+                    done
+
+                    message+="${help_message_groups["Help"]}"
+                elif [[ "${include_directive}" == "Header" ]]; then
+                    message+="${help_message_groups["Usage"]}"
+                    message+=$'\n'
+                    message+="${help_message_groups["Remark"]}"
+                else
+                    message+="${help_message_groups[${include_directive}]}"
+                fi
+            else
+                message+="${usage_message_groups["Usage"]}"
+            fi
+        elif [[ "${line}" == \#* && "${keep_comments}" == false ]]; then
+            line_type="comment"
+        elif [[ -n "${line}" || "${keep_comments}" == true ]]; then
+            line_type="text"
+        fi
+
+        # If ${line_type} has been set to "text", print the current
+        # line.  If it is set to "include_directive", reset it to "text"
+        # to (possibly) print the next line, and only not the current
+        # "<ArgumentGroup>" line.
+        if [[ "${line_type}" == "text" ]]; then
+            message+="${line}"
+            message+=$'\n'
+        elif [[ "${line_type}" == "include directive" ]]; then
+            line_type="text"
+        fi
+    done 
+
     # Colorize and print the help or usage message, then exit, if
     # requested.
-    message="$(argparser_colorize "${style}" "${message}" "${write_target}")"
-    printf '%s\n' "${message}"
+    argparser_colorize "${style}" "${message}" "${write_target}"
 
     if [[ "${exit}" == true ]]; then
         exit "${exit_code}"
@@ -4607,8 +4594,8 @@ function argparser_main() {
     # - $@: the arguments to parse
     #
     # Globals:
-    # - args: the parsed and checked arguments with key and value as
-    #   associative array
+    # - ${ARGPARSER_ARG_ARRAY_NAME}: the parsed and checked arguments
+    #   with key and value as associative array
     #
     # Environment:
     # - ARGPARSER_ARG_ARRAY_NAME (read-only)
@@ -4640,6 +4627,7 @@ function argparser_main() {
     local given_arg
     local -a given_args
     local -a given_positional_args
+    local -A help_message_groups
     local i
     local is_extglob_set
     local is_help
@@ -4653,6 +4641,7 @@ function argparser_main() {
     local names
     local prefix
     local -A prefixes
+    local -A usage_message_groups
     local value
     local values
     local warning_message
@@ -5080,7 +5069,6 @@ if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_parse_positional_args
     unset -f argparser_parse_short_option
     unset -f argparser_print_error_or_warning_message
-    unset -f argparser_print_help_or_usage_file
     unset -f argparser_print_help_or_usage_message
     unset -f argparser_print_version_message
     unset -f argparser_quicksort
