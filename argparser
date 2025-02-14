@@ -4648,8 +4648,11 @@ function argparser_main() {
     # Read the arguments.
     read -r -a given_args <<< "$@"
 
-    # Enable extglob.  Since all functions relying on it being set are
-    # called from argparser_main, they inherit the option.
+    # Locally disable errexit and enable extglob.  Since all functions
+    # relying on the latter being set are called from argparser_main,
+    # they inherit the option.
+    local -
+    set +o errexit
     is_extglob_set="$(shopt -p extglob)"
     shopt -s extglob
 
