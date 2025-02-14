@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-13
+# Last Modification: 2025-02-14
 
 # TODO: Support argparser configuration by command-line arguments and
 #       config file.
@@ -3144,6 +3144,7 @@ function argparser_create_help_message() {
     # - ARGPARSER_MAX_COL_WIDTH_1 (read-only)
     # - ARGPARSER_MAX_COL_WIDTH_2 (read-only)
     # - ARGPARSER_MAX_COL_WIDTH_3 (read-only)
+    # - ARGPARSER_POSITIONAL_ARG_GROUP (read-only)
     # - ARGPARSER_SCRIPT_NAME (read-only)
 
     # Define the local variables.
@@ -3205,9 +3206,9 @@ function argparser_create_help_message() {
     local whitespace_len_1
     local whitespace_len_2
 
-    # Read the arguments' groups to sort the arguments by group in the
-    # help message.  To this end, compare each argument's group later
-    # upon iterating over them.
+    # Read the arguments' groups to sort the keyword arguments by group
+    # in the help message.  To this end, compare each argument's group
+    # later upon iterating over them.
     arg_groups=( )
     for arg_group in "${all_arg_groups[@]}"; do
         if [[ "${arg_group}" != "${ARGPARSER_POSITIONAL_ARG_GROUP}" \
@@ -3768,16 +3769,10 @@ function argparser_create_help_message() {
     # as first one, and the rest being sorted alphabetically, print its
     # arguments.
     index=0
-    for arg_group in "${ARGPARSER_POSITIONAL_ARG_GROUP}" "${arg_groups[@]}"; do
-        # Set the argument group's name for output.  Translate the name
-        # of the positional arguments group, which cannot be provided in
-        # the translated help file as it is given by an environment
-        # variable.
-        if [[ "${arg_group}" == "${ARGPARSER_POSITIONAL_ARG_GROUP}" ]]; then
-            help_message="$(argparser_translate "${arg_group}"):"
-        else
-            help_message="${arg_group}:"
-        fi
+    arg_groups=("${ARGPARSER_POSITIONAL_ARG_GROUP}" "${arg_groups[@]}")
+    for arg_group in "${arg_groups[@]}"; do
+        # Set the argument group's name for output.
+        help_message="${arg_group}:"
         help_message+=$'\n'
 
         # For any argument line, output the three columns and their
@@ -4369,7 +4364,8 @@ function argparser_print_help_or_usage_message() {
         exit_code="${ARGPARSER_USAGE_EXIT_CODE}"
     fi
 
-    # Read the arguments' groups to sort them for the help message.
+    # Read the keyword arguments' groups to sort them for the help
+    # message.
     arg_groups=( )
     for arg_group in "${all_arg_groups[@]}"; do
         if [[ "${arg_group}" != "${ARGPARSER_POSITIONAL_ARG_GROUP}" \
@@ -4380,8 +4376,10 @@ function argparser_print_help_or_usage_message() {
         fi
     done
 
-    # Sort the argument groups.
+    # Sort the argument groups and prepend the positional arguments
+    # group.
     mapfile -d "" -t arg_groups < <(argparser_sort false "${arg_groups[@]}")
+    arg_groups=("${ARGPARSER_POSITIONAL_ARG_GROUP}" "${arg_groups[@]}")
 
     # Create the help or usage message groups, which are saved in an
     # associative array using the include directives as keys.
@@ -4424,9 +4422,7 @@ function argparser_print_help_or_usage_message() {
                     message+="${help_message_groups["Remark"]}"
                     message+=$'\n'
 
-                    for arg_group in "${ARGPARSER_POSITIONAL_ARG_GROUP}" \
-                        "${arg_groups[@]}"
-                    do
+                    for arg_group in "${arg_groups[@]}"; do
                         message+="${help_message_groups[${arg_group}]}"
                         message+=$'\n'
                     done
@@ -4602,6 +4598,7 @@ function argparser_main() {
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_CHECK_ARG_DEFINITION (read-only)
     # - ARGPARSER_ERROR_EXIT_CODE (read-only)
+    # - ARGPARSER_POSITIONAL_ARG_GROUP
     # - ARGPARSER_SILENCE_ERRORS (read-only)
     # - ARGPARSER_TRANSLATION_FILE (read-only)
 
@@ -4762,9 +4759,14 @@ function argparser_main() {
     fi
 
     # If ${ARGPARSER_TRANSLATION_FILE} isn't set to the empty string,
-    # read the translation file.
+    # read the translation file.  To be able to use the localized name
+    # of ${ARGPARSER_POSITIONAL_ARG_GROUP} in the arguments definition
+    # and help message, translate it.
     if [[ -n "${ARGPARSER_TRANSLATION_FILE}" ]]; then
         argparser_read_translation
+
+        ARGPARSER_POSITIONAL_ARG_GROUP="$(argparser_translate \
+            "${ARGPARSER_POSITIONAL_ARG_GROUP}")"
     fi
 
     # Parse the script's given arguments.

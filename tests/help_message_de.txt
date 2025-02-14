@@ -19,7 +19,7 @@ ist.
 
 # Print the positional arguments.
 Die folgenden Argumente sind positional.
-@Positional arguments
+@Positionale Argumente
 
 # Print the options from the "Erforderliche Optionen" group.
 Die folgenden Optionen haben keinen Vorgabewert.
