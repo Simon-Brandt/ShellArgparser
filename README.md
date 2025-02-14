@@ -725,30 +725,40 @@ Now, we get the following help message:
 ```console
 $ bash try_help_file.sh -h
 A brief header summarizes the way how to interpret the help message.
-Usage: try_help_file.sh [--] [pos_1] pos_2
+Usage: try_help_file.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
-The following options have no default value.
-Mandatory options:
-[pos_1={1,2}]
-                    one positional argument with default and
-                    choice (default: 2)
-pos_2               two positional arguments without default
-                    or choice
-
-The following options have a default value.
-Optional options:
+The following arguments are positional.
+Positional arguments:
 [pos_1={1,2}]
                       one positional argument with default and
                       choice (default: 2)
 pos_2                 two positional arguments without default
                       or choice
 
+The following options have no default value.
+Mandatory options:
+-a,   --var-1=VAL_1   one value without default or choice
+-b,   --var-2=VAL_2   at least one value without default or
+                      choice
+-c,   --var-3={A,B}   at least one value with choice
+
+The following options have a default value.
+Optional options:
+[-d={A,B,C}]
+                      one value with default and choice
+                      (default: A)
+      [--var-5=VAL_5] one value with default (default: E)
+[-f], [--var-6]       no value (flag) with default (default:
+                      false)
+[-g], [--var-7]       (DEPRECATED) no value (flag) with
+                      default (default: true)
+
 There are always three options for the help messages.
--h,   --help    display this help and exit
--u,   --usage   display the usage and exit
--V,   --version display the version and exit
+-h,   --help          display this help and exit
+-u,   --usage         display the usage and exit
+-V,   --version       display the version and exit
 ```
 
 When you compare the structure of this help message with both the previous version and the help file, you see that there, you can include the sections from the auto-generated help message by prefixing their names with an [`ARGPARSER_HELP_FILE_INCLUDE_CHAR`](#argparser_help_file_include_char) character, defaulting to an `"@"`. Generally speaking, an include directive, as the commands are referred to, like `@Section`, includes the section entitled `"Section"`.
@@ -979,30 +989,40 @@ The former command prints the American English help message, the latter its Germ
 $ LANG=de_DE.UTF-8 bash try_localization.sh -h
 Eine kurze Kopfzeile fasst zusammen, wie die Hilfe-Meldung zu interpretieren
 ist.
-Aufruf: try_localization.sh [--] [pos_1] pos_2
+Aufruf: try_localization.sh [OPTIONEN] ARGUMENTE [--] [pos_1] pos_2
 
 Erforderliche Argumente für lange Optionen sind auch für kurze erforderlich.
 
-Die folgenden Optionen haben keinen Vorgabewert.
-Erforderliche Optionen:
-[pos_1={1,2}]
-                    ein positionales Argument mit Vorgabe
-                    und Auswahl (Vorgabe: 2)
-pos_2               zwei positionale Argumente ohne Vorgabe
-                    oder Auswahl
-
-Die folgenden Optionen haben einen Vorgabewert.
-Optionale Optionen:
+Die folgenden Argumente sind positional.
+Positionale Argumente:
 [pos_1={1,2}]
                       ein positionales Argument mit Vorgabe
                       und Auswahl (Vorgabe: 2)
 pos_2                 zwei positionale Argumente ohne Vorgabe
                       oder Auswahl
 
+Die folgenden Optionen haben keinen Vorgabewert.
+Erforderliche Optionen:
+-a,   --var-1=VAL_1   ein Wert ohne Vorgabe oder Auswahl
+-b,   --var-2=VAL_2   mindestens ein Wert ohne Vorgabe oder
+                      Auswahl
+-c,   --var-3={A,B}   mindestens ein Wert mit Auswahl
+
+Die folgenden Optionen haben einen Vorgabewert.
+Optionale Optionen:
+[-d={A,B,C}]
+                      ein Wert mit Vorgabe und Auswahl
+                      (Vorgabe: A)
+      [--var-5=VAL_5] ein Wert mit Vorgabe (Vorgabe: E)
+[-f], [--var-6]       kein Wert (Flag) mit Vorgabe (Vorgabe:
+                      falsch)
+[-g], [--var-7]       (VERALTET) kein Wert (Flag) mit Vorgabe
+                      (Vorgabe: wahr)
+
 Es gibt grundsätzlich drei Optionen für die Hilfe-Meldungen.
--h,   --help    diese Hilfe anzeigen und beenden
--u,   --usage   den Aufruf anzeigen und beenden
--V,   --version die Version anzeigen und beenden
+-h,   --help          diese Hilfe anzeigen und beenden
+-u,   --usage         den Aufruf anzeigen und beenden
+-V,   --version       die Version anzeigen und beenden
 ```
 
 Likewise, the usage message is localized:
