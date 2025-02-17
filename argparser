@@ -2994,6 +2994,7 @@ function argparser_read_translation() {
     local -a error_messages
     local group
     local is_continued
+    local language
     local line
     local -a lines
     local translation
@@ -3001,6 +3002,7 @@ function argparser_read_translation() {
     # Read the translation file.
     mapfile -t lines < "${ARGPARSER_TRANSLATION_FILE}"
     group=""
+    language=""
     translation=""
     is_continued=false
     error_messages=( )
@@ -3014,27 +3016,41 @@ function argparser_read_translation() {
             continue
         elif [[ "${line}" == "  ${ARGPARSER_LANGUAGE}: >" ]]; then
             # The line starts the translation to the desired language.
+            language="${ARGPARSER_LANGUAGE}"
             translation=""
             is_continued=true
         elif [[ "${line}" == "  ${ARGPARSER_LANGUAGE}: "* ]]; then
             # The line contains the translation to the desired language.
+            language="${ARGPARSER_LANGUAGE}"
             translation="${line#*: }"
         elif [[ "${line}" == "  "*": >" ]]; then
             # The line start the translation to another language, which
             # can be ignored, along all following lines until the start
             # of a new YAML key.
+            language="${line#* }"
+            language="${language%:*}"
+            translation=""
             is_continued=true
         elif [[ "${line}" == "  "*([^ ])": "* ]]; then
             # The line contains the translation to another language,
             # which can be ignored.
-            continue
-        elif [[ "${line}" == "    "* && "${is_continued}" == true ]]; then
+            language="${line#* }"
+            language="${language%:*}"
+            translation=""
+        elif [[ "${line}" == "    "* \
+            && "${language}" == "${ARGPARSER_LANGUAGE}" \
+            && "${is_continued}" == true ]]
+        then
             # The line continues the translation from the previous line.
             if [[ -z "${translation}" ]]; then
                 translation="${line#    }"
             else
                 translation+=" ${line#    }"
             fi
+        elif [[ "${line}" == "    "* && "${is_continued}" == true ]]; then
+            # The line continues the translation to another language,
+            # from the previous line, which can be ignored.
+            translation=""
         elif [[ "${line}" == *:  && "${line::1}" != " " ]]; then
             # The line starts a new group of translations.  Save the
             # previous translation under the previous group name, then
@@ -3099,19 +3115,28 @@ function argparser_translate() {
     # the dictionary, output a warning message and the untranslated
     # string.
     if [[ -n "${ARGPARSER_TRANSLATION_FILE}" ]]; then
-        if [[ "$(argparser_in_array "${key}" "${!dictionary[@]}")" == true ]]
+        if [[ "$(argparser_in_array "${key}" "${!dictionary[@]}")" == false ]]
         then
-            string="${dictionary[${key}]}"
-        else
             warning_message="Warning: In the translation file "
             warning_message+="\"${ARGPARSER_TRANSLATION_FILE}\", the "
-            warning_message+="identifier \"${key}\" or its translation to "
-            warning_message+="\"${ARGPARSER_LANGUAGE}\" is missing.  For "
+            warning_message+="identifier \"${key}\" is missing.  For "
             warning_message+="convenience, the untranslated string is used, "
             warning_message+="instead."
 
             argparser_print_error_or_warning_message "warning" false false \
                 "${warning_message}"
+        elif [[ -z "${dictionary[${key}]}" ]]; then
+            warning_message="Warning: In the translation file "
+            warning_message+="\"${ARGPARSER_TRANSLATION_FILE}\", the "
+            warning_message+="translation to \"${ARGPARSER_LANGUAGE}\" for "
+            warning_message+="the identifier \"${key}\" is missing.  For "
+            warning_message+="convenience, the untranslated string is used, "
+            warning_message+="instead."
+
+            argparser_print_error_or_warning_message "warning" false false \
+                "${warning_message}"
+        else
+            string="${dictionary[${key}]}"
         fi
     fi
 
