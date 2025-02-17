@@ -17,6 +17,7 @@ The argparser is a designed to be an easy-to-use, yet powerful command-line argu
     - [Arguments definition files](#arguments-definition-files)
     - [Help and usage message localization](#help-and-usage-message-localization)
     - [Version messages](#version-messages)
+    - [Error and warning messages](#error-and-warning-messages)
     - [Message styles](#message-styles)
   - [Include directives](#include-directives)
     - [`@All` directive](#all-directive)
@@ -698,9 +699,6 @@ source argparser
 
 Additionally, we need a separate file, which we'll call `help_message.txt` and have passed as value to [`ARGPARSER_HELP_FILE`](#argparser_help_file). This plain-text file stores the help message's structure and can contain arbitrary additional content.
 
-> [!IMPORTANT]
-> The file [`ARGPARSER_HELP_FILE`](#argparser_help_file) refers to **must** end with a newline character (*i.e.*, the character `x0A` encoded as `$'\n'` in Bash). Else, the [`read`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-read "gnu.org &rightarrow; Bash Builtins &rightarrow; read") builtin fails to read the last line, leading to a truncated help message.
-
 ```console
 $ cat help_message.txt
 # Print the header.
@@ -867,7 +865,7 @@ Usage: try_arg_def_file.sh [-h | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5]
 
 ### Help and usage message localization
 
-It is even possible to localize your script's help and usage message. For the usage message, all you need is an [`ARGPARSER_TRANSLATION_FILE`](#argparser_translation_file), a CSV file giving the translation of the auto-generated parts in the messages. The header gives the language identifier for each column, one of which being the default `en`, and another one the language you want the message to be translated to, *i.e.*, the [`ARGPARSER_LANGUAGE`](#argparser_language). For the usage message, this suffices, but in the help message, also non-auto-generated parts are included, especially each argument's help text. For them to be translated, you need a dedicated [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file) and possibly a localized [`ARGPARSER_HELP_FILE`](#argparser_help_file).
+It is even possible to localize your script's help and usage message. For the usage message, all you need is an [`ARGPARSER_TRANSLATION_FILE`](#argparser_translation_file), a simplified YAML file giving the translation of the auto-generated parts in the messages. For each section, you give the language identifier for the language you want the message to be translated to, *i.e.*, the [`ARGPARSER_LANGUAGE`](#argparser_language). For the usage message, this suffices, but in the help message, also non-auto-generated parts are included, especially each argument's help text. For them to be translated, you need a dedicated [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file) and possibly a localized [`ARGPARSER_HELP_FILE`](#argparser_help_file).
 
 If you set these environment variables to files whose filename contains the language, like so:
 
@@ -894,7 +892,7 @@ ARGPARSER_ARG_DEF_FILE="arguments_${LANG::2}.csv"
 ARGPARSER_ARG_DEF_FILE_HAS_HEADER=false
 ARGPARSER_HELP_FILE="help_message_${LANG::2}.txt"
 ARGPARSER_LANGUAGE="${LANG::2}"
-ARGPARSER_TRANSLATION_FILE="translation.csv"
+ARGPARSER_TRANSLATION_FILE="translation.yaml"
 
 # Set the arguments.
 args=(
@@ -914,7 +912,7 @@ source argparser
 
 </details>
 
-You need to manually translate the arguments definition (only the argument groups and the help texts) in the new arguments definition file, here using no header (stated by the [`ARGPARSER_ARG_DEF_FILE_HAS_HEADER`](#argparser_arg_def_file_has_header) environment variable):
+You need to manually translate the arguments definition (only the argument groups and the help texts) in the new arguments definition file, here shown as using no header (stated by the [`ARGPARSER_ARG_DEF_FILE_HAS_HEADER`](#argparser_arg_def_file_has_header) environment variable):
 
 ```console
 $ cat arguments_de.csv
@@ -951,26 +949,78 @@ Es gibt grundsätzlich drei Optionen für die Hilfe-Meldungen.
 @Help
 ```
 
-Finally, we need a translation file for the auto-generated parts. Note that here, only the German locale is used, while you may need to add further columns if your target users come from multiple countries.
+Finally, we need a translation file for the auto-generated parts. Note that here, only the German locale is used, while you may want to add further rows if your target users come from multiple countries.
 
-> [!IMPORTANT]
-> The file [`ARGPARSER_TRANSLATION_FILE`](#argparser_translation_file) refers to **must** end with a newline character (*i.e.*, the character `x0A` encoded as `$'\n'` in Bash). Else, the [`read`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-read "gnu.org &rightarrow; Bash Builtins &rightarrow; read") builtin fails to read the last line, leading to a warning about a missing entry (the one in the last line).
+```yaml
+$ cat translation.yaml
+# 1.    Define the translations for the arguments parsing.
+---
+Positional arguments:
+  en: Positional arguments
+  de: Positionale Argumente
+...
 
-```console
-$ cat translation.csv
-en:de
-Usage:Aufruf
-ARGUMENTS:ARGUMENTE
-DEPRECATED:VERALTET
-OPTIONS:OPTIONEN
-Mandatory arguments to long options are mandatory for short options too:Erforderliche Argumente für lange Optionen sind auch für kurze erforderlich
-display this help and exit:diese Hilfe anzeigen und beenden
-display the usage and exit:den Aufruf anzeigen und beenden
-display the version and exit:die Version anzeigen und beenden
-default:Vorgabe
-false:falsch
-true:wahr
+# 2.    Define the translations for help messages.
+# 2.1.  Define the translations for the usage line (part of the header).
+---
+Usage:
+  en: Usage
+  de: Aufruf
+
+Arguments:
+  en: ARGUMENTS
+  de: ARGUMENTE
+
+Options:
+  en: OPTIONS
+  de: OPTIONEN
+...
+
+# 2.2.  Define the translations for the remark (part of the header).
+---
+Mandatory arguments:
+  en: Mandatory arguments to long options are mandatory for short options too
+  de: >
+    Erforderliche Argumente für lange Optionen sind auch für kurze erforderlich
+...
+
+# 2.3.  Define the translations for the help column.
+---
+Deprecated:
+  en: DEPRECATED
+  de: VERALTET
+
+Default:
+  en: default
+  de: Vorgabe
+
+--help:
+  en: display this help and exit
+  de: diese Hilfe anzeigen und beenden
+
+--usage:
+  en: display the usage and exit
+  de: den Aufruf anzeigen und beenden
+
+--version:
+  en: display the version and exit
+  de: die Version anzeigen und beenden
+
+false:
+  en: false
+  de: falsch
+
+true:
+  en: true
+  de: wahr
+...
 ```
+
+Regarding the structure of the simplified and strictly line-oriented YAML file, the groups used as identifiers for the translations are given without indentation, followed by a colon. This creates a key in an associative array. The respective value is another associative array, this time holding the translation, with the language identifier as key and the translated string as value. The key must be indented by exactly two spaces, followed by a colon and another space. Then, either the translation can be given or a greater-than sign (`">"`). All lines given afterwards that are indented by exactly four spaces are concatenated and used as translated string.
+
+You can optionally add line comments, though not in-line comments, and structure the file using empty lines or YAML blocks with three hyphens (`"---"`) or three dots (`"..."`). Since the purpose of the YAML file is to store a translation, not to serialize arbitrary data, more advanced features (like JSON-like in-line associative arrays) aren't supported by the argparser, and an error is thrown for unrecognized structures.
+
+If a group identifier is missing, the argparser will emit a warning if and only if the state which uses the translation is reached, most commonly when the user requests the help message. In order not to miss a key, you can simply re-use the YAML file provided with the argparser.
 
 Now, the argparser is provided with the arguments definition, help, and translation file for the current locale. Thus, the help message can be generated in localized form, according to the user's `LANG`.
 
@@ -1420,7 +1470,7 @@ The main difference is that, if you `export` (or `declare -x`) the variables to 
 - ***Type:*** *filepath* (Filepath)
 - ***Allowed values:*** Any legit filepath or the empty string `""`
 - ***Default value:*** `""`
-- ***Description:*** The path to a CSV file holding the translation of auto-generated parts in the help and usage messages. This file can be used by multiple scripts. As a CSV file, it contains the translation in a column-wise layout, separated by [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1) characters. The first row (the header) specifies the language identifier used for the [`ARGPARSER_LANGUAGE`](#argparser_language), thereby, one column must be the default `"en"`. As many languages as desired can be given, which allows the localization for multiple languages with just one `ARGPARSER_TRANSLATION_FILE`. The columns, including `"en"`, can be in any order.
+- ***Description:*** The path to a simplified YAML file holding the translation of auto-generated parts in the help and usage messages. This file can be used by multiple scripts. As a YAML file, it contains the translation in a key&ndash;value layout, separated by colons and using significant indentation. Each group key must specify the language identifier used for the [`ARGPARSER_LANGUAGE`](#argparser_language). As many languages as desired can be given, which allows the localization for multiple languages with just one `ARGPARSER_TRANSLATION_FILE`. The rows can be in any order.
 
 ### `ARGPARSER_UNSET_ARGS`
 

@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-11
+# Last Modification: 2025-02-17
 
 # Usage: Run this script with "bash test_help_message.sh".
 
@@ -14,7 +14,7 @@ ARGPARSER_ARG_DEF_FILE="arguments_${LANG::2}.csv"
 ARGPARSER_ARG_DEF_FILE_HAS_HEADER=false
 ARGPARSER_HELP_FILE="help_message_${LANG::2}.txt"
 ARGPARSER_LANGUAGE="${LANG::2}"
-ARGPARSER_TRANSLATION_FILE="translation.csv"
+ARGPARSER_TRANSLATION_FILE="translation.yaml"
 
 # Set the arguments.
 # shellcheck disable=SC2190  # Indexed, not associative array.
