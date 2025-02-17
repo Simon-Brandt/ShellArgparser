@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-14
+# Last Modification: 2025-02-17
 
 # TODO: Support argparser configuration by command-line arguments and
 #       config file.
@@ -193,7 +193,7 @@ function argparser_is_variable_identifier() {
     # - $1: the variable whose value to check
     #
     # Output:
-    # - true, if the variable's value is usable as identifer
+    # - true, if the variable's value is usable as identifier
     # - false, else
 
     # Define the local variable.
@@ -2980,87 +2980,95 @@ function argparser_set_args() {
 # error messages.
 function argparser_read_translation() {
     # Read the translation of the auto-generated text for help and usage
-    # messages into an associative array.
+    # messages from the YAML file into an associative array.
     #
     # Nonlocals:
     # - dictionary: the associative array holding the translation text
     #
     # Environment:
-    # - ARGPARSER_ARG_DELIMITER_1 (read-only)
     # - ARGPARSER_LANGUAGE (read-only)
     # - ARGPARSER_TRANSLATION_FILE (read-only)
 
     # Define the local variables.
-    local column
     local error_message
-    local -a header
-    local -a line
-    local source_column
-    local target_column
-    local warning_message
+    local -a error_messages
+    local group
+    local is_continued
+    local line
+    local -a lines
+    local translation
 
-    # Read the first line (the header) of ${ARGPARSER_TRANSLATION_FILE}
-    # to get the column indices for the source ("en") and target
-    # language (${ARGPARSER_LANGUAGE}).
-    IFS="${ARGPARSER_ARG_DELIMITER_1}" read -r -a header \
-        < "${ARGPARSER_TRANSLATION_FILE}"
+    # Read the translation file.
+    mapfile -t lines < "${ARGPARSER_TRANSLATION_FILE}"
+    group=""
+    translation=""
+    is_continued=false
+    error_messages=( )
 
-    source_column=""
-    target_column=""
-    for column in "${!header[@]}"; do
-        if [[ "${header[column]}" == "en" ]]; then
-            source_column="${column}"
-        fi
-        if [[ "${header[column]}" == "${ARGPARSER_LANGUAGE}" ]]; then
-            target_column="${column}"
+    for line in "${lines[@]}"; do
+        if [[ -z "${line}" || "${line}" == \#* ]]; then
+            # The line is empty or commented.
+            continue
+        elif [[ "${line}" == "---" || "${line}" == "..." ]]; then
+            # The line starts or end a YAML block, which can be ignored.
+            continue
+        elif [[ "${line}" == "  ${ARGPARSER_LANGUAGE}: >" ]]; then
+            # The line starts the translation to the desired language.
+            translation=""
+            is_continued=true
+        elif [[ "${line}" == "  ${ARGPARSER_LANGUAGE}: "* ]]; then
+            # The line contains the translation to the desired language.
+            translation="${line#*: }"
+        elif [[ "${line}" == "  "*": >" ]]; then
+            # The line start the translation to another language, which
+            # can be ignored, along all following lines until the start
+            # of a new YAML key.
+            is_continued=true
+        elif [[ "${line}" == "  "*([^ ])": "* ]]; then
+            # The line contains the translation to another language,
+            # which can be ignored.
+            continue
+        elif [[ "${line}" == "    "* && "${is_continued}" == true ]]; then
+            # The line continues the translation from the previous line.
+            if [[ -z "${translation}" ]]; then
+                translation="${line#    }"
+            else
+                translation+=" ${line#    }"
+            fi
+        elif [[ "${line}" == *:  && "${line::1}" != " " ]]; then
+            # The line starts a new group of translations.  Save the
+            # previous translation under the previous group name, then
+            # extract the new one.
+            if [[ -n "${group}" ]]; then
+                dictionary[${group}]="${translation}"
+            fi
+            group="${line%:}"
+            translation=""
+            is_continued=false
+        else
+            error_messages+=("Error: Unrecognized YAML line \"${line}\".")
         fi
     done
 
-    # If the column for the source language isn't given, output an error
-    # message and exit.
-    if [[ -z "${source_column}" ]]; then
-        error_message="Error: In the translation file "
-        error_message+="\"${ARGPARSER_TRANSLATION_FILE}\", the column "
-        error_message+="\"en\" is missing, but required as source for "
-        error_message+="translation."
-
-        argparser_print_error_or_warning_message "error" false true \
-            "${error_message}"
+    # Add the last group to the dictionary.
+    if [[ -n "${group}" ]]; then
+        dictionary[${group}]="${translation}"
     fi
 
-    # If the column for the target language isn't given, output a
-    # warning message and set the target language to the source language
-    # to be able to continue.
-    if [[ -z "${target_column}" ]]; then
-        warning_message="Warning: In the translation file "
-        warning_message+="\"${ARGPARSER_TRANSLATION_FILE}\", the column "
-        warning_message+="\"${ARGPARSER_LANGUAGE}\" is missing, but required "
-        warning_message+="as target for translation.  For convenience, the "
-        warning_message+="source language \"en\" is used, instead."
-
-        argparser_print_error_or_warning_message "warning" false false \
-            "${warning_message}"
-
-        target_column="${source_column}"
-    fi
-
-    # Read all lines of the translation file and save the translation in
-    # the associative array ${dictionary}, using the source language as
-    # key and the target language as value.  Then, remove the header
-    # field from the array, which was also read.
-    while IFS="${ARGPARSER_ARG_DELIMITER_1}" read -r -a line; do
-        dictionary[${line[${source_column}]}]="${line[${target_column}]}"
-    done < "${ARGPARSER_TRANSLATION_FILE}"
-
-    unset "dictionary[${header[${source_column}]}]"
+    # Colorize, sort, filter, and print all error messages.
+    argparser_print_error_or_warning_message "error" true false \
+        "${error_messages[@]}"
 }
 
 function argparser_translate() {
     # Translate the given string.
     #
     # Arguments:
-    # - $@: the string to translate, possibly given as substrings to
-    #       join
+    # - $1: the key (identifier) of the string in the dictionary
+    # - $2: the string to use as fallback if no translation file is
+    #       given or the key does not exist
+    # - $@: the variable names to use for interpolation of "%s" format
+    #       specifiers in the string
     #
     # Nonlocals:
     # - dictionary: the associative array holding the translation text
@@ -3072,15 +3080,17 @@ function argparser_translate() {
     # Output:
     # - the translated string
 
-    # Define the local variable.
+    # Define the local variables.
+    local key
     local string
-    local substring
+    local var
+    local -a vars
 
-    # Read the argument.
-    string=""
-    for substring in "$@"; do
-        string+="${substring}"
-    done
+    # Read the arguments.
+    key="$1"
+    string="$2"
+    shift 2
+    vars=("$@")
 
     # If an ${ARGPARSER_TRANSLATION_FILE} was given (and thus the
     # translation was requested), translate the string by fetching its
@@ -3089,25 +3099,27 @@ function argparser_translate() {
     # the dictionary, output a warning message and the untranslated
     # string.
     if [[ -n "${ARGPARSER_TRANSLATION_FILE}" ]]; then
-        if [[ "$(argparser_in_array "${string}" \
-            "${!dictionary[@]}")" == true ]]
+        if [[ "$(argparser_in_array "${key}" "${!dictionary[@]}")" == true ]]
         then
-            printf '%s' "${dictionary[${string}]}"
+            string="${dictionary[${key}]}"
         else
             warning_message="Warning: In the translation file "
-            warning_message+="\"${ARGPARSER_TRANSLATION_FILE}\", the source "
-            warning_message+="string \"${string}\" is missing. For "
+            warning_message+="\"${ARGPARSER_TRANSLATION_FILE}\", the "
+            warning_message+="identifier \"${key}\" or its translation to "
+            warning_message+="\"${ARGPARSER_LANGUAGE}\" is missing.  For "
             warning_message+="convenience, the untranslated string is used, "
             warning_message+="instead."
 
             argparser_print_error_or_warning_message "warning" false false \
                 "${warning_message}"
-
-            printf '%s' "${string}"
         fi
-    else
-        printf '%s' "${string}"
     fi
+
+    # Replace the format specifiers in the string and output it.
+    for var in "${vars[@]}"; do
+        string="${string/"%s"/${var}}"
+    done
+    printf '%s' "${string}"
 }
 
 function argparser_create_help_message() {
@@ -3269,18 +3281,20 @@ function argparser_create_help_message() {
         # Set the third column's value.
         if [[ "${default_values}" != "-" && "${is_deprecated}" == true ]]
         then  # Default and deprecated.
-            new_col_3_value="($(argparser_translate "DEPRECATED")) "
+            new_col_3_value="($(argparser_translate "Deprecated" \
+                "DEPRECATED")) "
             new_col_3_value+="${help_text} ("
-            new_col_3_value+="$(argparser_translate "default"): "
+            new_col_3_value+="$(argparser_translate "Default" "default"): "
             new_col_3_value+="${default_values})"
             col_3+=("${new_col_3_value}")
         elif [[ "${default_values}" != "-" ]]; then  # Default only
             new_col_3_value="${help_text} ("
-            new_col_3_value+="$(argparser_translate "default"): "
+            new_col_3_value+="$(argparser_translate "Default" "default"): "
             new_col_3_value+="${default_values})"
             col_3+=("${new_col_3_value}")
         elif [[ "${is_deprecated}" == true ]]; then  # Deprecated only.
-            new_col_3_value="($(argparser_translate "DEPRECATED")) "
+            new_col_3_value="($(argparser_translate "Deprecated" \
+                "DEPRECATED")) "
             new_col_3_value+="${help_text}"
             col_3+=("${new_col_3_value}")
         else  # No default nor deprecated.
@@ -3460,30 +3474,35 @@ function argparser_create_help_message() {
             # Set the third column's value.
             if [[ "${arg_number}" == 0  && "${is_deprecated}" == true ]]
             then  # Flag and deprecated.
-                new_col_3_value="($(argparser_translate "DEPRECATED")) "
+                new_col_3_value="($(argparser_translate "Deprecated" \
+                    "DEPRECATED")) "
                 new_col_3_value+="${help_text} ("
-                new_col_3_value+="$(argparser_translate "default"): "
-                new_col_3_value+="$(argparser_translate "${default_values}"))"
+                new_col_3_value+="$(argparser_translate "Default" "default"): "
+                new_col_3_value+="$(argparser_translate "${default_values}" \
+                    "${default_values}"))"
                 new_col_3+=("${new_col_3_value}")
             elif [[ "${arg_number}" == 0 ]]; then  # Flag only.
                 new_col_3_value="${help_text} ("
-                new_col_3_value+="$(argparser_translate "default"): "
-                new_col_3_value+="$(argparser_translate "${default_values}"))"
+                new_col_3_value+="$(argparser_translate "Default" "default"): "
+                new_col_3_value+="$(argparser_translate "${default_values}"\
+                    "${default_values}"))"
                 new_col_3+=("${new_col_3_value}")
             elif [[ "${default_values}" != "-" && "${is_deprecated}" == true ]]
             then  # Default and deprecated.
-                new_col_3_value="($(argparser_translate "DEPRECATED")) "
+                new_col_3_value="($(argparser_translate "Deprecated" \
+                    "DEPRECATED")) "
                 new_col_3_value+="${help_text} ("
-                new_col_3_value+="$(argparser_translate "default"): "
+                new_col_3_value+="$(argparser_translate "Default" "default"): "
                 new_col_3_value+="${default_values})"
                 new_col_3+=("${new_col_3_value}")
             elif [[ "${default_values}" != "-" ]]; then  # Default only
                 new_col_3_value="${help_text} ("
-                new_col_3_value+="$(argparser_translate "default"): "
+                new_col_3_value+="$(argparser_translate "Default" "default"): "
                 new_col_3_value+="${default_values})"
                 new_col_3+=("${new_col_3_value}")
             elif [[ "${is_deprecated}" == true ]]; then  # Deprecated only.
-                new_col_3_value="($(argparser_translate "DEPRECATED")) "
+                new_col_3_value="($(argparser_translate "Deprecated" \
+                    "DEPRECATED")) "
                 new_col_3_value+="${help_text}"
                 new_col_3+=("${new_col_3_value}")
             else  # No default nor deprecated.
@@ -3532,19 +3551,21 @@ function argparser_create_help_message() {
     if [[ "${ARGPARSER_ADD_HELP}" == true ]]; then
         col_1+=("-h,")
         col_2+=("--help")
-        col_3+=("$(argparser_translate "display this help and exit")")
+        col_3+=("$(argparser_translate "--help" "display this help and exit")")
     fi
 
     if [[ "${ARGPARSER_ADD_USAGE}" == true ]]; then
         col_1+=("-u,")
         col_2+=("--usage")
-        col_3+=("$(argparser_translate "display the usage and exit")")
+        col_3+=("$(argparser_translate "--usage" \
+            "display the usage and exit")")
     fi
 
     if [[ "${ARGPARSER_ADD_VERSION}" == true ]]; then
         col_1+=("-V,")
         col_2+=("--version")
-        col_3+=("$(argparser_translate "display the version and exit")")
+        col_3+=("$(argparser_translate "--version" \
+            "display the version and exit")")
     fi
 
     # Limit the width of each column of the help message to
@@ -3727,18 +3748,18 @@ function argparser_create_help_message() {
     done
 
     # Set the help message's usage line, including the script's name.
-    usage="$(argparser_translate "Usage"): ${ARGPARSER_SCRIPT_NAME}"
+    usage="$(argparser_translate "Usage" "Usage"): ${ARGPARSER_SCRIPT_NAME}"
 
     # Add a hint for the optional keyword arguments (as summary), if
     # existing.
     if [[ "${has_default_args}" == true ]]; then
-        usage+=" [$(argparser_translate "OPTIONS")]"
+        usage+=" [$(argparser_translate "Options" "OPTIONS")]"
     fi
 
     # Add a hint for the mandatory keyword arguments (as summary), if
     # existing.
     if [[ "${has_required_args}" == true ]]; then
-        usage+=" $(argparser_translate "ARGUMENTS")"
+        usage+=" $(argparser_translate "Arguments" "ARGUMENTS")"
     fi
 
     # Add the names of the positional arguments, if existing.
@@ -3760,8 +3781,9 @@ function argparser_create_help_message() {
     help_message_groups["Usage"]="${usage}"
 
     # Set the remark.
-    remark="$(argparser_translate "Mandatory arguments to long options are " \
-        "mandatory for short options too")."
+    remark="Mandatory arguments to long options are mandatory for short "
+    remark+="options too"
+    remark="$(argparser_translate "Mandatory arguments" "${remark}")."
     remark+=$'\n'
     help_message_groups["Remark"]="${remark}"
 
@@ -3874,7 +3896,7 @@ function argparser_create_usage_message() {
     # Output the usage message's header, giving the script's name and
     # the existence of the -h | --help, -u | --usage, and -V | --version
     # arguments.
-    header="$(argparser_translate "Usage"): ${ARGPARSER_SCRIPT_NAME}"
+    header="$(argparser_translate "Usage" "Usage"): ${ARGPARSER_SCRIPT_NAME}"
     if [[ "${ARGPARSER_USAGE_MESSAGE_OPTION_TYPE}" == "short" ]]; then
         if [[ "${ARGPARSER_ADD_HELP}" == true \
             && "${ARGPARSER_ADD_USAGE}" == true \
@@ -4656,6 +4678,17 @@ function argparser_main() {
     is_extglob_set="$(shopt -p extglob)"
     shopt -s extglob
 
+    # If ${ARGPARSER_TRANSLATION_FILE} isn't set to the empty string,
+    # read the translation file.  To be able to use the localized name
+    # of ${ARGPARSER_POSITIONAL_ARG_GROUP} in the arguments definition
+    # and help message, translate it.
+    if [[ -n "${ARGPARSER_TRANSLATION_FILE}" ]]; then
+        argparser_read_translation
+
+        ARGPARSER_POSITIONAL_ARG_GROUP="$(argparser_translate \
+            "Positional arguments" "${ARGPARSER_POSITIONAL_ARG_GROUP}")"
+    fi
+
     # Check if the variable that ${ARGPARSER_ARG_ARRAY_NAME} refers to
     # is defined.  If not, guess how it may be called by searching the
     # set variables (not functions, hence the set POSIX mode) for a
@@ -4759,17 +4792,6 @@ function argparser_main() {
         # definition is useless or even impossible.
         argparser_print_error_or_warning_message "error" true true \
             "${error_messages[@]}"
-    fi
-
-    # If ${ARGPARSER_TRANSLATION_FILE} isn't set to the empty string,
-    # read the translation file.  To be able to use the localized name
-    # of ${ARGPARSER_POSITIONAL_ARG_GROUP} in the arguments definition
-    # and help message, translate it.
-    if [[ -n "${ARGPARSER_TRANSLATION_FILE}" ]]; then
-        argparser_read_translation
-
-        ARGPARSER_POSITIONAL_ARG_GROUP="$(argparser_translate \
-            "${ARGPARSER_POSITIONAL_ARG_GROUP}")"
     fi
 
     # Parse the script's given arguments.
