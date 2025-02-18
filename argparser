@@ -717,10 +717,11 @@ function argparser_check_env_vars() {
     # to set the variables himself.
     #
     # The following environment variables are unchecked:
-    # - ARGPARSER_DICTIONARY
-    # - ARGPARSER_POSITIONAL_ARG_GROUP
-    # - ARGPARSER_SCRIPT_NAME
-    # - ARGPARSER_VERSION
+    # - ARGPARSER_DICTIONARY (checked earlier / auto-set)
+    # - ARGPARSER_LANGUAGE (arbitrary value)
+    # - ARGPARSER_POSITIONAL_ARG_GROUP (arbitrary value)
+    # - ARGPARSER_SCRIPT_NAME (arbitrary value)
+    # - ARGPARSER_VERSION (arbitrary value)
     #
     # Environment:
     # - ARGPARSER_ADD_HELP (read-only)
@@ -744,7 +745,6 @@ function argparser_check_env_vars() {
     # - ARGPARSER_HELP_FILE_INCLUDE_CHAR (read-only)
     # - ARGPARSER_HELP_FILE_KEEP_COMMENTS (read-only)
     # - ARGPARSER_HELP_STYLE (read-only)
-    # - ARGPARSER_LANGUAGE (read-only)
     # - ARGPARSER_MAX_COL_WIDTH_1 (read-only)
     # - ARGPARSER_MAX_COL_WIDTH_2 (read-only)
     # - ARGPARSER_MAX_COL_WIDTH_3 (read-only)
@@ -898,7 +898,6 @@ function argparser_check_env_vars() {
     vars=(
         ARGPARSER_ARG_DEF_FILE
         ARGPARSER_HELP_FILE
-        ARGPARSER_TRANSLATION_FILE
         ARGPARSER_USAGE_FILE
     )
     for var in "${vars[@]}"; do
@@ -1021,10 +1020,10 @@ function argparser_check_env_vars() {
     # colorized.  Thus, set the style to its default value.  The same
     # holds true for ${ARGPARSER_ERROR_EXIT_CODE}.
     for error_message in "${error_messages[@]}"; do
-        if [[ "${error_message}" == *"ARGPARSER_ERROR_STYLE"* ]]; then
-            ARGPARSER_ERROR_STYLE="red,bold,reverse"
-        elif [[ "${error_message}" == *"ARGPARSER_ERROR_EXIT_CODE"* ]]; then
+        if [[ "${error_message}" == *"ARGPARSER_ERROR_EXIT_CODE"* ]]; then
             ARGPARSER_ERROR_EXIT_CODE=1
+        elif [[ "${error_message}" == *"ARGPARSER_ERROR_STYLE"* ]]; then
+            ARGPARSER_ERROR_STYLE="red,bold,reverse"
         fi
     done
 
@@ -3177,6 +3176,7 @@ function argparser_read_translation() {
     # - ARGPARSER_TRANSLATION_FILE (read-only)
 
     # Define the local variables.
+    local attributes
     local error_message
     local -a error_messages
     local group
@@ -3186,7 +3186,40 @@ function argparser_read_translation() {
     local -a lines
     local translation
 
-    # Read the translation file.
+    # Read the translation file.  If it doesn't exist or isn't readable,
+    # output an error message and exit.  Since at this point of
+    # invokation, the environment variables aren't checked, yet, set the
+    # needed ones to default values, if ${ARGPARSER_CHECK_ENV_VARS}
+    # isn't set to false (and by this, the checking hasn't been
+    # explicitly disabled).
+    attributes="$(argparser_check_file "${ARGPARSER_TRANSLATION_FILE}")"
+    if [[ "${attributes}" != 0000 ]]; then
+        error_message="Error: The environment variable \"%s\" is set to "
+        error_message+="\"%s\", but the referenced file "
+        case "${attributes}" in
+            0001) error_message+="is empty." ;;
+            0010) error_message+="is not readable." ;;
+            0011) error_message+="is not readable and empty." ;;
+            0100) error_message+="is not a regular file." ;;
+            0101) error_message+="is not a regular file and empty." ;;
+            0110)
+                error_message+="is not a regular file and not readable."
+                ;;
+            0111)
+                error_message+="is not a regular file, not readable, and "
+                error_message+="empty."
+                ;;
+            1111) error_message+="does not exist." ;;
+        esac
+
+        if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
+            ARGPARSER_ERROR_EXIT_CODE=1
+            ARGPARSER_ERROR_STYLE="red,bold,reverse"
+        fi
+        argparser_print_error_or_warning_message "error" false true \
+            "${error_message}"
+    fi
+
     mapfile -t lines < "${ARGPARSER_TRANSLATION_FILE}"
     group=""
     language=""
