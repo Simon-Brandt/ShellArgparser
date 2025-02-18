@@ -17,7 +17,6 @@ The argparser is a designed to be an easy-to-use, yet powerful command-line argu
     - [Arguments definition files](#arguments-definition-files)
     - [Help and usage message localization](#help-and-usage-message-localization)
     - [Version messages](#version-messages)
-    - [Error and warning messages](#error-and-warning-messages)
     - [Message styles](#message-styles)
   - [Include directives](#include-directives)
     - [`@All` directive](#all-directive)
@@ -1016,7 +1015,7 @@ true:
 ...
 ```
 
-Regarding the structure of the simplified and strictly line-oriented YAML file, the groups used as identifiers for the translations are given without indentation, followed by a colon. This creates a key in an associative array. The respective value is another associative array, this time holding the translation, with the language identifier as key and the translated string as value. The key must be indented by exactly two spaces, followed by a colon and another space. Then, either the translation can be given or a greater-than sign (`">"`). All lines given afterwards that are indented by exactly four spaces are concatenated and used as translated string.
+Regarding the structure of the simplified and strictly line-oriented YAML file, the groups used as identifiers for the translations are given without indentation, followed by a colon. This creates a key in an associative array. The respective value is another associative array, this time holding the translation, with the language identifier as key and the translated string as value. The key must be indented by exactly two spaces, followed by a colon and another space. Then, either the translation can be given or a greater-than sign (`">"`). All lines given afterwards that are indented by exactly four spaces are concatenated and used as translated string. In the translation, you can (and should) use the format specifier `%s` to denote the positions that the argparser should use for the interpolation with variable values, which cannot be directly given in the translation.
 
 You can optionally add line comments, though not in-line comments, and structure the file using empty lines or YAML blocks with three hyphens (`"---"`) or three dots (`"..."`). Since the purpose of the YAML file is to store a translation, not to serialize arbitrary data, more advanced features (like JSON-like in-line associative arrays) aren't supported by the argparser, and an error is thrown for unrecognized structures.
 
@@ -1194,6 +1193,7 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_CHECK_ARG_DEFINITION`](#argparser_check_arg_definition)           | *bool*                             | `false`                  |
 | [`ARGPARSER_CHECK_ENV_VARS`](#argparser_check_env_vars)                       | *bool*                             | `false`                  |
 | [`ARGPARSER_COUNT_FLAGS`](#argparser_count_flags)                             | *bool*                             | `false`                  |
+| [`ARGPARSER_DICTIONARY`](#argparser_dictionary)                               | *dict*                             | *None* (unset)           |
 | [`ARGPARSER_ERROR_EXIT_CODE`](#argparser_error_exit_code)                     | *int*                              | `1`                      |
 | [`ARGPARSER_ERROR_STYLE`](#argparser_error_style)                             | *str*                              | `"red,bold,reverse"`     |
 | [`ARGPARSER_HELP_EXIT_CODE`](#argparser_help_exit_code)                       | *int*                              | `0`                      |
@@ -1333,6 +1333,13 @@ The argparser defines a large set of environment variables, each following the n
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
 - ***Description:*** Whether to count flags instead of setting them to `true` or `false` based on the last prefix used on the command line. When `ARGPARSER_COUNT_FLAGS` is set to `false`, `-a -a +a` would result in `a` being set to `false`, since the last prefix was a plus sign. When `ARGPARSER_COUNT_FLAGS` is set to `true` instead, `a` would be set to `1`, as any `true` (hyphen) increases the count by `1` and any `false` (plus sign) decreases it by `1`. Flags that are absent from the command line are assigned `1` if their default value is `true`, and `-1` if their default value is `false`. This results in the same behavior when a flag is `true` per default and absent, or set with `-a` (yielding `a = 1`); or when a flag is `false` per default and absent, or set with `+a` (yielding `a = -1`). Counting flags can be helpful when, *e.g.*, different levels of verbosity are allowed. If [`ARGPARSER_ALLOW_OPTION_MERGING`](#argparser_allow_option_merging) is also set to `true`, the user can give `-vvv` on the command line for the third level of verbosity (given it's handled by your script).
+
+### `ARGPARSER_DICTIONARY`
+
+- ***Type:*** *dict* (Dictionary / Associative array)
+- ***Allowed values:*** *None*
+- ***Default value:*** *None* (unset)
+- ***Description:*** The associative array in which to store the translation from the [`ARGPARSER_TRANSLATION_FILE`](#argparser_translation_file) for the [`ARGPARSER_LANGUAGE`](#argparser_language). This array *must not be set* by your script, else, an error is thrown. The argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#argparser_unset_env_vars) is set to `false`).
 
 ### `ARGPARSER_ERROR_EXIT_CODE`
 
