@@ -8,7 +8,6 @@
 #       config file.
 # TODO: Remove double meaning of "--" both for configuring the argparser
 #       and as normal command-line option.
-# TODO: Output error message for unsupported include directives.
 # TODO: Rewrite tests as correct test suites.
 # TODO: Write tests for keyword-only and positional-only arguments.
 # TODO: Speed up argparser by e.g. trying to remove command
@@ -3301,7 +3300,8 @@ function argparser_read_translation() {
             translation=""
             is_continued=false
         else
-            error_message="Error: Unrecognized YAML line \"%s\"."
+            error_message="Error: The YAML line \"%s\" could not be "
+            error_message+="recognized."
             error_message="$(argparser_translate "Error YAML" \
                 "${error_message}" "${line}")"
             error_messages+=("${error_message}")
@@ -4639,6 +4639,8 @@ function argparser_print_help_or_usage_message() {
     # Define the local variables.
     local arg_group
     local -a arg_groups
+    local error_message
+    local -a error_messages
     local exit
     local exit_code
     local file
@@ -4720,7 +4722,7 @@ function argparser_print_help_or_usage_message() {
         # comments still have ${line_type} set to "comment".  For
         # include directives, add the requested groups from the help or
         # usage message.
-        if [[ "${line}" == "${include_char}"* ]]; then
+        if [[ "${line::1}" == "${include_char}" ]]; then
             line_type="include directive"
             include_directive="${line:1}"
             if [[ "${help_type}" == "help" ]]; then
@@ -4741,13 +4743,35 @@ function argparser_print_help_or_usage_message() {
                     message+="${help_message_groups["Usage"]}"
                     message+=$'\n'
                     message+="${help_message_groups["Remark"]}"
+                elif [[ "$(argparser_in_array "${include_directive}" \
+                    "Help" "Remark" "Usage")" == true ]]
+                then
+                    message+="${help_message_groups["${include_directive}"]}"
+                elif [[ "$(argparser_in_array "${include_directive}" \
+                    "${arg_groups[@]}")" == true ]]
+                then
+                    message+="${help_message_groups["${include_directive}"]}"
                 else
-                    message+="${help_message_groups[${include_directive}]}"
+                    error_message="Error: The include directive \"%s\" could "
+                    error_message+="not be recognized."
+                    error_message="$(argparser_translate \
+                        "Error include directive" "${error_message}" \
+                        "${include_directive}")"
+                    error_messages+=("${error_message}")
                 fi
             else
-                message+="${usage_message_groups["Usage"]}"
+                if [[ "${include_directive}" == "All" ]]; then
+                    message+="${usage_message_groups["Usage"]}"
+                else
+                    error_message="Error: The include directive \"%s\" could "
+                    error_message+="not be recognized."
+                    error_message="$(argparser_translate \
+                        "Error include directive" "${error_message}" \
+                        "${include_directive}")"
+                    error_messages+=("${error_message}")
+                fi
             fi
-        elif [[ "${line}" == \#* && "${keep_comments}" == false ]]; then
+        elif [[ "${line::1}" == \# && "${keep_comments}" == false ]]; then
             line_type="comment"
         elif [[ -n "${line}" || "${keep_comments}" == true ]]; then
             line_type="text"
@@ -4763,7 +4787,11 @@ function argparser_print_help_or_usage_message() {
         elif [[ "${line_type}" == "include directive" ]]; then
             line_type="text"
         fi
-    done 
+    done
+
+    # Colorize, sort, filter, and print all error messages.
+    argparser_print_error_or_warning_message "error" true false \
+        "${error_messages[@]}"
 
     # Colorize and print the help or usage message, then exit, if
     # requested.
