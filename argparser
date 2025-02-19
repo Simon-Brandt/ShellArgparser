@@ -10,6 +10,7 @@
 #       and as normal command-line option.
 # TODO: Output error message for unsupported include directives.
 # TODO: Rewrite tests as correct test suites.
+# TODO: Write tests for keyword-only and positional-only arguments.
 # TODO: Speed up argparser by e.g. trying to remove command
 #       substitutions.
 # BUG:  Negative values after commas are interpreted as option names.
@@ -507,7 +508,8 @@ function argparser_uniq() {
     # - $@: the array to filter
     #
     # Output:
-    # - the filtered array as string concatenated with null characters
+    # - the filtered array as string, concatenated and terminated with
+    #   null characters
 
     # Define the local variables.
     local array
@@ -601,7 +603,8 @@ function argparser_sort() {
     # - $@: the array to sort
     #
     # Output:
-    # - the sorted array as string concatenated with null characters
+    # - the sorted array as string, concatenated and terminated with
+    #   null characters
 
     # Define the local variables.
     local array
@@ -1047,7 +1050,7 @@ function argparser_read_args_definition() {
     # Output:
     # - the parsed arguments definition as message or an error message,
     #   starting with "File: ", "Script: ", or "Error: " (translated),
-    #   possibly concatenated with null characters
+    #   concatenated and terminated with null characters
 
     # Define the local variables.
     local arg
@@ -1354,8 +1357,8 @@ function argparser_check_args_definition_names() {
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     #
     # Output:
-    # - the error messages, starting with "Error: ", possibly
-    #   concatenated with null characters
+    # - the error messages, starting with "Error: ", concatenated and
+    #   terminated with null characters
 
     # Define the local variables.
     local arg_key
@@ -1629,7 +1632,7 @@ function argparser_check_args_definition_positional_values() {
     #
     # Output:
     # - the error messages, starting with "Error: " (translated),
-    #   possibly concatenated with null characters
+    #   concatenated and terminated with null characters
 
     # Define the local variables.
     local arg_key
@@ -1909,7 +1912,7 @@ function argparser_check_args_definition_option_values() {
     #
     # Output:
     # - the error messages, starting with "Error: " (translated),
-    #   possibly concatenated with null characters
+    #   concatenated and terminated with null characters
 
     # Define the local variables.
     local arg_key
@@ -2268,7 +2271,8 @@ function argparser_split_args() {
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     #
     # Output:
-    # - the split arguments as string concatenated with null characters
+    # - the split arguments as string, concatenated and terminated with
+    #   null characters
 
     # Define the local variables.
     local given_arg
@@ -2280,10 +2284,9 @@ function argparser_split_args() {
     given_args=("$@")
 
     for given_arg in "${given_args[@]}"; do
-        # Split all arguments on ${ARGPARSER_ARG_DELIMITER_2}
-        # characters and output them.
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values \
-            <<< "${given_arg}"
+        # Split all arguments on ${ARGPARSER_ARG_DELIMITER_2} characters
+        # and output them.
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values <<< "${given_arg}"
 
         for value in "${values[@]}"; do
             printf '%s\0' "${value}"
