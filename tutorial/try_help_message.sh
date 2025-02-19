@@ -2,11 +2,12 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-10
+# Last Modification: 2025-02-19
 
 # Usage: Run this script with "bash test_help_message.sh".
 
-# Purpose: Test the functionality of the argparser.
+# Purpose: Demonstrate the functionality of the argparser regarding the
+# inclusion of a help file.
 
 # Source the argparser, reading the help message from a file.
 ARGPARSER_HELP_FILE="${0%/*}/../auxfiles/help_message.txt"
@@ -27,18 +28,3 @@ args=(
 )
 
 source argparser
-
-# The arguments can now be accessed as keys and values of the
-# associative array "args".  Further, they are set as variables to the
-# environment, from which they are expanded by globbing.
-for arg in "${!var@}"; do
-    printf 'The keyword argument "%s" is set to "%s".\n' \
-        "${arg}" "${args[${arg}]}"
-done | sort
-
-index=1
-for arg in "${!pos@}"; do
-    printf 'The positional argument "%s" on index %s is set to "%s".\n' \
-        "${arg}" "${index}" "${args[${arg}]}"
-    (( index++ ))
-done

@@ -2,11 +2,11 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-10
+# Last Modification: 2025-02-19
 
 # Usage: Run this script with "bash test_basic.sh".
 
-# Purpose: Test the functionality of the argparser.
+# Purpose: Demonstrate the basic functionality of the argparser.
 
 # Source the argparser.  As the arguments have multiple short and long
 # options, override the default column widths for the help message.
@@ -28,12 +28,8 @@ args=(
     "var_6:f,F:var-6,var-f:VAL_6:false:-:bool:0:Optional options:-:no value (flag) with default"
     "var_7:g,G:var-7,var-g:VAL_7:true:-:bool:0:Optional options:deprecated:no value (flag) with default"
 )
-set -o nounset
-(set -o posix; set) > 1.txt
-source argparser --read -- "$@"
-source argparser --set -- "$@"
-(set -o posix; set) > 2.txt
-# diff --side-by-side --suppress-common-lines 1.txt 2.txt
+
+source argparser
 
 # The arguments can now be accessed as keys and values of the
 # associative array "args".  Further, they are set as variables to the

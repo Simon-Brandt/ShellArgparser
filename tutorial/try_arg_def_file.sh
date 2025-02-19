@@ -2,11 +2,12 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-10
+# Last Modification: 2025-02-19
 
 # Usage: Run this script with "bash test_arg_def_file.sh".
 
-# Purpose: Test the functionality of the argparser.
+# Purpose: Demonstrate the functionality of the argparser regarding the
+# inclusion of an arguments definition file.
 
 # Set the argparser, reading the arguments definition from a file.
 ARGPARSER_ARG_DEF_FILE="${0%/*}/../auxfiles/arguments.csv"

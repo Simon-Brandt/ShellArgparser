@@ -675,7 +675,7 @@ For demonstration, we take a stripped-down version of our `try_argparser.sh` scr
 #!/bin/bash
 
 # Source the argparser, reading the help message from a file.
-ARGPARSER_HELP_FILE="help_message.txt"
+ARGPARSER_HELP_FILE="${0%/*}/../auxfiles/help_message.txt"
 
 # Define the arguments.
 args=(
@@ -787,7 +787,7 @@ Using a separate arguments definition file allows you to share the definition ac
 #!/bin/bash
 
 # Set the argparser, reading the arguments definition from a file.
-ARGPARSER_ARG_DEF_FILE="arguments.csv"
+ARGPARSER_ARG_DEF_FILE="${0%/*}/../auxfiles/arguments.csv"
 
 # Set the arguments.
 args=(
@@ -887,11 +887,11 @@ then, in your script, you can set the `ARGPARSER_ARG_DEF_FILE` and `ARGPARSER_HE
 
 # Set the argparser, reading the arguments definition, help message, and
 # translation from a file.
-ARGPARSER_ARG_DEF_FILE="arguments_${LANG::2}.csv"
+ARGPARSER_ARG_DEF_FILE="${0%/*}/../auxfiles/arguments_${LANG::2}.csv"
 ARGPARSER_ARG_DEF_FILE_HAS_HEADER=false
-ARGPARSER_HELP_FILE="help_message_${LANG::2}.txt"
+ARGPARSER_HELP_FILE="${0%/*}/../auxfiles/help_message_${LANG::2}.txt"
 ARGPARSER_LANGUAGE="${LANG::2}"
-ARGPARSER_TRANSLATION_FILE="translation.yaml"
+ARGPARSER_TRANSLATION_FILE="${0%/*}/../auxfiles/translation.yaml"
 
 # Set the arguments.
 args=(
