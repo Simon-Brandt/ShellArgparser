@@ -461,7 +461,16 @@ Error arg def pos infinites:
     Fehler: Das positionale Argument mit dem Identifikator "%s" nimmt eine
     unbegrenzte Anzahl Werte, wie auch "%s", was das Parsen verunmöglicht.
 
-Error arg def pos infinite optional:
+Error arg def pos infinite optional 1:
+  en: >
+    Error: The positional argument with the identifier "%s" accepts an infinite
+    number of values, while being optional, which is not supported.
+  de: >
+    Fehler: Das positionale Argument mit dem Identifikator "%s" nimmt eine
+    unbegrenzte Anzahl Werte, während es optional ist, was nicht unterstützt
+    wird.
+
+Error arg def pos infinite optional 2:
   en: >
     Error: The positional argument with the identifier "%s" accepts an infinite
     number of values, while "%s" is optional, which renders parsing impossible.
