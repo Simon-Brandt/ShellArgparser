@@ -10,7 +10,7 @@
 # inclusion of a help file.
 
 # Source the argparser, reading the help message from a file.
-ARGPARSER_HELP_FILE="${0%/*}/../auxfiles/help_message.txt"
+ARGPARSER_HELP_FILE="${0%/*}/../resources/help_message.txt"
 
 # Define the arguments.
 # shellcheck disable=SC2190  # Indexed, not associative array.

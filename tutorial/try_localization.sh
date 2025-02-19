@@ -11,11 +11,11 @@
 
 # Set the argparser, reading the arguments definition, help message, and
 # translation from a file.
-ARGPARSER_ARG_DEF_FILE="${0%/*}/../auxfiles/arguments_${LANG::2}.csv"
+ARGPARSER_ARG_DEF_FILE="${0%/*}/../resources/arguments_${LANG::2}.csv"
 ARGPARSER_ARG_DEF_FILE_HAS_HEADER=false
-ARGPARSER_HELP_FILE="${0%/*}/../auxfiles/help_message_${LANG::2}.txt"
+ARGPARSER_HELP_FILE="${0%/*}/../resources/help_message_${LANG::2}.txt"
 ARGPARSER_LANGUAGE="${LANG::2}"
-ARGPARSER_TRANSLATION_FILE="${0%/*}/../auxfiles/translation.yaml"
+ARGPARSER_TRANSLATION_FILE="${0%/*}/../resources/translation.yaml"
 
 # Set the arguments.
 # shellcheck disable=SC2190  # Indexed, not associative array.

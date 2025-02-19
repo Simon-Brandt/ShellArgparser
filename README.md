@@ -121,7 +121,7 @@ PATH="/path/to/shell_argparser:${PATH}"
 
 ## Usage
 
-To give you an idea about the argparser's application, the following sections show some excerpts of scripts used for internal testing purposes, trying to guide you through the various features.
+To give you an idea about the argparser's application, the following sections show some excerpts of scripts used for internal testing purposes, in the herein given form located in the [tutorial](tutorial) directory, trying to guide you through the various features.
 
 > [!NOTE]
 > For the terminology in argument parsing, refer to the [Python optparse module documentation](https://docs.python.org/3/library/optparse.html#terminology "python.org &rightarrow; Python documentation &rightarrow; optparse module &rightarrow; terminology"). Additionally, for consistency with the positional arguments, options are herein partly referred to as keyword arguments.
@@ -675,7 +675,7 @@ For demonstration, we take a stripped-down version of our `try_argparser.sh` scr
 #!/bin/bash
 
 # Source the argparser, reading the help message from a file.
-ARGPARSER_HELP_FILE="${0%/*}/../auxfiles/help_message.txt"
+ARGPARSER_HELP_FILE="${0%/*}/../resources/help_message.txt"
 
 # Define the arguments.
 args=(
@@ -787,7 +787,7 @@ Using a separate arguments definition file allows you to share the definition ac
 #!/bin/bash
 
 # Set the argparser, reading the arguments definition from a file.
-ARGPARSER_ARG_DEF_FILE="${0%/*}/../auxfiles/arguments.csv"
+ARGPARSER_ARG_DEF_FILE="${0%/*}/../resources/arguments.csv"
 
 # Set the arguments.
 args=(
@@ -887,11 +887,11 @@ then, in your script, you can set the `ARGPARSER_ARG_DEF_FILE` and `ARGPARSER_HE
 
 # Set the argparser, reading the arguments definition, help message, and
 # translation from a file.
-ARGPARSER_ARG_DEF_FILE="${0%/*}/../auxfiles/arguments_${LANG::2}.csv"
+ARGPARSER_ARG_DEF_FILE="${0%/*}/../resources/arguments_${LANG::2}.csv"
 ARGPARSER_ARG_DEF_FILE_HAS_HEADER=false
-ARGPARSER_HELP_FILE="${0%/*}/../auxfiles/help_message_${LANG::2}.txt"
+ARGPARSER_HELP_FILE="${0%/*}/../resources/help_message_${LANG::2}.txt"
 ARGPARSER_LANGUAGE="${LANG::2}"
-ARGPARSER_TRANSLATION_FILE="${0%/*}/../auxfiles/translation.yaml"
+ARGPARSER_TRANSLATION_FILE="${0%/*}/../resources/translation.yaml"
 
 # Set the arguments.
 args=(

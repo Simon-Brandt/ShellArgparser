@@ -9,7 +9,7 @@
 # Purpose: Test the functionality of the argparser.
 
 # Set the argparser, reading the arguments definition from a file.
-ARGPARSER_ARG_DEF_FILE="${0%/*}/../auxfiles/arguments.csv"
+ARGPARSER_ARG_DEF_FILE="${0%/*}/../resources/arguments.csv"
 
 # Set the arguments.
 # shellcheck disable=SC2190  # Indexed, not associative array.
