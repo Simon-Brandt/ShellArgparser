@@ -22,6 +22,8 @@ The argparser is a designed to be an easy-to-use, yet powerful command-line argu
     - [`@All` directive](#all-directive)
     - [`@<ArgumentGroup>` directive](#argumentgroup-directive)
     - [`@Header` directive](#header-directive)
+    - [`@Remark` directive](#remark-directive)
+    - [`@Usage` directive](#usage-directive)
     - [`@Help` directive](#help-directive)
   - [Environment variables](#environment-variables)
     - [Overview over environment variables](#overview-over-environment-variables)
@@ -39,6 +41,7 @@ The argparser is a designed to be an easy-to-use, yet powerful command-line argu
     - [`ARGPARSER_CHECK_ARG_DEFINITION`](#argparser_check_arg_definition)
     - [`ARGPARSER_CHECK_ENV_VARS`](#argparser_check_env_vars)
     - [`ARGPARSER_COUNT_FLAGS`](#argparser_count_flags)
+    - [`ARGPARSER_DICTIONARY`](#argparser_dictionary)
     - [`ARGPARSER_ERROR_EXIT_CODE`](#argparser_error_exit_code)
     - [`ARGPARSER_ERROR_STYLE`](#argparser_error_style)
     - [`ARGPARSER_HELP_EXIT_CODE`](#argparser_help_exit_code)
@@ -768,8 +771,10 @@ The following section names (include directives) are supported, explained in gre
 - [`@<ArgumentGroup>`](#argumentgroup-directive)
 - [`@Header`](#header-directive)
 - [`@Help`](#help-directive)
+- [`@Remark`](#remark-directive)
+- [`@Usage`](#usage-directive)
 
-Thereby, `<ArgumentGroup>` can be the name of any argument group given in the arguments definition, like `"Mandatory options"` for the include directive `@Mandatory options` or `"Optional options"` for the include directive `@Optional options`. `@Header` prints the header, `@Help` the help, usage, and version options (depending on which of them are defined by [`ARGPARSER_ADD_HELP`](#argparser_add_help), [`ARGPARSER_ADD_USAGE`](#argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](#argparser_add_version)). Finally, the shorthand `@All` means to use the header, all argument groups, and the help options, in this order.
+Thereby, `<ArgumentGroup>` can be the name of any argument group given in the arguments definition, like `"Mandatory options"` for the include directive `@Mandatory options` or `"Optional options"` for the include directive `@Optional options`. `@Help` prints the help, usage, and version options (depending on which of them are defined by [`ARGPARSER_ADD_HELP`](#argparser_add_help), [`ARGPARSER_ADD_USAGE`](#argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](#argparser_add_version)), `@Remark` prints the remark that mandatory arguments to long options are mandatory for short options too, and `@Usage` prints the usage line. Finally, the shorthand `@All` means to print the usage line, the remark, all argument groups, and the help options, in this order, while `@Header` prints the usage line and the remark.
 
 Further, lines starting with a `"#"` character in the help file aren't printed if [`ARGPARSER_HELP_FILE_KEEP_COMMENTS`](#argparser_help_file_keep_comments) is set to `false` (the default). This allows you to comment your help file, perhaps to explain the structure&mdash;or just to write a header or footer with your name and debug email address inside.
 
@@ -1140,12 +1145,14 @@ The following section names (include directives) are supported in the help and u
 - [`@<ArgumentGroup>`](#argumentgroup-directive)
 - [`@Header`](#header-directive)
 - [`@Help`](#help-directive)
+- [`@Remark`](#remark-directive)
+- [`@Usage`](#usage-directive)
 
 Thereby, `<ArgumentGroup>` can be the name of any argument group given in the arguments definition, like `"Mandatory options"` for the include directive `@Mandatory options` or `"Optional options"` for the include directive `@Optional options`.
 
 ### `@All` directive
 
-The `@All` directive comprises all include directives in the following order: [`@Header`](#header-directive), [`@<ArgumentGroup>`](#argumentgroup-directive), and [`@Help`](#help-directive), separated from each other by a blank line.
+The `@All` directive comprises all include directives in the following order: [`@Usage`](#usage-directive), [`@Remark`](#remark-directive), [`@<ArgumentGroup>`](#argumentgroup-directive), and [`@Help`](#help-directive), separated from each other by a blank line.
 
 Consequently, the help message generated from the [`ARGPARSER_HELP_FILE`](#argparser_help_file) with the following content:
 
@@ -1156,7 +1163,9 @@ Consequently, the help message generated from the [`ARGPARSER_HELP_FILE`](#argpa
 is exactly identical to the one from the following content:
 
 ```text
-@Header
+@Usage
+
+@Remark
 
 @<ArgumentGroup>
 
@@ -1167,11 +1176,19 @@ is exactly identical to the one from the following content:
 
 ### `@<ArgumentGroup>` directive
 
-The `@<ArgumentGroup>` directive prints the help text for the respective `"<ArgumentGroup>"`, like `"Mandatory options"` for the include directive `@Mandatory options` or `"Optional options"` for the include directive `@Optional options`. Their order in the auto-generated help message would be alphabetical. Thus, if you have reasons for another structure, you need an [`ARGPARSER_HELP_FILE`](#argparser_help_file), denoting all arguments groups in the order preferred by you.
+The `@<ArgumentGroup>` directive prints the help text for the respective `"<ArgumentGroup>"`, like `"Mandatory options"` for the include directive `@Mandatory options` or `"Optional options"` for the include directive `@Optional options`. Their order in the auto-generated help message would be alphabetical for the keyword arguments, preceded by the group for the positional arguments (the [`ARGPARSER_POSITIONAL_ARG_GROUP`](#argparser_positional_arg_group)). Thus, if you have reasons for another structure, you need an [`ARGPARSER_HELP_FILE`](#argparser_help_file), denoting all arguments groups in the order preferred by you.
 
 ### `@Header` directive
 
-The `@Header` directive prints the line `Usage: <script_name> ...` (with `<script_name>` replaced by [`ARGPARSER_SCRIPT_NAME`](#argparser_script_name), defaulting to your script's name) and a note that mandatory arguments to long options are mandatory for short options too. This should be given just before all arguments.
+The `@Header` directive comprises the [`@Usage`](#usage-directive) and [`@Remark`](#remark-directive) include directive, separated from each other by a blank line, and is thus the shorthand for including both.
+
+### `@Remark` directive
+
+The `@Remark` directive prints the note that mandatory arguments to long options are mandatory for short options too. This should be given just before all arguments.
+
+### `@Usage` directive
+
+The `@Usage` directive prints the line `Usage: <script_name> ...`, with `<script_name>` replaced by [`ARGPARSER_SCRIPT_NAME`](#argparser_script_name), defaulting to your script's name. This should be given as first line.
 
 ### `@Help` directive
 
