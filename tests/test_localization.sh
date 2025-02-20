@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-17
+# Last Modification: 2025-02-20
 
 # Usage: Run this script with "bash test_help_message.sh".
 
@@ -10,11 +10,13 @@
 
 # Set the argparser, reading the arguments definition, help message, and
 # translation from a file.
-ARGPARSER_ARG_DEF_FILE="${0%/*}/../resources/arguments_${LANG::2}.csv"
+dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
+dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
+ARGPARSER_ARG_DEF_FILE="${dir}/arguments_${LANG::2}.csv"
 ARGPARSER_ARG_DEF_FILE_HAS_HEADER=false
-ARGPARSER_HELP_FILE="${0%/*}/../resources/help_message_${LANG::2}.txt"
+ARGPARSER_HELP_FILE="${dir}/help_message_${LANG::2}.txt"
 ARGPARSER_LANGUAGE="${LANG::2}"
-ARGPARSER_TRANSLATION_FILE="${0%/*}/../resources/translation.yaml"
+ARGPARSER_TRANSLATION_FILE="${dir}/translation.yaml"
 
 # Set the arguments.
 # shellcheck disable=SC2190  # Indexed, not associative array.

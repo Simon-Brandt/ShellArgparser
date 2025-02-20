@@ -665,7 +665,7 @@ The help message's structure aims at reproducing the commonly found structure in
 
 The argparser is not only able to compile a help message, but can also be guided by a separate file. Using the [`ARGPARSER_HELP_FILE`](#argparser_help_file) environment variable, to a certain degree, you can customize the help message's look and structure by moving the blocks the message consists of around and enriching it by arbitrary text.
 
-For demonstration, we take a stripped-down version of our `try_argparser.sh` script as `try_help_file.sh`, where we omit the alias names for the short and long options, for the sake of brevity.
+For demonstration, we take a stripped-down version of our `try_argparser.sh` script as `try_help_file.sh`, where we omit the alias names for the short and long options, for the sake of brevity. Note that using [`readlink`](https://man7.org/linux/man-pages/man1/readlink.1.html "man7.org &rightarrow; man pages &rightarrow; readlink(1)") is only required here to cope with the help file residing in the [resources](resources) directory, it is not necessary if you store the help file alongside your script in the same directory.
 
 <details open>
 
@@ -675,7 +675,9 @@ For demonstration, we take a stripped-down version of our `try_argparser.sh` scr
 #!/bin/bash
 
 # Source the argparser, reading the help message from a file.
-ARGPARSER_HELP_FILE="${0%/*}/../resources/help_message.txt"
+dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
+dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
+ARGPARSER_HELP_FILE="${dir}/help_message.txt"
 
 # Define the arguments.
 args=(
@@ -787,7 +789,9 @@ Using a separate arguments definition file allows you to share the definition ac
 #!/bin/bash
 
 # Set the argparser, reading the arguments definition from a file.
-ARGPARSER_ARG_DEF_FILE="${0%/*}/../resources/arguments.csv"
+dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
+dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
+ARGPARSER_ARG_DEF_FILE="${dir}/arguments.csv"
 
 # Set the arguments.
 args=(
@@ -887,11 +891,13 @@ then, in your script, you can set the `ARGPARSER_ARG_DEF_FILE` and `ARGPARSER_HE
 
 # Set the argparser, reading the arguments definition, help message, and
 # translation from a file.
-ARGPARSER_ARG_DEF_FILE="${0%/*}/../resources/arguments_${LANG::2}.csv"
+dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
+dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
+ARGPARSER_ARG_DEF_FILE="${dir}/arguments_${LANG::2}.csv"
 ARGPARSER_ARG_DEF_FILE_HAS_HEADER=false
-ARGPARSER_HELP_FILE="${0%/*}/../resources/help_message_${LANG::2}.txt"
+ARGPARSER_HELP_FILE="${dir}/help_message_${LANG::2}.txt"
 ARGPARSER_LANGUAGE="${LANG::2}"
-ARGPARSER_TRANSLATION_FILE="${0%/*}/../resources/translation.yaml"
+ARGPARSER_TRANSLATION_FILE="${dir}/translation.yaml"
 
 # Set the arguments.
 args=(

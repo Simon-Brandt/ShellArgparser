@@ -2,14 +2,16 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-10
+# Last Modification: 2025-02-20
 
 # Usage: Run this script with "bash test_help_message.sh".
 
 # Purpose: Test the functionality of the argparser.
 
 # Source the argparser, reading the help message from a file.
-ARGPARSER_HELP_FILE="${0%/*}/../resources/help_message.txt"
+dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
+dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
+ARGPARSER_HELP_FILE="${dir}/help_message.txt"
 
 # Define the arguments.
 # shellcheck disable=SC2190  # Indexed, not associative array.

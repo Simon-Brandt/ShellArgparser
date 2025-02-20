@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-19
+# Last Modification: 2025-02-20
 
 # Usage: Run this script with "bash test_arg_def_file.sh".
 
@@ -10,7 +10,9 @@
 # inclusion of an arguments definition file.
 
 # Set the argparser, reading the arguments definition from a file.
-ARGPARSER_ARG_DEF_FILE="${0%/*}/../resources/arguments.csv"
+dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
+dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
+ARGPARSER_ARG_DEF_FILE="${dir}/arguments.csv"
 
 # Set the arguments.
 # shellcheck disable=SC2190  # Indexed, not associative array.
