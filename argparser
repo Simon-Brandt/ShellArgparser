@@ -4849,6 +4849,7 @@ function argparser_print_error_or_warning_message() {
     # Environment:
     # - ARGPARSER_ERROR_EXIT_CODE (read-only)
     # - ARGPARSER_ERROR_STYLE (read-only)
+    # - ARGPARSER_SCRIPT_NAME (read-only)
     # - ARGPARSER_SILENCE_ERRORS (read-only)
     # - ARGPARSER_SILENCE_WARNINGS (read-only)
     # - ARGPARSER_WARNING_STYLE (read-only)
@@ -4900,6 +4901,7 @@ function argparser_print_error_or_warning_message() {
         fi
 
         for i in "${!messages[@]}"; do
+            messages[i]="${ARGPARSER_SCRIPT_NAME}: ${messages[i]}"
             messages[i]="$(argparser_colorize "${style}" "${messages[i]}" \
                 "${write_target}")"
         done
