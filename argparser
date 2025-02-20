@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-19
+# Last Modification: 2025-02-20
 
 # TODO: Support argparser configuration by command-line arguments and
 #       config file.
@@ -3229,6 +3229,8 @@ function argparser_read_translation() {
                 ;;
             1111) error_message+="does not exist." ;;
         esac
+        error_message="${error_message/"%s"/"ARGPARSER_TRANSLATION_FILE"}"
+        error_message="${error_message/"%s"/${ARGPARSER_TRANSLATION_FILE}}"
 
         if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
             ARGPARSER_ERROR_EXIT_CODE=1
