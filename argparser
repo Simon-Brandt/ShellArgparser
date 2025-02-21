@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-20
+# Last Modification: 2025-02-21
 
 # TODO: Support argparser configuration by command-line arguments and
 #       config file.
@@ -12,7 +12,6 @@
 # TODO: Write tests for keyword-only and positional-only arguments.
 # TODO: Speed up argparser by e.g. trying to remove command
 #       substitutions.
-# BUG:  Negative values after commas are interpreted as option names.
 
 # Usage: Source this script with "source argparser" inside the script
 # whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS} is set
@@ -2259,40 +2258,6 @@ function argparser_get_option_names() {
     printf '%s' "${option_names}"
 }
 
-function argparser_split_args() {
-    # Split all arguments given to the script on
-    # ${ARGPARSER_ARG_DELIMITER_2} characters.
-    #
-    # Arguments:
-    # - $@: the arguments to parse
-    #
-    # Environment:
-    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
-    #
-    # Output:
-    # - the split arguments as string, concatenated and terminated with
-    #   null characters
-
-    # Define the local variables.
-    local given_arg
-    local -a given_args
-    local value
-    local -a values
-
-    # Read the arguments.
-    given_args=("$@")
-
-    for given_arg in "${given_args[@]}"; do
-        # Split all arguments on ${ARGPARSER_ARG_DELIMITER_2} characters
-        # and output them.
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values <<< "${given_arg}"
-
-        for value in "${values[@]}"; do
-            printf '%s\0' "${value}"
-        done
-    done
-}
-
 function argparser_parse_arg() {
     # Parse an argument given to the script.
     #
@@ -2452,23 +2417,26 @@ function argparser_parse_long_option() {
     local long_option
     local -a long_options
     local prefix
+    local value
+    local -a values
 
     # Read the argument.
     given_arg="$1"
 
-    # Get the prefix, option name, and possibly value for the given
+    # Get the prefix, option name, and possibly values for the given
     # argument.
     prefix="${given_arg::1}"
     option_name="${given_arg:2}"
     if [[ "${given_arg}" =~ "=" ]]; then
         option_name="${option_name%%=*}"
-        value="${given_arg#*=}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values \
+            <<< "${given_arg#*=}"
     else
-        value=""
+        values=("")
     fi
     arg_key="$(argparser_get_arg_key "long" "${option_name}")"
 
-    # Output the argument, split into the option name and value, or an
+    # Output the argument, split into the option name and values, or an
     # error message.  In the latter case, output also the given
     # argument, such that values following the unknown argument are
     # assigned to this argument, not the last known one that got parsed.
@@ -2496,7 +2464,7 @@ function argparser_parse_long_option() {
 
         # Count the number of matches of the argument among the
         # abbreviated long option names. If it matches once, output the
-        # argument identifier and possibly the value following the
+        # argument identifier and possibly the values following the
         # equals sign ("=").  If multiple or no option names are
         # matched, output an error message, instead.
         count="$(argparser_count "${option_name}" "${abbr_long_options[@]}")"
@@ -2510,12 +2478,14 @@ function argparser_parse_long_option() {
                 fi
             done
 
-            if [[ -n "${value}" ]]; then
+            if [[ -n "${values[0]}" ]]; then
                 # Output the argument identifier, the prefix, and the
-                # value.
+                # values.
                 printf 'Argument: %s\0' "${arg_key}"
                 printf 'Prefix: %s\0' "${prefix}"
-                printf 'Value: %s\0' "${value}"
+                for value in "${values[@]}"; do
+                    printf 'Value: %s\0' "${value}"
+                done
             else
                 # Output the argument identifier and the prefix.
                 printf 'Argument: %s\0' "${arg_key}"
@@ -2541,12 +2511,14 @@ function argparser_parse_long_option() {
         fi
     else
         if [[ -n "${arg_key}" ]]; then
-            if [[ -n "${value}" ]]; then
+            if [[ -n "${values[0]}" ]]; then
                 # Output the argument identifier, the prefix, and the
-                # value.
+                # values.
                 printf 'Argument: %s\0' "${arg_key}"
                 printf 'Prefix: %s\0' "${prefix}"
-                printf 'Value: %s\0' "${value}"
+                for value in "${values[@]}"; do
+                    printf 'Value: %s\0' "${value}"
+                done
             else
                 # Output the argument identifier and the prefix.
                 printf 'Argument: %s\0' "${arg_key}"
@@ -2592,24 +2564,26 @@ function argparser_parse_short_option() {
     local prefix
     local option_name
     local value
+    local -a values
 
     # Read the argument.
     given_arg="$1"
 
-    # Get the prefix, option name, and possibly value for the given
+    # Get the prefix, option name, and possibly values for the given
     # argument.
     prefix="${given_arg::1}"
     option_name="${given_arg:1}"
     if [[ "${given_arg}" =~ "=" ]]; then
         option_name="${option_name%%=*}"
-        value="${given_arg#*=}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values \
+            <<< "${given_arg#*=}"
     else
-        value=""
+        values=("")
     fi
     arg_key="$(argparser_get_arg_key "short" "${option_name}")"
 
     # Get the argument identifier for the given (and perhaps merged)
-    # argument and output it, possibly along with the value following
+    # argument and output it, possibly along with the values following
     # the equals sign ("=").
     if [[ "${ARGPARSER_ALLOW_OPTION_MERGING}" == true ]]; then
         # Split the combined short option name, which may end in a
@@ -2649,19 +2623,23 @@ function argparser_parse_short_option() {
             fi
         done
 
-        if [[ -n "${value}" ]]; then
-            # Output the value, which is given after an equals sign
+        if [[ -n "${values[0]}" ]]; then
+            # Output the values, which are given after an equals sign
             # ("=").
-            printf 'Value: %s\0' "${value}"
+            for value in "${values[@]}"; do
+                printf 'Value: %s\0' "${value}"
+            done
         fi
     else
         if [[ -n "${arg_key}" ]]; then
-            if [[ -n "${value}" ]]; then
+            if [[ -n "${values[0]}" ]]; then
                 # Output the argument identifier, the prefix, and the
-                # value.
+                # values.
                 printf 'Argument: %s\0' "${arg_key}"
                 printf 'Prefix: %s\0' "${prefix}"
-                printf 'Value: %s\0' "${value}"
+                for value in "${values[@]}"; do
+                    printf 'Value: %s\0' "${value}"
+                done
             else
                 # Output the argument identifier and the prefix.
                 printf 'Argument: %s\0' "${arg_key}"
@@ -2706,7 +2684,6 @@ function argparser_parse_positional_args() {
     local arg_number
     local args_count
     local default_args_count
-    local default_value
     local -a default_values
     local error_message
     local given_arg
@@ -2714,9 +2691,16 @@ function argparser_parse_positional_args() {
     local i
     local index
     local required_args_count
+    local -a values
 
-    # Read the arguments.
-    given_args=("$@")
+    # Read the arguments and split the values on
+    # ${ARGPARSER_ARG_DELIMITER_2} characters.
+    values=( )
+    for given_arg in "$@"; do
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a given_args \
+            <<< "${given_arg}"
+        values+=("${given_args[@]}")
+    done
 
     # Count the defined positional arguments with default values and
     # those without.
@@ -2751,7 +2735,7 @@ function argparser_parse_positional_args() {
     # accepting an infinite number of values is given as last once
     # (then, the count of default arguments is zero).  This allows to
     # distinguish these two cases.
-    args_count="${#given_args[@]}"
+    args_count="${#values[@]}"
     if (( args_count > required_args_count && default_args_count > 0 )); then
         # There are arguments having default values given.  Get the
         # argument identifiers for all given arguments and output them,
@@ -2765,7 +2749,7 @@ function argparser_parse_positional_args() {
             printf 'Argument: %s\0' "${arg_key}"
             for (( i = index; i < arg_number + index && i < args_count; i++ ))
             do
-                printf 'Value: %s\0' "${given_args[i]}"
+                printf 'Value: %s\0' "${values[i]}"
             done
             (( index += arg_number ))
         done
@@ -2792,7 +2776,7 @@ function argparser_parse_positional_args() {
             printf 'Argument: %s\0' "${arg_key}"
             if [[ "${arg_number}" == "+" ]]; then
                 for (( i = index; i < args_count; i++ )); do
-                    printf 'Value: %s\0' "${given_args[i]}"
+                    printf 'Value: %s\0' "${values[i]}"
                 done
                 index="${args_count}"
 
@@ -2801,7 +2785,7 @@ function argparser_parse_positional_args() {
                 for (( i = index; i < arg_number + index && i < args_count; \
                     i++ ))
                 do
-                    printf 'Value: %s\0' "${given_args[i]}"
+                    printf 'Value: %s\0' "${values[i]}"
                 done
                 (( index += arg_number ))
             fi
@@ -5126,7 +5110,6 @@ function argparser_main() {
     unset args
     local -A args
 
-    mapfile -d "" -t given_args < <(argparser_split_args "${given_args[@]}")
     for given_arg in "${given_args[@]}"; do
         # Parse the argument.
         mapfile -d "" -t messages < <(argparser_parse_arg "${given_arg}")
@@ -5434,7 +5417,6 @@ if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_read_args_definition
     unset -f argparser_read_translation
     unset -f argparser_sort
-    unset -f argparser_split_args
     unset -f argparser_translate
     unset -f argparser_trim
     unset -f argparser_uniq
