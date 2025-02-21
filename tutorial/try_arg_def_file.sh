@@ -2,9 +2,9 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-20
+# Last Modification: 2025-02-21
 
-# Usage: Run this script with "bash test_arg_def_file.sh".
+# Usage: Run this script with "bash try_arg_def_file.sh".
 
 # Purpose: Demonstrate the functionality of the argparser regarding the
 # inclusion of an arguments definition file.

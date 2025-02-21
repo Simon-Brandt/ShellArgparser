@@ -2,9 +2,9 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-19
+# Last Modification: 2025-02-21
 
-# Usage: Run this script with "bash test_basic.sh".
+# Usage: Run this script with "bash try_argparser.sh".
 
 # Purpose: Demonstrate the basic functionality of the argparser.
 

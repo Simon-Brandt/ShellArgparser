@@ -927,6 +927,11 @@ function argparser_check_env_vars() {
     # - ARGPARSER_SCRIPT_NAME (arbitrary value)
     # - ARGPARSER_VERSION (arbitrary value)
     #
+    # The following environment variables are only checked for mutual
+    # exclusivity with other environment variables:
+    # - ARGPARSER_CONFIGURATION_FILE (checked earlier)
+    # - ARGPARSER_TRANSLATION_FILE (checked earlier)
+    #
     # Environment:
     # - ARGPARSER_ADD_HELP (read-only)
     # - ARGPARSER_ADD_USAGE (read-only)
