@@ -1224,6 +1224,7 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)                     | *char*                             | `","`[^5]                |
 | [`ARGPARSER_CHECK_ARG_DEFINITION`](#argparser_check_arg_definition)           | *bool*                             | `false`                  |
 | [`ARGPARSER_CHECK_ENV_VARS`](#argparser_check_env_vars)                       | *bool*                             | `false`                  |
+| [`ARGPARSER_CONFIGURATION_FILE`](#argparser_configuration_file)               | *filepath* \| `""`                 | `""`                     |
 | [`ARGPARSER_COUNT_FLAGS`](#argparser_count_flags)                             | *bool*                             | `false`                  |
 | [`ARGPARSER_DICTIONARY`](#argparser_dictionary)                               | *dict*                             | *None* (unset)           |
 | [`ARGPARSER_ERROR_EXIT_CODE`](#argparser_error_exit_code)                     | *int*                              | `1`                      |
@@ -1358,6 +1359,16 @@ The argparser defines a large set of environment variables, each following the n
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
 - ***Description:*** Whether to check if the argparser environment variables accord to their definition. Again, this should only be turned on (set to `true`) for testing purposes, while in production environments, keeping it deactivated saves some (minimal) computation time. Still, if the user can modify the environment variables at some point (not recommended as it may lead to code injection!), you should activate it.
+
+### `ARGPARSER_CONFIGURATION_FILE`
+
+- ***Type:*** *filepath* (Filepath)
+- ***Allowed values:*** Any legit filepath or the empty string `""`
+- ***Default value:*** `""`
+- ***Description:*** The path to a file holding the argparser configuration. The lines will be read into environment variables, but those that are already defined within your script or environment override the specification in the `ARGPARSER_CONFIGURATION_FILE`. This file may be used by multiple scripts.
+
+> [!CAUTION]
+> The argparser reads the lines into variables without checking them! If the user can modify the `ARGPARSER_CONFIGURATION_FILE`, this is prone to command injection!
 
 ### `ARGPARSER_COUNT_FLAGS`
 
