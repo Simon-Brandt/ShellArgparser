@@ -2,11 +2,12 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-21
+# Last Modification: 2025-02-24
 
-# Usage: Run this script with "bash test_config_file.sh".
+# Usage: Run this script with "bash try_config_file.sh".
 
-# Purpose: Test the functionality of the argparser.
+# Purpose: Demonstrate the functionality of the argparser regarding the
+# inclusion of a configuration file.
 
 # Source the argparser, reading the configuration from a file.
 dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
