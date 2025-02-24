@@ -630,7 +630,7 @@ function argparser_colorize() {
 # Define the argparser functions for reading the configuration file and
 # setting and checking the environment variables.
 function argparser_read_configuration() {
-    # Read the configuratioon from the configuration file into the
+    # Read the configuration from the configuration file into the
     # environment variables.
     #
     # Environment:
@@ -647,9 +647,8 @@ function argparser_read_configuration() {
     # ARGPARSER_ARG_DELIMITER_2
     # ARGPARSER_CHECK_ARG_DEFINITION
     # ARGPARSER_CHECK_ENV_VARS
-    # ARGPARSER_CONFIGURATION_FILE
+    # ARGPARSER_CONFIGURATION_FILE (read-only)
     # ARGPARSER_COUNT_FLAGS
-    # ARGPARSER_DICTIONARY
     # ARGPARSER_ERROR_EXIT_CODE
     # ARGPARSER_ERROR_STYLE
     # ARGPARSER_HELP_EXIT_CODE
@@ -745,6 +744,17 @@ function argparser_read_configuration() {
         if [[ -z "${line}" || "${line}" == \#* ]]; then
             # Ignore the empty or commented line.
             continue
+        elif [[ "${line}" == *( )"dictionary"*( )=* ]]; then
+            # Output an error message when the line sets
+            # ${ARGPARSER_DICTIONARY}.
+            error_message="Error: In the configuration file \"%s\", the line "
+            error_message+="\"%s\" sets ARGPARSER_DICTIONARY, which must not "
+            error_message+="be set."
+
+            for var in "${ARGPARSER_CONFIGURATION_FILE}" "${line}"; do
+                error_message="${error_message/"%s"/${var}}"
+            done
+            error_messages+=("${error_message}")
         elif [[ "${line}" =~ = ]]; then
             # Set the variable name as shortest part before an equals
             # sign ("="), strip leading and trailing spaces, replace
@@ -774,9 +784,13 @@ function argparser_read_configuration() {
         else
             # Output an error message when the line doesn't contain an
             # equals sign ("=").
-            error_message="Error: The line \"%s\" doesn't contain an equals "
-            error_message+="sign (\"=\"), nor is it empty or commented."
-            error_message="${error_message/"%s"/"${line}"}"
+            error_message="Error: In the configuration file \"%s\", the line "
+            error_message+="\"%s\" doesn't contain an equals sign (\"=\"), "
+            error_message+="nor is it empty or commented."
+
+            for var in "${ARGPARSER_CONFIGURATION_FILE}" "${line}"; do
+                error_message="${error_message/"%s"/${var}}"
+            done
             error_messages+=("${error_message}")
         fi
     done
@@ -852,10 +866,18 @@ function argparser_set_env_vars() {
     # ARGPARSER_VERSION_STYLE
     # ARGPARSER_WARNING_STYLE
 
+    # Define the local variable.
+    local error_message
+
     # Check that ${ARGPARSER_DICTIONARY} is unset.
     if [[ -v ARGPARSER_DICTIONARY ]]; then
-        printf 'Error: ARGPARSER_DICTIONARY must not be set.\n'
-        exit 1
+        error_message="Error: ARGPARSER_DICTIONARY must not be set."
+        if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
+            ARGPARSER_ERROR_EXIT_CODE=1
+            ARGPARSER_ERROR_STYLE="red,bold,reverse"
+        fi
+        argparser_print_error_or_warning_message "error" false true \
+            "${error_message}"
     else
         declare -g -A ARGPARSER_DICTIONARY
     fi
