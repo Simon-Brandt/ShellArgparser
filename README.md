@@ -12,6 +12,7 @@ The argparser is a designed to be an easy-to-use, yet powerful command-line argu
   - [Usage](#usage)
     - [Argument passing](#argument-passing)
     - [Argparser invokation](#argparser-invokation)
+    - [Argparser configuration](#argparser-configuration)
     - [Help and usage messages](#help-and-usage-messages)
     - [Help and usage message files](#help-and-usage-message-files)
     - [Arguments definition files](#arguments-definition-files)
@@ -41,6 +42,7 @@ The argparser is a designed to be an easy-to-use, yet powerful command-line argu
     - [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)
     - [`ARGPARSER_CHECK_ARG_DEFINITION`](#argparser_check_arg_definition)
     - [`ARGPARSER_CHECK_ENV_VARS`](#argparser_check_env_vars)
+    - [`ARGPARSER_CONFIGURATION_FILE`](#argparser_configuration_file)
     - [`ARGPARSER_COUNT_FLAGS`](#argparser_count_flags)
     - [`ARGPARSER_DICTIONARY`](#argparser_dictionary)
     - [`ARGPARSER_ERROR_EXIT_CODE`](#argparser_error_exit_code)
@@ -242,7 +244,7 @@ The positional argument "pos_1" on index 1 is set to "2".
 The positional argument "pos_2" on index 2 is set to "1,2".
 ```
 
-And now we got something that looks like the intended output. Even without fully understanding yet what the argparser does, you can see that we set *three* options and their arguments ([`IFS`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Variables.html#index-IFS "gnu.org &rightarrow; Bourne Shell Variables &rightarrow; IFS") whitespace&ndash;delimited) on the command-line invokation of `try_argparser.sh`, *viz.* `--var-1`, `--var-2`, and `--var-3`. Nonetheless, the script reports *seven* options to be given. This is due to `var_4` through `var_7` (note that the *identifiers* use underscores ("snake case"), while the *option names* use hyphens ("kebab-case"), here) having said default values that are used when the argument is not given on the command line. For `var_1` through `var_3`, the reported values are exactly what we specified, *i.e.*, `"1"`, `"2"`, and `"A"`, respectively.
+And now we got something that looks like the intended output. Even without fully understanding yet what the argparser does, you can see that we set *three* options and their arguments ([`IFS`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Variables.html#index-IFS "gnu.org &rightarrow; Bourne Shell Variables &rightarrow; IFS") whitespace&ndash;delimited) on the command-line invokation of `try_argparser.sh`, *viz.* `--var-1`, `--var-2`, and `--var-3`. Nonetheless, the script reports *seven* options to be given. This is due to `var_4` through `var_7` (note that the *identifiers* use underscores ("snake case"), while the *option names* use hyphens ("kebab case"), here) having said default values that are used when the argument is not given on the command line. For `var_1` through `var_3`, the reported values are exactly what we specified, *i.e.*, `"1"`, `"2"`, and `"A"`, respectively.
 
 Likewise, `pos_2` is reported to be `1,2`, so some sort of sequence of the two values we gave (more precise: the concatenation of the two values, joined by an [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2) character, as we'll see later), and `pos_1` has been assigned a default value of `2`.
 
@@ -559,6 +561,97 @@ As you saw above, the argparser will aggregate all arguments (values) given afte
 
 Thereby, errors abort the script, while warnings just write a message to `STDERR`. Even after parsing or value checking errors occurred, the parsing or value checking continues and the argparser aggregates the error messages until the end, when all are printed, to simplify the correction of multiple mistakes.
 
+### Argparser configuration
+
+The argparser accepts a fifty-ish options for configuring the argument parsing, checking their values and the consistency of the arguments definition, creating the various message types (see below), and setting the required companion files. These options are available as [environment variables](#environment-variables). By this, you can set them directly in your script, and even [`export`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-export "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; export") them to child processes. Thus, you can set these variables once and use them throughout your script suite.
+
+Still, it is likely that, after some time or for a specific project, you'll settle with a certain set of options that you'll want to reuse for all scripts. Then, setting the environment variables in any script becomes a tedious task, wasting space in each script. Additionally, should you want to change a value, you need to change it in any file.
+
+For this reason, the argparser also supports configuration by a config file, given by the [`ARGPARSER_CONFIGURATION_FILE`](#argparser_configuration_file) environment variable. This file contains the options in a key&ndash;value syntax and can be shared by multiple scripts, which only need to point to the same configuration file. The options have the same name as the environment variables, with a stripped leading `"ARGPARSER_"` and being written in lowercase, and with underscores replaced by hyphens. *I.e.*, the "screaming snake case" is replaced by the "kebab case".
+
+The keys and values must be separated by an equals sign (`=`), but can be surrounded by spaces, allowing for a table-like arrangement. Further, empty or commented lines (those starting with a hashmark, *i.e.*, `#`) are ignored, and thus can be used to explain certain values. In-line comments aren't supported to simplify the parsing of values containing a hashmark. It is possible to quote strings, but not necessary, which allows the one-by-one replacement of values from scripts to the configuration file and *vice versa*.
+
+Thereby, you can override options from the file with some given in your script. Should an option be defined in neither place, a default is used. This allows you to list only necessary options in your configuration file and let the argparser set everything else.
+
+Now, let's have a look at the configuration file (or at least, at the first ten lines to save some space):
+
+```console
+$ head --lines=10 options.cfg
+add-help                  = true
+add-usage                 = true
+add-version               = true
+allow-option-abbreviation = false
+allow-option-merging      = false
+arg-array-name            = "args"
+arg-def-file              = ""
+arg-def-file-has-header   = true
+arg-def-has-header        = true
+arg-delimiter-1           = ":"
+```
+
+For demonstration, we take a stripped-down version of our `try_argparser.sh` script as `try_config_file.sh`, where we omit the alias names for the short and long options, for the sake of brevity. Note that using [`readlink`](https://man7.org/linux/man-pages/man1/readlink.1.html "man7.org &rightarrow; man pages &rightarrow; readlink(1)") is only required here to cope with the configuration file residing in the [resources](resources) directory, it is not necessary if you use absolute paths or store the configuration file alongside your script in the same directory&mdash;or won't invoke your script from multiple working directories.
+
+<details open>
+
+<summary>Contents of <code>try_config_file.sh</code></summary>
+
+```bash
+#!/bin/bash
+
+# Source the argparser, reading the configuration from a file.
+dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
+dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
+ARGPARSER_CONFIGURATION_FILE="${dir}/options.cfg"
+
+# Define the arguments.
+args=(
+    "id:short_opts:long_opts:val_names:defaults:choices:type:arg_no:arg_group:notes:help"
+    "pos_1:-:-:pos_1:2:1,2:int:1:Positional arguments:-:one positional argument with default and choice"
+    "pos_2:-:-:pos_2:-:-:int:2:Positional arguments:-:two positional arguments without default or choice"
+    "var_1:a:var-1:VAL_1:-:-:uint:1:Mandatory options:-:one value without default or choice"
+    "var_2:b:var-2:VAL_2:-:-:int:+:Mandatory options:-:at least one value without default or choice"
+    "var_3:c:var-3:VAL_3:-:A,B:char:+:Mandatory options:-:at least one value with choice"
+    "var_4:d:-:VAL_4:A:A,B,C:char:1:Optional options:-:one value with default and choice"
+    "var_5:-:var-5:VAL_5:E:-:str:1:Optional options:-:one value with default"
+    "var_6:f:var-6:VAL_6:false:-:bool:0:Optional options:-:no value (flag) with default"
+    "var_7:g:var-7:VAL_7:true:-:bool:0:Optional options:deprecated:no value (flag) with default"
+)
+
+source argparser
+
+# The arguments can now be accessed as keys and values of the
+# associative array "args".  Further, they are set as variables to the
+# environment, from which they are expanded by globbing.
+for arg in "${!var@}"; do
+    printf 'The keyword argument "%s" is set to "%s".\n' \
+        "${arg}" "${args[${arg}]}"
+done | sort
+
+index=1
+for arg in "${!pos@}"; do
+    printf 'The positional argument "%s" on index %s is set to "%s".\n' \
+        "${arg}" "${index}" "${args[${arg}]}"
+    (( index++ ))
+done
+```
+
+The script can now be invoked as any other script, yielding the same results:
+
+```console
+$ bash try_config_file.sh 1 2 -a 1 -b 2 -c A
+The keyword argument "var_1" is set to "1".
+The keyword argument "var_2" is set to "2".
+The keyword argument "var_3" is set to "A".
+The keyword argument "var_4" is set to "A".
+The keyword argument "var_5" is set to "E".
+The keyword argument "var_6" is set to "false".
+The keyword argument "var_7" is set to "true".
+The positional argument "pos_1" on index 1 is set to "2".
+The positional argument "pos_2" on index 2 is set to "1,2".
+```
+
+</details>
+
 ### Help and usage messages
 
 No matter how many keyword arguments are defined, as long as [`ARGPARSER_ADD_HELP`](#argparser_add_help) and [`ARGPARSER_ADD_USAGE`](#argparser_add_usage) are set to `true` (the default), the argparser interprets the flags `-h` and `--help` as call for a verbose help message and `-u` and `--usage` as call for a brief usage message. Then, these options are automatically added to the script's argument definition and override any same-named argument name (yielding an error message if [`ARGPARSER_CHECK_ARG_DEFINITION`](#argparser_check_arg_definition) is set to `true`). This is to ensure that the novice user of your script can do exactly what we did, above: trying the most common variants to get some help over how to use a program or script by typing
@@ -667,9 +760,7 @@ The help message's structure aims at reproducing the commonly found structure in
 
 ### Help and usage message files
 
-The argparser is not only able to compile a help message, but can also be guided by a separate file. Using the [`ARGPARSER_HELP_FILE`](#argparser_help_file) environment variable, to a certain degree, you can customize the help message's look and structure by moving the blocks the message consists of around and enriching it by arbitrary text.
-
-For demonstration, we take a stripped-down version of our `try_argparser.sh` script as `try_help_file.sh`, where we omit the alias names for the short and long options, for the sake of brevity. Note that using [`readlink`](https://man7.org/linux/man-pages/man1/readlink.1.html "man7.org &rightarrow; man pages &rightarrow; readlink(1)") is only required here to cope with the help file residing in the [resources](resources) directory, it is not necessary if you store the help file alongside your script in the same directory.
+The argparser is not only able to compile a help message, but can also be guided by a separate file. Using the [`ARGPARSER_HELP_FILE`](#argparser_help_file) environment variable, to a certain degree, you can customize the help message's look and structure by moving the blocks the message consists of around and enriching it by arbitrary text. Again, we use a simplified script as `try_help_file.sh` without alias names for the short and long options.
 
 <details open>
 
