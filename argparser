@@ -5127,7 +5127,9 @@ function argparser_print_error_or_warning_message() {
         fi
 
         for i in "${!messages[@]}"; do
-            messages[i]="${ARGPARSER_SCRIPT_NAME}: ${messages[i]}"
+            if [[ -n "${ARGPARSER_SCRIPT_NAME}" ]]; then
+                messages[i]="${ARGPARSER_SCRIPT_NAME}: ${messages[i]}"
+            fi
             messages[i]="$(argparser_colorize "${style}" "${messages[i]}" \
                 "${write_target}")"
         done
