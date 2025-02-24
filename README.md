@@ -1053,13 +1053,25 @@ Es gibt grundsätzlich drei Optionen für die Hilfe-Meldungen.
 
 Finally, we need a translation file for the auto-generated parts. Note that here, only the German locale is used, while you may want to add further rows if your target users come from multiple countries.
 
+<details open>
+
+<summary>Contents of <code>translation.yaml</code></summary>
+
 ```yaml
-$ cat translation.yaml
+$ head --lines=70 translation.yaml
 # 1.    Define the translations for the arguments parsing.
 ---
 Positional arguments:
   en: Positional arguments
   de: Positionale Argumente
+
+Error:
+  en: Error
+  de: Fehler
+
+Warning:
+  en: Warning
+  de: Warnung
 ...
 
 # 2.    Define the translations for help messages.
@@ -1081,7 +1093,8 @@ Options:
 # 2.2.  Define the translations for the remark (part of the header).
 ---
 Mandatory arguments:
-  en: Mandatory arguments to long options are mandatory for short options too
+  en: >
+    Mandatory arguments to long options are mandatory for short options too
   de: >
     Erforderliche Argumente für lange Optionen sind auch für kurze erforderlich
 ...
@@ -1117,6 +1130,8 @@ true:
   de: wahr
 ...
 ```
+
+</details>
 
 Regarding the structure of the simplified and strictly line-oriented YAML file, the groups used as identifiers for the translations are given without indentation, followed by a colon. This creates a key in an associative array. The respective value is another associative array, this time holding the translation, with the language identifier as key and the translated string as value. The key must be indented by exactly two spaces, followed by a colon and another space. Then, either the translation can be given or a greater-than sign (`">"`). All lines given afterwards that are indented by exactly four spaces are concatenated and used as translated string. In the translation, you can (and should) use the format specifier `%s` to denote the positions that the argparser should use for the interpolation with variable values, which cannot be directly given in the translation.
 

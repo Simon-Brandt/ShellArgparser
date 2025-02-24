@@ -793,6 +793,7 @@ Error YAML:
     Error: The YAML line "%s" could not be recognized.
   de: >
     Fehler: Die YAML-Zeile "%s" konnte nicht erkannt werden.
+...
 
 # 3.10. Define the translations for creating the help or usage messages.
 ---
