@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-21
+# Last Modification: 2025-02-26
 
 # TODO: Support argparser configuration by command-line arguments.
 # TODO: Remove double meaning of "--" both for configuring the argparser
@@ -3495,10 +3495,13 @@ function argparser_check_arg_values() {
             then
                 choice_values=("$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
                     printf '%s' "${choice_values[*]}")")
-                error_message="Error: The argument \"%s\" must be in {%s}."
+                values=("$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; printf '%s' \
+                    "${values[*]}")")
+                error_message="Error: The argument \"%s\" must be in {%s}, "
+                error_message+="but is {%s}."
                 error_message="$(argparser_translate "Error arg choice" \
                     "${error_message}" "${option_names}" \
-                    "${choice_values[0]}")"
+                    "${choice_values[0]}" "${values[0]}")"
                 printf '%s\0' "${error_message}"
                 return
             fi

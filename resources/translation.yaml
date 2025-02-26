@@ -748,9 +748,9 @@ Error wrong arg number 3:
 
 Error arg choice:
   en: >
-    Error: The argument "%s" must be in {%s}.
+    Error: The argument "%s" must be in {%s}, but is {%s}.
   de: >
-    Fehler: Das Argument "%s" muss in {%s} liegen.
+    Fehler: Das Argument "%s" muss in {%s} liegen, ist aber {%s}.
 
 Error arg bool:
   en: >
