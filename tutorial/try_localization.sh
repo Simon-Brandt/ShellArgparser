@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-21
+# Last Modification: 2025-02-28
 
 # Usage: Run this script with "bash try_localization.sh".
 
@@ -32,5 +32,4 @@ args=(
     var_6
     var_7
 )
-
-source argparser
+source argparser -- "$@"

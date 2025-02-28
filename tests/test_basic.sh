@@ -30,8 +30,7 @@ args=(
 )
 set -o nounset
 (set -o posix; set) > 1.txt
-source argparser --read -- "$@"
-source argparser --set -- "$@"
+source argparser -- "$@"
 (set -o posix; set) > 2.txt
 # diff --side-by-side --suppress-common-lines 1.txt 2.txt
 

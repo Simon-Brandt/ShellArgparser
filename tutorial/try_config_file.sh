@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-24
+# Last Modification: 2025-02-28
 
 # Usage: Run this script with "bash try_config_file.sh".
 
@@ -28,8 +28,7 @@ args=(
     "var_6:f:var-6:VAL_6:false:-:bool:0:Optional options:-:no value (flag) with default"
     "var_7:g:var-7:VAL_7:true:-:bool:0:Optional options:deprecated:no value (flag) with default"
 )
-
-source argparser
+source argparser -- "$@"
 
 # The arguments can now be accessed as keys and values of the
 # associative array "args".  Further, they are set as variables to the

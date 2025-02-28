@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-20
+# Last Modification: 2025-02-28
 
 # Usage: Run this script with "bash test_arg_def_file.sh".
 
@@ -26,8 +26,7 @@ args=(
     var_6
     var_7
 )
-
-source argparser
+source argparser -- "$@"
 
 # The arguments can now be accessed as keys and values of the
 # associative array "args".  Further, they are set as variables to the
