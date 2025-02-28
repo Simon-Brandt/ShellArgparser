@@ -40,6 +40,7 @@ The argparser is a designed to be an easy-to-use, yet powerful command-line argu
     - [`ARGPARSER_ARG_DEF_HAS_HEADER`](#argparser_arg_def_has_header)
     - [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)
     - [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)
+    - [`ARGPARSER_ARGS`](#argparser_args)
     - [`ARGPARSER_CHECK_ARG_DEFINITION`](#argparser_check_arg_definition)
     - [`ARGPARSER_CHECK_ENV_VARS`](#argparser_check_env_vars)
     - [`ARGPARSER_CONFIGURATION_FILE`](#argparser_configuration_file)
@@ -162,8 +163,7 @@ args=(
     "var_6:f,F:var-6,var-f:VAL_6:false:-:bool:0:Optional options:-:no value (flag) with default"
     "var_7:g,G:var-7,var-g:VAL_7:true:-:bool:0:Optional options:deprecated:no value (flag) with default"
 )
-
-source argparser
+source argparser -- "$@"
 
 # The arguments can now be accessed as keys and values of the
 # associative array "args".  Further, they are set as variables to the
@@ -458,8 +458,7 @@ args=(
     "var_6:f,F:var-6,var-f:VAL_6:false:-:bool:0:Optional options:-:no value (flag) with default"
     "var_7:g,G:var-7,var-g:VAL_7:true:-:bool:0:Optional options:deprecated:no value (flag) with default"
 )
-
-source argparser
+source argparser -- "$@"
 
 # The arguments can now be accessed as keys and values of the
 # associative array "args".  Further, they are set as variables to the
@@ -481,16 +480,18 @@ done
 
 As you can see, there are three sections in the code that are specific to the argparser. The accession at the end only serves us to gain insights into the values of the arguments and are not necessary to include&mdash;you would replace this by the actual workings of your script.
 
-The first section sets argparser-specific [environment variables](#environment-variables) to optimize the visual output, which we'll investigate later. Then, the arguments are defined, and finally, the argparser is called. This call is central to the script as it is the line that runs the argparser. So, most simply, from your script whose command-line arguments you want to be parsed, the main thing you need to do is to source the argparser ([sourcing](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash Builtins &rightarrow; source") means in-place execution without forking):
+The first section sets argparser-specific [environment variables](#environment-variables) to optimize the visual output, which we'll investigate later. Then, the arguments are defined, and finally, the argparser is called. This call is central to the script as it is the line that runs the argparser. So, most simply, from your script whose command-line arguments you want to be parsed, the main thing you need to do is to `source` the argparser ([sourcing](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash Builtins &rightarrow; source") means in-place execution without forking):
 
 ```bash
-source argparser
+source argparser -- "$@"
 ```
 
-Alternatively, but not recommended for the lack of the command's clearness, you could use the synonymous [dot operator](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-_002e "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; dot operator") inherited from the Bourne shell (which cannot run the argparser, which is a Bash script!):
+As a result of the argparser's configurability (see below), it is necessary to give cour script's command line after a double hyphen, *e.g.*, using `-- "$@"`.
+
+Alternatively to `source`, but not recommended for the lack of the command's clearness, you could use the synonymous [dot operator](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-_002e "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; dot operator") inherited from the Bourne shell (which cannot run the argparser, which is a Bash script!):
 
 ```bash
-. argparser
+. argparser -- "$@"
 ```
 
 This is the simplest form of invoking the argparser. It will read your script's command line, parse the arguments, and set them to variables in your script. And this is the reason for sourcing instead of normal calling as in:
@@ -507,33 +508,9 @@ or:
 
 since you don't want the arguments to be set in a subprocess created after forking, as these will be gone when the argparser (and with it, the subprocess) exits.
 
-You can obtain fine-grained control by the longer form of the command:
+As stated, the argparser sets an associative array to store the arguments in. For maximum control over the variables in your script's scope, you can configure its name via [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name), defaulting to `"args"`. In `try_argparser.sh`, we obtained the report by accessing exactly this associative array, looping over all variables known to the script that start with `var` or `pos`, respectively. At the same time, this variable name is used to provide the arguments definition.
 
-```bash
-source argparser --action -- "$@"
-```
-
-with `action` being either `read`, `set`, or `all`. If `action` is `read`, then the argparser will only read the command-line arguments and parse them into an associative array you can access afterwards, denoted by the name the environment variable [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name) refers to (per default, `"args"`). If the `action` is set to `set`, the options from this array are set as variables to your script. In other words, you need to `read` the arguments before you `set` them, but you can perform arbitrary steps in-between. This could come handy when you want to use the variable names the argparser sets for some task or want to manipulate the associative array prior having the values set. Finally, if the `action` is `all`, both `read` and `set` will be executed (in this order).
-
-Due to the manner the [`source`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash Builtins &rightarrow; source") builtin is defined, you must explicitly state the `"$@"` to pass the arguments to the argparser. The `--` before is required to separate the argparser modification from the actual arguments&mdash;after all, it is not unlikely that some of your scripts might want to use one of the options `--read`, `--set`, or `--all`. To still be able to distinguish between an option for the argparser and an argument to your script, the double hyphen is used as delimiter.
-
-Further, writing
-
-```bash
-source argparser --all -- "$@"
-```
-
-is almost identical to writing a bare
-
-```bash
-source argparser
-```
-
-but less legible. Thus, the latter form is preferred. There is one important exception to this rule, and that is configuration by environment variables. Specifying an `action` overrides the values of [`ARGPARSER_READ_ARGS`](#argparser_read_args) and [`ARGPARSER_SET_ARGS`](#argparser_set_args), which are else inherited from the sourcing script's environment (which, in turn, might inherit them from another calling script). Thus, to rule out any possible influence of the environment on `read` and `set`, the long invokation command is recommendable.
-
-As stated, `read` sets an associative array to store the arguments in. For maximum control over the variables in your script's scope, you can configure its name via [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name), defaulting to `"args"`. In `try_argparser.sh`, we obtained the report by accessing exactly this associative array, looping over all variables known to the script that start with `var` or `pos`, respectively. At the same time, this variable name is used to provide the arguments definition.
-
-While the single line `source argparser` provides the argparser's functionality by running it, the positional and keyword arguments need to be defined somewhere. Thus, prior to the argparser's invokation (and, in our case, after setting some environment variables to set the maximum column widths for the help message), the arguments are defined. Thereby, the indexed array `args` defines which command-line arguments are acceptable for the script, possibly giving an argument definition in an argparser-specific tabular manner. Alternatively, this definition could be given as a separate [arguments definition file](#arguments-definition-files), indicated as [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file).
+While the single line `source argparser -- "$@"` provides the argparser's functionality by running it, the positional and keyword arguments need to be defined somewhere. Thus, prior to the argparser's invokation (and, in our case, after setting some environment variables to set the maximum column widths for the help message), the arguments are defined. Thereby, the indexed array `args` defines which command-line arguments are acceptable for the script, possibly giving an argument definition in an argparser-specific tabular manner. Alternatively, this definition could be given as a separate [arguments definition file](#arguments-definition-files), indicated as [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file).
 
 The rationale for allowing `args` to store both the arguments alone and them along their definition gets clear when you realize that it's possible to share an arguments definition file across multiple scripts and only require a limited subset of the arguments for the current script. Then, you can give these arguments a common definition, identical for any script using them. Additionally, it is even possible to use an arguments definition file and definitions in `args` together, with the latter expanding on the former or overriding them, thus providing the opportunity to use arguments with the same name, but different definitions, in separate scripts. This offers great flexibility when writing wrapper scripts around pipelines, when you want to pass common arguments to different programs in your pipeline. Just define an argument within your wrapper script and pass its value to both programs.
 
@@ -563,7 +540,7 @@ Thereby, errors abort the script, while warnings just write a message to `STDERR
 
 ### Argparser configuration
 
-The argparser accepts a fifty-ish options for configuring the argument parsing, checking their values and the consistency of the arguments definition, creating the various message types (see below), and setting the required companion files. These options are available as [environment variables](#environment-variables). By this, you can set them directly in your script, and even [`export`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-export "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; export") them to child processes. Thus, you can set these variables once and use them throughout your script suite.
+The argparser accepts about 50 options for configuring the argument parsing, checking their values and the consistency of the arguments definition, creating the various message types (see below), and setting the required companion files. These options are available as [environment variables](#environment-variables). By this, you can set them directly in your script, and even [`export`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-export "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; export") them to child processes. Thus, you can set these variables once and use them throughout your script suite.
 
 Still, it is likely that, after some time or for a specific project, you'll settle with a certain set of options that you'll want to reuse for all scripts. Then, setting the environment variables in any script becomes a tedious task, wasting space in each script. Additionally, should you want to change a value, you need to change it in any file.
 
@@ -616,8 +593,7 @@ args=(
     "var_6:f:var-6:VAL_6:false:-:bool:0:Optional options:-:no value (flag) with default"
     "var_7:g:var-7:VAL_7:true:-:bool:0:Optional options:deprecated:no value (flag) with default"
 )
-
-source argparser
+source argparser -- "$@"
 
 # The arguments can now be accessed as keys and values of the
 # associative array "args".  Further, they are set as variables to the
@@ -652,6 +628,26 @@ The positional argument "pos_2" on index 2 is set to "1,2".
 
 </details>
 
+Further, all environment variables can also be given as command-line parameters upon sourcing the argparser. Thereby, the options have the same name as in the configuration file ("kebab case"), and are only valid for the given argparser call.
+
+You can give the options right before your script's command line and the delimiting double hyphen. The argparser interprets all options given before the first double hyphen as options belonging to the argparser, the remainder is interpreted as your script's command line. This especially means that you cannot use the double hyphen to delimit positional arguments for the argparser&mdash;but since none are supported (apart from the command line), an error would be given, anyways.
+
+Due to the manner the [`source`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash Builtins &rightarrow; source") builtin is defined, the argparser cannot distinguish whether it was sourced with arguments, so mandates them in any case. This means that you must explicitly state the `-- "$@"` to pass the arguments to the argparser, even if you don't use any option. The `--` is required to separate the argparser modification from the actual arguments&mdash;after all, it is not unlikely that some of your scripts might want to use one of the argparser options for themselves. To still be able to distinguish between an option for the argparser and an argument to your script, the double hyphen is used as delimiter.
+
+So the general call would look like this:
+
+```bash
+source argparser --option -- "$@"
+```
+
+with `option` being any environment variable's transformed name.
+
+Since the argparser parses its options like it does for your script's ones (by non-recursively sourcing itself), the same special syntax regarding flags is used. That means, if you set `++set-args` as option, then the argparser will only read the command-line arguments, parsing them into an associative array you can access afterwards, denoted by the name the environment variable [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name) refers to (per default, `"args"`)&mdash;but it won't set them as variables to your script.  The opposite holds for the option `++read-args`, which deactivates the reading. Finally, if `--read-args` and `--set-args` are set, the arguments will both be read and set (in this order). Since the default value for both options is `true`, these actions are also carried out when only one option or none is given.
+
+Not surprisingly, you need to read the arguments before you set them, but you can perform arbitrary steps in-between. This could come handy when you want to use the variable names the argparser sets for some task or want to manipulate the associative array prior having the values set.
+
+If you [`export`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-export "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; export") (or [`declare -x`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-declare "gnu.org &rightarrow; Bash Builtins &rightarrow; declare")) environment variables like [`ARGPARSER_READ_ARGS`](#argparser_read_args) and [`ARGPARSER_SET_ARGS`](#argparser_set_args) to child processes (like scripts called from your master script), they will inherit these variables. If, in your child script, you use a bare `source argparser -- "$@"`, *i.e.*, without specifying an option to the argparser, the settings from the inherited environment variables will be used. However, you can always override them by specifying an argparser option. By this, you may set the environment variables in your master script and use the settings in some child scripts, with the others setting their own options. Thus, to rule out any possible influence of the environment on reading and setting, using the two respective option flags might be recommendable for certain use cases.
+
 ### Arguments definition files
 
 In the previous sections, we always provided the arguments definition directly in the script, right before we sourced the argparser. However, it is possible to "outsource" the definition (or part of it) in a bespoke file that is referred to by the [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file) environment variable.
@@ -682,8 +678,7 @@ args=(
     var_6
     var_7
 )
-
-source argparser
+source argparser -- "$@"
 
 # The arguments can now be accessed as keys and values of the
 # associative array "args".  Further, they are set as variables to the
@@ -878,8 +873,7 @@ args=(
     "var_6:f:var-6:VAL_6:false:-:bool:0:Optional options:-:no value (flag) with default"
     "var_7:g:var-7:VAL_7:true:-:bool:0:Optional options:deprecated:no value (flag) with default"
 )
-
-source argparser
+source argparser -- "$@"
 ```
 
 </details>
@@ -1008,8 +1002,7 @@ args=(
     var_6
     var_7
 )
-
-source argparser
+source argparser -- "$@"
 ```
 
 </details>
@@ -1328,6 +1321,7 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_ARG_DEF_HAS_HEADER`](#argparser_arg_def_has_header)               | *bool*                             | `true`                   |
 | [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)                     | *char*                             | `":"`[^5]                |
 | [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)                     | *char*                             | `","`[^5]                |
+| [`ARGPARSER_ARGS`](#argparser_args)                                           | *arr*                              | *None* (unset)           |
 | [`ARGPARSER_CHECK_ARG_DEFINITION`](#argparser_check_arg_definition)           | *bool*                             | `false`                  |
 | [`ARGPARSER_CHECK_ENV_VARS`](#argparser_check_env_vars)                       | *bool*                             | `false`                  |
 | [`ARGPARSER_CONFIGURATION_FILE`](#argparser_configuration_file)               | *filepath* \| `""`                 | `""`                     |
@@ -1451,6 +1445,13 @@ The argparser defines a large set of environment variables, each following the n
 - ***Allowed values:*** Any unique character that's not used as [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1), no hyphen (`-`), no plus sign (`+`)
 - ***Default value:*** `","`
 - ***Description:*** The secondary delimiter that separates the elements of sequences in the arguments definition. Again, you don't need to access this variable, but you must ensure that it is set to a character or glyph that does not occur in the arguments definition or their values.
+
+### `ARGPARSER_ARGS`
+
+- ***Type:*** *arr* (Indexed, later associative array)
+- ***Allowed values:*** *None*
+- ***Default value:*** *None* (unset)
+- ***Description:*** The indexed array in which the argparser's options are stored, and later, the associative array for their values. This array *must not be set* by your script, else, an error is thrown. The argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#argparser_unset_env_vars) is set to `false`).
 
 ### `ARGPARSER_CHECK_ARG_DEFINITION`
 
@@ -1580,8 +1581,7 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to read the arguments from the command line (*i.e.*, from `"$@"`) and parse them to the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name) sets. Setting `ARGPARSER_READ_ARGS` is the same as calling `source argparser --read -- "$@"`. If set along [`ARGPARSER_SET_ARGS`](#argparser_set_args), it is the same as calling `source argparser --all -- "$@"` or a bare `source argparser`.  
-The main difference is that, if you `export` (or `declare -x`) the variables to child processes (like scripts called from your master script), they will inherit these environment variables. If, in your child script, you use a bare `source argparser`, *i.e.*, without specifying an action to the argparser, the setting from the inherited environment variables will be used. You can always override them by specifying an action. By this, you may set the environment variables in your master script and use the settings in some child scripts, with the others setting their own action.
+- ***Description:*** Whether to read the arguments from the command line (*i.e.*, from `"$@"`) and parse them to the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name) sets.
 
 ### `ARGPARSER_SCRIPT_NAME`
 
@@ -1595,7 +1595,7 @@ The main difference is that, if you `export` (or `declare -x`) the variables to 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to set the (read and parsed) arguments from the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name) refers to as variables in the calling script's scope. Setting `ARGPARSER_SET_ARGS` is the same as calling `source argparser --set -- "$@"`. If set along [`ARGPARSER_READ_ARGS`](#argparser_read_args), it is the same as calling `source argparser --all -- "$@"` or a bare `source argparser`. For details, refer to [`ARGPARSER_READ_ARGS`](#argparser_read_args).
+- ***Description:*** Whether to set the (read and parsed) arguments from the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name) refers to as variables in the calling script's scope.
 
 > [!CAUTION]
 > The argparser performs no complex sanity checks for argument values! Automatically setting them as variables to the script is prone to command injection!
