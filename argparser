@@ -638,13 +638,14 @@ function argparser_set_internal_vars() {
     # ARGPARSER_DICTIONARY
     # ARGPARSER_ERROR_EXIT_CODE
     # ARGPARSER_ERROR_STYLE
+    # ARGPARSER_SCRIPT_ARGS
     # ARGPARSER_USE_STYLES_IN_FILES
 
     # Define the local variable.
     local -a error_messages
 
-    # Check that ${ARGPARSER_ARGS} and ${ARGPARSER_DICTIONARY} are
-    # unset, then set them.
+    # Check that ${ARGPARSER_ARGS}, ${ARGPARSER_DICTIONARY}, and
+    # ${ARGPARSER_SCRIPT_ARGS} are unset, then set them.
     error_messages=( )
     if [[ -v "ARGPARSER_ARGS" ]]; then
         error_messages+=("Error: ARGPARSER_ARGS must not be set.")
@@ -656,6 +657,12 @@ function argparser_set_internal_vars() {
         error_messages+=("Error: ARGPARSER_DICTIONARY must not be set.")
     else
         declare -g -A ARGPARSER_DICTIONARY
+    fi
+
+    if [[ -v "ARGPARSER_SCRIPT_ARGS" ]]; then
+        error_messages+=("Error: ARGPARSER_SCRIPT_ARGS must not be set.")
+    else
+        declare -g -a ARGPARSER_SCRIPT_ARGS
     fi
 
     # Output an error message for those internal environment variables
@@ -891,7 +898,6 @@ function argparser_set_env_vars() {
     # ARGPARSER_CHECK_ENV_VARS
     # ARGPARSER_CONFIGURATION_FILE
     # ARGPARSER_COUNT_FLAGS
-    # ARGPARSER_DICTIONARY
     # ARGPARSER_ERROR_EXIT_CODE
     # ARGPARSER_ERROR_STYLE
     # ARGPARSER_HELP_EXIT_CODE
@@ -905,6 +911,7 @@ function argparser_set_env_vars() {
     # ARGPARSER_MAX_COL_WIDTH_3
     # ARGPARSER_POSITIONAL_ARG_GROUP
     # ARGPARSER_READ_ARGS
+    # ARGPARSER_SCRIPT_ARGS
     # ARGPARSER_SCRIPT_NAME
     # ARGPARSER_SET_ARGS
     # ARGPARSER_SET_ARRAYS
@@ -1117,9 +1124,11 @@ function argparser_check_env_vars() {
     # to set the variables himself.
     #
     # The following environment variables are unchecked:
+    # - ARGPARSER_ARGS (auto-set)
     # - ARGPARSER_DICTIONARY (checked earlier / auto-set)
     # - ARGPARSER_LANGUAGE (arbitrary value)
     # - ARGPARSER_POSITIONAL_ARG_GROUP (arbitrary value)
+    # - ARGPARSER_SCRIPT_ARGS (auto-set)
     # - ARGPARSER_SCRIPT_NAME (arbitrary value)
     # - ARGPARSER_VERSION (arbitrary value)
     #

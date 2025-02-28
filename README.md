@@ -1340,6 +1340,7 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)                     | *uint*                             | `39`[^6]                 |
 | [`ARGPARSER_POSITIONAL_ARG_GROUP`](#argparser_positional_arg_group)           | *str*                              | `"Positional arguments"` |
 | [`ARGPARSER_READ_ARGS`](#argparser_read_args)                                 | *bool*                             | `true`                   |
+| [`ARGPARSER_SCRIPT_ARGS`](#argparser_script_args)                             | *arr*                              | *None* (unset)           |
 | [`ARGPARSER_SCRIPT_NAME`](#argparser_script_name)                             | *str*                              | `"${0##*/}"`             |
 | [`ARGPARSER_SET_ARGS`](#argparser_set_args)                                   | *bool*                             | `true`                   |
 | [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)                               | *bool*                             | `true`                   |
@@ -1582,6 +1583,13 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
 - ***Description:*** Whether to read the arguments from the command line (*i.e.*, from `"$@"`) and parse them to the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name) sets.
+
+### `ARGPARSER_SCRIPT_ARGS`
+
+- ***Type:*** *arr* (Indexed array)
+- ***Allowed values:*** *None*
+- ***Default value:*** *None* (unset)
+- ***Description:*** The indexed array in which the argparser stores your script's command line upon parsing its own arguments. This array *must not be set* by your script, else, an error is thrown. The argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#argparser_unset_env_vars) is set to `false`).
 
 ### `ARGPARSER_SCRIPT_NAME`
 
