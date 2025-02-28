@@ -2,28 +2,27 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-26
+# Last Modification: 2025-02-28
 
-# TODO: Support argparser configuration by command-line arguments.
-# TODO: Remove double meaning of "--" both for configuring the argparser
-#       and as normal command-line option.
 # TODO: Rewrite tests as correct test suites.
 # TODO: Write tests for keyword-only and positional-only arguments.
 # TODO: Speed up argparser by e.g. trying to remove command
-#       substitutions.
+#       substitutions, or using the novel "${ command; }" syntax
+#       introduced in Bash 5.3.
+# TODO: Support mutually exclusive argument groups.
 
-# Usage: Source this script with "source argparser" inside the script
-# whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS} is set
-# to true (the default), the arguments will be parsed upon sourcing.  If
-# ${ARGPARSER_SET_ARGS} is set to true (the default), the arguments will
-# be set to variables upon sourcing, else, the associative array which
-# ${ARGPARSER_ARG_ARRAY_NAME} points to needs to be accessed.  Refer to
-# the README.md for details.
+# Usage: Source this script with `source argparser -- "$@"` inside the
+# script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
+# is set to true (the default), the arguments will be parsed upon
+# sourcing.  If ${ARGPARSER_SET_ARGS} is set to true (the default), the
+# arguments will also be set to variables upon sourcing, else, the
+# associative array which ${ARGPARSER_ARG_ARRAY_NAME} points to needs to
+# be accessed.  Refer to the README.md for details.
 
-# Purpose: Parse a script's arguments, giving proper error messages for
-# wrongly set arguments, assigning the values to the respective
-# variables, as well as creating and printing a help message.  Refer to
-# the README.md for details.
+# Purpose: Parse a script's arguments, giving proper error and warning
+# messages for wrongly set arguments, assigning the values to the
+# respective variables, as well as creating and printing a help, usage,
+# and version message.  Refer to the README.md for details.
 
 ########################################################################
 
@@ -627,8 +626,53 @@ function argparser_colorize() {
     fi
 }
 
-# Define the argparser functions for reading the configuration file and
+# Define the argparser functions for reading the configuration and
 # setting and checking the environment variables.
+function argparser_set_internal_vars() {
+    # Check that no "environment" variable for internal usage by the
+    # argparser is set, then set them.
+    #
+    # Environment:
+    # ARGPARSER_ARGS
+    # ARGPARSER_CHECK_ENV_VARS (read-only)
+    # ARGPARSER_DICTIONARY
+    # ARGPARSER_ERROR_EXIT_CODE
+    # ARGPARSER_ERROR_STYLE
+    # ARGPARSER_USE_STYLES_IN_FILES
+
+    # Define the local variable.
+    local -a error_messages
+
+    # Check that ${ARGPARSER_ARGS} and ${ARGPARSER_DICTIONARY} are
+    # unset, then set them.
+    error_messages=( )
+    if [[ -v "ARGPARSER_ARGS" ]]; then
+        error_messages+=("Error: ARGPARSER_ARGS must not be set.")
+    else
+        declare -g -a ARGPARSER_ARGS
+    fi
+
+    if [[ -v "ARGPARSER_DICTIONARY" ]]; then
+        error_messages+=("Error: ARGPARSER_DICTIONARY must not be set.")
+    else
+        declare -g -A ARGPARSER_DICTIONARY
+    fi
+
+    # Output an error message for those internal environment variables
+    # that have been previously set.
+    if (( "${#error_messages[@]}" > 0 )); then
+        if [[ ! -v "ARGPARSER_CHECK_ENV_VARS" \
+            || "${ARGPARSER_CHECK_ENV_VARS}" != false ]]
+        then
+            ARGPARSER_ERROR_EXIT_CODE=1
+            ARGPARSER_ERROR_STYLE="red,bold,reverse"
+            ARGPARSER_USE_STYLES_IN_FILES=false
+        fi
+        argparser_print_error_or_warning_message "error" false true \
+            "${error_messages[@]}"
+    fi
+}
+
 function argparser_read_configuration() {
     # Read the configuration from the configuration file into the
     # environment variables.
@@ -744,6 +788,16 @@ function argparser_read_configuration() {
         if [[ -z "${line}" || "${line}" == \#* ]]; then
             # Ignore the empty or commented line.
             continue
+        elif [[ "${line}" == *( )"args"*( )=* ]]; then
+            # Output an error message when the line sets
+            # ${ARGPARSER_ARGS}.
+            error_message="Error: In the configuration file \"%s\", the line "
+            error_message+="\"%s\" sets ARGPARSER_ARGS, which must not be set."
+
+            for var in "${ARGPARSER_CONFIGURATION_FILE}" "${line}"; do
+                error_message="${error_message/"%s"/${var}}"
+            done
+            error_messages+=("${error_message}")
         elif [[ "${line}" == *( )"dictionary"*( )=* ]]; then
             # Output an error message when the line sets
             # ${ARGPARSER_DICTIONARY}.
@@ -777,8 +831,14 @@ function argparser_read_configuration() {
 
             # Set the environment variable, as long as it isn't already
             # set by the calling script or environment to prevent
-            # overriding it.
+            # overriding it.  For ${ARGPARSER_SCRIPT_NAME}, set the
+            # value to the basename of the script's $0 if an empty
+            # string is given.
             if [[ ! -v "${var}" ]]; then
+                if [[ "${var}" == "ARGPARSER_SCRIPT_NAME" && -z "${value}" ]]
+                then
+                    value="${0##*/}"
+                fi
                 declare -g "${var}"="${value}"
             fi
         else
@@ -826,6 +886,7 @@ function argparser_set_env_vars() {
     # ARGPARSER_ARG_DEF_HAS_HEADER
     # ARGPARSER_ARG_DELIMITER_1
     # ARGPARSER_ARG_DELIMITER_2
+    # ARGPARSER_ARGS
     # ARGPARSER_CHECK_ARG_DEFINITION
     # ARGPARSER_CHECK_ENV_VARS
     # ARGPARSER_CONFIGURATION_FILE
@@ -866,74 +927,187 @@ function argparser_set_env_vars() {
     # ARGPARSER_VERSION_STYLE
     # ARGPARSER_WARNING_STYLE
 
-    # Define the local variable.
-    local error_message
+    # Define the local variables.
+    local arg
+    local arg_key
+    local value
 
-    # Check that ${ARGPARSER_DICTIONARY} is unset.
-    if [[ -v ARGPARSER_DICTIONARY ]]; then
-        error_message="Error: ARGPARSER_DICTIONARY must not be set."
-        if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
-            ARGPARSER_ERROR_EXIT_CODE=1
-            ARGPARSER_ERROR_STYLE="red,bold,reverse"
+    # Set all non-internal environment variables by reading the
+    # argparser's command line given upon sourcing the argparser, using
+    # the argparser itself with default values for all environment
+    # variables (which are yet to be set).
+    ARGPARSER_ARGS=(
+        "id                                  |short_opts |long_opts                 |val_names    |defaults             |choices    |type |arg_no |arg_group |notes |help"
+        "ARGPARSER_ADD_HELP                  |-          |add-help                  |-            |true                 |-          |bool |0      |Options   |-     |-   "
+        "ARGPARSER_ADD_USAGE                 |-          |add-usage                 |-            |true                 |-          |bool |0      |Options   |-     |-   "
+        "ARGPARSER_ADD_VERSION               |-          |add-version               |-            |true                 |-          |bool |0      |Options   |-     |-   "
+        "ARGPARSER_ALLOW_OPTION_ABBREVIATION |-          |allow-option-abbreviation |-            |false                |-          |bool |0      |Options   |-     |-   "
+        "ARGPARSER_ALLOW_OPTION_MERGING      |-          |allow-option-merging      |-            |false                |-          |bool |0      |Options   |-     |-   "
+        "ARGPARSER_ARG_ARRAY_NAME            |-          |arg-array-name            |NAME         |args                 |-          |str  |1      |Options   |-     |-   "
+        "ARGPARSER_ARG_DEF_FILE              |-          |arg-def-file              |FILE         |''                   |-          |str  |1      |Options   |-     |-   "
+        "ARGPARSER_ARG_DEF_FILE_HAS_HEADER   |-          |arg-def-file-has-header   |-            |true                 |-          |bool |0      |Options   |-     |-   "
+        "ARGPARSER_ARG_DEF_HAS_HEADER        |-          |arg-def-has-header        |-            |true                 |-          |bool |0      |Options   |-     |-   "
+        "ARGPARSER_ARG_DELIMITER_1           |-          |arg-delimiter-1           |CHAR         |:                    |-          |char |1      |Options   |-     |-   "
+        "ARGPARSER_ARG_DELIMITER_2           |-          |arg-delimiter-2           |CHAR         |,                    |-          |char |1      |Options   |-     |-   "
+        "ARGPARSER_CHECK_ARG_DEFINITION      |-          |check-arg-definition      |-            |false                |-          |bool |0      |Options   |-     |-   "
+        "ARGPARSER_CHECK_ENV_VARS            |-          |check-env-vars            |-            |false                |-          |bool |0      |Options   |-     |-   "
+        "ARGPARSER_CONFIGURATION_FILE        |-          |configuration-file        |FILE         |''                   |-          |str  |1      |Options   |-     |-   "
+        "ARGPARSER_COUNT_FLAGS               |-          |count-flags               |-            |false                |-          |bool |0      |Options   |-     |-   "
+        "ARGPARSER_ERROR_EXIT_CODE           |-          |error-exit-code           |INT          |1                    |-          |int  |1      |Options   |-     |-   "
+        "ARGPARSER_ERROR_STYLE               |-          |error-style               |STYLE        |red;bold;reverse     |-          |str  |+      |Options   |-     |-   "
+        "ARGPARSER_HELP_EXIT_CODE            |-          |help-exit-code            |INT          |0                    |-          |int  |1      |Options   |-     |-   "
+        "ARGPARSER_HELP_FILE                 |-          |help-file                 |FILE         |''                   |-          |str  |1      |Options   |-     |-   "
+        "ARGPARSER_HELP_FILE_INCLUDE_CHAR    |-          |help-file-include-char    |CHAR         |@                    |-          |char |1      |Options   |-     |-   "
+        "ARGPARSER_HELP_FILE_KEEP_COMMENTS   |-          |help-file-keep-comments   |-            |false                |-          |bool |0      |Options   |-     |-   "
+        "ARGPARSER_HELP_STYLE                |-          |help-style                |STYLE        |italic               |-          |str  |+      |Options   |-     |-   "
+        "ARGPARSER_LANGUAGE                  |-          |language                  |-            |en                   |-          |str  |1      |Options   |-     |-   "
+        "ARGPARSER_MAX_COL_WIDTH_1           |-          |max-col-width-1           |INT          |5                    |-          |uint |1      |Options   |-     |-   "
+        "ARGPARSER_MAX_COL_WIDTH_2           |-          |max-col-width-2           |INT          |33                   |-          |uint |1      |Options   |-     |-   "
+        "ARGPARSER_MAX_COL_WIDTH_3           |-          |max-col-width-3           |INT          |39                   |-          |uint |1      |Options   |-     |-   "
+        "ARGPARSER_POSITIONAL_ARG_GROUP      |-          |positional-arg-group      |NAME         |Positional arguments |-          |str  |1      |Options   |-     |-   "
+        "ARGPARSER_READ_ARGS                 |-          |read-args                 |-            |true                 |-          |bool |0      |Options   |-     |-   "
+        "ARGPARSER_SCRIPT_ARGS               |-          |-                         |COMMAND LINE |-                    |-          |str  |+      |Options   |-     |-   "
+        "ARGPARSER_SCRIPT_NAME               |-          |script-name               |NAME         |''                   |-          |str  |1      |Options   |-     |-   "
+        "ARGPARSER_SET_ARGS                  |-          |set-args                  |-            |true                 |-          |bool |0      |Options   |-     |-   "
+        "ARGPARSER_SET_ARRAYS                |-          |set-arrays                |-            |true                 |-          |bool |0      |Options   |-     |-   "
+        "ARGPARSER_SILENCE_ERRORS            |-          |silence-errors            |-            |false                |-          |bool |0      |Options   |-     |-   "
+        "ARGPARSER_SILENCE_WARNINGS          |-          |silence-warnings          |-            |false                |-          |bool |0      |Options   |-     |-   "
+        "ARGPARSER_TRANSLATION_FILE          |-          |translation-file          |FILE         |''                   |-          |str  |1      |Options   |-     |-   "
+        "ARGPARSER_UNSET_ARGS                |-          |unset-args                |-            |true                 |-          |bool |0      |Options   |-     |-   "
+        "ARGPARSER_UNSET_ENV_VARS            |-          |unset-env-vars            |-            |true                 |-          |bool |0      |Options   |-     |-   "
+        "ARGPARSER_UNSET_FUNCTIONS           |-          |unset-functions           |-            |true                 |-          |bool |0      |Options   |-     |-   "
+        "ARGPARSER_USAGE_EXIT_CODE           |-          |usage-exit-code           |INT          |0                    |-          |int  |1      |Options   |-     |-   "
+        "ARGPARSER_USAGE_FILE                |-          |usage-file                |FILE         |''                   |-          |str  |1      |Options   |-     |-   "
+        "ARGPARSER_USAGE_FILE_INCLUDE_CHAR   |-          |usage-file-include-char   |CHAR         |@                    |-          |char |1      |Options   |-     |-   "
+        "ARGPARSER_USAGE_FILE_KEEP_COMMENTS  |-          |usage-file-keep-comments  |-            |false                |-          |bool |0      |Options   |-     |-   "
+        "ARGPARSER_USAGE_MESSAGE_OPTION_TYPE |-          |usage-message-option-type |-            |short                |long;short |str  |1      |Options   |-     |-   "
+        "ARGPARSER_USAGE_MESSAGE_ORIENTATION |-          |usage-message-orientation |-            |row                  |row;column |str  |1      |Options   |-     |-   "
+        "ARGPARSER_USAGE_STYLE               |-          |usage-style               |STYLE        |italic               |-          |str  |+      |Options   |-     |-   "
+        "ARGPARSER_USE_STYLES_IN_FILES       |-          |use-styles-in-files       |-            |false                |-          |bool |0      |Options   |-     |-   "
+        "ARGPARSER_VERSION                   |-          |version                   |-            |1.0.0                |-          |str  |1      |Options   |-     |-   "
+        "ARGPARSER_VERSION_EXIT_CODE         |-          |version-exit-code         |INT          |0                    |-          |int  |1      |Options   |-     |-   "
+        "ARGPARSER_VERSION_STYLE             |-          |version-style             |STYLE        |bold                 |-          |str  |+      |Options   |-     |-   "
+        "ARGPARSER_WARNING_STYLE             |-          |warning-style             |STYLE        |red;bold             |-          |str  |+      |Options   |-     |-   "
+    )
+
+    # shellcheck source=argparser
+    ARGPARSER_ADD_HELP=true \
+        ARGPARSER_ADD_USAGE=true \
+        ARGPARSER_ADD_VERSION=true \
+        ARGPARSER_ALLOW_OPTION_ABBREVIATION=false \
+        ARGPARSER_ALLOW_OPTION_MERGING=false \
+        ARGPARSER_ARG_ARRAY_NAME="ARGPARSER_ARGS" \
+        ARGPARSER_ARG_DEF_FILE="" \
+        ARGPARSER_ARG_DEF_FILE_HAS_HEADER=true \
+        ARGPARSER_ARG_DEF_HAS_HEADER=true \
+        ARGPARSER_ARG_DELIMITER_1="|" \
+        ARGPARSER_ARG_DELIMITER_2=";" \
+        ARGPARSER_CHECK_ARG_DEFINITION=false \
+        ARGPARSER_CHECK_ENV_VARS=false \
+        ARGPARSER_CONFIGURATION_FILE="" \
+        ARGPARSER_COUNT_FLAGS=false \
+        ARGPARSER_ERROR_EXIT_CODE=1 \
+        ARGPARSER_ERROR_STYLE="red,bold,reverse" \
+        ARGPARSER_HELP_EXIT_CODE=0 \
+        ARGPARSER_HELP_FILE="" \
+        ARGPARSER_HELP_FILE_INCLUDE_CHAR="@" \
+        ARGPARSER_HELP_FILE_KEEP_COMMENTS=false \
+        ARGPARSER_HELP_STYLE="italic" \
+        ARGPARSER_LANGUAGE="en" \
+        ARGPARSER_MAX_COL_WIDTH_1=5 \
+        ARGPARSER_MAX_COL_WIDTH_2=33 \
+        ARGPARSER_MAX_COL_WIDTH_3=39 \
+        ARGPARSER_POSITIONAL_ARG_GROUP="Positional arguments" \
+        ARGPARSER_READ_ARGS=true \
+        ARGPARSER_SCRIPT_NAME="${BASH_SOURCE[0]##*/}" \
+        ARGPARSER_SET_ARGS=false \
+        ARGPARSER_SET_ARRAYS=false \
+        ARGPARSER_SILENCE_ERRORS=false \
+        ARGPARSER_SILENCE_WARNINGS=false \
+        ARGPARSER_TRANSLATION_FILE="" \
+        ARGPARSER_UNSET_ARGS=true \
+        ARGPARSER_UNSET_ENV_VARS=false \
+        ARGPARSER_UNSET_FUNCTIONS=false \
+        ARGPARSER_USAGE_EXIT_CODE=0 \
+        ARGPARSER_USAGE_FILE="" \
+        ARGPARSER_USAGE_FILE_INCLUDE_CHAR="@" \
+        ARGPARSER_USAGE_FILE_KEEP_COMMENTS=false \
+        ARGPARSER_USAGE_MESSAGE_OPTION_TYPE="long" \
+        ARGPARSER_USAGE_MESSAGE_ORIENTATION="column" \
+        ARGPARSER_USAGE_STYLE="italic" \
+        ARGPARSER_USE_STYLES_IN_FILES=false \
+        ARGPARSER_VERSION="1.0.0" \
+        ARGPARSER_VERSION_EXIT_CODE=0 \
+        ARGPARSER_VERSION_STYLE="bold" \
+        ARGPARSER_WARNING_STYLE="red,bold" \
+        source "${BASH_SOURCE[0]}" "$@"
+
+    # Set the environment variables that aren't set yet as global
+    # variables.  For all environment variables that weren't given by
+    # neither a config file, nor as an environment variable assignment,
+    # nor as a command-line parameter to the argparser, use the default
+    # value the argparser has assigned.  If the environment variable has
+    # been given before, check if it was also given on the command line,
+    # then override the previous value, else, keep the previous value.
+    # By this, the command-line parameters have a higher importance than
+    # environment variables. For those environment variables whose
+    # default is given as "''" (two single quotes), set the value to the
+    # empty string.  For ${ARGPARSER_SCRIPT_NAME}, set the value to the
+    # basename of the script's $0, if an empty string is given.
+    for arg_key in "${!ARGPARSER_ARGS[@]}"; do
+        if [[ -v "${arg_key}" ]]; then
+            # The environment variable has already been set.  Override
+            # it if it was also given on the command line.  When the
+            # current command-line argument is the double hyphen ("--")
+            # used to delimit the argparser options from the script's,
+            # break.
+            for arg in "$@"; do
+                if [[ "${arg}" == "--" ]]; then
+                    break
+                fi
+
+                # Set the variable name as shortest part before an
+                # equals sign ("="), strip the leading hyphens, replace
+                # inner hyphens by underscores, capitalize the variable
+                # name, and prepend the string "ARGPARSER_".
+                arg="${arg%%=*}"
+                arg="${arg#--}"
+                arg="${arg//-/_}"
+                arg="ARGPARSER_${arg^^}"
+
+                # If the command-line argument is the current
+                # environment variable, override its value with the one
+                # given on the command line, which was parsed by the
+                # argparser.
+                if [[ "${arg}" == "${arg_key}" ]]; then
+                    value="${ARGPARSER_ARGS[${arg_key}]}"
+                    if [[ "${value}" == "''" ]]; then
+                        if [[ "${arg_key}" == "ARGPARSER_SCRIPT_NAME" ]]; then
+                            value="${0##*/}"
+                        else
+                            value=""
+                        fi
+                    fi
+                    declare -g "${arg_key}"="${value}"
+                    break
+                fi
+            done
+        else
+            # The environment variable is yet unset, so set it to the
+            # value the argparser has set upon parsing, i.e., either the
+            # value from the command line, or, if absent, the default
+            # value.
+            value="${ARGPARSER_ARGS[${arg_key}]}"
+            if [[ "${value}" == "''" ]]; then
+                if [[ "${arg_key}" == "ARGPARSER_SCRIPT_NAME" ]]; then
+                    value="${0##*/}"
+                else
+                    value=""
+                fi
+            fi
+            declare -g "${arg_key}"="${value}"
         fi
-        argparser_print_error_or_warning_message "error" false true \
-            "${error_message}"
-    else
-        declare -g -A ARGPARSER_DICTIONARY
-    fi
-
-    # Set the remaining environment variables.  The no-op command ":" is
-    # used for its side effect to set the variables, if unset or null,
-    # as part of the parameter expansion.
-    : "${ARGPARSER_ADD_HELP:=true}"
-    : "${ARGPARSER_ADD_USAGE:=true}"
-    : "${ARGPARSER_ADD_VERSION:=true}"
-    : "${ARGPARSER_ALLOW_OPTION_ABBREVIATION:=false}"
-    : "${ARGPARSER_ALLOW_OPTION_MERGING:=false}"
-    : "${ARGPARSER_ARG_ARRAY_NAME:="args"}"
-    : "${ARGPARSER_ARG_DEF_FILE:=""}"
-    : "${ARGPARSER_ARG_DEF_FILE_HAS_HEADER:=true}"
-    : "${ARGPARSER_ARG_DEF_HAS_HEADER:=true}"
-    : "${ARGPARSER_ARG_DELIMITER_1:=":"}"
-    : "${ARGPARSER_ARG_DELIMITER_2:=","}"
-    : "${ARGPARSER_CHECK_ARG_DEFINITION:=false}"
-    : "${ARGPARSER_CHECK_ENV_VARS:=false}"
-    : "${ARGPARSER_CONFIGURATION_FILE:=""}"
-    : "${ARGPARSER_COUNT_FLAGS:=false}"
-    : "${ARGPARSER_ERROR_EXIT_CODE:=1}"
-    : "${ARGPARSER_ERROR_STYLE:="red,bold,reverse"}"
-    : "${ARGPARSER_HELP_EXIT_CODE:=0}"
-    : "${ARGPARSER_HELP_FILE:=""}"
-    : "${ARGPARSER_HELP_FILE_INCLUDE_CHAR:="@"}"
-    : "${ARGPARSER_HELP_FILE_KEEP_COMMENTS:=false}"
-    : "${ARGPARSER_HELP_STYLE:="italic"}"
-    : "${ARGPARSER_LANGUAGE:="en"}"
-    : "${ARGPARSER_MAX_COL_WIDTH_1:=5}"
-    : "${ARGPARSER_MAX_COL_WIDTH_2:=33}"
-    : "${ARGPARSER_MAX_COL_WIDTH_3:=39}"
-    : "${ARGPARSER_POSITIONAL_ARG_GROUP:="Positional arguments"}"
-    : "${ARGPARSER_READ_ARGS:=true}"
-    : "${ARGPARSER_SCRIPT_NAME:="${0##*/}"}"
-    : "${ARGPARSER_SET_ARGS:=true}"
-    : "${ARGPARSER_SET_ARRAYS:=true}"
-    : "${ARGPARSER_SILENCE_ERRORS:=false}"
-    : "${ARGPARSER_SILENCE_WARNINGS:=false}"
-    : "${ARGPARSER_TRANSLATION_FILE:=""}"
-    : "${ARGPARSER_UNSET_ARGS:=true}"
-    : "${ARGPARSER_UNSET_ENV_VARS:=true}"
-    : "${ARGPARSER_UNSET_FUNCTIONS:=true}"
-    : "${ARGPARSER_USAGE_EXIT_CODE:=0}"
-    : "${ARGPARSER_USAGE_FILE:=""}"
-    : "${ARGPARSER_USAGE_FILE_INCLUDE_CHAR:="@"}"
-    : "${ARGPARSER_USAGE_FILE_KEEP_COMMENTS:=false}"
-    : "${ARGPARSER_USAGE_MESSAGE_OPTION_TYPE:="short"}"
-    : "${ARGPARSER_USAGE_MESSAGE_ORIENTATION:="row"}"
-    : "${ARGPARSER_USAGE_STYLE:="italic"}"
-    : "${ARGPARSER_USE_STYLES_IN_FILES:=false}"
-    : "${ARGPARSER_VERSION:="1.0.0"}"
-    : "${ARGPARSER_VERSION_EXIT_CODE:=0}"
-    : "${ARGPARSER_VERSION_STYLE:="bold"}"
-    : "${ARGPARSER_WARNING_STYLE:="red,bold"}"
+    done
 }
 
 function argparser_check_env_vars() {
@@ -1265,7 +1439,7 @@ function argparser_check_env_vars() {
 }
 
 # Define the argparser functions for reading the translation and
-# translating.
+# translating strings.
 function argparser_read_translation() {
     # Read the translation of the auto-generated text for help and usage
     # messages from the YAML file into an associative array.
@@ -5585,41 +5759,39 @@ function argparser_main() {
     eval "${is_extglob_set}"
 }
 
-# Read the action specification for the argparser.
-if (( "$#" >= 2 )) && [[ "$2" == "--" ]]; then
-    case "$1" in
-        "--read")
-            ARGPARSER_READ_ARGS=true
-            ARGPARSER_SET_ARGS=false
-            ;;
-        "--set")
-            ARGPARSER_READ_ARGS=false
-            ARGPARSER_SET_ARGS=true
-            ;;
-        "--all")
-            ARGPARSER_READ_ARGS=true
-            ARGPARSER_SET_ARGS=true
-            ;;
-        *)
-            printf 'Error: Wrong action given: %s\n' "$1"
-            exit 1
-            ;;
-    esac
-
-    # Get rid of the action specification.
-    shift 2
+# If the argparser hasn't sourced itself (i.e., the current recursion
+# level is the outer one from the calling script), set the internal
+# "environment" variables.
+if [[ "${BASH_SOURCE[1]}" != "${BASH_SOURCE[0]}" ]]; then
+    argparser_set_internal_vars
 fi
 
 # If ${ARGPARSER_CONFIGURATION_FILE} is defined and not set to the empty
-# string, read the configuration file.  Then, set the environment
-# variables that aren't already set by the calling script or environment
-# or read from the configuration file to prevent overriding them.
+# string, read the configuration file.
 if [[ -v ARGPARSER_CONFIGURATION_FILE \
     && -n "${ARGPARSER_CONFIGURATION_FILE}" ]]
 then
     argparser_read_configuration
 fi
-argparser_set_env_vars "$@"
+
+# If the argparser hasn't sourced itself (i.e., the current recursion
+# level is the outer one from the calling script), set the environment
+# variables that aren't already set by the calling script or environment
+# or read from the configuration file to prevent overriding them.  As
+# the argparser must be sourced with command-line arguments, shift them
+# after reading until reaching an "--", which delimits the argparser
+# command-line arguments from those of the script.  Finally, shift also
+# the "--".
+if [[ "${BASH_SOURCE[1]}" != "${BASH_SOURCE[0]}" ]]; then
+    argparser_set_env_vars "$@"
+
+    while (( "$#" > 0 )) && [[ -n "$1" && "$1" != "--" ]]; do
+        shift
+    done
+    if (( "$#" > 0 )) && [[ -n "$1" && "$1" == "--" ]]; then
+        shift
+    fi
+fi
 
 # If ${ARGPARSER_TRANSLATION_FILE} isn't set to the empty string, read
 # the translation file.  To be able to use the localized name of
@@ -5700,7 +5872,9 @@ if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_read_args_definition
     unset -f argparser_read_configuration
     unset -f argparser_read_translation
+    unset -f argparser_set_args
     unset -f argparser_set_env_vars
+    unset -f argparser_set_internal_vars
     unset -f argparser_sort
     unset -f argparser_translate
     unset -f argparser_trim
@@ -5723,6 +5897,7 @@ if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_ARG_DEF_HAS_HEADER
     unset ARGPARSER_ARG_DELIMITER_1
     unset ARGPARSER_ARG_DELIMITER_2
+    unset ARGPARSER_ARGS
     unset ARGPARSER_CHECK_ARG_DEFINITION
     unset ARGPARSER_CHECK_ENV_VARS
     unset ARGPARSER_CONFIGURATION_FILE
@@ -5741,6 +5916,7 @@ if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_MAX_COL_WIDTH_3
     unset ARGPARSER_POSITIONAL_ARG_GROUP
     unset ARGPARSER_READ_ARGS
+    unset ARGPARSER_SCRIPT_ARGS
     unset ARGPARSER_SCRIPT_NAME
     unset ARGPARSER_SET_ARGS
     unset ARGPARSER_SET_ARRAYS
