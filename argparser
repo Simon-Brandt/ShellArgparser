@@ -713,6 +713,9 @@ function argparser_read_configuration() {
     # ARGPARSER_POSITIONAL_ARG_GROUP
     # ARGPARSER_READ_ARGS
     # ARGPARSER_SCRIPT_NAME
+    # ARGPARSER_SCRIPT_VERSION
+    # ARGPARSER_SCRIPT_VERSION_EXIT_CODE
+    # ARGPARSER_SCRIPT_VERSION_STYLE
     # ARGPARSER_SET_ARGS
     # ARGPARSER_SET_ARRAYS
     # ARGPARSER_SILENCE_ERRORS
@@ -729,9 +732,6 @@ function argparser_read_configuration() {
     # ARGPARSER_USAGE_MESSAGE_ORIENTATION
     # ARGPARSER_USAGE_STYLE
     # ARGPARSER_USE_STYLES_IN_FILES
-    # ARGPARSER_VERSION
-    # ARGPARSER_VERSION_EXIT_CODE
-    # ARGPARSER_VERSION_STYLE
     # ARGPARSER_WARNING_STYLE
 
     # Define the local variables.
@@ -912,6 +912,9 @@ function argparser_set_env_vars() {
     # ARGPARSER_READ_ARGS
     # ARGPARSER_SCRIPT_ARGS
     # ARGPARSER_SCRIPT_NAME
+    # ARGPARSER_SCRIPT_VERSION
+    # ARGPARSER_SCRIPT_VERSION_EXIT_CODE
+    # ARGPARSER_SCRIPT_VERSION_STYLE
     # ARGPARSER_SET_ARGS
     # ARGPARSER_SET_ARRAYS
     # ARGPARSER_SILENCE_ERRORS
@@ -928,9 +931,6 @@ function argparser_set_env_vars() {
     # ARGPARSER_USAGE_MESSAGE_ORIENTATION
     # ARGPARSER_USAGE_STYLE
     # ARGPARSER_USE_STYLES_IN_FILES
-    # ARGPARSER_VERSION
-    # ARGPARSER_VERSION_EXIT_CODE
-    # ARGPARSER_VERSION_STYLE
     # ARGPARSER_WARNING_STYLE
 
     # Define the local variables.
@@ -974,6 +974,9 @@ function argparser_set_env_vars() {
         "ARGPARSER_READ_ARGS                 |-          |read-args                 |-            |true                 |-          |bool |0      |Options   |-     |-   "
         "ARGPARSER_SCRIPT_ARGS               |-          |-                         |COMMAND LINE |-                    |-          |str  |+      |Options   |-     |-   "
         "ARGPARSER_SCRIPT_NAME               |-          |script-name               |NAME         |''                   |-          |str  |1      |Options   |-     |-   "
+        "ARGPARSER_SCRIPT_VERSION            |-          |script-version            |-            |1.0.0                |-          |str  |1      |Options   |-     |-   "
+        "ARGPARSER_SCRIPT_VERSION_EXIT_CODE  |-          |script-version-exit-code  |INT          |0                    |-          |int  |1      |Options   |-     |-   "
+        "ARGPARSER_SCRIPT_VERSION_STYLE      |-          |script-version-style      |STYLE        |bold                 |-          |str  |+      |Options   |-     |-   "
         "ARGPARSER_SET_ARGS                  |-          |set-args                  |-            |true                 |-          |bool |0      |Options   |-     |-   "
         "ARGPARSER_SET_ARRAYS                |-          |set-arrays                |-            |true                 |-          |bool |0      |Options   |-     |-   "
         "ARGPARSER_SILENCE_ERRORS            |-          |silence-errors            |-            |false                |-          |bool |0      |Options   |-     |-   "
@@ -990,9 +993,6 @@ function argparser_set_env_vars() {
         "ARGPARSER_USAGE_MESSAGE_ORIENTATION |-          |usage-message-orientation |-            |row                  |row,column |str  |1      |Options   |-     |-   "
         "ARGPARSER_USAGE_STYLE               |-          |usage-style               |STYLE        |italic               |-          |str  |+      |Options   |-     |-   "
         "ARGPARSER_USE_STYLES_IN_FILES       |-          |use-styles-in-files       |-            |false                |-          |bool |0      |Options   |-     |-   "
-        "ARGPARSER_VERSION                   |-          |version                   |-            |1.0.0                |-          |str  |1      |Options   |-     |-   "
-        "ARGPARSER_VERSION_EXIT_CODE         |-          |version-exit-code         |INT          |0                    |-          |int  |1      |Options   |-     |-   "
-        "ARGPARSER_VERSION_STYLE             |-          |version-style             |STYLE        |bold                 |-          |str  |+      |Options   |-     |-   "
         "ARGPARSER_WARNING_STYLE             |-          |warning-style             |STYLE        |red,bold             |-          |str  |+      |Options   |-     |-   "
     )
 
@@ -1026,6 +1026,9 @@ function argparser_set_env_vars() {
         ARGPARSER_POSITIONAL_ARG_GROUP="Positional arguments" \
         ARGPARSER_READ_ARGS=true \
         ARGPARSER_SCRIPT_NAME="${BASH_SOURCE[0]##*/}" \
+        ARGPARSER_SCRIPT_VERSION="1.0.0" \
+        ARGPARSER_SCRIPT_VERSION_EXIT_CODE=0 \
+        ARGPARSER_SCRIPT_VERSION_STYLE="bold" \
         ARGPARSER_SET_ARGS=false \
         ARGPARSER_SET_ARRAYS=false \
         ARGPARSER_SILENCE_ERRORS=false \
@@ -1042,9 +1045,6 @@ function argparser_set_env_vars() {
         ARGPARSER_USAGE_MESSAGE_ORIENTATION="column" \
         ARGPARSER_USAGE_STYLE="italic" \
         ARGPARSER_USE_STYLES_IN_FILES=false \
-        ARGPARSER_VERSION="1.0.0" \
-        ARGPARSER_VERSION_EXIT_CODE=0 \
-        ARGPARSER_VERSION_STYLE="bold" \
         ARGPARSER_WARNING_STYLE="red,bold" \
         source "${BASH_SOURCE[0]}" "$@"
 
@@ -1129,7 +1129,7 @@ function argparser_check_env_vars() {
     # - ARGPARSER_POSITIONAL_ARG_GROUP (arbitrary value)
     # - ARGPARSER_SCRIPT_ARGS (auto-set)
     # - ARGPARSER_SCRIPT_NAME (arbitrary value)
-    # - ARGPARSER_VERSION (arbitrary value)
+    # - ARGPARSER_SCRIPT_VERSION (arbitrary value)
     #
     # The following environment variables are only checked for mutual
     # exclusivity with other environment variables:
@@ -1163,6 +1163,8 @@ function argparser_check_env_vars() {
     # - ARGPARSER_MAX_COL_WIDTH_2 (read-only)
     # - ARGPARSER_MAX_COL_WIDTH_3 (read-only)
     # - ARGPARSER_READ_ARGS (read-only)
+    # - ARGPARSER_SCRIPT_VERSION_EXIT_CODE (read-only)
+    # - ARGPARSER_SCRIPT_VERSION_STYLE (read-only)
     # - ARGPARSER_SET_ARGS (read-only)
     # - ARGPARSER_SET_ARRAYS (read-only)
     # - ARGPARSER_SILENCE_ERRORS (read-only)
@@ -1179,8 +1181,6 @@ function argparser_check_env_vars() {
     # - ARGPARSER_USAGE_MESSAGE_ORIENTATION (read-only)
     # - ARGPARSER_USAGE_STYLE (read-only)
     # - ARGPARSER_USE_STYLES_IN_FILES (read-only)
-    # - ARGPARSER_VERSION_EXIT_CODE (read-only)
-    # - ARGPARSER_VERSION_STYLE (read-only)
     # - ARGPARSER_WARNING_STYLE (read-only)
 
     # Define the local variables.
@@ -1274,8 +1274,8 @@ function argparser_check_env_vars() {
     vars=(
         ARGPARSER_ERROR_EXIT_CODE
         ARGPARSER_HELP_EXIT_CODE
+        ARGPARSER_SCRIPT_VERSION_EXIT_CODE
         ARGPARSER_USAGE_EXIT_CODE
-        ARGPARSER_VERSION_EXIT_CODE
     )
     for var in "${vars[@]}"; do
         if [[ "$(argparser_is_variable_int "${!var}")" == false ]]; then
@@ -1349,8 +1349,8 @@ function argparser_check_env_vars() {
     vars=(
         ARGPARSER_ERROR_STYLE
         ARGPARSER_HELP_STYLE
+        ARGPARSER_SCRIPT_VERSION_STYLE
         ARGPARSER_USAGE_STYLE
-        ARGPARSER_VERSION_STYLE
         ARGPARSER_WARNING_STYLE
     )
     for var in "${vars[@]}"; do
@@ -5244,9 +5244,9 @@ function argparser_print_version_message() {
     #
     # Environment:
     # - ARGPARSER_SCRIPT_NAME (read-only)
-    # - ARGPARSER_VERSION (read-only)
-    # - ARGPARSER_VERSION_EXIT_CODE (read-only)
-    # - ARGPARSER_VERSION_STYLE (read-only)
+    # - ARGPARSER_SCRIPT_VERSION (read-only)
+    # - ARGPARSER_SCRIPT_VERSION_EXIT_CODE (read-only)
+    # - ARGPARSER_SCRIPT_VERSION_STYLE (read-only)
 
     # Define the local variables.
     local exit
@@ -5258,13 +5258,13 @@ function argparser_print_version_message() {
     write_target="$2"
 
     # Colorize and print the version message, then exit, if requested.
-    message="${ARGPARSER_SCRIPT_NAME} v${ARGPARSER_VERSION}"
-    message="$(argparser_colorize "${ARGPARSER_VERSION_STYLE}" "${message}" \
-        "${write_target}")"
+    message="${ARGPARSER_SCRIPT_NAME} v${ARGPARSER_SCRIPT_VERSION}"
+    message="$(argparser_colorize "${ARGPARSER_SCRIPT_VERSION_STYLE}" \
+        "${message}" "${write_target}")"
     printf '%s\n' "${message}"
 
     if [[ "${exit}" == true ]]; then
-        exit "${ARGPARSER_VERSION_EXIT_CODE}"
+        exit "${ARGPARSER_SCRIPT_VERSION_EXIT_CODE}"
     fi
 }
 
@@ -5946,6 +5946,9 @@ if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_READ_ARGS
     unset ARGPARSER_SCRIPT_ARGS
     unset ARGPARSER_SCRIPT_NAME
+    unset ARGPARSER_SCRIPT_VERSION
+    unset ARGPARSER_SCRIPT_VERSION_EXIT_CODE
+    unset ARGPARSER_SCRIPT_VERSION_STYLE
     unset ARGPARSER_SET_ARGS
     unset ARGPARSER_SET_ARRAYS
     unset ARGPARSER_SILENCE_ERRORS
@@ -5962,8 +5965,5 @@ if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_USAGE_MESSAGE_ORIENTATION
     unset ARGPARSER_USAGE_STYLE
     unset ARGPARSER_USE_STYLES_IN_FILES
-    unset ARGPARSER_VERSION
-    unset ARGPARSER_VERSION_EXIT_CODE
-    unset ARGPARSER_VERSION_STYLE
     unset ARGPARSER_WARNING_STYLE
 fi

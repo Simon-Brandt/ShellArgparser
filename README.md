@@ -60,6 +60,9 @@ The argparser is a designed to be an easy-to-use, yet powerful command-line argu
     - [`ARGPARSER_POSITIONAL_ARG_GROUP`](#argparser_positional_arg_group)
     - [`ARGPARSER_READ_ARGS`](#argparser_read_args)
     - [`ARGPARSER_SCRIPT_NAME`](#argparser_script_name)
+    - [`ARGPARSER_SCRIPT_VERSION_EXIT_CODE`](#argparser_script_version_exit_code)
+    - [`ARGPARSER_SCRIPT_VERSION_STYLE`](#argparser_script_version_style)
+    - [`ARGPARSER_SCRIPT_VERSION`](#argparser_script_version)
     - [`ARGPARSER_SET_ARGS`](#argparser_set_args)
     - [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)
     - [`ARGPARSER_SILENCE_ERRORS`](#argparser_silence_errors)
@@ -76,9 +79,6 @@ The argparser is a designed to be an easy-to-use, yet powerful command-line argu
     - [`ARGPARSER_USAGE_MESSAGE_ORIENTATION`](#argparser_usage_message_orientation)
     - [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style)
     - [`ARGPARSER_USE_STYLES_IN_FILES`](#argparser_use_styles_in_files)
-    - [`ARGPARSER_VERSION`](#argparser_version)
-    - [`ARGPARSER_VERSION_EXIT_CODE`](#argparser_version_exit_code)
-    - [`ARGPARSER_VERSION_STYLE`](#argparser_version_style)
     - [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style)
 <!-- </toc> -->
 
@@ -1194,7 +1194,7 @@ Aufruf: try_localization.sh [-h | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5
 
 ### Version messages
 
-Besides the `-h`, `--help`, `-u`, and `--usage` flags, there is a third option intended to help the user, `-V` and `--version`. This option compiles a brief version message for your script, showing its canonical name (the [`ARGPARSER_SCRIPT_NAME`](#argparser_script_name)) and the version number (the [`ARGPARSER_VERSION`](#argparser_version)). Just as for the help and usage messages, you can disable the version message (and its corresponding flags) by setting [`ARGPARSER_ADD_VERSION`](#argparser_add_version) to `false`. Note that the short option name is an uppercase `V`, such that you can use the lowercase `v` (as `-v`) for your purposes, like `--verbatim` or `--verbose`. This is in line with the common behavior of command-line programs.
+Besides the `-h`, `--help`, `-u`, and `--usage` flags, there is a third option intended to help the user, `-V` and `--version`. This option compiles a brief version message for your script, showing its canonical name (the [`ARGPARSER_SCRIPT_NAME`](#argparser_script_name)) and the version number (the [`ARGPARSER_SCRIPT_VERSION`](#argparser_script_version)). Just as for the help and usage messages, you can disable the version message (and its corresponding flags) by setting [`ARGPARSER_ADD_VERSION`](#argparser_add_version) to `false`. Note that the short option name is an uppercase `V`, such that you can use the lowercase `v` (as `-v`) for your purposes, like `--verbatim` or `--verbose`. This is in line with the common behavior of command-line programs.
 
 The output version message is very simple:
 
@@ -1213,7 +1213,7 @@ Using [`ARGPARSER_SILENCE_ERRORS`](#argparser_silence_errors) and [`ARGPARSER_SI
 
 ### Message styles
 
-It is possible to customize the appearance of error, warning, help, usage, and version messages using the respective environment variable, *viz.*, [`ARGPARSER_ERROR_STYLE`](#argparser_error_style), [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style), [`ARGPARSER_HELP_STYLE`](#argparser_help_style), [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style), and [`ARGPARSER_VERSION_STYLE`](#argparser_version_style). Using [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters"), messages can be colorized and stylized. This is especially useful to quickly see errors when logging, but requires that the terminal or text editor, with which you opened the log file, supports interpreting the escape codes. This is, *e.g.*, supported by `less --raw-control-chars <filename>`.
+It is possible to customize the appearance of error, warning, help, usage, and version messages using the respective environment variable, *viz.*, [`ARGPARSER_ERROR_STYLE`](#argparser_error_style), [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style), [`ARGPARSER_HELP_STYLE`](#argparser_help_style), [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style), and [`ARGPARSER_SCRIPT_VERSION_STYLE`](#argparser_script_version_style). Using [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters"), messages can be colorized and stylized. This is especially useful to quickly see errors when logging, but requires that the terminal or text editor, with which you opened the log file, supports interpreting the escape codes. This is, *e.g.*, supported by `less --raw-control-chars <filename>`.
 
 When [`ARGPARSER_USE_STYLES_IN_FILES`](#argparser_use_styles_in_files) is set to `false`, the escape sequences are only included when `STDOUT`/`STDERR` is a terminal, keeping files plain 7-bit ASCII for simpler parsing. Note that, when your arguments definition or help file includes non-ASCII characters (as is usual for almost any language other than English varieties), the output contains these characters as well.
 
@@ -1342,6 +1342,9 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_READ_ARGS`](#argparser_read_args)                                 | *bool*                             | `true`                   |
 | [`ARGPARSER_SCRIPT_ARGS`](#argparser_script_args)                             | *arr*                              | *None* (unset)           |
 | [`ARGPARSER_SCRIPT_NAME`](#argparser_script_name)                             | *str*                              | `"${0##*/}"`             |
+| [`ARGPARSER_SCRIPT_VERSION`](#argparser_script_version)                                     | *str*                              | `"1.0.0"`                |
+| [`ARGPARSER_SCRIPT_VERSION_EXIT_CODE`](#argparser_script_version_exit_code)                 | *int*                              | `0`                      |
+| [`ARGPARSER_SCRIPT_VERSION_STYLE`](#argparser_script_version_style)                         | *str*                              | `"bold"`                 |
 | [`ARGPARSER_SET_ARGS`](#argparser_set_args)                                   | *bool*                             | `true`                   |
 | [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)                               | *bool*                             | `true`                   |
 | [`ARGPARSER_SILENCE_ERRORS`](#argparser_silence_errors)                       | *bool*                             | `false`                  |
@@ -1358,9 +1361,6 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_USAGE_MESSAGE_ORIENTATION`](#argparser_usage_message_orientation) | *str*                              | `"row"`                  |
 | [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style)                             | *str*                              | `"italic"`               |
 | [`ARGPARSER_USE_STYLES_IN_FILES`](#argparser_use_styles_in_files)             | *bool*                             | `false`                  |
-| [`ARGPARSER_VERSION`](#argparser_version)                                     | *str*                              | `"1.0.0"`                |
-| [`ARGPARSER_VERSION_EXIT_CODE`](#argparser_version_exit_code)                 | *int*                              | `0`                      |
-| [`ARGPARSER_VERSION_STYLE`](#argparser_version_style)                         | *str*                              | `"bold"`                 |
 | [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style)                         | *str*                              | `"red,bold"`             |
 
 [^1]: Bash is weakly typed, hence the denoted types are just a guidance.
@@ -1598,6 +1598,27 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Default value:*** `"${0##*/}"`
 - ***Description:*** The name of your script as it should appear in the help, usage, version, error, and warning messages. By default, it is the name used upon invoking your script (`"$0"`), trimmed by everything before the last slash character (mimicking the behavior of `basename`). If, for example, you want to give your script a symlink, but don't want this symlink's name to be used in the help and usage messages, then you can provide a custom, canonicalized `ARGPARSER_SCRIPT_NAME`. Alternatively, if your script forms a sub-part of a larger program, it may be named `program_part.sh`, but should be called as `program name [ARGUMENTS]`. Then, `program.sh` could parse its positional argument `name` and call `program_part.sh`, but on the command line, you want to hide this implementation detail and refer to `program_part.sh` as `program name`, so you set `ARGPARSER_SCRIPT_NAME` accordingly.
 
+### `ARGPARSER_SCRIPT_VERSION`
+
+- ***Type:*** *str* (String)
+- ***Allowed values:*** Any string
+- ***Default value:*** `"1.0.0"`
+- ***Description:*** The version number of your script to be used in the version message. Prefer using [semantic versioning](https://semver.org/ "semver.org"), *i.e.*, give version numbers by major version, minor version, and patch, separated by dots.
+
+### `ARGPARSER_SCRIPT_VERSION_EXIT_CODE`
+
+- ***Type:*** *int* (Integer)
+- ***Allowed values:*** Any integer, usually zero
+- ***Default value:*** `0`
+- ***Description:*** The exit code when a version message was requested using the `-V` or `--version` flag.
+
+### `ARGPARSER_SCRIPT_VERSION_STYLE`
+
+- ***Type:*** *str* (String)
+- ***Allowed values:*** Any comma-separated string consisting of a color and/or style, with the colors being `"black"`, `"red"`, `"green"`, `"yellow"`, `"blue"`, `"magenta"`, `"cyan"`, and `"white"`, and the styles being `"normal"`, `"bold"`, `"faint"`, `"italic"`, `"underline"`, `"double"`, `"overline"`, `"crossed-out"`, `"blink"`, and `"reverse"`
+- ***Default value:*** `"bold"`
+- ***Description:*** The color and style specification to use for version messages, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters").
+
 ### `ARGPARSER_SET_ARGS`
 
 - ***Type:*** *bool* (Boolean)
@@ -1711,28 +1732,7 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
-- ***Description:*** Whether to use the colors and styles from [`ARGPARSER_ERROR_STYLE`](#argparser_error_style), [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style), [`ARGPARSER_HELP_STYLE`](#argparser_help_style), [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style), and [`ARGPARSER_VERSION_STYLE`](#argparser_version_style) when `STDOUT`/`STDERR` is not a terminal (and thus perhaps a file). This is useful to get plain 7-bit ASCII text output for files, while in interactive sessions, the escape sequences offer more user-friendly formatting and highlighting possibilities. By this, you can parse your files afterwards more easily. Still, using *e.g.* `less --raw-control-chars <filename>`, these escape sequences can be displayed from files, when included.
-
-### `ARGPARSER_VERSION`
-
-- ***Type:*** *str* (String)
-- ***Allowed values:*** Any string
-- ***Default value:*** `"1.0.0"`
-- ***Description:*** The version number of your script to be used in the version message. Prefer using [semantic versioning](https://semver.org/ "semver.org"), *i.e.*, give version numbers by major version, minor version, and patch, separated by dots.
-
-### `ARGPARSER_VERSION_EXIT_CODE`
-
-- ***Type:*** *int* (Integer)
-- ***Allowed values:*** Any integer, usually zero
-- ***Default value:*** `0`
-- ***Description:*** The exit code when a version message was requested using the `-V` or `--version` flag.
-
-### `ARGPARSER_VERSION_STYLE`
-
-- ***Type:*** *str* (String)
-- ***Allowed values:*** Any comma-separated string consisting of a color and/or style, with the colors being `"black"`, `"red"`, `"green"`, `"yellow"`, `"blue"`, `"magenta"`, `"cyan"`, and `"white"`, and the styles being `"normal"`, `"bold"`, `"faint"`, `"italic"`, `"underline"`, `"double"`, `"overline"`, `"crossed-out"`, `"blink"`, and `"reverse"`
-- ***Default value:*** `"bold"`
-- ***Description:*** The color and style specification to use for version messages, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters").
+- ***Description:*** Whether to use the colors and styles from [`ARGPARSER_ERROR_STYLE`](#argparser_error_style), [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style), [`ARGPARSER_HELP_STYLE`](#argparser_help_style), [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style), and [`ARGPARSER_SCRIPT_VERSION_STYLE`](#argparser_script_version_style) when `STDOUT`/`STDERR` is not a terminal (and thus perhaps a file). This is useful to get plain 7-bit ASCII text output for files, while in interactive sessions, the escape sequences offer more user-friendly formatting and highlighting possibilities. By this, you can parse your files afterwards more easily. Still, using *e.g.* `less --raw-control-chars <filename>`, these escape sequences can be displayed from files, when included.
 
 ### `ARGPARSER_WARNING_STYLE`
 
