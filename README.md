@@ -59,10 +59,11 @@ The argparser is a designed to be an easy-to-use, yet powerful command-line argu
     - [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)
     - [`ARGPARSER_POSITIONAL_ARG_GROUP`](#argparser_positional_arg_group)
     - [`ARGPARSER_READ_ARGS`](#argparser_read_args)
+    - [`ARGPARSER_SCRIPT_ARGS`](#argparser_script_args)
     - [`ARGPARSER_SCRIPT_NAME`](#argparser_script_name)
+    - [`ARGPARSER_SCRIPT_VERSION`](#argparser_script_version)
     - [`ARGPARSER_SCRIPT_VERSION_EXIT_CODE`](#argparser_script_version_exit_code)
     - [`ARGPARSER_SCRIPT_VERSION_STYLE`](#argparser_script_version_style)
-    - [`ARGPARSER_SCRIPT_VERSION`](#argparser_script_version)
     - [`ARGPARSER_SET_ARGS`](#argparser_set_args)
     - [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)
     - [`ARGPARSER_SILENCE_ERRORS`](#argparser_silence_errors)
@@ -79,6 +80,7 @@ The argparser is a designed to be an easy-to-use, yet powerful command-line argu
     - [`ARGPARSER_USAGE_MESSAGE_ORIENTATION`](#argparser_usage_message_orientation)
     - [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style)
     - [`ARGPARSER_USE_STYLES_IN_FILES`](#argparser_use_styles_in_files)
+    - [`ARGPARSER_VERSION`](#argparser_version)
     - [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style)
 <!-- </toc> -->
 
@@ -1342,9 +1344,9 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_READ_ARGS`](#argparser_read_args)                                 | *bool*                             | `true`                   |
 | [`ARGPARSER_SCRIPT_ARGS`](#argparser_script_args)                             | *arr*                              | *None* (unset)           |
 | [`ARGPARSER_SCRIPT_NAME`](#argparser_script_name)                             | *str*                              | `"${0##*/}"`             |
-| [`ARGPARSER_SCRIPT_VERSION`](#argparser_script_version)                                     | *str*                              | `"1.0.0"`                |
-| [`ARGPARSER_SCRIPT_VERSION_EXIT_CODE`](#argparser_script_version_exit_code)                 | *int*                              | `0`                      |
-| [`ARGPARSER_SCRIPT_VERSION_STYLE`](#argparser_script_version_style)                         | *str*                              | `"bold"`                 |
+| [`ARGPARSER_SCRIPT_VERSION`](#argparser_script_version)                       | *str*                              | `"1.0.0"`                |
+| [`ARGPARSER_SCRIPT_VERSION_EXIT_CODE`](#argparser_script_version_exit_code)   | *int*                              | `0`                      |
+| [`ARGPARSER_SCRIPT_VERSION_STYLE`](#argparser_script_version_style)           | *str*                              | `"bold"`                 |
 | [`ARGPARSER_SET_ARGS`](#argparser_set_args)                                   | *bool*                             | `true`                   |
 | [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)                               | *bool*                             | `true`                   |
 | [`ARGPARSER_SILENCE_ERRORS`](#argparser_silence_errors)                       | *bool*                             | `false`                  |
@@ -1361,6 +1363,7 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_USAGE_MESSAGE_ORIENTATION`](#argparser_usage_message_orientation) | *str*                              | `"row"`                  |
 | [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style)                             | *str*                              | `"italic"`               |
 | [`ARGPARSER_USE_STYLES_IN_FILES`](#argparser_use_styles_in_files)             | *bool*                             | `false`                  |
+| [`ARGPARSER_VERSION`](#argparser_version)                                     | *str*                              | *None* (unset)           |
 | [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style)                         | *str*                              | `"red,bold"`             |
 
 [^1]: Bash is weakly typed, hence the denoted types are just a guidance.
@@ -1733,6 +1736,14 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
 - ***Description:*** Whether to use the colors and styles from [`ARGPARSER_ERROR_STYLE`](#argparser_error_style), [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style), [`ARGPARSER_HELP_STYLE`](#argparser_help_style), [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style), and [`ARGPARSER_SCRIPT_VERSION_STYLE`](#argparser_script_version_style) when `STDOUT`/`STDERR` is not a terminal (and thus perhaps a file). This is useful to get plain 7-bit ASCII text output for files, while in interactive sessions, the escape sequences offer more user-friendly formatting and highlighting possibilities. By this, you can parse your files afterwards more easily. Still, using *e.g.* `less --raw-control-chars <filename>`, these escape sequences can be displayed from files, when included.
+
+### `ARGPARSER_VERSION`
+
+- ***Type:*** *str* (String)
+- ***Allowed values:*** *None*
+- ***Default value:*** *None* (unset)
+- ***Description:*** The version number of the argparser to be used in the version message, using [semantic versioning](https://semver.org/ "semver.org"), *i.e.*, with the version numbers given by major version, minor version, and patch, separated by dots. This variable is read-only and *must not be set* by your script, else, an error is thrown. The argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#argparser_unset_env_vars) is set to `false`).  
+Besides the version message you (not your script's user) can call, the main purpose of `ARGPARSER_VERSION` is to simplify the transition to newer argparser versions. Whenever breaking changes are made, there will be scripts given in the repository that will try to automatically upgrade your code, as far as possible, to comply with new features.
 
 ### `ARGPARSER_WARNING_STYLE`
 
