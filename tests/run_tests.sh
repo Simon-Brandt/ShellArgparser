@@ -45,7 +45,7 @@ function print_section() {
     # Arguments:
     # - $1: the section name to print
     printf '\e[33;1;7mRunning tests for %s...' "$1"
-    printf '%*s' $(( 99 - ${#1} )) ""
+    printf '%*s' $(( 99 - "${#1}" )) ""
     printf '\e[0m\n'
     print_double_separator
 }
@@ -75,17 +75,41 @@ function print_diff() {
             "${test_number}"
         printf '%*s' $(( 85 - "${#test_number}" )) ""
         printf '\e[0m\n'
+        failure_reasons+=("${test_type}")
     fi
     print_double_separator
 }
 
+# Define the function for printing the reasons for failures.
+function print_failure_reasons() {
+    # Print the reasons for failures.
+    if (( "${#failure_reasons}" == 0 )); then
+        return
+    fi
+    printf '\e[33;1;7mReasons for failure:'
+    printf '%100s' ""
+    printf '\n'
+
+    mapfile -t failure_reasons \
+        < <(printf '%s\n' "${failure_reasons[@]}" | sort --unique)
+    for reason in "${failure_reasons[@]}"; do
+        printf ' - %s' "${reason}"
+        printf '%*s' $(( 117 - "${#reason}" )) ""
+        printf '\n'
+    done
+    printf '\e[0m\n'
+}
+
 # Run the tests.
+failure_reasons=( )
+
 # 1.    Test the general functionality using test_basic.sh.
 # 2.    Test the functionality regarding short options.
 print_section "short options"
 
 # 2.1.  Test the normal output.
 test_number="2.1"
+test_type="output"
 cmd="bash test_short_options.sh 1 2 -a 1 -b 2 -c A"
 output="$(cat << EOF
 The keyword argument "var_1" is set to "1".
@@ -103,6 +127,7 @@ print_diff "${cmd}" "${output}"
 
 # 2.2.  Test the usage message in "row" orientation.
 test_number="2.2"
+test_type="usage"
 cmd="bash test_short_options.sh -u"
 output="$(cat << EOF
 Usage: test_short_options.sh [-h | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
@@ -112,6 +137,7 @@ print_diff "${cmd}" "${output}"
 
 # 2.3.  Test the usage message in "column" orientation.
 test_number="2.3"
+test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash test_short_options.sh -u"
 output="$(cat << EOF
 Usage: test_short_options.sh [-h | -u | -V]
@@ -130,6 +156,7 @@ print_diff "${cmd}" "${output}"
 
 # 2.4.  Test the help message.
 test_number="2.4"
+test_type="help"
 cmd="bash test_short_options.sh -h"
 output="$(cat << EOF
 Usage: test_short_options.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
@@ -165,6 +192,7 @@ print_section "long options"
 
 # 3.1.  Test the normal output.
 test_number="3.1"
+test_type="output"
 cmd="bash test_long_options.sh 1 2 --var-a 1 --var-b 2 --var-c A"
 output="$(cat << EOF
 The keyword argument "var_1" is set to "1".
@@ -182,6 +210,7 @@ print_diff "${cmd}" "${output}"
 
 # 3.2.  Test the usage message in "row" orientation.
 test_number="3.2"
+test_type="usage"
 cmd="bash test_long_options.sh --usage"
 output="$(cat << EOF
 Usage: test_long_options.sh [-h | -u | -V] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1 --var-2,--var-b=VAL_2... --var-3,--var-c={A,B}... [{1,2}] pos_2
@@ -191,6 +220,7 @@ print_diff "${cmd}" "${output}"
 
 # 3.3.  Test the usage message in "column" orientation.
 test_number="3.3"
+test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash test_long_options.sh --usage"
 output="$(cat << EOF
 Usage: test_long_options.sh [-h | -u | -V]
@@ -209,6 +239,7 @@ print_diff "${cmd}" "${output}"
 
 # 3.4.  Test the help message.
 test_number="3.4"
+test_type="help"
 cmd="bash test_long_options.sh --help"
 output="$(cat << EOF
 Usage: test_long_options.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
@@ -246,3 +277,5 @@ print_diff "${cmd}" "${output}"
 # 5.    Test the functionality regarding arguments definition files.
 # 6.    Test the functionality regarding help files.
 # 7.    Test the functionality regarding the localization.
+# Print the reasons for the failures.
+print_failure_reasons
