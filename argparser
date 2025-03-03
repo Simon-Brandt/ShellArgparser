@@ -639,29 +639,47 @@ function argparser_set_internal_vars() {
     # ARGPARSER_ERROR_STYLE
     # ARGPARSER_SCRIPT_ARGS
     # ARGPARSER_USE_STYLES_IN_FILES
+    # ARGPARSER_VERSION
 
-    # Define the local variable.
+    # Define the local variables.
+    local error_message
     local -a error_messages
 
-    # Check that ${ARGPARSER_ARGS}, ${ARGPARSER_DICTIONARY}, and
-    # ${ARGPARSER_SCRIPT_ARGS} are unset, then set them.
+    # Check that ${ARGPARSER_ARGS}, ${ARGPARSER_DICTIONARY},
+    # ${ARGPARSER_SCRIPT_ARGS}, and ${ARGPARSER_VERSION} are unset, then
+    # declare or set them.
     error_messages=( )
     if [[ -v "ARGPARSER_ARGS" ]]; then
-        error_messages+=("Error: ARGPARSER_ARGS must not be set.")
+        error_message="Error: ARGPARSER_ARGS is an internal variable and must "
+        error_message+="not be set."
+        error_messages+=("${error_message}")
     else
         declare -g -a ARGPARSER_ARGS
     fi
 
     if [[ -v "ARGPARSER_DICTIONARY" ]]; then
-        error_messages+=("Error: ARGPARSER_DICTIONARY must not be set.")
+        error_message="Error: ARGPARSER_DICTIONARY is an internal variable "
+        error_message+="and must not be set."
+        error_messages+=("${error_message}")
     else
         declare -g -A ARGPARSER_DICTIONARY
     fi
 
     if [[ -v "ARGPARSER_SCRIPT_ARGS" ]]; then
-        error_messages+=("Error: ARGPARSER_SCRIPT_ARGS must not be set.")
+        error_message="Error: ARGPARSER_SCRIPT_ARGS is an internal variable "
+        error_message+="and must not be set."
+        error_messages+=("${error_message}")
     else
         declare -g -a ARGPARSER_SCRIPT_ARGS
+    fi
+
+    if [[ -v "ARGPARSER_VERSION" ]]; then
+        error_message="Error: ARGPARSER_VERSION is an internal variable and "
+        error_message+="must not be set.  Did you mean "
+        error_message+="\"ARGPARSER_SCRIPT_VERSION\"?"
+        error_messages+=("${error_message}")
+    else
+        readonly ARGPARSER_VERSION=0.1.0
     fi
 
     # Output an error message for those internal environment variables
@@ -798,7 +816,8 @@ function argparser_read_configuration() {
             # Output an error message when the line sets
             # ${ARGPARSER_ARGS}.
             error_message="Error: In the configuration file \"%s\", the line "
-            error_message+="\"%s\" sets ARGPARSER_ARGS, which must not be set."
+            error_message+="\"%s\" sets ARGPARSER_ARGS, which is an "
+            error_message+="internal variable and must not be set."
 
             for var in "${ARGPARSER_CONFIGURATION_FILE}" "${line}"; do
                 error_message="${error_message/"%s"/${var}}"
@@ -808,8 +827,30 @@ function argparser_read_configuration() {
             # Output an error message when the line sets
             # ${ARGPARSER_DICTIONARY}.
             error_message="Error: In the configuration file \"%s\", the line "
-            error_message+="\"%s\" sets ARGPARSER_DICTIONARY, which must not "
-            error_message+="be set."
+            error_message+="\"%s\" sets ARGPARSER_DICTIONARY, which is an "
+            error_message+="internal variable and must not be set."
+
+            for var in "${ARGPARSER_CONFIGURATION_FILE}" "${line}"; do
+                error_message="${error_message/"%s"/${var}}"
+            done
+            error_messages+=("${error_message}")
+        elif [[ "${line}" == *( )"script-args"*( )=* ]]; then
+            # Output an error message when the line sets
+            # ${ARGPARSER_SCRIPT_ARGS}.
+            error_message="Error: In the configuration file \"%s\", the line "
+            error_message+="\"%s\" sets ARGPARSER_SCRIPT_ARGS, which is an "
+            error_message+="internal variable and must not be set."
+
+            for var in "${ARGPARSER_CONFIGURATION_FILE}" "${line}"; do
+                error_message="${error_message/"%s"/${var}}"
+            done
+            error_messages+=("${error_message}")
+        elif [[ "${line}" == *( )"version"*( )=* ]]; then
+            # Output an error message when the line sets
+            # ${ARGPARSER_VERSION}.
+            error_message="Error: In the configuration file \"%s\", the line "
+            error_message+="\"%s\" sets ARGPARSER_VERSION, which is an "
+            error_message+="internal variable and must not be set."
 
             for var in "${ARGPARSER_CONFIGURATION_FILE}" "${line}"; do
                 error_message="${error_message/"%s"/${var}}"
@@ -931,6 +972,7 @@ function argparser_set_env_vars() {
     # ARGPARSER_USAGE_MESSAGE_ORIENTATION
     # ARGPARSER_USAGE_STYLE
     # ARGPARSER_USE_STYLES_IN_FILES
+    # ARGPARSER_VERSION (read-only)
     # ARGPARSER_WARNING_STYLE
 
     # Define the local variables.
@@ -1026,7 +1068,7 @@ function argparser_set_env_vars() {
         ARGPARSER_POSITIONAL_ARG_GROUP="Positional arguments" \
         ARGPARSER_READ_ARGS=true \
         ARGPARSER_SCRIPT_NAME="${BASH_SOURCE[0]##*/}" \
-        ARGPARSER_SCRIPT_VERSION="1.0.0" \
+        ARGPARSER_SCRIPT_VERSION="${ARGPARSER_VERSION}" \
         ARGPARSER_SCRIPT_VERSION_EXIT_CODE=0 \
         ARGPARSER_SCRIPT_VERSION_STYLE="bold" \
         ARGPARSER_SET_ARGS=false \
@@ -1130,6 +1172,7 @@ function argparser_check_env_vars() {
     # - ARGPARSER_SCRIPT_ARGS (auto-set)
     # - ARGPARSER_SCRIPT_NAME (arbitrary value)
     # - ARGPARSER_SCRIPT_VERSION (arbitrary value)
+    # - ARGPARSER_VERSION (auto-set)
     #
     # The following environment variables are only checked for mutual
     # exclusivity with other environment variables:
@@ -5965,5 +6008,6 @@ if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
     unset ARGPARSER_USAGE_MESSAGE_ORIENTATION
     unset ARGPARSER_USAGE_STYLE
     unset ARGPARSER_USE_STYLES_IN_FILES
+    unset ARGPARSER_VERSION
     unset ARGPARSER_WARNING_STYLE
 fi
