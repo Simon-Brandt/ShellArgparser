@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-28
+# Last Modification: 2025-03-03
 
 # TODO: Rewrite tests as correct test suites.
 # TODO: Write tests for keyword-only and positional-only arguments.
@@ -10,6 +10,7 @@
 #       substitutions, or using the novel "${ command; }" syntax
 #       introduced in Bash 5.3.
 # TODO: Support mutually exclusive argument groups.
+# TODO: Add help text to environment variables.
 
 # Usage: Source this script with `source argparser -- "$@"` inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -961,7 +962,7 @@ function argparser_set_env_vars() {
         "ARGPARSER_CONFIGURATION_FILE        |-          |configuration-file        |FILE         |''                   |-          |str  |1      |Options   |-     |-   "
         "ARGPARSER_COUNT_FLAGS               |-          |count-flags               |-            |false                |-          |bool |0      |Options   |-     |-   "
         "ARGPARSER_ERROR_EXIT_CODE           |-          |error-exit-code           |INT          |1                    |-          |int  |1      |Options   |-     |-   "
-        "ARGPARSER_ERROR_STYLE               |-          |error-style               |STYLE        |red;bold;reverse     |-          |str  |+      |Options   |-     |-   "
+        "ARGPARSER_ERROR_STYLE               |-          |error-style               |STYLE        |red,bold,reverse     |-          |str  |+      |Options   |-     |-   "
         "ARGPARSER_HELP_EXIT_CODE            |-          |help-exit-code            |INT          |0                    |-          |int  |1      |Options   |-     |-   "
         "ARGPARSER_HELP_FILE                 |-          |help-file                 |FILE         |''                   |-          |str  |1      |Options   |-     |-   "
         "ARGPARSER_HELP_FILE_INCLUDE_CHAR    |-          |help-file-include-char    |CHAR         |@                    |-          |char |1      |Options   |-     |-   "
@@ -987,14 +988,14 @@ function argparser_set_env_vars() {
         "ARGPARSER_USAGE_FILE                |-          |usage-file                |FILE         |''                   |-          |str  |1      |Options   |-     |-   "
         "ARGPARSER_USAGE_FILE_INCLUDE_CHAR   |-          |usage-file-include-char   |CHAR         |@                    |-          |char |1      |Options   |-     |-   "
         "ARGPARSER_USAGE_FILE_KEEP_COMMENTS  |-          |usage-file-keep-comments  |-            |false                |-          |bool |0      |Options   |-     |-   "
-        "ARGPARSER_USAGE_MESSAGE_OPTION_TYPE |-          |usage-message-option-type |-            |short                |long;short |str  |1      |Options   |-     |-   "
-        "ARGPARSER_USAGE_MESSAGE_ORIENTATION |-          |usage-message-orientation |-            |row                  |row;column |str  |1      |Options   |-     |-   "
+        "ARGPARSER_USAGE_MESSAGE_OPTION_TYPE |-          |usage-message-option-type |-            |short                |long,short |str  |1      |Options   |-     |-   "
+        "ARGPARSER_USAGE_MESSAGE_ORIENTATION |-          |usage-message-orientation |-            |row                  |row,column |str  |1      |Options   |-     |-   "
         "ARGPARSER_USAGE_STYLE               |-          |usage-style               |STYLE        |italic               |-          |str  |+      |Options   |-     |-   "
         "ARGPARSER_USE_STYLES_IN_FILES       |-          |use-styles-in-files       |-            |false                |-          |bool |0      |Options   |-     |-   "
         "ARGPARSER_VERSION                   |-          |version                   |-            |1.0.0                |-          |str  |1      |Options   |-     |-   "
         "ARGPARSER_VERSION_EXIT_CODE         |-          |version-exit-code         |INT          |0                    |-          |int  |1      |Options   |-     |-   "
         "ARGPARSER_VERSION_STYLE             |-          |version-style             |STYLE        |bold                 |-          |str  |+      |Options   |-     |-   "
-        "ARGPARSER_WARNING_STYLE             |-          |warning-style             |STYLE        |red;bold             |-          |str  |+      |Options   |-     |-   "
+        "ARGPARSER_WARNING_STYLE             |-          |warning-style             |STYLE        |red,bold             |-          |str  |+      |Options   |-     |-   "
     )
 
     # shellcheck source=argparser
@@ -1008,7 +1009,7 @@ function argparser_set_env_vars() {
         ARGPARSER_ARG_DEF_FILE_HAS_HEADER=true \
         ARGPARSER_ARG_DEF_HAS_HEADER=true \
         ARGPARSER_ARG_DELIMITER_1="|" \
-        ARGPARSER_ARG_DELIMITER_2=";" \
+        ARGPARSER_ARG_DELIMITER_2="," \
         ARGPARSER_CHECK_ARG_DEFINITION=false \
         ARGPARSER_CHECK_ENV_VARS=false \
         ARGPARSER_CONFIGURATION_FILE="" \
@@ -3518,17 +3519,33 @@ function argparser_check_arg_values() {
     else
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a prefixes <<< "$2"
     fi
-    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values <<< "$3"
+    if [[ "${arg_key}" == "ARGPARSER_ARG_DELIMITER_2" ]]; then
+        if [[ -n "$3" ]]; then
+            values=("$3")
+        else
+            values=( )
+        fi
 
-    # Read the argument's definition.
-    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a default_values \
-        <<< "${all_default_values[${arg_key}]}"
-    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values \
-        <<< "${all_choice_values[${arg_key}]}"
-    type="${all_types[${arg_key}]}"
-    arg_number="${all_arg_numbers[${arg_key}]}"
-    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
-        <<< "${all_notes[${arg_key}]}"
+        # Read the argument's definition.
+        default_values=("${all_default_values[${arg_key}]}")
+        choice_values=("${all_choice_values[${arg_key}]}")
+        type="${all_types[${arg_key}]}"
+        arg_number="${all_arg_numbers[${arg_key}]}"
+        notes=("${all_notes[${arg_key}]}")
+    else
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values <<< "$3"
+
+        # Read the argument's definition.
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a default_values \
+            <<< "${all_default_values[${arg_key}]}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values \
+            <<< "${all_choice_values[${arg_key}]}"
+        type="${all_types[${arg_key}]}"
+        arg_number="${all_arg_numbers[${arg_key}]}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
+            <<< "${all_notes[${arg_key}]}"
+    fi
+
 
     # Concatenate the name of all short and long options for the error
     # and warning messages.
@@ -3614,8 +3631,11 @@ function argparser_check_arg_values() {
                 # As some default values are given, print a similar
                 # warning message as for the absence case, but set the
                 # values to the default values and continue.
-                default_values=("$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
-                    printf '%s' "${default_values[*]}")")
+                if [[ "${arg_key}" != "ARGPARSER_ARG_DELIMITER_2" ]]; then
+                    default_values=("$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
+                        printf '%s' "${default_values[*]}")")
+                fi
+
                 if [[ "${arg_number}" == 1 ]]; then
                     warning_message="Warning: The argument \"%s\" requires 1 "
                     warning_message+="value, but has %s given.  For "
@@ -3643,8 +3663,11 @@ function argparser_check_arg_values() {
                 fi
                 printf '%s\0' "${warning_message}"
 
-                IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a default_values \
-                    <<< "${all_default_values[${arg_key}]}"
+                if [[ "${arg_key}" == "ARGPARSER_ARG_DELIMITER_2" ]]; then
+                    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a \
+                        default_values \
+                            <<< "${all_default_values[${arg_key}]}"
+                fi
                 values=("${default_values[@]}")
             fi
         elif [[ "${arg_number}" == 0 && (! -v values || -z "${values[0]}") ]]
