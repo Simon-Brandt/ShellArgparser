@@ -97,7 +97,7 @@ function print_failure_reasons() {
         printf '%*s' $(( 117 - "${#reason}" )) ""
         printf '\n'
     done
-    printf '\e[0m\n'
+    printf '\e[0m'
 }
 
 # Run the tests.
@@ -276,6 +276,73 @@ print_diff "${cmd}" "${output}"
 # 4.    Test the functionality regarding configuration files.
 # 5.    Test the functionality regarding arguments definition files.
 # 6.    Test the functionality regarding help files.
+print_section "help files"
+
+# 6.1.  Test the normal output.
+test_number="6.1"
+test_type="output"
+cmd="bash test_help_file.sh 1 2 --var-1 1 --var-2 2 --var-3 A"
+output="$(cat << EOF
+The keyword argument "var_1" is set to "1".
+The keyword argument "var_2" is set to "2".
+The keyword argument "var_3" is set to "A".
+The keyword argument "var_4" is set to "A".
+The keyword argument "var_5" is set to "E".
+The keyword argument "var_6" is set to "false".
+The keyword argument "var_7" is set to "true".
+The positional argument "pos_1" on index 1 is set to "2".
+The positional argument "pos_2" on index 2 is set to "1,2".
+EOF
+)"
+print_diff "${cmd}" "${output}"
+
+# 6.2.  Test the usage message.
+test_number="6.2"
+test_type="usage"
+cmd="bash test_help_file.sh --usage"
+output="$(cat << EOF
+Usage: test_help_file.sh [-h | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+EOF
+)"
+print_diff "${cmd}" "${output}"
+
+# 6.3.  Test the help message.
+test_number="6.3"
+test_type="help"
+cmd="bash test_help_file.sh --help"
+output="$(cat << EOF
+A brief header summarizes the way how to interpret the help message.
+Usage: test_help_file.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
+
+Mandatory arguments to long options are mandatory for short options too.
+
+The following arguments are positional.
+Positional arguments:
+[pos_1={1,2}]         one positional argument with default and choice (default:
+                      2)
+pos_2                 two positional arguments without default or choice
+
+The following options have no default value.
+Mandatory options:
+-a,   --var-1=VAL_1   one value without default or choice
+-b,   --var-2=VAL_2   at least one value without default or choice
+-c,   --var-3={A,B}   at least one value with choice
+
+The following options have a default value.
+Optional options:
+[-d={A,B,C}]          one value with default and choice (default: A)
+      [--var-5=VAL_5] one value with default (default: E)
+[-f], [--var-6]       no value (flag) with default (default: false)
+[-g], [--var-7]       (DEPRECATED) no value (flag) with default (default: true)
+
+There are always three options for the help messages.
+-h,   --help          display this help and exit
+-u,   --usage         display the usage and exit
+-V,   --version       display the version and exit
+EOF
+)"
+print_diff "${cmd}" "${output}"
+
 # 7.    Test the functionality regarding the localization.
 print_section "localization"
 
