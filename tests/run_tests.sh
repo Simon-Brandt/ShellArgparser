@@ -277,5 +277,138 @@ print_diff "${cmd}" "${output}"
 # 5.    Test the functionality regarding arguments definition files.
 # 6.    Test the functionality regarding help files.
 # 7.    Test the functionality regarding the localization.
+print_section "localization"
+
+# 7.1.  Test the normal output for the American locale.
+test_number="7.1"
+test_type="output"
+cmd="LANG=en_US.UTF-8 bash test_localization.sh 1 2 --var-1 1 --var-2 2 --var-3 A"
+output="$(cat << EOF
+The keyword argument "var_1" is set to "1".
+The keyword argument "var_2" is set to "2".
+The keyword argument "var_3" is set to "A".
+The keyword argument "var_4" is set to "A".
+The keyword argument "var_5" is set to "E".
+The keyword argument "var_6" is set to "false".
+The keyword argument "var_7" is set to "true".
+The positional argument "pos_1" on index 1 is set to "2".
+The positional argument "pos_2" on index 2 is set to "1,2".
+EOF
+)"
+print_diff "${cmd}" "${output}"
+
+# 7.2.  Test the normal output for the German locale.
+test_number="7.2"
+test_type="output"
+cmd="LANG=de_DE.UTF-8 bash test_localization.sh 1 2 --var-1 1 --var-2 2 --var-3 A"
+output="$(cat << EOF
+The keyword argument "var_1" is set to "1".
+The keyword argument "var_2" is set to "2".
+The keyword argument "var_3" is set to "A".
+The keyword argument "var_4" is set to "A".
+The keyword argument "var_5" is set to "E".
+The keyword argument "var_6" is set to "false".
+The keyword argument "var_7" is set to "true".
+The positional argument "pos_1" on index 1 is set to "2".
+The positional argument "pos_2" on index 2 is set to "1,2".
+EOF
+)"
+print_diff "${cmd}" "${output}"
+
+# 7.3.  Test the usage message for the American locale.
+test_number="7.3"
+test_type="usage"
+cmd="LANG=en_US.UTF-8 bash test_localization.sh --usage"
+output="$(cat << EOF
+Usage: test_localization.sh [-h | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+EOF
+)"
+print_diff "${cmd}" "${output}"
+
+# 7.4.  Test the usage message for the German locale.
+test_number="7.4"
+test_type="usage"
+cmd="LANG=de_DE.UTF-8 bash test_localization.sh --usage"
+output="$(cat << EOF
+Aufruf: test_localization.sh [-h | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+EOF
+)"
+print_diff "${cmd}" "${output}"
+
+# 7.5.  Test the help message for the American locale.
+test_number="7.5"
+test_type="help"
+cmd="LANG=en_US.UTF-8 bash test_localization.sh --help"
+output="$(cat << EOF
+A brief header summarizes the way how to interpret the help message.
+Usage: test_localization.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
+
+Mandatory arguments to long options are mandatory for short options too.
+
+The following arguments are positional.
+Positional arguments:
+[pos_1={1,2}]         one positional argument with default and choice
+                      (default: 2)
+pos_2                 two positional arguments without default or choice
+
+The following options have no default value.
+Mandatory options:
+-a,   --var-1=VAL_1   one value without default or choice
+-b,   --var-2=VAL_2   at least one value without default or choice
+-c,   --var-3={A,B}   at least one value with choice
+
+The following options have a default value.
+Optional options:
+[-d={A,B,C}]          one value with default and choice (default: A)
+      [--var-5=VAL_5] one value with default (default: E)
+[-f], [--var-6]       no value (flag) with default (default: false)
+[-g], [--var-7]       (DEPRECATED) no value (flag) with default (default: true)
+
+There are always three options for the help messages.
+-h,   --help          display this help and exit
+-u,   --usage         display the usage and exit
+-V,   --version       display the version and exit
+EOF
+)"
+print_diff "${cmd}" "${output}"
+
+# 7.6.  Test the help message for the German locale.
+test_number="7.6"
+test_type="help"
+cmd="LANG=de_DE.UTF-8 bash test_localization.sh --help"
+output="$(cat << EOF
+Eine kurze Kopfzeile fasst zusammen, wie die Hilfe-Meldung zu interpretieren
+ist.
+Aufruf: test_localization.sh [OPTIONEN] ARGUMENTE [--] [pos_1] pos_2
+
+Erforderliche Argumente für lange Optionen sind auch für kurze erforderlich.
+
+Die folgenden Argumente sind positional.
+Positionale Argumente:
+[pos_1={1,2}]         ein positionales Argument mit Vorgabe und Auswahl
+                      (Vorgabe: 2)
+pos_2                 zwei positionale Argumente ohne Vorgabe oder Auswahl
+
+Die folgenden Optionen haben keinen Vorgabewert.
+Erforderliche Optionen:
+-a,   --var-1=VAL_1   ein Wert ohne Vorgabe oder Auswahl
+-b,   --var-2=VAL_2   mindestens ein Wert ohne Vorgabe oder Auswahl
+-c,   --var-3={A,B}   mindestens ein Wert mit Auswahl
+
+Die folgenden Optionen haben einen Vorgabewert.
+Optionale Optionen:
+[-d={A,B,C}]          ein Wert mit Vorgabe und Auswahl (Vorgabe: A)
+      [--var-5=VAL_5] ein Wert mit Vorgabe (Vorgabe: E)
+[-f], [--var-6]       kein Wert (Flag) mit Vorgabe (Vorgabe: falsch)
+[-g], [--var-7]       (VERALTET) kein Wert (Flag) mit Vorgabe (Vorgabe: wahr)
+
+Es gibt grundsätzlich drei Optionen für die Hilfe-Meldungen.
+-h,   --help          diese Hilfe anzeigen und beenden
+-u,   --usage         den Aufruf anzeigen und beenden
+-V,   --version       die Version anzeigen und beenden
+EOF
+)"
+print_diff "${cmd}" "${output}"
+
 # Print the reasons for the failures.
 print_failure_reasons
