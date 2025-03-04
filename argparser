@@ -902,6 +902,11 @@ function argparser_read_configuration() {
 
     # Colorize, sort, filter, and print all error messages, then exit,
     # as the environment variables should be correctly read.
+    if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
+        ARGPARSER_ARG_DELIMITER_2=","
+        ARGPARSER_ERROR_EXIT_CODE=1
+        ARGPARSER_ERROR_STYLE="red,bold,reverse"
+    fi
     argparser_print_error_or_warning_message "error" true true \
         "${error_messages[@]}"
 }
@@ -1622,6 +1627,11 @@ function argparser_read_translation() {
     fi
 
     # Colorize, sort, filter, and print all error messages.
+    if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
+        ARGPARSER_ARG_DELIMITER_2=","
+        ARGPARSER_ERROR_EXIT_CODE=1
+        ARGPARSER_ERROR_STYLE="red,bold,reverse"
+    fi
     argparser_print_error_or_warning_message "error" true false \
         "${error_messages[@]}"
 }
@@ -1682,6 +1692,11 @@ function argparser_translate() {
                     "${ARGPARSER_TRANSLATION_FILE}" "${key}")"
             fi
 
+            if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
+                ARGPARSER_ARG_DELIMITER_2=","
+                ARGPARSER_ERROR_EXIT_CODE=1
+                ARGPARSER_ERROR_STYLE="red,bold,reverse"
+            fi
             argparser_print_error_or_warning_message "warning" false false \
                 "${warning_message}"
         elif [[ -z "${ARGPARSER_DICTIONARY[${key}]}" ]]; then
@@ -1703,6 +1718,11 @@ function argparser_translate() {
                     "${key}")"
             fi
 
+            if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
+                ARGPARSER_ARG_DELIMITER_2=","
+                ARGPARSER_ERROR_EXIT_CODE=1
+                ARGPARSER_ERROR_STYLE="red,bold,reverse"
+            fi
             argparser_print_error_or_warning_message "warning" false false \
                 "${warning_message}"
         else
