@@ -550,17 +550,16 @@ function argparser_colorize() {
     # - $3: the target to write to ("file" or "tty")
     #
     # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_USE_STYLES_IN_FILES (read-only)
     #
     # Output:
     # - the colorized string
 
     # Define the local variables.
-    local -A colors
     local request
     local requests
     local string
-    local style
     local -A styles
     local write_target
 
@@ -569,10 +568,10 @@ function argparser_colorize() {
     string="$2"
     write_target="$3"
 
-    # Define the associative arrays with colors or styles, respectively,
-    # and their corresponding Select Graphic Rendition (SGR) ANSI escape
-    # sequence codes.
-    colors=(
+    # Define the associative array with colors and styles, and their
+    # corresponding Select Graphic Rendition (SGR) ANSI escape sequence
+    # codes.
+    styles=(
         [black]=30
         [red]=31
         [green]=32
@@ -581,9 +580,6 @@ function argparser_colorize() {
         [magenta]=35
         [cyan]=36
         [white]=37
-    )
-
-    styles=(
         [normal]=22
         [bold]=1
         [faint]=2
@@ -596,27 +592,22 @@ function argparser_colorize() {
         [reverse]=7
     )
 
-    # Split the requested color and/or style on commas and print any.
-    # Then, print the string and reset the color and style.  Possibly,
-    # only use styles when writing to a terminal.  As argparser_colorize
-    # is generally run through command substitution, [[ -t 1 ]] would
-    # always be false, i.e., it is impossible to see if the final STDOUT
-    # goes to a terminal.  Thus, the test is outsourced to the invoking
-    # function and passed as command-line argument.
+    # Split the requested color and/or style on
+    # ${ARGPARSER_ARG_DELIMITER_2} characters and print any.  Then,
+    # print the string and reset the color/style.  Possibly, only use
+    # colors/styles when writing to a terminal.
+    # As argparser_colorize is generally run through command
+    # substitution, [[ -t 1 ]] would always be false, i.e., it is
+    # impossible to see if the final STDOUT goes to a terminal.  Thus,
+    # the test is outsourced to the invoking function and passed as
+    # command-line argument.
     if [[ "${ARGPARSER_USE_STYLES_IN_FILES}" == true \
         || "${write_target}" == "tty" ]]
     then
-        IFS="," read -r -a requests <<< "${requests}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a requests \
+            <<< "${requests}"
         for request in "${requests[@]}"; do
-            if [[ "$(argparser_in_array "${request}" \
-                "${!colors[@]}")" == true ]]
-            then
-                printf '\e[%sm' "${colors[${request}]}"
-            elif [[ "$(argparser_in_array "${request}" \
-                "${!styles[@]}")" == true ]]
-            then
-                printf '\e[%sm' "${styles[${request}]}"
-            fi
+            printf '\e[%sm' "${styles[${request}]}"
         done
 
         printf '%s\e[0m' "${string}"
@@ -688,6 +679,7 @@ function argparser_set_internal_vars() {
         if [[ ! -v "ARGPARSER_CHECK_ENV_VARS" \
             || "${ARGPARSER_CHECK_ENV_VARS}" != false ]]
         then
+            ARGPARSER_ARG_DELIMITER_2=","
             ARGPARSER_ERROR_EXIT_CODE=1
             ARGPARSER_ERROR_STYLE="red,bold,reverse"
             ARGPARSER_USE_STYLES_IN_FILES=false
@@ -797,6 +789,7 @@ function argparser_read_configuration() {
         error_message="${error_message/"%s"/${ARGPARSER_CONFIGURATION_FILE}}"
 
         if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
+            ARGPARSER_ARG_DELIMITER_2=","
             ARGPARSER_ERROR_EXIT_CODE=1
             ARGPARSER_ERROR_STYLE="red,bold,reverse"
         fi
@@ -1496,6 +1489,7 @@ function argparser_read_translation() {
     # messages from the YAML file into an associative array.
     #
     # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2
     # - ARGPARSER_CHECK_ENV_VARS
     # - ARGPARSER_DICTIONARY
     # - ARGPARSER_ERROR_EXIT_CODE
@@ -1543,6 +1537,7 @@ function argparser_read_translation() {
         error_message="${error_message/"%s"/${ARGPARSER_TRANSLATION_FILE}}"
 
         if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
+            ARGPARSER_ARG_DELIMITER_2=","
             ARGPARSER_ERROR_EXIT_CODE=1
             ARGPARSER_ERROR_STYLE="red,bold,reverse"
         fi
