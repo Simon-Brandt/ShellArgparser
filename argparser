@@ -5629,18 +5629,9 @@ function argparser_main() {
         # value or prefix to the previously given ones.
         for message in "${messages[@]}"; do
             case "${message}" in
-                Help)
-                    is_help=true
-                    break 2
-                    ;;
-                Usage)
-                    is_usage=true
-                    break 2
-                    ;;
-                Version)
-                    is_version=true
-                    break 2
-                    ;;
+                Help) is_help=true ;;
+                Usage) is_usage=true ;;
+                Version) is_version=true ;;
                 ${translated_error}*)
                     error_messages+=("${message}")
                     ;;
