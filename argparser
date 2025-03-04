@@ -3076,6 +3076,13 @@ function argparser_parse_arg() {
             "${error_message}")"
         printf '%s\0' "${error_message}"
         printf 'Argument: %s\0' "${given_arg}"
+    elif [[ "${given_arg}" == "--argparser" \
+        && "${BASH_SOURCE[1]}" == "${BASH_SOURCE[0]}" ]]
+    then
+        # The argument is the magic string for the argparser, which has
+        # sourced itself (i.e., the current recursion level is the inner
+        # one from the argparser, not the calling script).
+        printf 'Logo\0'
     elif [[ "${given_arg::2}" == "--" || "${given_arg::2}" == "++" ]]; then
         # The argument is a long option, so check whether the given
         # argument is defined.
@@ -3899,7 +3906,7 @@ function argparser_set_args() {
 
 # Define the argparser functions for creating and printing the help,
 # usage, and version messages, as well as for printing error and warning
-# messages.
+# messages, and the argparser logo.
 function argparser_create_help_message() {
     # Create a help message for the script's arguments.
     #
@@ -5411,6 +5418,196 @@ function argparser_print_error_or_warning_message() {
     fi
 }
 
+function argparser_print_logo() {
+    # Print the argparser logo in ANSI art.
+
+    # Define the local variables.
+    local space
+    local font_1
+    local font_2
+    local font_3
+    local font_4
+    local font_5
+    local font_6
+    local font_7
+    local font_8
+    local font_9
+
+    # Set each letter's color as all primary and secondary colors,
+    # traversing the color wheel for one and a half rounds.
+    space="black,reverse"     # _ (whitespace)
+    font_1="green,reverse"    # A
+    font_2="cyan,reverse"     # R
+    font_3="blue,reverse"     # G
+    font_4="magenta,reverse"  # P
+    font_5="red,reverse"      # A
+    font_6="yellow,reverse"   # R
+    font_7="green,reverse"    # S
+    font_8="cyan,reverse"     # E
+    font_9="blue,reverse"     # R
+
+    # Output the first line, which is empty.
+    argparser_colorize "${space}" "                                " "tty"  # _
+    argparser_colorize "${space}" "                                " "tty"  # _
+    argparser_colorize "${space}" "          " "tty"                        # _
+    printf '\n'
+
+    # Output the second line, containing the first of five lines of the
+    # letters.
+    argparser_colorize "${space}" "   " "tty"      # _, A
+    argparser_colorize "${font_1}" "    " "tty"    # A
+    argparser_colorize "${space}" "    " "tty"     # A, _, R
+    argparser_colorize "${font_2}" "    " "tty"    # R
+    argparser_colorize "${space}" "    " "tty"     # R, _, G
+    argparser_colorize "${font_3}" "     " "tty"   # G
+    argparser_colorize "${space}" "   " "tty"      # _, P
+    argparser_colorize "${font_4}" "    " "tty"    # P
+    argparser_colorize "${space}" "    " "tty"     # P, _, A
+    argparser_colorize "${font_5}" "    " "tty"    # A
+    argparser_colorize "${space}" "    " "tty"     # A, _, R
+    argparser_colorize "${font_6}" "    " "tty"    # R
+    argparser_colorize "${space}" "    " "tty"     # R, _, S
+    argparser_colorize "${font_7}" "     " "tty"   # S
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_8}" "      " "tty"  # E
+    argparser_colorize "${space}" "   " "tty"      # _, R
+    argparser_colorize "${font_9}" "    " "tty"    # R
+    argparser_colorize "${space}" "   " "tty"      # R, _
+    printf '\n'
+
+    # Output the third line, containing the second of five lines of the
+    # letters.
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_1}" "  " "tty"      # A
+    argparser_colorize "${space}" "  " "tty"       # A
+    argparser_colorize "${font_1}" "  " "tty"      # A
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_2}" "  " "tty"      # R
+    argparser_colorize "${space}" "  " "tty"       # R
+    argparser_colorize "${font_2}" "  " "tty"      # R
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_3}" "  " "tty"      # G
+    argparser_colorize "${space}" "      " "tty"   # G, _
+    argparser_colorize "${font_4}" "  " "tty"      # P
+    argparser_colorize "${space}" "  " "tty"       # P
+    argparser_colorize "${font_4}" "  " "tty"      # P
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_5}" "  " "tty"      # A
+    argparser_colorize "${space}" "  " "tty"       # A
+    argparser_colorize "${font_5}" "  " "tty"      # A
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_6}" "  " "tty"      # R
+    argparser_colorize "${space}" "  " "tty"       # R
+    argparser_colorize "${font_6}" "  " "tty"      # R
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_7}" "  " "tty"      # S
+    argparser_colorize "${space}" "      " "tty"   # S, _
+    argparser_colorize "${font_8}" "  " "tty"      # E
+    argparser_colorize "${space}" "      " "tty"   # E, _
+    argparser_colorize "${font_9}" "  " "tty"      # R
+    argparser_colorize "${space}" "  " "tty"       # R
+    argparser_colorize "${font_9}" "  " "tty"      # R
+    argparser_colorize "${space}" "  " "tty"       # _
+    printf '\n'
+
+    # Output the fourth line, containing the third of five lines of the
+    # letters.
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_1}" "      " "tty"  # A
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_2}" "      " "tty"  # R
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_3}" "     " "tty"   # G
+    argparser_colorize "${space}" "   " "tty"      # G, _
+    argparser_colorize "${font_4}" "     " "tty"   # P
+    argparser_colorize "${space}" "   " "tty"      # P, _
+    argparser_colorize "${font_5}" "      " "tty"  # A
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_6}" "      " "tty"  # R
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_7}" "      " "tty"  # S
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_8}" "      " "tty"  # E
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_9}" "      " "tty"  # R
+    argparser_colorize "${space}" "  " "tty"       # _
+    printf '\n'
+
+    # Output the fifth line, containing the fourth of five lines of the
+    # letters.
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_1}" "  " "tty"      # A
+    argparser_colorize "${space}" "  " "tty"       # A
+    argparser_colorize "${font_1}" "  " "tty"      # A
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_2}" "  " "tty"      # R
+    argparser_colorize "${space}" " " "tty"        # R
+    argparser_colorize "${font_2}" "  " "tty"      # R
+    argparser_colorize "${space}" "   " "tty"      # R, _
+    argparser_colorize "${font_3}" "  " "tty"      # G
+    argparser_colorize "${space}" "  " "tty"       # G
+    argparser_colorize "${font_3}" "  " "tty"      # G
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_4}" "  " "tty"      # P
+    argparser_colorize "${space}" "      " "tty"   # P, _
+    argparser_colorize "${font_5}" "  " "tty"      # A
+    argparser_colorize "${space}" "  " "tty"       # A
+    argparser_colorize "${font_5}" "  " "tty"      # A
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_6}" "  " "tty"      # R
+    argparser_colorize "${space}" " " "tty"        # R
+    argparser_colorize "${font_6}" "  " "tty"      # R
+    argparser_colorize "${space}" "       " "tty"  # R, _, S
+    argparser_colorize "${font_7}" "  " "tty"      # S
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_8}" "  " "tty"      # E
+    argparser_colorize "${space}" "      " "tty"   # E, _
+    argparser_colorize "${font_9}" "  " "tty"      # R
+    argparser_colorize "${space}" " " "tty"        # R
+    argparser_colorize "${font_9}" "  " "tty"      # R
+    argparser_colorize "${space}" "   " "tty"      # R, _
+    printf '\n'
+
+    # Output the sixth line, containing the fifth of five lines of the
+    # letters.
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_1}" "  " "tty"      # A
+    argparser_colorize "${space}" "  " "tty"       # A
+    argparser_colorize "${font_1}" "  " "tty"      # A
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_2}" "  " "tty"      # R
+    argparser_colorize "${space}" "  " "tty"       # R
+    argparser_colorize "${font_2}" "  " "tty"      # R
+    argparser_colorize "${space}" "   " "tty"      # _, G
+    argparser_colorize "${font_3}" "    " "tty"    # G
+    argparser_colorize "${space}" "   " "tty"      # G, _
+    argparser_colorize "${font_4}" "  " "tty"      # P
+    argparser_colorize "${space}" "      " "tty"   # P, _
+    argparser_colorize "${font_5}" "  " "tty"      # A
+    argparser_colorize "${space}" "  " "tty"       # A
+    argparser_colorize "${font_5}" "  " "tty"      # A
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_6}" "  " "tty"      # R
+    argparser_colorize "${space}" "  " "tty"       # R
+    argparser_colorize "${font_6}" "  " "tty"      # R
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_7}" "     " "tty"   # S
+    argparser_colorize "${space}" "   " "tty"      # S, _
+    argparser_colorize "${font_8}" "      " "tty"  # E
+    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${font_9}" "  " "tty"      # R
+    argparser_colorize "${space}" "  " "tty"       # R
+    argparser_colorize "${font_9}" "  " "tty"      # R
+    argparser_colorize "${space}" "  " "tty"       # _
+    printf '\n'
+
+    # Output the seventh line, which is empty again.
+    argparser_colorize "${space}" "                                " "tty"  # _
+    argparser_colorize "${space}" "                                " "tty"  # _
+    argparser_colorize "${space}" "          " "tty"                        # _
+    printf '\n'
+}
+
 # Define the main argparser function.
 function argparser_main() {
     # Parse the script's given arguments and check if they accord to
@@ -5457,6 +5654,7 @@ function argparser_main() {
     local i
     local is_extglob_set
     local is_help
+    local is_logo
     local is_positional
     local is_positional_only
     local is_usage
@@ -5608,6 +5806,7 @@ function argparser_main() {
 
     # Parse the script's given arguments.
     is_help=false
+    is_logo=false
     is_usage=false
     is_version=false
     is_positional=true
@@ -5681,13 +5880,13 @@ function argparser_main() {
                         args[${arg_key}]+="${value}"
                     fi
                     ;;
+                Logo) is_logo=true ;;
             esac
         done
     done
 
-    # If the help message was requested, print it.  If the usage message
-    # was requested, but not the help message, print the usage message.
-    # Finally, if only the version message was requested, print that.
+    # If the help, usage, or version message, or the logo was requested
+    # (in this order of priority), print it.
     if [[ -t 1 ]]; then
         write_target="tty"
     else
@@ -5700,6 +5899,11 @@ function argparser_main() {
         argparser_print_help_or_usage_message "usage" true "${write_target}"
     elif [[ "${is_version}" == true ]]; then
         argparser_print_version_message true "${write_target}"
+    elif [[ "${is_logo}" == true ]]; then
+        # Print the logo in one chunk by aggregating it via command
+        # substitution.
+        printf '%s\n' "$(argparser_print_logo)"
+        exit
     fi
 
     # Parse the script's given positional arguments, that are yet only
@@ -5944,6 +6148,7 @@ if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_parse_short_option
     unset -f argparser_print_error_or_warning_message
     unset -f argparser_print_help_or_usage_message
+    unset -f argparser_print_logo
     unset -f argparser_print_version_message
     unset -f argparser_quicksort
     unset -f argparser_read_args_definition
