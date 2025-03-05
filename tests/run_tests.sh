@@ -58,16 +58,19 @@ function print_diff() {
     # - $1: the command line to run
     # - $2: the expected output
     printf 'Running test %s: "\e[1m%s\e[0m"...\n' "${test_number}" "$1"
+
     diff --side-by-side --suppress-common-lines --color=always --width=120 \
         <(eval "$1") \
         <(printf '%s\n' "$2") \
         >&2
+
     # shellcheck disable=SC2181  # Intentional explicit check for return value.
     if (( "$?" == 0 )); then
         printf '\e[32;1;7mTest %s succeeded with correct output.' \
             "${test_number}"
         printf '%*s' $(( 84 - "${#test_number}" )) ""
         printf '\e[0m\n'
+        (( succeeded_cmd_count++ ))
     elif (( "$?" == 1 )); then
         print_single_separator
         printf '\e[31;1;7mTest %s failed with diverging output.' \
@@ -75,8 +78,37 @@ function print_diff() {
         printf '%*s' $(( 85 - "${#test_number}" )) ""
         printf '\e[0m\n'
         failure_reasons+=("${test_type}")
+        (( failed_cmd_count++ ))
     fi
     print_double_separator
+}
+
+# Define the function for printing the summary.
+function print_summary() {
+    # Print a summary giving statistics over the run commands.
+    local line
+
+    printf '\e[33;1;7mSummary:'
+    printf '%113s' ""
+    printf '\n'
+
+    line="$(printf ' - %2s tests were run.' \
+        $(( succeeded_cmd_count + failed_cmd_count )))"
+    printf '%s' "${line}"
+    printf '%*s' $(( 120 - "${#line}" )) ""
+    printf '\n'
+
+    line="$(printf ' - %2s tests succeeded.' "${succeeded_cmd_count}")"
+    printf '%s' "${line}"
+    printf '%*s' $(( 120 - "${#line}" )) ""
+    printf '\n'
+
+    line="$(printf ' - %2s tests failed.' "${failed_cmd_count}")"
+    printf '%s' "${line}"
+    printf '%*s' $(( 120 - "${#line}" )) ""
+    printf '\n'
+
+    printf '\e[0m'
 }
 
 # Define the function for printing the reasons for failures.
@@ -100,6 +132,8 @@ function print_failure_reasons() {
 }
 
 # Run the tests.
+failed_cmd_count=0
+succeeded_cmd_count=0
 failure_reasons=( )
 
 # 1.    Test the general functionality using test_basic.sh.
@@ -686,5 +720,7 @@ EOF
 )"
 print_diff "${cmd}" "${output}"
 
-# Print the reasons for the failures.
+# Print the summary and the reasons for the failures.
+print_summary
+printf '\e[33;1;7m%120s\n\e[0m' ""
 print_failure_reasons
