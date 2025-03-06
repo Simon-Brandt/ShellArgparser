@@ -57,11 +57,18 @@ function print_diff() {
     # Arguments:
     # - $1: the command line to run
     # - $2: the expected output
-    printf 'Running test %s: "\e[1m%s\e[0m"...\n' "${test_number}" "$1"
+    # - $3: the expected error
+
+    local cmd="$1"
+    local output="$2"
+    local error="$3"
+
+    printf 'Running test %s: "\e[1m%s\e[0m"...\n' "${test_number}" "${cmd}"
 
     diff --side-by-side --suppress-common-lines --color=always --width=120 \
-        <(eval "$1") \
-        <(printf '%s\n' "$2") \
+        <(eval "${cmd}" 2>&1) \
+        <(if [[ -n "${error}" ]]; then printf '%s\n' "${error}"; fi; \
+            printf '%s\n' "${output}") \
         >&2
 
     # shellcheck disable=SC2181  # Intentional explicit check for return value.
@@ -155,7 +162,8 @@ The positional argument "pos_1" on index 1 is set to "2".
 The positional argument "pos_2" on index 2 is set to "1,2".
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 1.2.  Test the normal output for long option names, using spaces.
 test_number="1.2"
@@ -173,7 +181,8 @@ The positional argument "pos_1" on index 1 is set to "2".
 The positional argument "pos_2" on index 2 is set to "1,2".
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 1.3.  Test the normal output for short option names, using equals
 #       signs.
@@ -192,7 +201,8 @@ The positional argument "pos_1" on index 1 is set to "2".
 The positional argument "pos_2" on index 2 is set to "1,2".
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 1.4.  Test the normal output for long option names, using equals
 #       signs.
@@ -211,7 +221,8 @@ The positional argument "pos_1" on index 1 is set to "2".
 The positional argument "pos_2" on index 2 is set to "1,2".
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 1.5.  Test the normal output with the double hyphen as positional
 #       arguments delimiter.
@@ -230,7 +241,8 @@ The positional argument "pos_1" on index 1 is set to "2".
 The positional argument "pos_2" on index 2 is set to "1,2".
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 1.6.  Test the normal output with the doubled plus sign as positional
 #       arguments delimiter.
@@ -249,7 +261,8 @@ The positional argument "pos_1" on index 1 is set to "2".
 The positional argument "pos_2" on index 2 is set to "1,2".
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 1.7.  Test the normal output with the positional argument with default
 #       value being given.
@@ -268,9 +281,10 @@ The positional argument "pos_1" on index 1 is set to "1".
 The positional argument "pos_2" on index 2 is set to "2,3".
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
-# 1.8.  Test the normal output with flags.
+# 1.8.  Test the normal output with flags, including the deprecated one.
 test_number="1.8"
 test_type="output"
 cmd="bash test_basic.sh 1 2 --var-1=1 --var-2=2 --var-3=A --var-6 ++var-7"
@@ -286,7 +300,8 @@ The positional argument "pos_1" on index 1 is set to "2".
 The positional argument "pos_2" on index 2 is set to "1,2".
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error="test_basic.sh: Warning: The argument \"-g,-G,--var-7,--var-g\" is deprecated and will be removed in the future."
+print_diff "${cmd}" "${output}" "${error}"
 
 # 1.9.  Test the usage message in "row" orientation.
 test_number="1.9"
@@ -296,7 +311,8 @@ output="$(cat << EOF
 Usage: test_basic.sh [-h | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 1.10.  Test the usage message in "column" orientation.
 test_number="1.10"
@@ -315,7 +331,8 @@ Usage: test_basic.sh [-h | -u | -V]
                      pos_2
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 1.11.  Test the help message.
 test_number="1.11"
@@ -352,7 +369,8 @@ Optional options:
 -V,       --version                        display the version and exit
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 2.    Test the functionality regarding short options.
 print_section "short options"
@@ -373,7 +391,8 @@ The positional argument "pos_1" on index 1 is set to "2".
 The positional argument "pos_2" on index 2 is set to "1,2".
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 2.2.  Test the usage message in "row" orientation.
 test_number="2.2"
@@ -383,7 +402,8 @@ output="$(cat << EOF
 Usage: test_short_options.sh [-h | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 2.3.  Test the usage message in "column" orientation.
 test_number="2.3"
@@ -402,7 +422,8 @@ Usage: test_short_options.sh [-h | -u | -V]
                              pos_2
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 2.4.  Test the help message.
 test_number="2.4"
@@ -435,7 +456,8 @@ Optional options:
 -V                 display the version and exit
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 3.    Test the functionality regarding long options.
 print_section "long options"
@@ -456,7 +478,8 @@ The positional argument "pos_1" on index 1 is set to "2".
 The positional argument "pos_2" on index 2 is set to "1,2".
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 3.2.  Test the usage message in "row" orientation.
 test_number="3.2"
@@ -466,7 +489,8 @@ output="$(cat << EOF
 Usage: test_long_options.sh [-h | -u | -V] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1 --var-2,--var-b=VAL_2... --var-3,--var-c={A,B}... [{1,2}] pos_2
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 3.3.  Test the usage message in "column" orientation.
 test_number="3.3"
@@ -485,7 +509,8 @@ Usage: test_long_options.sh [-h | -u | -V]
                             pos_2
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 3.4.  Test the help message.
 test_number="3.4"
@@ -521,7 +546,8 @@ Optional options:
 --version                        display the version and exit
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 4.    Test the functionality regarding configuration files.
 print_section "configuration files"
@@ -542,7 +568,8 @@ The positional argument "pos_1" on index 1 is set to "2".
 The positional argument "pos_2" on index 2 is set to "1,2".
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 4.2.  Test the usage message.
 test_number="4.2"
@@ -552,7 +579,8 @@ output="$(cat << EOF
 Usage: test_config_file.sh [-h | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 4.3.  Test the help message.
 test_number="4.3"
@@ -584,7 +612,8 @@ Optional options:
 -V,   --version       display the version and exit
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 5.    Test the functionality regarding arguments definition files.
 print_section "arguments definition files"
@@ -605,7 +634,8 @@ The positional argument "pos_1" on index 1 is set to "2".
 The positional argument "pos_2" on index 2 is set to "1,2".
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 5.2.  Test the usage message.
 test_number="5.2"
@@ -615,7 +645,8 @@ output="$(cat << EOF
 Usage: test_arg_def_file.sh [-h | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 5.3.  Test the help message.
 test_number="5.3"
@@ -647,7 +678,8 @@ Optional options:
 -V,   --version       display the version and exit
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 6.    Test the functionality regarding help files.
 print_section "help files"
@@ -668,7 +700,8 @@ The positional argument "pos_1" on index 1 is set to "2".
 The positional argument "pos_2" on index 2 is set to "1,2".
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 6.2.  Test the usage message.
 test_number="6.2"
@@ -678,7 +711,8 @@ output="$(cat << EOF
 Usage: test_help_file.sh [-h | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 6.3.  Test the help message.
 test_number="6.3"
@@ -715,7 +749,8 @@ There are always three options for the help messages.
 -V,   --version       display the version and exit
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 7.    Test the functionality regarding the localization.
 print_section "localization"
@@ -736,7 +771,8 @@ The positional argument "pos_1" on index 1 is set to "2".
 The positional argument "pos_2" on index 2 is set to "1,2".
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 7.2.  Test the normal output for the German locale.
 test_number="7.2"
@@ -754,7 +790,8 @@ The positional argument "pos_1" on index 1 is set to "2".
 The positional argument "pos_2" on index 2 is set to "1,2".
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 7.3.  Test the usage message for the American locale.
 test_number="7.3"
@@ -764,7 +801,8 @@ output="$(cat << EOF
 Usage: test_localization.sh [-h | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 7.4.  Test the usage message for the German locale.
 test_number="7.4"
@@ -774,7 +812,8 @@ output="$(cat << EOF
 Aufruf: test_localization.sh [-h | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 7.5.  Test the help message for the American locale.
 test_number="7.5"
@@ -811,7 +850,8 @@ There are always three options for the help messages.
 -V,   --version       display the version and exit
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # 7.6.  Test the help message for the German locale.
 test_number="7.6"
@@ -849,7 +889,8 @@ Es gibt grundsätzlich drei Optionen für die Hilfe-Meldungen.
 -V,   --version       die Version anzeigen und beenden
 EOF
 )"
-print_diff "${cmd}" "${output}"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
 
 # Print the summary and the reasons for the failures.
 print_summary
