@@ -295,19 +295,22 @@ function argparser_trim() {
     # Arguments:
     # - $1: the string to trim
     #
-    # Output:
-    # - the trimmed string
+    # Nonlocals:
+    # - trimmed_string: the trimmed string
 
-    # Define the local variables.
+    # TODO: Instead of a nonlocal ${trimmed_string}, give output via
+    # command substitution using the Bash 5.3 form "${ printf ... ; }".
+
+    # Define the local variable.
     local string
 
     # Read the argument.
     string="$1"
 
-    # Trim and output the string.
+    # Trim the string and set the nonlocal ${trimmed_string} to it.
     string="${string##+( )}"
     string="${string%%+( )}"
-    printf '%s' "${string}"
+    trimmed_string="${string}"
 }
 
 function argparser_fold() {
@@ -1792,6 +1795,7 @@ function argparser_read_args_definition() {
     local key_pattern
     local line
     local lines
+    local trimmed_string
 
     # Read the arguments.
     # shellcheck disable=SC2190  # Indexed, not associative array.
@@ -1873,7 +1877,9 @@ function argparser_read_args_definition() {
             # an error message.
             for line in "${lines[@]:1}"; do
                 arg_key="${line%%"${ARGPARSER_ARG_DELIMITER_1}"*}"
-                arg_key="$(argparser_trim "${arg_key}")"
+                argparser_trim "${arg_key}"
+                arg_key="${trimmed_string}"
+
                 if [[ "${arg_key}" == "${arg}" ]]; then
                     if [[ "${line}" == ${def_pattern} ]]; then
                         printf 'File: %s\0' "${line}"
@@ -1957,6 +1963,7 @@ function argparser_parse_args_definition() {
     local long_options
     local notes
     local short_options
+    local trimmed_string
     local type
     local value_names
 
@@ -1970,7 +1977,8 @@ function argparser_parse_args_definition() {
     IFS="${ARGPARSER_ARG_DELIMITER_1}" read -r -a header \
         <<< "${args_definition[0]}"
     for column_index in "${!header[@]}"; do
-        header[column_index]="$(argparser_trim "${header[column_index]}")"
+        argparser_trim "${header[column_index]}"
+        header[column_index]="${trimmed_string}"
     done
 
     # Get the column indices of all fields known to the current
@@ -2030,10 +2038,14 @@ function argparser_parse_args_definition() {
     # positional and add it to the respective indexed array.
     for line in "${args_definition[@]:1}"; do
         IFS="${ARGPARSER_ARG_DELIMITER_1}" read -r -a line <<< "${line}"
-        arg_key="$(argparser_trim "${line[${fields["id"]}]}")"
+        argparser_trim "${line[${fields["id"]}]}"
+        arg_key="${trimmed_string}"
 
-        short_options="$(argparser_trim "${line[${fields["short_opts"]}]}")"
-        long_options="$(argparser_trim "${line[${fields["long_opts"]}]}")"
+        argparser_trim "${line[${fields["short_opts"]}]}"
+        short_options="${trimmed_string}"
+
+        argparser_trim "${line[${fields["long_opts"]}]}"
+        long_options="${trimmed_string}"
 
         if [[ "${short_options}" == "-" && "${long_options}" == "-" ]]; then
             all_positional_args+=("${arg_key}")
@@ -2042,28 +2054,36 @@ function argparser_parse_args_definition() {
             all_long_options[${arg_key}]="${long_options}"
         fi
 
-        value_names="$(argparser_trim "${line[${fields["val_names"]}]}")"
+        argparser_trim "${line[${fields["val_names"]}]}"
+        value_names="${trimmed_string}"
         all_value_names[${arg_key}]="${value_names}"
 
-        default_values="$(argparser_trim "${line[${fields["defaults"]}]}")"
+        argparser_trim "${line[${fields["defaults"]}]}"
+        default_values="${trimmed_string}"
         all_default_values[${arg_key}]="${default_values}"
 
-        choice_values="$(argparser_trim "${line[${fields["choices"]}]}")"
+        argparser_trim "${line[${fields["choices"]}]}"
+        choice_values="${trimmed_string}"
         all_choice_values[${arg_key}]="${choice_values}"
 
-        type="$(argparser_trim "${line[${fields["type"]}]}")"
+        argparser_trim "${line[${fields["type"]}]}"
+        type="${trimmed_string}"
         all_types[${arg_key}]="${type}"
 
-        arg_number="$(argparser_trim "${line[${fields["arg_no"]}]}")"
+        argparser_trim "${line[${fields["arg_no"]}]}"
+        arg_number="${trimmed_string}"
         all_arg_numbers[${arg_key}]="${arg_number}"
 
-        arg_group="$(argparser_trim "${line[${fields["arg_group"]}]}")"
+        argparser_trim "${line[${fields["arg_group"]}]}"
+        arg_group="${trimmed_string}"
         all_arg_groups[${arg_key}]="${arg_group}"
 
-        notes="$(argparser_trim "${line[${fields["notes"]}]}")"
+        argparser_trim "${line[${fields["notes"]}]}"
+        notes="${trimmed_string}"
         all_notes[${arg_key}]="${notes}"
 
-        help_text="$(argparser_trim "${line[${fields["help"]}]}")"
+        argparser_trim "${line[${fields["help"]}]}"
+        help_text="${trimmed_string}"
         all_help_texts[${arg_key}]="${help_text}"
     done
 }
