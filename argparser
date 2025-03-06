@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-03-04
+# Last Modification: 2025-03-06
 
 # TODO: Speed up argparser by e.g. trying to remove command
 #       substitutions, or using the novel "${ command; }" syntax
@@ -976,7 +976,38 @@ function argparser_set_env_vars() {
     # Define the local variables.
     local arg
     local arg_key
+    local -a args
     local value
+
+    # As the argparser can be sourced with command-line arguments,
+    # separate them from the script's command line.  Any argument until
+    # the first "--" is seen as argument to the argparser.  Lastly,
+    # shift also the "--" and set ${ARGPARSER_SCRIPT_ARGS} to the
+    # remainder of the command line.
+    # In order to show the need for the script's command line in the
+    # argparser's help and usage message, ${ARGPARSER_SCRIPT_ARGS} is
+    # added to the argparser's arguments definition as mandatory
+    # positional argument.  Since using its actual value would mean that
+    # upon parsing, a "++" in the script's arguments would be
+    # interpreted as sign to re-evaluate the arguments as keyword
+    # arguments for the argparser (and not for the script), set the
+    # string "argparser" as dummy value for the positional argument.  As
+    # only keyword arguments are set as environment variables, below,
+    # the actual value of ${ARGPARSER_SCRIPT_ARGS} won't be overridden
+    # and kept as the script's command line.
+    args=( )
+
+    # shellcheck disable=SC2190  # Indexed, not associative array.
+    while (( "$#" > 0 )) && [[ -n "$1" && "$1" != "--" ]]; do
+        args+=("$1")
+        shift
+    done
+    if (( "$#" > 0 )) && [[ -n "$1" && "$1" == "--" ]]; then
+        shift
+    fi
+    ARGPARSER_SCRIPT_ARGS=("$@")
+    # shellcheck disable=SC2190  # Indexed, not associative array.
+    args+=("--" "argparser")
 
     # Set all non-internal environment variables by reading the
     # argparser's command line given upon sourcing the argparser, using
@@ -1036,7 +1067,7 @@ function argparser_set_env_vars() {
         "ARGPARSER_WARNING_STYLE             |-          |warning-style             |STYLE        |red,bold             |-          |str  |+      |Options   |-     |-   "
     )
 
-    # shellcheck source=argparser
+    # # shellcheck source=argparser
     ARGPARSER_ADD_HELP=true \
         ARGPARSER_ADD_USAGE=true \
         ARGPARSER_ADD_VERSION=true \
@@ -1086,7 +1117,7 @@ function argparser_set_env_vars() {
         ARGPARSER_USAGE_STYLE="italic" \
         ARGPARSER_USE_STYLES_IN_FILES=false \
         ARGPARSER_WARNING_STYLE="red,bold" \
-        source "${BASH_SOURCE[0]}" "$@"
+        source "${BASH_SOURCE[0]}" "${args[@]}"
 
     # Set the environment variables that aren't set yet as global
     # variables.  For all environment variables that weren't given by
@@ -1103,15 +1134,8 @@ function argparser_set_env_vars() {
     for arg_key in "${!ARGPARSER_ARGS[@]}"; do
         if [[ -v "${arg_key}" ]]; then
             # The environment variable has already been set.  Override
-            # it if it was also given on the command line.  When the
-            # current command-line argument is the double hyphen ("--")
-            # used to delimit the argparser options from the script's,
-            # break.
-            for arg in "$@"; do
-                if [[ "${arg}" == "--" ]]; then
-                    break
-                fi
-
+            # it if it was also given on the command line.
+            for arg in "${args[@]}"; do
                 # Set the variable name as shortest part before an
                 # equals sign ("="), strip the leading hyphens, replace
                 # inner hyphens by underscores, capitalize the variable
@@ -6058,20 +6082,12 @@ fi
 # If the argparser hasn't sourced itself (i.e., the current recursion
 # level is the outer one from the calling script), set the environment
 # variables that aren't already set by the calling script or environment
-# or read from the configuration file to prevent overriding them.  As
-# the argparser must be sourced with command-line arguments, shift them
-# after reading until reaching an "--", which delimits the argparser
-# command-line arguments from those of the script.  Finally, shift also
-# the "--".
+# or read from the configuration file to prevent overriding them.  Then,
+# set the script's command-line arguments (with the argparser arguments
+# being removed) as the current command line.
 if [[ "${BASH_SOURCE[1]}" != "${BASH_SOURCE[0]}" ]]; then
     argparser_set_env_vars "$@"
-
-    while (( "$#" > 0 )) && [[ -n "$1" && "$1" != "--" ]]; do
-        shift
-    done
-    if (( "$#" > 0 )) && [[ -n "$1" && "$1" == "--" ]]; then
-        shift
-    fi
+    set -- "${ARGPARSER_SCRIPT_ARGS[@]}"
 fi
 
 # If ${ARGPARSER_TRANSLATION_FILE} isn't set to the empty string, read
