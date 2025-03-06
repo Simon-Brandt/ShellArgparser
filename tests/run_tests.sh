@@ -855,3 +855,6 @@ print_diff "${cmd}" "${output}"
 print_summary
 printf '\e[33;1;7m%120s\n\e[0m' ""
 print_failure_reasons
+
+# Exit with the number of failed commands as exit code.
+exit "${failed_cmd_count}"
