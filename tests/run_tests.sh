@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-03-05
+# Last Modification: 2025-03-06
 
 # TODO: Add tests for the general arguments parsing.
 # TODO: Write test files for keyword-only and positional-only arguments.
@@ -89,7 +89,7 @@ function print_summary() {
     local line
 
     printf '\e[33;1;7mSummary:'
-    printf '%113s' ""
+    printf '%112s' ""
     printf '\n'
 
     line="$(printf ' - %2s tests were run.' \
@@ -139,7 +139,7 @@ failure_reasons=( )
 # 1.    Test the general functionality using test_basic.sh.
 print_section "general functionality"
 
-# 1.1.  Test the normal output.
+# 1.1.  Test the normal output for short option names, using spaces.
 test_number="1.1"
 test_type="output"
 cmd="bash test_basic.sh 1 2 -a 1 -b 2 -c A"
@@ -157,8 +157,139 @@ EOF
 )"
 print_diff "${cmd}" "${output}"
 
-# 1.2.  Test the usage message in "row" orientation.
+# 1.2.  Test the normal output for long option names, using spaces.
 test_number="1.2"
+test_type="output"
+cmd="bash test_basic.sh 1 2 --var-1 1 --var-2 2 --var-3 A"
+output="$(cat << EOF
+The keyword argument "var_1" is set to "1".
+The keyword argument "var_2" is set to "2".
+The keyword argument "var_3" is set to "A".
+The keyword argument "var_4" is set to "A".
+The keyword argument "var_5" is set to "E".
+The keyword argument "var_6" is set to "false".
+The keyword argument "var_7" is set to "true".
+The positional argument "pos_1" on index 1 is set to "2".
+The positional argument "pos_2" on index 2 is set to "1,2".
+EOF
+)"
+print_diff "${cmd}" "${output}"
+
+# 1.3.  Test the normal output for short option names, using equals
+#       signs.
+test_number="1.3"
+test_type="output"
+cmd="bash test_basic.sh 1 2 -a=1 -b=2 -c=A"
+output="$(cat << EOF
+The keyword argument "var_1" is set to "1".
+The keyword argument "var_2" is set to "2".
+The keyword argument "var_3" is set to "A".
+The keyword argument "var_4" is set to "A".
+The keyword argument "var_5" is set to "E".
+The keyword argument "var_6" is set to "false".
+The keyword argument "var_7" is set to "true".
+The positional argument "pos_1" on index 1 is set to "2".
+The positional argument "pos_2" on index 2 is set to "1,2".
+EOF
+)"
+print_diff "${cmd}" "${output}"
+
+# 1.4.  Test the normal output for long option names, using equals
+#       signs.
+test_number="1.4"
+test_type="output"
+cmd="bash test_basic.sh 1 2 --var-1=1 --var-2=2 --var-3=A"
+output="$(cat << EOF
+The keyword argument "var_1" is set to "1".
+The keyword argument "var_2" is set to "2".
+The keyword argument "var_3" is set to "A".
+The keyword argument "var_4" is set to "A".
+The keyword argument "var_5" is set to "E".
+The keyword argument "var_6" is set to "false".
+The keyword argument "var_7" is set to "true".
+The positional argument "pos_1" on index 1 is set to "2".
+The positional argument "pos_2" on index 2 is set to "1,2".
+EOF
+)"
+print_diff "${cmd}" "${output}"
+
+# 1.5.  Test the normal output with the double hyphen as positional
+#       arguments delimiter.
+test_number="1.5"
+test_type="output"
+cmd="bash test_basic.sh --var-1=1 --var-2=2 --var-3=A -- 1 2"
+output="$(cat << EOF
+The keyword argument "var_1" is set to "1".
+The keyword argument "var_2" is set to "2".
+The keyword argument "var_3" is set to "A".
+The keyword argument "var_4" is set to "A".
+The keyword argument "var_5" is set to "E".
+The keyword argument "var_6" is set to "false".
+The keyword argument "var_7" is set to "true".
+The positional argument "pos_1" on index 1 is set to "2".
+The positional argument "pos_2" on index 2 is set to "1,2".
+EOF
+)"
+print_diff "${cmd}" "${output}"
+
+# 1.6.  Test the normal output with the doubled plus sign as positional
+#       arguments delimiter.
+test_number="1.6"
+test_type="output"
+cmd="bash test_basic.sh --var-1=1 --var-2=2 -- 1 2 ++ --var-3=A"
+output="$(cat << EOF
+The keyword argument "var_1" is set to "1".
+The keyword argument "var_2" is set to "2".
+The keyword argument "var_3" is set to "A".
+The keyword argument "var_4" is set to "A".
+The keyword argument "var_5" is set to "E".
+The keyword argument "var_6" is set to "false".
+The keyword argument "var_7" is set to "true".
+The positional argument "pos_1" on index 1 is set to "2".
+The positional argument "pos_2" on index 2 is set to "1,2".
+EOF
+)"
+print_diff "${cmd}" "${output}"
+
+# 1.7.  Test the normal output with the positional argument with default
+#       value being given.
+test_number="1.7"
+test_type="output"
+cmd="bash test_basic.sh --var-1=1 --var-2=2 --var-3=A -- 1 2 3"
+output="$(cat << EOF
+The keyword argument "var_1" is set to "1".
+The keyword argument "var_2" is set to "2".
+The keyword argument "var_3" is set to "A".
+The keyword argument "var_4" is set to "A".
+The keyword argument "var_5" is set to "E".
+The keyword argument "var_6" is set to "false".
+The keyword argument "var_7" is set to "true".
+The positional argument "pos_1" on index 1 is set to "1".
+The positional argument "pos_2" on index 2 is set to "2,3".
+EOF
+)"
+print_diff "${cmd}" "${output}"
+
+# 1.8.  Test the normal output with flags.
+test_number="1.8"
+test_type="output"
+cmd="bash test_basic.sh 1 2 --var-1=1 --var-2=2 --var-3=A --var-6 ++var-7"
+output="$(cat << EOF
+The keyword argument "var_1" is set to "1".
+The keyword argument "var_2" is set to "2".
+The keyword argument "var_3" is set to "A".
+The keyword argument "var_4" is set to "A".
+The keyword argument "var_5" is set to "E".
+The keyword argument "var_6" is set to "true".
+The keyword argument "var_7" is set to "false".
+The positional argument "pos_1" on index 1 is set to "2".
+The positional argument "pos_2" on index 2 is set to "1,2".
+EOF
+)"
+print_diff "${cmd}" "${output}"
+
+# 1.9.  Test the usage message in "row" orientation.
+test_number="1.9"
 test_type="usage"
 cmd="bash test_basic.sh --usage"
 output="$(cat << EOF
@@ -167,8 +298,8 @@ EOF
 )"
 print_diff "${cmd}" "${output}"
 
-# 1.3.  Test the usage message in "column" orientation.
-test_number="1.3"
+# 1.10.  Test the usage message in "column" orientation.
+test_number="1.10"
 test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash test_basic.sh --usage"
 output="$(cat << EOF
@@ -186,8 +317,8 @@ EOF
 )"
 print_diff "${cmd}" "${output}"
 
-# 1.4.  Test the help message.
-test_number="1.4"
+# 1.11.  Test the help message.
+test_number="1.11"
 test_type="help"
 cmd="bash test_basic.sh --help"
 output="$(cat << EOF
