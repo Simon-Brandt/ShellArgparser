@@ -1,0 +1,23 @@
+# Run the `run_tests.sh` script to execute all tests.
+
+name: run_tests
+
+# Run the workflow on pushes and pull requests for the "main" branch, or manually.
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+# Set the job to run on the latest Ubuntu OS
+jobs:
+  run_tests:
+    runs-on: ubuntu-latest
+    steps:
+      # Check-out the repository under $GITHUB_WORKSPACE, so the job can access it.
+      - uses: actions/checkout@v4
+
+      # Run the script.
+      - name: run_tests
+        run: tests/run_tests.sh
