@@ -49,7 +49,7 @@ function print_section() {
     print_double_separator
 }
 
-# Define the function for printing the diff.
+# Define the function for printing the diff of commands.
 function print_diff() {
     # Print the difference between the command's output and the expected
     # output.
@@ -59,26 +59,31 @@ function print_diff() {
     # - $2: the expected output
     # - $3: the expected error
 
-    local cmd="$1"
-    local output="$2"
-    local error="$3"
+    local cmd
+    local error
+    local exit_code
+    local output
+
+    cmd="$1"
+    output="$2"
+    error="$3"
 
     printf 'Running test %s: "\e[1m%s\e[0m"...\n' "${test_number}" "${cmd}"
 
     diff --side-by-side --suppress-common-lines --color=always --width=120 \
-        <(eval "${cmd}" 2>&1) \
+        <(eval "${cmd}" 2>&1 3> /dev/null 4> /dev/null) \
         <(if [[ -n "${error}" ]]; then printf '%s\n' "${error}"; fi; \
             printf '%s\n' "${output}") \
         >&2
+    exit_code="$?"
 
-    # shellcheck disable=SC2181  # Intentional explicit check for return value.
-    if (( "$?" == 0 )); then
+    if (( exit_code == 0 )); then
         printf '\e[32;1;7mTest %s succeeded with correct output.' \
             "${test_number}"
         printf '%*s' $(( 84 - "${#test_number}" )) ""
         printf '\e[0m\n'
         (( succeeded_cmd_count++ ))
-    elif (( "$?" == 1 )); then
+    elif (( exit_code == 1 )); then
         print_single_separator
         printf '\e[31;1;7mTest %s failed with diverging output.' \
             "${test_number}"
@@ -86,6 +91,50 @@ function print_diff() {
         printf '\e[0m\n'
         failure_reasons+=("${test_type}")
         (( failed_cmd_count++ ))
+    fi
+    print_double_separator
+}
+
+# Define the function for printing the diff of file descriptors.
+function print_fd_diff() {
+    # Print the difference between the file descriptors holding content
+    # created before and after command execution.
+
+    local exit_code
+
+    # Run the command and compare the output of file descriptor 3 and 4,
+    # while ignoring all others.  Remove lines that are allowed to
+    # differ.
+    diff --side-by-side --suppress-common-lines --color=always --width=120 \
+        <(eval "${cmd}" 3>&1 >& /dev/null 4> /dev/null \
+            | sed \
+                --expression='/^BASH_ARG.=/d' \
+                --expression='/^PPID=/d' \
+                --expression='/^_=/d' \
+                --expression='/^args=/d') \
+        <(eval "${cmd}" 4>&1 >& /dev/null 3> /dev/null \
+            | sed \
+                --expression='/^BASH_ARG.=/d' \
+                --expression='/^PPID=/d' \
+                --expression='/^_=/d' \
+                --expression='/^args=/d' \
+                --expression='/^pos_.=/d' \
+                --expression='/^var_.=/d') \
+        >&2
+    exit_code="$?"
+
+    if (( exit_code == 0 )); then
+        printf '\e[32;1;7mTest %s succeeded with identical environment.' \
+            "${test_number}"
+        printf '%*s' $(( 77 - "${#test_number}" )) ""
+        printf '\e[0m\n'
+    elif (( exit_code == 1 )); then
+        print_single_separator
+        printf '\e[31;1;7mTest %s failed with diverging environment.' \
+            "${test_number}"
+        printf '%*s' $(( 80 - "${#test_number}" )) ""
+        printf '\e[0m\n'
+        failure_reasons+=("${test_type}")
     fi
     print_double_separator
 }
@@ -549,11 +598,41 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 4.    Test the functionality regarding configuration files.
-print_section "configuration files"
+# 4.    Test the functionality regarding the environment.
+print_section "environment"
+exec 3>&1 4>&2
 
 # 4.1.  Test the normal output.
 test_number="4.1"
+test_type="output"
+cmd="bash test_environment.sh 1 2 --var-1 1 --var-2 2 --var-3 A"
+output="$(cat << EOF
+The keyword argument "var_1" is set to "1".
+The keyword argument "var_2" is set to "2".
+The keyword argument "var_3" is set to "A".
+The keyword argument "var_4" is set to "A".
+The keyword argument "var_5" is set to "E".
+The keyword argument "var_6" is set to "false".
+The keyword argument "var_7" is set to "true".
+The positional argument "pos_1" on index 1 is set to "2".
+The positional argument "pos_2" on index 2 is set to "1,2".
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 4.2.  Test the environment.
+test_number="4.2"
+test_type="environment"
+print_fd_diff
+
+exec 3>&- 4>&-
+
+# 5.    Test the functionality regarding configuration files.
+print_section "configuration files"
+
+# 5.1.  Test the normal output.
+test_number="5.1"
 test_type="output"
 cmd="bash test_config_file.sh 1 2 --var-1 1 --var-2 2 --var-3 A"
 output="$(cat << EOF
@@ -571,8 +650,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 4.2.  Test the usage message.
-test_number="4.2"
+# 5.2.  Test the usage message.
+test_number="5.2"
 test_type="usage"
 cmd="bash test_config_file.sh --usage"
 output="$(cat << EOF
@@ -582,8 +661,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 4.3.  Test the help message.
-test_number="4.3"
+# 5.3.  Test the help message.
+test_number="5.3"
 test_type="help"
 cmd="bash test_config_file.sh --help"
 output="$(cat << EOF
@@ -615,11 +694,11 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 5.    Test the functionality regarding arguments definition files.
+# 6.    Test the functionality regarding arguments definition files.
 print_section "arguments definition files"
 
-# 5.1.  Test the normal output.
-test_number="5.1"
+# 6.1.  Test the normal output.
+test_number="6.1"
 test_type="output"
 cmd="bash test_arg_def_file.sh 1 2 --var-1 1 --var-2 2 --var-3 A"
 output="$(cat << EOF
@@ -637,8 +716,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 5.2.  Test the usage message.
-test_number="5.2"
+# 6.2.  Test the usage message.
+test_number="6.2"
 test_type="usage"
 cmd="bash test_arg_def_file.sh --usage"
 output="$(cat << EOF
@@ -648,8 +727,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 5.3.  Test the help message.
-test_number="5.3"
+# 6.3.  Test the help message.
+test_number="6.3"
 test_type="help"
 cmd="bash test_arg_def_file.sh --help"
 output="$(cat << EOF
@@ -681,11 +760,11 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 6.    Test the functionality regarding help files.
+# 7.    Test the functionality regarding help files.
 print_section "help files"
 
-# 6.1.  Test the normal output.
-test_number="6.1"
+# 7.1.  Test the normal output.
+test_number="7.1"
 test_type="output"
 cmd="bash test_help_file.sh 1 2 --var-1 1 --var-2 2 --var-3 A"
 output="$(cat << EOF
@@ -703,8 +782,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 6.2.  Test the usage message.
-test_number="6.2"
+# 7.2.  Test the usage message.
+test_number="7.2"
 test_type="usage"
 cmd="bash test_help_file.sh --usage"
 output="$(cat << EOF
@@ -714,8 +793,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 6.3.  Test the help message.
-test_number="6.3"
+# 7.3.  Test the help message.
+test_number="7.3"
 test_type="help"
 cmd="bash test_help_file.sh --help"
 output="$(cat << EOF
@@ -752,11 +831,11 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 7.    Test the functionality regarding the localization.
+# 8.    Test the functionality regarding the localization.
 print_section "localization"
 
-# 7.1.  Test the normal output for the American locale.
-test_number="7.1"
+# 8.1.  Test the normal output for the American locale.
+test_number="8.1"
 test_type="output"
 cmd="LANG=en_US.UTF-8 bash test_localization.sh 1 2 --var-1 1 --var-2 2 --var-3 A"
 output="$(cat << EOF
@@ -774,8 +853,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 7.2.  Test the normal output for the German locale.
-test_number="7.2"
+# 8.2.  Test the normal output for the German locale.
+test_number="8.2"
 test_type="output"
 cmd="LANG=de_DE.UTF-8 bash test_localization.sh 1 2 --var-1 1 --var-2 2 --var-3 A"
 output="$(cat << EOF
@@ -793,8 +872,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 7.3.  Test the usage message for the American locale.
-test_number="7.3"
+# 8.3.  Test the usage message for the American locale.
+test_number="8.3"
 test_type="usage"
 cmd="LANG=en_US.UTF-8 bash test_localization.sh --usage"
 output="$(cat << EOF
@@ -804,8 +883,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 7.4.  Test the usage message for the German locale.
-test_number="7.4"
+# 8.4.  Test the usage message for the German locale.
+test_number="8.4"
 test_type="usage"
 cmd="LANG=de_DE.UTF-8 bash test_localization.sh --usage"
 output="$(cat << EOF
@@ -815,8 +894,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 7.5.  Test the help message for the American locale.
-test_number="7.5"
+# 8.5.  Test the help message for the American locale.
+test_number="8.5"
 test_type="help"
 cmd="LANG=en_US.UTF-8 bash test_localization.sh --help"
 output="$(cat << EOF
@@ -853,8 +932,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 7.6.  Test the help message for the German locale.
-test_number="7.6"
+# 8.6.  Test the help message for the German locale.
+test_number="8.6"
 test_type="help"
 cmd="LANG=de_DE.UTF-8 bash test_localization.sh --help"
 output="$(cat << EOF
