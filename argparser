@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-03-06
+# Last Modification: 2025-03-07
 
 # TODO: Speed up argparser by e.g. trying to remove command
 #       substitutions, or using the novel "${ command; }" syntax
@@ -33,9 +33,9 @@ function argparser_in_array() {
     # - $1: the element to search for
     # - $@: the array to search through
     #
-    # Output:
-    # - true, if the element exists in the array
-    # - false, else
+    # Return value:
+    # - 0, if the element exists in the array
+    # - 1, else
 
     # Define the local variables.
     local element
@@ -47,15 +47,14 @@ function argparser_in_array() {
     shift
 
     # Iterate through the array and compare each element to the query.
-    # Output 0 on success, else 1.
+    # Return 0 on success, else 1.
     for element in "$@"; do
         if [[ "${element}" == "${query}" ]]; then
-            printf true
-            return
+            return 0
         fi
     done
 
-    printf false
+    return 1
 }
 
 function argparser_is_variable_bool() {
@@ -64,9 +63,9 @@ function argparser_is_variable_bool() {
     # Arguments:
     # - $1: the variable whose value to check
     #
-    # Output:
-    # - true, if the variable's value is a boolean
-    # - false, else
+    # Return value:
+    # - 0, if the variable's value is a boolean
+    # - 1, else
 
     # Define the local variable.
     local var
@@ -76,9 +75,9 @@ function argparser_is_variable_bool() {
 
     # Check the variable's value.
     if [[ "${var}" == true || "${var}" == false ]]; then
-        printf true
+        return 0
     else
-        printf false
+        return 1
     fi
 }
 
@@ -88,9 +87,9 @@ function argparser_is_variable_char() {
     # Arguments:
     # - $1: the variable whose value to check
     #
-    # Output:
-    # - true, if the variable's value is a character
-    # - false, else
+    # Return value:
+    # - 0, if the variable's value is a character
+    # - 1, else
 
     # Define the local variable.
     local var
@@ -100,9 +99,9 @@ function argparser_is_variable_char() {
 
     # Check the variable's value.
     if [[ "${var}" == [[:print:]] ]]; then
-        printf true
+        return 0
     else
-        printf false
+        return 1
     fi
 }
 
@@ -112,9 +111,9 @@ function argparser_is_variable_identifier() {
     # Arguments:
     # - $1: the variable whose value to check
     #
-    # Output:
-    # - true, if the variable's value is usable as identifier
-    # - false, else
+    # Return value:
+    # - 0, if the variable's value is usable as identifier
+    # - 1, else
 
     # Define the local variable.
     local var
@@ -124,9 +123,9 @@ function argparser_is_variable_identifier() {
 
     # Check the variable's value.
     if [[ "${var}" == [[:alpha:]_]+([[:word:]]) ]]; then
-        printf true
+        return 0
     else
-        printf false
+        return 1
     fi
 }
 
@@ -136,9 +135,9 @@ function argparser_is_variable_int() {
     # Arguments:
     # - $1: the variable whose value to check
     #
-    # Output:
-    # - true, if the variable's value is an integer
-    # - false, else
+    # Return value:
+    # - 0, if the variable's value is an integer
+    # - 1, else
 
     # Define the local variable.
     local var
@@ -148,9 +147,9 @@ function argparser_is_variable_int() {
 
     # Check the variable's value.
     if [[ "${var}" == ?([+-])+([[:digit:]]) ]]; then
-        printf true
+        return 0
     else
-        printf false
+        return 1
     fi
 }
 
@@ -160,9 +159,9 @@ function argparser_is_variable_uint() {
     # Arguments:
     # - $1: the variable whose value to check
     #
-    # Output:
-    # - true, if the variable's value is an unsigned integer
-    # - false, else
+    # Return value:
+    # - 0, if the variable's value is an unsigned integer
+    # - 1, else
 
     # Define the local variable.
     local var
@@ -172,9 +171,9 @@ function argparser_is_variable_uint() {
 
     # Check the variable's value.
     if [[ "${var}" == +([[:digit:]]) ]]; then
-        printf true
+        return 0
     else
-        printf false
+        return 1
     fi
 }
 
@@ -185,9 +184,9 @@ function argparser_check_color_or_style() {
     # Arguments:
     # - $1: the colors and/or styles to use as comma-separated list
     #
-    # Output:
-    # - true, if all colors and/or styles are implemented
-    # - false, else
+    # Return value:
+    # - 0, if all colors and/or styles are implemented
+    # - 1, else
 
     # Define the local variables.
     local -a colors
@@ -232,15 +231,14 @@ function argparser_check_color_or_style() {
     # an error message.
     IFS="," read -r -a requests <<< "${requests}"
     for request in "${requests[@]}"; do
-        if [[ "$(argparser_in_array "${request}" "${colors[@]}")" == false \
-            && "$(argparser_in_array "${request}" "${styles[@]}")" == false ]]
+        if ! argparser_in_array "${request}" "${colors[@]}" \
+            && ! argparser_in_array "${request}" "${styles[@]}"
         then
-            printf false
-            return
+            return 1
         fi
     done
 
-    printf true
+    return 0
 }
 
 function argparser_check_file() {
@@ -1288,7 +1286,7 @@ function argparser_check_env_vars() {
         ARGPARSER_USE_STYLES_IN_FILES
     )
     for var in "${vars[@]}"; do
-        if [[ "$(argparser_is_variable_bool "${!var}")" == false ]]; then
+        if ! argparser_is_variable_bool "${!var}"; then
             error_message="Error: The environment variable \"%s\" is set to "
             error_message+="\"%s\", but must be a boolean, i.e., true or "
             error_message+="false."
@@ -1307,7 +1305,7 @@ function argparser_check_env_vars() {
         ARGPARSER_USAGE_FILE_INCLUDE_CHAR
     )
     for var in "${vars[@]}"; do
-        if [[ "$(argparser_is_variable_char "${!var}")" == false ]]; then
+        if ! argparser_is_variable_char "${!var}"; then
             error_message="Error: The environment variable \"%s\" is set to "
             error_message+="\"%s\", but must be a character, i.e., a string "
             error_message+="comprising one printable ASCII character."
@@ -1324,7 +1322,7 @@ function argparser_check_env_vars() {
         ARGPARSER_ARG_ARRAY_NAME
     )
     for var in "${vars[@]}"; do
-        if [[ "$(argparser_is_variable_identifier "${!var}")" == false ]]; then
+        if ! argparser_is_variable_identifier "${!var}"; then
             error_message="Error: The environment variable \"%s\" is set to "
             error_message+="\"%s\", but designed to be used as Bash variable "
             error_message+="identifier, i.e., its value must start with a "
@@ -1346,7 +1344,7 @@ function argparser_check_env_vars() {
         ARGPARSER_USAGE_EXIT_CODE
     )
     for var in "${vars[@]}"; do
-        if [[ "$(argparser_is_variable_int "${!var}")" == false ]]; then
+        if ! argparser_is_variable_int "${!var}"; then
             error_message="Error: The environment variable \"%s\" is set to "
             error_message+="\"%s\", but must be an integer, i.e., comprise "
             error_message+="only digits and possibly a leading sign."
@@ -1364,7 +1362,7 @@ function argparser_check_env_vars() {
         ARGPARSER_MAX_COL_WIDTH_3
     )
     for var in "${vars[@]}"; do
-        if [[ "$(argparser_is_variable_uint "${!var}")" == false ]]; then
+        if ! argparser_is_variable_uint "${!var}"; then
             error_message="Error: The environment variable \"%s\" is set to "
             error_message+="\"%s\", but must be an unsigned integer, i.e., "
             error_message+="comprise only digits and no sign."
@@ -1422,7 +1420,7 @@ function argparser_check_env_vars() {
         ARGPARSER_WARNING_STYLE
     )
     for var in "${vars[@]}"; do
-        if [[ "$(argparser_check_color_or_style "${!var}")" == false ]]; then
+        if ! argparser_check_color_or_style "${!var}"; then
             error_message="Error: The environment variable \"%s\" is set to "
             error_message+="\"%s\", but the comma-separated values must lie "
             error_message+="in {black, red, green, yellow, blue, magenta, "
@@ -1702,9 +1700,7 @@ function argparser_translate() {
     # loop would arise by trying to fetch the inexistent translation
     # over and over.
     if [[ -n "${ARGPARSER_TRANSLATION_FILE}" ]]; then
-        if [[ "$(argparser_in_array "${key}" \
-            "${!ARGPARSER_DICTIONARY[@]}")" == false ]]
-        then
+        if ! argparser_in_array "${key}" "${!ARGPARSER_DICTIONARY[@]}"; then
             warning_message="Warning: In the translation file \"%s\", the "
             warning_message+="identifier \"%s\" is missing.  For convenience, "
             warning_message+="the untranslated string is used, instead."
@@ -2146,7 +2142,7 @@ function argparser_check_args_definition_names() {
         # name is given, the hyphen is a legit value, so don't check
         # this.
         if (( "${#short_options[@]}" > 1 )) \
-            && [[ "$(argparser_in_array "-" "${short_options[@]}")" == true ]]
+            && argparser_in_array "-" "${short_options[@]}"
         then
             # Check if a hyphen is included in the short option names.
             error_message="Error: The argument with the identifier \"%s\" has "
@@ -2225,10 +2221,10 @@ function argparser_check_args_definition_names() {
 
                 # Check if the short option name is already given in
                 # another argument's definition.
-                if [[ "$(argparser_in_array "${short_option}" \
-                    "${!checked_short_options[@]}")" == true \
-                    && "${checked_short_options[${short_option}]}" != \
-                    "${arg_key}" ]]
+                if argparser_in_array "${short_option}" \
+                    "${!checked_short_options[@]}" \
+                    && [[ "${checked_short_options[${short_option}]}" != \
+                        "${arg_key}" ]]
                 then
                     error_message="Error: The argument with the identifier "
                     error_message+="\"%s\" has the short option \"-%s\" "
@@ -2253,7 +2249,7 @@ function argparser_check_args_definition_names() {
         # times in the current argument's definition or across all yet
         # investigated arguments' definitions.
         if (( "${#long_options[@]}" > 1 )) \
-            && [[ "$(argparser_in_array "-" "${long_options[@]}")" == true ]]
+            && argparser_in_array "-" "${long_options[@]}"
         then
             # Check if a hyphen is included in the long option names.
             error_message="Error: The argument with the identifier \"%s\" has "
@@ -2333,10 +2329,10 @@ function argparser_check_args_definition_names() {
 
                 # Check if the long option name is already given in
                 # another argument's definition.
-                if [[ "$(argparser_in_array "${long_option}" \
-                    "${!checked_long_options[@]}")" == true \
-                    && "${checked_long_options[${long_option}]}" != \
-                    "${arg_key}" ]]
+                if argparser_in_array "${long_option}" \
+                    "${!checked_long_options[@]}" \
+                    && [[ "${checked_long_options[${long_option}]}" != \
+                        "${arg_key}" ]]
                 then
                     error_message="Error: The argument with the identifier "
                     error_message+="\"%s\" has the long option \"--%s\" "
@@ -2441,9 +2437,9 @@ function argparser_check_args_definition_positional_values() {
         # Else, output an error message.
         if [[ "${choice_values[0]}" != "-" ]]; then
             for default_value in "${default_values[@]}"; do
-                if [[ "${default_value}" != "-" \
-                    && "$(argparser_in_array "${default_value}" \
-                        "${choice_values[@]}")" == false ]]
+                if [[ "${default_value}" != "-" ]] \
+                    && ! argparser_in_array "${default_value}" \
+                        "${choice_values[@]}"
                 then
                     choice_value="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
                         printf '%s' "${choice_values[*]}")"
@@ -2552,8 +2548,7 @@ function argparser_check_args_definition_positional_values() {
         fi
 
         # Check the data type.
-        if [[ "$(argparser_in_array "${type}" "-" "bool" "char" "int" "str" \
-            "uint")" == false ]]
+        if ! argparser_in_array "${type}" "-" "bool" "char" "int" "str" "uint"
         then
             error_message="Error: The positional argument with the identifier "
             error_message+="\"%s\" has \"%s\" given as data type, but only "
@@ -2569,9 +2564,8 @@ function argparser_check_args_definition_positional_values() {
             if [[ "${choice_value}" == "-" || "${type}" == "-" ]]; then
                 # No choice value or type is given, so abort the loop.
                 break
-            elif [[ "${type}" == "bool" \
-                && "$(argparser_is_variable_bool \
-                    "${choice_value}")" == false ]]
+            elif [[ "${type}" == "bool" ]] \
+                && ! argparser_is_variable_bool "${choice_value}"
             then
                 # Check if the choice value is a boolean.
                 error_message="Error: The positional argument with the "
@@ -2581,9 +2575,8 @@ function argparser_check_args_definition_positional_values() {
                 error_message="$(argparser_translate "Error arg def pos bool" \
                     "${error_message}" "${arg_key}" "${choice_value}")"
                 printf '%s\0' "${error_message}"
-            elif [[ "${type}" == "char" \
-                && "$(argparser_is_variable_char \
-                    "${choice_value}")" == false ]]
+            elif [[ "${type}" == "char" ]] \
+                && ! argparser_is_variable_char "${choice_value}"
             then
                 # Check if the choice value is a character.
                 error_message="Error: The positional argument with the "
@@ -2594,8 +2587,8 @@ function argparser_check_args_definition_positional_values() {
                 error_message="$(argparser_translate "Error arg def pos char" \
                     "${error_message}" "${arg_key}" "${choice_value}")"
                 printf '%s\0' "${error_message}"
-            elif [[ "${type}" == "int" \
-                && "$(argparser_is_variable_int "${choice_value}")" == false ]]
+            elif [[ "${type}" == "int" ]] \
+                && ! argparser_is_variable_int "${choice_value}"
             then
                 # Check if the choice value is an integer.
                 error_message="Error: The positional argument with the "
@@ -2606,9 +2599,8 @@ function argparser_check_args_definition_positional_values() {
                 error_message="$(argparser_translate "Error arg def pos int" \
                     "${error_message}" "${arg_key}" "${choice_value}")"
                 printf '%s\0' "${error_message}"
-            elif [[ "${type}" == "uint" \
-                && "$(argparser_is_variable_uint \
-                    "${choice_value}")" == false ]]
+            elif [[ "${type}" == "uint" ]] \
+                && ! argparser_is_variable_uint "${choice_value}"
             then
                 # Check if the choice value is an unsigned integer.
                 error_message="Error: The positional argument with the "
@@ -2623,9 +2615,7 @@ function argparser_check_args_definition_positional_values() {
 
         # Check the notes.
         for note in "${notes[@]}"; do
-            if [[ "$(argparser_in_array "${note}" "-" \
-                "deprecated")" == false ]]
-            then
+            if ! argparser_in_array "${note}" "-" "deprecated"; then
                 error_message="Error: The positional argument with the "
                 error_message+="identifier \"%s\" has \"%s\" given as note, "
                 error_message+="but only \"deprecated\" is supported."
@@ -2747,9 +2737,9 @@ function argparser_check_args_definition_option_values() {
 
             # Check the default values.
             for default_value in "${default_values[@]}"; do
-                if [[ "${default_value}" != "-" \
-                    && "$(argparser_in_array "${default_value}" \
-                    "${choice_values[@]}")" == false ]]
+                if [[ "${default_value}" != "-" ]] \
+                    && ! argparser_in_array "${default_value}" \
+                        "${choice_values[@]}"
                 then
                     choice_value="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
                         printf '%s' "${choice_values[*]}")"
@@ -2768,8 +2758,7 @@ function argparser_check_args_definition_option_values() {
         fi
 
         # Check the data type.
-        if [[ "$(argparser_in_array "${type}" "-" "bool" "char" "int" "str" \
-            "uint")" == false ]]
+        if ! argparser_in_array "${type}" "-" "bool" "char" "int" "str" "uint"
         then
             error_message="Error: The argument with the identifier \"%s\" has "
             error_message+="\"%s\" given as data type, but only \"bool\", "
@@ -2785,9 +2774,8 @@ function argparser_check_args_definition_option_values() {
             if [[ "${choice_value}" == "-" || "${type}" == "-" ]]; then
                 # No choice value or type is given, so abort the loop.
                 break
-            elif [[ "${type}" == "bool" \
-                && "$(argparser_is_variable_bool \
-                    "${choice_value}")" == false ]]
+            elif [[ "${type}" == "bool" ]] \
+                && ! argparser_is_variable_bool "${choice_value}"
             then
                 # Check if the choice value is a boolean.
                 error_message="Error: The argument with the identifier \"%s\" "
@@ -2797,9 +2785,8 @@ function argparser_check_args_definition_option_values() {
                     "Error arg def option bool" "${error_message}" \
                     "${arg_key}" "${choice_value}")"
                 printf '%s\0' "${error_message}"
-            elif [[ "${type}" == "char" \
-                && "$(argparser_is_variable_char \
-                    "${choice_value}")" == false ]]
+            elif [[ "${type}" == "char" ]] \
+                && ! argparser_is_variable_char "${choice_value}"
             then
                 # Check if the choice value is a character.
                 error_message="Error: The argument with the identifier \"%s\" "
@@ -2810,8 +2797,8 @@ function argparser_check_args_definition_option_values() {
                     "Error arg def option char" "${error_message}" \
                     "${arg_key}" "${choice_value}")"
                 printf '%s\0' "${error_message}"
-            elif [[ "${type}" == "int" \
-                && "$(argparser_is_variable_int "${choice_value}")" == false ]]
+            elif [[ "${type}" == "int" ]] \
+                && ! argparser_is_variable_int "${choice_value}"
             then
                 # Check if the choice value is an integer.
                 error_message="Error: The argument with the identifier \"%s\" "
@@ -2822,9 +2809,8 @@ function argparser_check_args_definition_option_values() {
                     "Error arg def option int" "${error_message}" \
                     "${arg_key}" "${choice_value}")"
                 printf '%s\0' "${error_message}"
-            elif [[ "${type}" == "uint" \
-                && "$(argparser_is_variable_uint \
-                    "${choice_value}")" == false ]]
+            elif [[ "${type}" == "uint" ]] \
+                && ! argparser_is_variable_uint "${choice_value}"
             then
                 # Check if the choice value is an unsigned integer.
                 error_message="Error: The argument with the identifier \"%s\" "
@@ -2840,9 +2826,7 @@ function argparser_check_args_definition_option_values() {
 
         # Check the notes.
         for note in "${notes[@]}"; do
-            if [[ "$(argparser_in_array "${note}" "-" \
-                "deprecated")" == false ]]
-            then
+            if ! argparser_in_array "${note}" "-" "deprecated"; then
                 error_message="Error: The argument with the identifier \"%s\" "
                 error_message+="has \"%s\" given as note, but only "
                 error_message+="\"deprecated\" is supported."
@@ -2974,9 +2958,7 @@ function argparser_get_option_names() {
     # them the default value of a hyphen, indicating absence.  For the
     # option name below, use the value name, of which positional
     # arguments can only have one (thus using a string, not an array).
-    if [[ "$(argparser_in_array "${arg_key}" \
-        "${!all_short_options[@]}")" == true ]]
-    then
+    if argparser_in_array "${arg_key}" "${!all_short_options[@]}"; then
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a short_options \
             <<< "${all_short_options[${arg_key}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a long_options \
@@ -3617,9 +3599,7 @@ function argparser_check_arg_values() {
     # use an empty array as default value, such that testing on its
     # value is possible, below.
     arg_key="$1"
-    if [[ "$(argparser_in_array "${arg_key}" \
-        "${all_positional_args[@]}")" == true ]]
-    then
+    if argparser_in_array "${arg_key}" "${all_positional_args[@]}"; then
         prefixes=( )
     else
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a prefixes <<< "$2"
@@ -3801,9 +3781,7 @@ function argparser_check_arg_values() {
     # output an error message.
     if [[ "${choice_values[0]}" != "-" ]]; then
         for value in "${values[@]}"; do
-            if [[ "$(argparser_in_array "${value}" \
-                "${choice_values[@]}")" == false ]]
-            then
+            if ! argparser_in_array "${value}" "${choice_values[@]}"; then
                 choice_values=("$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
                     printf '%s' "${choice_values[*]}")")
                 values=("$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; printf '%s' \
@@ -3824,9 +3802,8 @@ function argparser_check_arg_values() {
         if [[ "${type}" == "-" ]]; then
             # No type is given, so abort the loop.
             break
-        elif [[ "${type}" == "bool" \
-            && "${arg_number}" != 0 \
-            && "$(argparser_is_variable_bool "${value}")" == false ]]
+        elif [[ "${type}" == "bool" && "${arg_number}" != 0 ]] \
+            && ! argparser_is_variable_bool "${value}"
         then
             # Check if the value is a boolean.  If the argument is a
             # flag, then the values are set by the argparser to
@@ -3839,8 +3816,8 @@ function argparser_check_arg_values() {
                 "${error_message}" "${option_names}" "${value}")"
             printf '%s\0' "${error_message}"
             return
-        elif [[ "${type}" == "char" \
-            && "$(argparser_is_variable_char "${value}")" == false ]]
+        elif [[ "${type}" == "char" ]] \
+            && ! argparser_is_variable_char "${value}"
         then
             # Check if the value is a character.
             error_message="Error: The argument \"%s\" is set to \"%s\", but "
@@ -3850,8 +3827,8 @@ function argparser_check_arg_values() {
                 "${error_message}" "${option_names}" "${value}")"
             printf '%s\0' "${error_message}"
             return
-        elif [[ "${type}" == "int" \
-            && "$(argparser_is_variable_int "${value}")" == false ]]
+        elif [[ "${type}" == "int" ]] \
+            && ! argparser_is_variable_int "${value}"
         then
             # Check if the value is an integer.
             error_message="Error: The argument \"%s\" is set to \"%s\", but "
@@ -3861,8 +3838,8 @@ function argparser_check_arg_values() {
                 "${error_message}" "${option_names}" "${value}")"
             printf '%s\0' "${error_message}"
             return
-        elif [[ "${type}" == "uint" \
-            && "$(argparser_is_variable_uint "${value}")" == false ]]
+        elif [[ "${type}" == "uint" ]] \
+            && ! argparser_is_variable_uint "${value}"
         then
             # Check if the value is an unsigned integer.
             error_message="Error: The argument \"%s\" is set to \"%s\", but "
@@ -4052,9 +4029,8 @@ function argparser_create_help_message() {
     # later upon iterating over them.
     arg_groups=( )
     for arg_group in "${all_arg_groups[@]}"; do
-        if [[ "${arg_group}" != "${ARGPARSER_POSITIONAL_ARG_GROUP}" \
-            && "$(argparser_in_array "${arg_group}" \
-                "${arg_groups[@]}")" == false ]]
+        if [[ "${arg_group}" != "${ARGPARSER_POSITIONAL_ARG_GROUP}" ]] \
+            && ! argparser_in_array "${arg_group}" "${arg_groups[@]}"
         then
             arg_groups+=("${arg_group}")
         fi
@@ -5221,9 +5197,8 @@ function argparser_print_help_or_usage_message() {
     # message.
     arg_groups=( )
     for arg_group in "${all_arg_groups[@]}"; do
-        if [[ "${arg_group}" != "${ARGPARSER_POSITIONAL_ARG_GROUP}" \
-            && "$(argparser_in_array "${arg_group}" \
-                "${arg_groups[@]}")" == false ]]
+        if [[ "${arg_group}" != "${ARGPARSER_POSITIONAL_ARG_GROUP}" ]] \
+            && ! argparser_in_array "${arg_group}" "${arg_groups[@]}"
         then
             arg_groups+=("${arg_group}")
         fi
@@ -5285,12 +5260,12 @@ function argparser_print_help_or_usage_message() {
                     message+="${help_message_groups["Usage"]}"
                     message+=$'\n'
                     message+="${help_message_groups["Remark"]}"
-                elif [[ "$(argparser_in_array "${include_directive}" \
-                    "Help" "Remark" "Usage")" == true ]]
+                elif argparser_in_array "${include_directive}" "Help" \
+                    "Remark" "Usage"
                 then
                     message+="${help_message_groups["${include_directive}"]}"
-                elif [[ "$(argparser_in_array "${include_directive}" \
-                    "${arg_groups[@]}")" == true ]]
+                elif argparser_in_array "${include_directive}" \
+                    "${arg_groups[@]}"
                 then
                     message+="${help_message_groups["${include_directive}"]}"
                 else
@@ -5901,9 +5876,7 @@ function argparser_main() {
                 Prefix*)
                     # Set the current argument's prefix ("-" or "+").
                     prefix="${message#Prefix: }"
-                    if [[ "$(argparser_in_array "${arg_key}" \
-                        "${!prefixes[@]}")" == false ]]
-                    then
+                    if ! argparser_in_array "${arg_key}" "${!prefixes[@]}"; then
                         prefixes[${arg_key}]="${prefix}"
                     else
                         prefixes[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
@@ -5915,9 +5888,7 @@ function argparser_main() {
                     value="${message#Value: }"
                     if [[ "${is_positional}" == true ]]; then
                         given_positional_args+=("${value}")
-                    elif [[ "$(argparser_in_array "${arg_key}" \
-                        "${!args[@]}")" == false ]]
-                    then
+                    elif ! argparser_in_array "${arg_key}" "${!args[@]}"; then
                         args[${arg_key}]="${value}"
                     else
                         args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
@@ -5967,9 +5938,7 @@ function argparser_main() {
             Value*)
                 # Set the current argument's value.
                 value="${message#Value: }"
-                if [[ "$(argparser_in_array "${arg_key}" \
-                    "${!args[@]}")" == false ]]
-                then
+                if ! argparser_in_array "${arg_key}" "${!args[@]}"; then
                     args[${arg_key}]="${value}"
                 else
                     args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
@@ -6009,15 +5978,13 @@ function argparser_main() {
         # arguments or those without value are assigned the empty string
         # as prefix and/or value. This is then interpreted as hint for
         # the argument's or value's absence.
-        if [[ "$(argparser_in_array "${arg_key}" "${!prefixes[@]}")" == true ]]
-        then
+        if argparser_in_array "${arg_key}" "${!prefixes[@]}"; then
             prefix="${prefixes[${arg_key}]}"
         else
             prefix=""
         fi
 
-        if [[ "$(argparser_in_array "${arg_key}" "${!args[@]}")" == true ]]
-        then
+        if argparser_in_array "${arg_key}" "${!args[@]}"; then
             values="${args[${arg_key}]}"
         else
             values=""
