@@ -1,6 +1,6 @@
 # Bash argparser
 
-The argparser is a designed to be an easy-to-use, yet powerful command-line argument parser for your Bash scripts, superior to the traditionally used [`getopt`](https://www.man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)")/[`getopts`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-getopts "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; getopts") or a bare suite of conditionals in a `case..esac` statement. It is entirely written in pure Bash, without invoking external commands. Thus, using the argparser does not add additional dependencies to your script, especially not on differing versions of a program (like [`awk`](https://www.man7.org/linux/man-pages/man1/awk.1p.html "man7.org &rightarrow; man pages &rightarrow; awk(1p)")). Shells other than Bash are (currently) not supported. The argparser is inspired by the [Python argparse module](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module").
+The argparser is a designed to be an easy-to-use, yet powerful command-line argument parser for your Bash scripts, superior to the traditionally used [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)")/[`getopts`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-getopts "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; getopts") or a bare suite of conditionals in a `case..esac` statement. It is entirely written in pure Bash, without invoking external commands. Thus, using the argparser does not add additional dependencies to your script, especially not on differing versions of a program (like [`awk`](https://man7.org/linux/man-pages/man1/awk.1p.html "man7.org &rightarrow; man pages &rightarrow; awk(1p)")). Shells other than Bash are (currently) not supported. The argparser is inspired by the [Python argparse module](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module").
 
 ## Table of contents
 
@@ -1413,7 +1413,7 @@ The argparser defines a large set of environment variables, each following the n
 - ***Type:*** *str* (String), but only characters allowed in a legit Bash variable identifier
 - ***Allowed values:*** Any legit Bash variable identifier
 - ***Default value:*** `"args"`
-- ***Description:*** The name of an indexed array, under which the arguments are provided, and of an associative array, under which the parsed arguments can be accessed. The former stores the argument's identifier as key and its definition as value, but joined to one string by an [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1) character, the latter stores the identifier as key its values as value. If [`ARGPARSER_SET_ARGS`](#argparser_set_args) is `true`, you usually don't need to access this array as the arguments will be set as variables.
+- ***Description:*** The name of an indexed array, under which the arguments are provided, and of an associative array, under which the parsed arguments can be accessed. The former stores the argument's identifier as key and its definition as value, but joined to one string by an [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1) character, the latter stores the identifier as key and its values as value. If [`ARGPARSER_SET_ARGS`](#argparser_set_args) is `true`, you usually don't need to access this array as the arguments will be set as variables.
 
 ### `ARGPARSER_ARG_DEF_FILE`
 
@@ -1557,7 +1557,7 @@ The argparser defines a large set of environment variables, each following the n
 - ***Allowed values:*** Any positive integer
 - ***Default value:*** `5`
 - ***Description:*** The maximum column width of the first column in the generated help message. This column holds the short options of the arguments, hence, it can be rather narrow. The column's content gets wrapped by line breaks if its width exceeds the `ARGPARSER_MAX_COL_WIDTH_1`. If it is less wide, the column is shrunk accordingly.  
-It is recommendable to have a total width of the help message of 79 characters. As one space is always inserted as separation between the first and second, as well as the second and third column, the sum of `ARGPARSER_MAX_COL_WIDTH_1`, [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2), and [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3) should equal 77. As long options are longer than short options, the second column should be far wider than the first. The help text in the third column consists of human-readable words and is thus less bound to word wrapping restrictions. By this, it is easier to set the third column's width to 77 characters minus the total width of the unwrapped first two columns to get an optimized help message layout.
+It is recommendable to have a total width of the help message of 79 characters. As one space is always inserted as separation between the first and second column, as well as between the second and third column, the sum of `ARGPARSER_MAX_COL_WIDTH_1`, [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2), and [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3) should equal 77. As long options are longer than short options, the second column should be far wider than the first. The help text in the third column consists of human-readable words and is thus less bound to word wrapping restrictions. By this, it is easier to set the third column's width to 77 characters minus the total width of the unwrapped first two columns to get an optimized help message layout.
 
 ### `ARGPARSER_MAX_COL_WIDTH_2`
 
@@ -1599,7 +1599,7 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Type:*** *str* (String)
 - ***Allowed values:*** Any string
 - ***Default value:*** `"${0##*/}"`
-- ***Description:*** The name of your script as it should appear in the help, usage, version, error, and warning messages. By default, it is the name used upon invoking your script (`"$0"`), trimmed by everything before the last slash character (mimicking the behavior of `basename`). If, for example, you want to give your script a symlink, but don't want this symlink's name to be used in the help and usage messages, then you can provide a custom, canonicalized `ARGPARSER_SCRIPT_NAME`. Alternatively, if your script forms a sub-part of a larger program, it may be named `program_part.sh`, but should be called as `program name [ARGUMENTS]`. Then, `program.sh` could parse its positional argument `name` and call `program_part.sh`, but on the command line, you want to hide this implementation detail and refer to `program_part.sh` as `program name`, so you set `ARGPARSER_SCRIPT_NAME` accordingly.
+- ***Description:*** The name of your script as it should appear in the help, usage, version, error, and warning messages. By default, it is the name used upon invoking your script (`"$0"`), trimmed by everything before the last slash character (mimicking the behavior of [`basename`](https://man7.org/linux/man-pages/man1/basename.1.html "man7.org &rightarrow; man pages &rightarrow; basename(1)")). If, for example, you want to give your script a symlink, but don't want this symlink's name to be used in the help and usage messages, then you can provide a custom, canonicalized `ARGPARSER_SCRIPT_NAME`. Alternatively, if your script forms a sub-part of a larger program, it may be named `program_part.sh`, but should be called as `program name [ARGUMENTS]`. Then, `program.sh` could parse its positional argument `name` and call `program_part.sh`, but on the command line, you want to hide this implementation detail and refer to `program_part.sh` as `program name`, so you set `ARGPARSER_SCRIPT_NAME` accordingly.
 
 ### `ARGPARSER_SCRIPT_VERSION`
 
@@ -1658,7 +1658,7 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Type:*** *filepath* (Filepath)
 - ***Allowed values:*** Any legit filepath or the empty string `""`
 - ***Default value:*** `""`
-- ***Description:*** The path to a simplified YAML file holding the translation of auto-generated parts in the help and usage messages. This file can be used by multiple scripts. As a YAML file, it contains the translation in a key&ndash;value layout, separated by colons and using significant indentation. Each group key must specify the language identifier used for the [`ARGPARSER_LANGUAGE`](#argparser_language). As many languages as desired can be given, which allows the localization for multiple languages with just one `ARGPARSER_TRANSLATION_FILE`. The rows can be in any order.
+- ***Description:*** The path to a simplified YAML file holding the translation of auto-generated parts in the help, usage, error, and warning messages. This file can be used by multiple scripts. As a YAML file, it contains the translation in a key&ndash;value layout, separated by colons and using significant indentation. Each group key must specify the language identifier used for the [`ARGPARSER_LANGUAGE`](#argparser_language). As many languages as desired can be given, which allows the localization for multiple languages with just one `ARGPARSER_TRANSLATION_FILE`. The rows can be in any order.
 
 ### `ARGPARSER_UNSET_ARGS`
 
@@ -1672,14 +1672,14 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to unset (remove) argparser environment variables from the environment. As long as you don't need these variables anymore or want to reset them prior to the next argparser invokation, this is usually what you want. This prevents accidental (but also deliberate) inheritance to child scripts when passing the entire environment to them.
+- ***Description:*** Whether to unset (remove) the argparser environment variables from the environment. As long as you don't need these variables anymore or want to reset them prior to the next argparser invokation, this is usually what you want. This prevents accidental (but also deliberate) inheritance to child scripts when passing the entire environment to them.
 
 ### `ARGPARSER_UNSET_FUNCTIONS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to unset (remove) argparser functions from the environment. You should not need them separate from an argparser invokation, where they're automatically defined (set) upon sourcing it. By unsetting them, the namespace is kept clean.
+- ***Description:*** Whether to unset (remove) the argparser functions from the environment. You should not need them separate from an argparser invokation, where they're automatically defined (set) upon sourcing it. By unsetting them, the namespace is kept clean.
 
 ### `ARGPARSER_USAGE_EXIT_CODE`
 
@@ -1707,7 +1707,7 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
-- ***Description:*** Whether to keep commented lines (and their trailing blank lines) in the usage file. By this, you can choose whether you want to include lines serving as a comment (starting with a hashmark, *i.e.* `"#`) in the usage file also in the usage message. This is only evaluated if an [`ARGPARSER_USAGE_FILE`](#argparser_usage_file) is given.
+- ***Description:*** Whether to keep commented lines (and their trailing blank lines) in the usage file. By this, you can choose whether you want to include lines serving as a comment (starting with a hashmark, *i.e.* `#`) in the usage file also in the usage message. This is only evaluated if an [`ARGPARSER_USAGE_FILE`](#argparser_usage_file) is given.
 
 ### `ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`
 
@@ -1735,7 +1735,7 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
-- ***Description:*** Whether to use the colors and styles from [`ARGPARSER_ERROR_STYLE`](#argparser_error_style), [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style), [`ARGPARSER_HELP_STYLE`](#argparser_help_style), [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style), and [`ARGPARSER_SCRIPT_VERSION_STYLE`](#argparser_script_version_style) when `STDOUT`/`STDERR` is not a terminal (and thus perhaps a file). This is useful to get plain 7-bit ASCII text output for files, while in interactive sessions, the escape sequences offer more user-friendly formatting and highlighting possibilities. By this, you can parse your files afterwards more easily. Still, using *e.g.* `less --raw-control-chars <filename>`, these escape sequences can be displayed from files, when included.
+- ***Description:*** Whether to use the colors and styles from [`ARGPARSER_ERROR_STYLE`](#argparser_error_style), [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style), [`ARGPARSER_HELP_STYLE`](#argparser_help_style), [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style), and [`ARGPARSER_SCRIPT_VERSION_STYLE`](#argparser_script_version_style) when `STDOUT`/`STDERR` is not a terminal (and thus perhaps a file). This is useful to get plain 7-bit ASCII text output for files, while in interactive sessions, the escape sequences offer more user-friendly formatting and possibilities for highlighting. By this, you can parse your files afterwards more easily. Still, using *e.g.* `less --raw-control-chars <filename>`, these escape sequences can be displayed from files, when included.
 
 ### `ARGPARSER_VERSION`
 
