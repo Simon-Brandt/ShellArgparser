@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-03-10
+# Last Modification: 2025-03-11
 
 # TODO: Add tests for the general arguments parsing.
 # TODO: Write test files for keyword-only and positional-only arguments.
@@ -361,8 +361,19 @@ EOF
 error="test_basic.sh: Warning: The argument \"-g,-G,--var-7,--var-g\" is deprecated and will be removed in the future."
 print_diff "${cmd}" "${output}" "${error}"
 
-# 1.9  Test the version message.
+# 1.9.  Test the version message using the short option name.
 test_number="1.9"
+test_type="version"
+cmd="bash test_basic.sh -V"
+output="$(cat << EOF
+test_basic.sh v1.0.0
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 1.10. Test the version message using the long option name.
+test_number="1.10"
 test_type="version"
 cmd="bash test_basic.sh --version"
 output="$(cat << EOF
@@ -372,8 +383,19 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 1.10. Test the usage message in "row" orientation.
-test_number="1.10"
+# 1.11. Test the usage using the short option name.
+test_number="1.11"
+test_type="usage"
+cmd="bash test_basic.sh -u"
+output="$(cat << EOF
+Usage: test_basic.sh [-h | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 1.12. Test the usage message using the long option name.
+test_number="1.12"
 test_type="usage"
 cmd="bash test_basic.sh --usage"
 output="$(cat << EOF
@@ -383,8 +405,19 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 1.11. Test the usage message in "column" orientation.
-test_number="1.11"
+# 1.13. Test the usage message in "row" orientation.
+test_number="1.13"
+test_type="usage"
+cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=row bash test_basic.sh --usage"
+output="$(cat << EOF
+Usage: test_basic.sh [-h | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 1.14. Test the usage message in "column" orientation.
+test_number="1.14"
 test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash test_basic.sh --usage"
 output="$(cat << EOF
@@ -403,8 +436,68 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 1.12. Test the help message.
-test_number="1.12"
+# 1.15. Test the usage message with preferred short option names.
+test_number="1.15"
+test_type="usage"
+cmd="ARGPARSER_USAGE_MESSAGE_OPTION_TYPE=short bash test_basic.sh --usage"
+output="$(cat << EOF
+Usage: test_basic.sh [-h | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 1.16. Test the usage message with preferred long option names.
+test_number="1.16"
+test_type="usage"
+cmd="ARGPARSER_USAGE_MESSAGE_OPTION_TYPE=long bash test_basic.sh --usage"
+output="$(cat << EOF
+Usage: test_basic.sh [--help | --usage | --version] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1 --var-2,--var-b=VAL_2... --var-3,--var-c={A,B}... [{1,2}] pos_2
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 1.17. Test the help message using the short option name.
+test_number="1.17"
+test_type="help"
+cmd="bash test_basic.sh -h"
+output="$(cat << EOF
+Usage: test_basic.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
+
+Mandatory arguments to long options are mandatory for short options too.
+
+Positional arguments:
+[pos_1={1,2}]                              one positional argument with default
+                                           and choice (default: 2)
+pos_2                                      two positional arguments without
+                                           default or choice
+
+Mandatory options:
+-a, -A,   --var-1=VAL_1, --var-a=VAR-A     one value without default or choice
+-b, -B,   --var-2=VAL_2, --var-b=VAR-B     at least one value without default
+                                           or choice
+-c, -C,   --var-3={A,B}, --var-c={A,B}     at least one value with choice
+
+Optional options:
+-d, -D,   [--var-4={A,B,C}],               one value with default and choice
+          [--var-d={A,B,C}]                (default: A)
+-e, -E,   [--var-5=VAL_5], [--var-e=VAR-E] one value with default (default: E)
+[-f, -F], [--var-6, --var-f]               no value (flag) with default
+                                           (default: false)
+[-g, -G], [--var-7, --var-g]               (DEPRECATED) no value (flag) with
+                                           default (default: true)
+
+-h,       --help                           display this help and exit
+-u,       --usage                          display the usage and exit
+-V,       --version                        display the version and exit
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 1.18. Test the help message using the long option name.
+test_number="1.18"
 test_type="help"
 cmd="bash test_basic.sh --help"
 output="$(cat << EOF
@@ -463,7 +556,7 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 2.2.  Test the version message.
+# 2.2.  Test the version message using the short option name.
 test_number="2.2"
 test_type="version"
 cmd="bash test_short_options.sh -V"
@@ -474,8 +567,19 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 2.3.  Test the usage message in "row" orientation.
+# 2.3.  Test the version message using the long option name.
 test_number="2.3"
+test_type="version"
+cmd="bash test_short_options.sh --version"
+output="$(cat << EOF
+test_short_options.sh v1.0.0
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 2.4.  Test the usage message using the short option name.
+test_number="2.4"
 test_type="usage"
 cmd="bash test_short_options.sh -u"
 output="$(cat << EOF
@@ -485,30 +589,55 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 2.4.  Test the usage message in "column" orientation.
-test_number="2.4"
+# 2.5.  Test the usage message using the long option name.
+test_number="2.5"
 test_type="usage"
-cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash test_short_options.sh -u"
+cmd="bash test_short_options.sh --usage"
 output="$(cat << EOF
-Usage: test_short_options.sh [-h | -u | -V]
-                             [-d,-D={A,B,C}]
-                             [-e,-E=VAL_5]
-                             [-f,-F]
-                             [-g,-G]
-                             -a,-A=VAL_1
-                             -b,-B=VAL_2...
-                             -c,-C={A,B}...
-                             [{1,2}]
-                             pos_2
+Usage: test_short_options.sh [-h | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 2.5.  Test the help message.
-test_number="2.5"
+# 2.6.  Test the help message using the short option name.
+test_number="2.6"
 test_type="help"
 cmd="bash test_short_options.sh -h"
+output="$(cat << EOF
+Usage: test_short_options.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
+
+Mandatory arguments to long options are mandatory for short options too.
+
+Positional arguments:
+[pos_1={1,2}]      one positional argument with default and choice (default:
+                    2)
+pos_2              two positional arguments without default or choice
+
+Mandatory options:
+-a=VAL_1,-A=A      one value without default or choice
+-b=VAL_2,-B=B      at least one value without default or choice
+-c={A,B},-C={A,B}  at least one value with choice
+
+Optional options:
+[-d={A,B,C}],      one value with default and choice (default: A)
+[-D={A,B,C}]
+[-e=VAL_5], [-E=E] one value with default (default: E)
+[-f, -F]           no value (flag) with default (default: false)
+[-g, -G]           (DEPRECATED) no value (flag) with default (default: true)
+
+-h                 display this help and exit
+-u                 display the usage and exit
+-V                 display the version and exit
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 2.7.  Test the help message using the long option name.
+test_number="2.7"
+test_type="help"
+cmd="bash test_short_options.sh --help"
 output="$(cat << EOF
 Usage: test_short_options.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
 
@@ -561,8 +690,19 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 3.2.  Test the version message.
+# 3.2.  Test the version message using the short option name.
 test_number="3.2"
+test_type="version"
+cmd="bash test_long_options.sh -V"
+output="$(cat << EOF
+test_long_options.sh v1.0.0
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 3.3.  Test the version message using the long option name.
+test_number="3.3"
 test_type="version"
 cmd="bash test_long_options.sh --version"
 output="$(cat << EOF
@@ -572,8 +712,19 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 3.3.  Test the usage message in "row" orientation.
-test_number="3.3"
+# 3.4.  Test the usage message using the short option name.
+test_number="3.4"
+test_type="usage"
+cmd="bash test_long_options.sh -u"
+output="$(cat << EOF
+Usage: test_long_options.sh [-h | -u | -V] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1 --var-2,--var-b=VAL_2... --var-3,--var-c={A,B}... [{1,2}] pos_2
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 3.5.  Test the usage message using the long option name.
+test_number="3.5"
 test_type="usage"
 cmd="bash test_long_options.sh --usage"
 output="$(cat << EOF
@@ -583,28 +734,45 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 3.4.  Test the usage message in "column" orientation.
-test_number="3.4"
-test_type="usage"
-cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash test_long_options.sh --usage"
+# 3.6.  Test the help message using the short option name.
+test_number="3.6"
+test_type="help"
+cmd="bash test_long_options.sh -h"
 output="$(cat << EOF
-Usage: test_long_options.sh [-h | -u | -V]
-                            [--var-4,--var-d={A,B,C}]
-                            [--var-5,--var-e=VAL_5]
-                            [--var-6,--var-f]
-                            [--var-7,--var-g]
-                            --var-1,--var-a=VAL_1
-                            --var-2,--var-b=VAL_2...
-                            --var-3,--var-c={A,B}...
-                            [{1,2}]
-                            pos_2
+Usage: test_long_options.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
+
+Mandatory arguments to long options are mandatory for short options too.
+
+Positional arguments:
+[pos_1={1,2}]                    one positional argument with default and
+                                 choice (default: 2)
+pos_2                            two positional arguments without default or
+                                 choice
+
+Mandatory options:
+--var-1=VAL_1, --var-a=VAR-A     one value without default or choice
+--var-2=VAL_2, --var-b=VAR-B     at least one value without default
+                                 or choice
+--var-3={A,B}, --var-c={A,B}     at least one value with choice
+
+Optional options:
+[--var-4={A,B,C}],               one value with default and choice
+[--var-d={A,B,C}]                (default: A)
+[--var-5=VAL_5], [--var-e=VAR-E] one value with default (default: E)
+[--var-6, --var-f]               no value (flag) with default (default: false)
+[--var-7, --var-g]               (DEPRECATED) no value (flag) with default
+                                 (default: true)
+
+--help                           display this help and exit
+--usage                          display the usage and exit
+--version                        display the version and exit
 EOF
 )"
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 3.5.  Test the help message.
-test_number="3.5"
+# 3.7.  Test the help message using the long option name.
+test_number="3.7"
 test_type="help"
 cmd="bash test_long_options.sh --help"
 output="$(cat << EOF
