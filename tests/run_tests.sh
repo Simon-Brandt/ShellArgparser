@@ -361,8 +361,19 @@ EOF
 error="test_basic.sh: Warning: The argument \"-g,-G,--var-7,--var-g\" is deprecated and will be removed in the future."
 print_diff "${cmd}" "${output}" "${error}"
 
-# 1.9.  Test the usage message in "row" orientation.
+# 1.9  Test the version message.
 test_number="1.9"
+test_type="version"
+cmd="bash test_basic.sh --version"
+output="$(cat << EOF
+test_basic.sh v1.0.0
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 1.10. Test the usage message in "row" orientation.
+test_number="1.10"
 test_type="usage"
 cmd="bash test_basic.sh --usage"
 output="$(cat << EOF
@@ -372,8 +383,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 1.10.  Test the usage message in "column" orientation.
-test_number="1.10"
+# 1.11. Test the usage message in "column" orientation.
+test_number="1.11"
 test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash test_basic.sh --usage"
 output="$(cat << EOF
@@ -392,8 +403,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 1.11.  Test the help message.
-test_number="1.11"
+# 1.12. Test the help message.
+test_number="1.12"
 test_type="help"
 cmd="bash test_basic.sh --help"
 output="$(cat << EOF
@@ -452,8 +463,19 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 2.2.  Test the usage message in "row" orientation.
+# 2.2.  Test the version message.
 test_number="2.2"
+test_type="version"
+cmd="bash test_short_options.sh -V"
+output="$(cat << EOF
+test_short_options.sh v1.0.0
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 2.3.  Test the usage message in "row" orientation.
+test_number="2.3"
 test_type="usage"
 cmd="bash test_short_options.sh -u"
 output="$(cat << EOF
@@ -463,8 +485,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 2.3.  Test the usage message in "column" orientation.
-test_number="2.3"
+# 2.4.  Test the usage message in "column" orientation.
+test_number="2.4"
 test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash test_short_options.sh -u"
 output="$(cat << EOF
@@ -483,8 +505,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 2.4.  Test the help message.
-test_number="2.4"
+# 2.5.  Test the help message.
+test_number="2.5"
 test_type="help"
 cmd="bash test_short_options.sh -h"
 output="$(cat << EOF
@@ -539,8 +561,19 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 3.2.  Test the usage message in "row" orientation.
+# 3.2.  Test the version message.
 test_number="3.2"
+test_type="version"
+cmd="bash test_long_options.sh --version"
+output="$(cat << EOF
+test_long_options.sh v1.0.0
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 3.3.  Test the usage message in "row" orientation.
+test_number="3.3"
 test_type="usage"
 cmd="bash test_long_options.sh --usage"
 output="$(cat << EOF
@@ -550,8 +583,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 3.3.  Test the usage message in "column" orientation.
-test_number="3.3"
+# 3.4.  Test the usage message in "column" orientation.
+test_number="3.4"
 test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash test_long_options.sh --usage"
 output="$(cat << EOF
@@ -570,8 +603,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 3.4.  Test the help message.
-test_number="3.4"
+# 3.5.  Test the help message.
+test_number="3.5"
 test_type="help"
 cmd="bash test_long_options.sh --help"
 output="$(cat << EOF
@@ -659,8 +692,19 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 5.2.  Test the usage message.
+# 5.2.  Test the version message.
 test_number="5.2"
+test_type="version"
+cmd="bash test_config_file.sh --version"
+output="$(cat << EOF
+test_config_file.sh v1.0.0
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 5.3.  Test the usage message.
+test_number="5.3"
 test_type="usage"
 cmd="bash test_config_file.sh --usage"
 output="$(cat << EOF
@@ -670,8 +714,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 5.3.  Test the help message.
-test_number="5.3"
+# 5.4.  Test the help message.
+test_number="5.4"
 test_type="help"
 cmd="bash test_config_file.sh --help"
 output="$(cat << EOF
@@ -725,8 +769,19 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 6.2.  Test the usage message.
+# 6.2.  Test the version message.
 test_number="6.2"
+test_type="version"
+cmd="bash test_arg_def_file.sh --version"
+output="$(cat << EOF
+test_arg_def_file.sh v1.0.0
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 6.3.  Test the usage message.
+test_number="6.3"
 test_type="usage"
 cmd="bash test_arg_def_file.sh --usage"
 output="$(cat << EOF
@@ -736,8 +791,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 6.3.  Test the help message.
-test_number="6.3"
+# 6.4.  Test the help message.
+test_number="6.4"
 test_type="help"
 cmd="bash test_arg_def_file.sh --help"
 output="$(cat << EOF
@@ -791,8 +846,19 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 7.2.  Test the usage message.
+# 7.2.  Test the version message.
 test_number="7.2"
+test_type="version"
+cmd="bash test_help_file.sh --version"
+output="$(cat << EOF
+test_help_file.sh v1.0.0
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 7.3.  Test the usage message.
+test_number="7.3"
 test_type="usage"
 cmd="bash test_help_file.sh --usage"
 output="$(cat << EOF
@@ -802,8 +868,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 7.3.  Test the help message.
-test_number="7.3"
+# 7.4.  Test the help message.
+test_number="7.4"
 test_type="help"
 cmd="bash test_help_file.sh --help"
 output="$(cat << EOF
@@ -881,8 +947,19 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 8.3.  Test the usage message for the American locale.
+# 8.3.  Test the version message.
 test_number="8.3"
+test_type="version"
+cmd="bash test_localization.sh --version"
+output="$(cat << EOF
+test_localization.sh v1.0.0
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 8.4.  Test the usage message for the American locale.
+test_number="8.4"
 test_type="usage"
 cmd="LANG=en_US.UTF-8 bash test_localization.sh --usage"
 output="$(cat << EOF
@@ -892,8 +969,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 8.4.  Test the usage message for the German locale.
-test_number="8.4"
+# 8.5.  Test the usage message for the German locale.
+test_number="8.5"
 test_type="usage"
 cmd="LANG=de_DE.UTF-8 bash test_localization.sh --usage"
 output="$(cat << EOF
@@ -903,8 +980,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 8.5.  Test the help message for the American locale.
-test_number="8.5"
+# 8.6.  Test the help message for the American locale.
+test_number="8.6"
 test_type="help"
 cmd="LANG=en_US.UTF-8 bash test_localization.sh --help"
 output="$(cat << EOF
@@ -941,8 +1018,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 8.6.  Test the help message for the German locale.
-test_number="8.6"
+# 8.7.  Test the help message for the German locale.
+test_number="8.7"
 test_type="help"
 cmd="LANG=de_DE.UTF-8 bash test_localization.sh --help"
 output="$(cat << EOF
