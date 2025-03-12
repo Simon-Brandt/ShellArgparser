@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-28
+# Last Modification: 2025-03-11
 
 # Usage: Run this script with "bash test_short_options.sh".
 
@@ -13,6 +13,7 @@
 ARGPARSER_MAX_COL_WIDTH_1=9
 ARGPARSER_MAX_COL_WIDTH_2=33
 ARGPARSER_MAX_COL_WIDTH_3=35
+ARGPARSER_USE_LONG_OPTIONS=false
 
 # Define the arguments.
 # shellcheck disable=SC2190  # Indexed, not associative array.

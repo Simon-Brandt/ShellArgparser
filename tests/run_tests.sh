@@ -571,11 +571,13 @@ print_diff "${cmd}" "${output}" "${error}"
 test_number="2.3"
 test_type="version"
 cmd="bash test_short_options.sh --version"
-output="$(cat << EOF
-test_short_options.sh v1.0.0
+output=""
+error="$(cat << EOF
+test_short_options.sh: Error: The argument "--version" is unknown.
+
+Usage: test_short_options.sh [-h | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
-error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 2.4.  Test the usage message using the short option name.
@@ -593,11 +595,13 @@ print_diff "${cmd}" "${output}" "${error}"
 test_number="2.5"
 test_type="usage"
 cmd="bash test_short_options.sh --usage"
-output="$(cat << EOF
+output=""
+error="$(cat << EOF
+test_short_options.sh: Error: The argument "--usage" is unknown.
+
 Usage: test_short_options.sh [-h | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
-error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 2.6.  Test the help message using the short option name.
@@ -638,34 +642,13 @@ print_diff "${cmd}" "${output}" "${error}"
 test_number="2.7"
 test_type="help"
 cmd="bash test_short_options.sh --help"
-output="$(cat << EOF
-Usage: test_short_options.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
+output=""
+error="$(cat << EOF
+test_short_options.sh: Error: The argument "--help" is unknown.
 
-Mandatory arguments to long options are mandatory for short options too.
-
-Positional arguments:
-[pos_1={1,2}]      one positional argument with default and choice (default:
-                    2)
-pos_2              two positional arguments without default or choice
-
-Mandatory options:
--a=VAL_1,-A=A      one value without default or choice
--b=VAL_2,-B=B      at least one value without default or choice
--c={A,B},-C={A,B}  at least one value with choice
-
-Optional options:
-[-d={A,B,C}],      one value with default and choice (default: A)
-[-D={A,B,C}]
-[-e=VAL_5], [-E=E] one value with default (default: E)
-[-f, -F]           no value (flag) with default (default: false)
-[-g, -G]           (DEPRECATED) no value (flag) with default (default: true)
-
--h                 display this help and exit
--u                 display the usage and exit
--V                 display the version and exit
+Usage: test_short_options.sh [-h | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
-error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 3.    Test the functionality regarding long options.
@@ -694,11 +677,13 @@ print_diff "${cmd}" "${output}" "${error}"
 test_number="3.2"
 test_type="version"
 cmd="bash test_long_options.sh -V"
-output="$(cat << EOF
-test_long_options.sh v1.0.0
+output=""
+error="$(cat << EOF
+test_long_options.sh: Error: The argument "-V" is unknown.
+
+Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1 --var-2,--var-b=VAL_2... --var-3,--var-c={A,B}... [{1,2}] pos_2
 EOF
 )"
-error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 3.3.  Test the version message using the long option name.
@@ -716,11 +701,13 @@ print_diff "${cmd}" "${output}" "${error}"
 test_number="3.4"
 test_type="usage"
 cmd="bash test_long_options.sh -u"
-output="$(cat << EOF
-Usage: test_long_options.sh [-h | -u | -V] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1 --var-2,--var-b=VAL_2... --var-3,--var-c={A,B}... [{1,2}] pos_2
+output=""
+error="$(cat << EOF
+test_long_options.sh: Error: The argument "-u" is unknown.
+
+Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1 --var-2,--var-b=VAL_2... --var-3,--var-c={A,B}... [{1,2}] pos_2
 EOF
 )"
-error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 3.5.  Test the usage message using the long option name.
@@ -728,7 +715,7 @@ test_number="3.5"
 test_type="usage"
 cmd="bash test_long_options.sh --usage"
 output="$(cat << EOF
-Usage: test_long_options.sh [-h | -u | -V] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1 --var-2,--var-b=VAL_2... --var-3,--var-c={A,B}... [{1,2}] pos_2
+Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1 --var-2,--var-b=VAL_2... --var-3,--var-c={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -738,37 +725,13 @@ print_diff "${cmd}" "${output}" "${error}"
 test_number="3.6"
 test_type="help"
 cmd="bash test_long_options.sh -h"
-output="$(cat << EOF
-Usage: test_long_options.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
+output=""
+error="$(cat << EOF
+test_long_options.sh: Error: The argument "-h" is unknown.
 
-Mandatory arguments to long options are mandatory for short options too.
-
-Positional arguments:
-[pos_1={1,2}]                    one positional argument with default and
-                                 choice (default: 2)
-pos_2                            two positional arguments without default or
-                                 choice
-
-Mandatory options:
---var-1=VAL_1, --var-a=VAR-A     one value without default or choice
---var-2=VAL_2, --var-b=VAR-B     at least one value without default
-                                 or choice
---var-3={A,B}, --var-c={A,B}     at least one value with choice
-
-Optional options:
-[--var-4={A,B,C}],               one value with default and choice
-[--var-d={A,B,C}]                (default: A)
-[--var-5=VAL_5], [--var-e=VAR-E] one value with default (default: E)
-[--var-6, --var-f]               no value (flag) with default (default: false)
-[--var-7, --var-g]               (DEPRECATED) no value (flag) with default
-                                 (default: true)
-
---help                           display this help and exit
---usage                          display the usage and exit
---version                        display the version and exit
+Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1 --var-2,--var-b=VAL_2... --var-3,--var-c={A,B}... [{1,2}] pos_2
 EOF
 )"
-error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 3.7.  Test the help message using the long option name.
@@ -1303,6 +1266,8 @@ Usage: argparser [--help | --usage | --version]
                  [--usage-message-option-type={long,short}]
                  [--usage-message-orientation={row,column}]
                  [--usage-style=STYLE...]
+                 [--use-long-options]
+                 [--use-short-options]
                  [--use-styles-in-files]
                  [--warning-style=STYLE...]
                  COMMAND LINE...
@@ -1321,136 +1286,129 @@ Usage: argparser [OPTIONS] [--] COMMAND LINE
 Mandatory arguments to long options are mandatory for short options too.
 
 Positional arguments:
-COMMAND LINE                         the indexed array in which the argparser
-                                     stores the script's command line upon
-                                     parsing its own arguments
+COMMAND LINE                     the indexed array in which the argparser
+                                 stores the script's command line upon parsing
+                                 its own arguments
 
 Options:
-    [--add-help]                     add -h, --help as flags to call the help
-                                     message (default: true)
-    [--add-usage]                    add -u, --usage as flags to call the
-                                     usage message (default: true)
-    [--add-version]                  add -V, --version as flags to call the
-                                     version message (default: true)
-    [--allow-option-abbreviation]    allow the user to give long option names
-                                     in abbreviated form (default: false)
-    [--allow-option-merging]         allow the user to give short option
-                                     names in merged (concatenated) form
-                                     (default: false)
-    [--arg-array-name=NAME]          the indexed array for the raw arguments
-                                     and the associative array for the parsed
-                                     arguments (default: args)
-    [--arg-def-file=FILE]            the path to a file holding the
-                                     definition of the arguments (default:
-                                     '')
-    [--arg-def-file-has-header]      whether the arguments definition file
-                                     has a header explaining the columns
-                                     (default: true)
-    [--arg-def-has-header]           whether the arguments definition in the
-                                     script has a header explaining the
-                                     columns (default: true)
-    [--arg-delimiter-1=CHAR]         the primary delimiter that separates the
-                                     fields in the arguments definition
-                                     (default: :)
-    [--arg-delimiter-2=CHAR]         the secondary delimiter that separates
-                                     the elements of sequences in the
-                                     arguments definition (default: ,)
-    [--check-arg-definition]         check if the arguments definition is
-                                     consistent (default: false)
-    [--check-env-vars]               check if the argparser environment
-                                     variables accord to their definition
-                                     (default: false)
-    [--configuration-file=FILE]      the path to a file holding the argparser
-                                     configuration (default: '')
-    [--count-flags]                  count flags instead of setting them to
-                                     true or false based on the last prefix
-                                     used on the command line (default:
-                                     false)
-    [--error-exit-code=INT]          the exit code when errors occurred upon
-                                     parsing (default: 1)
-    [--error-style=STYLE]            the color and style specification for
-                                     error messages (default:
-                                     red,bold,reverse)
-    [--help-exit-code=INT]           the exit code for help messages
-                                     (default: 0)
-    [--help-file=FILE]               the path to a file holding the extended
-                                     help message (default: '')
-    [--help-file-include-char=CHAR]  the character that introduces an include
-                                     directive in an ARGPARSER_HELP_FILE
-                                     (default: @)
-    [--help-file-keep-comments]      keep commented lines in the help file
-                                     (default: false)
-    [--help-style=STYLE]             the color and style specification for
-                                     help messages (default: italic)
-    [--language=-]                   the language in which to localize the
-                                     help and usage messages (default: en)
-    [--max-col-width-1=INT]          the maximum column width of the first
-                                     column in the help message (default: 5)
-    [--max-col-width-2=INT]          the maximum column width of the second
-                                     column in the help message (default: 33)
-    [--max-col-width-3=INT]          the maximum column width of the third
-                                     column in the help message (default: 39)
-    [--positional-arg-group=NAME]    the name of the argument group holding
-                                     all positional arguments (default:
-                                     Positional arguments)
-    [--read-args]                    read the arguments and parse them to
-                                     ARGPARSER_ARG_ARRAY_NAME (default: true)
-    [--script-name=NAME]             the script's name for the help, usage,
-                                     version, error, and warning messages
-                                     (default: '')
-    [--script-version=-]             the script's version number for the
-                                     version message (default: 1.0.0)
-    [--script-version-exit-code=INT] the exit code for version messages
-                                     (default: 0)
-    [--script-version-style=STYLE]   the color and style specification for
-                                     version messages (default: bold)
-    [--set-args]                     set the arguments from
-                                     ARGPARSER_ARG_ARRAY_NAME as variables in
-                                     the script's scope (default: true)
-    [--set-arrays]                   set arguments intended to have multiple
-                                     values as indexed array (default: true)
-    [--silence-errors]               silence the emission (output) of error
-                                     messages (default: false)
-    [--silence-warnings]             silence the emission (output) of warning
-                                     messages (default: false)
-    [--translation-file=FILE]        the path to a simplified YAML file
-                                     holding the translation to
-                                     ARGPARSER_LANGUAGE (default: '')
-    [--unset-args]                   unset (remove) all command-line
-                                     arguments given to the script (default:
-                                     true)
-    [--unset-env-vars]               unset (remove) the argparser environment
-                                     variables from the environment (default:
-                                     true)
-    [--unset-functions]              unset (remove) the argparser functions
-                                     from the environment (default: true)
-    [--usage-exit-code=INT]          the exit code for usage messages
-                                     (default: 0)
-    [--usage-file=FILE]              the path to a file holding the extended
-                                     usage message (default: '')
-    [--usage-file-include-char=CHAR] the character that introduces an include
-                                     directive in an ARGPARSER_USAGE_FILE
-                                     (default: @)
-    [--usage-file-keep-comments]     keep commented lines in the usage file
-                                     (default: false)
-    [--usage-message-option-type={long,short}]
-                                     use short or long option names in usage
-                                     messages (default: short)
-    [--usage-message-orientation={row,column}]
-                                     output the positional and keyword
-                                     arguments in usage messages in a row or
-                                     in a column (default: row)
-    [--usage-style=STYLE]            the color and style specification for
-                                     usage messages (default: italic)
-    [--use-styles-in-files]          use the colors and styles when
-                                     STDOUT/STDERR is not a terminal
-                                     (default: false)
-    [--warning-style=STYLE]          the color and style specification for
-                                     warning messages (default: red,bold)
+[--add-help]                     add -h, --help as flags to call the help
+                                 message (default: true)
+[--add-usage]                    add -u, --usage as flags to call the usage
+                                 message (default: true)
+[--add-version]                  add -V, --version as flags to call the version
+                                 message (default: true)
+[--allow-option-abbreviation]    allow the user to give long option names in
+                                 abbreviated form (default: false)
+[--allow-option-merging]         allow the user to give short option names in
+                                 merged (concatenated) form (default: false)
+[--arg-array-name=NAME]          the indexed array for the raw arguments and
+                                 the associative array for the parsed arguments
+                                 (default: args)
+[--arg-def-file=FILE]            the path to a file holding the definition of
+                                 the arguments (default: '')
+[--arg-def-file-has-header]      whether the arguments definition file has a
+                                 header explaining the columns (default: true)
+[--arg-def-has-header]           whether the arguments definition in the script
+                                 has a header explaining the columns (default:
+                                 true)
+[--arg-delimiter-1=CHAR]         the primary delimiter that separates the
+                                 fields in the arguments definition (default:
+                                 :)
+[--arg-delimiter-2=CHAR]         the secondary delimiter that separates the
+                                 elements of sequences in the arguments
+                                 definition (default: ,)
+[--check-arg-definition]         check if the arguments definition is
+                                    consistent (default: false)
+[--check-env-vars]               check if the argparser environment variables
+                                 accord to their definition (default: false)
+[--configuration-file=FILE]      the path to a file holding the argparser
+                                 configuration (default: '')
+[--count-flags]                  count flags instead of setting them to true or
+                                 false based on the last prefix used on the
+                                 command line (default: false)
+[--error-exit-code=INT]          the exit code when errors occurred upon
+                                 parsing (default: 1)
+[--error-style=STYLE]            the color and style specification for error
+                                 messages (default: red,bold,reverse)
+[--help-exit-code=INT]           the exit code for help messages (default: 0)
+[--help-file=FILE]               the path to a file holding the extended help
+                                 message (default: '')
+[--help-file-include-char=CHAR]  the character that introduces an include
+                                 directive in an ARGPARSER_HELP_FILE (default:
+                                 @)
+[--help-file-keep-comments]      keep commented lines in the help file
+                                    (default: false)
+[--help-style=STYLE]             the color and style specification for help
+                                 messages (default: italic)
+[--language=-]                   the language in which to localize the help and
+                                 usage messages (default: en)
+[--max-col-width-1=INT]          the maximum column width of the first column
+                                 in the help message (default: 5)
+[--max-col-width-2=INT]          the maximum column width of the second column
+                                 in the help message (default: 33)
+[--max-col-width-3=INT]          the maximum column width of the third column
+                                 in the help message (default: 39)
+[--positional-arg-group=NAME]    the name of the argument group holding all
+                                 positional arguments (default: Positional
+                                 arguments)
+[--read-args]                    read the arguments and parse them to
+                                 ARGPARSER_ARG_ARRAY_NAME (default: true)
+[--script-name=NAME]             the script's name for the help, usage,
+                                 version, error, and warning messages (default:
+                                 '')
+[--script-version=-]             the script's version number for the version
+                                 message (default: 1.0.0)
+[--script-version-exit-code=INT] the exit code for version messages (default:
+                                 0)
+[--script-version-style=STYLE]   the color and style specification for version
+                                 messages (default: bold)
+[--set-args]                     set the arguments from
+                                 ARGPARSER_ARG_ARRAY_NAME as variables in the
+                                 script's scope (default: true)
+[--set-arrays]                   set arguments intended to have multiple values
+                                 as indexed array (default: true)
+[--silence-errors]               silence the emission (output) of error
+                                 messages (default: false)
+[--silence-warnings]             silence the emission (output) of warning
+                                 messages (default: false)
+[--translation-file=FILE]        the path to a simplified YAML file holding the
+                                 translation to ARGPARSER_LANGUAGE (default:
+                                 '')
+[--unset-args]                   unset (remove) all command-line arguments
+                                 given to the script (default: true)
+[--unset-env-vars]               unset (remove) the argparser environment
+                                 variables from the environment (default: true)
+[--unset-functions]              unset (remove) the argparser functions from
+                                 the environment (default: true)
+[--usage-exit-code=INT]          the exit code for usage messages (default: 0)
+[--usage-file=FILE]              the path to a file holding the extended usage
+                                 message (default: '')
+[--usage-file-include-char=CHAR] the character that introduces an include
+                                 directive in an ARGPARSER_USAGE_FILE (default:
+                                 @)
+[--usage-file-keep-comments]     keep commented lines in the usage file
+                                 (default: false)
+[--usage-message-option-type={long,short}]
+                                 use short or long option names in usage
+                                 messages (default: short)
+[--usage-message-orientation={row,column}]
+                                 output the positional and keyword arguments in
+                                 usage messages in a row or in a column
+                                 (default: row)
+[--usage-style=STYLE]            the color and style specification for usage
+                                 messages (default: italic)
+[--use-long-options]             use the long options for parsing (default:
+                                 true)
+[--use-short-options]            use the short options for parsing (default:
+                                 true)
+[--use-styles-in-files]          use the colors and styles when STDOUT/STDERR
+                                 is not a terminal (default: false)
+[--warning-style=STYLE]          the color and style specification for warning
+                                 messages (default: red,bold)
 
--h, --help                           display this help and exit
--u, --usage                          display the usage and exit
--V, --version                        display the version and exit
+--help                           display this help and exit
+--usage                          display the usage and exit
+--version                        display the version and exit
 EOF
 )"
 error=""

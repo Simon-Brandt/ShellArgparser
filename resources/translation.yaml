@@ -221,6 +221,26 @@ Error env var delimiters:
     Fehler: Die Umgebungsvariablen "ARGPARSER_ARG_DELIMITER_1" und
     "ARGPARSER_ARG_DELIMITER_2" müssen unterschiedliche Werte haben.
 
+Error env var short options:
+  en: >
+    Error: The environment variable "ARGPARSER_USAGE_MESSAGE_OPTION_TYPE"
+    requests the usage of short option names, but "ARGPARSER_USE_SHORT_OPTIONS"
+    turns them off.
+  de: >
+    Fehler: Die Umgebungsvariable "ARGPARSER_USAGE_MESSAGE_OPTION_TYPE" fordert
+    die Nutzung kurzer Optionsnamen, "ARGPARSER_USE_SHORT_OPTIONS" deaktiviert
+    diese aber.
+
+Error env var long options:
+  en: >
+    Error: The environment variable "ARGPARSER_USAGE_MESSAGE_OPTION_TYPE"
+    requests the usage of long option names, but "ARGPARSER_USE_LONG_OPTIONS"
+    turns them off.
+  de: >
+    Fehler: Die Umgebungsvariable "ARGPARSER_USAGE_MESSAGE_OPTION_TYPE" fordert
+    die Nutzung langer Optionsnamen, "ARGPARSER_USE_LONG_OPTIONS" deaktiviert
+    diese aber.
+
 Error env var files:
   en: >
     Error: The environment variables "%s" and "%s" point to the same file.
@@ -650,23 +670,59 @@ Error arg double plus:
   de: >
     Fehler: Die besondere Option "++" nimmt keinen Wert.
 
-Error arg help:
+Error arg help 1:
   en: >
     Error: The option "-h,--help" takes no value.
   de: >
     Fehler: Die Option "-h,--help" nimmt keinen Wert.
 
-Error arg usage:
+Error arg help 2:
+  en: >
+    Error: The option "--help" takes no value.
+  de: >
+    Fehler: Die Option "--help" nimmt keinen Wert.
+
+Error arg help 3:
+  en: >
+    Error: The option "-h" takes no value.
+  de: >
+    Fehler: Die Option "-h" nimmt keinen Wert.
+
+Error arg usage 1:
   en: >
     Error: The option "-u,--usage" takes no value.
   de: >
     Fehler: Die Option "-u,--usage" nimmt keinen Wert.
 
-Error arg version:
+Error arg usage 2:
+  en: >
+    Error: The option "--usage" takes no value.
+  de: >
+    Fehler: Die Option "--usage" nimmt keinen Wert.
+
+Error arg usage 3:
+  en: >
+    Error: The option "-u" takes no value.
+  de: >
+    Fehler: Die Option "-u" nimmt keinen Wert.
+
+Error arg version 1:
   en: >
     Error: The option "-V,--version" takes no value.
   de: >
     Fehler: Die Option "-V,--version" nimmt keinen Wert.
+
+Error arg version 2:
+  en: >
+    Error: The option "--version" takes no value.
+  de: >
+    Fehler: Die Option "--version" nimmt keinen Wert.
+
+Error arg version 3:
+  en: >
+    Error: The option "-V" takes no value.
+  de: >
+    Fehler: Die Option "-V" nimmt keinen Wert.
 
 Error arg unknown:
   en: >
