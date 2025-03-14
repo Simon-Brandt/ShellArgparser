@@ -4083,6 +4083,428 @@ function argparser_check_arg_values() {
     messages+=("Value: ${value}")
 }
 
+function argparser_parse_args() {
+    # Parse the script's given arguments and check if they accord to
+    # their definition.  Give proper error messages for wrongly set
+    # arguments and assign the values to the respective variables.
+    # Possibly, create and print a help message.
+    #
+    # Arguments:
+    # - $@: the arguments to parse
+    #
+    # Globals:
+    # - ${ARGPARSER_ARG_ARRAY_NAME}: the parsed and checked arguments
+    #   with key and value as associative array
+    #
+    # Environment:
+    # - ARGPARSER_ARG_ARRAY_NAME (read-only)
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+    # - ARGPARSER_CHECK_ARG_DEFINITION (read-only)
+    # - ARGPARSER_ERROR_EXIT_CODE (read-only)
+    # - ARGPARSER_SILENCE_ERRORS (read-only)
+
+    # Define the local variables.  If the variable that
+    # ${ARGPARSER_ARG_ARRAY_NAME} refers to is undefined, all variables
+    # prefixed with "arg" are searched, later.  In order to not shadow
+    # them by local variables, all locals starting with "arg" are
+    # defined later.
+    local -A all_arg_groups
+    local -A all_arg_numbers
+    local -A all_choice_values
+    local -A all_default_values
+    local -A all_help_texts
+    local -A all_long_options
+    local -A all_notes
+    local -a all_positional_args
+    local -A all_short_options
+    local -A all_types
+    local -A all_value_names
+    local error_message
+    local -a error_messages
+    local given_arg
+    local -a given_args
+    local -a given_positional_args
+    local -A help_message_groups
+    local i
+    local is_extglob_set
+    local is_help
+    local is_logo
+    local is_positional
+    local is_positional_only
+    local is_usage
+    local is_version
+    local message
+    local -a messages
+    local name
+    local names
+    local prefix
+    local -A prefixes
+    local translated_error
+    local translated_warning
+    local -A usage_message_groups
+    local value
+    local values
+    local warning_message
+    local -a warning_messages
+    local write_target
+
+    # Read the arguments.
+    read -r -a given_args <<< "$@"
+
+    # Locally disable errexit and enable extglob.  Since all functions
+    # relying on the latter being set are called from argparser_main,
+    # they inherit the option.
+    local -
+    set +o errexit
+    is_extglob_set="$(shopt -p extglob)"
+    shopt -s extglob
+
+    # Check if the variable that ${ARGPARSER_ARG_ARRAY_NAME} refers to
+    # is defined.  If not, guess how it may be called by searching the
+    # set variables (not functions, hence the set POSIX mode) for a
+    # variable name starting with "arg" to give a clearer error message.
+    # If no such variable name is found, skip that part of the message.
+    if [[ ! -v "${ARGPARSER_ARG_ARRAY_NAME}" ]]; then
+        mapfile -t names <<< "$(set -o posix; set)"
+        for name in "${names[@]}"; do
+            if [[ "${name}" == "arg"* ]]; then
+                name="${name%%=*}"
+                break
+            else
+                name=""
+            fi
+        done
+
+        if [[ -n "${name}" ]]; then
+            error_message="Error: The variable ARGPARSER_ARG_ARRAY_NAME "
+            error_message+="refers to \"%s\", but this variable is not "
+            error_message+="defined.  Either you have given your arguments "
+            error_message+="array another name (maybe \"%s\" -- then change "
+            error_message+="ARGPARSER_ARG_ARRAY_NAME accordingly) or you "
+            error_message+="forgot defining the array at all (then define it)."
+            error_message="$(argparser_translate "Error arg array 1" \
+                "${error_message}" "${ARGPARSER_ARG_ARRAY_NAME}" "${name}")"
+        else
+            error_message="Error: The variable ARGPARSER_ARG_ARRAY_NAME "
+            error_message+="refers to \"%s\", but this variable is not "
+            error_message+="defined.  Either you have given your arguments "
+            error_message+="array another name (then change "
+            error_message+="ARGPARSER_ARG_ARRAY_NAME accordingly) or you "
+            error_message+="forgot defining the array at all (then define it)."
+            error_message="$(argparser_translate "Error arg array 2" \
+                "${error_message}" "${ARGPARSER_ARG_ARRAY_NAME}")"
+        fi
+        argparser_print_error_or_warning_message "error" false true \
+            "${error_message}"
+    fi
+
+    # Define the remaining local variables that start with "arg".
+    local arg
+    local arg_key
+    local -a args_definition_file
+    local -a args_definition_script
+
+    # Read in the requested arguments.  ${ARGPARSER_ARG_ARRAY_NAME} is
+    # set to the name of the indexed array holding the arguments in the
+    # script.  If it is already "args" (the default name), nothing needs
+    # to be done, but other variable names need to be mapped to "args"
+    # to be able to refer to the variable by name.  Thus, declare prints
+    # the array contents stored in the variable
+    # ${ARGPARSER_ARG_ARRAY_NAME} refers to, which then gets stripped
+    # from the leading assignment (before the equals sign ("=")) and set
+    # to the new indexed array ${args}.  Since later, the variable
+    # ${ARGPARSER_ARG_ARRAY_NAME} refers to is assigned an associative
+    # array, while being an indexed array, unset it.
+    if [[ "${ARGPARSER_ARG_ARRAY_NAME}" != "args" ]]; then
+        local args
+        args="$(declare -p "${ARGPARSER_ARG_ARRAY_NAME}")"
+        local -a args="${args#*=}"
+
+        unset "${ARGPARSER_ARG_ARRAY_NAME}"
+    fi
+
+    # Read the arguments definition.
+    args_definition_file=( )
+    args_definition_script=( )
+    error_messages=( )
+    translated_error="$(argparser_translate "Error" "Error")"
+    translated_warning="$(argparser_translate "Warning" "Warning")"
+
+    messages=( )
+    argparser_read_args_definition "${args[@]}"
+    for message in "${messages[@]}"; do
+        # Append the arguments definition to those for the file or
+        # script, respectively.
+        case "${message}" in
+            File*) args_definition_file+=("${message#File: }") ;;
+            Script*) args_definition_script+=("${message#Script: }") ;;
+            ${translated_error}*)
+                error_messages+=("${message}")
+            ;;
+        esac
+    done
+
+    # If there are error messages, colorize, sort, and print them, then
+    # exit, as parsing the arguments definition with missing parts is
+    # useless.
+    argparser_print_error_or_warning_message "error" false true \
+        "${error_messages[@]}"
+
+    # Parse the arguments definition.
+    all_positional_args=( )
+    if (( "${#args_definition_file[@]}" > 0 )); then
+        argparser_parse_args_definition "file" "${args_definition_file[@]}"
+    fi
+    if (( "${#args_definition_script[@]}" > 0 )); then
+        argparser_parse_args_definition "script" "${args_definition_script[@]}"
+    fi
+
+    # If ${ARGPARSER_CHECK_ARG_DEFINITION} is set to true, check the
+    # consistency of the arguments definition.
+    error_messages=( )
+    if [[ "${ARGPARSER_CHECK_ARG_DEFINITION}" == true ]]; then
+        # Check the arguments definition, first the short and long
+        # option names, then the default and choice values.
+        argparser_check_args_definition_names
+        argparser_check_args_definition_positional_values
+        argparser_check_args_definition_option_values
+
+        # If there are error messages, colorize, sort, filter, and print
+        # them, then exit, as parsing the arguments with a faulty
+        # definition is useless or even impossible.
+        argparser_print_error_or_warning_message "error" true true \
+            "${error_messages[@]}"
+    fi
+
+    # Parse the script's given arguments.
+    is_help=false
+    is_logo=false
+    is_usage=false
+    is_version=false
+    is_positional=true
+    is_positional_only=false
+    error_messages=( )
+
+    unset args
+    local -A args
+
+    for given_arg in "${given_args[@]}"; do
+        # Parse the argument.
+        messages=( )
+        argparser_parse_arg "${given_arg}"
+
+        # Read the output message and either set the help, usage, or
+        # version message for printing and stop parsing, append the
+        # message to the previous error messages or set the argument's
+        # value or prefix. In case of arguments given multiple times,
+        # i.e., when the key already exists in ${!args[@]}, add the new
+        # value or prefix to the previously given ones.
+        for message in "${messages[@]}"; do
+            case "${message}" in
+                Help) is_help=true ;;
+                Usage) is_usage=true ;;
+                Version) is_version=true ;;
+                ${translated_error}*)
+                    error_messages+=("${message}")
+                    ;;
+                Positional_Start)
+                    # Set the flag that the positional-only arguments
+                    # delimiter "--" has been set, such that all
+                    # following arguments are interpreted as positional.
+                    is_positional=true
+                    is_positional_only=true
+                    ;;
+                Positional_End)
+                    # Set the flag that the positional-only arguments
+                    # delimiter "++" has been set (and thus "--" has
+                    # been unset), such that all following arguments are
+                    # interpreted as usual.
+                    is_positional=true
+                    is_positional_only=false
+                    ;;
+                Argument*)
+                    # Set the current argument name.
+                    is_positional=false
+                    arg_key="${message#Argument: }"
+                    ;;
+                Prefix*)
+                    # Set the current argument's prefix ("-" or "+").
+                    prefix="${message#Prefix: }"
+                    if ! argparser_in_array "${arg_key}" "${!prefixes[@]}"; then
+                        prefixes[${arg_key}]="${prefix}"
+                    else
+                        prefixes[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                        prefixes[${arg_key}]+="${prefix}"
+                    fi
+                    ;;
+                Value*)
+                    # Set the current argument's value.
+                    value="${message#Value: }"
+                    if [[ "${is_positional}" == true ]]; then
+                        given_positional_args+=("${value}")
+                    elif ! argparser_in_array "${arg_key}" "${!args[@]}"; then
+                        args[${arg_key}]="${value}"
+                    else
+                        args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                        args[${arg_key}]+="${value}"
+                    fi
+                    ;;
+                Logo) is_logo=true ;;
+            esac
+        done
+    done
+
+    # If the help, usage, or version message, or the logo was requested
+    # (in this order of priority), print it.
+    if [[ -t 1 ]]; then
+        write_target="tty"
+    else
+        write_target="file"
+    fi
+
+    if [[ "${is_help}" == true ]]; then
+        argparser_print_help_or_usage_message "help" true "${write_target}"
+    elif [[ "${is_usage}" == true ]]; then
+        argparser_print_help_or_usage_message "usage" true "${write_target}"
+    elif [[ "${is_version}" == true ]]; then
+        argparser_print_version_message true "${write_target}"
+    elif [[ "${is_logo}" == true ]]; then
+        # Print the logo in one chunk by aggregating it via command
+        # substitution.
+        printf '%s\n' "$(argparser_print_logo)"
+        exit
+    fi
+
+    # Parse the script's given positional arguments, that are yet only
+    # assigned to a single indexed array.
+    messages=( )
+    argparser_parse_positional_args "${given_positional_args[@]}"
+
+    # Read the output message and either append the message to the
+    # previous error messages or set the argument's value.  Again, in
+    # case of arguments given multiple times, i.e., when the key already
+    # exists in ${!args[@]}, add the new value to the previously given
+    # ones.
+    for message in "${messages[@]}"; do
+        case "${message}" in
+            ${translated_error}*) error_messages+=("${message}") ;;
+            Argument*) arg_key="${message#Argument: }" ;;
+            Value*)
+                # Set the current argument's value.
+                value="${message#Value: }"
+                if ! argparser_in_array "${arg_key}" "${!args[@]}"; then
+                    args[${arg_key}]="${value}"
+                else
+                    args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                    args[${arg_key}]+="${value}"
+                fi
+                ;;
+        esac
+    done
+
+    # Colorize, sort, filter, and print all error messages.
+    argparser_print_error_or_warning_message "error" true false \
+        "${error_messages[@]}"
+
+    # If any argument was not or wrongly given (i.e., there were
+    # errors), print a blank line and the usage message and abort the
+    # script.
+    if (( "${#error_messages[@]}" > 0 )); then
+        if [[ -t 2 ]]; then
+            write_target="tty"
+        else
+            write_target="file"
+        fi
+
+        if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
+            printf '\n' >&2
+            argparser_print_help_or_usage_message "usage" false \
+                "${write_target}" >&2
+        fi
+        exit "${ARGPARSER_ERROR_EXIT_CODE}"
+    fi
+
+    # Check the arguments' values.
+    error_messages=( )
+    warning_messages=( )
+    for arg_key in "${!all_short_options[@]}" "${all_positional_args[@]}"; do
+        # Check which defined argument is given to the script.  Omitted
+        # arguments or those without value are assigned the empty string
+        # as prefix and/or value. This is then interpreted as hint for
+        # the argument's or value's absence.
+        if argparser_in_array "${arg_key}" "${!prefixes[@]}"; then
+            prefix="${prefixes[${arg_key}]}"
+        else
+            prefix=""
+        fi
+
+        if argparser_in_array "${arg_key}" "${!args[@]}"; then
+            values="${args[${arg_key}]}"
+        else
+            values=""
+        fi
+
+        # Check the argument's values.
+        messages=( )
+        argparser_check_arg_values "${arg_key}" "${prefix}" "${values}"
+
+        # Read the output message and either append the message to the
+        # previous error or warning messages or set the argument's
+        # values.
+        values=""
+        for message in "${messages[@]}"; do
+            case "${message}" in
+                ${translated_error}*) error_messages+=("${message}") ;;
+                ${translated_warning}*) warning_messages+=("${message}") ;;
+                Value*) values="${message#Value: }" ;;
+            esac
+        done
+
+        # Assign the checked values to the argument.
+        args[${arg_key}]="${values}"
+    done
+
+    # Colorize, sort, filter, and print all error and warning messages.
+    argparser_print_error_or_warning_message "error" true false \
+        "${error_messages[@]}"
+    argparser_print_error_or_warning_message "warning" true false \
+        "${warning_messages[@]}"
+
+    # If any argument was not or wrongly given (i.e., there were errors
+    # and not just warnings), print a blank line and the usage message
+    # and abort the script.
+    if (( "${#error_messages[@]}" > 0 )); then
+        if [[ -t 2 ]]; then
+            write_target="tty"
+        else
+            write_target="file"
+        fi
+
+        if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
+            printf '\n' >&2
+            argparser_print_help_or_usage_message "usage" false \
+                "${write_target}" >&2
+        fi
+        exit "${ARGPARSER_ERROR_EXIT_CODE}"
+    fi
+
+    # Copy the values of the associative array ${args} to the variable
+    # ${ARGPARSER_ARG_ARRAY_NAME} refers to.  Thereby, declare prints
+    # the array contents stored in ${args}, which then gets stripped
+    # from the leading assignment (before the equals sign ("=")) and set
+    # to the new associative array with the name of
+    # ${ARGPARSER_ARG_ARRAY_NAME}.
+
+    # shellcheck disable=SC2178  # Intentional string, not array.
+    args="$(declare -p args)"
+    declare -g -A "${ARGPARSER_ARG_ARRAY_NAME}"="${args#*=}"
+
+    # Depending on the value of ${is_extglob_set}, which uses shopt's
+    # feature of storing the extglob state in a format reusable as
+    # input, possibly disable extglob.
+    eval "${is_extglob_set}"
+}
+
 function argparser_set_args() {
     # Set the keyword and positional arguments to global variables.
     #
@@ -5892,605 +6314,194 @@ function argparser_print_logo() {
 
 # Define the main argparser function.
 function argparser_main() {
-    # Parse the script's given arguments and check if they accord to
-    # their definition.  Give proper error messages for wrongly set
-    # arguments and assign the values to the respective variables.
-    # Possibly, create and print a help message.
-    #
-    # Arguments:
-    # - $@: the arguments to parse
-    #
-    # Globals:
-    # - ${ARGPARSER_ARG_ARRAY_NAME}: the parsed and checked arguments
-    #   with key and value as associative array
-    #
-    # Environment:
-    # - ARGPARSER_ARG_ARRAY_NAME (read-only)
-    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
-    # - ARGPARSER_CHECK_ARG_DEFINITION (read-only)
-    # - ARGPARSER_ERROR_EXIT_CODE (read-only)
-    # - ARGPARSER_SILENCE_ERRORS (read-only)
-
-    # Define the local variables.  If the variable that
-    # ${ARGPARSER_ARG_ARRAY_NAME} refers to is undefined, all variables
-    # prefixed with "arg" are searched, later.  In order to not shadow
-    # them by local variables, all locals starting with "arg" are
-    # defined later.
-    local -A all_arg_groups
-    local -A all_arg_numbers
-    local -A all_choice_values
-    local -A all_default_values
-    local -A all_help_texts
-    local -A all_long_options
-    local -A all_notes
-    local -a all_positional_args
-    local -A all_short_options
-    local -A all_types
-    local -A all_value_names
-    local error_message
-    local -a error_messages
-    local given_arg
-    local -a given_args
-    local -a given_positional_args
-    local -A help_message_groups
-    local i
-    local is_extglob_set
-    local is_help
-    local is_logo
-    local is_positional
-    local is_positional_only
-    local is_usage
-    local is_version
-    local message
-    local -a messages
-    local name
-    local names
-    local prefix
-    local -A prefixes
-    local translated_error
-    local translated_warning
-    local -A usage_message_groups
-    local value
-    local values
-    local warning_message
-    local -a warning_messages
-    local write_target
-
-    # Read the arguments.
-    read -r -a given_args <<< "$@"
-
-    # Locally disable errexit and enable extglob.  Since all functions
-    # relying on the latter being set are called from argparser_main,
-    # they inherit the option.
-    local -
-    set +o errexit
-    is_extglob_set="$(shopt -p extglob)"
-    shopt -s extglob
-
-    # Check if the variable that ${ARGPARSER_ARG_ARRAY_NAME} refers to
-    # is defined.  If not, guess how it may be called by searching the
-    # set variables (not functions, hence the set POSIX mode) for a
-    # variable name starting with "arg" to give a clearer error message.
-    # If no such variable name is found, skip that part of the message.
-    if [[ ! -v "${ARGPARSER_ARG_ARRAY_NAME}" ]]; then
-        mapfile -t names <<< "$(set -o posix; set)"
-        for name in "${names[@]}"; do
-            if [[ "${name}" == "arg"* ]]; then
-                name="${name%%=*}"
-                break
-            else
-                name=""
-            fi
-        done
-
-        if [[ -n "${name}" ]]; then
-            error_message="Error: The variable ARGPARSER_ARG_ARRAY_NAME "
-            error_message+="refers to \"%s\", but this variable is not "
-            error_message+="defined.  Either you have given your arguments "
-            error_message+="array another name (maybe \"%s\" -- then change "
-            error_message+="ARGPARSER_ARG_ARRAY_NAME accordingly) or you "
-            error_message+="forgot defining the array at all (then define it)."
-            error_message="$(argparser_translate "Error arg array 1" \
-                "${error_message}" "${ARGPARSER_ARG_ARRAY_NAME}" "${name}")"
-        else
-            error_message="Error: The variable ARGPARSER_ARG_ARRAY_NAME "
-            error_message+="refers to \"%s\", but this variable is not "
-            error_message+="defined.  Either you have given your arguments "
-            error_message+="array another name (then change "
-            error_message+="ARGPARSER_ARG_ARRAY_NAME accordingly) or you "
-            error_message+="forgot defining the array at all (then define it)."
-            error_message="$(argparser_translate "Error arg array 2" \
-                "${error_message}" "${ARGPARSER_ARG_ARRAY_NAME}")"
-        fi
-        argparser_print_error_or_warning_message "error" false true \
-            "${error_message}"
+    # If the argparser hasn't sourced itself (i.e., the current
+    # recursion level is the outer one from the calling script), set the
+    # internal "environment" variables.
+    if [[ "${BASH_SOURCE[2]}" != "${BASH_SOURCE[1]}" ]]; then
+        argparser_set_internal_vars
     fi
 
-    # Define the remaining local variables that start with "arg".
-    local arg
-    local arg_key
-    local -a args_definition_file
-    local -a args_definition_script
-
-    # Read in the requested arguments.  ${ARGPARSER_ARG_ARRAY_NAME} is
-    # set to the name of the indexed array holding the arguments in the
-    # script.  If it is already "args" (the default name), nothing needs
-    # to be done, but other variable names need to be mapped to "args"
-    # to be able to refer to the variable by name.  Thus, declare prints
-    # the array contents stored in the variable
-    # ${ARGPARSER_ARG_ARRAY_NAME} refers to, which then gets stripped
-    # from the leading assignment (before the equals sign ("=")) and set
-    # to the new indexed array ${args}.  Since later, the variable
-    # ${ARGPARSER_ARG_ARRAY_NAME} refers to is assigned an associative
-    # array, while being an indexed array, unset it.
-    if [[ "${ARGPARSER_ARG_ARRAY_NAME}" != "args" ]]; then
-        local args
-        args="$(declare -p "${ARGPARSER_ARG_ARRAY_NAME}")"
-        local -a args="${args#*=}"
-
-        unset "${ARGPARSER_ARG_ARRAY_NAME}"
+    # If ${ARGPARSER_CONFIGURATION_FILE} is defined and not set to the
+    # empty string, read the configuration file.
+    if [[ -v ARGPARSER_CONFIGURATION_FILE \
+        && -n "${ARGPARSER_CONFIGURATION_FILE}" ]]
+    then
+        argparser_read_configuration
     fi
 
-    # Read the arguments definition.
-    args_definition_file=( )
-    args_definition_script=( )
-    error_messages=( )
-    translated_error="$(argparser_translate "Error" "Error")"
-    translated_warning="$(argparser_translate "Warning" "Warning")"
-
-    messages=( )
-    argparser_read_args_definition "${args[@]}"
-    for message in "${messages[@]}"; do
-        # Append the arguments definition to those for the file or
-        # script, respectively.
-        case "${message}" in
-            File*) args_definition_file+=("${message#File: }") ;;
-            Script*) args_definition_script+=("${message#Script: }") ;;
-            ${translated_error}*)
-                error_messages+=("${message}")
-            ;;
-        esac
-    done
-
-    # If there are error messages, colorize, sort, and print them, then
-    # exit, as parsing the arguments definition with missing parts is
-    # useless.
-    argparser_print_error_or_warning_message "error" false true \
-        "${error_messages[@]}"
-
-    # Parse the arguments definition.
-    all_positional_args=( )
-    if (( "${#args_definition_file[@]}" > 0 )); then
-        argparser_parse_args_definition "file" "${args_definition_file[@]}"
-    fi
-    if (( "${#args_definition_script[@]}" > 0 )); then
-        argparser_parse_args_definition "script" "${args_definition_script[@]}"
+    # If the argparser hasn't sourced itself (i.e., the current
+    # recursion level is the outer one from the calling script), set the
+    # environment variables that aren't already set by the calling
+    # script or environment or read from the configuration file to
+    # prevent overriding them.  Then, set the script's command-line
+    # arguments (with the argparser arguments being removed) as the
+    # current command line.
+    if [[ "${BASH_SOURCE[2]}" != "${BASH_SOURCE[1]}" ]]; then
+        argparser_set_env_vars "$@"
+        set -- "${ARGPARSER_SCRIPT_ARGS[@]}"
     fi
 
-    # If ${ARGPARSER_CHECK_ARG_DEFINITION} is set to true, check the
-    # consistency of the arguments definition.
-    error_messages=( )
-    if [[ "${ARGPARSER_CHECK_ARG_DEFINITION}" == true ]]; then
-        # Check the arguments definition, first the short and long
-        # option names, then the default and choice values.
-        argparser_check_args_definition_names
-        argparser_check_args_definition_positional_values
-        argparser_check_args_definition_option_values
+    # If ${ARGPARSER_TRANSLATION_FILE} isn't set to the empty string,
+    # read the translation file.  To be able to use the localized name
+    # of ${ARGPARSER_POSITIONAL_ARG_GROUP} in the arguments definition
+    # and help message, translate it.
+    if [[ -n "${ARGPARSER_TRANSLATION_FILE}" ]]; then
+        argparser_read_translation
 
-        # If there are error messages, colorize, sort, filter, and print
-        # them, then exit, as parsing the arguments with a faulty
-        # definition is useless or even impossible.
-        argparser_print_error_or_warning_message "error" true true \
-            "${error_messages[@]}"
+        ARGPARSER_POSITIONAL_ARG_GROUP="$(argparser_translate \
+            "Positional arguments" "${ARGPARSER_POSITIONAL_ARG_GROUP}")"
     fi
 
-    # Parse the script's given arguments.
-    is_help=false
-    is_logo=false
-    is_usage=false
-    is_version=false
-    is_positional=true
-    is_positional_only=false
-    error_messages=( )
-
-    unset args
-    local -A args
-
-    for given_arg in "${given_args[@]}"; do
-        # Parse the argument.
-        messages=( )
-        argparser_parse_arg "${given_arg}"
-
-        # Read the output message and either set the help, usage, or
-        # version message for printing and stop parsing, append the
-        # message to the previous error messages or set the argument's
-        # value or prefix. In case of arguments given multiple times,
-        # i.e., when the key already exists in ${!args[@]}, add the new
-        # value or prefix to the previously given ones.
-        for message in "${messages[@]}"; do
-            case "${message}" in
-                Help) is_help=true ;;
-                Usage) is_usage=true ;;
-                Version) is_version=true ;;
-                ${translated_error}*)
-                    error_messages+=("${message}")
-                    ;;
-                Positional_Start)
-                    # Set the flag that the positional-only arguments
-                    # delimiter "--" has been set, such that all
-                    # following arguments are interpreted as positional.
-                    is_positional=true
-                    is_positional_only=true
-                    ;;
-                Positional_End)
-                    # Set the flag that the positional-only arguments
-                    # delimiter "++" has been set (and thus "--" has
-                    # been unset), such that all following arguments are
-                    # interpreted as usual.
-                    is_positional=true
-                    is_positional_only=false
-                    ;;
-                Argument*)
-                    # Set the current argument name.
-                    is_positional=false
-                    arg_key="${message#Argument: }"
-                    ;;
-                Prefix*)
-                    # Set the current argument's prefix ("-" or "+").
-                    prefix="${message#Prefix: }"
-                    if ! argparser_in_array "${arg_key}" "${!prefixes[@]}"; then
-                        prefixes[${arg_key}]="${prefix}"
-                    else
-                        prefixes[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
-                        prefixes[${arg_key}]+="${prefix}"
-                    fi
-                    ;;
-                Value*)
-                    # Set the current argument's value.
-                    value="${message#Value: }"
-                    if [[ "${is_positional}" == true ]]; then
-                        given_positional_args+=("${value}")
-                    elif ! argparser_in_array "${arg_key}" "${!args[@]}"; then
-                        args[${arg_key}]="${value}"
-                    else
-                        args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
-                        args[${arg_key}]+="${value}"
-                    fi
-                    ;;
-                Logo) is_logo=true ;;
-            esac
-        done
-    done
-
-    # If the help, usage, or version message, or the logo was requested
-    # (in this order of priority), print it.
-    if [[ -t 1 ]]; then
-        write_target="tty"
-    else
-        write_target="file"
+    # If ${ARGPARSER_CHECK_ENV_VARS} isn't set to false, check if the
+    # environment variables accord to their definition.  Since
+    # ${ARGPARSER_CHECK_ENV_VARS} is, as any other environment variable,
+    # yet unchecked, its value may be different from the expected "true"
+    # or "false".  Hence, testing for "not false" is not the exact
+    # opposite of testing for "true".  Even more, if
+    # ${ARGPARSER_CHECK_ENV_VARS} is different from "true" and "false",
+    # the test would be mandatory as it shows the environment variables
+    # have been wrongly set.
+    if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
+        argparser_check_env_vars
     fi
 
-    if [[ "${is_help}" == true ]]; then
-        argparser_print_help_or_usage_message "help" true "${write_target}"
-    elif [[ "${is_usage}" == true ]]; then
-        argparser_print_help_or_usage_message "usage" true "${write_target}"
-    elif [[ "${is_version}" == true ]]; then
-        argparser_print_version_message true "${write_target}"
-    elif [[ "${is_logo}" == true ]]; then
-        # Print the logo in one chunk by aggregating it via command
-        # substitution.
-        printf '%s\n' "$(argparser_print_logo)"
-        exit
+    # If ${ARGPARSER_READ_ARGS} is set to true, read and parse the
+    # arguments.
+    if [[ "${ARGPARSER_READ_ARGS}" == true ]]; then
+        argparser_parse_args "$@"
     fi
 
-    # Parse the script's given positional arguments, that are yet only
-    # assigned to a single indexed array.
-    messages=( )
-    argparser_parse_positional_args "${given_positional_args[@]}"
-
-    # Read the output message and either append the message to the
-    # previous error messages or set the argument's value.  Again, in
-    # case of arguments given multiple times, i.e., when the key already
-    # exists in ${!args[@]}, add the new value to the previously given
-    # ones.
-    for message in "${messages[@]}"; do
-        case "${message}" in
-            ${translated_error}*) error_messages+=("${message}") ;;
-            Argument*) arg_key="${message#Argument: }" ;;
-            Value*)
-                # Set the current argument's value.
-                value="${message#Value: }"
-                if ! argparser_in_array "${arg_key}" "${!args[@]}"; then
-                    args[${arg_key}]="${value}"
-                else
-                    args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
-                    args[${arg_key}]+="${value}"
-                fi
-                ;;
-        esac
-    done
-
-    # Colorize, sort, filter, and print all error messages.
-    argparser_print_error_or_warning_message "error" true false \
-        "${error_messages[@]}"
-
-    # If any argument was not or wrongly given (i.e., there were
-    # errors), print a blank line and the usage message and abort the
-    # script.
-    if (( "${#error_messages[@]}" > 0 )); then
-        if [[ -t 2 ]]; then
-            write_target="tty"
-        else
-            write_target="file"
-        fi
-
-        if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
-            printf '\n' >&2
-            argparser_print_help_or_usage_message "usage" false \
-                "${write_target}" >&2
-        fi
-        exit "${ARGPARSER_ERROR_EXIT_CODE}"
+    # If ${ARGPARSER_UNSET_ARGS} is set to true, disable all arguments
+    # given to the calling script, effectively unsetting the command
+    # line.
+    if [[ "${ARGPARSER_UNSET_ARGS}" == true ]]; then
+        set --
     fi
 
-    # Check the arguments' values.
-    error_messages=( )
-    warning_messages=( )
-    for arg_key in "${!all_short_options[@]}" "${all_positional_args[@]}"; do
-        # Check which defined argument is given to the script.  Omitted
-        # arguments or those without value are assigned the empty string
-        # as prefix and/or value. This is then interpreted as hint for
-        # the argument's or value's absence.
-        if argparser_in_array "${arg_key}" "${!prefixes[@]}"; then
-            prefix="${prefixes[${arg_key}]}"
-        else
-            prefix=""
-        fi
-
-        if argparser_in_array "${arg_key}" "${!args[@]}"; then
-            values="${args[${arg_key}]}"
-        else
-            values=""
-        fi
-
-        # Check the argument's values.
-        messages=( )
-        argparser_check_arg_values "${arg_key}" "${prefix}" "${values}"
-
-        # Read the output message and either append the message to the
-        # previous error or warning messages or set the argument's
-        # values.
-        values=""
-        for message in "${messages[@]}"; do
-            case "${message}" in
-                ${translated_error}*) error_messages+=("${message}") ;;
-                ${translated_warning}*) warning_messages+=("${message}") ;;
-                Value*) values="${message#Value: }" ;;
-            esac
-        done
-
-        # Assign the checked values to the argument.
-        args[${arg_key}]="${values}"
-    done
-
-    # Colorize, sort, filter, and print all error and warning messages.
-    argparser_print_error_or_warning_message "error" true false \
-        "${error_messages[@]}"
-    argparser_print_error_or_warning_message "warning" true false \
-        "${warning_messages[@]}"
-
-    # If any argument was not or wrongly given (i.e., there were errors
-    # and not just warnings), print a blank line and the usage message
-    # and abort the script.
-    if (( "${#error_messages[@]}" > 0 )); then
-        if [[ -t 2 ]]; then
-            write_target="tty"
-        else
-            write_target="file"
-        fi
-
-        if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
-            printf '\n' >&2
-            argparser_print_help_or_usage_message "usage" false \
-                "${write_target}" >&2
-        fi
-        exit "${ARGPARSER_ERROR_EXIT_CODE}"
+    # If ${ARGPARSER_SET_ARGS} is set to true, set the arguments as
+    # variables to the current environment.
+    if [[ "${ARGPARSER_SET_ARGS}" == true ]]; then
+        argparser_set_args
     fi
 
-    # Copy the values of the associative array ${args} to the variable
-    # ${ARGPARSER_ARG_ARRAY_NAME} refers to.  Thereby, declare prints
-    # the array contents stored in ${args}, which then gets stripped
-    # from the leading assignment (before the equals sign ("=")) and set
-    # to the new associative array with the name of
-    # ${ARGPARSER_ARG_ARRAY_NAME}.
+    # If ${ARGPARSER_UNSET_FUNCTIONS} is set to true, unset all
+    # argparser functions.  The names are used instead of a glob to
+    # limit side effects with potentially same-named functions (i.e.,
+    # those starting with "argparser_") from the calling script that
+    # stand in no relation to the argparser.
+    if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
+        unset -f argparser_check_arg_values
+        unset -f argparser_check_args_definition_names
+        unset -f argparser_check_args_definition_option_values
+        unset -f argparser_check_args_definition_positional_values
+        unset -f argparser_check_bash_version
+        unset -f argparser_check_color_or_style
+        unset -f argparser_check_env_vars
+        unset -f argparser_check_file
+        unset -f argparser_check_shell
+        unset -f argparser_colorize
+        unset -f argparser_count
+        unset -f argparser_create_help_message
+        unset -f argparser_create_usage_message
+        unset -f argparser_fold
+        unset -f argparser_get_arg_key
+        unset -f argparser_get_option_names
+        unset -f argparser_in_array
+        unset -f argparser_is_variable_bool
+        unset -f argparser_is_variable_char
+        unset -f argparser_is_variable_identifier
+        unset -f argparser_is_variable_int
+        unset -f argparser_is_variable_uint
+        unset -f argparser_main
+        unset -f argparser_parse_arg
+        unset -f argparser_parse_args
+        unset -f argparser_parse_args_definition
+        unset -f argparser_parse_long_option
+        unset -f argparser_parse_positional_args
+        unset -f argparser_parse_short_option
+        unset -f argparser_print_error_or_warning_message
+        unset -f argparser_print_help_or_usage_message
+        unset -f argparser_print_logo
+        unset -f argparser_print_version_message
+        unset -f argparser_quicksort
+        unset -f argparser_read_args_definition
+        unset -f argparser_read_configuration
+        unset -f argparser_read_translation
+        unset -f argparser_set_args
+        unset -f argparser_set_env_vars
+        unset -f argparser_set_internal_vars
+        unset -f argparser_sort
+        unset -f argparser_translate
+        unset -f argparser_trim
+        unset -f argparser_uniq
+    fi
 
-    # shellcheck disable=SC2178  # Intentional string, not array.
-    args="$(declare -p args)"
-    declare -g -A "${ARGPARSER_ARG_ARRAY_NAME}"="${args#*=}"
-
-    # Depending on the value of ${is_extglob_set}, which uses shopt's
-    # feature of storing the extglob state in a format reusable as
-    # input, possibly disable extglob.
-    eval "${is_extglob_set}"
+    # If ${ARGPARSER_UNSET_ENV_VARS} is set to true, unset all argparser
+    # environment variables.  Again, the names are used instead of a
+    # glob to limit side effects with potentially same-named variables
+    # (i.e., those starting with "ARGPARSER_") from the calling script
+    # that stand in no relation to the argparser.
+    if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
+        unset ARGPARSER_ADD_HELP
+        unset ARGPARSER_ADD_USAGE
+        unset ARGPARSER_ADD_VERSION
+        unset ARGPARSER_ALLOW_OPTION_ABBREVIATION
+        unset ARGPARSER_ALLOW_OPTION_MERGING
+        unset ARGPARSER_ARG_ARRAY_NAME
+        unset ARGPARSER_ARG_DEF_FILE
+        unset ARGPARSER_ARG_DEF_FILE_HAS_HEADER
+        unset ARGPARSER_ARG_DEF_HAS_HEADER
+        unset ARGPARSER_ARG_DELIMITER_1
+        unset ARGPARSER_ARG_DELIMITER_2
+        unset ARGPARSER_ARGS
+        unset ARGPARSER_CHECK_ARG_DEFINITION
+        unset ARGPARSER_CHECK_ENV_VARS
+        unset ARGPARSER_CONFIGURATION_FILE
+        unset ARGPARSER_COUNT_FLAGS
+        unset ARGPARSER_DICTIONARY
+        unset ARGPARSER_ERROR_EXIT_CODE
+        unset ARGPARSER_ERROR_STYLE
+        unset ARGPARSER_HELP_EXIT_CODE
+        unset ARGPARSER_HELP_FILE
+        unset ARGPARSER_HELP_FILE_INCLUDE_CHAR
+        unset ARGPARSER_HELP_FILE_KEEP_COMMENTS
+        unset ARGPARSER_HELP_STYLE
+        unset ARGPARSER_LANGUAGE
+        unset ARGPARSER_MAX_COL_WIDTH_1
+        unset ARGPARSER_MAX_COL_WIDTH_2
+        unset ARGPARSER_MAX_COL_WIDTH_3
+        unset ARGPARSER_POSITIONAL_ARG_GROUP
+        unset ARGPARSER_READ_ARGS
+        unset ARGPARSER_SCRIPT_ARGS
+        unset ARGPARSER_SCRIPT_NAME
+        unset ARGPARSER_SCRIPT_VERSION
+        unset ARGPARSER_SCRIPT_VERSION_EXIT_CODE
+        unset ARGPARSER_SCRIPT_VERSION_STYLE
+        unset ARGPARSER_SET_ARGS
+        unset ARGPARSER_SET_ARRAYS
+        unset ARGPARSER_SILENCE_ERRORS
+        unset ARGPARSER_SILENCE_WARNINGS
+        unset ARGPARSER_TRANSLATION_FILE
+        unset ARGPARSER_UNSET_ARGS
+        unset ARGPARSER_UNSET_ENV_VARS
+        unset ARGPARSER_UNSET_FUNCTIONS
+        unset ARGPARSER_USAGE_EXIT_CODE
+        unset ARGPARSER_USAGE_FILE
+        unset ARGPARSER_USAGE_FILE_INCLUDE_CHAR
+        unset ARGPARSER_USAGE_FILE_KEEP_COMMENTS
+        unset ARGPARSER_USAGE_MESSAGE_OPTION_TYPE
+        unset ARGPARSER_USAGE_MESSAGE_ORIENTATION
+        unset ARGPARSER_USAGE_STYLE
+        unset ARGPARSER_USE_LONG_OPTIONS
+        unset ARGPARSER_USE_SHORT_OPTIONS
+        unset ARGPARSER_USE_STYLES_IN_FILES
+        unset ARGPARSER_VERSION
+        unset ARGPARSER_WARNING_STYLE
+    fi
 }
 
 # Check the version of the current Bash instance.
 argparser_check_bash_version
 
-# If the argparser hasn't sourced itself (i.e., the current recursion
-# level is the outer one from the calling script), set the internal
-# "environment" variables.
-if [[ "${BASH_SOURCE[1]}" != "${BASH_SOURCE[0]}" ]]; then
-    argparser_set_internal_vars
-fi
-
-# If ${ARGPARSER_CONFIGURATION_FILE} is defined and not set to the empty
-# string, read the configuration file.
-if [[ -v ARGPARSER_CONFIGURATION_FILE \
-    && -n "${ARGPARSER_CONFIGURATION_FILE}" ]]
-then
-    argparser_read_configuration
-fi
-
-# If the argparser hasn't sourced itself (i.e., the current recursion
-# level is the outer one from the calling script), set the environment
-# variables that aren't already set by the calling script or environment
-# or read from the configuration file to prevent overriding them.  Then,
-# set the script's command-line arguments (with the argparser arguments
-# being removed) as the current command line.
-if [[ "${BASH_SOURCE[1]}" != "${BASH_SOURCE[0]}" ]]; then
-    argparser_set_env_vars "$@"
-    set -- "${ARGPARSER_SCRIPT_ARGS[@]}"
-fi
-
-# If ${ARGPARSER_TRANSLATION_FILE} isn't set to the empty string, read
-# the translation file.  To be able to use the localized name of
-# ${ARGPARSER_POSITIONAL_ARG_GROUP} in the arguments definition and help
-# message, translate it.
-if [[ -n "${ARGPARSER_TRANSLATION_FILE}" ]]; then
-    argparser_read_translation
-
-    ARGPARSER_POSITIONAL_ARG_GROUP="$(argparser_translate \
-        "Positional arguments" "${ARGPARSER_POSITIONAL_ARG_GROUP}")"
-fi
-
-# If ${ARGPARSER_CHECK_ENV_VARS} isn't set to false, check if the
-# environment variables accord to their definition.  Since
-# ${ARGPARSER_CHECK_ENV_VARS} is, as any other environment variable, yet
-# unchecked, its value may be different from the expected "true" or
-# "false".  Hence, testing for "not false" is not the exact opposite of
-# testing for "true".  Even more, if ${ARGPARSER_CHECK_ENV_VARS} is
-# different from "true" and "false", the test would be mandatory as it
-# shows the environment variables have been wrongly set.
-if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
-    argparser_check_env_vars
-fi
-
-# If ${ARGPARSER_READ_ARGS} is set to true, read and parse the
-# arguments.
-if [[ "${ARGPARSER_READ_ARGS}" == true ]]; then
-    argparser_main "$@"
-fi
-
-# If ${ARGPARSER_UNSET_ARGS} is set to true, disable all arguments given
-# to the calling script, effectively unsetting the command line.
-if [[ "${ARGPARSER_UNSET_ARGS}" == true ]]; then
-    set --
-fi
-
-# If ${ARGPARSER_SET_ARGS} is set to true, set the arguments as
-# variables to the current environment.
-if [[ "${ARGPARSER_SET_ARGS}" == true ]]; then
-    argparser_set_args
-fi
-
-# If ${ARGPARSER_UNSET_FUNCTIONS} is set to true, unset all argparser
-# functions.  The names are used instead of a glob to limit side effects
-# with potentially same-named functions from the calling script that
-# stand in no relation to the argparser.
-if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
-    unset -f argparser_check_arg_values
-    unset -f argparser_check_args_definition_names
-    unset -f argparser_check_args_definition_option_values
-    unset -f argparser_check_args_definition_positional_values
-    unset -f argparser_check_bash_version
-    unset -f argparser_check_color_or_style
-    unset -f argparser_check_env_vars
-    unset -f argparser_check_file
-    unset -f argparser_check_shell
-    unset -f argparser_colorize
-    unset -f argparser_count
-    unset -f argparser_create_help_message
-    unset -f argparser_create_usage_message
-    unset -f argparser_fold
-    unset -f argparser_get_arg_key
-    unset -f argparser_get_option_names
-    unset -f argparser_in_array
-    unset -f argparser_is_variable_bool
-    unset -f argparser_is_variable_char
-    unset -f argparser_is_variable_identifier
-    unset -f argparser_is_variable_int
-    unset -f argparser_is_variable_uint
-    unset -f argparser_main
-    unset -f argparser_parse_arg
-    unset -f argparser_parse_args_definition
-    unset -f argparser_parse_long_option
-    unset -f argparser_parse_positional_args
-    unset -f argparser_parse_short_option
-    unset -f argparser_print_error_or_warning_message
-    unset -f argparser_print_help_or_usage_message
-    unset -f argparser_print_logo
-    unset -f argparser_print_version_message
-    unset -f argparser_quicksort
-    unset -f argparser_read_args_definition
-    unset -f argparser_read_configuration
-    unset -f argparser_read_translation
-    unset -f argparser_set_args
-    unset -f argparser_set_env_vars
-    unset -f argparser_set_internal_vars
-    unset -f argparser_sort
-    unset -f argparser_translate
-    unset -f argparser_trim
-    unset -f argparser_uniq
-fi
-
-# If ${ARGPARSER_UNSET_ENV_VARS} is set to true, unset all argparser
-# environment variables.  Again, the names are used instead of a glob to
-# limit side effects with potentially same-named variables from the
-# calling script that stand in no relation to the argparser.
-if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
-    unset ARGPARSER_ADD_HELP
-    unset ARGPARSER_ADD_USAGE
-    unset ARGPARSER_ADD_VERSION
-    unset ARGPARSER_ALLOW_OPTION_ABBREVIATION
-    unset ARGPARSER_ALLOW_OPTION_MERGING
-    unset ARGPARSER_ARG_ARRAY_NAME
-    unset ARGPARSER_ARG_DEF_FILE
-    unset ARGPARSER_ARG_DEF_FILE_HAS_HEADER
-    unset ARGPARSER_ARG_DEF_HAS_HEADER
-    unset ARGPARSER_ARG_DELIMITER_1
-    unset ARGPARSER_ARG_DELIMITER_2
-    unset ARGPARSER_ARGS
-    unset ARGPARSER_CHECK_ARG_DEFINITION
-    unset ARGPARSER_CHECK_ENV_VARS
-    unset ARGPARSER_CONFIGURATION_FILE
-    unset ARGPARSER_COUNT_FLAGS
-    unset ARGPARSER_DICTIONARY
-    unset ARGPARSER_ERROR_EXIT_CODE
-    unset ARGPARSER_ERROR_STYLE
-    unset ARGPARSER_HELP_EXIT_CODE
-    unset ARGPARSER_HELP_FILE
-    unset ARGPARSER_HELP_FILE_INCLUDE_CHAR
-    unset ARGPARSER_HELP_FILE_KEEP_COMMENTS
-    unset ARGPARSER_HELP_STYLE
-    unset ARGPARSER_LANGUAGE
-    unset ARGPARSER_MAX_COL_WIDTH_1
-    unset ARGPARSER_MAX_COL_WIDTH_2
-    unset ARGPARSER_MAX_COL_WIDTH_3
-    unset ARGPARSER_POSITIONAL_ARG_GROUP
-    unset ARGPARSER_READ_ARGS
-    unset ARGPARSER_SCRIPT_ARGS
-    unset ARGPARSER_SCRIPT_NAME
-    unset ARGPARSER_SCRIPT_VERSION
-    unset ARGPARSER_SCRIPT_VERSION_EXIT_CODE
-    unset ARGPARSER_SCRIPT_VERSION_STYLE
-    unset ARGPARSER_SET_ARGS
-    unset ARGPARSER_SET_ARRAYS
-    unset ARGPARSER_SILENCE_ERRORS
-    unset ARGPARSER_SILENCE_WARNINGS
-    unset ARGPARSER_TRANSLATION_FILE
-    unset ARGPARSER_UNSET_ARGS
-    unset ARGPARSER_UNSET_ENV_VARS
-    unset ARGPARSER_UNSET_FUNCTIONS
-    unset ARGPARSER_USAGE_EXIT_CODE
-    unset ARGPARSER_USAGE_FILE
-    unset ARGPARSER_USAGE_FILE_INCLUDE_CHAR
-    unset ARGPARSER_USAGE_FILE_KEEP_COMMENTS
-    unset ARGPARSER_USAGE_MESSAGE_OPTION_TYPE
-    unset ARGPARSER_USAGE_MESSAGE_ORIENTATION
-    unset ARGPARSER_USAGE_STYLE
-    unset ARGPARSER_USE_LONG_OPTIONS
-    unset ARGPARSER_USE_SHORT_OPTIONS
-    unset ARGPARSER_USE_STYLES_IN_FILES
-    unset ARGPARSER_VERSION
-    unset ARGPARSER_WARNING_STYLE
-fi
+# Run the argparser.
+argparser_main "$@"
