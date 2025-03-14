@@ -3029,8 +3029,7 @@ function argparser_get_arg_key() {
 }
 
 function argparser_get_option_names() {
-    # Concatenate the name of all short and long options for the error
-    # and warning messages.
+    # Concatenate the name of all short and long options.
     #
     # Arguments:
     # - $1: the argument's name (key)
@@ -3043,18 +3042,18 @@ function argparser_get_option_names() {
     #   option names (read-only)
     # - all_value_names: the associative array holding the value names
     #   (read-only)
+    # - option_names: the name of all short and long options as
+    #   comma-separated string
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
-    #
-    # Output:
-    # - the name of all short and long options as comma-separated string
 
     # Define the local variables.
     local arg_key
+    local long_option_names
     local -a long_options
-    local option_names
     local order
+    local short_option_names
     local -a short_options
     local value_names
 
@@ -3079,25 +3078,21 @@ function argparser_get_option_names() {
     fi
 
     # Concatenate the name of all short and long options.
+    printf -v short_option_names -- '-%s,' "${short_options[@]}"
+    printf -v long_option_names -- '--%s,' "${long_options[@]}"
     if [[ "${short_options[0]}" != "-" && "${long_options[0]}" != "-" ]]; then
         if [[ "${order}" == "short-long" ]]; then
-            option_names="$(printf -- '-%s,' "${short_options[@]}")"
-            option_names+="$(printf -- '--%s,' "${long_options[@]}")"
+            option_names="${short_option_names}${long_option_names%,}"
         elif [[ "${order}" == "long-short" ]]; then
-            option_names="$(printf -- '--%s,' "${long_options[@]}")"
-            option_names+="$(printf -- '-%s,' "${short_options[@]}")"
+            option_names="${long_option_names}${short_option_names%,}"
         fi
-        option_names="${option_names%,}"
     elif [[ "${short_options[0]}" != "-" ]]; then
-        option_names="$(printf -- '-%s,' "${short_options[@]}")"
-        option_names="${option_names%,}"
+        option_names="${short_option_names%,}"
     elif [[ "${long_options[0]}" != "-" ]]; then
-        option_names="$(printf -- '--%s,' "${long_options[@]}")"
-        option_names="${option_names%,}"
+        option_names="${long_option_names%,}"
     else
         option_names="${value_names}"
     fi
-    printf '%s' "${option_names}"
 }
 
 function argparser_parse_arg() {
@@ -3846,7 +3841,7 @@ function argparser_check_arg_values() {
 
     # Concatenate the name of all short and long options for the error
     # and warning messages.
-    option_names="$(argparser_get_option_names "${arg_key}" "short-long")"
+    argparser_get_option_names "${arg_key}" "short-long"
 
     # If a "+" prefix is given and the argument is no flag, output an
     # error message.
@@ -4602,6 +4597,7 @@ function argparser_create_help_message() {
     # - ARGPARSER_USE_SHORT_OPTIONS (read-only)
 
     # Define the local variables.
+    local -a all_option_names
     local arg_group
     local -a arg_groups
     local arg_key
@@ -4757,7 +4753,7 @@ function argparser_create_help_message() {
         new_col_1=( )
         new_col_2=( )
         new_col_3=( )
-        option_names=( )
+        all_option_names=( )
 
         for arg_key in "${!all_short_options[@]}"; do
             # Read the argument's group to check whether it belongs to
@@ -4782,8 +4778,8 @@ function argparser_create_help_message() {
 
             # Concatenate the name of all short and long options for the
             # sorting of all arguments, later.
-            option_names+=("$(argparser_get_option_names "${arg_key}" \
-                "long-short")")
+            argparser_get_option_names "${arg_key}" "long-short"
+            all_option_names+=("${option_names}")
 
             # Set a flag whether the option has default values for
             # adjustment of the help message header, later.
@@ -4961,19 +4957,19 @@ function argparser_create_help_message() {
         # unsorted columns.  As a consequence, all columns are sorted as
         # if they would have been sorted together (which appears not be
         # feasible).
-        for i in "${!option_names[@]}"; do
-            sorted_col_1[${option_names[i]}]="${new_col_1[i]}"
-            sorted_col_2[${option_names[i]}]="${new_col_2[i]}"
-            sorted_col_3[${option_names[i]}]="${new_col_3[i]}"
+        for i in "${!all_option_names[@]}"; do
+            sorted_col_1[${all_option_names[i]}]="${new_col_1[i]}"
+            sorted_col_2[${all_option_names[i]}]="${new_col_2[i]}"
+            sorted_col_3[${all_option_names[i]}]="${new_col_3[i]}"
         done
 
-        mapfile -d "" -t option_names \
-            < <(argparser_sort false "${option_names[@]}")
+        mapfile -d "" -t all_option_names \
+            < <(argparser_sort false "${all_option_names[@]}")
 
-        for i in "${!option_names[@]}"; do
-            col_1+=("${sorted_col_1[${option_names[i]}]}")
-            col_2+=("${sorted_col_2[${option_names[i]}]}")
-            col_3+=("${sorted_col_3[${option_names[i]}]}")
+        for i in "${!all_option_names[@]}"; do
+            col_1+=("${sorted_col_1[${all_option_names[i]}]}")
+            col_2+=("${sorted_col_2[${all_option_names[i]}]}")
+            col_3+=("${sorted_col_3[${all_option_names[i]}]}")
         done
 
         # To mark the end of an argument group later upon printing, add
