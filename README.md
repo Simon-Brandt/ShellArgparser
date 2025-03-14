@@ -101,7 +101,7 @@ The argparser:
 ## Installation
 
 > [!WARNING]
-> Requires Bash 5 or higher (try `bash --version`). Tested with `GNU bash, Version 5.2.21(1)-release (x86_64-pc-linux-gnu)`.
+> The argparser requires Bash 4.0 or higher (try `bash --version`). It is extensively tested with Bash 5.2, precisely, with `GNU bash, Version 5.2.21(1)-release (x86_64-pc-linux-gnu)`. With `BASH_COMPAT` set to `40` or higher, the [tests](tests) still succeed, but if you encounter errors for versions earlier than 5.2, please file an issue, such that the minimum requirement can be adjusted. Shells other than Bash aren't supported, and the argparser aborts with an error message.
 
 No actual installation is necessary, as the argparser is just a Bash script that can be located in an arbitrary directory of your choice, like `/usr/local/bin`. Thus, the "installation" is as simple as cloning the repository in this very directory:
 

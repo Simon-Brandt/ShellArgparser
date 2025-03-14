@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-03-11
+# Last Modification: 2025-03-14
 
 # TODO: Add tests for the general arguments parsing.
 # TODO: Write test files for keyword-only and positional-only arguments.
@@ -116,6 +116,7 @@ function print_fd_diff() {
             | sed \
                 --expression='/^BASH_ARGC=/d' \
                 --expression='/^BASH_ARGV=/d' \
+                --expression='/^BASHOPTS=/d' \
                 --expression='/^PPID=/d' \
                 --expression='/^_=/d' \
                 --expression='/^args=/d') \
@@ -123,6 +124,8 @@ function print_fd_diff() {
             | sed \
                 --expression='/^BASH_ARGC=/d' \
                 --expression='/^BASH_ARGV=/d' \
+                --expression='/^BASH_COMPAT=/d' \
+                --expression='/^BASHOPTS=/d' \
                 --expression='/^BASH_REMATCH=/d' \
                 --expression='/^PPID=/d' \
                 --expression='/^_=/d' \

@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-03-12
+# Last Modification: 2025-03-14
 
 # TODO: Consider using the Bash 5.3 form "${ printf ... ; }" for command
 #       substitutions instead of "$(printf ...)" or nonlocal variables,
@@ -23,6 +23,57 @@
 # and version message.  Refer to the README.md for details.
 
 ########################################################################
+
+# Define the argparser functions to check that the argparser is run by
+# Bash 4.0 or higher, and execute the former immediately, such that the
+# rest of the script doesn't get parsed (which would create errors since
+# it's written in Bash, not POSIX compliantly).
+argparser_check_shell() {
+    # Check that the current shell is a Bash instance.  Else, print an
+    # error message.
+    #
+    # In order to have the function interpretable by shells other than
+    # Bash, all commands are written in a POSIX-conformant form.
+
+    # shellcheck disable=SC2292  # Intentional POSIX conformance.
+    if [ -z "${BASH}" ]; then
+        printf '%s: ' "$0"
+        printf 'Error: The argument parsing requires Bash as active shell.\n'
+        exit 1
+    fi
+}
+argparser_check_shell
+
+function argparser_check_bash_version() {
+    # Check that version of the current Bash instance is at least 4.0.
+    # Else, print an error message.
+    #
+    # Environment:
+    # ARGPARSER_CHECK_ENV_VARS (read-only)
+    # ARGPARSER_ERROR_EXIT_CODE
+    # ARGPARSER_ERROR_STYLE
+    # ARGPARSER_USE_STYLES_IN_FILES
+
+    # Define the local variable.
+    local error_message
+
+    # Check Bash's version.
+    if (( "${BASH_VERSINFO[0]}" < 4 )); then
+        error_message="Error: For argument parsing, Bash 4.0 or higher is "
+        error_message+="mandatory."
+
+        if [[ ! -v "ARGPARSER_CHECK_ENV_VARS" \
+            || "${ARGPARSER_CHECK_ENV_VARS}" != false ]]
+        then
+            ARGPARSER_ARG_DELIMITER_2=","
+            ARGPARSER_ERROR_EXIT_CODE=1
+            ARGPARSER_ERROR_STYLE="red,bold,reverse"
+            ARGPARSER_USE_STYLES_IN_FILES=false
+        fi
+        argparser_print_error_or_warning_message "error" false true \
+            "${error_message}"
+    fi
+}
 
 # Define the argparser functions used for general tests.
 function argparser_in_array() {
@@ -6263,6 +6314,9 @@ function argparser_main() {
     eval "${is_extglob_set}"
 }
 
+# Check the version of the current Bash instance.
+argparser_check_bash_version
+
 # If the argparser hasn't sourced itself (i.e., the current recursion
 # level is the outer one from the calling script), set the internal
 # "environment" variables.
@@ -6339,9 +6393,11 @@ if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
     unset -f argparser_check_args_definition_names
     unset -f argparser_check_args_definition_option_values
     unset -f argparser_check_args_definition_positional_values
+    unset -f argparser_check_bash_version
     unset -f argparser_check_color_or_style
     unset -f argparser_check_env_vars
     unset -f argparser_check_file
+    unset -f argparser_check_shell
     unset -f argparser_colorize
     unset -f argparser_count
     unset -f argparser_create_help_message
