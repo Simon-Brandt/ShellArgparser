@@ -3313,12 +3313,11 @@ function argparser_parse_arg() {
         messages+=("${error_message}")
         messages+=("Argument: ${given_arg}")
     elif [[ "${given_arg}" == "--argparser" \
-        && "${BASH_SOURCE[1]}" == "${BASH_SOURCE[0]}" ]]
+        && "${BASH_SOURCE[0]}" == "${BASH_SOURCE[-1]}" ]]
     then
-        # The argument is the magic string for the argparser, which has
-        # sourced itself (i.e., the current recursion level is the inner
-        # one from the argparser, not the calling script).  Since it
-        # accepts only long options by design, no test for
+        # The argument is the magic string for the argparser, which was
+        # directly called and not run from another script.  Since the
+        # argparser accepts only long options by design, no test for
         # ${ARGPARSER_USE_LONG_OPTIONS} is necessary.
         messages+=("Logo")
     elif [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true \
@@ -5807,9 +5806,9 @@ function argparser_print_logo() {
     argparser_colorize "${font_5}" "      " "tty"  # A
     argparser_colorize "${space}" "  " "tty"       # _
     argparser_colorize "${font_6}" "      " "tty"  # R
-    argparser_colorize "${space}" "  " "tty"       # _
-    argparser_colorize "${font_7}" "      " "tty"  # S
-    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${space}" "   " "tty"      # _, S
+    argparser_colorize "${font_7}" "    " "tty"    # S
+    argparser_colorize "${space}" "   " "tty"      # S, _
     argparser_colorize "${font_8}" "      " "tty"  # E
     argparser_colorize "${space}" "  " "tty"       # _
     argparser_colorize "${font_9}" "      " "tty"  # R
