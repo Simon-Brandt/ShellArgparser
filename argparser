@@ -441,11 +441,10 @@ function argparser_count() {
     # - $1: the element to count
     # - $@: the array where to count the element
     #
-    # Output:
-    # - the count of the element
+    # Nonlocals:
+    # - count: the count of the element
 
     # Define the local variables.
-    local count
     local element
     local query
 
@@ -461,7 +460,6 @@ function argparser_count() {
             (( count++ ))
         fi
     done
-    printf '%s' "${count}"
 }
 
 function argparser_uniq() {
@@ -2353,8 +2351,7 @@ function argparser_check_args_definition_names() {
 
                 # Check if the short option name is given multiple times
                 # in the current argument's definition.
-                count="$(argparser_count "${short_option}" \
-                    "${short_options[@]}")"
+                argparser_count "${short_option}" "${short_options[@]}"
                 if (( count > 1 )); then
                     error_message="Error: The argument with the identifier "
                     error_message+="\"%s\" has the short option \"-%s\" given "
@@ -2473,8 +2470,7 @@ function argparser_check_args_definition_names() {
 
                 # Check if the long option name is given multiple times
                 # in the current argument's definition.
-                count="$(argparser_count "${long_option}" \
-                    "${long_options[@]}")"
+                argparser_count "${long_option}" "${long_options[@]}"
                 if (( count > 1 )); then
                     error_message="Error: The argument with the identifier "
                     error_message+="\"%s\" has the long option \"--%s\" given "
@@ -3458,6 +3454,7 @@ function argparser_parse_long_option() {
     local abbr_long_option
     local -A abbr_long_options
     local arg_key
+    local count
     local error_message
     local given_arg
     local long_option
@@ -3515,8 +3512,7 @@ function argparser_parse_long_option() {
         # argument identifier and possibly the values following the
         # equals sign ("=").  If multiple or no option names are
         # matched, output an error message, instead.
-        count="$(argparser_count "${option_name}" "${abbr_long_options[@]}")"
-
+        argparser_count "${option_name}" "${abbr_long_options[@]}"
         if (( count == 1 )); then
             # Get the argument identifier for the abbreviated argument.
             for arg_key in "${!abbr_long_options[@]}"; do
@@ -3898,6 +3894,8 @@ function argparser_check_arg_values() {
     local arg_number
     local -a choice_values
     local count
+    local count_hyphen
+    local count_plus
     local -a default_values
     local error_message
     local note
@@ -4090,8 +4088,13 @@ function argparser_check_arg_values() {
             # given prefix determines the value, implicitly overriding
             # any prefix given before.
             if [[ "${ARGPARSER_COUNT_FLAGS}" == true ]]; then
-                (( count = "$(argparser_count "-" "${prefixes[@]}")" ))
-                (( count -= "$(argparser_count "+" "${prefixes[@]}")" ))
+                argparser_count "-" "${prefixes[@]}"
+                count_hyphen="${count}"
+
+                argparser_count "+" "${prefixes[@]}"
+                count_plus="${count}"
+
+                (( count = count_hyphen - count_plus ))
                 values=("${count}")
             else
                 if [[ "${prefixes[-1]}" == "-" ]]; then
@@ -5448,10 +5451,11 @@ function argparser_create_help_message() {
     # Output the help, usage, and version lines, which are the last
     # three lines.  Thereby, count the number of "true" as value of the
     # respective environment variable, viz. ${ARGPARSER_ADD_HELP},
-    # ${ARGPARSER_ADD_USAGE}, and ${ARGPARSER_ADD_VERSION}.
-    count="$(argparser_count true "${ARGPARSER_ADD_HELP}" \
-        "${ARGPARSER_ADD_USAGE}" "${ARGPARSER_ADD_VERSION}")"
+    # ${ARGPARSER_ADD_USAGE}, and ${ARGPARSER_ADD_VERSION}, to get the
+    # number of lines to output.
     help_message=""
+    argparser_count true "${ARGPARSER_ADD_HELP}" "${ARGPARSER_ADD_USAGE}" \
+        "${ARGPARSER_ADD_VERSION}"
     if (( count == 3 )); then
         help_message+="${col_1[-3]}${whitespace_1[-3]}${col_2[-3]}"
         help_message+="${whitespace_2[-3]}${col_3[-3]}"
