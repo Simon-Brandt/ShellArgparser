@@ -4759,7 +4759,7 @@ function argparser_create_help_message() {
     local lines_col_2
     local lines_col_3
     local long_option
-    local long_options
+    local -a long_options
     local max_line_count
     local -a new_col_1
     local new_col_1_value
@@ -4777,7 +4777,8 @@ function argparser_create_help_message() {
     local -a notes
     local -a option_names
     local remark
-    local short_options
+    local short_option
+    local -a short_options
     local -A sorted_col_1
     local -A sorted_col_2
     local -A sorted_col_3
@@ -4835,14 +4836,13 @@ function argparser_create_help_message() {
         # Set the first column's value.
         if [[ "${choice_values}" != "-" && "${default_values}" != "-" ]]
         then  # Choice and default.
-            col_1+=("$(printf "[%s={%s}]" "${value_names}" \
-                "${choice_values}")")
+            col_1+=("[${value_names}={${choice_values}}]")
         elif [[ "${choice_values}" != "-" ]]; then  # Choice only.
-            col_1+=("$(printf "%s={%s}" "${value_names}" "${choice_values}")")
+            col_1+=("${value_names}={${choice_values}}")
         elif [[ "${default_values}" != "-" ]]; then  # Default only.
-            col_1+=("$(printf "[%s]" "${value_names}")")
+            col_1+=("[${value_names}]")
         else  # No choice nor default.
-            col_1+=("$(printf "%s" "${value_names}")")
+            col_1+=("${value_names}")
         fi
 
         # Set the second column's value.
@@ -4941,68 +4941,69 @@ function argparser_create_help_message() {
             # use the empty string instead.
             # Set the first column's value.
             if [[ "${short_options[0]}" == "-" ]]; then  # No short option.
-                new_col_1+=("")
+                new_col_1_value=""
             elif [[ "${long_options[0]}" == "-" ]]; then  # No long option.
                 if [[ "${arg_number}" == 0 ]]; then  # Flag.
                     new_col_1_value="["
-                    new_col_1_value+="$(printf -- "-%s, " \
-                        "${short_options[@]}")"
+                    for short_option in "${short_options[@]}"; do
+                        new_col_1_value+="-${short_option}, "
+                    done
                     new_col_1_value="${new_col_1_value%, }"
                     new_col_1_value+="]"
-                    new_col_1+=("${new_col_1_value}")
                 elif [[ "${choice_values}" != "-" \
                     && "${default_values}" != "-" ]]
                 then  # Choice and default.
                     new_col_1_value=""
                     for short_option in "${short_options[@]}"; do
-                        new_col_1_value+="$(printf -- "[-%s={%s}], " \
-                            "${short_option}" "${choice_values}")"
+                        new_col_1_value+="[-${short_option}="
+                        new_col_1_value+="{${choice_values}}], "
                     done
                     new_col_1_value="${new_col_1_value%, }"
-                    new_col_1+=("${new_col_1_value}")
                 elif [[ "${choice_values}" != "-" ]]; then  # Choice only.
                     new_col_1_value=""
                     for short_option in "${short_options[@]}"; do
-                        new_col_1_value+="$(printf -- "-%s={%s}, " \
-                            "${short_option}" "${choice_values}")"
+                        new_col_1_value+="-${short_option}="
+                        new_col_1_value+="{${choice_values}}, "
                     done
                     new_col_1_value="${new_col_1_value%, }"
-                    new_col_1+=("${new_col_1_value}")
                 elif [[ "${default_values}" != "-" ]]; then  # Default only.
                     new_col_1_value=""
                     for i in "${!short_options[@]}"; do
-                        new_col_1_value+="$(printf -- "[-%s=%s], " \
-                            "${short_options[i]}" \
-                            "${value_names[i]:-${short_options[i]^^}}")"
+                        new_col_1_value+="[-${short_options[i]}="
+                        new_col_1_value+="${value_names[i]:-${short_options[i]^^}}], "
                     done
                     new_col_1_value="${new_col_1_value%, }"
-                    new_col_1+=("${new_col_1_value}")
                 else  # No choice nor default.
                     new_col_1_value=""
                     for i in "${!short_options[@]}"; do
-                        new_col_1_value+="$(printf -- "-%s=%s, " \
-                            "${short_options[i]}" \
-                            "${value_names[i]:-${short_options[i]^^}}")"
+                        new_col_1_value+="-${short_options[i]}="
+                        new_col_1_value+="${value_names[i]:-${short_options[i]^^}}, "
                     done
                     new_col_1_value="${new_col_1_value%, }"
-                    new_col_1+=("${new_col_1_value}")
                 fi
             elif [[ "${arg_number}" == 0 ]]; then  # Long option, flag.
                 new_col_1_value="["
-                new_col_1_value+="$(printf -- "-%s, " "${short_options[@]}")"
+                for short_option in "${short_options[@]}"; do
+                    new_col_1_value+="-${short_option}, "
+                done
                 new_col_1_value="${new_col_1_value%, }"
                 new_col_1_value+="],"
-                new_col_1+=("${new_col_1_value}")
             else  # Long option, non-flag.
-                new_col_1+=("$(printf -- "-%s, " "${short_options[@]}")")
+                new_col_1_value=""
+                for short_option in "${short_options[@]}"; do
+                    new_col_1_value+="-${short_option}, "
+                done
             fi
+            new_col_1+=("${new_col_1_value}")
 
             # Set the second column's value.
             if [[ "${long_options[0]}" == "-" ]]; then  # No long option.
                 new_col_2+=("")
             elif [[ "${arg_number}" == 0 ]]; then  # Flag.
                 new_col_2_value="["
-                new_col_2_value+="$(printf -- "--%s, " "${long_options[@]}")"
+                for long_option in "${long_options[@]}"; do
+                    new_col_2_value+="--${long_option}, "
+                done
                 new_col_2_value="${new_col_2_value%, }"
                 new_col_2_value+="]"
                 new_col_2+=("${new_col_2_value}")
@@ -5010,34 +5011,30 @@ function argparser_create_help_message() {
             then  # Choice and default.
                 new_col_2_value=""
                 for long_option in "${long_options[@]}"; do
-                    new_col_2_value+="$(printf -- "[--%s={%s}], " \
-                        "${long_option}" "${choice_values}")"
+                    new_col_2_value+="[--${long_option}={${choice_values}}], "
                 done
                 new_col_2_value="${new_col_2_value%, }"
                 new_col_2+=("${new_col_2_value}")
             elif [[ "${choice_values}" != "-" ]]; then  # Choice only.
                 new_col_2_value=""
                 for long_option in "${long_options[@]}"; do
-                    new_col_2_value+="$(printf -- "--%s={%s}, " \
-                        "${long_option}" "${choice_values}")"
+                    new_col_2_value+="--${long_option}={${choice_values}}, "
                 done
                 new_col_2_value="${new_col_2_value%, }"
                 new_col_2+=("${new_col_2_value}")
             elif [[ "${default_values}" != "-" ]]; then  # Default only.
                 new_col_2_value=""
                 for i in "${!long_options[@]}"; do
-                    new_col_2_value+="$(printf -- "[--%s=%s], " \
-                        "${long_options[i]}" \
-                        "${value_names[i]:-${long_options[i]^^}}")"
+                    new_col_2_value+="[--${long_options[i]}="
+                    new_col_2_value+="${value_names[i]:-${long_options[i]^^}}], "
                 done
                 new_col_2_value="${new_col_2_value%, }"
                 new_col_2+=("${new_col_2_value}")
             else  # No choice nor default.
                 new_col_2_value=""
                 for i in "${!long_options[@]}"; do
-                    new_col_2_value+="$(printf -- "--%s=%s, " \
-                        "${long_options[i]}" \
-                        "${value_names[i]:-${long_options[i]^^}}")"
+                    new_col_2_value+="--${long_options[i]}="
+                    new_col_2_value+="${value_names[i]:-${long_options[i]^^}}, "
                 done
                 new_col_2_value="${new_col_2_value%, }"
                 new_col_2+=("${new_col_2_value}")
@@ -5343,20 +5340,33 @@ function argparser_create_help_message() {
     whitespace_1=( )
     whitespace_2=( )
     for i in "${!col_1[@]}"; do
+        whitespace_1+=("")
+        whitespace_2+=("")
+
         if (( "${#col_1[i]}" <= ARGPARSER_MAX_COL_WIDTH_1 )); then
             (( whitespace_len_1 = col_width_1 - "${#col_1[i]}" + 1 ))
-            whitespace_1+=("$(printf '%*s' "${whitespace_len_1}" "")")
+            for (( j = 0; j < whitespace_len_1; j++ )); do
+                whitespace_1[-1]+=" "
+            done
         else
             (( whitespace_len_1 = col_width_1 + 1 ))
-            whitespace_1+=("$(printf '\n%*s' "${whitespace_len_1}" "")")
+            whitespace_1[-1]+=$'\n '
+            for (( j = 0; j < whitespace_len_1; j++ )); do
+                whitespace_1[-1]+=" "
+            done
         fi
 
         if (( "${#col_2[i]}" <= ARGPARSER_MAX_COL_WIDTH_2 )); then
             (( whitespace_len_2 = col_width_2 - "${#col_2[i]}" + 1 ))
-            whitespace_2+=("$(printf '%*s' "${whitespace_len_2}" "")")
+            for (( j = 0; j < whitespace_len_2; j++ )); do
+                whitespace_2[-1]+=" "
+            done
         else
             (( whitespace_len_2 = col_width_1 + col_width_2 + 2 ))
-            whitespace_2+=("$(printf '\n%*s' "${whitespace_len_2}" "")")
+            whitespace_2[-1]+=$'\n '
+            for (( j = 0; j < whitespace_len_2; j++ )); do
+                whitespace_2[-1]+=" "
+            done
         fi
     done
 
