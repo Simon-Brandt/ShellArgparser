@@ -370,15 +370,12 @@ function argparser_fold() {
     # - $2: the maximum width a column may have
     # - $3: the maximum width a column has yet
     #
-    # Output:
-    # - the line with introduced line breaks and the width of the widest
-    #   line part as string, concatenated and terminated with null
-    #   characters
+    # Nonlocals:
+    # - joined_words: the line with introduced line breaks
+    # - largest_col_width: the width of the widest line part
 
     # Define the local variables.
     local col_width
-    local joined_words
-    local largest_col_width
     local len_joined_words
     local len_word
     local line
@@ -403,13 +400,15 @@ function argparser_fold() {
         if (( len_word > max_col_width && len_joined_words == 0 )); then
             # As the word is too long, print the word and introduce a
             # line break.  Then, reset the column width.
-            joined_words+="$(printf '%s\n' "${word}")"
+            joined_words+="${word}"
+            joined_words+=$'\n'
             col_width=0
         elif (( col_width + len_word > max_col_width )); then
             # As the line with the word appended would be too long,
             # introduce a line break and print the word.  Then, set the
             # column width.
-            joined_words+="$(printf '\n%s' "${word}")"
+            joined_words+=$'\n'
+            joined_words+="${word}"
             col_width="${len_word}"
         elif (( len_joined_words == 0 )); then
             # For the first word, add the word only.  Increase the
@@ -433,8 +432,6 @@ function argparser_fold() {
             largest_col_width="${col_width}"
         fi
     done
-
-    printf '%s\0' "${joined_words}" "${largest_col_width}"
 }
 
 function argparser_count() {
@@ -4762,7 +4759,8 @@ function argparser_create_help_message() {
     local index
     local is_deprecated
     local j
-    local -a line
+    local joined_words
+    local largest_col_width
     local line_count_1
     local line_count_2
     local line_count_3
@@ -5200,31 +5198,28 @@ function argparser_create_help_message() {
     # Split the element of column 1.
     col_width_1=0
     for i in "${!col_1[@]}"; do
-        mapfile -d "" -t line \
-            < <(argparser_fold "${col_1[i]}" "${ARGPARSER_MAX_COL_WIDTH_1}" \
-                "${col_width_1}")
-        col_1[i]="${line[0]}"
-        col_width_1="${line[1]}"
+        argparser_fold "${col_1[i]}" "${ARGPARSER_MAX_COL_WIDTH_1}" \
+            "${col_width_1}"
+        col_1[i]="${joined_words}"
+        col_width_1="${largest_col_width}"
     done
 
     # Split the element of column 2.
     col_width_2=0
     for i in "${!col_2[@]}"; do
-        mapfile -d "" -t line \
-            < <(argparser_fold "${col_2[i]}" "${ARGPARSER_MAX_COL_WIDTH_2}" \
-                "${col_width_2}")
-        col_2[i]="${line[0]}"
-        col_width_2="${line[1]}"
+        argparser_fold "${col_2[i]}" "${ARGPARSER_MAX_COL_WIDTH_2}" \
+            "${col_width_2}"
+        col_2[i]="${joined_words}"
+        col_width_2="${largest_col_width}"
     done
 
     # Split the element of column 3.
     col_width_3=0
     for i in "${!col_3[@]}"; do
-        mapfile -d "" -t line \
-            < <(argparser_fold "${col_3[i]}" "${ARGPARSER_MAX_COL_WIDTH_3}" \
-                "${col_width_3}")
-        col_3[i]="${line[0]}"
-        col_width_3="${line[1]}"
+        argparser_fold "${col_3[i]}" "${ARGPARSER_MAX_COL_WIDTH_3}" \
+            "${col_width_3}"
+        col_3[i]="${joined_words}"
+        col_width_3="${largest_col_width}"
     done
 
     # Adjust the number of line breaks between each column's rows, such
