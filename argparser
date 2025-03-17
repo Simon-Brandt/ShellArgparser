@@ -589,26 +589,33 @@ function argparser_colorize() {
     # Arguments:
     # - $1: the colors and/or styles to use as comma-separated list
     # - $2: the string to colorize
-    # - $3: the target to write to ("file" or "tty")
+    # - $3: the file descriptor to write to (1 or 2)
+    # - $4: whether to print the colorized string
+    #
+    # Nonlocals:
+    # - style: the color and/or style to colorize the string (if $4 is
+    #   false)
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_USE_STYLES_IN_FILES (read-only)
     #
     # Output:
-    # - the colorized string
+    # - the colorized string (if $4 is true)
 
     # Define the local variables.
+    local file_descriptor
+    local print_string
     local request
     local requests
     local string
     local -A styles
-    local write_target
 
     # Read the arguments.
     requests="$1"
     string="$2"
-    write_target="$3"
+    file_descriptor="$3"
+    print_string="$4"
 
     # Define the associative array with colors and styles, and their
     # corresponding Select Graphic Rendition (SGR) ANSI escape sequence
@@ -635,26 +642,35 @@ function argparser_colorize() {
     )
 
     # Split the requested color and/or style on
-    # ${ARGPARSER_ARG_DELIMITER_2} characters and print any.  Then,
-    # print the string and reset the color/style.  Possibly, only use
-    # colors/styles when writing to a terminal.
-    # As argparser_colorize is generally run through command
-    # substitution, [[ -t 1 ]] would always be false, i.e., it is
-    # impossible to see if the final STDOUT goes to a terminal.  Thus,
-    # the test is outsourced to the invoking function and passed as
-    # command-line argument.
+    # ${ARGPARSER_ARG_DELIMITER_2} characters and replace it with the
+    # corresponding escape sequence, if writing to a terminal or the
+    # escape sequences shall be included in the file.  The test assumes
+    # that argparser_colorize is never run through command substitution,
+    # else [[ -t ${file_descriptor} ]] would always be false, i.e., it
+    # would impossible to tell if the final STDOUT/STDERR goes to a
+    # terminal.
+    style=""
     if [[ "${ARGPARSER_USE_STYLES_IN_FILES}" == true \
-        || "${write_target}" == "tty" ]]
+        || -t "${file_descriptor}" ]]
     then
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a requests \
             <<< "${requests}"
         for request in "${requests[@]}"; do
-            printf '\e[%sm' "${styles[${request}]}"
+            style+="\e[${styles[${request}]}m"
         done
+    fi
 
-        printf '%s\e[0m' "${string}"
-    else
-        printf '%s' "${string}"
+    # Possibly, print the colorized string and reset the color/style.
+    if [[ "${print_string}" == true ]]; then
+        # shellcheck disable=SC2059  # Escape sequence in variable.
+        printf "${style}"
+        printf "%s" "${string}"
+
+        if [[ "${ARGPARSER_USE_STYLES_IN_FILES}" == true \
+            || -t "${file_descriptor}" ]]
+        then
+            printf '\e[0m'
+        fi
     fi
 }
 
@@ -944,7 +960,7 @@ function argparser_read_configuration() {
     # input, possibly disable extglob.
     eval "${is_extglob_set}"
 
-    # Colorize, sort, filter, and print all error messages, then exit,
+    # Sort, filter, colorize, and print all error messages, then exit,
     # as the environment variables should be correctly read.
     if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
         ARGPARSER_ARG_DELIMITER_2=","
@@ -1596,7 +1612,7 @@ function argparser_check_env_vars() {
         done
     done
 
-    # If there are error messages, colorize, sort, and print them, then
+    # If there are error messages, sort, colorize, and print them, then
     # exit, as parsing the arguments with a faulty environment variable
     # configuration might be impossible.  If ${ARGPARSER_ERROR_STYLE} is
     # among the faulty variables, the error messages cannot be properly
@@ -1754,7 +1770,7 @@ function argparser_read_translation() {
         ARGPARSER_DICTIONARY[${group}]="${translation}"
     fi
 
-    # Colorize, sort, filter, and print all error messages.
+    # Sort, filter, colorize, and print all error messages.
     if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
         ARGPARSER_ARG_DELIMITER_2=","
         ARGPARSER_ERROR_EXIT_CODE=1
@@ -2135,7 +2151,7 @@ function argparser_parse_args_definition() {
         fi
     done
 
-    # If there are error messages, colorize, sort, and print them, then
+    # If there are error messages, sort, colorize, and print them, then
     # exit.
     argparser_print_error_or_warning_message "error" false true \
         "${error_messages[@]}"
@@ -4271,7 +4287,6 @@ function argparser_parse_args() {
     local values
     local warning_message
     local -a warning_messages
-    local write_target
 
     # Read the arguments.
     read -r -a given_args <<< "$@"
@@ -4377,7 +4392,7 @@ function argparser_parse_args() {
         esac
     done
 
-    # If there are error messages, colorize, sort, and print them, then
+    # If there are error messages, sort, colorize, and print them, then
     # exit, as parsing the arguments definition with missing parts is
     # useless.
     argparser_print_error_or_warning_message "error" false true \
@@ -4402,7 +4417,7 @@ function argparser_parse_args() {
         argparser_check_args_definition_positional_values
         argparser_check_args_definition_option_values
 
-        # If there are error messages, colorize, sort, filter, and print
+        # If there are error messages, sort, filter, colorize, and print
         # them, then exit, as parsing the arguments with a faulty
         # definition is useless or even impossible.
         argparser_print_error_or_warning_message "error" true true \
@@ -4489,22 +4504,14 @@ function argparser_parse_args() {
 
     # If the help, usage, or version message, or the logo was requested
     # (in this order of priority), print it.
-    if [[ -t 1 ]]; then
-        write_target="tty"
-    else
-        write_target="file"
-    fi
-
     if [[ "${is_help}" == true ]]; then
-        argparser_print_help_or_usage_message "help" true "${write_target}"
+        argparser_print_help_or_usage_message "help" true 1
     elif [[ "${is_usage}" == true ]]; then
-        argparser_print_help_or_usage_message "usage" true "${write_target}"
+        argparser_print_help_or_usage_message "usage" true 1
     elif [[ "${is_version}" == true ]]; then
-        argparser_print_version_message true "${write_target}"
+        argparser_print_version_message true 1
     elif [[ "${is_logo}" == true ]]; then
-        # Print the logo in one chunk by aggregating it via command
-        # substitution.
-        printf '%s\n' "$(argparser_print_logo)"
+        argparser_print_logo
         exit
     fi
 
@@ -4535,7 +4542,7 @@ function argparser_parse_args() {
         esac
     done
 
-    # Colorize, sort, filter, and print all error messages.
+    # Sort, filter, colorize, and print all error messages.
     argparser_print_error_or_warning_message "error" true false \
         "${error_messages[@]}"
 
@@ -4543,16 +4550,9 @@ function argparser_parse_args() {
     # errors), print a blank line and the usage message and abort the
     # script.
     if (( "${#error_messages[@]}" > 0 )); then
-        if [[ -t 2 ]]; then
-            write_target="tty"
-        else
-            write_target="file"
-        fi
-
         if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
             printf '\n' >&2
-            argparser_print_help_or_usage_message "usage" false \
-                "${write_target}" >&2
+            argparser_print_help_or_usage_message "usage" false 2 >&2
         fi
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
     fi
@@ -4597,7 +4597,7 @@ function argparser_parse_args() {
         args[${arg_key}]="${values}"
     done
 
-    # Colorize, sort, filter, and print all error and warning messages.
+    # Sort, filter, colorize, and print all error and warning messages.
     argparser_print_error_or_warning_message "error" true false \
         "${error_messages[@]}"
     argparser_print_error_or_warning_message "warning" true false \
@@ -4607,16 +4607,9 @@ function argparser_parse_args() {
     # and not just warnings), print a blank line and the usage message
     # and abort the script.
     if (( "${#error_messages[@]}" > 0 )); then
-        if [[ -t 2 ]]; then
-            write_target="tty"
-        else
-            write_target="file"
-        fi
-
         if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
             printf '\n' >&2
-            argparser_print_help_or_usage_message "usage" false \
-                "${write_target}" >&2
+            argparser_print_help_or_usage_message "usage" false 2 >&2
         fi
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
     fi
@@ -5964,7 +5957,7 @@ function argparser_print_help_or_usage_message() {
     # Arguments:
     # - $1: the help type ("help" or "usage")
     # - $2: whether to exit after printing
-    # - $3: the target to write to ("file" or "tty")
+    # - $3: the file descriptor to write to (1 or 2)
     #
     # Nonlocals:
     # - all_arg_groups: the associative array holding the argument
@@ -5995,6 +5988,7 @@ function argparser_print_help_or_usage_message() {
     local exit
     local exit_code
     local file
+    local file_descriptor
     local help_type
     local include_char
     local include_directive
@@ -6005,12 +5999,11 @@ function argparser_print_help_or_usage_message() {
     local message
     local style
     local translation
-    local write_target
 
     # Read the arguments.
     help_type="$1"
     exit="$2"
-    write_target="$3"
+    file_descriptor="$3"
 
     # Set the constants to the respective environment variables.
     if [[ "${help_type}" == "help" ]]; then
@@ -6142,13 +6135,13 @@ function argparser_print_help_or_usage_message() {
         fi
     done
 
-    # Colorize, sort, filter, and print all error messages.
+    # Sort, filter, colorize, and print all error messages.
     argparser_print_error_or_warning_message "error" true false \
         "${error_messages[@]}"
 
     # Colorize and print the help or usage message, then exit, if
     # requested.
-    argparser_colorize "${style}" "${message}" "${write_target}"
+    argparser_colorize "${style}" "${message}" "${file_descriptor}" true
 
     if [[ "${exit}" == true ]]; then
         exit "${exit_code}"
@@ -6160,7 +6153,6 @@ function argparser_print_version_message() {
     #
     # Arguments:
     # - $1: whether to exit after printing
-    # - $2: the target to write to ("file" or "tty")
     #
     # Environment:
     # - ARGPARSER_SCRIPT_NAME (read-only)
@@ -6171,17 +6163,15 @@ function argparser_print_version_message() {
     # Define the local variables.
     local exit
     local message
-    local write_target
+    local style
 
-    # Read the arguments.
+    # Read the argument.
     exit="$1"
-    write_target="$2"
 
     # Colorize and print the version message, then exit, if requested.
     message="${ARGPARSER_SCRIPT_NAME} v${ARGPARSER_SCRIPT_VERSION}"
-    message="$(argparser_colorize "${ARGPARSER_SCRIPT_VERSION_STYLE}" \
-        "${message}" "${write_target}")"
-    printf '%s\n' "${message}"
+    argparser_colorize "${ARGPARSER_SCRIPT_VERSION_STYLE}" "${message}" 1 true
+    printf '\n'
 
     if [[ "${exit}" == true ]]; then
         exit "${ARGPARSER_SCRIPT_VERSION_EXIT_CODE}"
@@ -6189,7 +6179,7 @@ function argparser_print_version_message() {
 }
 
 function argparser_print_error_or_warning_message() {
-    # Colorize, sort, filter, and print all error or warning messages.
+    # Sort, filter, colorize, and print all error or warning messages.
     #
     # Arguments:
     # - $1: the error type ("error" or "warning")
@@ -6212,7 +6202,6 @@ function argparser_print_error_or_warning_message() {
     local -a messages
     local style
     local error_type
-    local write_target
 
     # Read the arguments.
     error_type="$1"
@@ -6242,30 +6231,40 @@ function argparser_print_error_or_warning_message() {
         style="${ARGPARSER_WARNING_STYLE}"
     fi
 
-    # Colorize, sort, filter, and print all error or warning messages,
+    # Sort, filter, colorize, and print all error or warning messages,
     # then exit, if requested.
     if (( "${#messages[@]}" > 0 )); then
-        if [[ -t 2 ]]; then
-            write_target="tty"
-        else
-            write_target="file"
-        fi
-
+        # Prepend the script name, if given.
         for i in "${!messages[@]}"; do
             if [[ -n "${ARGPARSER_SCRIPT_NAME}" ]]; then
                 messages[i]="${ARGPARSER_SCRIPT_NAME}: ${messages[i]}"
             fi
-            messages[i]="$(argparser_colorize "${style}" "${messages[i]}" \
-                "${write_target}")"
         done
 
+        # Sort and filter the messages.
         mapfile -d "" -t messages < <(argparser_sort false "${messages[@]}")
 
         if [[ "${filter}" == true ]]; then
             mapfile -d "" -t messages < <(argparser_uniq "${messages[@]}")
         fi
 
-        printf '%s\n' "${messages[@]}" >&2
+        # Colorize the messages, if writing to a terminal or the escape
+        # sequences shall be included in the file.  The test assumes
+        # that argparser_print_error_or_warning_message is never run
+        # through command substitution, else [[ -t ${file_descriptor} ]]
+        # would always be false, i.e., it would impossible to tell if
+        # the final STDOUT/STDERR goes to a terminal.
+        argparser_colorize "${style}" "" 2 false
+        {
+            # shellcheck disable=SC2059  # Escape sequence in variable.
+            printf "${style}"
+            printf "%s\n" "${messages[@]}"
+            if [[ "${ARGPARSER_USE_STYLES_IN_FILES}" == true \
+                || -t "${file_descriptor}" ]]
+            then
+                printf '\e[0m'
+            fi
+        } >&2
 
         if [[ "${exit}" == true ]]; then
             exit "${ARGPARSER_ERROR_EXIT_CODE}"
@@ -6277,7 +6276,6 @@ function argparser_print_logo() {
     # Print the argparser logo in ANSI art.
 
     # Define the local variables.
-    local space
     local font_1
     local font_2
     local font_3
@@ -6287,6 +6285,8 @@ function argparser_print_logo() {
     local font_7
     local font_8
     local font_9
+    local space
+    local style
 
     # Set each letter's color as all primary and secondary colors,
     # traversing the color wheel for one and a half rounds.
@@ -6302,164 +6302,164 @@ function argparser_print_logo() {
     font_9="blue,reverse"     # R
 
     # Output the first line, which is empty.
-    argparser_colorize "${space}" "                                " "tty"  # _
-    argparser_colorize "${space}" "                                " "tty"  # _
-    argparser_colorize "${space}" "          " "tty"                        # _
+    argparser_colorize "${space}" "                              " 1 true  # _
+    argparser_colorize "${space}" "                              " 1 true  # _
+    argparser_colorize "${space}" "              " 1 true                  # _
     printf '\n'
 
     # Output the second line, containing the first of five lines of the
     # letters.
-    argparser_colorize "${space}" "   " "tty"      # _, A
-    argparser_colorize "${font_1}" "    " "tty"    # A
-    argparser_colorize "${space}" "    " "tty"     # A, _, R
-    argparser_colorize "${font_2}" "    " "tty"    # R
-    argparser_colorize "${space}" "    " "tty"     # R, _, G
-    argparser_colorize "${font_3}" "     " "tty"   # G
-    argparser_colorize "${space}" "   " "tty"      # _, P
-    argparser_colorize "${font_4}" "    " "tty"    # P
-    argparser_colorize "${space}" "    " "tty"     # P, _, A
-    argparser_colorize "${font_5}" "    " "tty"    # A
-    argparser_colorize "${space}" "    " "tty"     # A, _, R
-    argparser_colorize "${font_6}" "    " "tty"    # R
-    argparser_colorize "${space}" "    " "tty"     # R, _, S
-    argparser_colorize "${font_7}" "     " "tty"   # S
-    argparser_colorize "${space}" "  " "tty"       # _
-    argparser_colorize "${font_8}" "      " "tty"  # E
-    argparser_colorize "${space}" "   " "tty"      # _, R
-    argparser_colorize "${font_9}" "    " "tty"    # R
-    argparser_colorize "${space}" "   " "tty"      # R, _
+    argparser_colorize "${space}" "   " 1 true      # _, A
+    argparser_colorize "${font_1}" "    " 1 true    # A
+    argparser_colorize "${space}" "    " 1 true     # A, _, R
+    argparser_colorize "${font_2}" "    " 1 true    # R
+    argparser_colorize "${space}" "    " 1 true     # R, _, G
+    argparser_colorize "${font_3}" "     " 1 true   # G
+    argparser_colorize "${space}" "   " 1 true      # _, P
+    argparser_colorize "${font_4}" "    " 1 true    # P
+    argparser_colorize "${space}" "    " 1 true     # P, _, A
+    argparser_colorize "${font_5}" "    " 1 true    # A
+    argparser_colorize "${space}" "    " 1 true     # A, _, R
+    argparser_colorize "${font_6}" "    " 1 true    # R
+    argparser_colorize "${space}" "    " 1 true     # R, _, S
+    argparser_colorize "${font_7}" "     " 1 true   # S
+    argparser_colorize "${space}" "  " 1 true       # _
+    argparser_colorize "${font_8}" "      " 1 true  # E
+    argparser_colorize "${space}" "   " 1 true      # _, R
+    argparser_colorize "${font_9}" "    " 1 true    # R
+    argparser_colorize "${space}" "   " 1 true      # R, _
     printf '\n'
 
     # Output the third line, containing the second of five lines of the
     # letters.
-    argparser_colorize "${space}" "  " "tty"       # _
-    argparser_colorize "${font_1}" "  " "tty"      # A
-    argparser_colorize "${space}" "  " "tty"       # A
-    argparser_colorize "${font_1}" "  " "tty"      # A
-    argparser_colorize "${space}" "  " "tty"       # _
-    argparser_colorize "${font_2}" "  " "tty"      # R
-    argparser_colorize "${space}" "  " "tty"       # R
-    argparser_colorize "${font_2}" "  " "tty"      # R
-    argparser_colorize "${space}" "  " "tty"       # _
-    argparser_colorize "${font_3}" "  " "tty"      # G
-    argparser_colorize "${space}" "      " "tty"   # G, _
-    argparser_colorize "${font_4}" "  " "tty"      # P
-    argparser_colorize "${space}" "  " "tty"       # P
-    argparser_colorize "${font_4}" "  " "tty"      # P
-    argparser_colorize "${space}" "  " "tty"       # _
-    argparser_colorize "${font_5}" "  " "tty"      # A
-    argparser_colorize "${space}" "  " "tty"       # A
-    argparser_colorize "${font_5}" "  " "tty"      # A
-    argparser_colorize "${space}" "  " "tty"       # _
-    argparser_colorize "${font_6}" "  " "tty"      # R
-    argparser_colorize "${space}" "  " "tty"       # R
-    argparser_colorize "${font_6}" "  " "tty"      # R
-    argparser_colorize "${space}" "  " "tty"       # _
-    argparser_colorize "${font_7}" "  " "tty"      # S
-    argparser_colorize "${space}" "      " "tty"   # S, _
-    argparser_colorize "${font_8}" "  " "tty"      # E
-    argparser_colorize "${space}" "      " "tty"   # E, _
-    argparser_colorize "${font_9}" "  " "tty"      # R
-    argparser_colorize "${space}" "  " "tty"       # R
-    argparser_colorize "${font_9}" "  " "tty"      # R
-    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${space}" "  " 1 true       # _
+    argparser_colorize "${font_1}" "  " 1 true      # A
+    argparser_colorize "${space}" "  " 1 true       # A
+    argparser_colorize "${font_1}" "  " 1 true      # A
+    argparser_colorize "${space}" "  " 1 true       # _
+    argparser_colorize "${font_2}" "  " 1 true      # R
+    argparser_colorize "${space}" "  " 1 true       # R
+    argparser_colorize "${font_2}" "  " 1 true      # R
+    argparser_colorize "${space}" "  " 1 true       # _
+    argparser_colorize "${font_3}" "  " 1 true      # G
+    argparser_colorize "${space}" "      " 1 true   # G, _
+    argparser_colorize "${font_4}" "  " 1 true      # P
+    argparser_colorize "${space}" "  " 1 true       # P
+    argparser_colorize "${font_4}" "  " 1 true      # P
+    argparser_colorize "${space}" "  " 1 true       # _
+    argparser_colorize "${font_5}" "  " 1 true      # A
+    argparser_colorize "${space}" "  " 1 true       # A
+    argparser_colorize "${font_5}" "  " 1 true      # A
+    argparser_colorize "${space}" "  " 1 true       # _
+    argparser_colorize "${font_6}" "  " 1 true      # R
+    argparser_colorize "${space}" "  " 1 true       # R
+    argparser_colorize "${font_6}" "  " 1 true      # R
+    argparser_colorize "${space}" "  " 1 true       # _
+    argparser_colorize "${font_7}" "  " 1 true      # S
+    argparser_colorize "${space}" "      " 1 true   # S, _
+    argparser_colorize "${font_8}" "  " 1 true      # E
+    argparser_colorize "${space}" "      " 1 true   # E, _
+    argparser_colorize "${font_9}" "  " 1 true      # R
+    argparser_colorize "${space}" "  " 1 true       # R
+    argparser_colorize "${font_9}" "  " 1 true      # R
+    argparser_colorize "${space}" "  " 1 true       # _
     printf '\n'
 
     # Output the fourth line, containing the third of five lines of the
     # letters.
-    argparser_colorize "${space}" "  " "tty"       # _
-    argparser_colorize "${font_1}" "      " "tty"  # A
-    argparser_colorize "${space}" "  " "tty"       # _
-    argparser_colorize "${font_2}" "      " "tty"  # R
-    argparser_colorize "${space}" "  " "tty"       # _
-    argparser_colorize "${font_3}" "     " "tty"   # G
-    argparser_colorize "${space}" "   " "tty"      # G, _
-    argparser_colorize "${font_4}" "     " "tty"   # P
-    argparser_colorize "${space}" "   " "tty"      # P, _
-    argparser_colorize "${font_5}" "      " "tty"  # A
-    argparser_colorize "${space}" "  " "tty"       # _
-    argparser_colorize "${font_6}" "      " "tty"  # R
-    argparser_colorize "${space}" "   " "tty"      # _, S
-    argparser_colorize "${font_7}" "    " "tty"    # S
-    argparser_colorize "${space}" "   " "tty"      # S, _
-    argparser_colorize "${font_8}" "      " "tty"  # E
-    argparser_colorize "${space}" "  " "tty"       # _
-    argparser_colorize "${font_9}" "      " "tty"  # R
-    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${space}" "  " 1 true       # _
+    argparser_colorize "${font_1}" "      " 1 true  # A
+    argparser_colorize "${space}" "  " 1 true       # _
+    argparser_colorize "${font_2}" "      " 1 true  # R
+    argparser_colorize "${space}" "  " 1 true       # _
+    argparser_colorize "${font_3}" "     " 1 true   # G
+    argparser_colorize "${space}" "   " 1 true      # G, _
+    argparser_colorize "${font_4}" "     " 1 true   # P
+    argparser_colorize "${space}" "   " 1 true      # P, _
+    argparser_colorize "${font_5}" "      " 1 true  # A
+    argparser_colorize "${space}" "  " 1 true       # _
+    argparser_colorize "${font_6}" "      " 1 true  # R
+    argparser_colorize "${space}" "   " 1 true      # _, S
+    argparser_colorize "${font_7}" "    " 1 true    # S
+    argparser_colorize "${space}" "   " 1 true      # S, _
+    argparser_colorize "${font_8}" "      " 1 true  # E
+    argparser_colorize "${space}" "  " 1 true       # _
+    argparser_colorize "${font_9}" "      " 1 true  # R
+    argparser_colorize "${space}" "  " 1 true       # _
     printf '\n'
 
     # Output the fifth line, containing the fourth of five lines of the
     # letters.
-    argparser_colorize "${space}" "  " "tty"       # _
-    argparser_colorize "${font_1}" "  " "tty"      # A
-    argparser_colorize "${space}" "  " "tty"       # A
-    argparser_colorize "${font_1}" "  " "tty"      # A
-    argparser_colorize "${space}" "  " "tty"       # _
-    argparser_colorize "${font_2}" "  " "tty"      # R
-    argparser_colorize "${space}" " " "tty"        # R
-    argparser_colorize "${font_2}" "  " "tty"      # R
-    argparser_colorize "${space}" "   " "tty"      # R, _
-    argparser_colorize "${font_3}" "  " "tty"      # G
-    argparser_colorize "${space}" "  " "tty"       # G
-    argparser_colorize "${font_3}" "  " "tty"      # G
-    argparser_colorize "${space}" "  " "tty"       # _
-    argparser_colorize "${font_4}" "  " "tty"      # P
-    argparser_colorize "${space}" "      " "tty"   # P, _
-    argparser_colorize "${font_5}" "  " "tty"      # A
-    argparser_colorize "${space}" "  " "tty"       # A
-    argparser_colorize "${font_5}" "  " "tty"      # A
-    argparser_colorize "${space}" "  " "tty"       # _
-    argparser_colorize "${font_6}" "  " "tty"      # R
-    argparser_colorize "${space}" " " "tty"        # R
-    argparser_colorize "${font_6}" "  " "tty"      # R
-    argparser_colorize "${space}" "       " "tty"  # R, _, S
-    argparser_colorize "${font_7}" "  " "tty"      # S
-    argparser_colorize "${space}" "  " "tty"       # _
-    argparser_colorize "${font_8}" "  " "tty"      # E
-    argparser_colorize "${space}" "      " "tty"   # E, _
-    argparser_colorize "${font_9}" "  " "tty"      # R
-    argparser_colorize "${space}" " " "tty"        # R
-    argparser_colorize "${font_9}" "  " "tty"      # R
-    argparser_colorize "${space}" "   " "tty"      # R, _
+    argparser_colorize "${space}" "  " 1 true       # _
+    argparser_colorize "${font_1}" "  " 1 true      # A
+    argparser_colorize "${space}" "  " 1 true       # A
+    argparser_colorize "${font_1}" "  " 1 true      # A
+    argparser_colorize "${space}" "  " 1 true       # _
+    argparser_colorize "${font_2}" "  " 1 true      # R
+    argparser_colorize "${space}" " " 1 true        # R
+    argparser_colorize "${font_2}" "  " 1 true      # R
+    argparser_colorize "${space}" "   " 1 true      # R, _
+    argparser_colorize "${font_3}" "  " 1 true      # G
+    argparser_colorize "${space}" "  " 1 true       # G
+    argparser_colorize "${font_3}" "  " 1 true      # G
+    argparser_colorize "${space}" "  " 1 true       # _
+    argparser_colorize "${font_4}" "  " 1 true      # P
+    argparser_colorize "${space}" "      " 1 true   # P, _
+    argparser_colorize "${font_5}" "  " 1 true      # A
+    argparser_colorize "${space}" "  " 1 true       # A
+    argparser_colorize "${font_5}" "  " 1 true      # A
+    argparser_colorize "${space}" "  " 1 true       # _
+    argparser_colorize "${font_6}" "  " 1 true      # R
+    argparser_colorize "${space}" " " 1 true        # R
+    argparser_colorize "${font_6}" "  " 1 true      # R
+    argparser_colorize "${space}" "       " 1 true  # R, _, S
+    argparser_colorize "${font_7}" "  " 1 true      # S
+    argparser_colorize "${space}" "  " 1 true       # _
+    argparser_colorize "${font_8}" "  " 1 true      # E
+    argparser_colorize "${space}" "      " 1 true   # E, _
+    argparser_colorize "${font_9}" "  " 1 true      # R
+    argparser_colorize "${space}" " " 1 true        # R
+    argparser_colorize "${font_9}" "  " 1 true      # R
+    argparser_colorize "${space}" "   " 1 true      # R, _
     printf '\n'
 
     # Output the sixth line, containing the fifth of five lines of the
     # letters.
-    argparser_colorize "${space}" "  " "tty"       # _
-    argparser_colorize "${font_1}" "  " "tty"      # A
-    argparser_colorize "${space}" "  " "tty"       # A
-    argparser_colorize "${font_1}" "  " "tty"      # A
-    argparser_colorize "${space}" "  " "tty"       # _
-    argparser_colorize "${font_2}" "  " "tty"      # R
-    argparser_colorize "${space}" "  " "tty"       # R
-    argparser_colorize "${font_2}" "  " "tty"      # R
-    argparser_colorize "${space}" "   " "tty"      # _, G
-    argparser_colorize "${font_3}" "    " "tty"    # G
-    argparser_colorize "${space}" "   " "tty"      # G, _
-    argparser_colorize "${font_4}" "  " "tty"      # P
-    argparser_colorize "${space}" "      " "tty"   # P, _
-    argparser_colorize "${font_5}" "  " "tty"      # A
-    argparser_colorize "${space}" "  " "tty"       # A
-    argparser_colorize "${font_5}" "  " "tty"      # A
-    argparser_colorize "${space}" "  " "tty"       # _
-    argparser_colorize "${font_6}" "  " "tty"      # R
-    argparser_colorize "${space}" "  " "tty"       # R
-    argparser_colorize "${font_6}" "  " "tty"      # R
-    argparser_colorize "${space}" "  " "tty"       # _
-    argparser_colorize "${font_7}" "     " "tty"   # S
-    argparser_colorize "${space}" "   " "tty"      # S, _
-    argparser_colorize "${font_8}" "      " "tty"  # E
-    argparser_colorize "${space}" "  " "tty"       # _
-    argparser_colorize "${font_9}" "  " "tty"      # R
-    argparser_colorize "${space}" "  " "tty"       # R
-    argparser_colorize "${font_9}" "  " "tty"      # R
-    argparser_colorize "${space}" "  " "tty"       # _
+    argparser_colorize "${space}" "  " 1 true       # _
+    argparser_colorize "${font_1}" "  " 1 true      # A
+    argparser_colorize "${space}" "  " 1 true       # A
+    argparser_colorize "${font_1}" "  " 1 true      # A
+    argparser_colorize "${space}" "  " 1 true       # _
+    argparser_colorize "${font_2}" "  " 1 true      # R
+    argparser_colorize "${space}" "  " 1 true       # R
+    argparser_colorize "${font_2}" "  " 1 true      # R
+    argparser_colorize "${space}" "   " 1 true      # _, G
+    argparser_colorize "${font_3}" "    " 1 true    # G
+    argparser_colorize "${space}" "   " 1 true      # G, _
+    argparser_colorize "${font_4}" "  " 1 true      # P
+    argparser_colorize "${space}" "      " 1 true   # P, _
+    argparser_colorize "${font_5}" "  " 1 true      # A
+    argparser_colorize "${space}" "  " 1 true       # A
+    argparser_colorize "${font_5}" "  " 1 true      # A
+    argparser_colorize "${space}" "  " 1 true       # _
+    argparser_colorize "${font_6}" "  " 1 true      # R
+    argparser_colorize "${space}" "  " 1 true       # R
+    argparser_colorize "${font_6}" "  " 1 true      # R
+    argparser_colorize "${space}" "  " 1 true       # _
+    argparser_colorize "${font_7}" "     " 1 true   # S
+    argparser_colorize "${space}" "   " 1 true      # S, _
+    argparser_colorize "${font_8}" "      " 1 true  # E
+    argparser_colorize "${space}" "  " 1 true       # _
+    argparser_colorize "${font_9}" "  " 1 true      # R
+    argparser_colorize "${space}" "  " 1 true       # R
+    argparser_colorize "${font_9}" "  " 1 true      # R
+    argparser_colorize "${space}" "  " 1 true       # _
     printf '\n'
 
     # Output the seventh line, which is empty again.
-    argparser_colorize "${space}" "                                " "tty"  # _
-    argparser_colorize "${space}" "                                " "tty"  # _
-    argparser_colorize "${space}" "          " "tty"                        # _
+    argparser_colorize "${space}" "                              " 1 true  # _
+    argparser_colorize "${space}" "                              " 1 true  # _
+    argparser_colorize "${space}" "              " 1 true                  # _
     printf '\n'
 }
 
