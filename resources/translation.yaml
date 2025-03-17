@@ -182,18 +182,18 @@ Error env var file 1111:
 
 Error env var styles:
   en: >
-    Error: The environment variable "%s" is set to "%s", but the
-    comma-separated values must lie in {black, red, green, yellow, blue,
-    magenta, cyan, white} for colors and in {normal, bold, faint, italic,
-    underline, double, overline, crossed-out, blink, reverse} for styles.
+    Error: The environment variable "%s" is set to "%s", but the values must
+    lie in {black, red, green, yellow, blue, magenta, cyan, white} for colors
+    and in {normal, bold, faint, italic, underline, double, overline,
+    crossed-out, blink, reverse} for styles.
   de: >
-    Fehler: Die Umgebungsvariable "%s" ist auf "%s" gesetzt, die
-    Komma-getrennten Werte müssen aber in {black, red, green, yellow, blue,
-    magenta, cyan, white} (also {schwarz, rot, grün, gelb, blau, magenta, cyan,
-    weiß}) für Farben und in {normal, bold, faint, italic, underline, double,
-    overline, crossed-out, blink, reverse} (also {normal, fett, blass, kursiv,
-    unterstrichen, doppelt unterstrichen, überstrichen, durchgestrichen,
-    blinkend, revers} für Stile liegen.
+    Fehler: Die Umgebungsvariable "%s" ist auf "%s" gesetzt, die Werte müssen
+    aber in {black, red, green, yellow, blue, magenta, cyan, white} (also
+    {schwarz, rot, grün, gelb, blau, magenta, cyan, weiß}) für Farben und in
+    {normal, bold, faint, italic, underline, double, overline, crossed-out,
+    blink, reverse} (also {normal, fett, blass, kursiv, unterstrichen, doppelt
+    unterstrichen, überstrichen, durchgestrichen, blinkend, revers} für Stile
+    liegen.
 
 Error env var option type:
   en: >

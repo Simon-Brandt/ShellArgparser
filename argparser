@@ -234,23 +234,24 @@ function argparser_check_color_or_style() {
     # Arguments:
     # - $1: the colors and/or styles to use as comma-separated list
     #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+    #
     # Return value:
     # - 0, if all colors and/or styles are implemented
     # - 1, else
 
     # Define the local variables.
-    local -a colors
     local request
     local requests
-    local style
     local -a styles
 
     # Read the argument.
     requests="$1"
 
-    # Define the arrays of implemented colors and styles.
+    # Define the array of implemented colors and styles.
     # shellcheck disable=SC2190  # Indexed, not associative array.
-    colors=(
+    styles=(
         black
         red
         green
@@ -259,10 +260,6 @@ function argparser_check_color_or_style() {
         magenta
         cyan
         white
-    )
-
-    # shellcheck disable=SC2190  # Indexed, not associative array.
-    styles=(
         normal
         bold
         faint
@@ -279,11 +276,9 @@ function argparser_check_color_or_style() {
     # Then, print the string and reset the color and style.  If a
     # non-existing color or style is requested, abort the script with
     # an error message.
-    IFS="," read -r -a requests <<< "${requests}"
+    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a requests <<< "${requests}"
     for request in "${requests[@]}"; do
-        if ! argparser_in_array "${request}" "${colors[@]}" \
-            && ! argparser_in_array "${request}" "${styles[@]}"
-        then
+        if ! argparser_in_array "${request}" "${styles[@]}"; then
             return 1
         fi
     done
@@ -1492,11 +1487,11 @@ function argparser_check_env_vars() {
     for var in "${vars[@]}"; do
         if ! argparser_check_color_or_style "${!var}"; then
             error_message="Error: The environment variable \"%s\" is set to "
-            error_message+="\"%s\", but the comma-separated values must lie "
-            error_message+="in {black, red, green, yellow, blue, magenta, "
-            error_message+="cyan, white} for colors and in {normal, bold, "
-            error_message+="faint, italic, underline, double, overline, "
-            error_message+="crossed-out, blink, reverse} for styles."
+            error_message+="\"%s\", but the values must lie in {black, red, "
+            error_message+="green, yellow, blue, magenta, cyan, white} for "
+            error_message+="colors and in {normal, bold, faint, italic, "
+            error_message+="underline, double, overline, crossed-out, blink, "
+            error_message+="reverse} for styles."
 
             argparser_translate "Error env var styles" "${error_message}" \
                 "${var}" "${!var}"
