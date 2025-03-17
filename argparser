@@ -298,11 +298,11 @@ function argparser_check_file() {
     # Arguments:
     # - $1: the file to check
     #
-    # Output:
-    # - a bit mask with four bits set to 0 (true) if the file exists
-    #   (first bit), is a regular file (second bit), is readable (third
-    #   bit), and/or has a size greater than 0 bytes (fourth bit), else
-    #   set to 1 (false)
+    # Nonlocals:
+    # - file_attributes: a bit mask with four bits set to 0 (true) if
+    #   the file exists (first bit), is a regular file (second bit), is
+    #   readable (third bit), and/or has a size greater than 0 bytes
+    #   (fourth bit), else set to 1 (false)
 
     # Define the local variable.
     local file
@@ -312,27 +312,27 @@ function argparser_check_file() {
 
     # Check the variable's value.
     if [[ -e "${file}" ]]; then
-        printf 0
+        file_attributes="0"
     else
-        printf 1
+        file_attributes="1"
     fi
 
     if [[ -f "${file}" ]]; then
-        printf 0
+        file_attributes+="0"
     else
-        printf 1
+        file_attributes+="1"
     fi
 
     if [[ -r "${file}" ]]; then
-        printf 0
+        file_attributes+="0"
     else
-        printf 1
+        file_attributes+="1"
     fi
 
     if [[ -s "${file}" ]]; then
-        printf 0
+        file_attributes+="0"
     else
-        printf 1
+        file_attributes+="1"
     fi
 }
 
@@ -799,9 +799,9 @@ function argparser_read_configuration() {
     # ARGPARSER_WARNING_STYLE
 
     # Define the local variables.
-    local attributes
     local error_message
     local -a error_messages
+    local file_attributes
     local is_extglob_set
     local line
     local -a lines
@@ -820,11 +820,11 @@ function argparser_read_configuration() {
     # needed ones to default values, if ${ARGPARSER_CHECK_ENV_VARS}
     # isn't set to false (and by this, the checking hasn't been
     # explicitly disabled).
-    attributes="$(argparser_check_file "${ARGPARSER_CONFIGURATION_FILE}")"
-    if [[ "${attributes}" != 0000 ]]; then
+    argparser_check_file "${ARGPARSER_CONFIGURATION_FILE}"
+    if [[ "${file_attributes}" != "0000" ]]; then
         error_message="Error: The environment variable \"%s\" is set to "
         error_message+="\"%s\", but the referenced file "
-        case "${attributes}" in
+        case "${file_attributes}" in
             0001) error_message+="is empty." ;;
             0010) error_message+="is not readable." ;;
             0011) error_message+="is not readable and empty." ;;
@@ -1311,9 +1311,9 @@ function argparser_check_env_vars() {
     # - ARGPARSER_WARNING_STYLE (read-only)
 
     # Define the local variables.
-    local attributes
     local error_message
     local -a error_messages
+    local file_attributes
     local i
     local translation
     local var
@@ -1455,11 +1455,11 @@ function argparser_check_env_vars() {
         ARGPARSER_USAGE_FILE
     )
     for var in "${vars[@]}"; do
-        attributes="$(argparser_check_file "${!var}")"
-        if [[ -n "${!var}" && "${attributes}" != 0000 ]]; then
+        argparser_check_file "${!var}"
+        if [[ -n "${!var}" && "${file_attributes}" != "0000" ]]; then
             error_message="Error: The environment variable \"%s\" is set to "
             error_message+="\"%s\", but the referenced file "
-            case "${attributes}" in
+            case "${file_attributes}" in
                 0001) error_message+="is empty." ;;
                 0010) error_message+="is not readable." ;;
                 0011) error_message+="is not readable and empty." ;;
@@ -1475,7 +1475,7 @@ function argparser_check_env_vars() {
                 1111) error_message+="does not exist." ;;
             esac
 
-            argparser_translate "Error env var file ${attributes}" \
+            argparser_translate "Error env var file ${file_attributes}" \
                 "${error_message}" "${var}" "${!var}"
             error_message="${translation}"
             error_messages+=("${error_message}")
@@ -1640,9 +1640,9 @@ function argparser_read_translation() {
     # - ARGPARSER_TRANSLATION_FILE (read-only)
 
     # Define the local variables.
-    local attributes
     local error_message
     local -a error_messages
+    local file_attributes
     local group
     local is_continued
     local language
@@ -1656,11 +1656,11 @@ function argparser_read_translation() {
     # needed ones to default values, if ${ARGPARSER_CHECK_ENV_VARS}
     # isn't set to false (and by this, the checking hasn't been
     # explicitly disabled).
-    attributes="$(argparser_check_file "${ARGPARSER_TRANSLATION_FILE}")"
-    if [[ "${attributes}" != 0000 ]]; then
+    argparser_check_file "${ARGPARSER_TRANSLATION_FILE}"
+    if [[ "${file_attributes}" != "0000" ]]; then
         error_message="Error: The environment variable \"%s\" is set to "
         error_message+="\"%s\", but the referenced file "
-        case "${attributes}" in
+        case "${file_attributes}" in
             0001) error_message+="is empty." ;;
             0010) error_message+="is not readable." ;;
             0011) error_message+="is not readable and empty." ;;
