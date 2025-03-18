@@ -2613,10 +2613,17 @@ function argparser_check_args_definition_positional_values() {
                     && ! argparser_in_array "${default_value}" \
                         "${choice_values[@]}"
                 then
-                    choice_value="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
-                        printf '%s' "${choice_values[*]}")"
-                    default_value="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
-                        printf '%s' "${default_values[*]}")"
+                    choice_value="${choice_values[0]}"
+                    for (( i = 1; i < "${#choice_values[@]}"; i++ )); do
+                        choice_value+="${ARGPARSER_ARG_DELIMITER_2}"
+                        choice_value+="${choice_values[i]}"
+                    done
+
+                    default_value="${default_values[0]}"
+                    for (( i = 1; i < "${#default_values[@]}"; i++ )); do
+                        default_value+="${ARGPARSER_ARG_DELIMITER_2}"
+                        default_value+="${default_values[i]}"
+                    done
 
                     error_message="Error: The positional argument with the "
                     error_message+="identifier \"%s\" accepts only the choice "
@@ -2877,8 +2884,12 @@ function argparser_check_args_definition_option_values() {
             && "${default_values[0]}" != true \
             && "${default_values[0]}" != false ]]
         then
-            default_value="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
-                printf '%s' "${default_values[*]}")"
+            default_value="${default_values[0]}"
+            for (( i = 1; i < "${#default_values[@]}"; i++ )); do
+                default_value+="${ARGPARSER_ARG_DELIMITER_2}"
+                default_value+="${default_values[i]}"
+            done
+
             error_message="Error: The argument with the identifier \"%s\" "
             error_message+="must be true or false, but has {%s} given as "
             error_message+="default."
@@ -2925,8 +2936,12 @@ function argparser_check_args_definition_option_values() {
         if [[ "${choice_values[0]}" != "-" ]]; then
             # Check that flags have no choice values.
             if [[ "${arg_number}" == 0 ]]; then
-                choice_value="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
-                    printf '%s' "${choice_values[*]}")"
+                choice_value="${choice_values[0]}"
+                for (( i = 1; i < "${#choice_values[@]}"; i++ )); do
+                    choice_value+="${ARGPARSER_ARG_DELIMITER_2}"
+                    choice_value+="${choice_values[i]}"
+                done
+
                 error_message="Error: The argument with the identifier \"%s\" "
                 error_message+="accepts no choice values, but has {%s} given."
 
@@ -2942,10 +2957,18 @@ function argparser_check_args_definition_option_values() {
                     && ! argparser_in_array "${default_value}" \
                         "${choice_values[@]}"
                 then
-                    choice_value="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
-                        printf '%s' "${choice_values[*]}")"
-                    default_value="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
-                        printf '%s' "${default_values[*]}")"
+                    choice_value="${choice_values[0]}"
+                    for (( i = 1; i < "${#choice_values[@]}"; i++ )); do
+                        choice_value+="${ARGPARSER_ARG_DELIMITER_2}"
+                        choice_value+="${choice_values[i]}"
+                    done
+
+                    default_value="${default_values[0]}"
+                    for (( i = 1; i < "${#default_values[@]}"; i++ )); do
+                        default_value+="${ARGPARSER_ARG_DELIMITER_2}"
+                        default_value+="${default_values[i]}"
+                    done
+
                     error_message="Error: The argument with the identifier "
                     error_message+="\"%s\" accepts only the choice values "
                     error_message+="{%s}, but has {%s} given as default."
@@ -3903,12 +3926,15 @@ function argparser_check_arg_values() {
     # Define the local variables.
     local arg_key
     local arg_number
+    local choice_value
     local -a choice_values
     local count
     local count_hyphen
     local count_plus
+    local default_value
     local -a default_values
     local error_message
+    local i
     local note
     local -a notes
     local option_names
@@ -4050,8 +4076,11 @@ function argparser_check_arg_values() {
                 # warning message as for the absence case, but set the
                 # values to the default values and continue.
                 if [[ "${arg_key}" != "ARGPARSER_ARG_DELIMITER_2" ]]; then
-                    default_values=("$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
-                        printf '%s' "${default_values[*]}")")
+                    default_value="${default_values[0]}"
+                    for (( i = 1; i < "${#default_values[@]}"; i++ )); do
+                        default_value+="${ARGPARSER_ARG_DELIMITER_2}"
+                        default_value+="${default_values[i]}"
+                    done
                 fi
 
                 if [[ "${arg_number}" == 1 ]]; then
@@ -4061,7 +4090,7 @@ function argparser_check_arg_values() {
 
                     argparser_translate "Warning wrong arg number 1" \
                         "${warning_message}" "${option_names}" \
-                        "${#values[@]}" "${default_values[0]}"
+                        "${#values[@]}" "${default_value}"
                     warning_message="${translation}"
                 elif [[ "${arg_number}" == "+" ]]; then
                     warning_message="Warning: The argument \"%s\" requires at "
@@ -4070,7 +4099,7 @@ function argparser_check_arg_values() {
 
                     argparser_translate "Warning wrong arg number 2" \
                         "${warning_message}" "${option_names}" \
-                        "${#values[@]}" "${default_values[0]}"
+                        "${#values[@]}" "${default_value}"
                     warning_message="${translation}"
                 else
                     warning_message="Warning: The argument \"%s\" requires "
@@ -4079,7 +4108,7 @@ function argparser_check_arg_values() {
 
                     argparser_translate "Warning wrong arg number 3" \
                         "${warning_message}" "${option_names}" \
-                        "${arg_number}" "${#values[@]}" "${default_values[0]}"
+                        "${arg_number}" "${#values[@]}" "${default_value}"
                     warning_message="${translation}"
                 fi
                 messages+=("${warning_message}")
@@ -4123,15 +4152,22 @@ function argparser_check_arg_values() {
     if [[ "${choice_values[0]}" != "-" ]]; then
         for value in "${values[@]}"; do
             if ! argparser_in_array "${value}" "${choice_values[@]}"; then
-                choice_values=("$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; \
-                    printf '%s' "${choice_values[*]}")")
-                values=("$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; printf '%s' \
-                    "${values[*]}")")
+                choice_value="${choice_values[0]}"
+                for (( i = 1; i < "${#choice_values[@]}"; i++ )); do
+                    choice_value+="${ARGPARSER_ARG_DELIMITER_2}"
+                    choice_value+="${choice_values[i]}"
+                done
+
+                value="${values[0]}"
+                for (( i = 1; i < "${#values[@]}"; i++ )); do
+                    value+="${ARGPARSER_ARG_DELIMITER_2}${values[i]}"
+                done
+
                 error_message="Error: The argument \"%s\" must be in {%s}, "
                 error_message+="but is {%s}."
 
                 argparser_translate "Error arg choice" "${error_message}" \
-                    "${option_names}" "${choice_values[0]}" "${values[0]}"
+                    "${option_names}" "${choice_value}" "${value}"
                 error_message="${translation}"
                 messages+=("${error_message}")
                 return
@@ -4219,7 +4255,10 @@ function argparser_check_arg_values() {
     done
 
     # Output the checked values.
-    value="$(IFS="${ARGPARSER_ARG_DELIMITER_2}"; printf '%s' "${values[*]}")"
+    value="${values[0]}"
+    for (( i = 1; i < "${#values[@]}"; i++ )); do
+        value+="${ARGPARSER_ARG_DELIMITER_2}${values[i]}"
+    done
     messages+=("Value: ${value}")
 }
 
