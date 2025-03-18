@@ -5510,12 +5510,16 @@ function argparser_create_usage_message() {
     local choice_values
     local default_values
     local header
+    local i
+    local line
     local -a lines
+    local long_option
     local -a long_option_default_args
     local -a long_option_required_args
     local -a long_options
     local -a positional_default_args
     local -a positional_required_args
+    local short_option
     local -a short_option_default_args
     local -a short_option_required_args
     local -a short_options
@@ -5523,7 +5527,6 @@ function argparser_create_usage_message() {
     local usage_message
     local value_names
     local whitespace
-    local whitespace_len
 
     # Output the usage message's header, giving the script's name and
     # the existence of the -h | --help, -u | --usage, and -V | --version
@@ -5594,9 +5597,10 @@ function argparser_create_usage_message() {
     # length of the script name and the (translated) leading "Usage: ".
     # For a row-like orientation, only use one space.
     if [[ "${ARGPARSER_USAGE_MESSAGE_ORIENTATION}" == "column" ]]; then
-        whitespace_len="${#header}"
-        (( whitespace_len++ ))
-        whitespace="$(printf '\n%*s' "${whitespace_len}" "")"
+        whitespace=$'\n '
+        for (( i = 0; i < "${#header}"; i++ )); do
+            whitespace+=" "
+        done
     else
         whitespace=" "
     fi
@@ -5695,38 +5699,38 @@ function argparser_create_usage_message() {
         # style.
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a short_options \
             <<< "${short_options[0]}"
-        short_options=("$(printf -- "-%s${ARGPARSER_ARG_DELIMITER_2}" \
-            "${short_options[@]}")")
-        short_options=("${short_options[0]%?}")
+        short_options[0]="-${short_options[0]}"
+        for short_option in "${short_options[@]:1}"; do
+            short_options[0]+="${ARGPARSER_ARG_DELIMITER_2}-${short_option}"
+        done
+        short_options=("${short_options[0]}")
 
         # Define the line for the current argument.  The argument has
         # some short options and some default values and may have some
         # choice values or an argument number of 0 (i.e., it is a flag),
         # with the existence of each changing the look of the line.
         if [[ "${arg_number}" == 0 ]]; then  # Flag.
-            lines+=("$(printf '[%s]' "${short_options[0]}")")
+            lines+=("[${short_options[0]}]")
         elif [[ "${choice_values}" != "-" ]]; then  # Choice and default.
             if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
-                lines+=("$(printf '[%s={%s}...]' "${short_options[0]}" \
-                    "${choice_values}")")
+                lines+=("[${short_options[0]}={${choice_values}}...]")
             else
-                lines+=("$(printf '[%s={%s}]' "${short_options[0]}" \
-                    "${choice_values}")")
+                lines+=("[${short_options[0]}={${choice_values}}]")
             fi
         else  # Default only.
             if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
-                lines+=("$(printf '[%s=%s...]' "${short_options[0]}" \
-                    "${value_names}")")
+                lines+=("[${short_options[0]}=${value_names}...]")
             else
-                lines+=("$(printf '[%s=%s]' "${short_options[0]}" \
-                    "${value_names}")")
+                lines+=("[${short_options[0]}=${value_names}]")
             fi
         fi
     done
 
     if (( "${#lines[@]}" > 0 )); then
         mapfile -d "" -t lines < <(argparser_sort false "${lines[@]}")
-        usage_message+="$(printf "${whitespace}%s" "${lines[@]}")"
+        for line in "${lines[@]}"; do
+            usage_message+="${whitespace}${line}"
+        done
     fi
 
     # Output each keyword argument with long options and default values
@@ -5749,38 +5753,38 @@ function argparser_create_usage_message() {
         # style.
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a long_options \
             <<< "${long_options[0]}"
-        long_options=("$(printf -- "--%s${ARGPARSER_ARG_DELIMITER_2}" \
-            "${long_options[@]}")")
-        long_options=("${long_options[0]%?}")
+        long_options[0]="--${long_options[0]}"
+        for long_option in "${long_options[@]:1}"; do
+            long_options[0]+="${ARGPARSER_ARG_DELIMITER_2}--${long_option}"
+        done
+        long_options=("${long_options[0]}")
 
         # Define the line for the current argument.  The argument has
         # some long options and some default values and may have some
         # choice values or an argument number of 0 (i.e., it is a flag),
         # with the existence of each changing the look of the line.
         if [[ "${arg_number}" == 0 ]]; then  # Flag.
-            lines+=("$(printf '[%s]' "${long_options[0]}")")
+            lines+=("[${long_options[0]}]")
         elif [[ "${choice_values}" != "-" ]]; then  # Choice and default.
             if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
-                lines+=("$(printf '[%s={%s}...]' "${long_options[0]}" \
-                    "${choice_values}")")
+                lines+=("[${long_options[0]}={${choice_values}}...]")
             else
-                lines+=("$(printf '[%s={%s}]' "${long_options[0]}" \
-                    "${choice_values}")")
+                lines+=("[${long_options[0]}={${choice_values}}]")
             fi
         else  # Default only.
             if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
-                lines+=("$(printf '[%s=%s...]' "${long_options[0]}" \
-                    "${value_names}")")
+                lines+=("[${long_options[0]}=${value_names}...]")
             else
-                lines+=("$(printf '[%s=%s]' "${long_options[0]}" \
-                    "${value_names}")")
+                lines+=("[${long_options[0]}=${value_names}]")
             fi
         fi
     done
 
     if (( "${#lines[@]}" > 0 )); then
         mapfile -d "" -t lines < <(argparser_sort false "${lines[@]}")
-        usage_message+="$(printf "${whitespace}%s" "${lines[@]}")"
+        for line in "${lines[@]}"; do
+            usage_message+="${whitespace}${line}"
+        done
     fi
 
     # Output each keyword argument with short options and without
@@ -5803,9 +5807,11 @@ function argparser_create_usage_message() {
         # style.
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a short_options \
             <<< "${short_options[0]}"
-        short_options=("$(printf -- "-%s${ARGPARSER_ARG_DELIMITER_2}" \
-            "${short_options[@]}")")
-        short_options=("${short_options[0]%?}")
+        short_options[0]="-${short_options[0]}"
+        for short_option in "${short_options[@]:1}"; do
+            short_options[0]+="${ARGPARSER_ARG_DELIMITER_2}-${short_option}"
+        done
+        short_options=("${short_options[0]}")
 
         # Define the line for the current argument.  The argument has
         # some short options and no default values and may have some
@@ -5813,26 +5819,24 @@ function argparser_create_usage_message() {
         # the line.
         if [[ "${choice_values}" != "-" ]]; then  # Choice only.
             if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
-                lines+=("$(printf '%s={%s}...' "${short_options[0]}" \
-                    "${choice_values}")")
+                lines+=("${short_options[0]}={${choice_values}}...")
             else
-                lines+=("$(printf '%s={%s}' "${short_options[0]}" \
-                    "${choice_values}")")
+                lines+=("${short_options[0]}={${choice_values}}")
             fi
         else  # No choice nor default.
             if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
-                lines+=("$(printf '%s=%s...' "${short_options[0]}" \
-                    "${value_names}")")
+                lines+=("${short_options[0]}=${value_names}...")
             else
-                lines+=("$(printf '%s=%s' "${short_options[0]}" \
-                    "${value_names}")")
+                lines+=("${short_options[0]}=${value_names}")
             fi
         fi
     done
 
     if (( "${#lines[@]}" > 0 )); then
         mapfile -d "" -t lines < <(argparser_sort false "${lines[@]}")
-        usage_message+="$(printf "${whitespace}%s" "${lines[@]}")"
+        for line in "${lines[@]}"; do
+            usage_message+="${whitespace}${line}"
+        done
     fi
 
     # Output each keyword argument with long options and without default
@@ -5855,9 +5859,11 @@ function argparser_create_usage_message() {
         # style.
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a long_options \
             <<< "${long_options[0]}"
-        long_options=("$(printf -- "--%s${ARGPARSER_ARG_DELIMITER_2}" \
-            "${long_options[@]}")")
-        long_options=("${long_options[0]%?}")
+        long_options[0]="--${long_options[0]}"
+        for long_option in "${long_options[@]:1}"; do
+            long_options[0]+="${ARGPARSER_ARG_DELIMITER_2}--${long_option}"
+        done
+        long_options=("${long_options[0]}")
 
         # Define the line for the current argument.  The argument has
         # some long options and no default values and may have some
@@ -5865,26 +5871,24 @@ function argparser_create_usage_message() {
         # the line.
         if [[ "${choice_values}" != "-" ]]; then  # Choice only.
             if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
-                lines+=("$(printf '%s={%s}...' "${long_options[0]}" \
-                    "${choice_values}")")
+                lines+=("${long_options[0]}={${choice_values}}...")
             else
-                lines+=("$(printf '%s={%s}' "${long_options[0]}" \
-                    "${choice_values}")")
+                lines+=("${long_options[0]}={${choice_values}}")
             fi
         else  # No choice nor default.
             if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
-                lines+=("$(printf '%s=%s...' "${long_options[0]}" \
-                    "${value_names}")")
+                lines+=("${long_options[0]}=${value_names}...")
             else
-                lines+=("$(printf '%s=%s' "${long_options[0]}" \
-                    "${value_names}")")
+                lines+=("${long_options[0]}=${value_names}")
             fi
         fi
     done
 
     if (( "${#lines[@]}" > 0 )); then
         mapfile -d "" -t lines < <(argparser_sort false "${lines[@]}")
-        usage_message+="$(printf "${whitespace}%s" "${lines[@]}")"
+        for line in "${lines[@]}"; do
+            usage_message+="${whitespace}${line}"
+        done
     fi
 
     # Output each positional argument with default values and sort them
@@ -5901,22 +5905,24 @@ function argparser_create_usage_message() {
         # existence of each changing the look of the line.
         if [[ "${choice_values}" != "-" ]]; then  # Choice and default.
             if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
-                lines+=("$(printf '[{%s}...]' "${choice_values}")")
+                lines+=("[{${choice_values}}...]")
             else
-                lines+=("$(printf '[{%s}]' "${choice_values}")")
+                lines+=("[{${choice_values}}]")
             fi
         else  # Default only.
             if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
-                lines+=("$(printf '[%s...]' "${value_names}")")
+                lines+=("[${value_names}...]")
             else
-                lines+=("$(printf '[%s]' "${value_names}")")
+                lines+=("[${value_names}]")
             fi
         fi
     done
 
     if (( "${#lines[@]}" > 0 )); then
         mapfile -d "" -t lines < <(argparser_sort false "${lines[@]}")
-        usage_message+="$(printf "${whitespace}%s" "${lines[@]}")"
+        for line in "${lines[@]}"; do
+            usage_message+="${whitespace}${line}"
+        done
     fi
 
     # Output each positional argument without default values and sort
@@ -5933,22 +5939,24 @@ function argparser_create_usage_message() {
         # existence of each changing the look of the line.
         if [[ "${choice_values}" != "-" ]]; then  # Choice only.
             if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
-                lines+=("$(printf '{%s}...' "${choice_values}")")
+                lines+=("{${choice_values}}...")
             else
-                lines+=("$(printf '{%s}' "${choice_values}")")
+                lines+=("{${choice_values}}")
             fi
         else  # No choice nor default.
             if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
-                lines+=("$(printf '%s...' "${value_names}")")
+                lines+=("${value_names}...")
             else
-                lines+=("$(printf '%s' "${value_names}")")
+                lines+=("${value_names}")
             fi
         fi
     done
 
     if (( "${#lines[@]}" > 0 )); then
         mapfile -d "" -t lines < <(argparser_sort false "${lines[@]}")
-        usage_message+="$(printf "${whitespace}%s" "${lines[@]}")"
+        for line in "${lines[@]}"; do
+            usage_message+="${whitespace}${line}"
+        done
     fi
 
     # Output the final usage message.
