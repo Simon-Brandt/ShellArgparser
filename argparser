@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-03-17
+# Last Modification: 2025-03-18
 
 # TODO: Support mutually exclusive argument groups.
 # TODO: Consider using the Bash 5.3 form "${ command ... ; }" for the
@@ -463,9 +463,8 @@ function argparser_uniq() {
     # Arguments:
     # - $@: the array to filter
     #
-    # Output:
-    # - the filtered array as string, concatenated and terminated with
-    #   null characters
+    # Nonlocals:
+    # - filtered_array: the filtered array
 
     # Define the local variables.
     local array
@@ -476,10 +475,11 @@ function argparser_uniq() {
     array=("$@")
 
     # Filter the array and output it.
-    prev_element=""
-    for element in "${array[@]}"; do
+    prev_element="${array[0]}"
+    filtered_array=("${array[0]}")
+    for element in "${array[@]:1}"; do
         if [[ "${element}" != "${prev_element}" ]]; then
-            printf '%s\0' "${element}"
+            filtered_array+=("${element}")
         fi
         prev_element="${element}"
     done
@@ -558,9 +558,8 @@ function argparser_sort() {
     # - $1: whether to reverse-sort the array
     # - $@: the array to sort
     #
-    # Output:
-    # - the sorted array as string, concatenated and terminated with
-    #   null characters
+    # Nonlocals:
+    # - sorted_array: the sorted array
 
     # Define the local variables.
     local array
@@ -575,11 +574,12 @@ function argparser_sort() {
     # Sort the array and output it, possibly after reversing it.
     argparser_quicksort 0 "$(( "${#array[@]}" - 1 ))"
     if [[ "${reverse}" == true ]]; then
+        sorted_array=( )
         for (( i = "${#array[@]}" - 1; i >= 0; i-- )); do
-            printf '%s\0' "${array[i]}"
+            sorted_array+=("${array[i]}")
         done
     else
-        printf '%s\0' "${array[@]}"
+        sorted_array=("${array[@]}")
     fi
 }
 
@@ -2264,14 +2264,15 @@ function argparser_check_args_definition_names() {
     local -a long_options
     local short_option
     local -a short_options
+    local -a sorted_array
     local translation
 
     # Get and sort all argument keys (identifiers), such that the
     # following loop is performed in alphabetical order of the
     # arguments, such that the error messages for duplicate option names
     # refer to the lexicographically earlier argument.
-    mapfile -d "" -t arg_keys \
-        < <(argparser_sort false "${!all_short_options[@]}")
+    argparser_sort false "${!all_short_options[@]}"
+    arg_keys=("${sorted_array[@]}")
 
     # Check that no short or long option is given twice for the same
     # argument or among multiples.
@@ -4815,6 +4816,7 @@ function argparser_create_help_message() {
     local remark
     local short_option
     local -a short_options
+    local -a sorted_array
     local -A sorted_col_1
     local -A sorted_col_2
     local -A sorted_col_3
@@ -5135,8 +5137,8 @@ function argparser_create_help_message() {
             sorted_col_3[${all_option_names[i]}]="${new_col_3[i]}"
         done
 
-        mapfile -d "" -t all_option_names \
-            < <(argparser_sort false "${all_option_names[@]}")
+        argparser_sort false "${all_option_names[@]}"
+        all_option_names=("${sorted_array[@]}")
 
         for i in "${!all_option_names[@]}"; do
             col_1+=("${sorted_col_1[${all_option_names[i]}]}")
@@ -5559,6 +5561,7 @@ function argparser_create_usage_message() {
     local -a short_option_default_args
     local -a short_option_required_args
     local -a short_options
+    local -a sorted_array
     local translation
     local usage_message
     local value_names
@@ -5763,7 +5766,9 @@ function argparser_create_usage_message() {
     done
 
     if (( "${#lines[@]}" > 0 )); then
-        mapfile -d "" -t lines < <(argparser_sort false "${lines[@]}")
+        argparser_sort false "${lines[@]}"
+        lines=("${sorted_array[@]}")
+    
         for line in "${lines[@]}"; do
             usage_message+="${whitespace}${line}"
         done
@@ -5817,7 +5822,9 @@ function argparser_create_usage_message() {
     done
 
     if (( "${#lines[@]}" > 0 )); then
-        mapfile -d "" -t lines < <(argparser_sort false "${lines[@]}")
+        argparser_sort false "${lines[@]}"
+        lines=("${sorted_array[@]}")
+
         for line in "${lines[@]}"; do
             usage_message+="${whitespace}${line}"
         done
@@ -5869,7 +5876,9 @@ function argparser_create_usage_message() {
     done
 
     if (( "${#lines[@]}" > 0 )); then
-        mapfile -d "" -t lines < <(argparser_sort false "${lines[@]}")
+        argparser_sort false "${lines[@]}"
+        lines=("${sorted_array[@]}")
+
         for line in "${lines[@]}"; do
             usage_message+="${whitespace}${line}"
         done
@@ -5921,7 +5930,9 @@ function argparser_create_usage_message() {
     done
 
     if (( "${#lines[@]}" > 0 )); then
-        mapfile -d "" -t lines < <(argparser_sort false "${lines[@]}")
+        argparser_sort false "${lines[@]}"
+        lines=("${sorted_array[@]}")
+
         for line in "${lines[@]}"; do
             usage_message+="${whitespace}${line}"
         done
@@ -5955,7 +5966,9 @@ function argparser_create_usage_message() {
     done
 
     if (( "${#lines[@]}" > 0 )); then
-        mapfile -d "" -t lines < <(argparser_sort false "${lines[@]}")
+        argparser_sort false "${lines[@]}"
+        lines=("${sorted_array[@]}")
+
         for line in "${lines[@]}"; do
             usage_message+="${whitespace}${line}"
         done
@@ -5989,7 +6002,9 @@ function argparser_create_usage_message() {
     done
 
     if (( "${#lines[@]}" > 0 )); then
-        mapfile -d "" -t lines < <(argparser_sort false "${lines[@]}")
+        argparser_sort false "${lines[@]}"
+        lines=("${sorted_array[@]}")
+
         for line in "${lines[@]}"; do
             usage_message+="${whitespace}${line}"
         done
@@ -6051,6 +6066,7 @@ function argparser_print_help_or_usage_message() {
     local -a lines
     local line_type
     local message
+    local -a sorted_array
     local style
     local translation
 
@@ -6087,7 +6103,8 @@ function argparser_print_help_or_usage_message() {
 
     # Sort the argument groups and prepend the positional arguments
     # group.
-    mapfile -d "" -t arg_groups < <(argparser_sort false "${arg_groups[@]}")
+    argparser_sort false "${arg_groups[@]}"
+    arg_groups=("${sorted_array[@]}")
     arg_groups=("${ARGPARSER_POSITIONAL_ARG_GROUP}" "${arg_groups[@]}")
 
     # Create the help or usage message groups, which are saved in an
@@ -6252,8 +6269,10 @@ function argparser_print_error_or_warning_message() {
     # Define the local variables.
     local exit
     local filter
+    local -a filtered_array
     local message
     local -a messages
+    local -a sorted_array
     local style
     local error_type
 
@@ -6296,10 +6315,12 @@ function argparser_print_error_or_warning_message() {
         done
 
         # Sort and filter the messages.
-        mapfile -d "" -t messages < <(argparser_sort false "${messages[@]}")
+        argparser_sort false "${messages[@]}"
+        messages=("${sorted_array[@]}")
 
         if [[ "${filter}" == true ]]; then
-            mapfile -d "" -t messages < <(argparser_uniq "${messages[@]}")
+            argparser_uniq "${messages[@]}"
+            messages=("${filtered_array[@]}")
         fi
 
         # Colorize the messages, if writing to a terminal or the escape
