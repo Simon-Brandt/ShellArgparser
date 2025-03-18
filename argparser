@@ -4,10 +4,10 @@
 # E-Mail: simon.brandt@uni-greifswald.de
 # Last Modification: 2025-03-17
 
-# TODO: Consider using the Bash 5.3 form "${ printf ... ; }" for command
-#       substitutions instead of "$(printf ...)" or nonlocal variables,
-#       additionally speeding up the argparser.
 # TODO: Support mutually exclusive argument groups.
+# TODO: Consider using the Bash 5.3 form "${ command ... ; }" for the
+#       command substitutions instead of "$(command ...)" or nonlocal
+#       variables.
 
 # Usage: Source this script with `source argparser -- "$@"` inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -817,7 +817,8 @@ function argparser_read_configuration() {
     # Locally disable errexit and enable extglob.
     local -
     set +o errexit
-    is_extglob_set="$(shopt -p extglob)"
+    shopt -q extglob
+    is_extglob_set="$?"
     shopt -s extglob
 
     # Check if the configuration file exists and is readable.  Else,
@@ -955,10 +956,10 @@ function argparser_read_configuration() {
         fi
     done
 
-    # Depending on the value of ${is_extglob_set}, which uses shopt's
-    # feature of storing the extglob state in a format reusable as
-    # input, possibly disable extglob.
-    eval "${is_extglob_set}"
+    # Possibly disable extglob, if it was previously unset.
+    if (( is_extglob_set == 1 )); then
+        shopt -u extglob
+    fi
 
     # Sort, filter, colorize, and print all error messages, then exit,
     # as the environment variables should be correctly read.
@@ -1599,7 +1600,7 @@ function argparser_check_env_vars() {
     )
     for i in "${!vars[@]}"; do
         var_1="${vars[i]}"
-        for var_2 in "${vars[@]:$((i + 1))}"; do
+        for var_2 in "${vars[@]:i+1}"; do
             if [[ -n "${!var_1}" && "${!var_1}" == "${!var_2}" ]]; then
                 error_message="Error: The environment variables \"%s\" and "
                 error_message+="\"%s\" point to the same file."
@@ -4330,16 +4331,17 @@ function argparser_parse_args() {
     # they inherit the option.
     local -
     set +o errexit
-    is_extglob_set="$(shopt -p extglob)"
+    shopt -q extglob
+    is_extglob_set="$?"
     shopt -s extglob
 
     # Check if the variable that ${ARGPARSER_ARG_ARRAY_NAME} refers to
     # is defined.  If not, guess how it may be called by searching the
-    # set variables (not functions, hence the set POSIX mode) for a
-    # variable name starting with "arg" to give a clearer error message.
-    # If no such variable name is found, skip that part of the message.
+    # set variables for a variable name starting with "arg" to give a
+    # clearer error message.  If no such variable name is found, skip
+    # that part of the message.
     if [[ ! -v "${ARGPARSER_ARG_ARRAY_NAME}" ]]; then
-        mapfile -t names <<< "$(set -o posix; set)"
+        mapfile -t names < <(compgen -v)
         for name in "${names[@]}"; do
             if [[ "${name}" == "arg"* ]]; then
                 name="${name%%=*}"
@@ -4659,10 +4661,10 @@ function argparser_parse_args() {
     args="$(declare -p args)"
     declare -g -A "${ARGPARSER_ARG_ARRAY_NAME}"="${args#*=}"
 
-    # Depending on the value of ${is_extglob_set}, which uses shopt's
-    # feature of storing the extglob state in a format reusable as
-    # input, possibly disable extglob.
-    eval "${is_extglob_set}"
+    # Possibly disable extglob, if it was previously unset.
+    if (( is_extglob_set == 1 )); then
+        shopt -u extglob
+    fi
 }
 
 function argparser_set_args() {
