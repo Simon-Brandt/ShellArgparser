@@ -6326,16 +6326,15 @@ function argparser_print_error_or_warning_message() {
         # Colorize the messages, if writing to a terminal or the escape
         # sequences shall be included in the file.  The test assumes
         # that argparser_print_error_or_warning_message is never run
-        # through command substitution, else [[ -t ${file_descriptor} ]]
-        # would always be false, i.e., it would impossible to tell if
-        # the final STDOUT/STDERR goes to a terminal.
+        # through command substitution, else [[ -t 2 ]] would always be
+        # false, i.e., it would impossible to tell if the final STDERR
+        # goes to a terminal.
         argparser_colorize "${style}" "" 2 false
         {
             # shellcheck disable=SC2059  # Escape sequence in variable.
             printf "${style}"
             printf "%s\n" "${messages[@]}"
-            if [[ "${ARGPARSER_USE_STYLES_IN_FILES}" == true \
-                || -t "${file_descriptor}" ]]
+            if [[ "${ARGPARSER_USE_STYLES_IN_FILES}" == true || -t 2 ]]
             then
                 printf '\e[0m'
             fi
