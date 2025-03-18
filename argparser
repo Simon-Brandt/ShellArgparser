@@ -3087,16 +3087,13 @@ function argparser_get_arg_key() {
     #   names (read-only)
     # - all_short_options: the associative array holding the short
     #   option names (read-only)
+    # - arg_key: the argument identifier, if the key exists, or the
+    #   empty string, else (when the option name is erroneous)
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
-    #
-    # Output:
-    # - the argument identifier, if the key exists
-    # - the empty string, else (when the option name is erroneous)
 
     # Define the local variables.
-    local arg_key
     local long_option
     local -a long_options
     local mode
@@ -3123,7 +3120,6 @@ function argparser_get_arg_key() {
             # Check the short options.
             for short_option in "${short_options[@]}"; do
                 if [[ "${option_name}" == "${short_option}" ]]; then
-                    printf '%s' "${arg_key}"
                     return
                 fi
             done
@@ -3142,14 +3138,13 @@ function argparser_get_arg_key() {
             # Check the long options.
             for long_option in "${long_options[@]}"; do
                 if [[ "${option_name}" == "${long_option}" ]]; then
-                    printf '%s' "${arg_key}"
                     return
                 fi
             done
         done
     fi
 
-    printf ""
+    arg_key=""
 }
 
 function argparser_get_option_names() {
@@ -3513,7 +3508,7 @@ function argparser_parse_long_option() {
     else
         values=("")
     fi
-    arg_key="$(argparser_get_arg_key "long" "${option_name}")"
+    argparser_get_arg_key "long" "${option_name}"
 
     # Output the argument, split into the option name and values, or an
     # error message.  In the latter case, output also the given
@@ -3661,7 +3656,7 @@ function argparser_parse_short_option() {
     else
         values=("")
     fi
-    arg_key="$(argparser_get_arg_key "short" "${option_name}")"
+    argparser_get_arg_key "short" "${option_name}"
 
     # Get the argument identifier for the given (and perhaps merged)
     # argument and output it, possibly along with the values following
@@ -3671,7 +3666,7 @@ function argparser_parse_short_option() {
         # merged value, after any character.
         for (( i = 0; i < "${#option_name}"; i++ )); do
             char="${option_name:i:1}"
-            arg_key="$(argparser_get_arg_key "short" "${char}")"
+            argparser_get_arg_key "short" "${char}"
             if [[ -z "${arg_key}" ]]; then
                 # Since the argument hasn't been found in the
                 # definition, output an error message and the argument.
