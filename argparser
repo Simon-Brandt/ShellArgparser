@@ -1357,16 +1357,19 @@ function argparser_check_env_vars() {
         ARGPARSER_USE_STYLES_IN_FILES
     )
     for var in "${vars[@]}"; do
-        if ! argparser_is_variable_bool "${!var}"; then
-            error_message="Error: The environment variable \"%s\" is set to "
-            error_message+="\"%s\", but must be a boolean, i.e., true or "
-            error_message+="false."
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values <<< "${!var}"
+        for value in "${values[@]}"; do
+            if ! argparser_is_variable_bool "${value}"; then
+                error_message="Error: The environment variable \"%s\" is set "
+                error_message+="to \"%s\", but must be a boolean, i.e., true "
+                error_message+="or false."
 
-            argparser_translate "Error env var bool" "${error_message}" \
-                "${var}" "${!var}"
-            error_message="${translation}"
-            error_messages+=("${error_message}")
-        fi
+                argparser_translate "Error env var bool" "${error_message}" \
+                    "${var}" "${!var}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            fi
+        done
     done
 
     # Check if all environment variables expected to be characters are
@@ -1378,16 +1381,25 @@ function argparser_check_env_vars() {
         ARGPARSER_USAGE_FILE_INCLUDE_CHAR
     )
     for var in "${vars[@]}"; do
-        if ! argparser_is_variable_char "${!var}"; then
-            error_message="Error: The environment variable \"%s\" is set to "
-            error_message+="\"%s\", but must be a character, i.e., a string "
-            error_message+="comprising one printable ASCII character."
-
-            argparser_translate "Error env var char" "${error_message}" \
-                "${var}" "${!var}"
-            error_message="${translation}"
-            error_messages+=("${error_message}")
+        if [[ "${var}" == "ARGPARSER_ARG_DELIMITER_2" ]]; then
+            values=("${!var}")
+        else
+            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values <<< "${!var}"
         fi
+
+        for value in "${values[@]}"; do
+            if ! argparser_is_variable_char "${value}"; then
+                error_message="Error: The environment variable \"%s\" is set "
+                error_message+="to \"%s\", but must be a character, i.e., a "
+                error_message+="string comprising one printable ASCII "
+                error_message+="character."
+
+                argparser_translate "Error env var char" "${error_message}" \
+                    "${var}" "${!var}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            fi
+        done
     done
 
     # Check if all environment variables to be used as Bash variable
@@ -1397,18 +1409,21 @@ function argparser_check_env_vars() {
         ARGPARSER_ARG_ARRAY_NAME
     )
     for var in "${vars[@]}"; do
-        if ! argparser_is_variable_identifier "${!var}"; then
-            error_message="Error: The environment variable \"%s\" is set to "
-            error_message+="\"%s\", but designed to be used as Bash variable "
-            error_message+="identifier, i.e., its value must start with a "
-            error_message+="letter or underscore and contain only letters, "
-            error_message+="digits, and underscores."
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values <<< "${!var}"
+        for value in "${values[@]}"; do
+            if ! argparser_is_variable_identifier "${value}"; then
+                error_message="Error: The environment variable \"%s\" is set "
+                error_message+="to \"%s\", but designed to be used as Bash "
+                error_message+="variable identifier, i.e., its value must "
+                error_message+="start with a letter or underscore and contain "
+                error_message+="only letters, digits, and underscores."
 
-            argparser_translate "Error env var identifier" "${error_message}" \
-                "${var}" "${!var}"
-            error_message="${translation}"
-            error_messages+=("${error_message}")
-        fi
+                argparser_translate "Error env var identifier" \
+                    "${error_message}" "${var}" "${!var}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            fi
+        done
     done
 
     # Check if all environment variables expected to be integers are
@@ -1421,16 +1436,20 @@ function argparser_check_env_vars() {
         ARGPARSER_USAGE_EXIT_CODE
     )
     for var in "${vars[@]}"; do
-        if ! argparser_is_variable_int "${!var}"; then
-            error_message="Error: The environment variable \"%s\" is set to "
-            error_message+="\"%s\", but must be an integer, i.e., comprise "
-            error_message+="only digits and possibly a leading sign."
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values <<< "${!var}"
+        for value in "${values[@]}"; do
+            if ! argparser_is_variable_int "${value}"; then
+                error_message="Error: The environment variable \"%s\" is set "
+                error_message+="to \"%s\", but must be an integer, i.e., "
+                error_message+="comprise only digits and possibly a leading "
+                error_message+="sign."
 
-            argparser_translate "Error env var int" "${error_message}" \
-                "${var}" "${!var}"
-            error_message="${translation}"
-            error_messages+=("${error_message}")
-        fi
+                argparser_translate "Error env var int" "${error_message}" \
+                    "${var}" "${!var}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            fi
+        done
     done
 
     # Check if all environment variables expected to be unsigned
@@ -1441,16 +1460,19 @@ function argparser_check_env_vars() {
         ARGPARSER_MAX_COL_WIDTH_3
     )
     for var in "${vars[@]}"; do
-        if ! argparser_is_variable_uint "${!var}"; then
-            error_message="Error: The environment variable \"%s\" is set to "
-            error_message+="\"%s\", but must be an unsigned integer, i.e., "
-            error_message+="comprise only digits and no sign."
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values <<< "${!var}"
+        for value in "${values[@]}"; do
+            if ! argparser_is_variable_uint "${value}"; then
+                error_message="Error: The environment variable \"%s\" is set "
+                error_message+="to \"%s\", but must be an unsigned integer, "
+                error_message+="i.e., comprise only digits and no sign."
 
-            argparser_translate "Error env var uint" "${error_message}" \
-                "${var}" "${!var}"
-            error_message="${translation}"
-            error_messages+=("${error_message}")
-        fi
+                argparser_translate "Error env var uint" "${error_message}" \
+                    "${var}" "${!var}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            fi
+        done
     done
 
     # Check if all environment variables expected to point to files have
@@ -1613,12 +1635,13 @@ function argparser_check_env_vars() {
         done
     done
 
-    # If there are error messages, sort, colorize, and print them, then
-    # exit, as parsing the arguments with a faulty environment variable
-    # configuration might be impossible.  If ${ARGPARSER_ERROR_STYLE} is
-    # among the faulty variables, the error messages cannot be properly
-    # colorized.  Thus, set the style to its default value.  The same
-    # holds true for ${ARGPARSER_ERROR_EXIT_CODE}.
+    # If there are error messages, sort, filter, colorize, and print
+    # them, then exit, as parsing the arguments with a faulty
+    # environment variable configuration might be impossible.  If
+    # ${ARGPARSER_ERROR_STYLE} is among the faulty variables, the error
+    # messages cannot be properly colorized.  Thus, set the style to its
+    # default value.  The same holds true for
+    # ${ARGPARSER_ERROR_EXIT_CODE}.
     for error_message in "${error_messages[@]}"; do
         if [[ "${error_message}" == *"ARGPARSER_ERROR_EXIT_CODE"* ]]; then
             ARGPARSER_ERROR_EXIT_CODE=1
@@ -1627,7 +1650,7 @@ function argparser_check_env_vars() {
         fi
     done
 
-    argparser_print_error_or_warning_message "error" false true \
+    argparser_print_error_or_warning_message "error" true true \
         "${error_messages[@]}"
 }
 
