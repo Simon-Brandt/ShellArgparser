@@ -221,6 +221,38 @@ Error env var delimiters:
     Fehler: Die Umgebungsvariablen "ARGPARSER_ARG_DELIMITER_1" und
     "ARGPARSER_ARG_DELIMITER_2" müssen unterschiedliche Werte haben.
 
+Error env var short name hyphen:
+  en: >
+    Error: The environment variable "%s" has a placeholder "-" given as one of
+    the %s short option names, instead of a legit name.
+  de: >
+    Fehler: Die Umgebungsvariable "%s" hat ein Platzhalter-"-" als einen der %s
+    kurzen Optionsnamen gegeben statt einen zulässigen Namen.
+
+Error env var short name length:
+  en: >
+    Error: The environment variable "%s" has the short option "-%s" defined
+    with more than 1 character length.
+  de: >
+    Fehler: Die Umgebungsvariable "%s" hat die kurze Option "-%s" mit mehr als
+    einem Zeichen Länge definiert.
+
+Error env var short name inner duplication:
+  en: >
+    Error: The environment variable "%s" has the short option "-%s" given %s
+    times.
+  de: >
+    Fehler: Die Umgebungsvariable "%s" hat die kurze Option "-%s" %s-mal
+    gegeben.
+
+Error env var short name outer duplication:
+  en: >
+    Error: The environment variable "%s" has the short option "-%s" given, but
+    that is already in use by "%s".
+  de: >
+    Fehler: Die Umgebungsvariable "%s" hat die kurze Option "-%s" gegeben,
+    diese wird aber bereits von "%s" genutzt.
+
 Error env var short options:
   en: >
     Error: The environment variable "ARGPARSER_USAGE_MESSAGE_OPTION_TYPE"
@@ -317,26 +349,26 @@ Error arg def short name hyphen:
 
 Error arg def short name help:
   en: >
-    Error: The argument with the identifier "%s" has the short option -h
+    Error: The argument with the identifier "%s" has the short option "-%s"
     defined, which is reserved for invoking the help message.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat die kurze Option -h
+    Fehler: Das Argument mit dem Identifikator "%s" hat die kurze Option "-%s"
     definiert, die zum Aufruf der Hilfsnachricht reserviert ist.
 
 Error arg def short name usage:
   en: >
-    Error: The argument with the identifier "%s" has the short option -u
+    Error: The argument with the identifier "%s" has the short option "-%s"
     defined, which is reserved for invoking the usage message.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat die kurze Option -u
+    Fehler: Das Argument mit dem Identifikator "%s" hat die kurze Option "-%s"
     definiert, die zum Aufruf der Benutzungsnachricht reserviert ist.
 
 Error arg def short name version:
   en: >
-    Error: The argument with the identifier "%s" has the short option -V
+    Error: The argument with the identifier "%s" has the short option "-%s"
     defined, which is reserved for invoking the version message.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat die kurze Option -V
+    Fehler: Das Argument mit dem Identifikator "%s" hat die kurze Option "-%s"
     definiert, die zum Aufruf der Versionsnachricht reserviert ist.
 
 Error arg def short name length:
@@ -373,27 +405,27 @@ Error arg def long name hyphen:
 
 Error arg def long name help:
   en: >
-    Error: The argument with the identifier "%s" has the long option --help
+    Error: The argument with the identifier "%s" has the long option "--%s"
     defined, which is reserved for invoking the help message.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat die lange Option --help
+    Fehler: Das Argument mit dem Identifikator "%s" hat die lange Option "--%s"
     definiert, die zum Aufruf der Hilfsnachricht reserviert ist.
 
 Error arg def long name usage:
   en: >
-    Error: The argument with the identifier "%s" has the long option --usage
+    Error: The argument with the identifier "%s" has the long option "--%s"
     defined, which is reserved for invoking the usage message.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat die lange Option
-    --usage definiert, die zum Aufruf der Benutzungsnachricht reserviert ist.
+    Fehler: Das Argument mit dem Identifikator "%s" hat die lange Option "--%s"
+    definiert, die zum Aufruf der Benutzungsnachricht reserviert ist.
 
 Error arg def long name version:
   en: >
-    Error: The argument with the identifier "%s" has the long option --version
+    Error: The argument with the identifier "%s" has the long option "--%s"
     defined, which is reserved for invoking the version message.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat die lange Option
-    --version definiert, die zum Aufruf der Versionsnachricht reserviert ist.
+    Fehler: Das Argument mit dem Identifikator "%s" hat die lange Option "--%s"
+    definiert, die zum Aufruf der Versionsnachricht reserviert ist.
 
 Error arg def long name length:
   en: >
@@ -672,9 +704,9 @@ Error arg double plus:
 
 Error arg help 1:
   en: >
-    Error: The option "-h,--help" takes no value.
+    Error: The option "-%s,--help" takes no value.
   de: >
-    Fehler: Die Option "-h,--help" nimmt keinen Wert.
+    Fehler: Die Option "-%s,--help" nimmt keinen Wert.
 
 Error arg help 2:
   en: >
@@ -684,9 +716,9 @@ Error arg help 2:
 
 Error arg help 3:
   en: >
-    Error: The option "-h" takes no value.
+    Error: The option "-%s" takes no value.
   de: >
-    Fehler: Die Option "-h" nimmt keinen Wert.
+    Fehler: Die Option "-%s" nimmt keinen Wert.
 
 Error arg usage 1:
   en: >

@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-03-14
+# Last Modification: 2025-03-20
 
 # TODO: Add tests for the general arguments parsing.
 # TODO: Write test files for keyword-only and positional-only arguments.
@@ -391,7 +391,7 @@ test_number="1.11"
 test_type="usage"
 cmd="bash test_basic.sh -u"
 output="$(cat << EOF
-Usage: test_basic.sh [-h | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -402,7 +402,7 @@ test_number="1.12"
 test_type="usage"
 cmd="bash test_basic.sh --usage"
 output="$(cat << EOF
-Usage: test_basic.sh [-h | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -413,7 +413,7 @@ test_number="1.13"
 test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=row bash test_basic.sh --usage"
 output="$(cat << EOF
-Usage: test_basic.sh [-h | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -424,7 +424,7 @@ test_number="1.14"
 test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash test_basic.sh --usage"
 output="$(cat << EOF
-Usage: test_basic.sh [-h | -u | -V]
+Usage: test_basic.sh [-h,-? | -u | -V]
                      [-d,-D={A,B,C}]
                      [-e,-E=VAL_5]
                      [-f,-F]
@@ -444,7 +444,7 @@ test_number="1.15"
 test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_OPTION_TYPE=short bash test_basic.sh --usage"
 output="$(cat << EOF
-Usage: test_basic.sh [-h | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -491,7 +491,7 @@ Optional options:
 [-g, -G], [--var-7, --var-g]               (DEPRECATED) no value (flag) with
                                            default (default: true)
 
--h,       --help                           display this help and exit
+-h, -?    --help                           display this help and exit
 -u,       --usage                          display the usage and exit
 -V,       --version                        display the version and exit
 EOF
@@ -529,7 +529,7 @@ Optional options:
 [-g, -G], [--var-7, --var-g]               (DEPRECATED) no value (flag) with
                                            default (default: true)
 
--h,       --help                           display this help and exit
+-h, -?    --help                           display this help and exit
 -u,       --usage                          display the usage and exit
 -V,       --version                        display the version and exit
 EOF
@@ -578,7 +578,7 @@ output=""
 error="$(cat << EOF
 test_short_options.sh: Error: The argument "--version" is unknown.
 
-Usage: test_short_options.sh [-h | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
@@ -588,7 +588,7 @@ test_number="2.4"
 test_type="usage"
 cmd="bash test_short_options.sh -u"
 output="$(cat << EOF
-Usage: test_short_options.sh [-h | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -602,7 +602,7 @@ output=""
 error="$(cat << EOF
 test_short_options.sh: Error: The argument "--usage" is unknown.
 
-Usage: test_short_options.sh [-h | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
@@ -633,7 +633,7 @@ Optional options:
 [-f, -F]           no value (flag) with default (default: false)
 [-g, -G]           (DEPRECATED) no value (flag) with default (default: true)
 
--h                 display this help and exit
+-h, -?             display this help and exit
 -u                 display the usage and exit
 -V                 display the version and exit
 EOF
@@ -649,7 +649,7 @@ output=""
 error="$(cat << EOF
 test_short_options.sh: Error: The argument "--help" is unknown.
 
-Usage: test_short_options.sh [-h | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
@@ -842,7 +842,7 @@ test_number="5.3"
 test_type="usage"
 cmd="bash test_config_file.sh --usage"
 output="$(cat << EOF
-Usage: test_config_file.sh [-h | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+Usage: test_config_file.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -874,6 +874,7 @@ Optional options:
 [-g], [--var-7]       (DEPRECATED) no value (flag) with default (default: true)
 
 -h,   --help          display this help and exit
+-?,
 -u,   --usage         display the usage and exit
 -V,   --version       display the version and exit
 EOF
@@ -919,7 +920,7 @@ test_number="6.3"
 test_type="usage"
 cmd="bash test_arg_def_file.sh --usage"
 output="$(cat << EOF
-Usage: test_arg_def_file.sh [-h | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+Usage: test_arg_def_file.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -951,6 +952,7 @@ Optional options:
 [-g], [--var-7]       (DEPRECATED) no value (flag) with default (default: true)
 
 -h,   --help          display this help and exit
+-?,
 -u,   --usage         display the usage and exit
 -V,   --version       display the version and exit
 EOF
@@ -996,7 +998,7 @@ test_number="7.3"
 test_type="usage"
 cmd="bash test_help_file.sh --usage"
 output="$(cat << EOF
-Usage: test_help_file.sh [-h | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+Usage: test_help_file.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -1033,6 +1035,7 @@ Optional options:
 
 There are always three options for the help messages.
 -h,   --help          display this help and exit
+-?,
 -u,   --usage         display the usage and exit
 -V,   --version       display the version and exit
 EOF
@@ -1097,7 +1100,7 @@ test_number="8.4"
 test_type="usage"
 cmd="LANG=en_US.UTF-8 bash test_localization.sh --usage"
 output="$(cat << EOF
-Usage: test_localization.sh [-h | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+Usage: test_localization.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -1108,7 +1111,7 @@ test_number="8.5"
 test_type="usage"
 cmd="LANG=de_DE.UTF-8 bash test_localization.sh --usage"
 output="$(cat << EOF
-Aufruf: test_localization.sh [-h | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+Aufruf: test_localization.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -1145,6 +1148,7 @@ Optional options:
 
 There are always three options for the help messages.
 -h,   --help          display this help and exit
+-?,
 -u,   --usage         display the usage and exit
 -V,   --version       display the version and exit
 EOF
@@ -1184,6 +1188,7 @@ Optionale Optionen:
 
 Es gibt grundsätzlich drei Optionen für die Hilfe-Meldungen.
 -h,   --help          diese Hilfe anzeigen und beenden
+-?,
 -u,   --usage         den Aufruf anzeigen und beenden
 -V,   --version       die Version anzeigen und beenden
 EOF
@@ -1243,6 +1248,7 @@ Usage: argparser [--help | --usage | --version]
                  [--help-file=FILE]
                  [--help-file-include-char=CHAR]
                  [--help-file-keep-comments]
+                 [--help-options=CHAR...]
                  [--help-style=STYLE...]
                  [--language=LANGUAGE]
                  [--max-col-width-1=INT]
@@ -1252,6 +1258,7 @@ Usage: argparser [--help | --usage | --version]
                  [--read-args]
                  [--script-name=NAME]
                  [--script-version-exit-code=INT]
+                 [--script_version-options=CHAR...]
                  [--script-version=SCRIPT-VERSION]
                  [--script-version-style=STYLE...]
                  [--set-args]
@@ -1268,6 +1275,7 @@ Usage: argparser [--help | --usage | --version]
                  [--usage-file-keep-comments]
                  [--usage-message-option-type={long,short}]
                  [--usage-message-orientation={row,column}]
+                 [--usage-options=CHAR...]
                  [--usage-style=STYLE...]
                  [--use-long-options]
                  [--use-short-options]
@@ -1294,12 +1302,14 @@ COMMAND LINE                     the indexed array in which the argparser
                                  its own arguments
 
 Options:
-[--add-help]                     add -h, --help as flags to call the help
-                                 message (default: true)
-[--add-usage]                    add -u, --usage as flags to call the usage
-                                 message (default: true)
-[--add-version]                  add -V, --version as flags to call the version
-                                 message (default: true)
+[--add-help]                     add ARGPARSER_HELP_OPTIONS and --help as flags
+                                 to call the help message (default: true)
+[--add-usage]                    add ARGPARSER_USAGE_OPTIONS and --usage as
+                                 flags to call the usage message (default:
+                                 true)
+[--add-version]                  add ARGPARSER_SCRIPT_VERSION_OPTIONS and
+                                 --version as flags to call the version message
+                                 (default: true)
 [--allow-option-abbreviation]    allow the user to give long option names in
                                  abbreviated form (default: false)
 [--allow-option-merging]         allow the user to give short option names in
@@ -1321,7 +1331,7 @@ Options:
                                  elements of sequences in the arguments
                                  definition (default: ,)
 [--check-arg-definition]         check if the arguments definition is
-                                    consistent (default: false)
+                                 consistent (default: false)
 [--check-env-vars]               check if the argparser environment variables
                                  accord to their definition (default: false)
 [--configuration-file=FILE]      the path to a file holding the argparser
@@ -1340,7 +1350,9 @@ Options:
                                  directive in an ARGPARSER_HELP_FILE (default:
                                  @)
 [--help-file-keep-comments]      keep commented lines in the help file
-                                    (default: false)
+                                 (default: false)
+[--help-options=CHAR]            the short (single-character) option names to
+                                 invoke the help message (default: h,?)
 [--help-style=STYLE]             the color and style specification for help
                                  messages (default: italic)
 [--language=-]                   the language in which to localize the help and
@@ -1363,6 +1375,8 @@ Options:
                                  message (default: 1.0.0)
 [--script-version-exit-code=INT] the exit code for version messages (default:
                                  0)
+[--script_version-options=CHAR]  the short (single-character) option names to
+                                 invoke the version message (default: V)
 [--script-version-style=STYLE]   the color and style specification for version
                                  messages (default: bold)
 [--set-args]                     set the arguments from
@@ -1398,12 +1412,14 @@ Options:
                                  output the positional and keyword arguments in
                                  usage messages in a row or in a column
                                  (default: row)
+[--usage-options=CHAR]           the short (single-character) option names to
+                                 invoke the usage message (default: u)
 [--usage-style=STYLE]            the color and style specification for usage
                                  messages (default: italic)
-[--use-long-options]             use the long options for parsing (default:
-                                 true)
-[--use-short-options]            use the short options for parsing (default:
-                                 true)
+[--use-long-options]             use the long option names for parsing
+                                 (default: true)
+[--use-short-options]            use the short option names for parsing
+                                 (default: true)
 [--use-styles-in-files]          use the colors and styles when STDOUT/STDERR
                                  is not a terminal (default: false)
 [--warning-style=STYLE]          the color and style specification for warning
