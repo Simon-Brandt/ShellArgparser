@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-03-20
+# Last Modification: 2025-03-21
 
 # TODO: Add tests for the general arguments parsing.
 # TODO: Write test files for keyword-only and positional-only arguments.
@@ -1196,11 +1196,101 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 9.    Test the functionality regarding the standalone usage.
-print_section "standalone usage"
+# 9.    Test the functionality regarding the standalone mode in a
+#       pipeline.
+print_section "pipeline"
 
 # 9.1.  Test the normal output.
 test_number="9.1"
+test_type="output"
+cmd="sh test_pipeline.sh 1 2 --var-1 1 --var-2 2 --var-3 A"
+output="$(cat << EOF
+The keyword argument "var_1" is set to "1".
+The keyword argument "var_2" is set to "2".
+The keyword argument "var_3" is set to "A".
+The keyword argument "var_4" is set to "A".
+The keyword argument "var_5" is set to "E".
+The keyword argument "var_6" is set to "false".
+The keyword argument "var_7" is set to "true".
+The positional argument "pos_1" on index 1 is set to "2".
+The positional argument "pos_2" on index 2 is set to "1,2".
+EOF
+)"
+error="$(cat << EOF
+pos_1=2
+pos_2=1,2
+var_1=1
+var_2=2
+var_3=A
+var_4=A
+var_5=E
+var_6=false
+var_7=true
+EOF
+)"
+print_diff "${cmd}" "${output}" "${error}"
+
+# 9.2.  Test the version message.
+test_number="9.2"
+test_type="version"
+cmd="sh test_pipeline.sh --version"
+output="$(cat << EOF
+test_pipeline.sh v1.0.0
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 9.3.  Test the usage message.
+test_number="9.3"
+test_type="usage"
+cmd="sh test_pipeline.sh --usage"
+output="$(cat << EOF
+Usage: test_pipeline.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 9.4.  Test the help message.
+test_number="9.4"
+test_type="help"
+cmd="sh test_pipeline.sh --help"
+output="$(cat << EOF
+Usage: test_pipeline.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
+
+Mandatory arguments to long options are mandatory for short options too.
+
+Positional arguments:
+[pos_1={1,2}]         one positional argument with default and choice (default:
+                      2)
+pos_2                 two positional arguments without default or choice
+
+Mandatory options:
+-a,   --var-1=VAL_1   one value without default or choice
+-b,   --var-2=VAL_2   at least one value without default or choice
+-c,   --var-3={A,B}   at least one value with choice
+
+Optional options:
+[-d={A,B,C}]          one value with default and choice (default: A)
+      [--var-5=VAL_5] one value with default (default: E)
+[-f], [--var-6]       no value (flag) with default (default: false)
+[-g], [--var-7]       (DEPRECATED) no value (flag) with default (default: true)
+
+-h,   --help          display this help and exit
+-?,
+-u,   --usage         display the usage and exit
+-V,   --version       display the version and exit
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 10.   Test the functionality regarding the standalone usage.
+print_section "standalone usage"
+
+# 10.1. Test the normal output.
+test_number="10.1"
 test_type="output"
 cmd="bash ../argparser"
 output=""
@@ -1210,8 +1300,8 @@ EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
 
-# 9.2.  Test the version message.
-test_number="9.2"
+# 10.2. Test the version message.
+test_number="10.2"
 test_type="version"
 cmd="bash ../argparser --version"
 output="$(cat << EOF
@@ -1221,8 +1311,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 9.3.  Test the usage message.
-test_number="9.3"
+# 10.3. Test the usage message.
+test_number="10.3"
 test_type="usage"
 cmd="bash ../argparser --usage"
 output="$(cat << EOF
@@ -1287,8 +1377,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 9.4.  Test the help message.
-test_number="9.4"
+# 10.4. Test the help message.
+test_number="10.4"
 test_type="help"
 cmd="bash ../argparser --help"
 output="$(cat << EOF
