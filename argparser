@@ -731,7 +731,7 @@ function argparser_set_internal_vars() {
         error_message+="\"ARGPARSER_SCRIPT_VERSION\"?"
         error_messages+=("${error_message}")
     else
-        ARGPARSER_VERSION=0.1.0
+        ARGPARSER_VERSION="0.1.0"
     fi
 
     # Output an error message for those internal environment variables
@@ -6844,6 +6844,20 @@ function argparser_print_logo() {
 function argparser_main() {
     # Run the argparser, depending on the values of its environment
     # variables, to read, parse, and set the script's arguments.
+    #
+    # Environment:
+    # - ARGPARSER_CHECK_ENV_VARS (read-only)
+    # - ARGPARSER_CONFIGURATION_FILE (read-only)
+    # - ARGPARSER_POSITIONAL_ARG_GROUP
+    # - ARGPARSER_READ_ARGS (read-only)
+    # - ARGPARSER_SCRIPT_ARGS (read-only)
+    # - ARGPARSER_SET_ARGS (read-only)
+    # - ARGPARSER_TRANSLATION_FILE (read-only)
+    # - ARGPARSER_UNSET_ARGS (read-only)
+    # - ARGPARSER_UNSET_ENV_VARS (read-only)
+    # - ARGPARSER_UNSET_FUNCTIONS (read-only)
+    # - ARGPARSER_WRITE_ARGS (read-only)
+    # - ARGPARSER_WRITE_ARGS (read-only)
 
     # Define the local variable.
     local translation
