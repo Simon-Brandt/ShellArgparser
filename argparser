@@ -2,17 +2,14 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-03-21
+# Last Modification: 2025-03-25
 
 # TODO: Support mutually exclusive argument groups.
-# TODO: Add ability to output variables from ${args[@]} to STDOUT
-#       instead of setting them to the environment, for usage in other
-#       shells.
 # TODO: Consider using the Bash 5.3 form "${ command ... ; }" for the
 #       command substitutions instead of "$(command ...)" or nonlocal
 #       variables.
 
-# Usage: Source this script with `source argparser -- "$@"` inside the
+# Usage: Source this script with 'source argparser -- "$@"'' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
 # is set to true (the default), the arguments will be parsed upon
 # sourcing.  If ${ARGPARSER_SET_ARGS} is set to true (the default), the
@@ -745,6 +742,7 @@ function argparser_set_internal_vars() {
             ARGPARSER_ERROR_STYLE="red,bold,reverse"
             ARGPARSER_USE_STYLES_IN_FILES=false
         fi
+
         argparser_print_error_or_warning_message "error" false true \
             "${error_messages[@]}"
     fi
@@ -857,6 +855,7 @@ function argparser_read_configuration() {
             ARGPARSER_ERROR_EXIT_CODE=1
             ARGPARSER_ERROR_STYLE="red,bold,reverse"
         fi
+
         argparser_print_error_or_warning_message "error" false true \
             "${error_message}"
     fi
@@ -971,6 +970,7 @@ function argparser_read_configuration() {
         ARGPARSER_ERROR_EXIT_CODE=1
         ARGPARSER_ERROR_STYLE="red,bold,reverse"
     fi
+
     argparser_print_error_or_warning_message "error" true true \
         "${error_messages[@]}"
 }
@@ -1831,6 +1831,7 @@ function argparser_read_translation() {
             ARGPARSER_ERROR_EXIT_CODE=1
             ARGPARSER_ERROR_STYLE="red,bold,reverse"
         fi
+
         argparser_print_error_or_warning_message "error" false true \
             "${error_message}"
     fi
@@ -1918,6 +1919,7 @@ function argparser_read_translation() {
         ARGPARSER_ERROR_EXIT_CODE=1
         ARGPARSER_ERROR_STYLE="red,bold,reverse"
     fi
+
     argparser_print_error_or_warning_message "error" true false \
         "${error_messages[@]}"
 }
@@ -1982,6 +1984,7 @@ function argparser_translate() {
                 ARGPARSER_ERROR_EXIT_CODE=1
                 ARGPARSER_ERROR_STYLE="red,bold,reverse"
             fi
+
             argparser_print_error_or_warning_message "warning" false false \
                 "${warning_message}"
         elif [[ -z "${ARGPARSER_DICTIONARY[${key}]}" ]]; then
@@ -2008,6 +2011,7 @@ function argparser_translate() {
                 ARGPARSER_ERROR_EXIT_CODE=1
                 ARGPARSER_ERROR_STYLE="red,bold,reverse"
             fi
+
             argparser_print_error_or_warning_message "warning" false false \
                 "${warning_message}"
         else
@@ -2143,7 +2147,6 @@ function argparser_read_args_definition() {
                 if [[ "${arg_key}" == "${arg}" ]]; then
                     if [[ "${line}" == ${def_pattern} ]]; then
                         messages+=("File: ${line}")
-                        continue 2
                     else
                         error_message="Error: Invalid argument definition for "
                         error_message+="\"%s\"."
@@ -2152,8 +2155,8 @@ function argparser_read_args_definition() {
                             "${error_message}" "${arg}"
                         error_message="${translation}"
                         messages+=("${error_message}")
-                        continue 2
                     fi
+                    continue 2
                 fi
             done
             error_message="Error: No argument definition for \"%s\"."
@@ -3381,10 +3384,13 @@ function argparser_parse_arg() {
     # - is_positional_only: whether the positional arguments delimiter
     #   "--" has already been set and has not been unset by "++"
     #   (read-only)
+    # - is_sourced: whether the argparser has been sourced (read-only)
     # - messages: the parsed argument as message or an error message,
     #   starting with "Help", "Usage", "Version", "Logo",
     #   "Positional_Start", "Positional_End", "Error: " (translated),
     #   "Argument: ", "Prefix: ", or "Value: ", as indexed array
+    # - source_level: the depth of recursion upon sourcing the argparser
+    #   (read-only)
     #
     # Environment:
     # - ARGPARSER_ADD_HELP (read-only)
@@ -3644,7 +3650,8 @@ function argparser_parse_arg() {
         messages+=("${error_message}")
         messages+=("Argument: ${given_arg}")
     elif [[ "${given_arg}" == "--argparser" \
-        && "${BASH_SOURCE[0]}" == "${BASH_SOURCE[-1]}" ]]
+        && "${is_sourced}" == false \
+        && "${source_level}" == 2 ]]
     then
         # The argument is the magic string for the argparser, which was
         # directly called and not run from another script.  Since the
@@ -4482,6 +4489,11 @@ function argparser_parse_args() {
     # Arguments:
     # - $@: the arguments to parse
     #
+    # Nonlocals:
+    # - is_sourced: whether the argparser has been sourced (read-only)
+    # - source_level: the depth of recursion upon sourcing the argparser
+    #   (read-only)
+    #
     # Globals:
     # - ${ARGPARSER_ARG_ARRAY_NAME}: the parsed and checked arguments
     #   with key and value as associative array
@@ -4550,12 +4562,40 @@ function argparser_parse_args() {
     is_extglob_set="$?"
     shopt -s extglob
 
-    # Check if the variable that ${ARGPARSER_ARG_ARRAY_NAME} refers to
-    # is defined.  If not, guess how it may be called by searching the
-    # set variables for a variable name starting with "arg" to give a
-    # clearer error message.  If no such variable name is found, skip
-    # that part of the message.
-    if [[ ! -v "${ARGPARSER_ARG_ARRAY_NAME}" ]]; then
+    # If the argparser is run as standalone script and not sourced, read
+    # the arguments definition from STDIN into ${args} and remove
+    # leading blank lines.  If STDIN is empty, output an error message.
+    # If the argparser is sourced, check if the variable that
+    # ${ARGPARSER_ARG_ARRAY_NAME} refers to is defined.  If not, guess
+    # how it may be called by searching the set variables for a variable
+    # name starting with "arg" to give a clearer error message.  If no
+    # such variable name is found, skip that part of the message.
+    if [[ "${is_sourced}" == false && "${source_level}" == 1 ]]; then
+        ARGPARSER_ARG_ARRAY_NAME="args"
+        local -a args
+        if read -t 0 -u 0; then
+            IFS=$'\n' read -r -d "" -t 0.1 -u 0 -a args
+
+            # shellcheck disable=SC2190  # Indexed, not associative array.
+            while (( "${#args[@]}" > 0 )) && [[ -z "${args[0]}" ]]; do
+                args=("${args[@]:1}")
+            done
+        else
+            error_message="Error: Calling (instead of sourcing) the argparser "
+            error_message+="requires the arguments definition to be provided "
+            error_message+="through STDIN, separated by newlines.  Either "
+            error_message+="pipe to the argparser or use process substitution "
+            error_message+="to give input.  Alternatively, try \"%s --help\" "
+            error_message+="to get a help message with further information."
+
+            argparser_translate "Error arg array 1" "${error_message}" \
+                "${ARGPARSER_SCRIPT_NAME}"
+            error_message="${translation}"
+
+            argparser_print_error_or_warning_message "error" false true \
+                "${error_message}"
+        fi
+    elif [[ ! -v "${ARGPARSER_ARG_ARRAY_NAME}" ]]; then
         mapfile -t names < <(compgen -v)
         for name in "${names[@]}"; do
             if [[ "${name}" == "arg"* ]]; then
@@ -4574,8 +4614,8 @@ function argparser_parse_args() {
             error_message+="ARGPARSER_ARG_ARRAY_NAME accordingly) or you "
             error_message+="forgot defining the array at all (then define it)."
 
-            argparser_translate "Error arg array 1" "${error_message}" \
-                "${ARGPARSER_ARG_ARRAY_NAME}" "${name}"
+            argparser_translate "Error arg array 2" "${error_message}" \
+                "${ARGPARSER_ARG_ARRAY_NAME}"
             error_message="${translation}"
         else
             error_message="Error: The variable ARGPARSER_ARG_ARRAY_NAME "
@@ -4585,10 +4625,11 @@ function argparser_parse_args() {
             error_message+="ARGPARSER_ARG_ARRAY_NAME accordingly) or you "
             error_message+="forgot defining the array at all (then define it)."
 
-            argparser_translate "Error arg array 2" "${error_message}" \
+            argparser_translate "Error arg array 3" "${error_message}" \
                 "${ARGPARSER_ARG_ARRAY_NAME}"
             error_message="${translation}"
         fi
+
         argparser_print_error_or_warning_message "error" false true \
             "${error_message}"
     fi
@@ -4763,7 +4804,7 @@ function argparser_parse_args() {
         argparser_print_version_message true 1
     elif [[ "${is_logo}" == true ]]; then
         argparser_print_logo
-        exit
+        exit 0
     fi
 
     # Parse the script's given positional arguments, that are yet only
@@ -6859,28 +6900,36 @@ function argparser_main() {
     # - ARGPARSER_WRITE_ARGS (read-only)
     # - ARGPARSER_WRITE_ARGS (read-only)
 
-    # Define the local variable.
+    # Define the local variables.
     local translation
 
-    # If the argparser is run as standalone script and not sourced, read
-    # the arguments definition from STDIN into ${args}.
-    if [[ "${BASH_SOURCE[2]}" != "${BASH_SOURCE[1]}"
-        && "${BASH_SOURCE[-2]}" == "${BASH_SOURCE[-1]}" ]]
-    then
-        ARGPARSER_ARG_ARRAY_NAME="args"
-        local -a args
-        IFS=$'\n' read -r -d "" -t 0.1 -u 0 -a args
+    # Detect whether the argparser is sourced or run as standalone
+    # script.  Is it is sourced, discern whether it has sourced itself.
+    if [[ ! -v is_sourced ]]; then
+        local source_level
+        local is_sourced
 
-        # shellcheck disable=SC2190  # Indexed, not associative array.
-        while (( "${#args[@]}" > 0 )) && [[ -z "${args[0]}" ]]; do
-            args=("${args[@]:1}")
-        done
+        is_sourced=true
+    fi
+
+    if (( "${#FUNCNAME[@]}" >= 5 )) && [[ "${FUNCNAME[4]}" == "source" ]]; then
+        source_level=2
+    elif (( "${#FUNCNAME[@]}" >= 2 )) && [[ "${FUNCNAME[1]}" == "source" ]]
+    then
+        if [[ "${is_sourced}" == true ]]; then
+            source_level=1
+        else
+            source_level=2
+        fi
+    else
+        is_sourced=false
+        source_level=1
     fi
 
     # If the argparser hasn't sourced itself (i.e., the current
     # recursion level is the outer one from the calling script), set the
     # internal "environment" variables.
-    if [[ "${BASH_SOURCE[2]}" != "${BASH_SOURCE[1]}" ]]; then
+    if [[ "${source_level}" == 1 ]]; then
         argparser_set_internal_vars
     fi
 
@@ -6899,7 +6948,7 @@ function argparser_main() {
     # prevent overriding them.  Then, set the script's command-line
     # arguments (with the argparser arguments being removed) as the
     # current command line.
-    if [[ "${BASH_SOURCE[2]}" != "${BASH_SOURCE[1]}" ]]; then
+    if [[ "${source_level}" == 1 ]]; then
         argparser_set_env_vars "$@"
         set -- "${ARGPARSER_SCRIPT_ARGS[@]}"
     fi
@@ -7073,6 +7122,8 @@ function argparser_main() {
         unset ARGPARSER_WARNING_STYLE
         unset ARGPARSER_WRITE_ARGS
     fi
+
+    (( source_level-- ))
 }
 
 # Check the version of the current Bash instance.

@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-03-21
+# Last Modification: 2025-03-25
 
 # Usage: Run this script with "sh test_pipeline.sh".
 
@@ -10,6 +10,7 @@
 
 # Run the argparser in standalone mode from POSIX sh, reading from and
 # writing to a pipe.
+export ARGPARSER_SCRIPT_NAME="${0##*/}"
 export ARGPARSER_WRITE_ARGS=true
 
 # Define the arguments.

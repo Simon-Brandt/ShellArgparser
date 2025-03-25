@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-03-21
+# Last Modification: 2025-03-25
 
 # TODO: Add tests for the general arguments parsing.
 # TODO: Write test files for keyword-only and positional-only arguments.
@@ -1295,7 +1295,7 @@ test_type="output"
 cmd="bash ../argparser"
 output=""
 error="$(cat << EOF
-argparser: Error: The variable ARGPARSER_ARG_ARRAY_NAME refers to "args", but this variable is not defined.  Either you have given your arguments array another name (then change ARGPARSER_ARG_ARRAY_NAME accordingly) or you forgot defining the array at all (then define it).
+argparser: Error: Calling (instead of sourcing) the argparser requires the arguments definition to be provided through STDIN, separated by newlines.  Either pipe to the argparser or use process substitution to give input.  Alternatively, try "argparser --help" to get a help message with further information.
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
@@ -1371,6 +1371,7 @@ Usage: argparser [--help | --usage | --version]
                  [--use-short-options]
                  [--use-styles-in-files]
                  [--warning-style=STYLE...]
+                 [--write-args]
                  COMMAND LINE...
 EOF
 )"
@@ -1514,6 +1515,9 @@ Options:
                                  is not a terminal (default: false)
 [--warning-style=STYLE]          the color and style specification for warning
                                  messages (default: red,bold)
+[--write-args]                   write the arguments from
+                                 ARGPARSER_ARG_ARRAY_NAME to STDOUT (default:
+                                 false)
 
 --help                           display this help and exit
 --usage                          display the usage and exit

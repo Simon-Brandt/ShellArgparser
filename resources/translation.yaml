@@ -284,6 +284,20 @@ Error env var files:
 ---
 Error arg array 1:
   en: >
+    Error: Calling (instead of sourcing) the argparser requires the arguments
+    definition to be provided through STDIN, separated by newlines.  Either
+    pipe to the argparser or use process substitution to give input. 
+    Alternatively, try "%s --help" to get a help message with further
+    information.
+  de: >
+    Fehler: Das Aufrufen (statt Ausführen per source) des Argparsers erfordert,
+    dass die Argumentdefinition per STDIN gegeben wird, getrennt durch
+    Zeilenvorschübe.  Entweder lege eine Pipe zum Argparser oder nutze
+    Prozesssubstitution für die Eingabe. Probiere alternativ "%s --help", um
+    eine Hilfsnachricht mit weiterer Information zu erhalten.
+
+Error arg array 2:
+  en: >
     Error: The variable ARGPARSER_ARG_ARRAY_NAME refers to "%s", but this
     variable is not defined.  Either you have given your arguments array
     another name (maybe "%s" -- then change ARGPARSER_ARG_ARRAY_NAME
@@ -295,7 +309,7 @@ Error arg array 1:
     ARGPARSER_ARG_ARRAY_NAME entsprechend) oder du hast vergessen, das Array
     überhaupt zu definieren (dann definiere es).
 
-Error arg array 2:
+Error arg array 3:
   en: >
     Error: The variable ARGPARSER_ARG_ARRAY_NAME refers to "%s", but this
     variable is not defined.  Either you have given your arguments array
