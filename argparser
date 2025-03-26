@@ -5175,20 +5175,37 @@ function argparser_create_help_message() {
         # Define the columns' next line, for the current argument.  The
         # argument may have some default and some choice values with the
         # existence of each changing  the look of the first column.
-        # Set the first column's value.
-        if [[ "${choice_values}" != "-" && "${default_values}" != "-" ]]
-        then  # Choice and default.
-            col_1+=("[${value_names}={${choice_values}}]")
-        elif [[ "${choice_values}" != "-" ]]; then  # Choice only.
-            col_1+=("${value_names}={${choice_values}}")
-        elif [[ "${default_values}" != "-" ]]; then  # Default only.
-            col_1+=("[${value_names}]")
-        else  # No choice nor default.
-            col_1+=("${value_names}")
-        fi
+        if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
+            # Set the first column's value.
+            if [[ "${choice_values}" != "-" && "${default_values}" != "-" ]]
+            then  # Choice and default.
+                col_1+=("[${value_names}={${choice_values}}]")
+            elif [[ "${choice_values}" != "-" ]]; then  # Choice only.
+                col_1+=("${value_names}={${choice_values}}")
+            elif [[ "${default_values}" != "-" ]]; then  # Default only.
+                col_1+=("[${value_names}]")
+            else  # No choice nor default.
+                col_1+=("${value_names}")
+            fi
 
-        # Set the second column's value.
-        col_2+=("")
+            # Set the second column's value.
+            col_2+=("")
+        else
+            # Set the first column's value.
+            col_1+=("")
+
+            # Set the second column's value.
+            if [[ "${choice_values}" != "-" && "${default_values}" != "-" ]]
+            then  # Choice and default.
+                col_2+=("[${value_names}={${choice_values}}]")
+            elif [[ "${choice_values}" != "-" ]]; then  # Choice only.
+                col_2+=("${value_names}={${choice_values}}")
+            elif [[ "${default_values}" != "-" ]]; then  # Default only.
+                col_2+=("[${value_names}]")
+            else  # No choice nor default.
+                col_2+=("${value_names}")
+            fi
+        fi
 
         # Set the third column's value.
         if [[ "${default_values}" != "-" && "${is_deprecated}" == true ]]
@@ -5832,8 +5849,17 @@ function argparser_create_help_message() {
                 break
             fi
 
-            help_message+="${col_1[i]}${whitespace_1[i]}${col_2[i]}"
-            help_message+="${whitespace_2[i]}${col_3[i]}"
+            if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
+                help_message+="${col_1[i]}"
+                help_message+="${whitespace_1[i]}"
+            fi
+
+            if [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]; then
+                help_message+="${col_2[i]}"
+                help_message+="${whitespace_2[i]}"
+            fi
+
+            help_message+="${col_3[i]}"
             help_message+=$'\n'
         done
         help_message_groups[${arg_group}]="${help_message}"
