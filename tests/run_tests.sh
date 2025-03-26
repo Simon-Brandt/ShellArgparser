@@ -465,7 +465,7 @@ test_number="1.17"
 test_type="help"
 cmd="bash test_basic.sh -h"
 output="$(cat << EOF
-Usage: test_basic.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
+Usage: test_basic.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
@@ -503,7 +503,7 @@ test_number="1.18"
 test_type="help"
 cmd="bash test_basic.sh --help"
 output="$(cat << EOF
-Usage: test_basic.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
+Usage: test_basic.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
@@ -611,7 +611,7 @@ test_number="2.6"
 test_type="help"
 cmd="bash test_short_options.sh -h"
 output="$(cat << EOF
-Usage: test_short_options.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
+Usage: test_short_options.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
@@ -741,7 +741,7 @@ test_number="3.7"
 test_type="help"
 cmd="bash test_long_options.sh --help"
 output="$(cat << EOF
-Usage: test_long_options.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
+Usage: test_long_options.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
@@ -982,7 +982,7 @@ test_number="7.4"
 test_type="help"
 cmd="bash test_config_file.sh --help"
 output="$(cat << EOF
-Usage: test_config_file.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
+Usage: test_config_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
@@ -1060,7 +1060,7 @@ test_number="8.4"
 test_type="help"
 cmd="bash test_arg_def_file.sh --help"
 output="$(cat << EOF
-Usage: test_arg_def_file.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
+Usage: test_arg_def_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
@@ -1139,7 +1139,7 @@ test_type="help"
 cmd="bash test_help_file.sh --help"
 output="$(cat << EOF
 A brief header summarizes the way how to interpret the help message.
-Usage: test_help_file.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
+Usage: test_help_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
@@ -1252,7 +1252,7 @@ test_type="help"
 cmd="LANG=en_US.UTF-8 bash test_localization.sh --help"
 output="$(cat << EOF
 A brief header summarizes the way how to interpret the help message.
-Usage: test_localization.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
+Usage: test_localization.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
@@ -1292,7 +1292,7 @@ cmd="LANG=de_DE.UTF-8 bash test_localization.sh --help"
 output="$(cat << EOF
 Eine kurze Kopfzeile fasst zusammen, wie die Hilfe-Meldung zu interpretieren
 ist.
-Aufruf: test_localization.sh [OPTIONEN] ARGUMENTE [--] [pos_1] pos_2
+Aufruf: test_localization.sh [OPTIONEN] ARGUMENTE -- [pos_1] pos_2
 
 Erforderliche Argumente für lange Optionen sind auch für kurze erforderlich.
 
@@ -1386,7 +1386,7 @@ test_number="11.4"
 test_type="help"
 cmd="sh test_pipeline.sh --help"
 output="$(cat << EOF
-Usage: test_pipeline.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
+Usage: test_pipeline.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 

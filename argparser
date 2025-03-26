@@ -5767,7 +5767,12 @@ function argparser_create_help_message() {
 
     # Add the names of the positional arguments, if existing.
     if (( "${#all_positional_args[@]}" > 0 )); then
-        usage+=" [--]"
+        if [[ "${has_required_args}" == true ]]; then
+            usage+=" --"
+        elif [[ "${has_default_args}" == true ]]; then
+            usage+=" [--]"
+        fi
+
         for arg_key in "${all_positional_args[@]}"; do
             value_names=("${all_value_names[${arg_key}]}")
             default_values="${all_default_values[${arg_key}]}"
