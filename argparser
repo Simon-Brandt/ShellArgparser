@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-03-25
+# Last Modification: 2025-03-26
 
 # TODO: Support mutually exclusive argument groups.
 # TODO: Consider using the Bash 5.3 form "${ command ... ; }" for the
@@ -5221,9 +5221,11 @@ function argparser_create_help_message() {
     # whereas empty lines for single columns emerge from the line break
     # insertion when they are differently long.  Thus, a completely
     # empty line can be used as safe argument group delimiter.
-    col_1+=("")
-    col_2+=("")
-    col_3+=("")
+    if (( "${#all_positional_args[@]}" > 0 )); then
+        col_1+=("")
+        col_2+=("")
+        col_3+=("")
+    fi
 
     # Compute the columns for the keyword arguments.
     for arg_group in "${arg_groups[@]}"; do
@@ -5790,11 +5792,14 @@ function argparser_create_help_message() {
     remark+=$'\n'
     help_message_groups["Remark"]="${remark}"
 
-    # For each argument group, including the positional argument group
-    # as first one, and the rest being sorted alphabetically, print its
-    # arguments.
-    index=0
-    arg_groups=("${ARGPARSER_POSITIONAL_ARG_GROUP}" "${arg_groups[@]}")
+    # Set the argument groups for printing.  If there are positional
+    # arguments, include the positional argument group as first one.  If
+    # there are keyword arguments, add them afterwards.  Finally, add
+    # the "Help" group if any help option shall be added.
+    if (( "${#all_positional_args[@]}" > 0 )); then
+        arg_groups=("${ARGPARSER_POSITIONAL_ARG_GROUP}" "${arg_groups[@]}")
+    fi
+
     if [[ "${ARGPARSER_ADD_HELP}" == true \
         || "${ARGPARSER_ADD_USAGE}" == true \
         || "${ARGPARSER_ADD_VERSION}" == true ]]
@@ -5802,6 +5807,8 @@ function argparser_create_help_message() {
         arg_groups+=("Help")
     fi
 
+    # For each argument group, print its arguments.
+    index=0
     for arg_group in "${arg_groups[@]}"; do
         # Set the argument group's name for output.
         if [[ "${arg_group}" == "Help" ]]; then
@@ -6375,6 +6382,8 @@ function argparser_print_help_or_usage_message() {
     # Nonlocals:
     # - all_arg_groups: the associative array holding the argument
     #   groups (read-only)
+    # - all_positional_args: the indexed array holding the positional
+    #   argument names (read-only)
     # - help_message_groups: the associative array holding the help
     #   message's groups usable as include directive (read-only)
     # - usage_message_groups: the associative array holding the usage
@@ -6449,7 +6458,9 @@ function argparser_print_help_or_usage_message() {
     # group.
     argparser_sort false "${arg_groups[@]}"
     arg_groups=("${sorted_array[@]}")
-    arg_groups=("${ARGPARSER_POSITIONAL_ARG_GROUP}" "${arg_groups[@]}")
+    if (( "${#all_positional_args[@]}" > 0 )); then
+        arg_groups=("${ARGPARSER_POSITIONAL_ARG_GROUP}" "${arg_groups[@]}")
+    fi
 
     # Create the help or usage message groups, which are saved in an
     # associative array using the include directives as keys.
