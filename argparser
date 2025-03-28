@@ -155,6 +155,32 @@ function argparser_is_variable_char() {
     fi
 }
 
+function argparser_is_variable_float() {
+    # Check if a variable's value is a floating-point number.
+    #
+    # Arguments:
+    # - $1: the variable whose value to check
+    #
+    # Return value:
+    # - 0, if the variable's value is a floating-point number
+    # - 1, else
+
+    # Define the local variable.
+    local var
+
+    # Read the argument.
+    var="$1"
+
+    # Check the variable's value.
+    if [[ "${var}" == ?([+-])+([[:digit:]]).*([[:digit:]])
+        || "${var}" == ?([+-])*([[:digit:]]).+([[:digit:]]) ]]
+    then
+        return 0
+    else
+        return 1
+    fi
+}
+
 function argparser_is_variable_identifier() {
     # Check if a variable's value is usable as Bash variable identifier.
     #
@@ -2927,12 +2953,13 @@ function argparser_check_args_definition_positional_values() {
         fi
 
         # Check the data type.
-        if ! argparser_in_array "${type}" "-" "bool" "char" "int" "str" "uint"
+        if ! argparser_in_array "${type}" "-" "bool" "char" "float" "int" \
+            "str" "uint"
         then
             error_message="Error: The positional argument with the identifier "
             error_message+="\"%s\" has \"%s\" given as data type, but only "
-            error_message+="\"bool\", \"char\", \"int\", \"str\", and "
-            error_message+="\"uint\" are supported."
+            error_message+="\"bool\", \"char\", \"float\", \"int\", \"str\", "
+            error_message+="and \"uint\" are supported."
 
             argparser_translate "Error arg def pos type" "${error_message}" \
                 "${arg_key}" "${type}"
@@ -2969,6 +2996,20 @@ function argparser_check_args_definition_positional_values() {
                 error_message+="character."
 
                 argparser_translate "Error arg def pos char" \
+                    "${error_message}" "${arg_key}" "${choice_value}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            elif [[ "${type}" == "float" ]] \
+                && ! argparser_is_variable_float "${choice_value}"
+            then
+                # Check if the choice value is an integer.
+                error_message="Error: The positional argument with the "
+                error_message+="identifier \"%s\" has \"%s\" given as choice "
+                error_message+="value, which must be a floating-point number, "
+                error_message+="i.e., comprise only digits, a dot, and "
+                error_message+="possibly a leading sign."
+
+                argparser_translate "Error arg def pos float" \
                     "${error_message}" "${arg_key}" "${choice_value}"
                 error_message="${translation}"
                 error_messages+=("${error_message}")
@@ -3172,12 +3213,13 @@ function argparser_check_args_definition_option_values() {
         fi
 
         # Check the data type.
-        if ! argparser_in_array "${type}" "-" "bool" "char" "int" "str" "uint"
+        if ! argparser_in_array "${type}" "-" "bool" "char" "float" "int" \
+            "str" "uint"
         then
             error_message="Error: The argument with the identifier \"%s\" has "
             error_message+="\"%s\" given as data type, but only \"bool\", "
-            error_message+="\"char\", \"int\", \"str\", and \"uint\" are "
-            error_message+="supported."
+            error_message+="\"char\", \"float\", \"int\", \"str\", and "
+            error_message+="\"uint\" are supported."
 
             argparser_translate "Error arg def option type" \
                 "${error_message}" "${arg_key}" "${type}"
@@ -3212,6 +3254,20 @@ function argparser_check_args_definition_option_values() {
                 error_message+="printable ASCII character."
 
                 argparser_translate "Error arg def option char" \
+                    "${error_message}" "${arg_key}" "${choice_value}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            elif [[ "${type}" == "float" ]] \
+                && ! argparser_is_variable_float "${choice_value}"
+            then
+                # Check if the choice value is a floating-point number.
+                error_message="Error: The argument with the identifier \"%s\" "
+                error_message+="has \"%s\" given as choice value, which must "
+                error_message+="be a floating-point number, i.e., comprise "
+                error_message+="only digits, a dot, and possibly a leading "
+                error_message+="sign."
+
+                argparser_translate "Error arg def option float" \
                     "${error_message}" "${arg_key}" "${choice_value}"
                 error_message="${translation}"
                 error_messages+=("${error_message}")
@@ -4451,6 +4507,19 @@ function argparser_check_arg_values() {
             error_message+="one printable ASCII character."
 
             argparser_translate "Error arg char" "${error_message}" \
+                "${option_names}" "${value}"
+            error_message="${translation}"
+            messages+=("${error_message}")
+            return
+        elif [[ "${type}" == "float" ]] \
+            && ! argparser_is_variable_float "${value}"
+        then
+            # Check if the value is a floating-point number.
+            error_message="Error: The argument \"%s\" is set to \"%s\", but "
+            error_message+="must be a floating-point number, i.e., comprise "
+            error_message+="only digits, a dot, and possibly a leading sign."
+
+            argparser_translate "Error arg float" "${error_message}" \
                 "${option_names}" "${value}"
             error_message="${translation}"
             messages+=("${error_message}")
@@ -7117,6 +7186,7 @@ function argparser_main() {
         unset -f argparser_in_array
         unset -f argparser_is_variable_bool
         unset -f argparser_is_variable_char
+        unset -f argparser_is_variable_float
         unset -f argparser_is_variable_identifier
         unset -f argparser_is_variable_int
         unset -f argparser_is_variable_uint
