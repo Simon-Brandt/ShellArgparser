@@ -1,6 +1,6 @@
 # Bash argparser
 
-The argparser is a designed to be an easy-to-use, yet powerful command-line argument parser for your Bash scripts, superior to the traditionally used [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)")/[`getopts`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-getopts "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; getopts") or a bare suite of conditionals in a `case..esac` statement. It is entirely written in pure Bash, without invoking external commands. Thus, using the argparser does not add additional dependencies to your script, especially not on differing versions of a program (like [`awk`](https://man7.org/linux/man-pages/man1/awk.1p.html "man7.org &rightarrow; man pages &rightarrow; awk(1p)")). Shells other than Bash are (currently) not supported. The argparser is inspired by the [Python argparse module](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module").
+The argparser is a designed to be an easy-to-use, yet powerful command-line argument parser for your shell scripts (mainly Bash), superior to the traditionally used [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)")/[`getopts`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-getopts "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; getopts") or a bare suite of conditionals in a `case..esac` statement. It is entirely written in pure Bash, without invoking external commands. Thus, using the argparser does not add additional dependencies to your script, especially not on differing versions of a program (like [`awk`](https://man7.org/linux/man-pages/man1/awk.1p.html "man7.org &rightarrow; man pages &rightarrow; awk(1p)")). Shells other than Bash are only supported with a slightly different method of invokation (*i.e.*, running the argparser in a pipe, not by sourcing it). The argparser is inspired by the [Python argparse module](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module").
 
 ## Table of contents
 
@@ -88,6 +88,7 @@ The argparser is a designed to be an easy-to-use, yet powerful command-line argu
     - [`ARGPARSER_USE_STYLES_IN_FILES`](#argparser_use_styles_in_files)
     - [`ARGPARSER_VERSION`](#argparser_version)
     - [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style)
+    - [`ARGPARSER_WRITE_ARGS`](#argparser_write_args)
 <!-- </toc> -->
 
 ## Features
@@ -488,13 +489,13 @@ done
 
 As you can see, there are three sections in the code that are specific to the argparser. The accession at the end only serves us to gain insights into the values of the arguments and are not necessary to include&mdash;you would replace this by the actual workings of your script.
 
-The first section sets argparser-specific [environment variables](#environment-variables) to optimize the visual output, which we'll investigate later. Then, the arguments are defined, and finally, the argparser is called. This call is central to the script as it is the line that runs the argparser. So, most simply, from your script whose command-line arguments you want to be parsed, the main thing you need to do is to `source` the argparser ([sourcing](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash Builtins &rightarrow; source") means in-place execution without forking):
+The first section sets argparser-specific [environment variables](#environment-variables) to optimize the visual output, which we'll investigate later. Then, the arguments are defined, and finally, the argparser is called. This call is central to the script as it is the line that runs the argparser. So, most simply, from your Bash script whose command-line arguments you want to be parsed, the main thing you need to do is to `source` the argparser ([sourcing](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash Builtins &rightarrow; source") means in-place execution without forking):
 
 ```bash
 source argparser -- "$@"
 ```
 
-As a result of the argparser's configurability (see below), it is necessary to give cour script's command line after a double hyphen, *e.g.*, using `-- "$@"`.
+Shells other than Bash require a slightly different approach, the [standalone usage](#standalone-usage) in a pipe, but most things still hold for this case. As a result of the argparser's configurability (see below), it is necessary to give cour script's command line after a double hyphen, *e.g.*, using `-- "$@"`.
 
 Alternatively to `source`, but not recommended for the lack of the command's clearness, you could use the synonymous [dot operator](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-_002e "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; dot operator") inherited from the Bourne shell (which cannot run the argparser, which is a Bash script!):
 
@@ -514,7 +515,7 @@ or:
 ./argparser
 ```
 
-since you don't want the arguments to be set in a subprocess created after forking, as these will be gone when the argparser (and with it, the subprocess) exits.
+since you don't want the arguments to be set in a subprocess created after forking, as these will be gone when the argparser (and with it, the subprocess) exits. Still, this is the required way for other shells, which make use of the argparser's ability to write the arguments to STDOUT, if [`ARGPARSER_WRITE_ARGS`](#argparser_write_args) is set to `true`.
 
 As stated, the argparser sets an associative array to store the arguments in. For maximum control over the variables in your script's scope, you can configure its name via [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name), defaulting to `"args"`. In `try_argparser.sh`, we obtained the report by accessing exactly this associative array, looping over all variables known to the script that start with `var` or `pos`, respectively. At the same time, this variable name is used to provide the arguments definition.
 
@@ -1421,6 +1422,77 @@ Options:
       --version                        display the version and exit
 ```
 
+The second, and perhaps more important way of standalone usage is included for compatibility with other shells. Since only Bash can successfully source Bash scripts (at least, when they rely on Bashisms, which is the case for the argparser), the argparser would only be usable from within Bash scripts. While this remains the central point of application, there is also a way to run the argparser from other shell's scripts. As an example, let's have a look at the `try_pipeline.sh` script:
+
+<details open>
+
+<summary>Contents of <code>try_pipeline.sh</code></summary>
+
+```sh
+#!/bin/sh
+
+# Run the argparser in standalone mode from POSIX sh, reading from and
+# writing to a pipe.
+export ARGPARSER_SCRIPT_NAME="${0##*/}"
+export ARGPARSER_WRITE_ARGS=true
+
+# Define the arguments.
+args='
+    id:short_opts:long_opts:val_names:defaults:choices:type:arg_no:arg_group:notes:help
+    pos_1:-:-:pos_1:2:1,2:int:1:Positional arguments:-:one positional argument with default and choice
+    pos_2:-:-:pos_2:-:-:int:2:Positional arguments:-:two positional arguments without default or choice
+    var_1:a:var-1:VAL_1:-:-:uint:1:Mandatory options:-:one value without default or choice
+    var_2:b:var-2:VAL_2:-:-:int:+:Mandatory options:-:at least one value without default or choice
+    var_3:c:var-3:VAL_3:-:A,B:char:+:Mandatory options:-:at least one value with choice
+    var_4:d:-:VAL_4:A:A,B,C:char:1:Optional options:-:one value with default and choice
+    var_5:-:var-5:VAL_5:E:-:str:1:Optional options:-:one value with default
+    var_6:f:var-6:VAL_6:false:-:bool:0:Optional options:-:no value (flag) with default
+    var_7:g:var-7:VAL_7:true:-:bool:0:Optional options:deprecated:no value (flag) with default
+'
+
+if [ "$1" = "--help" ] \
+    || [ "$1" = "-h" ] \
+    || [ "$1" = "--usage" ] \
+    || [ "$1" = "-u" ] \
+    || [ "$1" = "--version" ] \
+    || [ "$1" = "-V" ]
+then
+    printf '%s' "${args}" | argparser -- "$@"
+else
+    eval "$(printf '%s' "${args}" | argparser -- "$@" | tee /dev/stderr)"
+fi
+
+# The arguments can now be accessed as variables from the environment.
+# In case of errors, eval hasn't been able to set them, thus the tested
+# expansion ${var_1+set} will be empty, so nothing would get printed.
+if [ -n "${var_1+set}" ]; then
+    printf 'The keyword argument "var_1" is set to "%s".\n' "${var_1}"
+    printf 'The keyword argument "var_2" is set to "%s".\n' "${var_2}"
+    printf 'The keyword argument "var_3" is set to "%s".\n' "${var_3}"
+    printf 'The keyword argument "var_4" is set to "%s".\n' "${var_4}"
+    printf 'The keyword argument "var_5" is set to "%s".\n' "${var_5}"
+    printf 'The keyword argument "var_6" is set to "%s".\n' "${var_6}"
+    printf 'The keyword argument "var_7" is set to "%s".\n' "${var_7}"
+
+    printf 'The positional argument "pos_1" on index 1 is set to "%s".\n' \
+        "${pos_1}"
+    printf 'The positional argument "pos_2" on index 2 is set to "%s".\n' \
+        "${pos_2}"
+fi | sort
+```
+
+As you can see, the script is written POSIX conformantly and by this already executable by `sh` or `dash`. Since POSIX doesn't specify useful programming constructs like arrays, the arguments definition must be a single string, delimited by linefeeds. By passing this string to the argparser via its STDIN stream (piping from `printf` to `argparser`), it is possible to feed the arguments definition to the argparser without requiring the usual [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name). Just as when sourcing, the argparser requires your script's command line as arguments, separated from its own arguments by a double hyphen.
+
+It is important to set [`ARGPARSER_WRITE_ARGS`](#argparser_write_args) to `true`. By this, the argparser will write the parsed arguments as key&ndash;value pairs to its STDOUT stream, since setting them as variables to the environment would result in them being lost when the child process the argparser is running in terminates.
+
+In our example script, the whole pipeline is run in a subshell, such that STDOUT gets captured by `eval`. This facilitates the setting of the variables to the main environment, as the argparser's outputs one argument per line, with an `=` sign as delimiter between key and value. In other terms, the argparser produces output which may be re-used as input to `eval`&mdash;here assuming that no special shell characters are included. For the purpose of this example, calls for the help, usage, and version message are caught in a separate branch to overcome the parsing by `eval`&mdash;after all, these messages are also written to STDOUT, while the usual error and warning messages end in STDERR. Depending on your shell, you may find more sophisticated solutions.
+
+Another point to notice is the need to set the [`ARGPARSER_SCRIPT_NAME`](#argparser_script_name) prior running the argparser, since from within its child process, it cannot access your script's name without requiring non-builtin commands like `ps`.
+
+In short, it is possible to run the argparser in standalone mode from other shells, but this comes with the caveats of subprocesses&ndash;which the sourcing in Bash overcomes. Still, the only feature that your shell must support, is calling processes in pipes or *via* process substitutions to pass data to teh argparser's STDIN and read its STDOUT. Since pipes are defined by POSIX, most shells should support this feature.
+
+</details>
+
 ## Include directives
 
 The following section names (include directives) are supported in the help and usage files (with `"@"` being the default character of the [`ARGPARSER_HELP_FILE_INCLUDE_CHAR`](#argparser_help_file_include_char) and [`ARGPARSER_USAGE_FILE_INCLUDE_CHAR`](#argparser_usage_file_include_char)):
@@ -1544,6 +1616,7 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_USE_STYLES_IN_FILES`](#argparser_use_styles_in_files)             | *bool*                             | `false`                  |
 | [`ARGPARSER_VERSION`](#argparser_version)                                     | *str*                              | *None* (unset)           |
 | [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style)                         | *str*                              | `"red,bold"`             |
+| [`ARGPARSER_WRITE_ARGS`](#argparser_write_args)                               | *bool*                             | `false`                  |
 
 [^1]: Bash is weakly typed, hence the denoted types are just a guidance.
 [^2]: Strings can optionally be enclosed by quotes.
@@ -1965,3 +2038,10 @@ Besides the version message you (not your script's user) can call, the main purp
 - ***Allowed values:*** Any comma-separated string consisting of a color and/or style, with the colors being `"black"`, `"red"`, `"green"`, `"yellow"`, `"blue"`, `"magenta"`, `"cyan"`, and `"white"`, and the styles being `"normal"`, `"bold"`, `"faint"`, `"italic"`, `"underline"`, `"double"`, `"overline"`, `"crossed-out"`, `"blink"`, and `"reverse"`
 - ***Default value:*** `"red,bold"`
 - ***Description:*** The color and style specification to use for warning messages, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters").
+
+### `ARGPARSER_WRITE_ARGS`
+
+- ***Type:*** *bool* (Boolean)
+- ***Allowed values:*** `true` and `false`
+- ***Default value:*** `false`
+- ***Description:*** Whether to write the arguments from [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name) to STDOUT. This is required for running the argparser in a pipe to be able to access the parsed arguments. These are output as key&ndash;value pairs, separated by linefeeds.

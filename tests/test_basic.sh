@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-03-06
+# Last Modification: 2025-03-28
 
 # Usage: Run this script with "bash test_basic.sh".
 
@@ -27,7 +27,6 @@ args=(
     "var_6:f,F:var-6,var-f:VAL_6:false:-:bool:0:Optional options:-:no value (flag) with default"
     "var_7:g,G:var-7,var-g:VAL_7:true:-:bool:0:Optional options:deprecated:no value (flag) with default"
 )
-
 source argparser -- "$@"
 
 # The arguments can now be accessed as keys and values of the
