@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-03-26
+# Last Modification: 2025-03-28
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -490,7 +490,7 @@ Optional options:
 [-g, -G], [--var-7, --var-g]               (DEPRECATED) no value (flag) with
                                            default (default: true)
 
--h, -?    --help                           display this help and exit
+-h, -?,   --help                           display this help and exit
 -u,       --usage                          display the usage and exit
 -V,       --version                        display the version and exit
 EOF
@@ -528,7 +528,7 @@ Optional options:
 [-g, -G], [--var-7, --var-g]               (DEPRECATED) no value (flag) with
                                            default (default: true)
 
--h, -?    --help                           display this help and exit
+-h, -?,   --help                           display this help and exit
 -u,       --usage                          display the usage and exit
 -V,       --version                        display the version and exit
 EOF
@@ -616,14 +616,13 @@ Usage: test_short_options.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 Mandatory arguments to long options are mandatory for short options too.
 
 Positional arguments:
-[pos_1={1,2}]      one positional argument with default and choice (default:
-                    2)
+[pos_1={1,2}]      one positional argument with default and choice (default: 2)
 pos_2              two positional arguments without default or choice
 
 Mandatory options:
--a=VAL_1,-A=A      one value without default or choice
--b=VAL_2,-B=B      at least one value without default or choice
--c={A,B},-C={A,B}  at least one value with choice
+-a=VAL_1, -A=A     one value without default or choice
+-b=VAL_2, -B=B     at least one value without default or choice
+-c={A,B}, -C={A,B} at least one value with choice
 
 Optional options:
 [-d={A,B,C}],      one value with default and choice (default: A)
@@ -753,13 +752,12 @@ pos_2                            two positional arguments without default or
 
 Mandatory options:
 --var-1=VAL_1, --var-a=VAR-A     one value without default or choice
---var-2=VAL_2, --var-b=VAR-B     at least one value without default
-                                 or choice
+--var-2=VAL_2, --var-b=VAR-B     at least one value without default or choice
 --var-3={A,B}, --var-c={A,B}     at least one value with choice
 
 Optional options:
-[--var-4={A,B,C}],               one value with default and choice
-[--var-d={A,B,C}]                (default: A)
+[--var-4={A,B,C}],               one value with default and choice (default: A)
+[--var-d={A,B,C}]
 [--var-5=VAL_5], [--var-e=VAR-E] one value with default (default: E)
 [--var-6, --var-f]               no value (flag) with default (default: false)
 [--var-7, --var-g]               (DEPRECATED) no value (flag) with default
@@ -1473,11 +1471,12 @@ Usage: argparser [--help | --usage | --version]
                  [--max-col-width-1=INT]
                  [--max-col-width-2=INT]
                  [--max-col-width-3=INT]
+                 [--max-width=INT]
                  [--positional-arg-group=NAME]
                  [--read-args]
                  [--script-name=NAME]
                  [--script-version-exit-code=INT]
-                 [--script_version-options=CHAR...]
+                 [--script-version-options=CHAR...]
                  [--script-version=SCRIPT-VERSION]
                  [--script-version-style=STYLE...]
                  [--set-args]
@@ -1582,7 +1581,9 @@ Options:
 [--max-col-width-2=INT]          the maximum column width of the second column
                                  in the help message (default: 33)
 [--max-col-width-3=INT]          the maximum column width of the third column
-                                 in the help message (default: 39)
+                                 in the help message (default: 0)
+[--max-width=INT]                the maximum width of the help message
+                                 (default: 79)
 [--positional-arg-group=NAME]    the name of the argument group holding all
                                  positional arguments (default: Positional
                                  arguments)
@@ -1595,7 +1596,7 @@ Options:
                                  message (default: 1.0.0)
 [--script-version-exit-code=INT] the exit code for version messages (default:
                                  0)
-[--script_version-options=CHAR]  the short (single-character) option names to
+[--script-version-options=CHAR]  the short (single-character) option names to
                                  invoke the version message (default: V)
 [--script-version-style=STYLE]   the color and style specification for version
                                  messages (default: bold)

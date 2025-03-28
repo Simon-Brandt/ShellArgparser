@@ -2,14 +2,14 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-03-26
+# Last Modification: 2025-03-28
 
 # TODO: Support mutually exclusive argument groups.
 # TODO: Consider using the Bash 5.3 form "${ command ... ; }" for the
 #       command substitutions instead of "$(command ...)" or nonlocal
 #       variables.
 
-# Usage: Source this script with 'source argparser -- "$@"'' inside the
+# Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
 # is set to true (the default), the arguments will be parsed upon
 # sourcing.  If ${ARGPARSER_SET_ARGS} is set to true (the default), the
@@ -357,13 +357,14 @@ function argparser_trim() {
 }
 
 function argparser_fold() {
-    # Limit the width of a help message's column to max_col_width by
-    # inserting line breaks.
+    # Limit the width of a help message's column to the maximum column
+    # width by inserting line breaks.
     #
     # Arguments:
     # - $1: the line in the column in which to insert line breaks
-    # - $2: the maximum width a column may have
-    # - $3: the maximum width a column has yet
+    # - $2: the column index
+    # - $3: the maximum width a column may have
+    # - $4: the maximum width a column has yet
     #
     # Nonlocals:
     # - joined_words: the line with introduced line breaks
@@ -371,6 +372,7 @@ function argparser_fold() {
 
     # Define the local variables.
     local col_width
+    local i
     local len_joined_words
     local len_word
     local line
@@ -380,28 +382,48 @@ function argparser_fold() {
 
     # Read the arguments.
     line="$1"
-    max_col_width="$2"
-    largest_col_width="$3"
+    col_index="$2"
+    max_col_width="$3"
+    largest_col_width="$4"
 
     # Split the column element word by word (on whitespace), such that
     # line breaks aren't inserted into entire words.
     joined_words=""
     col_width=0
-    read -r -a words <<< "${line}"
+    IFS=" " read -r -a words <<< "${line}"
 
-    for word in "${words[@]}"; do
+    for i in "${!words[@]}"; do
+        word="${words[i]}"
         len_word="${#word}"
         len_joined_words="${#joined_words}"
-        if (( len_word > max_col_width && len_joined_words == 0 )); then
-            # As the word is too long, print the word and introduce a
-            # line break.  Then, reset the column width.
+        if (( len_word > max_col_width \
+            && len_joined_words == 0 \
+            && i < "${#words[@]}" - 1 ));
+        then
+            # As the word, which is not the last in the line, is too
+            # long, print the word and introduce a line break.  Then,
+            # reset the column width.
             joined_words+="${word}"
             joined_words+=$'\n'
             col_width=0
+        elif (( len_word > max_col_width && len_joined_words == 0 )); then
+            # As the word, which is the last in the line, is too long,
+            # only print the word.
+            joined_words+="${word}"
+        elif (( col_width + len_word + 1 > max_col_width \
+            && (i < "${#words[@]}" - 1 || col_index == 3) ))
+        then
+            # As the line with the appended word, which is not the last
+            # in the line or the last of the third column, would be too
+            # long, introduce a line break and print the word.  Then,
+            # set the column width.
+            joined_words+=$'\n'
+            joined_words+="${word}"
+            col_width="${len_word}"
         elif (( col_width + len_word > max_col_width )); then
-            # As the line with the word appended would be too long,
-            # introduce a line break and print the word.  Then, set the
-            # column width.
+            # As the line with the appended word, which is the last in
+            # the line, would be too long, introduce a line break and
+            # print the word.  Then, set the column width.
             joined_words+=$'\n'
             joined_words+="${word}"
             col_width="${len_word}"
@@ -779,6 +801,7 @@ function argparser_read_configuration() {
     # ARGPARSER_MAX_COL_WIDTH_1
     # ARGPARSER_MAX_COL_WIDTH_2
     # ARGPARSER_MAX_COL_WIDTH_3
+    # ARGPARSER_MAX_WIDTH
     # ARGPARSER_POSITIONAL_ARG_GROUP
     # ARGPARSER_READ_ARGS
     # ARGPARSER_SCRIPT_NAME
@@ -1012,6 +1035,7 @@ function argparser_set_env_vars() {
     # ARGPARSER_MAX_COL_WIDTH_1
     # ARGPARSER_MAX_COL_WIDTH_2
     # ARGPARSER_MAX_COL_WIDTH_3
+    # ARGPARSER_MAX_WIDTH
     # ARGPARSER_POSITIONAL_ARG_GROUP
     # ARGPARSER_READ_ARGS
     # ARGPARSER_SCRIPT_ARGS
@@ -1111,14 +1135,15 @@ function argparser_set_env_vars() {
         "ARGPARSER_LANGUAGE                  |-          |language                  |-            |en                   |-          |str  |1      |Options   |-     |the language in which to localize the help and usage messages                                           "
         "ARGPARSER_MAX_COL_WIDTH_1           |-          |max-col-width-1           |INT          |5                    |-          |uint |1      |Options   |-     |the maximum column width of the first column in the help message                                        "
         "ARGPARSER_MAX_COL_WIDTH_2           |-          |max-col-width-2           |INT          |33                   |-          |uint |1      |Options   |-     |the maximum column width of the second column in the help message                                       "
-        "ARGPARSER_MAX_COL_WIDTH_3           |-          |max-col-width-3           |INT          |39                   |-          |uint |1      |Options   |-     |the maximum column width of the third column in the help message                                        "
+        "ARGPARSER_MAX_COL_WIDTH_3           |-          |max-col-width-3           |INT          |0                    |-          |uint |1      |Options   |-     |the maximum column width of the third column in the help message                                        "
+        "ARGPARSER_MAX_WIDTH                 |-          |max-width                 |INT          |79                   |-          |uint |1      |Options   |-     |the maximum width of the help message                                                                   "
         "ARGPARSER_POSITIONAL_ARG_GROUP      |-          |positional-arg-group      |NAME         |Positional arguments |-          |str  |1      |Options   |-     |the name of the argument group holding all positional arguments                                         "
         "ARGPARSER_READ_ARGS                 |-          |read-args                 |-            |true                 |-          |bool |0      |Options   |-     |read the arguments and parse them to ARGPARSER_ARG_ARRAY_NAME                                           "
         "ARGPARSER_SCRIPT_ARGS               |-          |-                         |COMMAND LINE |-                    |-          |str  |+      |Options   |-     |the indexed array in which the argparser stores the script's command line upon parsing its own arguments"
         "ARGPARSER_SCRIPT_NAME               |-          |script-name               |NAME         |''                   |-          |str  |1      |Options   |-     |the script's name for the help, usage, version, error, and warning messages                             "
         "ARGPARSER_SCRIPT_VERSION            |-          |script-version            |-            |1.0.0                |-          |str  |1      |Options   |-     |the script's version number for the version message                                                     "
         "ARGPARSER_SCRIPT_VERSION_EXIT_CODE  |-          |script-version-exit-code  |INT          |0                    |-          |int  |1      |Options   |-     |the exit code for version messages                                                                      "
-        "ARGPARSER_SCRIPT_VERSION_OPTIONS    |-          |script_version-options    |CHAR         |V                    |-          |char |+      |Options   |-     |the short (single-character) option names to invoke the version message                                 "
+        "ARGPARSER_SCRIPT_VERSION_OPTIONS    |-          |script-version-options    |CHAR         |V                    |-          |char |+      |Options   |-     |the short (single-character) option names to invoke the version message                                 "
         "ARGPARSER_SCRIPT_VERSION_STYLE      |-          |script-version-style      |STYLE        |bold                 |-          |str  |+      |Options   |-     |the color and style specification for version messages                                                  "
         "ARGPARSER_SET_ARGS                  |-          |set-args                  |-            |true                 |-          |bool |0      |Options   |-     |set the arguments from ARGPARSER_ARG_ARRAY_NAME as variables in the script's scope                      "
         "ARGPARSER_SET_ARRAYS                |-          |set-arrays                |-            |true                 |-          |bool |0      |Options   |-     |set arguments intended to have multiple values as indexed array                                         "
@@ -1170,7 +1195,8 @@ function argparser_set_env_vars() {
         ARGPARSER_LANGUAGE="en" \
         ARGPARSER_MAX_COL_WIDTH_1=5 \
         ARGPARSER_MAX_COL_WIDTH_2=33 \
-        ARGPARSER_MAX_COL_WIDTH_3=39 \
+        ARGPARSER_MAX_COL_WIDTH_3=0 \
+        ARGPARSER_MAX_WIDTH=79 \
         ARGPARSER_POSITIONAL_ARG_GROUP="Positional arguments" \
         ARGPARSER_READ_ARGS=true \
         ARGPARSER_SCRIPT_NAME="${BASH_SOURCE[0]##*/}" \
@@ -1310,6 +1336,7 @@ function argparser_check_env_vars() {
     # - ARGPARSER_MAX_COL_WIDTH_1 (read-only)
     # - ARGPARSER_MAX_COL_WIDTH_2 (read-only)
     # - ARGPARSER_MAX_COL_WIDTH_3 (read-only)
+    # - ARGPARSER_MAX_WIDTH (read-only)
     # - ARGPARSER_READ_ARGS (read-only)
     # - ARGPARSER_SCRIPT_VERSION_EXIT_CODE (read-only)
     # - ARGPARSER_SCRIPT_VERSION_OPTIONS (read-only)
@@ -1486,6 +1513,7 @@ function argparser_check_env_vars() {
         ARGPARSER_MAX_COL_WIDTH_1
         ARGPARSER_MAX_COL_WIDTH_2
         ARGPARSER_MAX_COL_WIDTH_3
+        ARGPARSER_MAX_WIDTH
     )
     for var in "${vars[@]}"; do
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values <<< "${!var}"
@@ -5055,6 +5083,7 @@ function argparser_create_help_message() {
     # - ARGPARSER_MAX_COL_WIDTH_1 (read-only)
     # - ARGPARSER_MAX_COL_WIDTH_2 (read-only)
     # - ARGPARSER_MAX_COL_WIDTH_3 (read-only)
+    # - ARGPARSER_MAX_WIDTH (read-only)
     # - ARGPARSER_POSITIONAL_ARG_GROUP (read-only)
     # - ARGPARSER_SCRIPT_NAME (read-only)
     # - ARGPARSER_SCRIPT_VERSION_OPTIONS (read-only)
@@ -5089,6 +5118,7 @@ function argparser_create_help_message() {
     local j
     local joined_words
     local largest_col_width
+    local line
     local line_count_1
     local line_count_2
     local line_count_3
@@ -5097,6 +5127,7 @@ function argparser_create_help_message() {
     local lines_col_3
     local long_option
     local -a long_options
+    local max_col_width_3
     local max_line_count
     local -a new_col_1
     local new_col_1_value
@@ -5107,9 +5138,6 @@ function argparser_create_help_message() {
     local newline_count_1
     local newline_count_2
     local newline_count_3
-    local newlines_1
-    local newlines_2
-    local newlines_3
     local note
     local -a notes
     local -a option_names
@@ -5575,12 +5603,14 @@ function argparser_create_help_message() {
         col_3+=("${translation}")
     fi
 
-    # Limit the width of each column of the help message to
-    # ${ARGPARSER_MAX_COL_WIDTH_*} by inserting line breaks.
+    # Limit the width of the first two columns of the help message to
+    # ${ARGPARSER_MAX_COL_WIDTH_*}, and of the third column to
+    # ${ARGPARSER_MAX_WIDTH} or ${ARGPARSER_MAX_COL_WIDTH_3} (if given)
+    # by inserting line breaks.
     # Split the element of column 1.
     col_width_1=0
     for i in "${!col_1[@]}"; do
-        argparser_fold "${col_1[i]}" "${ARGPARSER_MAX_COL_WIDTH_1}" \
+        argparser_fold "${col_1[i]}" 1 "${ARGPARSER_MAX_COL_WIDTH_1}" \
             "${col_width_1}"
         col_1[i]="${joined_words}"
         col_width_1="${largest_col_width}"
@@ -5589,17 +5619,31 @@ function argparser_create_help_message() {
     # Split the element of column 2.
     col_width_2=0
     for i in "${!col_2[@]}"; do
-        argparser_fold "${col_2[i]}" "${ARGPARSER_MAX_COL_WIDTH_2}" \
+        argparser_fold "${col_2[i]}" 2 "${ARGPARSER_MAX_COL_WIDTH_2}" \
             "${col_width_2}"
         col_2[i]="${joined_words}"
         col_width_2="${largest_col_width}"
     done
 
     # Split the element of column 3.
+    if (( ARGPARSER_MAX_COL_WIDTH_3 == 0 )); then
+        if (( col_width_1 > 0 & col_width_2 > 0 )); then
+            (( max_col_width_3 = ARGPARSER_MAX_WIDTH - col_width_1 \
+                - col_width_2 - 2 ))
+        elif (( col_width_1 > 0 )); then
+            (( max_col_width_3 = ARGPARSER_MAX_WIDTH - col_width_1 - 1 ))
+        elif (( col_width_2 > 0 )); then
+            (( max_col_width_3 = ARGPARSER_MAX_WIDTH - col_width_2 - 1 ))
+        else
+            (( max_col_width_3 = ARGPARSER_MAX_WIDTH ))
+        fi
+    else
+        max_col_width_3="${ARGPARSER_MAX_COL_WIDTH_3}"
+    fi
+
     col_width_3=0
     for i in "${!col_3[@]}"; do
-        argparser_fold "${col_3[i]}" "${ARGPARSER_MAX_COL_WIDTH_3}" \
-            "${col_width_3}"
+        argparser_fold "${col_3[i]}" 3 "${max_col_width_3}" "${col_width_3}"
         col_3[i]="${joined_words}"
         col_width_3="${largest_col_width}"
     done
@@ -5618,14 +5662,14 @@ function argparser_create_help_message() {
         line_count_3="${#lines_col_3[@]}"
 
         # Get the largest line count.
-        if (( line_count_1 > line_count_2 )); then
-            if (( line_count_1 > line_count_3 )); then
+        if (( line_count_1 >= line_count_2 )); then
+            if (( line_count_1 >= line_count_3 )); then
                 max_line_count="${line_count_1}"
             else
                 max_line_count="${line_count_3}"
             fi
         else
-            if (( line_count_2 > line_count_3 )); then
+            if (( line_count_2 >= line_count_3 )); then
                 max_line_count="${line_count_2}"
             else
                 max_line_count="${line_count_3}"
@@ -5658,23 +5702,17 @@ function argparser_create_help_message() {
         fi
 
         # To each element, add as many line breaks as computed.
-        newlines_1=""
         for (( j = 0; j < newline_count_1; j++ )); do
-            newlines_1+=$'\n'
+            col_1[i]+=$'\n'
         done
-        col_1[i]+="${newlines_1}"
 
-        newlines_2=""
         for (( j = 0; j < newline_count_2; j++ )); do
-            newlines_2+=$'\n'
+            col_2[i]+=$'\n'
         done
-        col_2[i]+="${newlines_2}"
 
-        newlines_3=""
         for (( j = 0; j < newline_count_3; j++ )); do
-            newlines_3+=$'\n'
+            col_3[i]+=$'\n'
         done
-        col_3[i]+="${newlines_3}"
     done
 
     # Re-read in the columns' lines, such that each line makes up one
@@ -5738,30 +5776,44 @@ function argparser_create_help_message() {
         whitespace_2+=("")
 
         if (( "${#col_1[i]}" <= ARGPARSER_MAX_COL_WIDTH_1 )); then
-            (( whitespace_len_1 = col_width_1 - "${#col_1[i]}" + 1 ))
-            for (( j = 0; j < whitespace_len_1; j++ )); do
-                whitespace_1[-1]+=" "
-            done
+            if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
+                (( whitespace_len_1 = col_width_1 - "${#col_1[i]}" + 1 ))
+            else
+                (( whitespace_len_1 = col_width_1 - "${#col_1[i]}" ))
+            fi
         else
-            (( whitespace_len_1 = col_width_1 + 1 ))
-            whitespace_1[-1]+=$'\n '
-            for (( j = 0; j < whitespace_len_1; j++ )); do
-                whitespace_1[-1]+=" "
-            done
+            if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
+                (( whitespace_len_1 = col_width_1 + 1 ))
+            else
+                (( whitespace_len_1 = col_width_1 ))
+            fi
+            whitespace_1[-1]+=$'\n'
         fi
 
+        for (( j = 0; j < whitespace_len_1; j++ )); do
+            whitespace_1[-1]+=" "
+        done
+
         if (( "${#col_2[i]}" <= ARGPARSER_MAX_COL_WIDTH_2 )); then
-            (( whitespace_len_2 = col_width_2 - "${#col_2[i]}" + 1 ))
-            for (( j = 0; j < whitespace_len_2; j++ )); do
-                whitespace_2[-1]+=" "
-            done
+            if [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]; then
+                (( whitespace_len_2 = col_width_2 - "${#col_2[i]}" + 1 ))
+            else
+                (( whitespace_len_2 = col_width_2 - "${#col_2[i]}" ))
+            fi
         else
-            (( whitespace_len_2 = col_width_1 + col_width_2 + 2 ))
-            whitespace_2[-1]+=$'\n '
-            for (( j = 0; j < whitespace_len_2; j++ )); do
-                whitespace_2[-1]+=" "
-            done
+            if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true \
+                && "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]
+            then
+                (( whitespace_len_2 = col_width_1 + col_width_2 + 2 ))
+            else
+                (( whitespace_len_2 = col_width_1 + col_width_2 + 1 ))
+            fi
+            whitespace_2[-1]+=$'\n'
         fi
+
+        for (( j = 0; j < whitespace_len_2; j++ )); do
+            whitespace_2[-1]+=" "
+        done
     done
 
     # Set the help message's usage line, including the script's name.
@@ -5849,18 +5901,13 @@ function argparser_create_help_message() {
                 break
             fi
 
-            if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
-                help_message+="${col_1[i]}"
-                help_message+="${whitespace_1[i]}"
-            fi
+            line="${col_1[i]}${whitespace_1[i]}"
+            line+="${col_2[i]}${whitespace_2[i]}"
+            line+="${col_3[i]}"
 
-            if [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]; then
-                help_message+="${col_2[i]}"
-                help_message+="${whitespace_2[i]}"
-            fi
-
-            help_message+="${col_3[i]}"
-            help_message+=$'\n'
+            line="${line%%+( )}"
+            line+=$'\n'
+            help_message+="${line}"
         done
         help_message_groups[${arg_group}]="${help_message}"
 
@@ -7133,6 +7180,7 @@ function argparser_main() {
         unset ARGPARSER_MAX_COL_WIDTH_1
         unset ARGPARSER_MAX_COL_WIDTH_2
         unset ARGPARSER_MAX_COL_WIDTH_3
+        unset ARGPARSER_MAX_WIDTH
         unset ARGPARSER_POSITIONAL_ARG_GROUP
         unset ARGPARSER_READ_ARGS
         unset ARGPARSER_SCRIPT_ARGS

@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-28
+# Last Modification: 2025-03-27
 
 # Usage: Run this script with "bash try_argparser.sh".
 
@@ -12,7 +12,6 @@
 # options, override the default column widths for the help message.
 ARGPARSER_MAX_COL_WIDTH_1=9
 ARGPARSER_MAX_COL_WIDTH_2=33
-ARGPARSER_MAX_COL_WIDTH_3=35
 
 # Define the arguments.
 # shellcheck disable=SC2190  # Indexed, not associative array.
