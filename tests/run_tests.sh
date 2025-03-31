@@ -1339,8 +1339,8 @@ Mandatory arguments to long options are mandatory for short options too.
 
 The following arguments are positional.
 Positional arguments:
-[pos_1={1,2}]         one positional argument with default and choice
-                      (default: 2)
+[pos_1={1,2}]         one positional argument with default and choice (default:
+                      2)
 pos_2                 two positional arguments without default or choice
 
 The following options have no default value.

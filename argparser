@@ -712,7 +712,7 @@ function argparser_colorize() {
     if [[ "${print_string}" == true ]]; then
         # shellcheck disable=SC2059  # Escape sequence in variable.
         printf "${style}"
-        printf "%s" "${string}"
+        printf '%s' "${string}"
 
         if [[ "${ARGPARSER_USE_STYLES_IN_FILES}" == true \
             || -t "${file_descriptor}" ]]
@@ -5184,6 +5184,7 @@ function argparser_create_help_message() {
     local i
     local index
     local is_deprecated
+    local is_overlong
     local j
     local joined_words
     local largest_col_width
@@ -5837,19 +5838,28 @@ function argparser_create_help_message() {
     # the column with the other elements.  For column 1, this equals the
     # column's maximum width plus 1 (the mandatory separation), for
     # column 2, both columns' maximum widths plus 2 (twice the mandatory
-    # separation).
+    # separation).  If the first column is too long, but the second one
+    # (which is used) empty and fits the remainder of the first column's
+    # content, write in the second column instead of breaking the line.
     whitespace_1=( )
     whitespace_2=( )
     for i in "${!col_1[@]}"; do
         whitespace_1+=("")
         whitespace_2+=("")
+        is_overlong=false
 
+        # Set the first column's width.
         if (( "${#col_1[i]}" <= ARGPARSER_MAX_COL_WIDTH_1 )); then
             if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
                 (( whitespace_len_1 = col_width_1 - "${#col_1[i]}" + 1 ))
             else
                 (( whitespace_len_1 = col_width_1 - "${#col_1[i]}" ))
             fi
+        elif [[ -z "${col_2[i]}" ]] \
+            && (( "${#col_1[i]}" <= ARGPARSER_MAX_COL_WIDTH_1 + col_width_2 ))
+        then
+            is_overlong=true
+            whitespace_len_1=0
         else
             if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
                 (( whitespace_len_1 = col_width_1 + 1 ))
@@ -5863,7 +5873,16 @@ function argparser_create_help_message() {
             whitespace_1[-1]+=" "
         done
 
-        if (( "${#col_2[i]}" <= ARGPARSER_MAX_COL_WIDTH_2 )); then
+        # Set the second column's width.
+        if [[ "${is_overlong}" == true ]]; then
+            if [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]; then
+                (( whitespace_len_2 = col_width_1 + col_width_2 \
+                    - "${#col_1[i]}" + 2 ))
+            else
+                (( whitespace_len_2 = col_width_1 + col_width_2 \
+                    - "${#col_1[i]}" + 1 ))
+            fi
+        elif (( "${#col_2[i]}" <= ARGPARSER_MAX_COL_WIDTH_2 )); then
             if [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]; then
                 (( whitespace_len_2 = col_width_2 - "${#col_2[i]}" + 1 ))
             else
@@ -6835,7 +6854,7 @@ function argparser_print_error_or_warning_message() {
         {
             # shellcheck disable=SC2059  # Escape sequence in variable.
             printf "${style}"
-            printf "%s\n" "${messages[@]}"
+            printf '%s\n' "${messages[@]}"
             if [[ "${ARGPARSER_USE_STYLES_IN_FILES}" == true || -t 2 ]]
             then
                 printf '\e[0m'
