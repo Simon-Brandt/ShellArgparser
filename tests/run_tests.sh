@@ -154,6 +154,7 @@ function print_diff() {
         colorize "" $'\n' true
 
         failure_reasons+=("${test_type}")
+        failed_cmds+=("${cmd}")
         (( failed_cmd_count++ ))
     fi
     print_double_separator
@@ -206,11 +207,12 @@ function print_fd_diff() {
         colorize "" $'\n' true
 
         failure_reasons+=("${test_type}")
+        failed_cmds+=("${cmd}")
     fi
     print_double_separator
 }
 
-# Define the function for printing the summary.
+# Define the functions for printing the summary.
 function print_summary() {
     # Print a summary giving statistics over the run commands.
     local line
@@ -238,7 +240,6 @@ function print_summary() {
     colorize "" "" true
 }
 
-# Define the function for printing the reasons for failures.
 function print_failure_reasons() {
     # Print the reasons for failures.
     if (( "${#failure_reasons}" == 0 )); then
@@ -259,9 +260,30 @@ function print_failure_reasons() {
     colorize "" "" true
 }
 
+function print_failed_commands() {
+    # Print the failed commands.
+    if (( "${#failure_reasons}" == 0 )); then
+        return
+    fi
+    colorize "yellow,bold,reverse" "Failed commands:" false
+    printf '%104s' ""
+    printf '\n'
+
+    mapfile -t failed_cmds \
+        < <(printf '%s\n' "${failed_cmds[@]}" | sort --unique)
+    for reason in "${failed_cmds[@]}"; do
+        printf ' - %s' "${reason}"
+        printf '%*s' $(( 117 - "${#reason}" )) ""
+        printf '\n'
+    done
+
+    colorize "" "" true
+}
+
 # Run the tests.
 failed_cmd_count=0
 succeeded_cmd_count=0
+failed_cmds=( )
 failure_reasons=( )
 
 # 1.    Test the general functionality using test_basic.sh.
@@ -1724,6 +1746,10 @@ colorize "yellow,bold,reverse" "" false
 printf '%120s' ""
 colorize "" $'\n' true
 print_failure_reasons
+colorize "yellow,bold,reverse" "" false
+printf '%120s' ""
+colorize "" $'\n' true
+print_failed_commands
 
 # Exit with the number of failed commands as exit code.
 exit "${failed_cmd_count}"
