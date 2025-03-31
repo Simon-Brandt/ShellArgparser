@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-03-28
+# Last Modification: 2025-03-31
 
 # TODO: Support mutually exclusive argument groups.
 # TODO: Consider using the Bash 5.3 form "${ command ... ; }" for the
@@ -258,7 +258,8 @@ function argparser_check_color_or_style() {
     # argparser_colorize.
     #
     # Arguments:
-    # - $1: the colors and/or styles to use as comma-separated list
+    # - $1: the colors and/or styles to use as
+    #       ${ARGPARSER_ARG_DELIMITER_2}-separated list
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
@@ -298,10 +299,8 @@ function argparser_check_color_or_style() {
         reverse
     )
 
-    # Split the requested color and/or style on commas and print any.
-    # Then, print the string and reset the color and style.  If a
-    # non-existing color or style is requested, abort the script with
-    # an error message.
+    # Split the requested color and/or style on
+    # ${ARGPARSER_ARG_DELIMITER_2} characters and check any.
     IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a requests <<< "${requests}"
     for request in "${requests[@]}"; do
         if ! argparser_in_array "${request}" "${styles[@]}"; then
@@ -635,7 +634,8 @@ function argparser_colorize() {
     # Colorize and format the string using ANSI escape sequences.
     #
     # Arguments:
-    # - $1: the colors and/or styles to use as comma-separated list
+    # - $1: the colors and/or styles to use as
+    #       ${ARGPARSER_ARG_DELIMITER_2}-separated list
     # - $2: the string to colorize
     # - $3: the file descriptor to write to (1 or 2)
     # - $4: whether to print the colorized string
