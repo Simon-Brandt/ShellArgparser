@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-03-28
+# Last Modification: 2025-03-31
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -11,29 +11,85 @@
 # Purpose: Test the functionality of the argparser by running all test
 # scripts and comparing their output and errors to expected values.
 
-# Define the functions for printing the colored output.
-function print_separator() {
-    # Print a colored line of 120 characters acting as visual separator.
+# Define the functions for colorizing and printing the colored output.
+function colorize() {
+    # Colorize and format the string using ANSI escape sequences.
     #
     # Arguments:
-    # - $1: the character to use as separator
-    # - $2: the ANSI SGR escape sequence for colorization
+    # - $1: the colors and/or styles to use as comma-separated list
+    # - $2: the string to colorize
+    # - $3: whether to reset the color and/or style after the string
+    #
+    # Output:
+    # - the colorized string
 
-    printf '\e[%s;1m' "$2"
-    printf '%120s' "" | tr ' ' "$1"
-    printf '\e[0m\n'
+    # Define the local variables.
+    local request
+    local requests
+    local reset
+    local string
+    local style
+    local -A styles
+
+    # Read the arguments.
+    requests="$1"
+    string="$2"
+    reset="$3"
+
+    # Define the associative array with colors and styles, and their
+    # corresponding Select Graphic Rendition (SGR) ANSI escape sequence
+    # codes.
+    styles=(
+        [black]=30
+        [red]=31
+        [green]=32
+        [yellow]=33
+        [blue]=34
+        [magenta]=35
+        [cyan]=36
+        [white]=37
+        [normal]=22
+        [bold]=1
+        [faint]=2
+        [italic]=3
+        [underline]=4
+        [double]=21
+        [overline]=53
+        [crossed-out]=9
+        [blink]=5
+        [reverse]=7
+    )
+
+    # Split the requested color and/or style on commas and replace it
+    # with the corresponding escape sequence.
+    style=""
+    IFS="," read -r -a requests <<< "${requests}"
+    for request in "${requests[@]}"; do
+        style+="\e[${styles[${request}]}m"
+    done
+
+    # Print the colorized string and possibly reset the color/style.
+
+    # shellcheck disable=SC2059  # Escape sequence in variable.
+    printf "${style}"
+    printf '%s' "${string}"
+    if [[ "${reset}" == true ]]; then
+        printf '\e[0m'
+    fi
 }
 
 function print_single_separator() {
     # Print a line of 120 hyphens acting as visual separator, colored in
     # white.
-    print_separator "-" 37
+    colorize "white" "$(printf '%120s' "" | tr ' ' "-")" true
+    printf '\n'
 }
 
 function print_double_separator() {
     # Print a line of 120 equals signs acting as visual separator,
     # colored in blue.
-    print_separator "=" 36
+    colorize "cyan" "$(printf '%120s' "" | tr ' ' "=")" true
+    printf '\n'
 }
 
 # Define the function for printing the section names.
@@ -42,9 +98,9 @@ function print_section() {
     #
     # Arguments:
     # - $1: the section name to print
-    printf '\e[33;1;7mRunning tests for %s...' "$1"
+    colorize "yellow,bold,reverse" "Running tests for $1..." false
     printf '%*s' $(( 99 - "${#1}" )) ""
-    printf '\e[0m\n'
+    colorize "" $'\n' true
     print_double_separator
 }
 
@@ -67,7 +123,9 @@ function print_diff() {
     output="$2"
     error="$3"
 
-    printf 'Running test %s: "\e[1m%s\e[0m"...\n' "${test_number}" "${cmd}"
+    printf 'Running test %s: ' "${test_number}"
+    colorize "bold" "\"${cmd}\"" true
+    printf '...\n'
 
     diff --side-by-side --suppress-common-lines --color=always --width=120 \
         <(eval "${cmd}" 2>&1 3> /dev/null 4> /dev/null) \
@@ -83,17 +141,18 @@ function print_diff() {
     exit_code="$?"
 
     if (( exit_code == 0 )); then
-        printf '\e[32;1;7mTest %s succeeded with correct output.' \
-            "${test_number}"
+        colorize "green,bold,reverse" \
+            "Test ${test_number} succeeded with correct output." false
         printf '%*s' $(( 84 - "${#test_number}" )) ""
-        printf '\e[0m\n'
+        colorize "" $'\n' true
         (( succeeded_cmd_count++ ))
     elif (( exit_code == 1 )); then
         print_single_separator
-        printf '\e[31;1;7mTest %s failed with diverging output.' \
-            "${test_number}"
+        colorize "red,bold,reverse" \
+            "Test ${test_number} failed with diverging output." false
         printf '%*s' $(( 85 - "${#test_number}" )) ""
-        printf '\e[0m\n'
+        colorize "" $'\n' true
+
         failure_reasons+=("${test_type}")
         (( failed_cmd_count++ ))
     fi
@@ -135,16 +194,17 @@ function print_fd_diff() {
     exit_code="$?"
 
     if (( exit_code == 0 )); then
-        printf '\e[32;1;7mTest %s succeeded with identical environment.' \
-            "${test_number}"
+        colorize "green,bold,reverse" \
+            "Test ${test_number} succeeded with identical environment." false
         printf '%*s' $(( 77 - "${#test_number}" )) ""
-        printf '\e[0m\n'
+        colorize "" $'\n' true
     elif (( exit_code == 1 )); then
         print_single_separator
-        printf '\e[31;1;7mTest %s failed with diverging environment.' \
-            "${test_number}"
+        colorize "red,bold,reverse" \
+            "Test ${test_number} failed with diverging environment." false
         printf '%*s' $(( 80 - "${#test_number}" )) ""
-        printf '\e[0m\n'
+        colorize "" $'\n' true
+
         failure_reasons+=("${test_type}")
     fi
     print_double_separator
@@ -155,7 +215,7 @@ function print_summary() {
     # Print a summary giving statistics over the run commands.
     local line
 
-    printf '\e[33;1;7mSummary:'
+    colorize "yellow,bold,reverse" "Summary:" false
     printf '%112s' ""
     printf '\n'
 
@@ -175,7 +235,7 @@ function print_summary() {
     printf '%*s' $(( 120 - "${#line}" )) ""
     printf '\n'
 
-    printf '\e[0m'
+    colorize "" "" true
 }
 
 # Define the function for printing the reasons for failures.
@@ -184,7 +244,7 @@ function print_failure_reasons() {
     if (( "${#failure_reasons}" == 0 )); then
         return
     fi
-    printf '\e[33;1;7mReasons for failure:'
+    colorize "yellow,bold,reverse" "Reasons for failure:" false
     printf '%100s' ""
     printf '\n'
 
@@ -195,7 +255,8 @@ function print_failure_reasons() {
         printf '%*s' $(( 117 - "${#reason}" )) ""
         printf '\n'
     done
-    printf '\e[0m'
+
+    colorize "" "" true
 }
 
 # Run the tests.
@@ -1659,7 +1720,9 @@ print_diff "${cmd}" "${output}" "${error}"
 
 # Print the summary and the reasons for the failures.
 print_summary
-printf '\e[33;1;7m%120s\n\e[0m' ""
+colorize "yellow,bold,reverse" "" false
+printf '%120s' ""
+colorize "" $'\n' true
 print_failure_reasons
 
 # Exit with the number of failed commands as exit code.
