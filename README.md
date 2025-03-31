@@ -59,6 +59,7 @@ The argparser is a designed to be an easy-to-use, yet powerful command-line argu
     - [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1)
     - [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2)
     - [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)
+    - [`ARGPARSER_MAX_WIDTH`](#argparser_max_width)
     - [`ARGPARSER_POSITIONAL_ARG_GROUP`](#argparser_positional_arg_group)
     - [`ARGPARSER_READ_ARGS`](#argparser_read_args)
     - [`ARGPARSER_SCRIPT_ARGS`](#argparser_script_args)
@@ -122,7 +123,7 @@ git clone https://github.com/Simon-Brandt/bash_argparser.git
 To be able to refer to the argparser directly by its name, without providing the entire path (which enhances the portability of your script to other machines), you may want to add
 
 ```bash
-PATH="/path/to/shell_argparser:${PATH}"
+PATH="/path/to/bash_argparser:${PATH}"
 ```
 
 (replace the `/path/to` with your actual path) to either of the following files (see `info bash` or `man bash`):
@@ -157,7 +158,6 @@ First, let's see how we can use the argparser to parse the arguments given to yo
 # options, override the default column widths for the help message.
 ARGPARSER_MAX_COL_WIDTH_1=9
 ARGPARSER_MAX_COL_WIDTH_2=33
-ARGPARSER_MAX_COL_WIDTH_3=35
 
 # Define the arguments.
 args=(
@@ -196,13 +196,12 @@ When you (as a user) have to deal with unknown scripts or programs, maybe the fi
 
 ```console
 $ bash try_argparser.sh --help
-Usage: try_argparser.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
+Usage: try_argparser.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
 Positional arguments:
-[pos_1={1,2}]
-                                           one positional argument with default
+[pos_1={1,2}]                              one positional argument with default
                                            and choice (default: 2)
 pos_2                                      two positional arguments without
                                            default or choice
@@ -452,7 +451,6 @@ Now that you have seen how the argparser serves in parsing and interpreting the 
 # options, override the default column widths for the help message.
 ARGPARSER_MAX_COL_WIDTH_1=9
 ARGPARSER_MAX_COL_WIDTH_2=33
-ARGPARSER_MAX_COL_WIDTH_3=35
 
 # Define the arguments.
 args=(
@@ -549,7 +547,7 @@ Thereby, errors abort the script, while warnings just write a message to `STDERR
 
 ### Argparser configuration
 
-The argparser accepts about 50 options for configuring the argument parsing, checking their values and the consistency of the arguments definition, creating the various message types (see below), and setting the required companion files. These options are available as [environment variables](#environment-variables). By this, you can set them directly in your script, and even [`export`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-export "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; export") them to child processes. Thus, you can set these variables once and use them throughout your script suite.
+The argparser accepts over 50 options for configuring the argument parsing, checking their values and the consistency of the arguments definition, creating the various message types (see below), and setting the required companion files. These options are available as [environment variables](#environment-variables). By this, you can set them directly in your script, and even [`export`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-export "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; export") them to child processes. Thus, you can set these variables once and use them throughout your script suite.
 
 Still, it is likely that, after some time or for a specific project, you'll settle with a certain set of options that you'll want to reuse for all scripts. Then, setting the environment variables in any script becomes a tedious task, wasting space in each script. Additionally, should you want to change a value, you need to change it in any file.
 
@@ -824,13 +822,12 @@ Likewise, we can investigate the help message (just as we did above, with the ve
 
 ```console
 $ bash try_argparser.sh --help
-Usage: try_argparser.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
+Usage: try_argparser.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
 Positional arguments:
-[pos_1={1,2}]
-                                           one positional argument with default
+[pos_1={1,2}]                              one positional argument with default
                                            and choice (default: 2)
 pos_2                                      two positional arguments without
                                            default or choice
@@ -857,7 +854,9 @@ Optional options:
 
 The help message details all short and long option names, their optionality (*i.e.*, whether there are default values), and their choice values, using the same syntax as in the usage message. Additionally, the help text and notes from the arguments definition are given. The arguments are separated by their groups, thus structuring the help message. First, the group for the positional arguments is given (indicated by [`ARGPARSER_POSITIONAL_ARG_GROUP`](#argparser_positional_arg_group)), then follow the keyword argument groups in alphabetical order. Finally, the default `--help`, `--usage`, and `--version` arguments (the latter for the [version message](#version-messages)) are given as separate, yet unnamed group.
 
-The help message's structure aims at reproducing the commonly found structure in command-line programs. By setting [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1), [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2), and [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3) (as done in `try_argparser.sh`), the column widths may be adapted to your needs, recommendably totalling 77 characters (thus 79 characters including the separating spaces). Note that columns are automatically shrunk, when their content is narrower, but they're not expanded, when their content is wider. This is to guarantee that the help message, when *e.g.* sent as logging output, nicely fits in the space you have.
+The help message's structure aims at reproducing the commonly found structure in command-line programs. By setting [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1), [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2), or [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3) (as done in `try_argparser.sh`), the column widths may be adapted to your needs, recommendably totalling 77 characters (thus 79 characters including the separating spaces). Note that columns are automatically shrunk, when their content is narrower, but they're not expanded, when their content is wider. This is to guarantee that the help message, when *e.g.* sent as logging output, nicely fits in the space you have.
+
+Alternatively, you may want to set [`ARGPARSER_MAX_WIDTH`](#argparser_max_width). By this, the help message will have a defined width, independent of shrunk columns. This is achieved by expanding the third column (with the help text) to the remaining width. For this to work, [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3) must be set to `0`.
 
 ### Help and usage message files
 
@@ -919,39 +918,32 @@ Now, we get the following help message:
 ```console
 $ bash try_help_file.sh -h
 A brief header summarizes the way how to interpret the help message.
-Usage: try_help_file.sh [OPTIONS] ARGUMENTS [--] [pos_1] pos_2
+Usage: try_help_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
 The following arguments are positional.
 Positional arguments:
-[pos_1={1,2}]
-                      one positional argument with default and
-                      choice (default: 2)
-pos_2                 two positional arguments without default
-                      or choice
+[pos_1={1,2}]         one positional argument with default and choice (default:
+                      2)
+pos_2                 two positional arguments without default or choice
 
 The following options have no default value.
 Mandatory options:
 -a,   --var-1=VAL_1   one value without default or choice
--b,   --var-2=VAL_2   at least one value without default or
-                      choice
+-b,   --var-2=VAL_2   at least one value without default or choice
 -c,   --var-3={A,B}   at least one value with choice
 
 The following options have a default value.
 Optional options:
-[-d={A,B,C}]
-                      one value with default and choice
-                      (default: A)
+[-d={A,B,C}]          one value with default and choice (default: A)
       [--var-5=VAL_5] one value with default (default: E)
-[-f], [--var-6]       no value (flag) with default (default:
-                      false)
-[-g], [--var-7]       (DEPRECATED) no value (flag) with
-                      default (default: true)
+[-f], [--var-6]       no value (flag) with default (default: false)
+[-g], [--var-7]       (DEPRECATED) no value (flag) with default (default: true)
 
 There are always three options for the help messages.
 -h,   --help          display this help and exit
--?,                   
+-?,
 -u,   --usage         display the usage and exit
 -V,   --version       display the version and exit
 ```
@@ -1165,39 +1157,32 @@ The former command prints the American English help message, the latter its Germ
 $ LANG=de_DE.UTF-8 bash try_localization.sh -h
 Eine kurze Kopfzeile fasst zusammen, wie die Hilfe-Meldung zu interpretieren
 ist.
-Aufruf: try_localization.sh [OPTIONEN] ARGUMENTE [--] [pos_1] pos_2
+Aufruf: try_localization.sh [OPTIONEN] ARGUMENTE -- [pos_1] pos_2
 
 Erforderliche Argumente für lange Optionen sind auch für kurze erforderlich.
 
 Die folgenden Argumente sind positional.
 Positionale Argumente:
-[pos_1={1,2}]
-                      ein positionales Argument mit Vorgabe
-                      und Auswahl (Vorgabe: 2)
-pos_2                 zwei positionale Argumente ohne Vorgabe
-                      oder Auswahl
+[pos_1={1,2}]         ein positionales Argument mit Vorgabe und Auswahl
+                      (Vorgabe: 2)
+pos_2                 zwei positionale Argumente ohne Vorgabe oder Auswahl
 
 Die folgenden Optionen haben keinen Vorgabewert.
 Erforderliche Optionen:
 -a,   --var-1=VAL_1   ein Wert ohne Vorgabe oder Auswahl
--b,   --var-2=VAL_2   mindestens ein Wert ohne Vorgabe oder
-                      Auswahl
+-b,   --var-2=VAL_2   mindestens ein Wert ohne Vorgabe oder Auswahl
 -c,   --var-3={A,B}   mindestens ein Wert mit Auswahl
 
 Die folgenden Optionen haben einen Vorgabewert.
 Optionale Optionen:
-[-d={A,B,C}]
-                       ein Wert mit Vorgabe und Auswahl
-                      (Vorgabe: A)
+[-d={A,B,C}]          ein Wert mit Vorgabe und Auswahl (Vorgabe: A)
       [--var-5=VAL_5] ein Wert mit Vorgabe (Vorgabe: E)
-[-f], [--var-6]       kein Wert (Flag) mit Vorgabe (Vorgabe:
-                      falsch)
-[-g], [--var-7]       (VERALTET) kein Wert (Flag) mit Vorgabe
-                      (Vorgabe: wahr)
+[-f], [--var-6]       kein Wert (Flag) mit Vorgabe (Vorgabe: falsch)
+[-g], [--var-7]       (VERALTET) kein Wert (Flag) mit Vorgabe (Vorgabe: wahr)
 
 Es gibt grundsätzlich drei Optionen für die Hilfe-Meldungen.
 -h,   --help          diese Hilfe anzeigen und beenden
--?,                   
+-?,
 -u,   --usage         den Aufruf anzeigen und beenden
 -V,   --version       die Version anzeigen und beenden
 ```
@@ -1273,153 +1258,142 @@ Usage: argparser [OPTIONS] [--] COMMAND LINE
 Mandatory arguments to long options are mandatory for short options too.
 
 Positional arguments:
-COMMAND
-                                        the indexed array in which the argparser
- LINE                                  stores the script's command line upon
-                                       parsing its own arguments
+COMMAND LINE                     the indexed array in which the argparser
+                                 stores the script's command line upon parsing
+                                 its own arguments
 
 Options:
-      [--add-help]                     add ARGPARSER_HELP_OPTIONS and --help as
-                                       flags to call the help message (default:
-                                       true)
-      [--add-usage]                    add ARGPARSER_USAGE_OPTIONS and --usage
-                                       as flags to call the usage message
-                                       (default: true)
-      [--add-version]                  add ARGPARSER_SCRIPT_VERSION_OPTIONS and
-                                       --version as flags to call the version
-                                       message (default: true)
-      [--allow-option-abbreviation]    allow the user to give long option names
-                                       in abbreviated form (default: false)
-      [--allow-option-merging]         allow the user to give short option
-                                       names in merged (concatenated) form
-                                       (default: false)
-      [--arg-array-name=NAME]          the indexed array for the raw arguments
-                                       and the associative array for the parsed
-                                       arguments (default: args)
-      [--arg-def-file=FILE]            the path to a file holding the
-                                       definition of the arguments (default:
-                                       '')
-      [--arg-def-file-has-header]      whether the arguments definition file
-                                       has a header explaining the columns
-                                       (default: true)
-      [--arg-def-has-header]           whether the arguments definition in the
-                                       script has a header explaining the
-                                       columns (default: true)
-      [--arg-delimiter-1=CHAR]         the primary delimiter that separates the
-                                       fields in the arguments definition
-                                       (default: :)
-      [--arg-delimiter-2=CHAR]         the secondary delimiter that separates
-                                       the elements of sequences in the
-                                       arguments definition (default: ,)
-      [--check-arg-definition]         check if the arguments definition is
-                                       consistent (default: false)
-      [--check-env-vars]               check if the argparser environment
-                                       variables accord to their definition
-                                       (default: false)
-      [--configuration-file=FILE]      the path to a file holding the argparser
-                                       configuration (default: '')
-      [--count-flags]                  count flags instead of setting them to
-                                       true or false based on the last prefix
-                                       used on the command line (default:
-                                       false)
-      [--error-exit-code=INT]          the exit code when errors occurred upon
-                                       parsing (default: 1)
-      [--error-style=STYLE]            the color and style specification for
-                                       error messages (default:
-                                       red,bold,reverse)
-      [--help-exit-code=INT]           the exit code for help messages
-                                       (default: 0)
-      [--help-file=FILE]               the path to a file holding the extended
-                                       help message (default: '')
-      [--help-file-include-char=CHAR]  the character that introduces an include
-                                       directive in an ARGPARSER_HELP_FILE
-                                       (default: @)
-      [--help-file-keep-comments]      keep commented lines in the help file
-                                       (default: false)
-      [--help-options=CHAR]            the short (single-character) option
-                                       names to invoke the help message
-                                       (default: h,?)
-      [--help-style=STYLE]             the color and style specification for
-                                       help messages (default: italic)
-      [--language=-]                   the language in which to localize the
-                                       help and usage messages (default: en)
-      [--max-col-width-1=INT]          the maximum column width of the first
-                                       column in the help message (default: 5)
-      [--max-col-width-2=INT]          the maximum column width of the second
-                                       column in the help message (default: 33)
-      [--max-col-width-3=INT]          the maximum column width of the third
-                                       column in the help message (default: 39)
-      [--positional-arg-group=NAME]    the name of the argument group holding
-                                       all positional arguments (default:
-                                       Positional arguments)
-      [--read-args]                    read the arguments and parse them to
-                                       ARGPARSER_ARG_ARRAY_NAME (default: true)
-      [--script-name=NAME]             the script's name for the help, usage,
-                                       version, error, and warning messages
-                                       (default: '')
-      [--script-version=-]             the script's version number for the
-                                       version message (default: 1.0.0)
-      [--script-version-exit-code=INT] the exit code for version messages
-                                       (default: 0)
-      [--script_version-options=CHAR]  the short (single-character) option
-                                       names to invoke the version message
-                                       (default: V)
-      [--script-version-style=STYLE]   the color and style specification for
-                                       version messages (default: bold)
-      [--set-args]                     set the arguments from
-                                       ARGPARSER_ARG_ARRAY_NAME as variables in
-                                       the script's scope (default: true)
-      [--set-arrays]                   set arguments intended to have multiple
-                                       values as indexed array (default: true)
-      [--silence-errors]               silence the emission (output) of error
-                                       messages (default: false)
-      [--silence-warnings]             silence the emission (output) of warning
-                                       messages (default: false)
-      [--translation-file=FILE]        the path to a simplified YAML file
-                                       holding the translation to
-                                       ARGPARSER_LANGUAGE (default: '')
-      [--unset-args]                   unset (remove) all command-line
-                                       arguments given to the script (default:
-                                       true)
-      [--unset-env-vars]               unset (remove) the argparser environment
-                                       variables from the environment (default:
-                                       true)
-      [--unset-functions]              unset (remove) the argparser functions
-                                       from the environment (default: true)
-      [--usage-exit-code=INT]          the exit code for usage messages
-                                       (default: 0)
-      [--usage-file=FILE]              the path to a file holding the extended
-                                       usage message (default: '')
-      [--usage-file-include-char=CHAR] the character that introduces an include
-                                       directive in an ARGPARSER_USAGE_FILE
-                                       (default: @)
-      [--usage-file-keep-comments]     keep commented lines in the usage file
-                                       (default: false)
-      [--usage-message-option-type={long,short}]
-                                        use short or long option names in usage
-                                       messages (default: short)
-      [--usage-message-orientation={row,column}]
-                                        output the positional and keyword
-                                       arguments in usage messages in a row or
-                                       in a column (default: row)
-      [--usage-options=CHAR]           the short (single-character) option
-                                       names to invoke the usage message
-                                       (default: u)
-      [--usage-style=STYLE]            the color and style specification for
-                                       usage messages (default: italic)
-      [--use-long-options]             use the long option names for parsing
-                                       (default: true)
-      [--use-short-options]            use the short option names for parsing
-                                       (default: true)
-      [--use-styles-in-files]          use the colors and styles when
-                                       STDOUT/STDERR is not a terminal
-                                       (default: false)
-      [--warning-style=STYLE]          the color and style specification for
-                                       warning messages (default: red,bold)
+[--add-help]                     add ARGPARSER_HELP_OPTIONS and --help as flags
+                                 to call the help message (default: true)
+[--add-usage]                    add ARGPARSER_USAGE_OPTIONS and --usage as
+                                 flags to call the usage message (default:
+                                 true)
+[--add-version]                  add ARGPARSER_SCRIPT_VERSION_OPTIONS and
+                                 --version as flags to call the version message
+                                 (default: true)
+[--allow-option-abbreviation]    allow the user to give long option names in
+                                 abbreviated form (default: false)
+[--allow-option-merging]         allow the user to give short option names in
+                                 merged (concatenated) form (default: false)
+[--arg-array-name=NAME]          the indexed array for the raw arguments and
+                                 the associative array for the parsed arguments
+                                 (default: args)
+[--arg-def-file=FILE]            the path to a file holding the definition of
+                                 the arguments (default: '')
+[--arg-def-file-has-header]      whether the arguments definition file has a
+                                 header explaining the columns (default: true)
+[--arg-def-has-header]           whether the arguments definition in the script
+                                 has a header explaining the columns (default:
+                                 true)
+[--arg-delimiter-1=CHAR]         the primary delimiter that separates the
+                                 fields in the arguments definition (default:
+                                 :)
+[--arg-delimiter-2=CHAR]         the secondary delimiter that separates the
+                                 elements of sequences in the arguments
+                                 definition (default: ,)
+[--check-arg-definition]         check if the arguments definition is
+                                 consistent (default: false)
+[--check-env-vars]               check if the argparser environment variables
+                                 accord to their definition (default: false)
+[--configuration-file=FILE]      the path to a file holding the argparser
+                                 configuration (default: '')
+[--count-flags]                  count flags instead of setting them to true or
+                                 false based on the last prefix used on the
+                                 command line (default: false)
+[--error-exit-code=INT]          the exit code when errors occurred upon
+                                 parsing (default: 1)
+[--error-style=STYLE]            the color and style specification for error
+                                 messages (default: red,bold,reverse)
+[--help-exit-code=INT]           the exit code for help messages (default: 0)
+[--help-file=FILE]               the path to a file holding the extended help
+                                 message (default: '')
+[--help-file-include-char=CHAR]  the character that introduces an include
+                                 directive in an ARGPARSER_HELP_FILE (default:
+                                 @)
+[--help-file-keep-comments]      keep commented lines in the help file
+                                 (default: false)
+[--help-options=CHAR]            the short (single-character) option names to
+                                 invoke the help message (default: h,?)
+[--help-style=STYLE]             the color and style specification for help
+                                 messages (default: italic)
+[--language=-]                   the language in which to localize the help and
+                                 usage messages (default: en)
+[--max-col-width-1=INT]          the maximum column width of the first column
+                                 in the help message (default: 5)
+[--max-col-width-2=INT]          the maximum column width of the second column
+                                 in the help message (default: 33)
+[--max-col-width-3=INT]          the maximum column width of the third column
+                                 in the help message (default: 0)
+[--max-width=INT]                the maximum width of the help message
+                                 (default: 79)
+[--positional-arg-group=NAME]    the name of the argument group holding all
+                                 positional arguments (default: Positional
+                                 arguments)
+[--read-args]                    read the arguments and parse them to
+                                 ARGPARSER_ARG_ARRAY_NAME (default: true)
+[--script-name=NAME]             the script's name for the help, usage,
+                                 version, error, and warning messages (default:
+                                 '')
+[--script-version=-]             the script's version number for the version
+                                 message (default: 1.0.0)
+[--script-version-exit-code=INT] the exit code for version messages (default:
+                                 0)
+[--script-version-options=CHAR]  the short (single-character) option names to
+                                 invoke the version message (default: V)
+[--script-version-style=STYLE]   the color and style specification for version
+                                 messages (default: bold)
+[--set-args]                     set the arguments from
+                                 ARGPARSER_ARG_ARRAY_NAME as variables in the
+                                 script's scope (default: true)
+[--set-arrays]                   set arguments intended to have multiple values
+                                 as indexed array (default: true)
+[--silence-errors]               silence the emission (output) of error
+                                 messages (default: false)
+[--silence-warnings]             silence the emission (output) of warning
+                                 messages (default: false)
+[--translation-file=FILE]        the path to a simplified YAML file holding the
+                                 translation to ARGPARSER_LANGUAGE (default:
+                                 '')
+[--unset-args]                   unset (remove) all command-line arguments
+                                 given to the script (default: true)
+[--unset-env-vars]               unset (remove) the argparser environment
+                                 variables from the environment (default: true)
+[--unset-functions]              unset (remove) the argparser functions from
+                                 the environment (default: true)
+[--usage-exit-code=INT]          the exit code for usage messages (default: 0)
+[--usage-file=FILE]              the path to a file holding the extended usage
+                                 message (default: '')
+[--usage-file-include-char=CHAR] the character that introduces an include
+                                 directive in an ARGPARSER_USAGE_FILE (default:
+                                 @)
+[--usage-file-keep-comments]     keep commented lines in the usage file
+                                 (default: false)
+[--usage-message-option-type={long,short}]
+                                 use short or long option names in usage
+                                 messages (default: short)
+[--usage-message-orientation={row,column}]
+                                 output the positional and keyword arguments in
+                                 usage messages in a row or in a column
+                                 (default: row)
+[--usage-options=CHAR]           the short (single-character) option names to
+                                 invoke the usage message (default: u)
+[--usage-style=STYLE]            the color and style specification for usage
+                                 messages (default: italic)
+[--use-long-options]             use the long option names for parsing
+                                 (default: true)
+[--use-short-options]            use the short option names for parsing
+                                 (default: true)
+[--use-styles-in-files]          use the colors and styles when STDOUT/STDERR
+                                 is not a terminal (default: false)
+[--warning-style=STYLE]          the color and style specification for warning
+                                 messages (default: red,bold)
+[--write-args]                   write the arguments from
+                                 ARGPARSER_ARG_ARRAY_NAME to STDOUT (default:
+                                 false)
 
-      --help                           display this help and exit
-      --usage                          display the usage and exit
-      --version                        display the version and exit
+--help                           display this help and exit
+--usage                          display the usage and exit
+--version                        display the version and exit
 ```
 
 The second, and perhaps more important way of standalone usage is included for compatibility with other shells. Since only Bash can successfully source Bash scripts (at least, when they rely on Bashisms, which is the case for the argparser), the argparser would only be usable from within Bash scripts. While this remains the central point of application, there is also a way to run the argparser from other shell's scripts. As an example, let's have a look at the `try_pipeline.sh` script:
@@ -1586,7 +1560,8 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_LANGUAGE`](#argparser_language)                                   | *str*                              | `"en"`                   |
 | [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1)                     | *uint*                             | `5`[^6]                  |
 | [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2)                     | *uint*                             | `33`[^6]                 |
-| [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)                     | *uint*                             | `39`[^6]                 |
+| [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)                     | *uint*                             | `0`[^6]                  |
+| [`ARGPARSER_MAX_WIDTH`](#argparser_max_width)                                 | *uint*                             | `79`                     |
 | [`ARGPARSER_POSITIONAL_ARG_GROUP`](#argparser_positional_arg_group)           | *str*                              | `"Positional arguments"` |
 | [`ARGPARSER_READ_ARGS`](#argparser_read_args)                                 | *bool*                             | `true`                   |
 | [`ARGPARSER_SCRIPT_ARGS`](#argparser_script_args)                             | *arr*                              | *None* (unset)           |
@@ -1815,22 +1790,29 @@ The argparser defines a large set of environment variables, each following the n
 - ***Type:*** *uint* (Unsigned integer)
 - ***Allowed values:*** Any positive integer
 - ***Default value:*** `5`
-- ***Description:*** The maximum column width of the first column in the generated help message. This column holds the short options of the arguments, hence, it can be rather narrow. The column's content gets wrapped by line breaks if its width exceeds the `ARGPARSER_MAX_COL_WIDTH_1`. If it is less wide, the column is shrunk accordingly.  
-It is recommendable to have a total width of the help message of 79 characters. As one space is always inserted as separation between the first and second column, as well as between the second and third column, the sum of `ARGPARSER_MAX_COL_WIDTH_1`, [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2), and [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3) should equal 77. As long options are longer than short options, the second column should be far wider than the first. The help text in the third column consists of human-readable words and is thus less bound to word wrapping restrictions. By this, it is easier to set the third column's width to 77 characters minus the total width of the unwrapped first two columns to get an optimized help message layout.
+- ***Description:*** The maximum column width of the first column in the generated help message. This column holds the short options of the arguments, hence, it usually can be rather narrow. The column's content gets wrapped by line breaks if its width exceeds the `ARGPARSER_MAX_COL_WIDTH_1`. If it is less wide, the column is shrunk accordingly. For details, refer to [`ARGPARSER_MAX_WIDTH`](#argparser_max_width).
 
 ### `ARGPARSER_MAX_COL_WIDTH_2`
 
 - ***Type:*** *uint* (Unsigned integer)
 - ***Allowed values:*** Any positive integer
 - ***Default value:*** `33`
-- ***Description:*** The maximum column width of the second column in the generated help message. This column holds the long options of the arguments, hence, it should be rather wide. The column's content gets wrapped by line breaks if its width exceeds the `ARGPARSER_MAX_COL_WIDTH_2`. If it is less wide, the column is shrunk accordingly. For details, refer to [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1).
+- ***Description:*** The maximum column width of the second column in the generated help message. This column holds the long options of the arguments, hence, it usually should be rather wide. The column's content gets wrapped by line breaks if its width exceeds the `ARGPARSER_MAX_COL_WIDTH_2`. If it is less wide, the column is shrunk accordingly. For details, refer to [`ARGPARSER_MAX_WIDTH`](#argparser_max_width).
 
 ### `ARGPARSER_MAX_COL_WIDTH_3`
 
 - ***Type:*** *uint* (Unsigned integer)
+- ***Allowed values:*** Any non-negative integer, including `0`
+- ***Default value:*** `0`
+- ***Description:*** The maximum column width of the third column in the generated help message. This column holds the help text of the arguments, hence, it usually should be rather wide. The column's content gets wrapped by line breaks if its width exceeds the `ARGPARSER_MAX_COL_WIDTH_3`. If it is less wide, the column is shrunk accordingly. A value of `0` disables this variable in favor of [`ARGPARSER_MAX_WIDTH`](#argparser_max_width). For details, refer to `ARGPARSER_MAX_WIDTH`.
+
+### `ARGPARSER_MAX_WIDTH`
+
+- ***Type:*** *uint* (Unsigned integer)
 - ***Allowed values:*** Any positive integer
-- ***Default value:*** `39`
-- ***Description:*** The maximum column width of the third column in the generated help message. This column holds the help text of the arguments, hence, it should be rather wide. The column's content gets wrapped by line breaks if its width exceeds the `ARGPARSER_MAX_COL_WIDTH_3`. If it is less wide, the column is shrunk accordingly. For details, refer to [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1).
+- ***Default value:*** `79`
+- ***Description:*** The maximum width of the entire generated help message. The widths of the first two columns are controlled by [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1) and [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2), respectively, whose contents are always wrapped by line breaks to fit this width, and shrunk if less wide. For the third column, [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3) may be set to `0` to disable this behavior in favor of a fixed width, set by `ARGPARSER_MAX_WIDTH`. Thereby, the third column takes up as much space as left, *i.e.*, the help message's maximum width minus the actual (not maximum) widths of the first two columns.  
+It is recommendable to have a total width of the help message of 79 characters. As one space is always inserted as separation between the first and second column, as well as between the second and third column, the sum of `ARGPARSER_MAX_COL_WIDTH_1`, `ARGPARSER_MAX_COL_WIDTH_2`, and `ARGPARSER_MAX_COL_WIDTH_3` should equal 77. As long options are longer than short options, the second column should be far wider than the first. The help text in the third column consists of human-readable words and is thus less bound to word wrapping restrictions. By this, it is easier to set the third column's width to 77 characters minus the total maximum width of the unwrapped first two columns to get an optimized help message layout&mdash;or use `ARGPARSER_MAX_WIDTH`.
 
 ### `ARGPARSER_POSITIONAL_ARG_GROUP`
 
