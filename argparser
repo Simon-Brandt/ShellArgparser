@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-03-31
+# Last Modification: 2025-04-01
 
 # TODO: Support mutually exclusive argument groups.
 # TODO: Consider using the Bash 5.3 form "${ command ... ; }" for the
@@ -2953,13 +2953,13 @@ function argparser_check_args_definition_positional_values() {
         fi
 
         # Check the data type.
-        if ! argparser_in_array "${type}" "-" "bool" "char" "float" "int" \
-            "str" "uint"
+        if ! argparser_in_array "${type}" "-" "bool" "char" "float" "file" \
+            "int" "str" "uint"
         then
             error_message="Error: The positional argument with the identifier "
             error_message+="\"%s\" has \"%s\" given as data type, but only "
-            error_message+="\"bool\", \"char\", \"float\", \"int\", \"str\", "
-            error_message+="and \"uint\" are supported."
+            error_message+="\"bool\", \"char\", \"float\", \"file\", \"int\", "
+            error_message+="\"str\", and \"uint\" are supported."
 
             argparser_translate "Error arg def pos type" "${error_message}" \
                 "${arg_key}" "${type}"
@@ -3002,7 +3002,7 @@ function argparser_check_args_definition_positional_values() {
             elif [[ "${type}" == "float" ]] \
                 && ! argparser_is_variable_float "${choice_value}"
             then
-                # Check if the choice value is an integer.
+                # Check if the choice value is a floating-point number.
                 error_message="Error: The positional argument with the "
                 error_message+="identifier \"%s\" has \"%s\" given as choice "
                 error_message+="value, which must be a floating-point number, "
@@ -3213,13 +3213,13 @@ function argparser_check_args_definition_option_values() {
         fi
 
         # Check the data type.
-        if ! argparser_in_array "${type}" "-" "bool" "char" "float" "int" \
-            "str" "uint"
+        if ! argparser_in_array "${type}" "-" "bool" "char" "float" "file" \
+            "int" "str" "uint"
         then
             error_message="Error: The argument with the identifier \"%s\" has "
             error_message+="\"%s\" given as data type, but only \"bool\", "
-            error_message+="\"char\", \"float\", \"int\", \"str\", and "
-            error_message+="\"uint\" are supported."
+            error_message+="\"char\", \"float\", \"file\", \"int\", \"str\", "
+            error_message+="and \"uint\" are supported."
 
             argparser_translate "Error arg def option type" \
                 "${error_message}" "${arg_key}" "${type}"
@@ -5263,6 +5263,7 @@ function argparser_create_help_message() {
             <<< "${all_default_values[${arg_key}]}"
         default_values_str="${all_default_values[${arg_key}]}"
         choice_values="${all_choice_values[${arg_key}]}"
+        type="${all_types[${arg_key}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
             <<< "${all_notes[${arg_key}]}"
         help_text="${all_help_texts[${arg_key}]}"
@@ -5320,7 +5321,7 @@ function argparser_create_help_message() {
             new_col_3_value+="${help_text} ("
             argparser_translate "Default" "default"
             new_col_3_value+="${translation}: "
-            if [[ "${type}" == "char" || "${type}" == "str" ]]; then
+            if argparser_in_array "${type}" "char" "file" "str"; then
                 new_col_3_value+="\""
                 for default_value in "${default_values_arr[@]}"; do
                     new_col_3_value+="${default_value},"
@@ -5335,7 +5336,7 @@ function argparser_create_help_message() {
             new_col_3_value="${help_text} ("
             argparser_translate "Default" "default"
             new_col_3_value+="${translation}: "
-            if [[ "${type}" == "char" || "${type}" == "str" ]]; then
+            if argparser_in_array "${type}" "char" "file" "str"; then
                 new_col_3_value+="\""
                 for default_value in "${default_values_arr[@]}"; do
                     new_col_3_value+="${default_value},"
@@ -5597,7 +5598,7 @@ function argparser_create_help_message() {
                 new_col_3_value+="${help_text} ("
                 argparser_translate "Default" "default"
                 new_col_3_value+="${translation}: "
-                if [[ "${type}" == "char" || "${type}" == "str" ]]; then
+                if argparser_in_array "${type}" "char" "file" "str"; then
                     new_col_3_value+="\""
                     for default_value in "${default_values_arr[@]}"; do
                         new_col_3_value+="${default_value},"
@@ -5612,7 +5613,7 @@ function argparser_create_help_message() {
                 new_col_3_value="${help_text} ("
                 argparser_translate "Default" "default"
                 new_col_3_value+="${translation}: "
-                if [[ "${type}" == "char" || "${type}" == "str" ]]; then
+                if argparser_in_array "${type}" "char" "file" "str"; then
                     new_col_3_value+="\""
                     for default_value in "${default_values_arr[@]}"; do
                         new_col_3_value+="${default_value},"

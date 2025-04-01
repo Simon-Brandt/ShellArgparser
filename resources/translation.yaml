@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-03-28
+# Last Modification: 2025-04-01
 
 # 1.    Define the translations for the arguments parsing.
 ---
@@ -552,12 +552,12 @@ Error arg def pos infinite optional 2:
 Error arg def pos type:
   en: >
     Error: The positional argument with the identifier "%s" has "%s" given as
-    data type, but only "bool", "char", "float", "int", "str", and "uint" are
-    supported.
+    data type, but only "bool", "char", "float", "file", "int", "str", and
+    "uint" are supported.
   de: >
     Fehler: Das positionale Argument mit dem Identifikator "%s" hat "%s" als
-    Datentyp gegeben, aber nur "bool", "char", "float", "int", "str", und
-    "uint" werden unterstützt.
+    Datentyp gegeben, aber nur "bool", "char", "float", "file", "int", "str",
+    und "uint" werden unterstützt.
 
 Error arg def pos bool:
   en: >
@@ -663,11 +663,12 @@ Error arg def option choice:
 Error arg def option type:
   en: >
     Error: The argument with the identifier "%s" has "%s" given as data type,
-    but only "bool", "char", "float", "int", "str", and "uint" are supported.
+    but only "bool", "char", "float", "file", "int", "str", and "uint" are
+    supported.
   de: >
     Fehler: Das Argument mit dem Identifikator "%s" hat "%s" als Datentyp
-    gegeben, aber nur "bool", "char", "float", "int", "str", und "uint" werden
-    unterstützt.
+    gegeben, aber nur "bool", "char", "float", "file", "int", "str", und "uint"
+    werden unterstützt.
 
 Error arg def option bool:
   en: >
