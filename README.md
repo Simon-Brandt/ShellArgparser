@@ -1255,12 +1255,12 @@ Although the usual way to run the argparser is sourcing, you can also invoke it 
 
 ```console
 $ argparser --help
-Usage: argparser [OPTIONS] [--] COMMAND LINE
+Usage: argparser [OPTIONS] [--] COMMAND_LINE
 
 Mandatory arguments to long options are mandatory for short options too.
 
 Positional arguments:
-COMMAND LINE                     the indexed array in which the argparser
+COMMAND_LINE                     the indexed array in which the argparser
                                  stores the script's command line upon parsing
                                  its own arguments
 
@@ -1318,7 +1318,7 @@ Options:
                                  invoke the help message (default: "h,?")
 [--help-style=STYLE]             the color and style specification for help
                                  messages (default: "italic")
-[--language=-]                   the language in which to localize the help and
+[--language=LANG]                the language in which to localize the help and
                                  usage messages (default: "en")
 [--max-col-width-1=INT]          the maximum column width of the first column
                                  in the help message (default: 5)
@@ -1336,7 +1336,7 @@ Options:
 [--script-name=NAME]             the script's name for the help, usage,
                                  version, error, and warning messages (default:
                                  "''")
-[--script-version=-]             the script's version number for the version
+[--script-version=VERSION]       the script's version number for the version
                                  message (default: "1.0.0")
 [--script-version-exit-code=INT] the exit code for version messages (default:
                                  0)

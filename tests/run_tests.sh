@@ -1552,7 +1552,7 @@ Usage: argparser [--help | --usage | --version]
                  [--help-file-keep-comments]
                  [--help-options=CHAR...]
                  [--help-style=STYLE...]
-                 [--language=LANGUAGE]
+                 [--language=LANG]
                  [--max-col-width-1=INT]
                  [--max-col-width-2=INT]
                  [--max-col-width-3=INT]
@@ -1562,8 +1562,8 @@ Usage: argparser [--help | --usage | --version]
                  [--script-name=NAME]
                  [--script-version-exit-code=INT]
                  [--script-version-options=CHAR...]
-                 [--script-version=SCRIPT-VERSION]
                  [--script-version-style=STYLE...]
+                 [--script-version=VERSION]
                  [--set-args]
                  [--set-arrays]
                  [--silence-errors]
@@ -1585,7 +1585,7 @@ Usage: argparser [--help | --usage | --version]
                  [--use-styles-in-files]
                  [--warning-style=STYLE...]
                  [--write-args]
-                 COMMAND LINE...
+                 COMMAND_LINE...
 EOF
 )"
 error=""
@@ -1596,12 +1596,12 @@ test_number="12.4"
 test_type="help"
 cmd="bash ../argparser --help"
 output="$(cat << EOF
-Usage: argparser [OPTIONS] [--] COMMAND LINE
+Usage: argparser [OPTIONS] [--] COMMAND_LINE
 
 Mandatory arguments to long options are mandatory for short options too.
 
 Positional arguments:
-COMMAND LINE                     the indexed array in which the argparser
+COMMAND_LINE                     the indexed array in which the argparser
                                  stores the script's command line upon parsing
                                  its own arguments
 
@@ -1659,7 +1659,7 @@ Options:
                                  invoke the help message (default: "h,?")
 [--help-style=STYLE]             the color and style specification for help
                                  messages (default: "italic")
-[--language=-]                   the language in which to localize the help and
+[--language=LANG]                the language in which to localize the help and
                                  usage messages (default: "en")
 [--max-col-width-1=INT]          the maximum column width of the first column
                                  in the help message (default: 5)
@@ -1677,7 +1677,7 @@ Options:
 [--script-name=NAME]             the script's name for the help, usage,
                                  version, error, and warning messages (default:
                                  "''")
-[--script-version=-]             the script's version number for the version
+[--script-version=VERSION]       the script's version number for the version
                                  message (default: "1.0.0")
 [--script-version-exit-code=INT] the exit code for version messages (default:
                                  0)
