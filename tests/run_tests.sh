@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-03-31
+# Last Modification: 2025-04-01
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -208,6 +208,7 @@ function print_fd_diff() {
 
         failure_reasons+=("${test_type}")
         failed_cmds+=("${cmd}")
+        (( failed_cmd_count++ ))
     fi
     print_double_separator
 }
@@ -1744,14 +1745,17 @@ print_diff "${cmd}" "${output}" "${error}"
 
 # Print the summary and the reasons for the failures.
 print_summary
-colorize "yellow,bold,reverse" "" false
-printf '%120s' ""
-colorize "" $'\n' true
-print_failure_reasons
-colorize "yellow,bold,reverse" "" false
-printf '%120s' ""
-colorize "" $'\n' true
-print_failed_commands
+
+if (( failed_cmd_count > 0 )); then
+    colorize "yellow,bold,reverse" "" false
+    printf '%120s' ""
+    colorize "" $'\n' true
+    print_failure_reasons
+    colorize "yellow,bold,reverse" "" false
+    printf '%120s' ""
+    colorize "" $'\n' true
+    print_failed_commands
+fi
 
 # Exit with the number of failed commands as exit code.
 exit "${failed_cmd_count}"
