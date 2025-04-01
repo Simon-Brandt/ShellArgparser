@@ -5174,7 +5174,9 @@ function argparser_create_help_message() {
     local col_width_2
     local col_width_3
     local count
-    local default_values
+    local default_value
+    local default_values_arr
+    local default_values_str
     local has_default_args
     local has_required_args
     local help_message
@@ -5219,6 +5221,7 @@ function argparser_create_help_message() {
     local -A sorted_col_2
     local -A sorted_col_3
     local translation
+    local type
     local usage
     local usage_option
     local -a usage_options
@@ -5256,7 +5259,9 @@ function argparser_create_help_message() {
     for arg_key in "${all_positional_args[@]}"; do
         # Read the argument's definition.
         value_names="${all_value_names[${arg_key}]}"
-        default_values="${all_default_values[${arg_key}]}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a default_values_arr \
+            <<< "${all_default_values[${arg_key}]}"
+        default_values_str="${all_default_values[${arg_key}]}"
         choice_values="${all_choice_values[${arg_key}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
             <<< "${all_notes[${arg_key}]}"
@@ -5275,12 +5280,13 @@ function argparser_create_help_message() {
         # existence of each changing  the look of the first column.
         if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
             # Set the first column's value.
-            if [[ "${choice_values}" != "-" && "${default_values}" != "-" ]]
+            if [[ "${choice_values}" != "-" \
+                && "${default_values_str}" != "-" ]]
             then  # Choice and default.
                 col_1+=("[${value_names}={${choice_values}}]")
             elif [[ "${choice_values}" != "-" ]]; then  # Choice only.
                 col_1+=("${value_names}={${choice_values}}")
-            elif [[ "${default_values}" != "-" ]]; then  # Default only.
+            elif [[ "${default_values_str}" != "-" ]]; then  # Default only.
                 col_1+=("[${value_names}]")
             else  # No choice nor default.
                 col_1+=("${value_names}")
@@ -5293,12 +5299,13 @@ function argparser_create_help_message() {
             col_1+=("")
 
             # Set the second column's value.
-            if [[ "${choice_values}" != "-" && "${default_values}" != "-" ]]
+            if [[ "${choice_values}" != "-" \
+                && "${default_values_str}" != "-" ]]
             then  # Choice and default.
                 col_2+=("[${value_names}={${choice_values}}]")
             elif [[ "${choice_values}" != "-" ]]; then  # Choice only.
                 col_2+=("${value_names}={${choice_values}}")
-            elif [[ "${default_values}" != "-" ]]; then  # Default only.
+            elif [[ "${default_values_str}" != "-" ]]; then  # Default only.
                 col_2+=("[${value_names}]")
             else  # No choice nor default.
                 col_2+=("${value_names}")
@@ -5306,20 +5313,38 @@ function argparser_create_help_message() {
         fi
 
         # Set the third column's value.
-        if [[ "${default_values}" != "-" && "${is_deprecated}" == true ]]
+        if [[ "${default_values_str}" != "-" && "${is_deprecated}" == true ]]
         then  # Default and deprecated.
             argparser_translate "Deprecated" "DEPRECATED"
             new_col_3_value="(${translation}) "
             new_col_3_value+="${help_text} ("
             argparser_translate "Default" "default"
             new_col_3_value+="${translation}: "
-            new_col_3_value+="${default_values})"
+            if [[ "${type}" == "char" || "${type}" == "str" ]]; then
+                new_col_3_value+="\""
+                for default_value in "${default_values_arr[@]}"; do
+                    new_col_3_value+="${default_value},"
+                done
+                new_col_3_value="${new_col_3_value%,}\""
+            else
+                new_col_3_value+="${default_values_str}"
+            fi
+            new_col_3_value+=")"
             col_3+=("${new_col_3_value}")
-        elif [[ "${default_values}" != "-" ]]; then  # Default only
+        elif [[ "${default_values_str}" != "-" ]]; then  # Default only.
             new_col_3_value="${help_text} ("
             argparser_translate "Default" "default"
             new_col_3_value+="${translation}: "
-            new_col_3_value+="${default_values})"
+            if [[ "${type}" == "char" || "${type}" == "str" ]]; then
+                new_col_3_value+="\""
+                for default_value in "${default_values_arr[@]}"; do
+                    new_col_3_value+="${default_value},"
+                done
+                new_col_3_value="${new_col_3_value%,}\""
+            else
+                new_col_3_value+="${default_values_str}"
+            fi
+            new_col_3_value+=")"
             col_3+=("${new_col_3_value}")
         elif [[ "${is_deprecated}" == true ]]; then  # Deprecated only.
             argparser_translate "Deprecated" "DEPRECATED"
@@ -5363,8 +5388,16 @@ function argparser_create_help_message() {
                 <<< "${all_long_options[${arg_key}]}"
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a value_names \
                 <<< "${all_value_names[${arg_key}]}"
-            default_values="${all_default_values[${arg_key}]}"
+            if [[ "${arg_key}" == "ARGPARSER_ARG_DELIMITER_2" ]]; then
+                default_values_arr=("${all_default_values[${arg_key}]}")
+            else
+                IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a \
+                    default_values_arr \
+                        <<< "${all_default_values[${arg_key}]}"
+            fi
+            default_values_str="${all_default_values[${arg_key}]}"
             choice_values="${all_choice_values[${arg_key}]}"
+            type="${all_types[${arg_key}]}"
             arg_number="${all_arg_numbers[${arg_key}]}"
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
                 <<< "${all_notes[${arg_key}]}"
@@ -5377,7 +5410,7 @@ function argparser_create_help_message() {
 
             # Set a flag whether the option has default values for
             # adjustment of the help message header, later.
-            if [[ "${default_values}" != "-" ]]; then
+            if [[ "${default_values_str}" != "-" ]]; then
                 has_default_args=true
             else
                 has_required_args=true
@@ -5410,7 +5443,7 @@ function argparser_create_help_message() {
                     new_col_1_value="${new_col_1_value%, }"
                     new_col_1_value+="]"
                 elif [[ "${choice_values}" != "-" \
-                    && "${default_values}" != "-" ]]
+                    && "${default_values_str}" != "-" ]]
                 then  # Choice and default.
                     new_col_1_value=""
                     for short_option in "${short_options[@]}"; do
@@ -5425,7 +5458,7 @@ function argparser_create_help_message() {
                         new_col_1_value+="{${choice_values}}, "
                     done
                     new_col_1_value="${new_col_1_value%, }"
-                elif [[ "${default_values}" != "-" ]]; then  # Default only.
+                elif [[ "${default_values_str}" != "-" ]]; then  # Default only.
                     new_col_1_value=""
                     for i in "${!short_options[@]}"; do
                         new_col_1_value+="[-${short_options[i]}="
@@ -5466,7 +5499,8 @@ function argparser_create_help_message() {
                 new_col_2_value="${new_col_2_value%, }"
                 new_col_2_value+="]"
                 new_col_2+=("${new_col_2_value}")
-            elif [[ "${choice_values}" != "-" && "${default_values}" != "-" ]]
+            elif [[ "${choice_values}" != "-" \
+                && "${default_values_str}" != "-" ]]
             then  # Choice and default.
                 new_col_2_value=""
                 for long_option in "${long_options[@]}"; do
@@ -5481,7 +5515,7 @@ function argparser_create_help_message() {
                 done
                 new_col_2_value="${new_col_2_value%, }"
                 new_col_2+=("${new_col_2_value}")
-            elif [[ "${default_values}" != "-" ]]; then  # Default only.
+            elif [[ "${default_values_str}" != "-" ]]; then  # Default only.
                 new_col_2_value=""
                 for i in "${!long_options[@]}"; do
                     new_col_2_value+="[--${long_options[i]}="
@@ -5507,30 +5541,51 @@ function argparser_create_help_message() {
                 new_col_3_value+="${help_text} ("
                 argparser_translate "Default" "default"
                 new_col_3_value+="${translation}: "
-                argparser_translate "${default_values}" "${default_values}"
+                argparser_translate "${default_values_str}" \
+                    "${default_values_str}"
                 new_col_3_value+="${translation})"
                 new_col_3+=("${new_col_3_value}")
             elif [[ "${arg_number}" == 0 ]]; then  # Flag only.
                 new_col_3_value="${help_text} ("
                 argparser_translate "Default" "default"
                 new_col_3_value+="${translation}: "
-                argparser_translate "${default_values}" "${default_values}"
+                argparser_translate "${default_values_str}" \
+                    "${default_values_str}"
                 new_col_3_value+="${translation})"
                 new_col_3+=("${new_col_3_value}")
-            elif [[ "${default_values}" != "-" && "${is_deprecated}" == true ]]
+            elif [[ "${default_values_str}" != "-" \
+                && "${is_deprecated}" == true ]]
             then  # Default and deprecated.
                 argparser_translate "Deprecated" "DEPRECATED"
                 new_col_3_value="(${translation}) "
                 new_col_3_value+="${help_text} ("
                 argparser_translate "Default" "default"
                 new_col_3_value+="${translation}: "
-                new_col_3_value+="${default_values})"
+                if [[ "${type}" == "char" || "${type}" == "str" ]]; then
+                    new_col_3_value+="\""
+                    for default_value in "${default_values_arr[@]}"; do
+                        new_col_3_value+="${default_value},"
+                    done
+                    new_col_3_value="${new_col_3_value%,}\""
+                else
+                    new_col_3_value+="${default_values_str}"
+                fi
+                new_col_3_value+=")"
                 new_col_3+=("${new_col_3_value}")
-            elif [[ "${default_values}" != "-" ]]; then  # Default only
+            elif [[ "${default_values_str}" != "-" ]]; then  # Default only.
                 new_col_3_value="${help_text} ("
                 argparser_translate "Default" "default"
                 new_col_3_value+="${translation}: "
-                new_col_3_value+="${default_values})"
+                if [[ "${type}" == "char" || "${type}" == "str" ]]; then
+                    new_col_3_value+="\""
+                    for default_value in "${default_values_arr[@]}"; do
+                        new_col_3_value+="${default_value},"
+                    done
+                    new_col_3_value="${new_col_3_value%,}\""
+                else
+                    new_col_3_value+="${default_values_str}"
+                fi
+                new_col_3_value+=")"
                 new_col_3+=("${new_col_3_value}")
             elif [[ "${is_deprecated}" == true ]]; then  # Deprecated only.
                 argparser_translate "Deprecated" "DEPRECATED"
@@ -5932,9 +5987,9 @@ function argparser_create_help_message() {
 
         for arg_key in "${all_positional_args[@]}"; do
             value_names=("${all_value_names[${arg_key}]}")
-            default_values="${all_default_values[${arg_key}]}"
+            default_values_str="${all_default_values[${arg_key}]}"
 
-            if [[ "${default_values}" != "-" ]]; then
+            if [[ "${default_values_str}" != "-" ]]; then
                 usage+=" [${value_names[0]}]"
             else
                 usage+=" ${value_names[0]}"
