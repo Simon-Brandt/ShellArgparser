@@ -1631,7 +1631,7 @@ Options:
                                  true)
 [--arg-delimiter-1=CHAR]         the primary delimiter that separates the
                                  fields in the arguments definition (default:
-                                 ":")
+                                 "|")
 [--arg-delimiter-2=CHAR]         the secondary delimiter that separates the
                                  elements of sequences in the arguments
                                  definition (default: ",")
