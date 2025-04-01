@@ -559,15 +559,15 @@ pos_2                                      two positional arguments without
                                            default or choice
 
 Mandatory options:
--a, -A,   --var-1=VAL_1, --var-a=VAR-A     one value without default or choice
--b, -B,   --var-2=VAL_2, --var-b=VAR-B     at least one value without default
+-a, -A,   --var-1=VAL_1, --var-a=VAR_A     one value without default or choice
+-b, -B,   --var-2=VAL_2, --var-b=VAR_B     at least one value without default
                                            or choice
 -c, -C,   --var-3={A,B}, --var-c={A,B}     at least one value with choice
 
 Optional options:
 -d, -D,   [--var-4={A,B,C}],               one value with default and choice
           [--var-d={A,B,C}]                (default: "A")
--e, -E,   [--var-5=VAL_5], [--var-e=VAR-E] one value with default (default:
+-e, -E,   [--var-5=VAL_5], [--var-e=VAR_E] one value with default (default:
                                            "E")
 [-f, -F], [--var-6, --var-f]               no value (flag) with default
                                            (default: false)
@@ -598,15 +598,15 @@ pos_2                                      two positional arguments without
                                            default or choice
 
 Mandatory options:
--a, -A,   --var-1=VAL_1, --var-a=VAR-A     one value without default or choice
--b, -B,   --var-2=VAL_2, --var-b=VAR-B     at least one value without default
+-a, -A,   --var-1=VAL_1, --var-a=VAR_A     one value without default or choice
+-b, -B,   --var-2=VAL_2, --var-b=VAR_B     at least one value without default
                                            or choice
 -c, -C,   --var-3={A,B}, --var-c={A,B}     at least one value with choice
 
 Optional options:
 -d, -D,   [--var-4={A,B,C}],               one value with default and choice
           [--var-d={A,B,C}]                (default: "A")
--e, -E,   [--var-5=VAL_5], [--var-e=VAR-E] one value with default (default:
+-e, -E,   [--var-5=VAL_5], [--var-e=VAR_E] one value with default (default:
                                            "E")
 [-f, -F], [--var-6, --var-f]               no value (flag) with default
                                            (default: false)
@@ -836,14 +836,14 @@ pos_2                            two positional arguments without default or
                                  choice
 
 Mandatory options:
---var-1=VAL_1, --var-a=VAR-A     one value without default or choice
---var-2=VAL_2, --var-b=VAR-B     at least one value without default or choice
+--var-1=VAL_1, --var-a=VAR_A     one value without default or choice
+--var-2=VAL_2, --var-b=VAR_B     at least one value without default or choice
 --var-3={A,B}, --var-c={A,B}     at least one value with choice
 
 Optional options:
 [--var-4={A,B,C}],               one value with default and choice (default:
 [--var-d={A,B,C}]                "A")
-[--var-5=VAL_5], [--var-e=VAR-E] one value with default (default: "E")
+[--var-5=VAL_5], [--var-e=VAR_E] one value with default (default: "E")
 [--var-6, --var-f]               no value (flag) with default (default: false)
 [--var-7, --var-g]               (DEPRECATED) no value (flag) with default
                                  (default: true)

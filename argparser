@@ -5461,15 +5461,33 @@ function argparser_create_help_message() {
                 elif [[ "${default_values_str}" != "-" ]]; then  # Default only.
                     new_col_1_value=""
                     for i in "${!short_options[@]}"; do
-                        new_col_1_value+="[-${short_options[i]}="
-                        new_col_1_value+="${value_names[i]:-${short_options[i]^^}}], "
+                        short_option="${short_options[i]}"
+                        new_col_1_value+="[-${short_option}="
+                        if [[ "${value_names[0]}" == "-" ]] \
+                            || (( "${#value_names[@]}" < i + 1 ))
+                        then
+                            short_option="${short_option//-/_}"
+                            short_option="${short_option^^}"
+                            new_col_1_value+="${short_option}], "
+                        else
+                            new_col_1_value+="${value_names[i]}], "
+                        fi
                     done
                     new_col_1_value="${new_col_1_value%, }"
                 else  # No choice nor default.
                     new_col_1_value=""
                     for i in "${!short_options[@]}"; do
-                        new_col_1_value+="-${short_options[i]}="
-                        new_col_1_value+="${value_names[i]:-${short_options[i]^^}}, "
+                        short_option="${short_options[i]}"
+                        new_col_1_value+="-${short_option}="
+                        if [[ "${value_names[0]}" == "-" ]] \
+                            || (( "${#value_names[@]}" < i + 1 ))
+                        then
+                            short_option="${short_option//-/_}"
+                            short_option="${short_option^^}"
+                            new_col_1_value+="${short_option}, "
+                        else
+                            new_col_1_value+="${value_names[i]}, "
+                        fi
                     done
                     new_col_1_value="${new_col_1_value%, }"
                 fi
@@ -5518,16 +5536,34 @@ function argparser_create_help_message() {
             elif [[ "${default_values_str}" != "-" ]]; then  # Default only.
                 new_col_2_value=""
                 for i in "${!long_options[@]}"; do
-                    new_col_2_value+="[--${long_options[i]}="
-                    new_col_2_value+="${value_names[i]:-${long_options[i]^^}}], "
+                    long_option="${long_options[i]}"
+                    new_col_2_value+="[--${long_option}="
+                    if [[ "${value_names[0]}" == "-" ]] \
+                        || (( "${#value_names[@]}" < i + 1 ))
+                    then
+                        long_option="${long_option//-/_}"
+                        long_option="${long_option^^}"
+                        new_col_2_value+="${long_option}], "
+                    else
+                        new_col_2_value+="${value_names[i]}], "
+                    fi
                 done
                 new_col_2_value="${new_col_2_value%, }"
                 new_col_2+=("${new_col_2_value}")
             else  # No choice nor default.
                 new_col_2_value=""
                 for i in "${!long_options[@]}"; do
-                    new_col_2_value+="--${long_options[i]}="
-                    new_col_2_value+="${value_names[i]:-${long_options[i]^^}}, "
+                    long_option="${long_options[i]}"
+                    new_col_2_value+="--${long_option}="
+                    if [[ "${value_names[0]}" == "-" ]] \
+                        || (( "${#value_names[@]}" < i + 1 ))
+                    then
+                        long_option="${long_option//-/_}"
+                        long_option="${long_option^^}"
+                        new_col_2_value+="${long_option}, "
+                    else
+                        new_col_2_value+="${value_names[i]}, "
+                    fi
                 done
                 new_col_2_value="${new_col_2_value%, }"
                 new_col_2+=("${new_col_2_value}")
@@ -6303,7 +6339,8 @@ function argparser_create_usage_message() {
         # If no value name is given, set them to the capitalized short
         # option names.
         if [[ "${value_names}" == "-" ]]; then
-            value_names="${short_options[0]^^}"
+            value_names="${short_options[0]//-/_}"
+            value_names="${value_names^^}"
         fi
 
         # Prefix the short options with one hyphen for their printing
@@ -6359,7 +6396,8 @@ function argparser_create_usage_message() {
         # If no value name is given, set them to the capitalized long
         # option names.
         if [[ "${value_names}" == "-" ]]; then
-            value_names="${long_options[0]^^}"
+            value_names="${long_options[0]//-/_}"
+            value_names="${value_names^^}"
         fi
 
         # Prefix the long options with two hyphens for their printing
@@ -6415,7 +6453,8 @@ function argparser_create_usage_message() {
         # If no value name is given, set them to the capitalized short
         # option names.
         if [[ "${value_names}" == "-" ]]; then
-            value_names="${short_options[0]^^}"
+            value_names="${short_options[0]//-/_}"
+            value_names="${value_names^^}"
         fi
 
         # Prefix the short options with one hyphen for their printing
@@ -6469,7 +6508,8 @@ function argparser_create_usage_message() {
         # If no value name is given, set them to the capitalized long
         # option names.
         if [[ "${value_names}" == "-" ]]; then
-            value_names="${long_options[0]^^}"
+            value_names="${long_options[0]//-/_}"
+            value_names="${value_names^^}"
         fi
 
         # Prefix the long options with two hyphens for their printing
