@@ -2359,7 +2359,7 @@ function argparser_parse_args_definition() {
                 argparser_translate "Error arg def field" "${error_message}" \
                     "${ARGPARSER_SCRIPT_NAME}" "${field}"
                 error_message="${translation}"
-            elif [[ "${definition_type}" == "file" ]]; then
+            else
                 error_message="Error: In the arguments definition file "
                 error_message+="\"%s\", the column \"%s\" is missing."
 
@@ -2976,8 +2976,8 @@ function argparser_check_args_definition_positional_values() {
         fi
 
         # Check the data type.
-        if ! argparser_in_array "${type}" "" "bool" "char" "float" "file" \
-            "int" "str" "uint"
+        if ! argparser_in_array "${type}" "bool" "char" "float" "file" "int" \
+            "str" "uint"
         then
             error_message="Error: The positional argument with the identifier "
             error_message+="\"%s\" has \"%s\" given as data type, but only "
@@ -2992,10 +2992,12 @@ function argparser_check_args_definition_positional_values() {
 
         # Check if the choice values accord to the type.
         for choice_value in "${choice_values[@]}"; do
-            if [[ -z "${choice_value}" || -z "${type}" ]]; then
-                # No choice value or type is given, so abort the loop.
+            if [[ -z "${choice_value}" ]]; then
+                # No choice value is given, so abort the loop.
                 break
-            elif [[ "${type}" == "bool" ]] \
+            fi
+
+            if [[ "${type}" == "bool" ]] \
                 && ! argparser_is_variable_bool "${choice_value}"
             then
                 # Check if the choice value is a boolean.
@@ -3236,8 +3238,8 @@ function argparser_check_args_definition_option_values() {
         fi
 
         # Check the data type.
-        if ! argparser_in_array "${type}" "" "bool" "char" "float" "file" \
-            "int" "str" "uint"
+        if ! argparser_in_array "${type}" "bool" "char" "float" "file" "int" \
+            "str" "uint"
         then
             error_message="Error: The argument with the identifier \"%s\" has "
             error_message+="\"%s\" given as data type, but only \"bool\", "
@@ -3252,10 +3254,12 @@ function argparser_check_args_definition_option_values() {
 
         # Check if the choice values accord to the type.
         for choice_value in "${choice_values[@]}"; do
-            if [[ -z "${choice_value}" || -z "${type}" ]]; then
-                # No choice value or type is given, so abort the loop.
+            if [[ -z "${choice_value}" ]]; then
+                # No choice value is given, so abort the loop.
                 break
-            elif [[ "${type}" == "bool" ]] \
+            fi
+
+            if [[ "${type}" == "bool" ]] \
                 && ! argparser_is_variable_bool "${choice_value}"
             then
                 # Check if the choice value is a boolean.
@@ -4502,10 +4506,7 @@ function argparser_check_arg_values() {
 
     # Check if the given values accord to the type.
     for value in "${values[@]}"; do
-        if [[ -z "${type}" ]]; then
-            # No type is given, so abort the loop.
-            break
-        elif [[ "${type}" == "bool" && "${arg_number}" != 0 ]] \
+        if [[ "${type}" == "bool" && "${arg_number}" != 0 ]] \
             && ! argparser_is_variable_bool "${value}"
         then
             # Check if the value is a boolean.  If the argument is a
