@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-04-01
+# Last Modification: 2025-04-02
 
 # Usage: Run this script with "bash test_positional_arguments.sh".
 
@@ -12,8 +12,8 @@
 # shellcheck disable=SC2190  # Indexed, not associative array.
 args=(
     "id    | short_opts | long_opts | val_names | defaults | choices | type | arg_no | arg_group            | notes      | help                                              "
-    "pos_1 | -          | -         | pos_1     | 2        | 1,2     | int  | 1      | Positional arguments | -          | one positional argument with default and choice   "
-    "pos_2 | -          | -         | pos_2     | -        | -       | int  | 2      | Positional arguments | -          | two positional arguments without default or choice"
+    "pos_1 |            |           | pos_1     | 2        | 1,2     | int  | 1      | Positional arguments |            | one positional argument with default and choice   "
+    "pos_2 |            |           | pos_2     |          |         | int  | 2      | Positional arguments |            | two positional arguments without default or choice"
 )
 source argparser -- "$@"
 

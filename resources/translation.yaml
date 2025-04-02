@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-04-01
+# Last Modification: 2025-04-02
 
 # 1.    Define the translations for the arguments parsing.
 ---
@@ -225,12 +225,12 @@ Error env var delimiters:
     Fehler: Die Umgebungsvariablen "ARGPARSER_ARG_DELIMITER_1" und
     "ARGPARSER_ARG_DELIMITER_2" müssen unterschiedliche Werte haben.
 
-Error env var short name hyphen:
+Error env var short name empty:
   en: >
-    Error: The environment variable "%s" has a placeholder "-" given as one of
+    Error: The environment variable "%s" has a placeholder "" given as one of
     the %s short option names, instead of a legit name.
   de: >
-    Fehler: Die Umgebungsvariable "%s" hat ein Platzhalter-"-" als einen der %s
+    Fehler: Die Umgebungsvariable "%s" hat ein Platzhalter-"" als einen der %s
     kurzen Optionsnamen gegeben statt einen zulässigen Namen.
 
 Error env var short name length:
@@ -357,12 +357,12 @@ Error arg def file field:
 # 3.4.  Define the translations for checking the names of the arguments
 #       in the arguments definition.
 ---
-Error arg def short name hyphen:
+Error arg def short name empty:
   en: >
-    Error: The argument with the identifier "%s" has a placeholder "-" given as
+    Error: The argument with the identifier "%s" has a placeholder "" given as
     one of the %s short option names, instead of a legit name.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat ein Platzhalter-"-" als
+    Fehler: Das Argument mit dem Identifikator "%s" hat ein Platzhalter-"" als
     einen der %s kurzen Optionsnamen gegeben statt einen zulässigen Namen.
 
 Error arg def short name help:
@@ -413,12 +413,12 @@ Error arg def short name outer duplication:
     Fehler: Das Argument mit dem Identifikator "%s" hat die kurze Option "-%s"
     gegeben, diese wird aber bereits von "%s" genutzt.
 
-Error arg def long name hyphen:
+Error arg def long name empty:
   en: >
-    Error: The argument with the identifier "%s" has a placeholder "-" given as
+    Error: The argument with the identifier "%s" has a placeholder "" given as
     one of the %s long option names, instead of a legit name.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat ein Platzhalter-"-" als
+    Fehler: Das Argument mit dem Identifikator "%s" hat ein Platzhalter-"" als
     einen der %s langen Optionsnamen gegeben statt einen zulässigen Namen.
 
 Error arg def long name help:

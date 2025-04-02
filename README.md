@@ -162,15 +162,15 @@ ARGPARSER_MAX_COL_WIDTH_2=33
 # Define the arguments.
 args=(
     "id    | short_opts | long_opts   | val_names | defaults | choices | type | arg_no | arg_group            | notes      | help                                              "
-    "pos_1 | -          | -           | pos_1     | 2        | 1,2     | int  | 1      | Positional arguments | -          | one positional argument with default and choice   "
-    "pos_2 | -          | -           | pos_2     | -        | -       | int  | 2      | Positional arguments | -          | two positional arguments without default or choice"
-    "var_1 | a,A        | var-1,var-a | VAL_1     | -        | -       | uint | 1      | Mandatory options    | -          | one value without default or choice               "
-    "var_2 | b,B        | var-2,var-b | VAL_2     | -        | -       | int  | +      | Mandatory options    | -          | at least one value without default or choice      "
-    "var_3 | c,C        | var-3,var-c | VAL_3     | -        | A,B     | char | +      | Mandatory options    | -          | at least one value with choice                    "
-    "var_4 | d,D        | var-4,var-d | VAL_4     | A        | A,B,C   | char | 1      | Optional options     | -          | one value with default and choice                 "
-    "var_5 | e,E        | var-5,var-e | VAL_5     | E        | -       | str  | 1      | Optional options     | -          | one value with default                            "
-    "var_6 | f,F        | var-6,var-f | VAL_6     | false    | -       | bool | 0      | Optional options     | -          | no value (flag) with default                      "
-    "var_7 | g,G        | var-7,var-g | VAL_7     | true     | -       | bool | 0      | Optional options     | deprecated | no value (flag) with default                      "
+    "pos_1 |            |             | pos_1     | 2        | 1,2     | int  | 1      | Positional arguments |            | one positional argument with default and choice   "
+    "pos_2 |            |             | pos_2     |          |         | int  | 2      | Positional arguments |            | two positional arguments without default or choice"
+    "var_1 | a,A        | var-1,var-a | VAL_1     |          |         | uint | 1      | Mandatory options    |            | one value without default or choice               "
+    "var_2 | b,B        | var-2,var-b | VAL_2     |          |         | int  | +      | Mandatory options    |            | at least one value without default or choice      "
+    "var_3 | c,C        | var-3,var-c | VAL_3     |          | A,B     | char | +      | Mandatory options    |            | at least one value with choice                    "
+    "var_4 | d,D        | var-4,var-d | VAL_4     | A        | A,B,C   | char | 1      | Optional options     |            | one value with default and choice                 "
+    "var_5 | e,E        | var-5,var-e | VAL_5     | E        |         | str  | 1      | Optional options     |            | one value with default                            "
+    "var_6 | f,F        | var-6,var-f | VAL_6     | false    |         | bool | 0      | Optional options     |            | no value (flag) with default                      "
+    "var_7 | g,G        | var-7,var-g | VAL_7     | true     |         | bool | 0      | Optional options     | deprecated | no value (flag) with default                      "
 )
 source argparser -- "$@"
 
@@ -456,15 +456,15 @@ ARGPARSER_MAX_COL_WIDTH_2=33
 # Define the arguments.
 args=(
     "id    | short_opts | long_opts   | val_names | defaults | choices | type | arg_no | arg_group            | notes      | help                                              "
-    "pos_1 | -          | -           | pos_1     | 2        | 1,2     | int  | 1      | Positional arguments | -          | one positional argument with default and choice   "
-    "pos_2 | -          | -           | pos_2     | -        | -       | int  | 2      | Positional arguments | -          | two positional arguments without default or choice"
-    "var_1 | a,A        | var-1,var-a | VAL_1     | -        | -       | uint | 1      | Mandatory options    | -          | one value without default or choice               "
-    "var_2 | b,B        | var-2,var-b | VAL_2     | -        | -       | int  | +      | Mandatory options    | -          | at least one value without default or choice      "
-    "var_3 | c,C        | var-3,var-c | VAL_3     | -        | A,B     | char | +      | Mandatory options    | -          | at least one value with choice                    "
-    "var_4 | d,D        | var-4,var-d | VAL_4     | A        | A,B,C   | char | 1      | Optional options     | -          | one value with default and choice                 "
-    "var_5 | e,E        | var-5,var-e | VAL_5     | E        | -       | str  | 1      | Optional options     | -          | one value with default                            "
-    "var_6 | f,F        | var-6,var-f | VAL_6     | false    | -       | bool | 0      | Optional options     | -          | no value (flag) with default                      "
-    "var_7 | g,G        | var-7,var-g | VAL_7     | true     | -       | bool | 0      | Optional options     | deprecated | no value (flag) with default                      "
+    "pos_1 |            |             | pos_1     | 2        | 1,2     | int  | 1      | Positional arguments |            | one positional argument with default and choice   "
+    "pos_2 |            |             | pos_2     |          |         | int  | 2      | Positional arguments |            | two positional arguments without default or choice"
+    "var_1 | a,A        | var-1,var-a | VAL_1     |          |         | uint | 1      | Mandatory options    |            | one value without default or choice               "
+    "var_2 | b,B        | var-2,var-b | VAL_2     |          |         | int  | +      | Mandatory options    |            | at least one value without default or choice      "
+    "var_3 | c,C        | var-3,var-c | VAL_3     |          | A,B     | char | +      | Mandatory options    |            | at least one value with choice                    "
+    "var_4 | d,D        | var-4,var-d | VAL_4     | A        | A,B,C   | char | 1      | Optional options     |            | one value with default and choice                 "
+    "var_5 | e,E        | var-5,var-e | VAL_5     | E        |         | str  | 1      | Optional options     |            | one value with default                            "
+    "var_6 | f,F        | var-6,var-f | VAL_6     | false    |         | bool | 0      | Optional options     |            | no value (flag) with default                      "
+    "var_7 | g,G        | var-7,var-g | VAL_7     | true     |         | bool | 0      | Optional options     | deprecated | no value (flag) with default                      "
 )
 source argparser -- "$@"
 
@@ -540,7 +540,7 @@ This argparser-specific tabular format consists of eleven columns, each separate
 
 If [`ARGPARSER_ARG_DEF_HAS_HEADER`](#argparser_arg_def_has_header) is set to `true`, then these names must be given as a header above all argument definitions. Providing a header has the advantage that the order of the columns does not matter, as long as the first column is the `id`. If you omit the header, the above order is mandatory.
 
-Keyword arguments can have multiple short and/or long names, optional default values, and/or an arbitrary number of choice values. The same holds for positional arguments, which are identified by having neither short nor long option names. Generally, absence of a value is indicated by a hyphen (`"-"`). Since hyphens have a special meaning on the command line (as option names), using them for other purposes would lead to deep confusion among your script's users, and thus, they're reserved for the purpose of indicating absence.
+Keyword arguments can have multiple short and/or long names, optional default values, and/or an arbitrary number of choice values. The same holds for positional arguments, which are identified by having neither short nor long option names. Generally, absence of a value is indicated by the empty string (`""`). Since hyphens have a special meaning on the command line (as option names), using them for other purposes would lead to deep confusion among your script's users, and thus, regard them as reserved.
 
 As you saw above, the argparser will aggregate all arguments (values) given after a word starting with a hyphen (*i.e.*, an option name) to this option. If the number doesn't match the number of required values, an error is thrown instead of cutting the values. If an argument gets a wrong number of values, but has a default value, only a warning is thrown and the default value is taken.
 
@@ -591,15 +591,15 @@ ARGPARSER_CONFIGURATION_FILE="${dir}/options.cfg"
 # Define the arguments.
 args=(
     "id    | short_opts | long_opts | val_names | defaults | choices | type | arg_no | arg_group            | notes      | help                                              "
-    "pos_1 | -          | -         | pos_1     | 2        | 1,2     | int  | 1      | Positional arguments | -          | one positional argument with default and choice   "
-    "pos_2 | -          | -         | pos_2     | -        | -       | int  | 2      | Positional arguments | -          | two positional arguments without default or choice"
-    "var_1 | a          | var-1     | VAL_1     | -        | -       | uint | 1      | Mandatory options    | -          | one value without default or choice               "
-    "var_2 | b          | var-2     | VAL_2     | -        | -       | int  | +      | Mandatory options    | -          | at least one value without default or choice      "
-    "var_3 | c          | var-3     | VAL_3     | -        | A,B     | char | +      | Mandatory options    | -          | at least one value with choice                    "
-    "var_4 | d          | -         | VAL_4     | A        | A,B,C   | char | 1      | Optional options     | -          | one value with default and choice                 "
-    "var_5 | -          | var-5     | VAL_5     | E        | -       | str  | 1      | Optional options     | -          | one value with default                            "
-    "var_6 | f          | var-6     | VAL_6     | false    | -       | bool | 0      | Optional options     | -          | no value (flag) with default                      "
-    "var_7 | g          | var-7     | VAL_7     | true     | -       | bool | 0      | Optional options     | deprecated | no value (flag) with default                      "
+    "pos_1 |            |           | pos_1     | 2        | 1,2     | int  | 1      | Positional arguments |            | one positional argument with default and choice   "
+    "pos_2 |            |           | pos_2     |          |         | int  | 2      | Positional arguments |            | two positional arguments without default or choice"
+    "var_1 | a          | var-1     | VAL_1     |          |         | uint | 1      | Mandatory options    |            | one value without default or choice               "
+    "var_2 | b          | var-2     | VAL_2     |          |         | int  | +      | Mandatory options    |            | at least one value without default or choice      "
+    "var_3 | c          | var-3     | VAL_3     |          | A,B     | char | +      | Mandatory options    |            | at least one value with choice                    "
+    "var_4 | d          |           | VAL_4     | A        | A,B,C   | char | 1      | Optional options     |            | one value with default and choice                 "
+    "var_5 |            | var-5     | VAL_5     | E        |         | str  | 1      | Optional options     |            | one value with default                            "
+    "var_6 | f          | var-6     | VAL_6     | false    |         | bool | 0      | Optional options     |            | no value (flag) with default                      "
+    "var_7 | g          | var-7     | VAL_7     | true     |         | bool | 0      | Optional options     | deprecated | no value (flag) with default                      "
 )
 source argparser -- "$@"
 
@@ -713,15 +713,15 @@ You can (and should) add the header to explain the fields, or else need to set [
 ```console
 $ cat arguments.csv
 id    | short_opts | long_opts | val_names | defaults | choices | type | arg_no | arg_group            | notes      | help
-pos_1 | -          | -         | pos_1     | 2        | 1,2     | int  | 1      | Positional arguments | -          | one positional argument with default and choice
-pos_2 | -          | -         | pos_2     | -        | -       | int  | 2      | Positional arguments | -          | two positional arguments without default or choice
-var_1 | a          | var-1     | VAL_1     | -        | -       | uint | 1      | Mandatory options    | -          | one value without default or choice
-var_2 | b          | var-2     | VAL_2     | -        | -       | int  | +      | Mandatory options    | -          | at least one value without default or choice
-var_3 | c          | var-3     | VAL_3     | -        | A,B     | char | +      | Mandatory options    | -          | at least one value with choice
-var_4 | d          | -         | VAL_4     | A        | A,B,C   | char | 1      | Optional options     | -          | one value with default and choice
-var_5 | -          | var-5     | VAL_5     | E        | -       | str  | 1      | Optional options     | -          | one value with default
-var_6 | f          | var-6     | VAL_6     | false    | -       | bool | 0      | Optional options     | -          | no value (flag) with default
-var_7 | g          | var-7     | VAL_7     | true     | -       | bool | 0      | Optional options     | deprecated | no value (flag) with default
+pos_1 |            |           | pos_1     | 2        | 1,2     | int  | 1      | Positional arguments |            | one positional argument with default and choice
+pos_2 |            |           | pos_2     |          |         | int  | 2      | Positional arguments |            | two positional arguments without default or choice
+var_1 | a          | var-1     | VAL_1     |          |         | uint | 1      | Mandatory options    |            | one value without default or choice
+var_2 | b          | var-2     | VAL_2     |          |         | int  | +      | Mandatory options    |            | at least one value without default or choice
+var_3 | c          | var-3     | VAL_3     |          | A,B     | char | +      | Mandatory options    |            | at least one value with choice
+var_4 | d          |           | VAL_4     | A        | A,B,C   | char | 1      | Optional options     |            | one value with default and choice
+var_5 |            | var-5     | VAL_5     | E        |         | str  | 1      | Optional options     |            | one value with default
+var_6 | f          | var-6     | VAL_6     | false    |         | bool | 0      | Optional options     |            | no value (flag) with default
+var_7 | g          | var-7     | VAL_7     | true     |         | bool | 0      | Optional options     | deprecated | no value (flag) with default
 ```
 
 When passing the usual argument names and values, we see that all arguments are still recognized:
@@ -879,15 +879,15 @@ ARGPARSER_HELP_FILE="${dir}/help_message.txt"
 # Define the arguments.
 args=(
     "id    | short_opts | long_opts | val_names | defaults | choices | type | arg_no | arg_group            | notes      | help                                              "
-    "pos_1 | -          | -         | pos_1     | 2        | 1,2     | int  | 1      | Positional arguments | -          | one positional argument with default and choice   "
-    "pos_2 | -          | -         | pos_2     | -        | -       | int  | 2      | Positional arguments | -          | two positional arguments without default or choice"
-    "var_1 | a          | var-1     | VAL_1     | -        | -       | uint | 1      | Mandatory options    | -          | one value without default or choice               "
-    "var_2 | b          | var-2     | VAL_2     | -        | -       | int  | +      | Mandatory options    | -          | at least one value without default or choice      "
-    "var_3 | c          | var-3     | VAL_3     | -        | A,B     | char | +      | Mandatory options    | -          | at least one value with choice                    "
-    "var_4 | d          | -         | VAL_4     | A        | A,B,C   | char | 1      | Optional options     | -          | one value with default and choice                 "
-    "var_5 | -          | var-5     | VAL_5     | E        | -       | str  | 1      | Optional options     | -          | one value with default                            "
-    "var_6 | f          | var-6     | VAL_6     | false    | -       | bool | 0      | Optional options     | -          | no value (flag) with default                      "
-    "var_7 | g          | var-7     | VAL_7     | true     | -       | bool | 0      | Optional options     | deprecated | no value (flag) with default                      "
+    "pos_1 |            |           | pos_1     | 2        | 1,2     | int  | 1      | Positional arguments |            | one positional argument with default and choice   "
+    "pos_2 |            |           | pos_2     |          |         | int  | 2      | Positional arguments |            | two positional arguments without default or choice"
+    "var_1 | a          | var-1     | VAL_1     |          |         | uint | 1      | Mandatory options    |            | one value without default or choice               "
+    "var_2 | b          | var-2     | VAL_2     |          |         | int  | +      | Mandatory options    |            | at least one value without default or choice      "
+    "var_3 | c          | var-3     | VAL_3     |          | A,B     | char | +      | Mandatory options    |            | at least one value with choice                    "
+    "var_4 | d          |           | VAL_4     | A        | A,B,C   | char | 1      | Optional options     |            | one value with default and choice                 "
+    "var_5 |            | var-5     | VAL_5     | E        |         | str  | 1      | Optional options     |            | one value with default                            "
+    "var_6 | f          | var-6     | VAL_6     | false    |         | bool | 0      | Optional options     |            | no value (flag) with default                      "
+    "var_7 | g          | var-7     | VAL_7     | true     |         | bool | 0      | Optional options     | deprecated | no value (flag) with default                      "
 )
 source argparser -- "$@"
 ```
@@ -1021,15 +1021,15 @@ You need to manually translate the arguments definition (only the argument group
 
 ```console
 $ cat arguments_de.csv
-pos_1 | - | -     | pos_1 | 2     | 1,2   | int  | 1 | Positionale Argumente  | -          | ein positionales Argument mit Vorgabe und Auswahl
-pos_2 | - | -     | pos_2 | -     | -     | int  | 2 | Positionale Argumente  | -          | zwei positionale Argumente ohne Vorgabe oder Auswahl
-var_1 | a | var-1 | VAL_1 | -     | -     | uint | 1 | Erforderliche Optionen | -          | ein Wert ohne Vorgabe oder Auswahl
-var_2 | b | var-2 | VAL_2 | -     | -     | int  | + | Erforderliche Optionen | -          | mindestens ein Wert ohne Vorgabe oder Auswahl
-var_3 | c | var-3 | VAL_3 | -     | A,B   | char | + | Erforderliche Optionen | -          | mindestens ein Wert mit Auswahl
-var_4 | d | -     | VAL_4 | A     | A,B,C | char | 1 | Optionale Optionen     | -          | ein Wert mit Vorgabe und Auswahl
-var_5 | - | var-5 | VAL_5 | E     | -     | str  | 1 | Optionale Optionen     | -          | ein Wert mit Vorgabe
-var_6 | f | var-6 | VAL_6 | false | -     | bool | 0 | Optionale Optionen     | -          | kein Wert (Flag) mit Vorgabe
-var_7 | g | var-7 | VAL_7 | true  | -     | bool | 0 | Optionale Optionen     | deprecated | kein Wert (Flag) mit Vorgabe
+pos_1 |   |       | pos_1 | 2     | 1,2   | int  | 1 | Positionale Argumente  |            | ein positionales Argument mit Vorgabe und Auswahl
+pos_2 |   |       | pos_2 |       |       | int  | 2 | Positionale Argumente  |            | zwei positionale Argumente ohne Vorgabe oder Auswahl
+var_1 | a | var-1 | VAL_1 |       |       | uint | 1 | Erforderliche Optionen |            | ein Wert ohne Vorgabe oder Auswahl
+var_2 | b | var-2 | VAL_2 |       |       | int  | + | Erforderliche Optionen |            | mindestens ein Wert ohne Vorgabe oder Auswahl
+var_3 | c | var-3 | VAL_3 |       | A,B   | char | + | Erforderliche Optionen |            | mindestens ein Wert mit Auswahl
+var_4 | d |       | VAL_4 | A     | A,B,C | char | 1 | Optionale Optionen     |            | ein Wert mit Vorgabe und Auswahl
+var_5 |   | var-5 | VAL_5 | E     |       | str  | 1 | Optionale Optionen     |            | ein Wert mit Vorgabe
+var_6 | f | var-6 | VAL_6 | false |       | bool | 0 | Optionale Optionen     |            | kein Wert (Flag) mit Vorgabe
+var_7 | g | var-7 | VAL_7 | true  |       | bool | 0 | Optionale Optionen     | deprecated | kein Wert (Flag) mit Vorgabe
 ```
 
 The same is necessary for the printable part of the help file:
@@ -1415,15 +1415,15 @@ export ARGPARSER_WRITE_ARGS=true
 # Define the arguments.
 args='
     id    | short_opts | long_opts | val_names | defaults | choices | type | arg_no | arg_group            | notes      | help
-    pos_1 | -          | -         | pos_1     | 2        | 1,2     | int  | 1      | Positional arguments | -          | one positional argument with default and choice
-    pos_2 | -          | -         | pos_2     | -        | -       | int  | 2      | Positional arguments | -          | two positional arguments without default or choice
-    var_1 | a          | var-1     | VAL_1     | -        | -       | uint | 1      | Mandatory options    | -          | one value without default or choice
-    var_2 | b          | var-2     | VAL_2     | -        | -       | int  | +      | Mandatory options    | -          | at least one value without default or choice
-    var_3 | c          | var-3     | VAL_3     | -        | A,B     | char | +      | Mandatory options    | -          | at least one value with choice
-    var_4 | d          | -         | VAL_4     | A        | A,B,C   | char | 1      | Optional options     | -          | one value with default and choice
-    var_5 | -          | var-5     | VAL_5     | E        | -       | str  | 1      | Optional options     | -          | one value with default
-    var_6 | f          | var-6     | VAL_6     | false    | -       | bool | 0      | Optional options     | -          | no value (flag) with default
-    var_7 | g          | var-7     | VAL_7     | true     | -       | bool | 0      | Optional options     | deprecated | no value (flag) with default
+    pos_1 |            |           | pos_1     | 2        | 1,2     | int  | 1      | Positional arguments |            | one positional argument with default and choice
+    pos_2 |            |           | pos_2     |          |         | int  | 2      | Positional arguments |            | two positional arguments without default or choice
+    var_1 | a          | var-1     | VAL_1     |          |         | uint | 1      | Mandatory options    |            | one value without default or choice
+    var_2 | b          | var-2     | VAL_2     |          |         | int  | +      | Mandatory options    |            | at least one value without default or choice
+    var_3 | c          | var-3     | VAL_3     |          | A,B     | char | +      | Mandatory options    |            | at least one value with choice
+    var_4 | d          |           | VAL_4     | A        | A,B,C   | char | 1      | Optional options     |            | one value with default and choice
+    var_5 |            | var-5     | VAL_5     | E        |         | str  | 1      | Optional options     |            | one value with default
+    var_6 | f          | var-6     | VAL_6     | false    |         | bool | 0      | Optional options     |            | no value (flag) with default
+    var_7 | g          | var-7     | VAL_7     | true     |         | bool | 0      | Optional options     | deprecated | no value (flag) with default
 '
 
 if [ "$1" = "--help" ] \
@@ -1668,14 +1668,14 @@ The argparser defines a large set of environment variables, each following the n
 ### `ARGPARSER_ARG_DELIMITER_1`
 
 - ***Type:*** *char* (Character)
-- ***Allowed values:*** Any unique character that's not used as [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2), no hyphen (`-`), no plus sign (`+`)
+- ***Allowed values:*** Any unique character that's not used as [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2), no hyphen (`-`), plus sign (`+`), asterisk (`*`), or question mark (`?`)
 - ***Default value:*** `"|"`
 - ***Description:*** The primary delimiter that separates the fields in the arguments definition. Though you don't need to access this variable, you must ensure that it is set to a character or glyph that does not occur in the arguments definition or their values.
 
 ### `ARGPARSER_ARG_DELIMITER_2`
 
 - ***Type:*** *char* (Character)
-- ***Allowed values:*** Any unique character that's not used as [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1), no hyphen (`-`), no plus sign (`+`)
+- ***Allowed values:*** Any unique character that's not used as [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1), no hyphen (`-`), plus sign (`+`), asterisk (`*`), or question mark (`?`)
 - ***Default value:*** `","`
 - ***Description:*** The secondary delimiter that separates the elements of sequences in the arguments definition. Again, you don't need to access this variable, but you must ensure that it is set to a character or glyph that does not occur in the arguments definition or their values.
 
