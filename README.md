@@ -42,7 +42,7 @@ The argparser is a designed to be an easy-to-use, yet powerful command-line argu
     - [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)
     - [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)
     - [`ARGPARSER_ARGS`](#argparser_args)
-    - [`ARGPARSER_CHECK_ARG_DEFINITION`](#argparser_check_arg_definition)
+    - [`ARGPARSER_CHECK_ARG_DEF`](#argparser_check_arg_def)
     - [`ARGPARSER_CHECK_ENV_VARS`](#argparser_check_env_vars)
     - [`ARGPARSER_CONFIGURATION_FILE`](#argparser_configuration_file)
     - [`ARGPARSER_COUNT_FLAGS`](#argparser_count_flags)
@@ -748,7 +748,7 @@ Usage: try_arg_def_file.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL
 
 ### Help and usage messages
 
-No matter how many keyword arguments are defined, as long as [`ARGPARSER_ADD_HELP`](#argparser_add_help) and [`ARGPARSER_ADD_USAGE`](#argparser_add_usage) are set to `true` (the default), the argparser interprets the flags from the [`ARGPARSER_HELP_OPTIONS`](#argparser_help_options) (default: `-h` and `-?`) and `--help` as call for a verbose help message and the flags from the [`ARGPARSER_USAGE_OPTIONS`](#argparser_usage_options) (default: `-u`) and `--usage` as call for a brief usage message. Then, these options are automatically added to the script's argument definition and override any same-named argument name (yielding an error message if [`ARGPARSER_CHECK_ARG_DEFINITION`](#argparser_check_arg_definition) is set to `true`). This is to ensure that the novice user of your script can do exactly what we did, above: trying the most common variants to get some help over how to use a program or script by typing
+No matter how many keyword arguments are defined, as long as [`ARGPARSER_ADD_HELP`](#argparser_add_help) and [`ARGPARSER_ADD_USAGE`](#argparser_add_usage) are set to `true` (the default), the argparser interprets the flags from the [`ARGPARSER_HELP_OPTIONS`](#argparser_help_options) (default: `-h` and `-?`) and `--help` as call for a verbose help message and the flags from the [`ARGPARSER_USAGE_OPTIONS`](#argparser_usage_options) (default: `-u`) and `--usage` as call for a brief usage message. Then, these options are automatically added to the script's argument definition and override any same-named argument name (yielding an error message if [`ARGPARSER_CHECK_ARG_DEF`](#argparser_check_arg_def) is set to `true`). This is to ensure that the novice user of your script can do exactly what we did, above: trying the most common variants to get some help over how to use a program or script by typing
 
 ```bash
 try_argparser.sh --help
@@ -1293,7 +1293,7 @@ Options:
 [--arg-delimiter-2=CHAR]         the secondary delimiter that separates the
                                  elements of sequences in the arguments
                                  definition (default: ",")
-[--check-arg-definition]         check if the arguments definition is
+[--check-arg-def]                check if the arguments definition is
                                  consistent (default: false)
 [--check-env-vars]               check if the argparser environment variables
                                  accord to their definition (default: false)
@@ -1546,7 +1546,7 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)                     | *char*                             | `"\|"`[^5]               |
 | [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)                     | *char*                             | `","`[^5]                |
 | [`ARGPARSER_ARGS`](#argparser_args)                                           | *arr*                              | *None* (unset)           |
-| [`ARGPARSER_CHECK_ARG_DEFINITION`](#argparser_check_arg_definition)           | *bool*                             | `false`                  |
+| [`ARGPARSER_CHECK_ARG_DEF`](#argparser_check_arg_def)                         | *bool*                             | `false`                  |
 | [`ARGPARSER_CHECK_ENV_VARS`](#argparser_check_env_vars)                       | *bool*                             | `false`                  |
 | [`ARGPARSER_CONFIGURATION_FILE`](#argparser_configuration_file)               | *filepath* \| `""`                 | `""`                     |
 | [`ARGPARSER_COUNT_FLAGS`](#argparser_count_flags)                             | *bool*                             | `false`                  |
@@ -1686,7 +1686,7 @@ The argparser defines a large set of environment variables, each following the n
 - ***Default value:*** *None* (unset)
 - ***Description:*** The indexed array in which the argparser's options are stored, and later, the associative array for their values. This array *must not be set* by your script, else, an error is thrown. The argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#argparser_unset_env_vars) is set to `false`).
 
-### `ARGPARSER_CHECK_ARG_DEFINITION`
+### `ARGPARSER_CHECK_ARG_DEF`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`

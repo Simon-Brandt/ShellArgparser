@@ -812,7 +812,7 @@ function argparser_read_configuration() {
     # ARGPARSER_ARG_DEF_HAS_HEADER
     # ARGPARSER_ARG_DELIMITER_1
     # ARGPARSER_ARG_DELIMITER_2
-    # ARGPARSER_CHECK_ARG_DEFINITION
+    # ARGPARSER_CHECK_ARG_DEF
     # ARGPARSER_CHECK_ENV_VARS
     # ARGPARSER_CONFIGURATION_FILE (read-only)
     # ARGPARSER_COUNT_FLAGS
@@ -1045,7 +1045,7 @@ function argparser_set_env_vars() {
     # ARGPARSER_ARG_DELIMITER_1
     # ARGPARSER_ARG_DELIMITER_2
     # ARGPARSER_ARGS
-    # ARGPARSER_CHECK_ARG_DEFINITION
+    # ARGPARSER_CHECK_ARG_DEF
     # ARGPARSER_CHECK_ENV_VARS
     # ARGPARSER_CONFIGURATION_FILE
     # ARGPARSER_COUNT_FLAGS
@@ -1146,7 +1146,7 @@ function argparser_set_env_vars() {
         "ARGPARSER_ARG_DEF_HAS_HEADER        :            : arg-def-has-header        :              : true                 :            : bool : 0      : Options   :       : whether the arguments definition in the script has a header explaining the columns                      "
         "ARGPARSER_ARG_DELIMITER_1           :            : arg-delimiter-1           : CHAR         : |                    :            : char : 1      : Options   :       : the primary delimiter that separates the fields in the arguments definition                             "
         "ARGPARSER_ARG_DELIMITER_2           :            : arg-delimiter-2           : CHAR         : ,                    :            : char : 1      : Options   :       : the secondary delimiter that separates the elements of sequences in the arguments definition            "
-        "ARGPARSER_CHECK_ARG_DEFINITION      :            : check-arg-definition      :              : false                :            : bool : 0      : Options   :       : check if the arguments definition is consistent                                                         "
+        "ARGPARSER_CHECK_ARG_DEF             :            : check-arg-def             :              : false                :            : bool : 0      : Options   :       : check if the arguments definition is consistent                                                         "
         "ARGPARSER_CHECK_ENV_VARS            :            : check-env-vars            :              : false                :            : bool : 0      : Options   :       : check if the argparser environment variables accord to their definition                                 "
         "ARGPARSER_CONFIGURATION_FILE        :            : configuration-file        : FILE         : ''                   :            : str  : 1      : Options   :       : the path to a file holding the argparser configuration                                                  "
         "ARGPARSER_COUNT_FLAGS               :            : count-flags               :              : false                :            : bool : 0      : Options   :       : count flags instead of setting them to true or false based on the last prefix used on the command line  "
@@ -1206,7 +1206,7 @@ function argparser_set_env_vars() {
         ARGPARSER_ARG_DEF_HAS_HEADER=true \
         ARGPARSER_ARG_DELIMITER_1=":" \
         ARGPARSER_ARG_DELIMITER_2="," \
-        ARGPARSER_CHECK_ARG_DEFINITION=false \
+        ARGPARSER_CHECK_ARG_DEF=false \
         ARGPARSER_CHECK_ENV_VARS=false \
         ARGPARSER_CONFIGURATION_FILE="" \
         ARGPARSER_COUNT_FLAGS=false \
@@ -1347,7 +1347,7 @@ function argparser_check_env_vars() {
     # - ARGPARSER_ARG_DEF_HAS_HEADER (read-only)
     # - ARGPARSER_ARG_DELIMITER_1 (read-only)
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
-    # - ARGPARSER_CHECK_ARG_DEFINITION (read-only)
+    # - ARGPARSER_CHECK_ARG_DEF (read-only)
     # - ARGPARSER_CHECK_ENV_VARS (read-only)
     # - ARGPARSER_CONFIGURATION_FILE (read-only)
     # - ARGPARSER_COUNT_FLAGS (read-only)
@@ -1416,7 +1416,7 @@ function argparser_check_env_vars() {
         ARGPARSER_ALLOW_OPTION_MERGING
         ARGPARSER_ARG_DEF_FILE_HAS_HEADER
         ARGPARSER_ARG_DEF_HAS_HEADER
-        ARGPARSER_CHECK_ARG_DEFINITION
+        ARGPARSER_CHECK_ARG_DEF
         ARGPARSER_CHECK_ENV_VARS
         ARGPARSER_COUNT_FLAGS
         ARGPARSER_HELP_FILE_KEEP_COMMENTS
@@ -4622,7 +4622,7 @@ function argparser_parse_args() {
     # Environment:
     # - ARGPARSER_ARG_ARRAY_NAME (read-only)
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
-    # - ARGPARSER_CHECK_ARG_DEFINITION (read-only)
+    # - ARGPARSER_CHECK_ARG_DEF (read-only)
     # - ARGPARSER_ERROR_EXIT_CODE (read-only)
     # - ARGPARSER_SILENCE_ERRORS (read-only)
 
@@ -4820,10 +4820,10 @@ function argparser_parse_args() {
         argparser_parse_args_definition "script" "${args_definition_script[@]}"
     fi
 
-    # If ${ARGPARSER_CHECK_ARG_DEFINITION} is set to true, check the
+    # If ${ARGPARSER_CHECK_ARG_DEF} is set to true, check the
     # consistency of the arguments definition.
     error_messages=( )
-    if [[ "${ARGPARSER_CHECK_ARG_DEFINITION}" == true ]]; then
+    if [[ "${ARGPARSER_CHECK_ARG_DEF}" == true ]]; then
         # Check the arguments definition, first the short and long
         # option names, then the default and choice values.
         argparser_check_args_definition_names
@@ -7367,7 +7367,7 @@ function argparser_main() {
         unset ARGPARSER_ARG_DELIMITER_1
         unset ARGPARSER_ARG_DELIMITER_2
         unset ARGPARSER_ARGS
-        unset ARGPARSER_CHECK_ARG_DEFINITION
+        unset ARGPARSER_CHECK_ARG_DEF
         unset ARGPARSER_CHECK_ENV_VARS
         unset ARGPARSER_CONFIGURATION_FILE
         unset ARGPARSER_COUNT_FLAGS

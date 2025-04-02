@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-04-01
+# Last Modification: 2025-04-02
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -1541,7 +1541,7 @@ Usage: argparser [--help | --usage | --version]
                  [--arg-def-has-header]
                  [--arg-delimiter-1=CHAR]
                  [--arg-delimiter-2=CHAR]
-                 [--check-arg-definition]
+                 [--check-arg-def]
                  [--check-env-vars]
                  [--configuration-file=FILE]
                  [--count-flags]
@@ -1635,7 +1635,7 @@ Options:
 [--arg-delimiter-2=CHAR]         the secondary delimiter that separates the
                                  elements of sequences in the arguments
                                  definition (default: ",")
-[--check-arg-definition]         check if the arguments definition is
+[--check-arg-def]                check if the arguments definition is
                                  consistent (default: false)
 [--check-env-vars]               check if the argparser environment variables
                                  accord to their definition (default: false)
