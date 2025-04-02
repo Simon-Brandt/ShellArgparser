@@ -12,7 +12,7 @@
 # Source the argparser, reading the configuration from a file.
 dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
 dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
-ARGPARSER_CONFIGURATION_FILE="${dir}/options.cfg"
+ARGPARSER_CONFIG_FILE="${dir}/options.cfg"
 
 # Define the arguments.
 # shellcheck disable=SC2190  # Indexed, not associative array.

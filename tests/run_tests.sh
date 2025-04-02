@@ -1543,7 +1543,7 @@ Usage: argparser [--help | --usage | --version]
                  [--arg-delimiter-2=CHAR]
                  [--check-arg-def]
                  [--check-env-vars]
-                 [--configuration-file=FILE]
+                 [--config-file=FILE]
                  [--count-flags]
                  [--error-exit-code=INT]
                  [--error-style=STYLE...]
@@ -1639,7 +1639,7 @@ Options:
                                  consistent (default: false)
 [--check-env-vars]               check if the argparser environment variables
                                  accord to their definition (default: false)
-[--configuration-file=FILE]      the path to a file holding the argparser
+[--config-file=FILE]             the path to a file holding the argparser
                                  configuration (default: "''")
 [--count-flags]                  count flags instead of setting them to true or
                                  false based on the last prefix used on the

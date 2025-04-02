@@ -44,7 +44,7 @@ The argparser is a designed to be an easy-to-use, yet powerful command-line argu
     - [`ARGPARSER_ARGS`](#argparser_args)
     - [`ARGPARSER_CHECK_ARG_DEF`](#argparser_check_arg_def)
     - [`ARGPARSER_CHECK_ENV_VARS`](#argparser_check_env_vars)
-    - [`ARGPARSER_CONFIGURATION_FILE`](#argparser_configuration_file)
+    - [`ARGPARSER_CONFIG_FILE`](#argparser_config_file)
     - [`ARGPARSER_COUNT_FLAGS`](#argparser_count_flags)
     - [`ARGPARSER_DICTIONARY`](#argparser_dictionary)
     - [`ARGPARSER_ERROR_EXIT_CODE`](#argparser_error_exit_code)
@@ -552,7 +552,7 @@ The argparser accepts over 50 options for configuring the argument parsing, chec
 
 Still, it is likely that, after some time or for a specific project, you'll settle with a certain set of options that you'll want to reuse for all scripts. Then, setting the environment variables in any script becomes a tedious task, wasting space in each script. Additionally, should you want to change a value, you need to change it in any file.
 
-For this reason, the argparser also supports configuration by a config file, given by the [`ARGPARSER_CONFIGURATION_FILE`](#argparser_configuration_file) environment variable. This file contains the options in a key&ndash;value syntax and can be shared by multiple scripts, which only need to point to the same configuration file. The options have the same name as the environment variables, with a stripped leading `"ARGPARSER_"` and being written in lowercase, and with underscores replaced by hyphens. *I.e.*, the "screaming snake case" is replaced by the "kebab case".
+For this reason, the argparser also supports configuration by a config file, given by the [`ARGPARSER_CONFIG_FILE`](#argparser_config_file) environment variable. This file contains the options in a key&ndash;value syntax and can be shared by multiple scripts, which only need to point to the same configuration file. The options have the same name as the environment variables, with a stripped leading `"ARGPARSER_"` and being written in lowercase, and with underscores replaced by hyphens. *I.e.*, the "screaming snake case" is replaced by the "kebab case".
 
 The keys and values must be separated by an equals sign (`=`), but can be surrounded by spaces, allowing for a table-like arrangement. Further, empty or commented lines (those starting with a hashmark, *i.e.*, `#`) are ignored, and thus can be used to explain certain values. In-line comments aren't supported to simplify the parsing of values containing a hashmark. It is possible to quote strings, but not necessary, which allows the one-by-one replacement of values from scripts to the configuration file and *vice versa*.
 
@@ -586,7 +586,7 @@ For demonstration, we take a stripped-down version of our `try_argparser.sh` scr
 # Source the argparser, reading the configuration from a file.
 dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
 dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
-ARGPARSER_CONFIGURATION_FILE="${dir}/options.cfg"
+ARGPARSER_CONFIG_FILE="${dir}/options.cfg"
 
 # Define the arguments.
 args=(
@@ -1297,7 +1297,7 @@ Options:
                                  consistent (default: false)
 [--check-env-vars]               check if the argparser environment variables
                                  accord to their definition (default: false)
-[--configuration-file=FILE]      the path to a file holding the argparser
+[--config-file=FILE]             the path to a file holding the argparser
                                  configuration (default: "''")
 [--count-flags]                  count flags instead of setting them to true or
                                  false based on the last prefix used on the
@@ -1548,7 +1548,7 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_ARGS`](#argparser_args)                                           | *arr*                              | *None* (unset)           |
 | [`ARGPARSER_CHECK_ARG_DEF`](#argparser_check_arg_def)                         | *bool*                             | `false`                  |
 | [`ARGPARSER_CHECK_ENV_VARS`](#argparser_check_env_vars)                       | *bool*                             | `false`                  |
-| [`ARGPARSER_CONFIGURATION_FILE`](#argparser_configuration_file)               | *filepath* \| `""`                 | `""`                     |
+| [`ARGPARSER_CONFIG_FILE`](#argparser_config_file)                             | *filepath* \| `""`                 | `""`                     |
 | [`ARGPARSER_COUNT_FLAGS`](#argparser_count_flags)                             | *bool*                             | `false`                  |
 | [`ARGPARSER_DICTIONARY`](#argparser_dictionary)                               | *dict*                             | *None* (unset)           |
 | [`ARGPARSER_ERROR_EXIT_CODE`](#argparser_error_exit_code)                     | *int*                              | `1`                      |
@@ -1700,15 +1700,15 @@ The argparser defines a large set of environment variables, each following the n
 - ***Default value:*** `false`
 - ***Description:*** Whether to check if the argparser environment variables accord to their definition. Again, this should only be turned on (set to `true`) for testing purposes, while in production environments, keeping it deactivated saves some (minimal) computation time. Still, if the user can modify the environment variables at some point (not recommended as it may lead to code injection!), you should activate it.
 
-### `ARGPARSER_CONFIGURATION_FILE`
+### `ARGPARSER_CONFIG_FILE`
 
 - ***Type:*** *filepath* (Filepath)
 - ***Allowed values:*** Any legit filepath or the empty string `""`
 - ***Default value:*** `""`
-- ***Description:*** The path to a file holding the argparser configuration. The lines will be read into environment variables, but those that are already defined within your script or environment override the specification in the `ARGPARSER_CONFIGURATION_FILE`. This file may be used by multiple scripts.
+- ***Description:*** The path to a file holding the argparser configuration. The lines will be read into environment variables, but those that are already defined within your script or environment override the specification in the `ARGPARSER_CONFIG_FILE`. This file may be used by multiple scripts.
 
 > [!CAUTION]
-> The argparser reads the lines into variables without checking them! If the user can modify the `ARGPARSER_CONFIGURATION_FILE`, this is prone to command injection!
+> The argparser reads the lines into variables without checking them! If the user can modify the `ARGPARSER_CONFIG_FILE`, this is prone to command injection!
 
 ### `ARGPARSER_COUNT_FLAGS`
 

@@ -814,7 +814,7 @@ function argparser_read_configuration() {
     # ARGPARSER_ARG_DELIMITER_2
     # ARGPARSER_CHECK_ARG_DEF
     # ARGPARSER_CHECK_ENV_VARS
-    # ARGPARSER_CONFIGURATION_FILE (read-only)
+    # ARGPARSER_CONFIG_FILE (read-only)
     # ARGPARSER_COUNT_FLAGS
     # ARGPARSER_ERROR_EXIT_CODE
     # ARGPARSER_ERROR_STYLE
@@ -877,7 +877,7 @@ function argparser_read_configuration() {
     # needed ones to default values, if ${ARGPARSER_CHECK_ENV_VARS}
     # isn't set to false (and by this, the checking hasn't been
     # explicitly disabled).
-    argparser_check_file "${ARGPARSER_CONFIGURATION_FILE}"
+    argparser_check_file "${ARGPARSER_CONFIG_FILE}"
     if [[ "${file_attributes}" != "0000" ]]; then
         error_message="Error: The environment variable \"%s\" is set to "
         error_message+="\"%s\", but the referenced file "
@@ -896,8 +896,8 @@ function argparser_read_configuration() {
                 ;;
             1111) error_message+="does not exist." ;;
         esac
-        error_message="${error_message/"%s"/"ARGPARSER_CONFIGURATION_FILE"}"
-        error_message="${error_message/"%s"/${ARGPARSER_CONFIGURATION_FILE}}"
+        error_message="${error_message/"%s"/"ARGPARSER_CONFIG_FILE"}"
+        error_message="${error_message/"%s"/${ARGPARSER_CONFIG_FILE}}"
 
         if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
             ARGPARSER_ARG_DELIMITER_2=","
@@ -910,7 +910,7 @@ function argparser_read_configuration() {
     fi
 
     # Read the configuration file.
-    mapfile -t lines < "${ARGPARSER_CONFIGURATION_FILE}"
+    mapfile -t lines < "${ARGPARSER_CONFIG_FILE}"
     error_messages=( )
 
     for line in "${lines[@]}"; do
@@ -924,7 +924,7 @@ function argparser_read_configuration() {
             error_message+="\"%s\" sets ARGPARSER_ARGS, which is an "
             error_message+="internal variable and must not be set."
 
-            for var in "${ARGPARSER_CONFIGURATION_FILE}" "${line}"; do
+            for var in "${ARGPARSER_CONFIG_FILE}" "${line}"; do
                 error_message="${error_message/"%s"/${var}}"
             done
             error_messages+=("${error_message}")
@@ -935,7 +935,7 @@ function argparser_read_configuration() {
             error_message+="\"%s\" sets ARGPARSER_DICTIONARY, which is an "
             error_message+="internal variable and must not be set."
 
-            for var in "${ARGPARSER_CONFIGURATION_FILE}" "${line}"; do
+            for var in "${ARGPARSER_CONFIG_FILE}" "${line}"; do
                 error_message="${error_message/"%s"/${var}}"
             done
             error_messages+=("${error_message}")
@@ -946,7 +946,7 @@ function argparser_read_configuration() {
             error_message+="\"%s\" sets ARGPARSER_SCRIPT_ARGS, which is an "
             error_message+="internal variable and must not be set."
 
-            for var in "${ARGPARSER_CONFIGURATION_FILE}" "${line}"; do
+            for var in "${ARGPARSER_CONFIG_FILE}" "${line}"; do
                 error_message="${error_message/"%s"/${var}}"
             done
             error_messages+=("${error_message}")
@@ -957,7 +957,7 @@ function argparser_read_configuration() {
             error_message+="\"%s\" sets ARGPARSER_VERSION, which is an "
             error_message+="internal variable and must not be set."
 
-            for var in "${ARGPARSER_CONFIGURATION_FILE}" "${line}"; do
+            for var in "${ARGPARSER_CONFIG_FILE}" "${line}"; do
                 error_message="${error_message/"%s"/${var}}"
             done
             error_messages+=("${error_message}")
@@ -1000,7 +1000,7 @@ function argparser_read_configuration() {
             error_message+="\"%s\" doesn't contain an equals sign (\"=\"), "
             error_message+="nor is it empty or commented."
 
-            for var in "${ARGPARSER_CONFIGURATION_FILE}" "${line}"; do
+            for var in "${ARGPARSER_CONFIG_FILE}" "${line}"; do
                 error_message="${error_message/"%s"/${var}}"
             done
             error_messages+=("${error_message}")
@@ -1047,7 +1047,7 @@ function argparser_set_env_vars() {
     # ARGPARSER_ARGS
     # ARGPARSER_CHECK_ARG_DEF
     # ARGPARSER_CHECK_ENV_VARS
-    # ARGPARSER_CONFIGURATION_FILE
+    # ARGPARSER_CONFIG_FILE
     # ARGPARSER_COUNT_FLAGS
     # ARGPARSER_ERROR_EXIT_CODE
     # ARGPARSER_ERROR_STYLE
@@ -1148,7 +1148,7 @@ function argparser_set_env_vars() {
         "ARGPARSER_ARG_DELIMITER_2           :            : arg-delimiter-2           : CHAR         : ,                    :            : char : 1      : Options   :       : the secondary delimiter that separates the elements of sequences in the arguments definition            "
         "ARGPARSER_CHECK_ARG_DEF             :            : check-arg-def             :              : false                :            : bool : 0      : Options   :       : check if the arguments definition is consistent                                                         "
         "ARGPARSER_CHECK_ENV_VARS            :            : check-env-vars            :              : false                :            : bool : 0      : Options   :       : check if the argparser environment variables accord to their definition                                 "
-        "ARGPARSER_CONFIGURATION_FILE        :            : configuration-file        : FILE         : ''                   :            : str  : 1      : Options   :       : the path to a file holding the argparser configuration                                                  "
+        "ARGPARSER_CONFIG_FILE               :            : config-file               : FILE         : ''                   :            : str  : 1      : Options   :       : the path to a file holding the argparser configuration                                                  "
         "ARGPARSER_COUNT_FLAGS               :            : count-flags               :              : false                :            : bool : 0      : Options   :       : count flags instead of setting them to true or false based on the last prefix used on the command line  "
         "ARGPARSER_ERROR_EXIT_CODE           :            : error-exit-code           : INT          : 1                    :            : int  : 1      : Options   :       : the exit code when errors occurred upon parsing                                                         "
         "ARGPARSER_ERROR_STYLE               :            : error-style               : STYLE        : red,bold,reverse     :            : str  : +      : Options   :       : the color and style specification for error messages                                                    "
@@ -1208,7 +1208,7 @@ function argparser_set_env_vars() {
         ARGPARSER_ARG_DELIMITER_2="," \
         ARGPARSER_CHECK_ARG_DEF=false \
         ARGPARSER_CHECK_ENV_VARS=false \
-        ARGPARSER_CONFIGURATION_FILE="" \
+        ARGPARSER_CONFIG_FILE="" \
         ARGPARSER_COUNT_FLAGS=false \
         ARGPARSER_ERROR_EXIT_CODE=1 \
         ARGPARSER_ERROR_STYLE="red,bold,reverse" \
@@ -1332,7 +1332,7 @@ function argparser_check_env_vars() {
     #
     # The following environment variables are only checked for mutual
     # exclusivity with other environment variables:
-    # - ARGPARSER_CONFIGURATION_FILE (checked earlier)
+    # - ARGPARSER_CONFIG_FILE (checked earlier)
     # - ARGPARSER_TRANSLATION_FILE (checked earlier)
     #
     # Environment:
@@ -1349,7 +1349,7 @@ function argparser_check_env_vars() {
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_CHECK_ARG_DEF (read-only)
     # - ARGPARSER_CHECK_ENV_VARS (read-only)
-    # - ARGPARSER_CONFIGURATION_FILE (read-only)
+    # - ARGPARSER_CONFIG_FILE (read-only)
     # - ARGPARSER_COUNT_FLAGS (read-only)
     # - ARGPARSER_ERROR_EXIT_CODE
     # - ARGPARSER_ERROR_STYLE
@@ -1788,7 +1788,7 @@ function argparser_check_env_vars() {
     # different from each other, if given.
     vars=(
         ARGPARSER_ARG_DEF_FILE
-        ARGPARSER_CONFIGURATION_FILE
+        ARGPARSER_CONFIG_FILE
         ARGPARSER_HELP_FILE
         ARGPARSER_TRANSLATION_FILE
         ARGPARSER_USAGE_FILE
@@ -7180,7 +7180,7 @@ function argparser_main() {
     #
     # Environment:
     # - ARGPARSER_CHECK_ENV_VARS (read-only)
-    # - ARGPARSER_CONFIGURATION_FILE (read-only)
+    # - ARGPARSER_CONFIG_FILE (read-only)
     # - ARGPARSER_POSITIONAL_ARG_GROUP
     # - ARGPARSER_READ_ARGS (read-only)
     # - ARGPARSER_SCRIPT_ARGS (read-only)
@@ -7225,11 +7225,9 @@ function argparser_main() {
         argparser_set_internal_vars
     fi
 
-    # If ${ARGPARSER_CONFIGURATION_FILE} is defined and not set to the
-    # empty string, read the configuration file.
-    if [[ -v ARGPARSER_CONFIGURATION_FILE \
-        && -n "${ARGPARSER_CONFIGURATION_FILE}" ]]
-    then
+    # If ${ARGPARSER_CONFIG_FILE} is defined and not set to the empty
+    # string, read the configuration file.
+    if [[ -v ARGPARSER_CONFIG_FILE  && -n "${ARGPARSER_CONFIG_FILE}" ]]; then
         argparser_read_configuration
     fi
 
@@ -7369,7 +7367,7 @@ function argparser_main() {
         unset ARGPARSER_ARGS
         unset ARGPARSER_CHECK_ARG_DEF
         unset ARGPARSER_CHECK_ENV_VARS
-        unset ARGPARSER_CONFIGURATION_FILE
+        unset ARGPARSER_CONFIG_FILE
         unset ARGPARSER_COUNT_FLAGS
         unset ARGPARSER_DICTIONARY
         unset ARGPARSER_ERROR_EXIT_CODE
