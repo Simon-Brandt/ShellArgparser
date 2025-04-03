@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-04-02
+# Last Modification: 2025-04-03
 
 # TODO: Support mutually exclusive argument groups.
 # TODO: Consider using the Bash 5.3 form "${ command ... ; }" for the
@@ -1264,9 +1264,12 @@ function argparser_set_env_vars() {
     # environment variables. For those environment variables whose
     # default is given as "''" (two single quotes), set the value to the
     # empty string.  For ${ARGPARSER_SCRIPT_NAME}, set the value to the
-    # basename of the script's $0, if an empty string is given.
+    # basename of the script's $0, if an empty string is given.  Skip
+    # ${ARGPARSER_SCRIPT_ARGS}, i.e., the command line.
     for arg_key in "${!ARGPARSER_ARGS[@]}"; do
-        if [[ -v "${arg_key}" ]]; then
+        if [[ "${arg_key}" == "ARGPARSER_SCRIPT_ARGS" ]]; then
+            continue
+        elif [[ -v "${arg_key}" ]]; then
             # The environment variable has already been set.  Override
             # it if it was also given on the command line.
             for arg in "${args[@]}"; do
