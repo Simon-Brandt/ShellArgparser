@@ -2,9 +2,9 @@
 
 The argparser is a designed to be an easy-to-use, yet powerful command-line argument parser for your shell scripts (mainly Bash), superior to the traditionally used [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)")/[`getopts`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-getopts "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; getopts") or a bare suite of conditionals in a `case..esac` statement. It is entirely written in pure Bash, without invoking external commands. Thus, using the argparser does not add additional dependencies to your script, especially not on differing versions of a program (like [`awk`](https://man7.org/linux/man-pages/man1/awk.1p.html "man7.org &rightarrow; man pages &rightarrow; awk(1p)")). Shells other than Bash are only supported with a slightly different method of invokation (*i.e.*, running the argparser in a pipe, not by sourcing it). The argparser is inspired by the [Python argparse module](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module").
 
+<!-- <toc> -->
 ## Table of contents
 
-<!-- <toc> -->
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -140,6 +140,22 @@ To give you an idea about the argparser's application, the following sections sh
 
 > [!NOTE]
 > For the terminology in argument parsing, refer to the [Python optparse module documentation](https://docs.python.org/3/library/optparse.html#terminology "python.org &rightarrow; Python documentation &rightarrow; optparse module &rightarrow; terminology"). Additionally, for consistency with the positional arguments, options are herein partly referred to as keyword arguments.
+
+<!-- <toc> -->
+### Table of contents
+
+- [Argument passing](#argument-passing)
+- [Argparser invokation](#argparser-invokation)
+- [Argparser configuration](#argparser-configuration)
+- [Arguments definition files](#arguments-definition-files)
+- [Help and usage messages](#help-and-usage-messages)
+- [Help and usage message files](#help-and-usage-message-files)
+- [Help and usage message localization](#help-and-usage-message-localization)
+- [Version messages](#version-messages)
+- [Error and warning messages](#error-and-warning-messages)
+- [Message styles](#message-styles)
+- [Standalone usage](#standalone-usage)
+<!-- </toc> -->
 
 ### Argument passing
 
@@ -1480,6 +1496,17 @@ The following section names (include directives) are supported in the help and u
 
 Thereby, `<ArgumentGroup>` can be the name of any argument group given in the arguments definition, like `"Mandatory options"` for the include directive `@Mandatory options` or `"Optional options"` for the include directive `@Optional options`.
 
+<!-- <toc> -->
+### Table of contents
+
+- [`@All` directive](#all-directive)
+- [`@<ArgumentGroup>` directive](#argumentgroup-directive)
+- [`@Header` directive](#header-directive)
+- [`@Remark` directive](#remark-directive)
+- [`@Usage` directive](#usage-directive)
+- [`@Help` directive](#help-directive)
+<!-- </toc> -->
+
 ### `@All` directive
 
 The `@All` directive comprises all include directives in the following order: [`@Usage`](#usage-directive), [`@Remark`](#remark-directive), [`@<ArgumentGroup>`](#argumentgroup-directive), and [`@Help`](#help-directive), separated from each other by a blank line.
@@ -1527,6 +1554,72 @@ The `@Help` directive prints the help text for the `--help`, `--usage`, and `--v
 ## Environment variables
 
 The argparser defines a large set of environment variables, each following the naming pattern `"ARGPARSER_*"`. They are used to control the behavior of the argument parsing, help and usage message generation, and much more. Note that, if for some reason you're script or environment is using a variable with the same name as one of the argparser variables, the argparser might not work as expected. If you want to be 100&#8239;% safe, you can unset any variable following the given pattern prior setting any desired argparser variables and sourcing the argparser&mdash;with the caveat that in turn the program that set the variable might not work, anymore.
+
+<!-- <toc> -->
+### Table of contents
+
+- [Overview over environment variables](#overview-over-environment-variables)
+- [`ARGPARSER_ADD_HELP`](#argparser_add_help)
+- [`ARGPARSER_ADD_USAGE`](#argparser_add_usage)
+- [`ARGPARSER_ADD_VERSION`](#argparser_add_version)
+- [`ARGPARSER_ALLOW_OPTION_ABBREVIATION`](#argparser_allow_option_abbreviation)
+- [`ARGPARSER_ALLOW_OPTION_MERGING`](#argparser_allow_option_merging)
+- [`ARGPARSER_ARG_ARRAY_NAME`](#argparser_arg_array_name)
+- [`ARGPARSER_ARG_DEF_FILE`](#argparser_arg_def_file)
+- [`ARGPARSER_ARG_DEF_FILE_HAS_HEADER`](#argparser_arg_def_file_has_header)
+- [`ARGPARSER_ARG_DEF_HAS_HEADER`](#argparser_arg_def_has_header)
+- [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)
+- [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)
+- [`ARGPARSER_ARGS`](#argparser_args)
+- [`ARGPARSER_CHECK_ARG_DEF`](#argparser_check_arg_def)
+- [`ARGPARSER_CHECK_ENV_VARS`](#argparser_check_env_vars)
+- [`ARGPARSER_CONFIG_FILE`](#argparser_config_file)
+- [`ARGPARSER_COUNT_FLAGS`](#argparser_count_flags)
+- [`ARGPARSER_DICTIONARY`](#argparser_dictionary)
+- [`ARGPARSER_ERROR_EXIT_CODE`](#argparser_error_exit_code)
+- [`ARGPARSER_ERROR_STYLE`](#argparser_error_style)
+- [`ARGPARSER_HELP_EXIT_CODE`](#argparser_help_exit_code)
+- [`ARGPARSER_HELP_FILE`](#argparser_help_file)
+- [`ARGPARSER_HELP_FILE_INCLUDE_CHAR`](#argparser_help_file_include_char)
+- [`ARGPARSER_HELP_FILE_KEEP_COMMENTS`](#argparser_help_file_keep_comments)
+- [`ARGPARSER_HELP_OPTIONS`](#argparser_help_options)
+- [`ARGPARSER_HELP_STYLE`](#argparser_help_style)
+- [`ARGPARSER_LANGUAGE`](#argparser_language)
+- [`ARGPARSER_MAX_COL_WIDTH_1`](#argparser_max_col_width_1)
+- [`ARGPARSER_MAX_COL_WIDTH_2`](#argparser_max_col_width_2)
+- [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3)
+- [`ARGPARSER_MAX_WIDTH`](#argparser_max_width)
+- [`ARGPARSER_POSITIONAL_ARG_GROUP`](#argparser_positional_arg_group)
+- [`ARGPARSER_READ_ARGS`](#argparser_read_args)
+- [`ARGPARSER_SCRIPT_ARGS`](#argparser_script_args)
+- [`ARGPARSER_SCRIPT_NAME`](#argparser_script_name)
+- [`ARGPARSER_SCRIPT_VERSION`](#argparser_script_version)
+- [`ARGPARSER_SCRIPT_VERSION_EXIT_CODE`](#argparser_script_version_exit_code)
+- [`ARGPARSER_SCRIPT_VERSION_OPTIONS`](#argparser_script_version_options)
+- [`ARGPARSER_SCRIPT_VERSION_STYLE`](#argparser_script_version_style)
+- [`ARGPARSER_SET_ARGS`](#argparser_set_args)
+- [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)
+- [`ARGPARSER_SILENCE_ERRORS`](#argparser_silence_errors)
+- [`ARGPARSER_SILENCE_WARNINGS`](#argparser_silence_warnings)
+- [`ARGPARSER_TRANSLATION_FILE`](#argparser_translation_file)
+- [`ARGPARSER_UNSET_ARGS`](#argparser_unset_args)
+- [`ARGPARSER_UNSET_ENV_VARS`](#argparser_unset_env_vars)
+- [`ARGPARSER_UNSET_FUNCTIONS`](#argparser_unset_functions)
+- [`ARGPARSER_USAGE_EXIT_CODE`](#argparser_usage_exit_code)
+- [`ARGPARSER_USAGE_FILE`](#argparser_usage_file)
+- [`ARGPARSER_USAGE_FILE_INCLUDE_CHAR`](#argparser_usage_file_include_char)
+- [`ARGPARSER_USAGE_FILE_KEEP_COMMENTS`](#argparser_usage_file_keep_comments)
+- [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](#argparser_usage_message_option_type)
+- [`ARGPARSER_USAGE_MESSAGE_ORIENTATION`](#argparser_usage_message_orientation)
+- [`ARGPARSER_USAGE_OPTIONS`](#argparser_usage_options)
+- [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style)
+- [`ARGPARSER_USE_LONG_OPTIONS`](#argparser_use_long_options)
+- [`ARGPARSER_USE_SHORT_OPTIONS`](#argparser_use_short_options)
+- [`ARGPARSER_USE_STYLES_IN_FILES`](#argparser_use_styles_in_files)
+- [`ARGPARSER_VERSION`](#argparser_version)
+- [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style)
+- [`ARGPARSER_WRITE_ARGS`](#argparser_write_args)
+<!-- </toc> -->
 
 ### Overview over environment variables
 
