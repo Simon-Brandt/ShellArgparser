@@ -141,8 +141,8 @@ To give you an idea about the argparser's application, the following sections sh
 > [!NOTE]
 > For the terminology in argument parsing, refer to the [Python optparse module documentation](https://docs.python.org/3/library/optparse.html#terminology "python.org &rightarrow; Python documentation &rightarrow; optparse module &rightarrow; terminology"). Additionally, for consistency with the positional arguments, options are herein partly referred to as keyword arguments.
 
-<!-- <toc> -->
-### Table of contents
+<!-- <toc title="Table of contents (Usage)"> -->
+### Table of contents (Usage)
 
 - [Argument passing](#argument-passing)
 - [Argparser invokation](#argparser-invokation)
@@ -1496,8 +1496,8 @@ The following section names (include directives) are supported in the help and u
 
 Thereby, `<ArgumentGroup>` can be the name of any argument group given in the arguments definition, like `"Mandatory options"` for the include directive `@Mandatory options` or `"Optional options"` for the include directive `@Optional options`.
 
-<!-- <toc> -->
-### Table of contents
+<!-- <toc title="Table of contents (Include directives)"> -->
+### Table of contents (Include directives)
 
 - [`@All` directive](#all-directive)
 - [`@<ArgumentGroup>` directive](#argumentgroup-directive)
@@ -1555,8 +1555,8 @@ The `@Help` directive prints the help text for the `--help`, `--usage`, and `--v
 
 The argparser defines a large set of environment variables, each following the naming pattern `"ARGPARSER_*"`. They are used to control the behavior of the argument parsing, help and usage message generation, and much more. Note that, if for some reason you're script or environment is using a variable with the same name as one of the argparser variables, the argparser might not work as expected. If you want to be 100&#8239;% safe, you can unset any variable following the given pattern prior setting any desired argparser variables and sourcing the argparser&mdash;with the caveat that in turn the program that set the variable might not work, anymore.
 
-<!-- <toc> -->
-### Table of contents
+<!-- <toc title="Table of contents (Environment variables)"> -->
+### Table of contents (Environment variables)
 
 - [Overview over environment variables](#overview-over-environment-variables)
 - [`ARGPARSER_ADD_HELP`](#argparser_add_help)
