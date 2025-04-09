@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-04-02
+# Last Modification: 2025-04-09
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -1586,7 +1586,7 @@ Usage: argparser [--help | --usage | --version]
                  [--use-styles-in-files]
                  [--warning-style=STYLE...]
                  [--write-args]
-                 COMMAND_LINE...
+                 command_line...
 EOF
 )"
 error=""
@@ -1597,12 +1597,12 @@ test_number="12.4"
 test_type="help"
 cmd="bash ../argparser --help"
 output="$(cat << EOF
-Usage: argparser [OPTIONS] [--] COMMAND_LINE
+Usage: argparser [OPTIONS] [--] command_line
 
 Mandatory arguments to long options are mandatory for short options too.
 
 Positional arguments:
-COMMAND_LINE                     the indexed array in which the argparser
+command_line                     the indexed array in which the argparser
                                  stores the script's command line upon parsing
                                  its own arguments
 
