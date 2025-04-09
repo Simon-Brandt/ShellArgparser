@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-04-02
+# Last Modification: 2025-04-09
 
 # 1.    Define the translations for the arguments parsing.
 ---
@@ -78,120 +78,120 @@ true:
 ---
 Error env var bool:
   en: >
-    Error: The environment variable "%s" is set to "%s", but must be a boolean,
+    Error: The environment variable "$1" is set to "$2", but must be a boolean,
     i.e., true or false.
   de: >
-    Fehler: Die Umgebungsvariable "%s" ist auf "%s" gesetzt, muss aber ein
+    Fehler: Die Umgebungsvariable "$1" ist auf "$2" gesetzt, muss aber ein
     boolscher Wert (Boolean) sein, d. h. wahr (true) oder falsch (false).
 
 Error env var char:
   en: >
-    Error: The environment variable "%s" is set to "%s", but must be a
+    Error: The environment variable "$1" is set to "$2", but must be a
     character, i.e., a string comprising one printable ASCII character.
   de: >
-    Fehler: Die Umgebungsvariable "%s" ist auf "%s" gesetzt, muss aber ein
+    Fehler: Die Umgebungsvariable "$1" ist auf "$2" gesetzt, muss aber ein
     einzelnes Zeichen sein, d. h. eine Zeichenkette aus einem druckbaren
     ASCII-Zeichen.
 
 Error env var identifier:
   en: >
-    Error: The environment variable "%s" is set to "%s", but designed to be
+    Error: The environment variable "$1" is set to "$2", but designed to be
     used as Bash variable identifier, i.e., its value must start with a letter
     or underscore and contain only letters, digits, and underscores.
   de: >
-    Fehler: Die Umgebungsvariable "%s" ist auf "%s" gesetzt, aber zur
+    Fehler: Die Umgebungsvariable "$1" ist auf "$2" gesetzt, aber zur
     Verwendung als Variablenidentifikator für Bash vorgesehen, d. h. ihr Wert
     muss mit einem Buchstaben oder Unterstrich beginnen und nur aus Buchstaben,
     Ziffern und Unterstrichen bestehen.
 
 Error env var int:
   en: >
-    Error: The environment variable "%s" is set to "%s", but must be an
+    Error: The environment variable "$1" is set to "$2", but must be an
     integer, i.e., comprise only digits and possibly a leading sign.
   de: >
-    Fehler: Die Umgebungsvariable "%s" ist auf "%s" gesetzt, muss aber eine
+    Fehler: Die Umgebungsvariable "$1" ist auf "$2" gesetzt, muss aber eine
     Ganzzahl sein, d. h. nur Ziffern und ggf. ein Vorzeichen umfassen.
 
 Error env var uint:
   en: >
-    Error: The environment variable "%s" is set to "%s", but must be an
+    Error: The environment variable "$1" is set to "$2", but must be an
     unsigned integer, i.e., comprise only digits and no sign.
   de: >
-    Fehler: Die Umgebungsvariable "%s" ist auf "%s" gesetzt, muss aber eine
+    Fehler: Die Umgebungsvariable "$1" ist auf "$2" gesetzt, muss aber eine
     natürliche Zahl sein, d. h. nur Ziffern und kein Vorzeichen umfassen.
 
 Error env var file 0001:
   en: >
-    Error: The environment variable "%s" is set to "%s", but the referenced
+    Error: The environment variable "$1" is set to "$2", but the referenced
     file is empty.
   de: >
-    Fehler: Die Umgebungsvariable "%s" ist auf "%s" gesetzt, die referenzierte
+    Fehler: Die Umgebungsvariable "$1" ist auf "$2" gesetzt, die referenzierte
     Datei ist aber leer.
 
 Error env var file 0010:
   en: >
-    Error: The environment variable "%s" is set to "%s", but the referenced
+    Error: The environment variable "$1" is set to "$2", but the referenced
     file is not readable.
   de: >
-    Fehler: Die Umgebungsvariable "%s" ist auf "%s" gesetzt, die referenzierte
+    Fehler: Die Umgebungsvariable "$1" ist auf "$2" gesetzt, die referenzierte
     Datei ist aber nicht lesbar.
 
 Error env var file 0011:
   en: >
-    Error: The environment variable "%s" is set to "%s", but the referenced
+    Error: The environment variable "$1" is set to "$2", but the referenced
     file is not readable and empty.
   de: >
-    Fehler: Die Umgebungsvariable "%s" ist auf "%s" gesetzt, die referenzierte
+    Fehler: Die Umgebungsvariable "$1" ist auf "$2" gesetzt, die referenzierte
     Datei ist aber nicht lesbar und leer.
 
 Error env var file 0100:
   en: >
-    Error: The environment variable "%s" is set to "%s", but the referenced
+    Error: The environment variable "$1" is set to "$2", but the referenced
     file is not a regular file.
   de: >
-    Fehler: Die Umgebungsvariable "%s" ist auf "%s" gesetzt, die referenzierte
+    Fehler: Die Umgebungsvariable "$1" ist auf "$2" gesetzt, die referenzierte
     Datei ist aber keine reguläre Datei.
 
 Error env var file 0101:
   en: >
-    Error: The environment variable "%s" is set to "%s", but the referenced
+    Error: The environment variable "$1" is set to "$2", but the referenced
     file is not a regular file and empty.
   de: >
-    Fehler: Die Umgebungsvariable "%s" ist auf "%s" gesetzt, die referenzierte
+    Fehler: Die Umgebungsvariable "$1" ist auf "$2" gesetzt, die referenzierte
     Datei ist aber keine reguläre Datei und leer.
 
 Error env var file 0110:
   en: >
-    Error: The environment variable "%s" is set to "%s", but the referenced
+    Error: The environment variable "$1" is set to "$2", but the referenced
     file is not a regular file and not readable.
   de: >
-    Fehler: Die Umgebungsvariable "%s" ist auf "%s" gesetzt, die referenzierte
+    Fehler: Die Umgebungsvariable "$1" ist auf "$2" gesetzt, die referenzierte
     Datei ist aber keine reguläre Datei und nicht lesbar.
 
 Error env var file 0111:
   en: >
-    Error: The environment variable "%s" is set to "%s", but the referenced
+    Error: The environment variable "$1" is set to "$2", but the referenced
     file is not a regular file, not readable, and empty.
   de: >
-    Fehler: Die Umgebungsvariable "%s" ist auf "%s" gesetzt, die referenzierte
+    Fehler: Die Umgebungsvariable "$1" ist auf "$2" gesetzt, die referenzierte
     Datei ist aber keine reguläre Datei, nicht lesbar und leer.
 
 Error env var file 1111:
   en: >
-    Error: The environment variable "%s" is set to "%s", but the referenced
+    Error: The environment variable "$1" is set to "$2", but the referenced
     file does not exist.
   de: >
-    Fehler: Die Umgebungsvariable "%s" ist auf "%s" gesetzt, die referenzierte
+    Fehler: Die Umgebungsvariable "$1" ist auf "$2" gesetzt, die referenzierte
     Datei existiert aber nicht.
 
 Error env var styles:
   en: >
-    Error: The environment variable "%s" is set to "%s", but the values must
+    Error: The environment variable "$1" is set to "$2", but the values must
     lie in {black, red, green, yellow, blue, magenta, cyan, white} for colors
     and in {normal, bold, faint, italic, underline, double, overline,
     crossed-out, blink, reverse} for styles.
   de: >
-    Fehler: Die Umgebungsvariable "%s" ist auf "%s" gesetzt, die Werte müssen
+    Fehler: Die Umgebungsvariable "$1" ist auf "$2" gesetzt, die Werte müssen
     aber in {black, red, green, yellow, blue, magenta, cyan, white} (also
     {schwarz, rot, grün, gelb, blau, magenta, cyan, weiß}) für Farben und in
     {normal, bold, faint, italic, underline, double, overline, crossed-out,
@@ -202,20 +202,20 @@ Error env var styles:
 Error env var option type:
   en: >
     Error: The environment variable "ARGPARSER_USAGE_MESSAGE_OPTION_TYPE" must
-    be either set to "long" or "short", but is "%s".
+    be either set to "long" or "short", but is "$1".
   de: >
     Fehler: Die Umgebungsvariable "ARGPARSER_USAGE_MESSAGE_OPTION_TYPE" muss
     entweder auf "long" ("lang") oder "short" ("kurz") gesetzt sein, ist aber
-    "%s".
+    "$1".
 
 Error env var orientation:
   en: >
     Error: The environment variable "ARGPARSER_USAGE_MESSAGE_ORIENTATION" must
-    be either set to "row" or "column", but is "%s".
+    be either set to "row" or "column", but is "$1".
   de: >
     Fehler: Die Umgebungsvariable "ARGPARSER_USAGE_MESSAGE_ORIENTATION" muss
     entweder auf "row" ("Zeile") oder "column" ("Spalte") gesetzt sein, ist
-    aber "%s".
+    aber "$1".
 
 Error env var delimiters:
   en: >
@@ -227,35 +227,35 @@ Error env var delimiters:
 
 Error env var short name empty:
   en: >
-    Error: The environment variable "%s" has a placeholder "" given as one of
-    the %s short option names, instead of a legit name.
+    Error: The environment variable "$1" has a placeholder "" given as one of
+    the $2 short option names, instead of a legit name.
   de: >
-    Fehler: Die Umgebungsvariable "%s" hat ein Platzhalter-"" als einen der %s
+    Fehler: Die Umgebungsvariable "$1" hat ein Platzhalter-"" als einen der $2
     kurzen Optionsnamen gegeben statt einen zulässigen Namen.
 
 Error env var short name length:
   en: >
-    Error: The environment variable "%s" has the short option "-%s" defined
+    Error: The environment variable "$1" has the short option "-$2" defined
     with more than 1 character length.
   de: >
-    Fehler: Die Umgebungsvariable "%s" hat die kurze Option "-%s" mit mehr als
+    Fehler: Die Umgebungsvariable "$1" hat die kurze Option "-$2" mit mehr als
     einem Zeichen Länge definiert.
 
 Error env var short name inner duplication:
   en: >
-    Error: The environment variable "%s" has the short option "-%s" given %s
+    Error: The environment variable "$1" has the short option "-$2" given $3
     times.
   de: >
-    Fehler: Die Umgebungsvariable "%s" hat die kurze Option "-%s" %s-mal
+    Fehler: Die Umgebungsvariable "$1" hat die kurze Option "-$2" $3-mal
     gegeben.
 
 Error env var short name outer duplication:
   en: >
-    Error: The environment variable "%s" has the short option "-%s" given, but
-    that is already in use by "%s".
+    Error: The environment variable "$1" has the short option "-$2" given, but
+    that is already in use by "$3".
   de: >
-    Fehler: Die Umgebungsvariable "%s" hat die kurze Option "-%s" gegeben,
-    diese wird aber bereits von "%s" genutzt.
+    Fehler: Die Umgebungsvariable "$1" hat die kurze Option "-$2" gegeben,
+    diese wird aber bereits von "$3" genutzt.
 
 Error env var short options:
   en: >
@@ -279,9 +279,9 @@ Error env var long options:
 
 Error env var files:
   en: >
-    Error: The environment variables "%s" and "%s" point to the same file.
+    Error: The environment variables "$1" and "$2" point to the same file.
   de: >
-    Fehler: Die Umgebungsvariablen "%s" und "%s" verweisen auf dieselbe Datei.
+    Fehler: Die Umgebungsvariablen "$1" und "$2" verweisen auf dieselbe Datei.
 ...
 
 # 3.2.  Define the translations for reading the arguments definition.
@@ -291,36 +291,36 @@ Error arg array 1:
     Error: Calling (instead of sourcing) the argparser requires the arguments
     definition to be provided through STDIN, separated by newlines.  Either
     pipe to the argparser or use process substitution to give input. 
-    Alternatively, try "%s --help" to get a help message with further
+    Alternatively, try "$1 --help" to get a help message with further
     information.
   de: >
     Fehler: Das Aufrufen (statt Ausführen per source) des Argparsers erfordert,
     dass die Argumentdefinition per STDIN gegeben wird, getrennt durch
     Zeilenvorschübe.  Entweder lege eine Pipe zum Argparser oder nutze
-    Prozesssubstitution für die Eingabe. Probiere alternativ "%s --help", um
+    Prozesssubstitution für die Eingabe. Probiere alternativ "$1 --help", um
     eine Hilfsnachricht mit weiterer Information zu erhalten.
 
 Error arg array 2:
   en: >
-    Error: The variable ARGPARSER_ARG_ARRAY_NAME refers to "%s", but this
+    Error: The variable ARGPARSER_ARG_ARRAY_NAME refers to "$1", but this
     variable is not defined.  Either you have given your arguments array
-    another name (maybe "%s" -- then change ARGPARSER_ARG_ARRAY_NAME
+    another name (maybe "$2" -- then change ARGPARSER_ARG_ARRAY_NAME
     accordingly) or you forgot defining the array at all (then define it).
   de: >
-    Fehler: Die Variable ARGPARSER_ARG_ARRAY_NAME bezieht sich auf "%s", diese
+    Fehler: Die Variable ARGPARSER_ARG_ARRAY_NAME bezieht sich auf "$1", diese
     Variable ist aber nicht definiert.  Entweder hast du dem Argumente-Array
-    einen anderen Namen gegeben (vielleicht "%s" -- dann ändere
+    einen anderen Namen gegeben (vielleicht "$2" -- dann ändere
     ARGPARSER_ARG_ARRAY_NAME entsprechend) oder du hast vergessen, das Array
     überhaupt zu definieren (dann definiere es).
 
 Error arg array 3:
   en: >
-    Error: The variable ARGPARSER_ARG_ARRAY_NAME refers to "%s", but this
+    Error: The variable ARGPARSER_ARG_ARRAY_NAME refers to "$1", but this
     variable is not defined.  Either you have given your arguments array
     another name (then change ARGPARSER_ARG_ARRAY_NAME accordingly) or you
     forgot defining the array at all (then define it).
   de: >
-    Fehler: Die Variable ARGPARSER_ARG_ARRAY_NAME bezieht sich auf "%s", diese
+    Fehler: Die Variable ARGPARSER_ARG_ARRAY_NAME bezieht sich auf "$1", diese
     Variable ist aber nicht definiert.  Entweder hast du dem Argumente-Array
     einen anderen Namen gegeben (dann ändere ARGPARSER_ARG_ARRAY_NAME
     entsprechend) oder du hast vergessen, das Array überhaupt zu definieren
@@ -328,30 +328,30 @@ Error arg array 3:
 
 Error no arg def:
   en: >
-    Error: No argument definition for "%s".
+    Error: No argument definition for "$1".
   de: >
-    Fehler: Keine Argumentdefinition für "%s".
+    Fehler: Keine Argumentdefinition für "$1".
 
 Error wrong arg def:
   en: >
-    Error: Invalid argument definition for "%s".
+    Error: Invalid argument definition for "$1".
   de: >
-    Fehler: Fehlerhafte Argumentdefinition für "%s".
+    Fehler: Fehlerhafte Argumentdefinition für "$1".
 ...
 
 # 3.3.  Define the translations for parsing the arguments definition.
 ---
 Error arg def field:
   en: >
-    Error: In the arguments definition in "%s", the column "%s" is missing.
+    Error: In the arguments definition in "$1", the column "$2" is missing.
   de: >
-    Fehler: In der Argumentdefinition in "%s" fehlt die Spalte "%s".
+    Fehler: In der Argumentdefinition in "$1" fehlt die Spalte "$2".
 
 Error arg def file field:
   en: >
-    Error: In the arguments definition file "%s", the column "%s" is missing.
+    Error: In the arguments definition file "$1", the column "$2" is missing.
   de: >
-    Fehler: In der Argumentdefinitionsdatei "%s" fehlt die Spalte "%s".
+    Fehler: In der Argumentdefinitionsdatei "$1" fehlt die Spalte "$2".
 ...
 
 # 3.4.  Define the translations for checking the names of the arguments
@@ -359,115 +359,115 @@ Error arg def file field:
 ---
 Error arg def short name empty:
   en: >
-    Error: The argument with the identifier "%s" has a placeholder "" given as
-    one of the %s short option names, instead of a legit name.
+    Error: The argument with the identifier "$1" has a placeholder "" given as
+    one of the $2 short option names, instead of a legit name.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat ein Platzhalter-"" als
-    einen der %s kurzen Optionsnamen gegeben statt einen zulässigen Namen.
+    Fehler: Das Argument mit dem Identifikator "$1" hat ein Platzhalter-"" als
+    einen der $2 kurzen Optionsnamen gegeben statt einen zulässigen Namen.
 
 Error arg def short name help:
   en: >
-    Error: The argument with the identifier "%s" has the short option "-%s"
+    Error: The argument with the identifier "$1" has the short option "-$2"
     defined, which is reserved for invoking the help message.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat die kurze Option "-%s"
+    Fehler: Das Argument mit dem Identifikator "$1" hat die kurze Option "-$2"
     definiert, die zum Aufruf der Hilfsnachricht reserviert ist.
 
 Error arg def short name usage:
   en: >
-    Error: The argument with the identifier "%s" has the short option "-%s"
+    Error: The argument with the identifier "$1" has the short option "-$2"
     defined, which is reserved for invoking the usage message.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat die kurze Option "-%s"
+    Fehler: Das Argument mit dem Identifikator "$1" hat die kurze Option "-$2"
     definiert, die zum Aufruf der Benutzungsnachricht reserviert ist.
 
 Error arg def short name version:
   en: >
-    Error: The argument with the identifier "%s" has the short option "-%s"
+    Error: The argument with the identifier "$1" has the short option "-$2"
     defined, which is reserved for invoking the version message.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat die kurze Option "-%s"
+    Fehler: Das Argument mit dem Identifikator "$1" hat die kurze Option "-$2"
     definiert, die zum Aufruf der Versionsnachricht reserviert ist.
 
 Error arg def short name length:
   en: >
-    Error: The argument with the identifier "%s" has the short option "-%s"
+    Error: The argument with the identifier "$1" has the short option "-$2"
     defined with more than 1 character length.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat die kurze Option "-%s"
+    Fehler: Das Argument mit dem Identifikator "$1" hat die kurze Option "-$2"
     mit mehr als einem Zeichen Länge definiert.
 
 Error arg def short name inner duplication:
   en: >
-    Error: The argument with the identifier "%s" has the short option "-%s"
-    given %s times.
+    Error: The argument with the identifier "$1" has the short option "-$2"
+    given $3 times.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat die kurze Option "-%s"
-    %s-mal gegeben.
+    Fehler: Das Argument mit dem Identifikator "$1" hat die kurze Option "-$2"
+    $3-mal gegeben.
 
 Error arg def short name outer duplication:
   en: >
-    Error: The argument with the identifier "%s" has the short option "-%s"
-    given, but that is already in use by "%s".
+    Error: The argument with the identifier "$1" has the short option "-$2"
+    given, but that is already in use by "$3".
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat die kurze Option "-%s"
-    gegeben, diese wird aber bereits von "%s" genutzt.
+    Fehler: Das Argument mit dem Identifikator "$1" hat die kurze Option "-$2"
+    gegeben, diese wird aber bereits von "$3" genutzt.
 
 Error arg def long name empty:
   en: >
-    Error: The argument with the identifier "%s" has a placeholder "" given as
-    one of the %s long option names, instead of a legit name.
+    Error: The argument with the identifier "$1" has a placeholder "" given as
+    one of the $2 long option names, instead of a legit name.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat ein Platzhalter-"" als
-    einen der %s langen Optionsnamen gegeben statt einen zulässigen Namen.
+    Fehler: Das Argument mit dem Identifikator "$1" hat ein Platzhalter-"" als
+    einen der $2 langen Optionsnamen gegeben statt einen zulässigen Namen.
 
 Error arg def long name help:
   en: >
-    Error: The argument with the identifier "%s" has the long option "--%s"
+    Error: The argument with the identifier "$1" has the long option "--$2"
     defined, which is reserved for invoking the help message.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat die lange Option "--%s"
+    Fehler: Das Argument mit dem Identifikator "$1" hat die lange Option "--$2"
     definiert, die zum Aufruf der Hilfsnachricht reserviert ist.
 
 Error arg def long name usage:
   en: >
-    Error: The argument with the identifier "%s" has the long option "--%s"
+    Error: The argument with the identifier "$1" has the long option "--$2"
     defined, which is reserved for invoking the usage message.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat die lange Option "--%s"
+    Fehler: Das Argument mit dem Identifikator "$1" hat die lange Option "--$2"
     definiert, die zum Aufruf der Benutzungsnachricht reserviert ist.
 
 Error arg def long name version:
   en: >
-    Error: The argument with the identifier "%s" has the long option "--%s"
+    Error: The argument with the identifier "$1" has the long option "--$2"
     defined, which is reserved for invoking the version message.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat die lange Option "--%s"
+    Fehler: Das Argument mit dem Identifikator "$1" hat die lange Option "--$2"
     definiert, die zum Aufruf der Versionsnachricht reserviert ist.
 
 Error arg def long name length:
   en: >
-    Error: The argument with the identifier "%s" has the long option "--%s"
+    Error: The argument with the identifier "$1" has the long option "--$2"
     defined with less than 2 characters length.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat die lange Option "--%s"
+    Fehler: Das Argument mit dem Identifikator "$1" hat die lange Option "--$2"
     mit weniger als zwei Zeichen Länge definiert.
 
 Error arg def long name inner duplication:
   en: >
-    Error: The argument with the identifier "%s" has the long option "--%s"
-    given %s times.
+    Error: The argument with the identifier "$1" has the long option "--$2"
+    given $3 times.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat die lange Option "--%s"
-    %s-mal gegeben.
+    Fehler: Das Argument mit dem Identifikator "$1" hat die lange Option "--$2"
+    $3-mal gegeben.
 
 Error arg def long name outer duplication:
   en: >
-    Error: The argument with the identifier "%s" has the long option "--%s"
-    given, but that is already in use by "%s".
+    Error: The argument with the identifier "$1" has the long option "--$2"
+    given, but that is already in use by "$3".
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat die lange Option "--%s"
-    gegeben, diese wird aber bereits von "%s" genutzt.
+    Fehler: Das Argument mit dem Identifikator "$1" hat die lange Option "--$2"
+    gegeben, diese wird aber bereits von "$3" genutzt.
 ...
 
 # 3.5.  Define the translations for checking the values of the
@@ -475,145 +475,145 @@ Error arg def long name outer duplication:
 ---
 Error arg def pos default 1:
   en: >
-    Error: The positional argument with the identifier "%s" requires 1 value,
-    but has %s given as default.
+    Error: The positional argument with the identifier "$1" requires 1 value,
+    but has $2 given as default.
   de: >
-    Fehler: Das positionale Argument mit dem Identifikator "%s" erfordert 1
-    Wert, hat aber %s als Vorgabe gegeben.
+    Fehler: Das positionale Argument mit dem Identifikator "$1" erfordert 1
+    Wert, hat aber $2 als Vorgabe gegeben.
 
 Error arg def pos default 2:
   en: >
-    Error: The positional argument with the identifier "%s" requires %s values,
-    but has %s given as default.
+    Error: The positional argument with the identifier "$1" requires $2 values,
+    but has $3 given as default.
   de: >
-    Fehler: Das positionale Argument mit dem Identifikator "%s" erfordert %s
-    Werte, hat aber %s als Vorgabe gegeben.
+    Fehler: Das positionale Argument mit dem Identifikator "$1" erfordert $2
+    Werte, hat aber $3 als Vorgabe gegeben.
 
 Error arg def pos choice:
   en: >
-    Error: The positional argument with the identifier "%s" accepts only the
-    choice values {%s}, but has {%s} given as default.
+    Error: The positional argument with the identifier "$1" accepts only the
+    choice values {$2}, but has {$3} given as default.
   de: >
-    Fehler: Das positionale Argument mit dem Identifikator "%s" nimmt nur die
-    Auswahlwerte {%s}, hat aber {%s} als Vorgabe gegeben.
+    Fehler: Das positionale Argument mit dem Identifikator "$1" nimmt nur die
+    Auswahlwerte {$2}, hat aber {$3} als Vorgabe gegeben.
 
 Error arg def pos optionals:
   en: >
-    Error: The positional argument with the identifier "%s" is optional, as is
-    "%s", which renders parsing impossible.
+    Error: The positional argument with the identifier "$1" is optional, as is
+    "$2", which renders parsing impossible.
   de: >
-    Fehler: Das positionale Argument mit dem Identifikator "%s" ist optional,
-    wie auch "%s", was das Parsen verunmöglicht.
+    Fehler: Das positionale Argument mit dem Identifikator "$1" ist optional,
+    wie auch "$2", was das Parsen verunmöglicht.
 
 Error arg def pos optional infinite:
   en: >
-    Error: The positional argument with the identifier "%s" is optional, while
-    "%s" accepts an infinite number of values, which renders parsing
+    Error: The positional argument with the identifier "$1" is optional, while
+    "$2" accepts an infinite number of values, which renders parsing
     impossible.
   de: >
-    Fehler: Das positionale Argument mit dem Identifikator "%s" ist optional,
-    während "%s" eine unbegrenzte Anzahl Werte nimmt, was das Parsen
+    Fehler: Das positionale Argument mit dem Identifikator "$1" ist optional,
+    während "$2" eine unbegrenzte Anzahl Werte nimmt, was das Parsen
     verunmöglicht.
 
 Error arg def pos flag:
   en: >
-    Error: The positional argument with the identifier "%s" accepts 0 arguments
+    Error: The positional argument with the identifier "$1" accepts 0 arguments
     and thus can never be given on the command line.
   de: >
-    Fehler: Das positionale Argument mit dem Identifikator "%s" nimmt 0
+    Fehler: Das positionale Argument mit dem Identifikator "$1" nimmt 0
     Argumente und kann daher nie auf der Kommandozeile gegeben werden.
 
 Error arg def pos infinites:
   en: >
-    Error: The positional argument with the identifier "%s" accepts an infinite
-    number of values, as does "%s", which renders parsing impossible.
+    Error: The positional argument with the identifier "$1" accepts an infinite
+    number of values, as does "$2", which renders parsing impossible.
   de: >
-    Fehler: Das positionale Argument mit dem Identifikator "%s" nimmt eine
-    unbegrenzte Anzahl Werte, wie auch "%s", was das Parsen verunmöglicht.
+    Fehler: Das positionale Argument mit dem Identifikator "$1" nimmt eine
+    unbegrenzte Anzahl Werte, wie auch "$2", was das Parsen verunmöglicht.
 
 Error arg def pos infinite optional 1:
   en: >
-    Error: The positional argument with the identifier "%s" accepts an infinite
+    Error: The positional argument with the identifier "$1" accepts an infinite
     number of values, while being optional, which is not supported.
   de: >
-    Fehler: Das positionale Argument mit dem Identifikator "%s" nimmt eine
+    Fehler: Das positionale Argument mit dem Identifikator "$1" nimmt eine
     unbegrenzte Anzahl Werte, während es optional ist, was nicht unterstützt
     wird.
 
 Error arg def pos infinite optional 2:
   en: >
-    Error: The positional argument with the identifier "%s" accepts an infinite
-    number of values, while "%s" is optional, which renders parsing impossible.
+    Error: The positional argument with the identifier "$1" accepts an infinite
+    number of values, while "$2" is optional, which renders parsing impossible.
   de: >
-    Fehler: Das positionale Argument mit dem Identifikator "%s" nimmt eine
-    unbegrenzte Anzahl Werte, während "%s" optional ist, was das Parsen
+    Fehler: Das positionale Argument mit dem Identifikator "$1" nimmt eine
+    unbegrenzte Anzahl Werte, während "$2" optional ist, was das Parsen
     verunmöglicht.
 
 Error arg def pos type:
   en: >
-    Error: The positional argument with the identifier "%s" has "%s" given as
+    Error: The positional argument with the identifier "$1" has "$2" given as
     data type, but only "bool", "char", "float", "file", "int", "str", and
     "uint" are supported.
   de: >
-    Fehler: Das positionale Argument mit dem Identifikator "%s" hat "%s" als
+    Fehler: Das positionale Argument mit dem Identifikator "$1" hat "$2" als
     Datentyp gegeben, aber nur "bool", "char", "float", "file", "int", "str",
     und "uint" werden unterstützt.
 
 Error arg def pos bool:
   en: >
-    Error: The positional argument with the identifier "%s" has "%s" given as
+    Error: The positional argument with the identifier "$1" has "$2" given as
     choice value, which must be a boolean, i.e., true or false.
   de: >
-    Fehler: Das positionale Argument mit dem Identifikator "%s" hat "%s" als
+    Fehler: Das positionale Argument mit dem Identifikator "$1" hat "$2" als
     Auswahlwert gegeben, welcher ein boolscher Wert (Boolean) sein muss, d. h.
     wahr (true) oder falsch (false).
 
 Error arg def pos char:
   en: >
-    Error: The positional argument with the identifier "%s" has "%s" given as
+    Error: The positional argument with the identifier "$1" has "$2" given as
     choice value, which must be a character, i.e., a string comprising one
     printable ASCII character.
   de: >
-    Fehler: Das positionale Argument mit dem Identifikator "%s" hat "%s" als
+    Fehler: Das positionale Argument mit dem Identifikator "$1" hat "$2" als
     Auswahlwert gegeben, welcher ein einzelnes Zeichen sein muss, d. h. eine
     Zeichenkette aus einem druckbaren ASCII-Zeichen.
 
 Error arg def pos float:
   en: >
-    Error: The positional argument with the identifier "%s" has "%s" given as
+    Error: The positional argument with the identifier "$1" has "$2" given as
     choice value, which must be a floating-point number, i.e., comprise only
     digits, a dot, and possibly a leading sign.
   de: >
-    Fehler: Das positionale Argument mit dem Identifikator "%s" hat "%s" als
+    Fehler: Das positionale Argument mit dem Identifikator "$1" hat "$2" als
     Auswahlwert gegeben, welcher eine Gleitkommazahl sein muss, d. h. nur
     Ziffern, einen Punkt, und ggf. ein Vorzeichen umfassen kann.
 
 Error arg def pos int:
   en: >
-    Error: The positional argument with the identifier "%s" has "%s" given as
+    Error: The positional argument with the identifier "$1" has "$2" given as
     choice value, which must be an integer, i.e., comprise only digits and
     possibly a leading sign.
   de: >
-    Fehler: Das positionale Argument mit dem Identifikator "%s" hat "%s" als
+    Fehler: Das positionale Argument mit dem Identifikator "$1" hat "$2" als
     Auswahlwert gegeben, welcher eine Ganzzahl sein muss, d. h. nur Ziffern und
     ggf. ein Vorzeichen umfassen kann.
 
 Error arg def pos uint:
   en: >
-    Error: The positional argument with the identifier "%s" has "%s" given as
+    Error: The positional argument with the identifier "$1" has "$2" given as
     choice value, which must be an unsigned integer, i.e., comprise only digits
     and no sign.
   de: >
-    Fehler: Das positionale Argument mit dem Identifikator "%s" hat "%s" als
+    Fehler: Das positionale Argument mit dem Identifikator "$1" hat "$2" als
     Auswahlwert gegeben, welcher eine natürliche Zahl sein muss, d. h. nur
     Ziffern und kein Vorzeichen umfassen kann.
 
 Error arg def pos note:
   en: >
-    Error: The positional argument with the identifier "%s" has "%s" given as
+    Error: The positional argument with the identifier "$1" has "$2" given as
     note, but only "deprecated" is supported.
   de: >
-    Fehler: Das positionale Argument mit dem Identifikator "%s" hat "%s" als
+    Fehler: Das positionale Argument mit dem Identifikator "$1" hat "$2" als
     Anmerkung gegeben, aber nur "deprecated" ("veraltet") wird unterstützt.
 ...
 
@@ -622,109 +622,109 @@ Error arg def pos note:
 ---
 Error arg def option flag:
   en: >
-    Error: The argument with the identifier "%s" must be true or false, but has
-    {%s} given as default.
+    Error: The argument with the identifier "$1" must be true or false, but has
+    {$2} given as default.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" muss wahr (true) oder
-    falsch (false) sein, hat aber "%s" als Vorgabe gegeben.
+    Fehler: Das Argument mit dem Identifikator "$1" muss wahr (true) oder
+    falsch (false) sein, hat aber "$2" als Vorgabe gegeben.
 
 Error arg def option default 1:
   en: >
-    Error: The argument with the identifier "%s" requires 1 value, but has %s
+    Error: The argument with the identifier "$1" requires 1 value, but has $2
     given as default.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" erfordert 1 Wert, hat aber
-    %s als Vorgabe gegeben.
+    Fehler: Das Argument mit dem Identifikator "$1" erfordert 1 Wert, hat aber
+    $2 als Vorgabe gegeben.
 
 Error arg def option default 2:
   en: >
-    Error: The argument with the identifier "%s" requires %s values, but has %s
+    Error: The argument with the identifier "$1" requires $2 values, but has $3
     given as default.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" erfordert %s Werte, hat
-    aber %s als Vorgabe gegeben.
+    Fehler: Das Argument mit dem Identifikator "$1" erfordert $2 Werte, hat
+    aber $3 als Vorgabe gegeben.
 
 Error arg def option choice flag:
   en: >
-    Error: The argument with the identifier "%s" accepts no choice values, but
-    has {%s} given.
+    Error: The argument with the identifier "$1" accepts no choice values, but
+    has {$2} given.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" nimmt keine Auswahlwerte,
-    hat aber {%s} gegeben.
+    Fehler: Das Argument mit dem Identifikator "$1" nimmt keine Auswahlwerte,
+    hat aber {$2} gegeben.
 
 Error arg def option choice:
   en: >
-    Error: The argument with the identifier "%s" accepts only the choice values
-    {%s}, but has {%s} given as default.
+    Error: The argument with the identifier "$1" accepts only the choice values
+    {$2}, but has {$3} given as default.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" nimmt nur die Auswahlwerte
-    {%s}, hat aber {%s} als Vorgabe gegeben.
+    Fehler: Das Argument mit dem Identifikator "$1" nimmt nur die Auswahlwerte
+    {$2}, hat aber {$3} als Vorgabe gegeben.
 
 Error arg def option type:
   en: >
-    Error: The argument with the identifier "%s" has "%s" given as data type,
+    Error: The argument with the identifier "$1" has "$2" given as data type,
     but only "bool", "char", "float", "file", "int", "str", and "uint" are
     supported.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat "%s" als Datentyp
+    Fehler: Das Argument mit dem Identifikator "$1" hat "$2" als Datentyp
     gegeben, aber nur "bool", "char", "float", "file", "int", "str", und "uint"
     werden unterstützt.
 
 Error arg def option bool:
   en: >
-    Error: The argument with the identifier "%s" has "%s" given as choice
+    Error: The argument with the identifier "$1" has "$2" given as choice
     value, which must be a boolean, i.e., true or false.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat "%s" als Auswahlwert
+    Fehler: Das Argument mit dem Identifikator "$1" hat "$2" als Auswahlwert
     gegeben, welcher ein boolscher Wert (Boolean) sein muss, d. h. wahr (true)
     oder falsch (false).
 
 Error arg def option char:
   en: >
-    Error: The argument with the identifier "%s" has "%s" given as choice
+    Error: The argument with the identifier "$1" has "$2" given as choice
     value, which must be a character, i.e., a string comprising one printable
     ASCII character.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat "%s" als
+    Fehler: Das Argument mit dem Identifikator "$1" hat "$2" als
     Auswahlwert gegeben, welcher ein einzelnes Zeichen sein muss, d. h. eine
     Zeichenkette aus einem druckbaren ASCII-Zeichen.
 
 Error arg def option float:
   en: >
-    Error: The argument with the identifier "%s" has "%s" given as choice
+    Error: The argument with the identifier "$1" has "$2" given as choice
     value, which must be a floating-point number, i.e., comprise only digits,
     a dot, and possibly a leading sign.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat "%s" als
+    Fehler: Das Argument mit dem Identifikator "$1" hat "$2" als
     Auswahlwert gegeben, welcher eine Gleitkommazahl sein muss, d. h. nur
     Ziffern, einen Punkt, und ggf. ein Vorzeichen umfassen kann.
 
 Error arg def option int:
   en: >
-    Error: The argument with the identifier "%s" has "%s" given as choice
+    Error: The argument with the identifier "$1" has "$2" given as choice
     value, which must be an integer, i.e., comprise only digits and possibly a
     leading sign.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat "%s" als
+    Fehler: Das Argument mit dem Identifikator "$1" hat "$2" als
     Auswahlwert gegeben, welcher eine Ganzzahl sein muss, d. h. nur Ziffern und
     ggf. ein Vorzeichen umfassen kann.
 
 Error arg def option uint:
   en: >
-    Error: The argument with the identifier "%s" has "%s" given as choice
+    Error: The argument with the identifier "$1" has "$2" given as choice
     value, which must be an unsigned integer, i.e., comprise only digits and no
     sign.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat "%s" als
+    Fehler: Das Argument mit dem Identifikator "$1" hat "$2" als
     Auswahlwert gegeben, welcher eine natürliche Zahl sein muss, d. h. nur
     Ziffern und kein Vorzeichen umfassen kann.
 
 Error arg def option note:
   en: >
-    Error: The argument with the identifier "%s" has "%s" given as note, but
+    Error: The argument with the identifier "$1" has "$2" given as note, but
     only "deprecated" is supported.
   de: >
-    Fehler: Das Argument mit dem Identifikator "%s" hat "%s" als
+    Fehler: Das Argument mit dem Identifikator "$1" hat "$2" als
     Anmerkung gegeben, aber nur "deprecated" ("veraltet") wird unterstützt.
 ...
 
@@ -744,9 +744,9 @@ Error arg double plus:
 
 Error arg help 1:
   en: >
-    Error: The option "-%s,--help" takes no value.
+    Error: The option "-$1,--help" takes no value.
   de: >
-    Fehler: Die Option "-%s,--help" nimmt keinen Wert.
+    Fehler: Die Option "-$1,--help" nimmt keinen Wert.
 
 Error arg help 2:
   en: >
@@ -756,9 +756,9 @@ Error arg help 2:
 
 Error arg help 3:
   en: >
-    Error: The option "-%s" takes no value.
+    Error: The option "-$1" takes no value.
   de: >
-    Fehler: Die Option "-%s" nimmt keinen Wert.
+    Fehler: Die Option "-$1" nimmt keinen Wert.
 
 Error arg usage 1:
   en: >
@@ -798,45 +798,45 @@ Error arg version 3:
 
 Error arg unknown:
   en: >
-    Error: The argument "%s" is unknown.
+    Error: The argument "$1" is unknown.
   de: >
-    Fehler: Das Argument "%s" ist unbekannt.
+    Fehler: Das Argument "$1" ist unbekannt.
 
 Error long option match:
   en: >
-    Error: The long option "%s" matches multiple long options.
+    Error: The long option "$1" matches multiple long options.
   de: >
-    Fehler: Die lange Option "%s" passt auf mehrere lange Optionen.
+    Fehler: Die lange Option "$1" passt auf mehrere lange Optionen.
 
 Error long option unknown:
   en: >
-    Error: The long option "%s" is unknown.
+    Error: The long option "$1" is unknown.
   de: >
-    Fehler: Die lange Option "%s" ist unbekannt.
+    Fehler: Die lange Option "$1" ist unbekannt.
 
 Error short option merge:
   en: >
-    Error: The short option "%s%s" is unknown.
+    Error: The short option "$1$2" is unknown.
   de: >
-    Fehler: Die kurze Option "%s%s" ist unbekannt.
+    Fehler: Die kurze Option "$1$2" ist unbekannt.
 
 Error short option unknown:
   en: >
-    Error: The short option "%s" is unknown.
+    Error: The short option "$1" is unknown.
   de: >
-    Fehler: Die kurze Option "%s" ist unbekannt.
+    Fehler: Die kurze Option "$1" ist unbekannt.
 
 Error pos arg count 1:
   en: >
-    Error: 1 positional argument is required, but %s are given.
+    Error: 1 positional argument is required, but $1 are given.
   de: >
-    Fehler: 1 positionales Argument ist erforderlich, aber %s sind gegeben.
+    Fehler: 1 positionales Argument ist erforderlich, aber $1 sind gegeben.
 
 Error pos arg count 2:
   en: >
-    Error: %s positional arguments are required, but %s are given.
+    Error: $1 positional arguments are required, but $2 are given.
   de: >
-    Fehler: %s positionale Argumente sind erforderlich, aber %s sind gegeben.
+    Fehler: $1 positionale Argumente sind erforderlich, aber $2 sind gegeben.
 ...
 
 # 3.8.  Define the translations for checking the values of the
@@ -844,82 +844,82 @@ Error pos arg count 2:
 ---
 Error arg no flag:
   en: >
-    Error: The option "%s" is no flag and thus cannot be given with a "+"
+    Error: The option "$1" is no flag and thus cannot be given with a "+"
     prefix.
   de: >
-    Fehler: Die Option "%s" ist kein Flag und kann daher nicht mit einem
+    Fehler: Die Option "$1" ist kein Flag und kann daher nicht mit einem
     "+"-Präfix gegeben werden.
 
 Error mandatory arg:
   en: >
-    Error: The argument "%s" is mandatory, but not given.
+    Error: The argument "$1" is mandatory, but not given.
   de: >
-    Fehler: Das Argument "%s" ist erforderlich, aber nicht gegeben.
+    Fehler: Das Argument "$1" ist erforderlich, aber nicht gegeben.
 
 Error wrong arg number 1:
   en: >
-    Error: The argument "%s" requires 1 value, but has %s given.
+    Error: The argument "$1" requires 1 value, but has $2 given.
   de: >
-    Fehler: Das Argument "%s" erfordert 1 Wert, hat aber %s gegeben.
+    Fehler: Das Argument "$1" erfordert 1 Wert, hat aber $2 gegeben.
 
 Error wrong arg number 2:
   en: >
-    Error: The argument "%s" requires at least 1 value, but has %s given.
+    Error: The argument "$1" requires at least 1 value, but has $2 given.
   de: >
-    Fehler: Das Argument "%s" erfordert mindestens 1 Wert, hat aber %s gegeben.
+    Fehler: Das Argument "$1" erfordert mindestens 1 Wert, hat aber $2 gegeben.
 
 Error wrong arg number 3:
   en: >
-    Error: The argument "%s" requires %s values, but has %s given.
+    Error: The argument "$1" requires $2 values, but has $3 given.
   de: >
-    Fehler: Das Argument "%s" erfordert %s Werte, hat aber %s gegeben.
+    Fehler: Das Argument "$1" erfordert $2 Werte, hat aber $3 gegeben.
 
 Error arg choice:
   en: >
-    Error: The argument "%s" must be in {%s}, but is {%s}.
+    Error: The argument "$1" must be in {$2}, but is {$3}.
   de: >
-    Fehler: Das Argument "%s" muss in {%s} liegen, ist aber {%s}.
+    Fehler: Das Argument "$1" muss in {$2} liegen, ist aber {$3}.
 
 Error arg bool:
   en: >
-    Error: The argument "%s" is set to "%s", but must be a boolean, i.e., true
+    Error: The argument "$1" is set to "$2", but must be a boolean, i.e., true
     or false.
   de: >
-    Fehler: Das Argument "%s" ist auf "%s" gesetzt, muss aber ein boolscher
+    Fehler: Das Argument "$1" ist auf "$2" gesetzt, muss aber ein boolscher
     Wert (Boolean) sein, d. h. wahr (true) oder falsch (false).
 
 Error arg char:
   en: >
-    Error: The argument "%s" is set to "%s", but must be a character, i.e., a
+    Error: The argument "$1" is set to "$2", but must be a character, i.e., a
     string comprising one printable ASCII character.
   de: >
-    Fehler: Das Argument "%s" ist auf "%s" gesetzt, muss aber ein
+    Fehler: Das Argument "$1" ist auf "$2" gesetzt, muss aber ein
     einzelnes Zeichen sein, d. h. eine Zeichenkette aus einem druckbaren
     ASCII-Zeichen.
 
 Error arg float:
   en: >
-    Error: The argument "%s" is set to "%s", but must be a floating-point
+    Error: The argument "$1" is set to "$2", but must be a floating-point
     number, i.e., comprise only digits, a dot, and possibly a leading sign.
   de: >
-    Fehler: Das Argument "%s" ist auf "%s" gesetzt, muss aber eine
+    Fehler: Das Argument "$1" ist auf "$2" gesetzt, muss aber eine
     Gleitkommazahl sein, d. h. nur Ziffern, einen Punkt, und ggf. ein
     Vorzeichen umfassen.
 
 Error arg int:
   en: >
-    Error: The argument "%s" is set to "%s", but must be an integer, i.e.,
+    Error: The argument "$1" is set to "$2", but must be an integer, i.e.,
     comprise only digits and possibly a leading sign.
   de: >
-    Fehler: Das Argument "%s" ist auf "%s" gesetzt, muss aber eine
+    Fehler: Das Argument "$1" ist auf "$2" gesetzt, muss aber eine
     Ganzzahl sein, d. h. nur Ziffern und ggf. ein Vorzeichen umfassen.
 
 Error arg uint:
   en: >
-    Error: The argument "%s" is set to "%s", but must be an unsigned integer,
+    Error: The argument "$1" is set to "$2", but must be an unsigned integer,
     i.e., comprise only digits and no sign.
   de: >
-    Fehler: Das Argument "%s" ist auf "%s" gesetzt, muss aber eine
+    Fehler: Das Argument "$1" ist auf "$2" gesetzt, muss aber eine
     natürliche Zahl sein, d. h. nur Ziffern und kein Vorzeichen umfassen.
 ...
 
@@ -927,18 +927,18 @@ Error arg uint:
 ---
 Error YAML:
   en: >
-    Error: The YAML line "%s" could not be recognized.
+    Error: The YAML line "$1" could not be recognized.
   de: >
-    Fehler: Die YAML-Zeile "%s" konnte nicht erkannt werden.
+    Fehler: Die YAML-Zeile "$1" konnte nicht erkannt werden.
 ...
 
 # 3.10. Define the translations for creating the help or usage messages.
 ---
 Error include directive:
   en: >
-    Error: The include directive "%s" could not be recognized.
+    Error: The include directive "$1" could not be recognized.
   de: >
-    Fehler: Die Include-Anweisung "%s" konnte nicht erkannt werden.
+    Fehler: Die Include-Anweisung "$1" konnte nicht erkannt werden.
 ...
 
 # 4.    Define the translations for warning messages.
@@ -947,33 +947,33 @@ Error include directive:
 ---
 Warning wrong arg number 1:
   en: >
-    Warning: The argument "%s" requires 1 value, but has %s given.  For
-    convenience, the default (%s) is used.
+    Warning: The argument "$1" requires 1 value, but has $2 given.  For
+    convenience, the default ($3) is used.
   de: >
-    Warnung: Das Argument "%s" erfordert 1 Wert, hat aber %s gegeben.  Zwecks
-    Einfachheit wird die Vorgabe (%s) genutzt.
+    Warnung: Das Argument "$1" erfordert 1 Wert, hat aber $2 gegeben.  Zwecks
+    Einfachheit wird die Vorgabe ($3) genutzt.
 
 Warning wrong arg number 2:
   en: >
-    Warning: The argument "%s" requires at least 1 value, but has %s given.
-    For convenience, the default (%s) is used.
+    Warning: The argument "$1" requires at least 1 value, but has $2 given.
+    For convenience, the default ($3) is used.
   de: >
-    Warnung: Das Argument "%s" erfordert mindestens 1 Wert, hat aber %s
-    gegeben.  Zwecks Einfachheit wird die Vorgabe (%s) genutzt.
+    Warnung: Das Argument "$1" erfordert mindestens 1 Wert, hat aber $2
+    gegeben.  Zwecks Einfachheit wird die Vorgabe ($3) genutzt.
 
 Warning wrong arg number 3:
   en: >
-    Warning: The argument "%s" requires %s values, but has %s given.  For
-    convenience, the default (%s) is used.
+    Warning: The argument "$1" requires $2 values, but has $3 given.  For
+    convenience, the default ($4) is used.
   de: >
-    Warnung: Das Argument "%s" erfordert %s Werte, hat aber %s gegeben.  Zwecks
-    Einfachheit wird die Vorgabe (%s) genutzt.
+    Warnung: Das Argument "$1" erfordert $2 Werte, hat aber $3 gegeben.  Zwecks
+    Einfachheit wird die Vorgabe ($4) genutzt.
 
 Warning deprecation:
   en: >
-    Warning: The argument "%s" is deprecated and will be removed in the future.
+    Warning: The argument "$1" is deprecated and will be removed in the future.
   de: >
-    Warnung: Das Argument "%s" ist veraltet und wird in Zukunft entfernt.
+    Warnung: Das Argument "$1" ist veraltet und wird in Zukunft entfernt.
 ...
 
 # 4.1.  Define the translations for checking the values of the
@@ -981,20 +981,20 @@ Warning deprecation:
 ---
 Warning no identifier:
   en: >
-    Warning: In the translation file "%s", the identifier "%s" is missing.  For
+    Warning: In the translation file "$1", the identifier "$2" is missing.  For
     convenience, the untranslated string is used, instead.
   de: >
-    Warnung: In der Übersetzungsdatei "%s" fehlt der Identifikator "%s".
+    Warnung: In der Übersetzungsdatei "$1" fehlt der Identifikator "$2".
     Zwecks Einfachheit wird stattdessen die nicht übersetzte Zeichenkette
     genutzt.
 
 Warning no translation:
   en: >
-    Warning: In the translation file "%s", the translation to "%s" for the
-    identifier "%s" is missing.  For convenience, the untranslated string is
+    Warning: In the translation file "$1", the translation to "$2" for the
+    identifier "$3" is missing.  For convenience, the untranslated string is
     used, instead.
   de: >
-    Warnung: In der Übersetzungsdatei "%s" fehlt die Übersetzung nach "%s" für
-    den Identifikator "%s".  Zwecks Einfachheit wird stattdessen die nicht
+    Warnung: In der Übersetzungsdatei "$1" fehlt die Übersetzung nach "$2" für
+    den Identifikator "$3".  Zwecks Einfachheit wird stattdessen die nicht
     übersetzte Zeichenkette genutzt.
 ...
