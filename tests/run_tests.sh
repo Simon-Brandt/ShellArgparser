@@ -1561,10 +1561,6 @@ Usage: argparser [--help | --usage | --version]
                  [--positional-arg-group=NAME]
                  [--read-args]
                  [--script-name=NAME]
-                 [--script-version-exit-code=INT]
-                 [--script-version-options=CHAR...]
-                 [--script-version-style=STYLE...]
-                 [--script-version=VERSION]
                  [--set-args]
                  [--set-arrays]
                  [--silence-errors]
@@ -1584,6 +1580,10 @@ Usage: argparser [--help | --usage | --version]
                  [--use-long-options]
                  [--use-short-options]
                  [--use-styles-in-files]
+                 [--version-exit-code=INT]
+                 [--version-options=CHAR...]
+                 [--version-style=STYLE...]
+                 [--version=VERSION]
                  [--warning-style=STYLE...]
                  [--write-args]
                  command_line...
@@ -1612,9 +1612,9 @@ Options:
 [--add-usage]                    add ARGPARSER_USAGE_OPTIONS and --usage as
                                  flags to call the usage message (default:
                                  true)
-[--add-version]                  add ARGPARSER_SCRIPT_VERSION_OPTIONS and
-                                 --version as flags to call the version message
-                                 (default: true)
+[--add-version]                  add ARGPARSER_VERSION_OPTIONS and --version as
+                                 flags to call the version message (default:
+                                 true)
 [--allow-option-abbreviation]    allow the user to give long option names in
                                  abbreviated form (default: false)
 [--allow-option-merging]         allow the user to give short option names in
@@ -1678,14 +1678,6 @@ Options:
 [--script-name=NAME]             the script's name for the help, usage,
                                  version, error, and warning messages (default:
                                  "''")
-[--script-version=VERSION]       the script's version number for the version
-                                 message (default: "1.0.0")
-[--script-version-exit-code=INT] the exit code for version messages (default:
-                                 0)
-[--script-version-options=CHAR]  the short (single-character) option names to
-                                 invoke the version message (default: "V")
-[--script-version-style=STYLE]   the color and style specification for version
-                                 messages (default: "bold")
 [--set-args]                     set the arguments from
                                  ARGPARSER_ARG_ARRAY_NAME as variables in the
                                  script's scope (default: true)
@@ -1729,6 +1721,14 @@ Options:
                                  (default: true)
 [--use-styles-in-files]          use the colors and styles when STDOUT/STDERR
                                  is not a terminal (default: false)
+[--version=VERSION]              the script's version number for the version
+                                 message (default: "1.0.0")
+[--version-exit-code=INT]        the exit code for version messages (default:
+                                 0)
+[--version-options=CHAR]         the short (single-character) option names to
+                                 invoke the version message (default: "V")
+[--version-style=STYLE]          the color and style specification for version
+                                 messages (default: "bold")
 [--warning-style=STYLE]          the color and style specification for warning
                                  messages (default: "red,bold")
 [--write-args]                   write the arguments from

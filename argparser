@@ -729,6 +729,7 @@ function argparser_set_internal_vars() {
     # argparser is set, then set them.
     #
     # Environment:
+    # ARGPARSER_ARGPARSER_VERSION
     # ARGPARSER_ARGS
     # ARGPARSER_CHECK_ENV_VARS (read-only)
     # ARGPARSER_DICTIONARY
@@ -736,16 +737,24 @@ function argparser_set_internal_vars() {
     # ARGPARSER_ERROR_STYLE
     # ARGPARSER_SCRIPT_ARGS
     # ARGPARSER_USE_STYLES_IN_FILES
-    # ARGPARSER_VERSION
 
     # Define the local variables.
     local error_message
     local -a error_messages
 
-    # Check that ${ARGPARSER_ARGS}, ${ARGPARSER_DICTIONARY},
-    # ${ARGPARSER_SCRIPT_ARGS}, and ${ARGPARSER_VERSION} are unset, then
-    # declare or set them.
+    # Check that ${ARGPARSER_ARGPARSER_VERSION}, ${ARGPARSER_ARGS},
+    # ${ARGPARSER_DICTIONARY}, and ${ARGPARSER_SCRIPT_ARGS} are  unset,
+    # then declare or set them.
     error_messages=( )
+    if [[ -v "ARGPARSER_ARGPARSER_VERSION" ]]; then
+        error_message="Error: ARGPARSER_ARGPARSER_VERSION is an internal "
+        error_message+="variable and must not be set.  Did you mean "
+        error_message+="\"ARGPARSER_VERSION\"?"
+        error_messages+=("${error_message}")
+    else
+        ARGPARSER_ARGPARSER_VERSION="0.1.0"
+    fi
+
     if [[ -v "ARGPARSER_ARGS" ]]; then
         error_message="Error: ARGPARSER_ARGS is an internal variable and must "
         error_message+="not be set."
@@ -768,15 +777,6 @@ function argparser_set_internal_vars() {
         error_messages+=("${error_message}")
     else
         declare -g -a ARGPARSER_SCRIPT_ARGS
-    fi
-
-    if [[ -v "ARGPARSER_VERSION" ]]; then
-        error_message="Error: ARGPARSER_VERSION is an internal variable and "
-        error_message+="must not be set.  Did you mean "
-        error_message+="\"ARGPARSER_SCRIPT_VERSION\"?"
-        error_messages+=("${error_message}")
-    else
-        ARGPARSER_VERSION="0.1.0"
     fi
 
     # Output an error message for those internal environment variables
@@ -831,9 +831,6 @@ function argparser_read_configuration() {
     # ARGPARSER_POSITIONAL_ARG_GROUP
     # ARGPARSER_READ_ARGS
     # ARGPARSER_SCRIPT_NAME
-    # ARGPARSER_SCRIPT_VERSION
-    # ARGPARSER_SCRIPT_VERSION_EXIT_CODE
-    # ARGPARSER_SCRIPT_VERSION_STYLE
     # ARGPARSER_SET_ARGS
     # ARGPARSER_SET_ARRAYS
     # ARGPARSER_SILENCE_ERRORS
@@ -852,6 +849,9 @@ function argparser_read_configuration() {
     # ARGPARSER_USE_LONG_OPTIONS
     # ARGPARSER_USE_SHORT_OPTIONS
     # ARGPARSER_USE_STYLES_IN_FILES
+    # ARGPARSER_VERSION
+    # ARGPARSER_VERSION_EXIT_CODE
+    # ARGPARSER_VERSION_STYLE
     # ARGPARSER_WARNING_STYLE
 
     # Define the local variables.
@@ -917,6 +917,17 @@ function argparser_read_configuration() {
         if [[ -z "${line}" || "${line}" == \#* ]]; then
             # Ignore the empty or commented line.
             continue
+        elif [[ "${line}" == *( )"argparser-version"*( )=* ]]; then
+            # Output an error message when the line sets
+            # ${ARGPARSER_ARGPARSER_VERSION}.
+            error_message="Error: In the configuration file \"%s\", the line "
+            error_message+="\"%s\" sets ARGPARSER_ARGPARSER_VERSION, which is "
+            error_message+="an internal variable and must not be set."
+
+            for var in "${ARGPARSER_CONFIG_FILE}" "${line}"; do
+                error_message="${error_message/"%s"/${var}}"
+            done
+            error_messages+=("${error_message}")
         elif [[ "${line}" == *( )"args"*( )=* ]]; then
             # Output an error message when the line sets
             # ${ARGPARSER_ARGS}.
@@ -944,17 +955,6 @@ function argparser_read_configuration() {
             # ${ARGPARSER_SCRIPT_ARGS}.
             error_message="Error: In the configuration file \"%s\", the line "
             error_message+="\"%s\" sets ARGPARSER_SCRIPT_ARGS, which is an "
-            error_message+="internal variable and must not be set."
-
-            for var in "${ARGPARSER_CONFIG_FILE}" "${line}"; do
-                error_message="${error_message/"%s"/${var}}"
-            done
-            error_messages+=("${error_message}")
-        elif [[ "${line}" == *( )"version"*( )=* ]]; then
-            # Output an error message when the line sets
-            # ${ARGPARSER_VERSION}.
-            error_message="Error: In the configuration file \"%s\", the line "
-            error_message+="\"%s\" sets ARGPARSER_VERSION, which is an "
             error_message+="internal variable and must not be set."
 
             for var in "${ARGPARSER_CONFIG_FILE}" "${line}"; do
@@ -1044,6 +1044,7 @@ function argparser_set_env_vars() {
     # ARGPARSER_ARG_DEF_HAS_HEADER
     # ARGPARSER_ARG_DELIMITER_1
     # ARGPARSER_ARG_DELIMITER_2
+    # ARGPARSER_ARGPARSER_VERSION (read-only)
     # ARGPARSER_ARGS
     # ARGPARSER_CHECK_ARG_DEF
     # ARGPARSER_CHECK_ENV_VARS
@@ -1066,10 +1067,6 @@ function argparser_set_env_vars() {
     # ARGPARSER_READ_ARGS
     # ARGPARSER_SCRIPT_ARGS
     # ARGPARSER_SCRIPT_NAME
-    # ARGPARSER_SCRIPT_VERSION
-    # ARGPARSER_SCRIPT_VERSION_EXIT_CODE
-    # ARGPARSER_SCRIPT_VERSION_OPTIONS
-    # ARGPARSER_SCRIPT_VERSION_STYLE
     # ARGPARSER_SET_ARGS
     # ARGPARSER_SET_ARRAYS
     # ARGPARSER_SILENCE_ERRORS
@@ -1089,7 +1086,10 @@ function argparser_set_env_vars() {
     # ARGPARSER_USE_LONG_OPTIONS
     # ARGPARSER_USE_SHORT_OPTIONS
     # ARGPARSER_USE_STYLES_IN_FILES
-    # ARGPARSER_VERSION (read-only)
+    # ARGPARSER_VERSION
+    # ARGPARSER_VERSION_EXIT_CODE
+    # ARGPARSER_VERSION_OPTIONS
+    # ARGPARSER_VERSION_STYLE
     # ARGPARSER_WARNING_STYLE
     # ARGPARSER_WRITE_ARGS
 
@@ -1137,7 +1137,7 @@ function argparser_set_env_vars() {
         "id                                  : short_opts : long_opts                 : val_names    : defaults             : choices    : type : arg_no : arg_group : notes : help                                                                                                    "
         "ARGPARSER_ADD_HELP                  :            : add-help                  :              : true                 :            : bool : 0      : Options   :       : add ARGPARSER_HELP_OPTIONS and --help as flags to call the help message                                 "
         "ARGPARSER_ADD_USAGE                 :            : add-usage                 :              : true                 :            : bool : 0      : Options   :       : add ARGPARSER_USAGE_OPTIONS and --usage as flags to call the usage message                              "
-        "ARGPARSER_ADD_VERSION               :            : add-version               :              : true                 :            : bool : 0      : Options   :       : add ARGPARSER_SCRIPT_VERSION_OPTIONS and --version as flags to call the version message                 "
+        "ARGPARSER_ADD_VERSION               :            : add-version               :              : true                 :            : bool : 0      : Options   :       : add ARGPARSER_VERSION_OPTIONS and --version as flags to call the version message                        "
         "ARGPARSER_ALLOW_OPTION_ABBREVIATION :            : allow-option-abbreviation :              : false                :            : bool : 0      : Options   :       : allow the user to give long option names in abbreviated form                                            "
         "ARGPARSER_ALLOW_OPTION_MERGING      :            : allow-option-merging      :              : false                :            : bool : 0      : Options   :       : allow the user to give short option names in merged (concatenated) form                                 "
         "ARGPARSER_ARG_ARRAY_NAME            :            : arg-array-name            : NAME         : args                 :            : str  : 1      : Options   :       : the indexed array for the raw arguments and the associative array for the parsed arguments              "
@@ -1167,10 +1167,6 @@ function argparser_set_env_vars() {
         "ARGPARSER_READ_ARGS                 :            : read-args                 :              : true                 :            : bool : 0      : Options   :       : read the arguments and parse them to ARGPARSER_ARG_ARRAY_NAME                                           "
         "ARGPARSER_SCRIPT_ARGS               :            :                           : command_line :                      :            : str  : +      : Options   :       : the indexed array in which the argparser stores the script's command line upon parsing its own arguments"
         "ARGPARSER_SCRIPT_NAME               :            : script-name               : NAME         : ''                   :            : str  : 1      : Options   :       : the script's name for the help, usage, version, error, and warning messages                             "
-        "ARGPARSER_SCRIPT_VERSION            :            : script-version            : VERSION      : 1.0.0                :            : str  : 1      : Options   :       : the script's version number for the version message                                                     "
-        "ARGPARSER_SCRIPT_VERSION_EXIT_CODE  :            : script-version-exit-code  : INT          : 0                    :            : int  : 1      : Options   :       : the exit code for version messages                                                                      "
-        "ARGPARSER_SCRIPT_VERSION_OPTIONS    :            : script-version-options    : CHAR         : V                    :            : char : +      : Options   :       : the short (single-character) option names to invoke the version message                                 "
-        "ARGPARSER_SCRIPT_VERSION_STYLE      :            : script-version-style      : STYLE        : bold                 :            : str  : +      : Options   :       : the color and style specification for version messages                                                  "
         "ARGPARSER_SET_ARGS                  :            : set-args                  :              : true                 :            : bool : 0      : Options   :       : set the arguments from ARGPARSER_ARG_ARRAY_NAME as variables in the script's scope                      "
         "ARGPARSER_SET_ARRAYS                :            : set-arrays                :              : true                 :            : bool : 0      : Options   :       : set arguments intended to have multiple values as indexed array                                         "
         "ARGPARSER_SILENCE_ERRORS            :            : silence-errors            :              : false                :            : bool : 0      : Options   :       : silence the emission (output) of error messages                                                         "
@@ -1190,6 +1186,10 @@ function argparser_set_env_vars() {
         "ARGPARSER_USE_LONG_OPTIONS          :            : use-long-options          :              : true                 :            : bool : 0      : Options   :       : use the long option names for parsing                                                                   "
         "ARGPARSER_USE_SHORT_OPTIONS         :            : use-short-options         :              : true                 :            : bool : 0      : Options   :       : use the short option names for parsing                                                                  "
         "ARGPARSER_USE_STYLES_IN_FILES       :            : use-styles-in-files       :              : false                :            : bool : 0      : Options   :       : use the colors and styles when STDOUT/STDERR is not a terminal                                          "
+        "ARGPARSER_VERSION                   :            : version                   : VERSION      : 1.0.0                :            : str  : 1      : Options   :       : the script's version number for the version message                                                     "
+        "ARGPARSER_VERSION_EXIT_CODE         :            : version-exit-code         : INT          : 0                    :            : int  : 1      : Options   :       : the exit code for version messages                                                                      "
+        "ARGPARSER_VERSION_OPTIONS           :            : version-options           : CHAR         : V                    :            : char : +      : Options   :       : the short (single-character) option names to invoke the version message                                 "
+        "ARGPARSER_VERSION_STYLE             :            : version-style             : STYLE        : bold                 :            : str  : +      : Options   :       : the color and style specification for version messages                                                  "
         "ARGPARSER_WARNING_STYLE             :            : warning-style             : STYLE        : red,bold             :            : str  : +      : Options   :       : the color and style specification for warning messages                                                  "
         "ARGPARSER_WRITE_ARGS                :            : write-args                :              : false                :            : bool : 0      : Options   :       : write the arguments from ARGPARSER_ARG_ARRAY_NAME to STDOUT                                             "
     )
@@ -1226,10 +1226,6 @@ function argparser_set_env_vars() {
         ARGPARSER_POSITIONAL_ARG_GROUP="Positional arguments" \
         ARGPARSER_READ_ARGS=true \
         ARGPARSER_SCRIPT_NAME="${BASH_SOURCE[0]##*/}" \
-        ARGPARSER_SCRIPT_VERSION="${ARGPARSER_VERSION}" \
-        ARGPARSER_SCRIPT_VERSION_EXIT_CODE=0 \
-        ARGPARSER_SCRIPT_VERSION_OPTIONS="V" \
-        ARGPARSER_SCRIPT_VERSION_STYLE="bold" \
         ARGPARSER_SET_ARGS=false \
         ARGPARSER_SET_ARRAYS=false \
         ARGPARSER_SILENCE_ERRORS=false \
@@ -1249,6 +1245,10 @@ function argparser_set_env_vars() {
         ARGPARSER_USE_LONG_OPTIONS=true \
         ARGPARSER_USE_SHORT_OPTIONS=false \
         ARGPARSER_USE_STYLES_IN_FILES=false \
+        ARGPARSER_VERSION="${ARGPARSER_ARGPARSER_VERSION}" \
+        ARGPARSER_VERSION_EXIT_CODE=0 \
+        ARGPARSER_VERSION_OPTIONS="V" \
+        ARGPARSER_VERSION_STYLE="bold" \
         ARGPARSER_WARNING_STYLE="red,bold" \
         ARGPARSER_WRITE_ARGS=false \
         source "${BASH_SOURCE[0]}" "${args[@]}"
@@ -1324,14 +1324,14 @@ function argparser_check_env_vars() {
     # to set the variables himself.
     #
     # The following environment variables are unchecked:
+    # - ARGPARSER_ARGPARSER_VERSION (auto-set)
     # - ARGPARSER_ARGS (auto-set)
     # - ARGPARSER_DICTIONARY (checked earlier / auto-set)
     # - ARGPARSER_LANGUAGE (arbitrary value)
     # - ARGPARSER_POSITIONAL_ARG_GROUP (arbitrary value)
     # - ARGPARSER_SCRIPT_ARGS (auto-set)
     # - ARGPARSER_SCRIPT_NAME (arbitrary value)
-    # - ARGPARSER_SCRIPT_VERSION (arbitrary value)
-    # - ARGPARSER_VERSION (auto-set)
+    # - ARGPARSER_VERSION (arbitrary value)
     #
     # The following environment variables are only checked for mutual
     # exclusivity with other environment variables:
@@ -1367,9 +1367,6 @@ function argparser_check_env_vars() {
     # - ARGPARSER_MAX_COL_WIDTH_3 (read-only)
     # - ARGPARSER_MAX_WIDTH (read-only)
     # - ARGPARSER_READ_ARGS (read-only)
-    # - ARGPARSER_SCRIPT_VERSION_EXIT_CODE (read-only)
-    # - ARGPARSER_SCRIPT_VERSION_OPTIONS (read-only)
-    # - ARGPARSER_SCRIPT_VERSION_STYLE (read-only)
     # - ARGPARSER_SET_ARGS (read-only)
     # - ARGPARSER_SET_ARRAYS (read-only)
     # - ARGPARSER_SILENCE_ERRORS (read-only)
@@ -1389,6 +1386,9 @@ function argparser_check_env_vars() {
     # - ARGPARSER_USE_LONG_OPTIONS (read-only)
     # - ARGPARSER_USE_SHORT_OPTIONS (read-only)
     # - ARGPARSER_USE_STYLES_IN_FILES (read-only)
+    # - ARGPARSER_VERSION_EXIT_CODE (read-only)
+    # - ARGPARSER_VERSION_OPTIONS (read-only)
+    # - ARGPARSER_VERSION_STYLE (read-only)
     # - ARGPARSER_WARNING_STYLE (read-only)
     # - ARGPARSER_WRITE_ARGS (read-only)
 
@@ -1460,9 +1460,9 @@ function argparser_check_env_vars() {
         ARGPARSER_ARG_DELIMITER_2
         ARGPARSER_HELP_FILE_INCLUDE_CHAR
         ARGPARSER_HELP_OPTIONS
-        ARGPARSER_SCRIPT_VERSION_OPTIONS
         ARGPARSER_USAGE_FILE_INCLUDE_CHAR
         ARGPARSER_USAGE_OPTIONS
+        ARGPARSER_VERSION_OPTIONS
     )
     for var in "${vars[@]}"; do
         if [[ "${var}" == "ARGPARSER_ARG_DELIMITER_2" ]]; then
@@ -1516,8 +1516,8 @@ function argparser_check_env_vars() {
     vars=(
         ARGPARSER_ERROR_EXIT_CODE
         ARGPARSER_HELP_EXIT_CODE
-        ARGPARSER_SCRIPT_VERSION_EXIT_CODE
         ARGPARSER_USAGE_EXIT_CODE
+        ARGPARSER_VERSION_EXIT_CODE
     )
     for var in "${vars[@]}"; do
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values <<< "${!var}"
@@ -1604,8 +1604,8 @@ function argparser_check_env_vars() {
     vars=(
         ARGPARSER_ERROR_STYLE
         ARGPARSER_HELP_STYLE
-        ARGPARSER_SCRIPT_VERSION_STYLE
         ARGPARSER_USAGE_STYLE
+        ARGPARSER_VERSION_STYLE
         ARGPARSER_WARNING_STYLE
     )
     for var in "${vars[@]}"; do
@@ -1671,8 +1671,8 @@ function argparser_check_env_vars() {
     # messages.
     vars=(
         ARGPARSER_HELP_OPTIONS
-        ARGPARSER_SCRIPT_VERSION_OPTIONS
         ARGPARSER_USAGE_OPTIONS
+        ARGPARSER_VERSION_OPTIONS
     )
     for var in "${vars[@]}"; do
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a short_options \
@@ -2498,7 +2498,7 @@ function argparser_check_args_definition_names() {
     IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a usage_options \
         <<< "${ARGPARSER_USAGE_OPTIONS}"
     IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a version_options \
-        <<< "${ARGPARSER_SCRIPT_VERSION_OPTIONS}"
+        <<< "${ARGPARSER_VERSION_OPTIONS}"
 
     # Get and sort all argument keys (identifiers), such that the
     # following loop is performed in alphabetical order of the
@@ -3530,7 +3530,7 @@ function argparser_parse_arg() {
     IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a usage_options \
         <<< "${ARGPARSER_USAGE_OPTIONS}"
     IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a version_options \
-        <<< "${ARGPARSER_SCRIPT_VERSION_OPTIONS}"
+        <<< "${ARGPARSER_VERSION_OPTIONS}"
 
     # Output the argument, split into option names and values, or an
     # error message.  In the latter case, output also the given
@@ -3721,7 +3721,7 @@ function argparser_parse_arg() {
         # illegal equals sign ("="), using the long option name.
         error_message="Error: The option \"-%s,--version\" takes no value."
         argparser_translate "Error arg version 1" "${error_message}" \
-            "${ARGPARSER_SCRIPT_VERSION_OPTIONS//${ARGPARSER_ARG_DELIMITER_2}/,-}"
+            "${ARGPARSER_VERSION_OPTIONS//${ARGPARSER_ARG_DELIMITER_2}/,-}"
         error_message="${translation}"
         messages+=("${error_message}")
         messages+=("Argument: ${given_arg}")
@@ -3735,7 +3735,7 @@ function argparser_parse_arg() {
         # illegal equals sign ("="), using the short option name.
         error_message="Error: The option \"-%s,--version\" takes no value."
         argparser_translate "Error arg version 1" "${error_message}" \
-            "${ARGPARSER_SCRIPT_VERSION_OPTIONS//${ARGPARSER_ARG_DELIMITER_2}/,-}"
+            "${ARGPARSER_VERSION_OPTIONS//${ARGPARSER_ARG_DELIMITER_2}/,-}"
         error_message="${translation}"
         messages+=("${error_message}")
         messages+=("Argument: ${given_arg}")
@@ -3759,7 +3759,7 @@ function argparser_parse_arg() {
         # illegal equals sign ("="), using the short option name.
         error_message="Error: The option \"-%s\" takes no value."
         argparser_translate "Error arg version 3" "${error_message}" \
-            "${ARGPARSER_SCRIPT_VERSION_OPTIONS//${ARGPARSER_ARG_DELIMITER_2}/,-}"
+            "${ARGPARSER_VERSION_OPTIONS//${ARGPARSER_ARG_DELIMITER_2}/,-}"
         error_message="${translation}"
         messages+=("${error_message}")
         messages+=("Argument: ${given_arg}")
@@ -5182,10 +5182,10 @@ function argparser_create_help_message() {
     # - ARGPARSER_MAX_WIDTH (read-only)
     # - ARGPARSER_POSITIONAL_ARG_GROUP (read-only)
     # - ARGPARSER_SCRIPT_NAME (read-only)
-    # - ARGPARSER_SCRIPT_VERSION_OPTIONS (read-only)
     # - ARGPARSER_USAGE_OPTIONS (read-only)
     # - ARGPARSER_USE_LONG_OPTIONS (read-only)
     # - ARGPARSER_USE_SHORT_OPTIONS (read-only)
+    # - ARGPARSER_VERSION_OPTIONS (read-only)
 
     # Define the local variables.
     local -a all_option_names
@@ -5762,7 +5762,7 @@ function argparser_create_help_message() {
         then
             col_1+=("")
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a version_options \
-                <<< "${ARGPARSER_SCRIPT_VERSION_OPTIONS}"
+                <<< "${ARGPARSER_VERSION_OPTIONS}"
             for version_option in "${version_options[@]}"; do
                 col_1[-1]+="-${version_option}, "
             done
@@ -5770,7 +5770,7 @@ function argparser_create_help_message() {
         elif [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
             col_1+=("")
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a version_options \
-                <<< "${ARGPARSER_SCRIPT_VERSION_OPTIONS}"
+                <<< "${ARGPARSER_VERSION_OPTIONS}"
             for version_option in "${version_options[@]}"; do
                 col_1[-1]+="-${version_option}, "
             done
@@ -6148,12 +6148,12 @@ function argparser_create_usage_message() {
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_HELP_OPTIONS (read-only)
     # - ARGPARSER_SCRIPT_NAME (read-only)
-    # - ARGPARSER_SCRIPT_VERSION_OPTIONS (read-only)
     # - ARGPARSER_USAGE_MESSAGE_OPTION_TYPE(read-only)
     # - ARGPARSER_USAGE_MESSAGE_ORIENTATION (read-only)
     # - ARGPARSER_USAGE_OPTIONS (read-only)
     # - ARGPARSER_USE_LONG_OPTIONS (read-only)
     # - ARGPARSER_USE_SHORT_OPTIONS (read-only)
+    # - ARGPARSER_VERSION_OPTIONS (read-only)
 
     # Define the local variables.
     local arg_key
@@ -6225,7 +6225,7 @@ function argparser_create_usage_message() {
             fi
 
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a version_options \
-                <<< "${ARGPARSER_SCRIPT_VERSION_OPTIONS}"
+                <<< "${ARGPARSER_VERSION_OPTIONS}"
             for version_option in "${version_options[@]}"; do
                 short_options+="-${version_option},"
             done
@@ -6866,9 +6866,9 @@ function argparser_print_version_message() {
     #
     # Environment:
     # - ARGPARSER_SCRIPT_NAME (read-only)
-    # - ARGPARSER_SCRIPT_VERSION (read-only)
-    # - ARGPARSER_SCRIPT_VERSION_EXIT_CODE (read-only)
-    # - ARGPARSER_SCRIPT_VERSION_STYLE (read-only)
+    # - ARGPARSER_VERSION (read-only)
+    # - ARGPARSER_VERSION_EXIT_CODE (read-only)
+    # - ARGPARSER_VERSION_STYLE (read-only)
 
     # Define the local variables.
     local exit
@@ -6879,12 +6879,12 @@ function argparser_print_version_message() {
     exit="$1"
 
     # Colorize and print the version message, then exit, if requested.
-    message="${ARGPARSER_SCRIPT_NAME} v${ARGPARSER_SCRIPT_VERSION}"
-    argparser_colorize "${ARGPARSER_SCRIPT_VERSION_STYLE}" "${message}" 1 true
+    message="${ARGPARSER_SCRIPT_NAME} v${ARGPARSER_VERSION}"
+    argparser_colorize "${ARGPARSER_VERSION_STYLE}" "${message}" 1 true
     printf '\n'
 
     if [[ "${exit}" == true ]]; then
-        exit "${ARGPARSER_SCRIPT_VERSION_EXIT_CODE}"
+        exit "${ARGPARSER_VERSION_EXIT_CODE}"
     fi
 }
 
@@ -7367,6 +7367,7 @@ function argparser_main() {
         unset ARGPARSER_ARG_DEF_HAS_HEADER
         unset ARGPARSER_ARG_DELIMITER_1
         unset ARGPARSER_ARG_DELIMITER_2
+        unset ARGPARSER_ARGPARSER_VERSION
         unset ARGPARSER_ARGS
         unset ARGPARSER_CHECK_ARG_DEF
         unset ARGPARSER_CHECK_ENV_VARS
@@ -7390,10 +7391,6 @@ function argparser_main() {
         unset ARGPARSER_READ_ARGS
         unset ARGPARSER_SCRIPT_ARGS
         unset ARGPARSER_SCRIPT_NAME
-        unset ARGPARSER_SCRIPT_VERSION
-        unset ARGPARSER_SCRIPT_VERSION_EXIT_CODE
-        unset ARGPARSER_SCRIPT_VERSION_OPTIONS
-        unset ARGPARSER_SCRIPT_VERSION_STYLE
         unset ARGPARSER_SET_ARGS
         unset ARGPARSER_SET_ARRAYS
         unset ARGPARSER_SILENCE_ERRORS
@@ -7414,6 +7411,9 @@ function argparser_main() {
         unset ARGPARSER_USE_SHORT_OPTIONS
         unset ARGPARSER_USE_STYLES_IN_FILES
         unset ARGPARSER_VERSION
+        unset ARGPARSER_VERSION_EXIT_CODE
+        unset ARGPARSER_VERSION_OPTIONS
+        unset ARGPARSER_VERSION_STYLE
         unset ARGPARSER_WARNING_STYLE
         unset ARGPARSER_WRITE_ARGS
     fi

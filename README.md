@@ -43,6 +43,7 @@ The argparser is entirely written in pure Bash, without invoking external comman
   - [`ARGPARSER_ARG_DEF_HAS_HEADER`](#argparser_arg_def_has_header)
   - [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)
   - [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)
+  - [`ARGPARSER_ARGPARSER_VERSION`](#argparser_argparser_version)
   - [`ARGPARSER_ARGS`](#argparser_args)
   - [`ARGPARSER_CHECK_ARG_DEF`](#argparser_check_arg_def)
   - [`ARGPARSER_CHECK_ENV_VARS`](#argparser_check_env_vars)
@@ -66,10 +67,6 @@ The argparser is entirely written in pure Bash, without invoking external comman
   - [`ARGPARSER_READ_ARGS`](#argparser_read_args)
   - [`ARGPARSER_SCRIPT_ARGS`](#argparser_script_args)
   - [`ARGPARSER_SCRIPT_NAME`](#argparser_script_name)
-  - [`ARGPARSER_SCRIPT_VERSION`](#argparser_script_version)
-  - [`ARGPARSER_SCRIPT_VERSION_EXIT_CODE`](#argparser_script_version_exit_code)
-  - [`ARGPARSER_SCRIPT_VERSION_OPTIONS`](#argparser_script_version_options)
-  - [`ARGPARSER_SCRIPT_VERSION_STYLE`](#argparser_script_version_style)
   - [`ARGPARSER_SET_ARGS`](#argparser_set_args)
   - [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)
   - [`ARGPARSER_SILENCE_ERRORS`](#argparser_silence_errors)
@@ -90,6 +87,9 @@ The argparser is entirely written in pure Bash, without invoking external comman
   - [`ARGPARSER_USE_SHORT_OPTIONS`](#argparser_use_short_options)
   - [`ARGPARSER_USE_STYLES_IN_FILES`](#argparser_use_styles_in_files)
   - [`ARGPARSER_VERSION`](#argparser_version)
+  - [`ARGPARSER_VERSION_EXIT_CODE`](#argparser_version_exit_code)
+  - [`ARGPARSER_VERSION_OPTIONS`](#argparser_version_options)
+  - [`ARGPARSER_VERSION_STYLE`](#argparser_version_style)
   - [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style)
   - [`ARGPARSER_WRITE_ARGS`](#argparser_write_args)
 <!-- </toc> -->
@@ -1216,7 +1216,7 @@ Aufruf: try_localization.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VA
 
 ### Version messages
 
-Besides the the [`ARGPARSER_HELP_OPTIONS`](#argparser_help_options), `--help`, the [`ARGPARSER_USAGE_OPTIONS`](#argparser_usage_options), and `--usage`, there is a third option intended to help the user, the [`ARGPARSER_SCRIPT_VERSION_OPTIONS`](#argparser_script_version_options) (default: `-V`) and `--version`. This flag compiles a brief version message for your script, showing its canonical name (the [`ARGPARSER_SCRIPT_NAME`](#argparser_script_name)) and the version number (the [`ARGPARSER_SCRIPT_VERSION`](#argparser_script_version)). Just as for the help and usage messages, you can disable the version message (and its corresponding flags) by setting [`ARGPARSER_ADD_VERSION`](#argparser_add_version) to `false`. Note that the default short option name is an uppercase `V`, such that you can use the lowercase `v` (as `-v`) for your purposes, like `--verbatim` or `--verbose`. This is in line with the common behavior of command-line programs. By setting `ARGPARSER_SCRIPT_VERSION_OPTIONS` accordingly, you can of course change it to your needs, if desired.
+Besides the the [`ARGPARSER_HELP_OPTIONS`](#argparser_help_options), `--help`, the [`ARGPARSER_USAGE_OPTIONS`](#argparser_usage_options), and `--usage`, there is a third option intended to help the user, the [`ARGPARSER_VERSION_OPTIONS`](#argparser_version_options) (default: `-V`) and `--version`. This flag compiles a brief version message for your script, showing its canonical name (the [`ARGPARSER_SCRIPT_NAME`](#argparser_script_name)) and the version number (the [`ARGPARSER_VERSION`](#argparser_version)). Just as for the help and usage messages, you can disable the version message (and its corresponding flags) by setting [`ARGPARSER_ADD_VERSION`](#argparser_add_version) to `false`. Note that the default short option name is an uppercase `V`, such that you can use the lowercase `v` (as `-v`) for your purposes, like `--verbatim` or `--verbose`. This is in line with the common behavior of command-line programs. By setting `ARGPARSER_VERSION_OPTIONS` accordingly, you can of course change it to your needs, if desired.
 
 The output version message is very simple:
 
@@ -1235,7 +1235,7 @@ Using [`ARGPARSER_SILENCE_ERRORS`](#argparser_silence_errors) and [`ARGPARSER_SI
 
 ### Message styles
 
-It is possible to customize the appearance of error, warning, help, usage, and version messages using the respective environment variable, *viz.*, [`ARGPARSER_HELP_STYLE`](#argparser_help_style), [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style), [`ARGPARSER_SCRIPT_VERSION_STYLE`](#argparser_script_version_style), [`ARGPARSER_ERROR_STYLE`](#argparser_error_style), and [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style). Using [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters"), messages can be colorized and stylized. This is especially useful to quickly see errors when logging, but requires that the terminal or text editor, with which you opened the log file, supports interpreting the escape codes. This is, *e.g.*, supported by [`less --raw-control-chars <filename>`](https://man7.org/linux/man-pages/man1/less.1.html "man7.org &rightarrow; man pages &rightarrow; less(1)").
+It is possible to customize the appearance of error, warning, help, usage, and version messages using the respective environment variable, *viz.*, [`ARGPARSER_HELP_STYLE`](#argparser_help_style), [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style), [`ARGPARSER_VERSION_STYLE`](#argparser_version_style), [`ARGPARSER_ERROR_STYLE`](#argparser_error_style), and [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style). Using [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters"), messages can be colorized and stylized. This is especially useful to quickly see errors when logging, but requires that the terminal or text editor, with which you opened the log file, supports interpreting the escape codes. This is, *e.g.*, supported by [`less --raw-control-chars <filename>`](https://man7.org/linux/man-pages/man1/less.1.html "man7.org &rightarrow; man pages &rightarrow; less(1)").
 
 When [`ARGPARSER_USE_STYLES_IN_FILES`](#argparser_use_styles_in_files) is set to `false`, the escape sequences are only included when `STDOUT`/`STDERR` is a terminal, keeping files plain 7-bit ASCII for simpler parsing. Note that, when your arguments definition or help file includes non-ASCII characters (as is usual for almost any language other than English varieties), the output contains these characters as well.
 
@@ -1288,9 +1288,9 @@ Options:
 [--add-usage]                    add ARGPARSER_USAGE_OPTIONS and --usage as
                                  flags to call the usage message (default:
                                  true)
-[--add-version]                  add ARGPARSER_SCRIPT_VERSION_OPTIONS and
-                                 --version as flags to call the version message
-                                 (default: true)
+[--add-version]                  add ARGPARSER_VERSION_OPTIONS and --version as
+                                 flags to call the version message (default:
+                                 true)
 [--allow-option-abbreviation]    allow the user to give long option names in
                                  abbreviated form (default: false)
 [--allow-option-merging]         allow the user to give short option names in
@@ -1354,14 +1354,6 @@ Options:
 [--script-name=NAME]             the script's name for the help, usage,
                                  version, error, and warning messages (default:
                                  "''")
-[--script-version=VERSION]       the script's version number for the version
-                                 message (default: "1.0.0")
-[--script-version-exit-code=INT] the exit code for version messages (default:
-                                 0)
-[--script-version-options=CHAR]  the short (single-character) option names to
-                                 invoke the version message (default: "V")
-[--script-version-style=STYLE]   the color and style specification for version
-                                 messages (default: "bold")
 [--set-args]                     set the arguments from
                                  ARGPARSER_ARG_ARRAY_NAME as variables in the
                                  script's scope (default: true)
@@ -1405,6 +1397,14 @@ Options:
                                  (default: true)
 [--use-styles-in-files]          use the colors and styles when STDOUT/STDERR
                                  is not a terminal (default: false)
+[--version=VERSION]              the script's version number for the version
+                                 message (default: "1.0.0")
+[--version-exit-code=INT]        the exit code for version messages (default:
+                                 0)
+[--version-options=CHAR]         the short (single-character) option names to
+                                 invoke the version message (default: "V")
+[--version-style=STYLE]          the color and style specification for version
+                                 messages (default: "bold")
 [--warning-style=STYLE]          the color and style specification for warning
                                  messages (default: "red,bold")
 [--write-args]                   write the arguments from
@@ -1565,6 +1565,7 @@ The argparser defines a large set of environment variables, each following the n
 - [`ARGPARSER_ARG_DEF_HAS_HEADER`](#argparser_arg_def_has_header)
 - [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)
 - [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)
+- [`ARGPARSER_ARGPARSER_VERSION`](#argparser_argparser_version)
 - [`ARGPARSER_ARGS`](#argparser_args)
 - [`ARGPARSER_CHECK_ARG_DEF`](#argparser_check_arg_def)
 - [`ARGPARSER_CHECK_ENV_VARS`](#argparser_check_env_vars)
@@ -1588,10 +1589,6 @@ The argparser defines a large set of environment variables, each following the n
 - [`ARGPARSER_READ_ARGS`](#argparser_read_args)
 - [`ARGPARSER_SCRIPT_ARGS`](#argparser_script_args)
 - [`ARGPARSER_SCRIPT_NAME`](#argparser_script_name)
-- [`ARGPARSER_SCRIPT_VERSION`](#argparser_script_version)
-- [`ARGPARSER_SCRIPT_VERSION_EXIT_CODE`](#argparser_script_version_exit_code)
-- [`ARGPARSER_SCRIPT_VERSION_OPTIONS`](#argparser_script_version_options)
-- [`ARGPARSER_SCRIPT_VERSION_STYLE`](#argparser_script_version_style)
 - [`ARGPARSER_SET_ARGS`](#argparser_set_args)
 - [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)
 - [`ARGPARSER_SILENCE_ERRORS`](#argparser_silence_errors)
@@ -1612,6 +1609,9 @@ The argparser defines a large set of environment variables, each following the n
 - [`ARGPARSER_USE_SHORT_OPTIONS`](#argparser_use_short_options)
 - [`ARGPARSER_USE_STYLES_IN_FILES`](#argparser_use_styles_in_files)
 - [`ARGPARSER_VERSION`](#argparser_version)
+- [`ARGPARSER_VERSION_EXIT_CODE`](#argparser_version_exit_code)
+- [`ARGPARSER_VERSION_OPTIONS`](#argparser_version_options)
+- [`ARGPARSER_VERSION_STYLE`](#argparser_version_style)
 - [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style)
 - [`ARGPARSER_WRITE_ARGS`](#argparser_write_args)
 <!-- </toc> -->
@@ -1631,6 +1631,7 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_ARG_DEF_HAS_HEADER`](#argparser_arg_def_has_header)               | *bool*    | `true`                   |
 | [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1)                     | *char*    | `"\|"`[^5]               |
 | [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)                     | *char*    | `","`[^5]                |
+| [`ARGPARSER_ARGPARSER_VERSION`](#argparser_argparser_version)                 | *str*     | *None* (unset)           |
 | [`ARGPARSER_ARGS`](#argparser_args)                                           | *arr*     | *None* (unset)           |
 | [`ARGPARSER_CHECK_ARG_DEF`](#argparser_check_arg_def)                         | *bool*    | `false`                  |
 | [`ARGPARSER_CHECK_ENV_VARS`](#argparser_check_env_vars)                       | *bool*    | `false`                  |
@@ -1654,10 +1655,6 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_READ_ARGS`](#argparser_read_args)                                 | *bool*    | `true`                   |
 | [`ARGPARSER_SCRIPT_ARGS`](#argparser_script_args)                             | *arr*     | *None* (unset)           |
 | [`ARGPARSER_SCRIPT_NAME`](#argparser_script_name)                             | *str*     | `"${0##*/}"`             |
-| [`ARGPARSER_SCRIPT_VERSION`](#argparser_script_version)                       | *str*     | `"1.0.0"`                |
-| [`ARGPARSER_SCRIPT_VERSION_EXIT_CODE`](#argparser_script_version_exit_code)   | *int*     | `0`                      |
-| [`ARGPARSER_SCRIPT_VERSION_OPTIONS`](#argparser_script_version_options)       | *char*    | `"V"`                    |
-| [`ARGPARSER_SCRIPT_VERSION_STYLE`](#argparser_script_version_style)           | *str*     | `"bold"`                 |
 | [`ARGPARSER_SET_ARGS`](#argparser_set_args)                                   | *bool*    | `true`                   |
 | [`ARGPARSER_SET_ARRAYS`](#argparser_set_arrays)                               | *bool*    | `true`                   |
 | [`ARGPARSER_SILENCE_ERRORS`](#argparser_silence_errors)                       | *bool*    | `false`                  |
@@ -1677,7 +1674,10 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_USE_LONG_OPTIONS`](#argparser_use_long_options)                   | *bool*    | `true`                   |
 | [`ARGPARSER_USE_SHORT_OPTIONS`](#argparser_use_short_options)                 | *bool*    | `true`                   |
 | [`ARGPARSER_USE_STYLES_IN_FILES`](#argparser_use_styles_in_files)             | *bool*    | `false`                  |
-| [`ARGPARSER_VERSION`](#argparser_version)                                     | *str*     | *None* (unset)           |
+| [`ARGPARSER_VERSION`](#argparser_version)                                     | *str*     | `"1.0.0"`                |
+| [`ARGPARSER_VERSION_EXIT_CODE`](#argparser_version_exit_code)                 | *int*     | `0`                      |
+| [`ARGPARSER_VERSION_OPTIONS`](#argparser_version_options)                     | *char*    | `"V"`                    |
+| [`ARGPARSER_VERSION_STYLE`](#argparser_version_style)                         | *str*     | `"bold"`                 |
 | [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style)                         | *str*     | `"red,bold"`             |
 | [`ARGPARSER_WRITE_ARGS`](#argparser_write_args)                               | *bool*    | `false`                  |
 
@@ -1707,7 +1707,7 @@ The argparser defines a large set of environment variables, each following the n
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to add the [`ARGPARSER_SCRIPT_VERSION_OPTIONS`](#argparser_script_version_options) and `--version` as flags to call the version message.
+- ***Description:*** Whether to add the [`ARGPARSER_VERSION_OPTIONS`](#argparser_version_options) and `--version` as flags to call the version message.
 
 ### `ARGPARSER_ALLOW_OPTION_ABBREVIATION`
 
@@ -1764,6 +1764,14 @@ The argparser defines a large set of environment variables, each following the n
 - ***Allowed values:*** Any unique character that's not used as [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1), no hyphen (`-`), plus sign (`+`), asterisk (`*`), or question mark (`?`)
 - ***Default value:*** `","`
 - ***Description:*** The secondary delimiter that separates the elements of sequences in the arguments definition. Again, you don't need to access this variable, but you must ensure that it is set to a character or glyph that does not occur in the arguments definition or their values.
+
+### `ARGPARSER_ARGPARSER_VERSION`
+
+- ***Type:*** *str* (String)
+- ***Allowed values:*** *None*
+- ***Default value:*** *None* (unset)
+- ***Description:*** The version number of the argparser to be used in the version message, using [semantic versioning](https://semver.org/ "semver.org"), *i.e.*, with the version numbers given by major version, minor version, and patch, separated by dots. This variable is read-only and *must not be set* by your script, else, an error is thrown. The argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#argparser_unset_env_vars) is set to `false`).  
+Besides the version message you (not your script's user) can call, the main purpose of `ARGPARSER_ARGPARSER_VERSION` is to simplify the transition to newer argparser versions. Whenever breaking changes are made, there will be scripts given in the repository that will try to automatically upgrade your code, as far as possible, to comply with new features.
 
 ### `ARGPARSER_ARGS`
 
@@ -1930,34 +1938,6 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Default value:*** `"${0##*/}"`
 - ***Description:*** The name of your script as it should appear in the help, usage, version, error, and warning messages. By default, it is the name used upon invoking your script (`"$0"`), trimmed by everything before the last slash character (mimicking the behavior of [`basename`](https://man7.org/linux/man-pages/man1/basename.1.html "man7.org &rightarrow; man pages &rightarrow; basename(1)")). If, for example, you want to give your script a symlink, but don't want this symlink's name to be used in the help and usage messages, then you can provide a custom, canonicalized `ARGPARSER_SCRIPT_NAME`. Alternatively, if your script forms a sub-part of a larger program, it may be named `program_part.sh`, but should be called as `program name [ARGUMENTS]`. Then, `program.sh` could parse its positional argument `name` and call `program_part.sh`, but on the command line, you want to hide this implementation detail and refer to `program_part.sh` as `program name`, so you set `ARGPARSER_SCRIPT_NAME` accordingly.
 
-### `ARGPARSER_SCRIPT_VERSION`
-
-- ***Type:*** *str* (String)
-- ***Allowed values:*** Any string
-- ***Default value:*** `"1.0.0"`
-- ***Description:*** The version number of your script to be used in the version message. Prefer using [semantic versioning](https://semver.org/ "semver.org"), *i.e.*, give version numbers by major version, minor version, and patch, separated by dots.
-
-### `ARGPARSER_SCRIPT_VERSION_EXIT_CODE`
-
-- ***Type:*** *int* (Integer)
-- ***Allowed values:*** Any integer, usually zero
-- ***Default value:*** `0`
-- ***Description:*** The exit code when a version message was requested using the [`ARGPARSER_SCRIPT_VERSION_OPTIONS`](#argparser_script_version_options) or the `--version` flag.
-
-### `ARGPARSER_SCRIPT_VERSION_OPTIONS`
-
-- ***Type:*** *char* (Character)
-- ***Allowed values:*** Any unique short-option character that's not used in the arguments definition
-- ***Default value:*** `"V"`
-- ***Description:*** The short option names used to call the version message. This is only evaluated if [`ARGPARSER_ADD_VERSION`](#argparser_add_version) is `true`.
-
-### `ARGPARSER_SCRIPT_VERSION_STYLE`
-
-- ***Type:*** *str* (String)
-- ***Allowed values:*** Any [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)-separated string consisting of a color and/or style, with the colors being `"black"`, `"red"`, `"green"`, `"yellow"`, `"blue"`, `"magenta"`, `"cyan"`, and `"white"`, and the styles being `"normal"`, `"bold"`, `"faint"`, `"italic"`, `"underline"`, `"double"`, `"overline"`, `"crossed-out"`, `"blink"`, and `"reverse"`
-- ***Default value:*** `"bold"`
-- ***Description:*** The color and style specification to use for version messages, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters").
-
 ### `ARGPARSER_SET_ARGS`
 
 - ***Type:*** *bool* (Boolean)
@@ -2085,22 +2065,42 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to accept short option names upon parsing and creating the help and usage messages. If your script doesn't take any short option, it may be practical to disable also the short options the argparser sets, *viz.* the [`ARGPARSER_HELP_OPTIONS`](#argparser_help_options), the [`ARGPARSER_USAGE_OPTIONS`](#argparser_usage_options), and the [`ARGPARSER_SCRIPT_VERSION_OPTIONS`](#argparser_script_version_options) (given that [`ARGPARSER_ADD_HELP`](#argparser_add_help), [`ARGPARSER_ADD_USAGE`](#argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](#argparser_add_version), respectively, are set). Additionally, the help message will only have two columns (the long option names and the help texts), then.
+- ***Description:*** Whether to accept short option names upon parsing and creating the help and usage messages. If your script doesn't take any short option, it may be practical to disable also the short options the argparser sets, *viz.* the [`ARGPARSER_HELP_OPTIONS`](#argparser_help_options), the [`ARGPARSER_USAGE_OPTIONS`](#argparser_usage_options), and the [`ARGPARSER_VERSION_OPTIONS`](#argparser_version_options) (given that [`ARGPARSER_ADD_HELP`](#argparser_add_help), [`ARGPARSER_ADD_USAGE`](#argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](#argparser_add_version), respectively, are set). Additionally, the help message will only have two columns (the long option names and the help texts), then.
 
 ### `ARGPARSER_USE_STYLES_IN_FILES`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
-- ***Description:*** Whether to use the colors and styles from [`ARGPARSER_HELP_STYLE`](#argparser_help_style), [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style), [`ARGPARSER_SCRIPT_VERSION_STYLE`](#argparser_script_version_style), [`ARGPARSER_ERROR_STYLE`](#argparser_error_style), and [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style) when `STDOUT`/`STDERR` is not a terminal (and thus perhaps a file). This is useful to get plain 7-bit ASCII text output for files, while in interactive sessions, the escape sequences offer more user-friendly formatting and possibilities for highlighting. By this, you can parse your files afterwards more easily. Still, using *e.g.* [`less --raw-control-chars <filename>`](https://man7.org/linux/man-pages/man1/less.1.html "man7.org &rightarrow; man pages &rightarrow; less(1)"), these escape sequences can be displayed from files, when included.
+- ***Description:*** Whether to use the colors and styles from [`ARGPARSER_HELP_STYLE`](#argparser_help_style), [`ARGPARSER_USAGE_STYLE`](#argparser_usage_style), [`ARGPARSER_VERSION_STYLE`](#argparser_version_style), [`ARGPARSER_ERROR_STYLE`](#argparser_error_style), and [`ARGPARSER_WARNING_STYLE`](#argparser_warning_style) when `STDOUT`/`STDERR` is not a terminal (and thus perhaps a file). This is useful to get plain 7-bit ASCII text output for files, while in interactive sessions, the escape sequences offer more user-friendly formatting and possibilities for highlighting. By this, you can parse your files afterwards more easily. Still, using *e.g.* [`less --raw-control-chars <filename>`](https://man7.org/linux/man-pages/man1/less.1.html "man7.org &rightarrow; man pages &rightarrow; less(1)"), these escape sequences can be displayed from files, when included.
 
 ### `ARGPARSER_VERSION`
 
 - ***Type:*** *str* (String)
-- ***Allowed values:*** *None*
-- ***Default value:*** *None* (unset)
-- ***Description:*** The version number of the argparser to be used in the version message, using [semantic versioning](https://semver.org/ "semver.org"), *i.e.*, with the version numbers given by major version, minor version, and patch, separated by dots. This variable is read-only and *must not be set* by your script, else, an error is thrown. The argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#argparser_unset_env_vars) is set to `false`).  
-Besides the version message you (not your script's user) can call, the main purpose of `ARGPARSER_VERSION` is to simplify the transition to newer argparser versions. Whenever breaking changes are made, there will be scripts given in the repository that will try to automatically upgrade your code, as far as possible, to comply with new features.
+- ***Allowed values:*** Any string
+- ***Default value:*** `"1.0.0"`
+- ***Description:*** The version number of your script to be used in the version message. Prefer using [semantic versioning](https://semver.org/ "semver.org"), *i.e.*, give version numbers by major version, minor version, and patch, separated by dots.
+
+### `ARGPARSER_VERSION_EXIT_CODE`
+
+- ***Type:*** *int* (Integer)
+- ***Allowed values:*** Any integer, usually zero
+- ***Default value:*** `0`
+- ***Description:*** The exit code when a version message was requested using the [`ARGPARSER_VERSION_OPTIONS`](#argparser_version_options) or the `--version` flag.
+
+### `ARGPARSER_VERSION_OPTIONS`
+
+- ***Type:*** *char* (Character)
+- ***Allowed values:*** Any unique short-option character that's not used in the arguments definition
+- ***Default value:*** `"V"`
+- ***Description:*** The short option names used to call the version message. This is only evaluated if [`ARGPARSER_ADD_VERSION`](#argparser_add_version) is `true`.
+
+### `ARGPARSER_VERSION_STYLE`
+
+- ***Type:*** *str* (String)
+- ***Allowed values:*** Any [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2)-separated string consisting of a color and/or style, with the colors being `"black"`, `"red"`, `"green"`, `"yellow"`, `"blue"`, `"magenta"`, `"cyan"`, and `"white"`, and the styles being `"normal"`, `"bold"`, `"faint"`, `"italic"`, `"underline"`, `"double"`, `"overline"`, `"crossed-out"`, `"blink"`, and `"reverse"`
+- ***Default value:*** `"bold"`
+- ***Description:*** The color and style specification to use for version messages, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters").
 
 ### `ARGPARSER_WARNING_STYLE`
 
