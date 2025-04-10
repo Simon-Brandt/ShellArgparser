@@ -24,6 +24,18 @@ The argparser is entirely written in pure Bash, without invoking external comman
   - [Message styles](#message-styles)
   - [Standalone usage](#standalone-usage)
 - [Reference](#reference)
+  - [Arguments definition](#arguments-definition)
+    - [Argument ID (`id`)](#argument-id-id)
+    - [Short option names (`short_opts`)](#short-option-names-short_opts)
+    - [Long option names (`long_opts`)](#long-option-names-long_opts)
+    - [Value names (`val_names`)](#value-names-val_names)
+    - [Default values (`defaults`)](#default-values-defaults)
+    - [Choice values (`choices`)](#choice-values-choices)
+    - [Data type (`type`)](#data-type-type)
+    - [Argument count (`arg_no`)](#argument-count-arg_no)
+    - [Argument group (`arg_group`)](#argument-group-arg_group)
+    - [Notes (`notes`)](#notes-notes)
+    - [Help text (`help`)](#help-text-help)
   - [Colors and styles](#colors-and-styles)
   - [Include directives](#include-directives)
     - [`@All` directive](#all-directive)
@@ -1479,6 +1491,64 @@ In short, it is possible to run the argparser in standalone mode from other shel
 ## Reference
 
 The reference details the actual definitions of all [colors and styles](#colors-and-styles), [include directives](#include-directives), and [environment variables](#environment-variables). While it may be advantageous to read it once in its entirety to see all features not discussed in the [tutorial](#tutorial), it is more designed as manual for specific questions regarding certain features.
+
+### Arguments definition
+
+The arguments definition that the argparser uses to parse the arguments and to create the help and usage messages shows a tabular structure with eleven columns. These columns are delimited by an [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1) character each, by default a pipe (`"|"`). Since fields can be surrounded by an arbitrary number of spaces, visual alignment as true table is possible. Optionally, a header can be given, indicated by setting [`ARGPARSER_ARG_DEF_HAS_HEADER`](#argparser_arg_def_has_header) and/or [`ARGPARSER_ARG_DEF_FILE_HAS_HEADER`](#argparser_arg_def_file_has_header) to `true`, using the identifiers shown below. Then, the order of the columns is arbitrary, but there should be little reason to deviate from the defult order. The values in multi-value fields are delimited by an [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2) character, by default a comma (`","`). Absence of value is indicated by the empty string, resulting after trimming spaces. That is, a field consisting of only spaces means absence.
+
+#### Argument ID (`id`)
+
+The argument identifier must be a valid variable identifier in Bash syntax (at least when [`ARGPARSER_SET_ARGS`](#argparser_set_args) is set to `true`, else, the ID is only used as key in associative arrays). These are defined as a word beginning with an alphabetic character or an underscore, followed by an arbitrary number of alphanumeric characters or underscores. In Bash's extglob syntax, the regular expression for verification may look like `[[:alpha:]_]*([[:word:]])`, assuming C locale.
+
+#### Short option names (`short_opts`)
+
+The short option names must comprise exactly one character, thereby, no leading hyphen may be given. Multiple short option names that shall be treated as aliases for the same option must be separated by an [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2) character. Bash is case-sensitive, so is the checking for option names. Thus, you would need to provide both `a` and `A` as short option names if you want both to be recognized. This distinction effectively allows doubling the number of available short option names defined as letters (`a-z` and `A-Z`).
+
+#### Long option names (`long_opts`)
+
+The long option names must comprise more than one character, thereby, no leading hyphen may be given. Multiple long option names that shall be treated as aliases for the same option must be separated by an [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2) character.
+
+#### Value names (`val_names`)
+
+The value names are used as substitute for the uppercased option names in help messages for non-flag options, *i.e.*, those requiring at least one argument. Setting a value name may render the help message clearer or more concise, like when having an option `--in-file` whose argument just needs to be shown as `FILE`. If no value name is given, or less than there are short or long option names, the remaining argument texts are filled with the respective option name in "screaming-snake-cased" (uppercased with underscores instead of hyphens) form. For positional arguments, the value name is the only name that can be shown, thus, it is required in this case.
+
+#### Default values (`defaults`)
+
+Positional and keyword arguments may have default values, which are assigned to the variables if the arguments aren't given on the command line. For flags, the default value must be either `true` or `false`.
+
+#### Choice values (`choices`)
+
+It is possible to restrict the range of acceptable values for an argument to a set indicated by the choice values. If [default values](#default-values-defaults) are given, they must lie within the choice values.
+
+#### Data type (`type`)
+
+The argparser defines several data types an argument may have. Using the regular expressions denoted below, the argument's value is compared to the data type. Still, Bash is weakly typed, and by this, the existence of a data type does not change the behavior of the variable. Nonetheless, you can use the type-checked value for certain computations, later on. It is mandatory that all default and choice values accord to the data type. The following data types are distinguished by the argparser:
+
+- *bool* (Boolean): either `true` or `false`, to be used for flags
+- *char* (Character): a string with length one
+- *float* (Floating-point number): digits, possibly with a period in-between, optionally with a leading hyphen as minus sign
+- *file* (Filepath): a filepath, currently unchecked
+- *int* (Integer): digits without period in-between, optionally with a leading hyphen as minus sign
+- *str* (String): anything not fitting into the other data types, unchecked
+- *uint* (Unsigned integer): digits with neither a period in-between nor a leading hyphen as minus sign
+
+#### Argument count (`arg_no`)
+
+The argument count defines the number of values a keyword or positional argument may accept. Independent of this count, the argparser will aggregate any non-hyphenated value to the previous keyword argument, or, if none is yet given, set it to the positional arguments. The argument count may be given as natural number (*i.e.*, as unsigned integer), including `0` as sign for flags, or as plus sign (`+`). The latter means to accept as many values as given, at least one.
+
+The [Python argparse module](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module") further defines `*` to accept any argument count, and `?` to accept exactly zero or one argument. Both features aren't yet supported by the argparser, but the characters are reserved for future usage as such, invalidating them as values for [`ARGPARSER_ARG_DELIMITER_1`](#argparser_arg_delimiter_1) and [`ARGPARSER_ARG_DELIMITER_2`](#argparser_arg_delimiter_2).
+
+#### Argument group (`arg_group`)
+
+The argument groups serve to group arguments in the help message. The first group shall comprise all positional arguments (if any is defined) and is named by [`ARGPARSER_POSITIONAL_ARG_GROUP`](#argparser_positional_arg_group). Any other argument group shall only contain keyword arguments (options), and is sorted alphabetically in the help message. In the future, argument groups will be expanded to allow actual grouping of arguments upon parsing, such that options may only be given together or mutually exclusively.
+
+#### Notes (`notes`)
+
+The notes are intended to give additional information about arguments that don't warrant the introduction of a new column in the arguments definition. This is usually true for notes that are rarely used, where thus the column's fields would be mostly empty. Currently, only `"deprecated"` is supported, but this is expected to change. This token advises the argparser to treat an argument as deprecated, emitting a warning, when it is given on the command line. Since command-line interfaces are prone to change over time, this warning allows you to gradually change your CLI, introducing replacement option names or even removing the functionality prior to removing the argument itself. By this, your script's users can slowly adapt to the new CLI.
+
+#### Help text (`help`)
+
+The help text should consist of a terse summary of the argument's function, like turning a feature on or off (which may be accomplished by flags), what a file is used for (like for input or output), or how your script's output may be modified. A help text can take any form, but be wary of it being wrapped to fit the width of the third column in the help message (if [`ARGPARSER_MAX_COL_WIDTH_3`](#argparser_max_col_width_3) is non-zero) or the total line length ([`ARGPARSER_MAX_WIDTH`](#argparser_max_width)). Help messages are no replacement for the manual, so the help text shouldn't be overly verbose.
 
 ### Colors and styles
 
