@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-04-09
+# Last Modification: 2025-04-11
 
 # 1.    Define the translations for the arguments parsing.
 ---
@@ -37,9 +37,10 @@ Options:
 ---
 Mandatory arguments:
   en: >
-    Mandatory arguments to long options are mandatory for short options too
+    Mandatory arguments to long options are mandatory for short options too.
   de: >
-    Erforderliche Argumente für lange Optionen sind auch für kurze erforderlich
+    Erforderliche Argumente für lange Optionen sind auch für kurze
+    erforderlich.
 ...
 
 # 2.3.  Define the translations for the help column.
