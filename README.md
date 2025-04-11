@@ -44,6 +44,21 @@ The argparser is entirely written in pure Bash, without invoking external comman
     - [`@Remark` directive](#remark-directive)
     - [`@Usage` directive](#usage-directive)
     - [`@Help` directive](#help-directive)
+  - [Translations](#translations)
+    - [`Positional arguments`](#positional-arguments)
+    - [`Error`](#error)
+    - [`Warning`](#warning)
+    - [`Usage`](#usage)
+    - [`Arguments`](#arguments)
+    - [`Options`](#options)
+    - [`Mandatory arguments`](#mandatory-arguments)
+    - [`Deprecated`](#deprecated)
+    - [`Default`](#default)
+    - [`--help`](#--help)
+    - [`--usage`](#--usage)
+    - [`--version`](#--version)
+    - [`false`](#false)
+    - [`true`](#true)
   - [Environment variables](#environment-variables)
     - [Overview over environment variables](#overview-over-environment-variables)
     - [`ARGPARSER_ADD_HELP`](#argparser_add_help)
@@ -1642,6 +1657,88 @@ The `@Usage` directive prints the line `Usage: <script_name> ...`, with `<script
 #### `@Help` directive
 
 The `@Help` directive prints the help text for the `--help`, `--usage`, and `--version` flags (if added to the arguments definition by [`ARGPARSER_ADD_HELP`](#argparser_add_help), [`ARGPARSER_ADD_USAGE`](#argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](#argparser_add_version)). Usually, you want to give this at the very end of all options.
+
+### Translations
+
+In order to facilitate translators the translation of the argparser-generated strings, most importantly the error and warning messages, and including the interpolated variables, they are listed here for reference, sorted by their occurence in the provided [translation.yaml](resources/translation.yaml). Further, this should give an overview over the most likely reasons for argument parsing failures.
+
+> [!NOTE]
+> The translation keys in the simplified YAML file are subject to change, if messages are added or removed. Since missing keys only generate warnings (which can even be silenced using [`ARGPARSER_SILENCE_WARNINGS`](#argparser_silence_warnings)), such changes are *not* considered breaking changes, and by this would *not* lead to an increase in the argparser's major version number. However, as few modifications as possible are anticipated, and only when other breaking changes are introduced, larger refactorings should occur.
+
+<!-- <toc title="Table of contents (Translations)"> -->
+#### Table of contents (Translations)
+
+- [`Positional arguments`](#positional-arguments)
+- [`Error`](#error)
+- [`Warning`](#warning)
+- [`Usage`](#usage)
+- [`Arguments`](#arguments)
+- [`Options`](#options)
+- [`Mandatory arguments`](#mandatory-arguments)
+- [`Deprecated`](#deprecated)
+- [`Default`](#default)
+- [`--help`](#--help)
+- [`--usage`](#--usage)
+- [`--version`](#--version)
+- [`false`](#false)
+- [`true`](#true)
+<!-- </toc> -->
+
+#### `Positional arguments`
+
+- ***Description:*** The name of the positional arguments group in the arguments definition, to be shown in the help message, *i.e.*, the translated [`ARGPARSER_POSITIONAL_ARG_GROUP`](#argparser_positional_arg_group).
+
+#### `Error`
+
+- ***Description:*** The word `"Error"` in error messages.
+
+#### `Warning`
+
+- ***Description:*** The word `"Warning"` in warning messages.
+
+#### `Usage`
+
+- ***Description:*** The word `"Usage"` in help and usage messages.
+
+#### `Arguments`
+
+- ***Description:*** The word `"ARGUMENTS"` in help messages, to show the existence of mandatory options (those without a default value).
+
+#### `Options`
+
+- ***Description:*** The word `"OPTIONS"` in help messages, to show the existence of optional options (those with a default value).
+
+#### `Mandatory arguments`
+
+- ***Description:*** The remark that mandatory arguments to long options are mandatory for short options too, to be used in the help message for the [`@Remark`](#remark-directive) include directive.
+
+#### `Deprecated`
+
+- ***Description:*** The word `"DEPRECATED"` in help messages, to show that an argument is deprecated and shouldn't be used, anymore.
+
+#### `Default`
+
+- ***Description:*** The word `"default"` in help messages, to introduce the default values.
+
+#### `--help`
+
+- ***Description:*** the help text for the help options, *i.e.*, the [`ARGPARSER_HELP_OPTIONS`](#argparser_help_options) and `--help`, if [`ARGPARSER_ADD_HELP`](#argparser_add_help) is set to `true`.
+
+#### `--usage`
+
+- ***Description:*** the help text for the usage options, *i.e.*, the [`ARGPARSER_USAGE_OPTIONS`](#argparser_usage_options) and `--usage`, if [`ARGPARSER_ADD_USAGE`](#argparser_add_usage) is set to `true`.
+
+#### `--version`
+
+- ***Description:*** the help text for the version options, *i.e.*, the [`ARGPARSER_VERSION_OPTIONS`](#argparser_version_options) and `--version`, if [`ARGPARSER_ADD_VERSION`](#argparser_add_version) is set to `true`.
+
+#### `false`
+
+- ***Description:*** The default value of `false` in help messages.
+
+#### `true`
+
+- ***Description:*** The default value of `true` in help messages.
 
 ### Environment variables
 
