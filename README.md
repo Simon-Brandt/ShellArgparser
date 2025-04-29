@@ -88,6 +88,8 @@ The argparser is entirely written in pure Bash, without invoking external comman
       1. [`Error arg array 3`](#4441-error-arg-array-3)
       1. [`Error wrong arg def`](#4442-error-wrong-arg-def)
       1. [`Error no arg def`](#4443-error-no-arg-def)
+      1. [`Error arg def field`](#4444-error-arg-def-field)
+      1. [`Error arg def file field`](#4445-error-arg-def-file-field)
    1. [Environment variables](#45-environment-variables)
       1. [Overview](#451-overview)
       1. [`ARGPARSER_ADD_HELP`](#452-argparser_add_help)
@@ -1740,6 +1742,8 @@ In order to facilitate translators the translation of the argparser-generated st
 1. [`Error arg array 3`](#4441-error-arg-array-3)
 1. [`Error wrong arg def`](#4442-error-wrong-arg-def)
 1. [`Error no arg def`](#4443-error-no-arg-def)
+1. [`Error arg def field`](#4444-error-arg-def-field)
+1. [`Error arg def file field`](#4445-error-arg-def-file-field)
 <!-- </toc> -->
 
 #### 4.4.1. `Positional arguments`
@@ -2016,6 +2020,22 @@ In order to facilitate translators the translation of the argparser-generated st
 - ***Reasons for error:*** When reading the arguments definition, the argparser found a definition line giving only an argument name, but no definition corresponding to this argument in the accompanying [`ARGPARSER_ARG_DEF_FILE`](#458-argparser_arg_def_file).
 - ***Interpolated variables:***
   - `$1`: The problematic arguments definition line with the argument.
+
+#### 4.4.44. `Error arg def field`
+
+- ***Description:*** The error that the arguments definition in the script lacks a column, instead giving an unused one.
+- ***Reasons for error:*** When parsing the arguments definition from the script, the argparser found the definition with as many columns as required, but the header sets a column name to a string not used by the argparser, leaving a column indentifier missing.
+- ***Interpolated variables:***
+  - `$1`: The [`ARGPARSER_SCRIPT_NAME`](#4536-argparser_script_name) with the problematic definition.
+  - `$2`: The missing column.
+
+#### 4.4.45. `Error arg def file field`
+
+- ***Description:*** The error that the arguments definition in the [`ARGPARSER_ARG_DEF_FILE`](#458-argparser_arg_def_file) lacks a column, instead giving an unused one.
+- ***Reasons for error:*** When parsing the arguments definition from the `ARGPARSER_ARG_DEF_FILE`, the argparser found the definition with as many columns as required, but the header sets a column name to a string not used by the argparser, leaving a column indentifier missing.
+- ***Interpolated variables:***
+  - `$1`: The [`ARGPARSER_ARG_DEF_FILE`](#458-argparser_arg_def_file) with the problematic definition.
+  - `$2`: The missing column.
 
 ### 4.5. Environment variables
 
