@@ -83,6 +83,11 @@ The argparser is entirely written in pure Bash, without invoking external comman
       1. [`Error env var short options`](#4436-error-env-var-short-options)
       1. [`Error env var long options`](#4437-error-env-var-long-options)
       1. [`Error env var files`](#4438-error-env-var-files)
+      1. [`Error arg array 1`](#4439-error-arg-array-1)
+      1. [`Error arg array 2`](#4440-error-arg-array-2)
+      1. [`Error arg array 3`](#4441-error-arg-array-3)
+      1. [`Error wrong arg def`](#4442-error-wrong-arg-def)
+      1. [`Error no arg def`](#4443-error-no-arg-def)
    1. [Environment variables](#45-environment-variables)
       1. [Overview](#451-overview)
       1. [`ARGPARSER_ADD_HELP`](#452-argparser_add_help)
@@ -1730,6 +1735,11 @@ In order to facilitate translators the translation of the argparser-generated st
 1. [`Error env var short options`](#4436-error-env-var-short-options)
 1. [`Error env var long options`](#4437-error-env-var-long-options)
 1. [`Error env var files`](#4438-error-env-var-files)
+1. [`Error arg array 1`](#4439-error-arg-array-1)
+1. [`Error arg array 2`](#4440-error-arg-array-2)
+1. [`Error arg array 3`](#4441-error-arg-array-3)
+1. [`Error wrong arg def`](#4442-error-wrong-arg-def)
+1. [`Error no arg def`](#4443-error-no-arg-def)
 <!-- </toc> -->
 
 #### 4.4.1. `Positional arguments`
@@ -1970,6 +1980,42 @@ In order to facilitate translators the translation of the argparser-generated st
 - ***Interpolated variables:***
   - `$1`: The first environment variable's name.
   - `$2`: The second environment variable's name.
+
+#### 4.4.39. `Error arg array 1`
+
+- ***Description:*** The error that no arguments definition has been provided upon calling the argparser.
+- ***Reasons for error:*** When calling (and not sourcing) the argparser, the arguments definition must be provided through STDIN, either by piping or by process substitution. However, STDIN (file descriptor 0) has been deemed empty.
+- ***Interpolated variables:***
+  - `$1`: The path to the argparser, as [`ARGPARSER_SCRIPT_NAME`](#4536-argparser_script_name).
+
+#### 4.4.40. `Error arg array 2`
+
+- ***Description:*** The error that [`ARGPARSER_ARG_ARRAY_NAME`](#457-argparser_arg_array_name) refers to a variable that's not defined.
+- ***Reasons for error:*** The arguments definition must be provided as an array variable whose name is stored in `ARGPARSER_ARG_ARRAY_NAME`. If this variable is not defined, the argparser tries to guess how it might have been called by looking for all variable names starting with `"arg"` and reports the first match.
+- ***Interpolated variables:***
+  - `$1`: The variable `ARGPARSER_ARG_ARRAY_NAME` refers to.
+  - `$2`: The guesstimated actual name of the variable.
+
+#### 4.4.41. `Error arg array 3`
+
+- ***Description:*** The error that [`ARGPARSER_ARG_ARRAY_NAME`](#457-argparser_arg_array_name) refers to a variable that's not defined.
+- ***Reasons for error:*** The arguments definition must be provided as an array variable whose name is stored in `ARGPARSER_ARG_ARRAY_NAME`. If this variable is not defined, the argparser tries to guess how it might have been called by looking for all variable names starting with `"arg"`, but didn't find any match.
+- ***Interpolated variables:***
+  - `$1`: The variable `ARGPARSER_ARG_ARRAY_NAME` refers to.
+
+#### 4.4.42. `Error wrong arg def`
+
+- ***Description:*** The error that an argument has a malformed definition.
+- ***Reasons for error:*** When reading the arguments definition, the argparser found a definition line giving either a wrong number of columns or only an argument name, with a likewise malformed definition corresponding to this argument in the accompanying [`ARGPARSER_ARG_DEF_FILE`](#458-argparser_arg_def_file).
+- ***Interpolated variables:***
+  - `$1`: The problematic arguments definition line with the argument.
+
+#### 4.4.43. `Error no arg def`
+
+- ***Description:*** The error that an argument is lacking a definition.
+- ***Reasons for error:*** When reading the arguments definition, the argparser found a definition line giving only an argument name, but no definition corresponding to this argument in the accompanying [`ARGPARSER_ARG_DEF_FILE`](#458-argparser_arg_def_file).
+- ***Interpolated variables:***
+  - `$1`: The problematic arguments definition line with the argument.
 
 ### 4.5. Environment variables
 
