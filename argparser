@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-04-11
+# Last Modification: 2025-05-07
 
 # TODO: Support mutually exclusive argument groups.
 # TODO: Consider using the Bash 5.3 form "${ command ... ; }" for the
@@ -804,6 +804,7 @@ function argparser_read_configuration() {
     # ARGPARSER_ADD_HELP
     # ARGPARSER_ADD_USAGE
     # ARGPARSER_ADD_VERSION
+    # ARGPARSER_ALLOW_FLAG_NEGATION
     # ARGPARSER_ALLOW_OPTION_ABBREVIATION
     # ARGPARSER_ALLOW_OPTION_MERGING
     # ARGPARSER_ARG_ARRAY_NAME
@@ -1032,6 +1033,7 @@ function argparser_set_env_vars() {
     # ARGPARSER_ADD_HELP
     # ARGPARSER_ADD_USAGE
     # ARGPARSER_ADD_VERSION
+    # ARGPARSER_ALLOW_FLAG_NEGATION
     # ARGPARSER_ALLOW_OPTION_ABBREVIATION
     # ARGPARSER_ALLOW_OPTION_MERGING
     # ARGPARSER_ARG_ARRAY_NAME
@@ -1134,6 +1136,7 @@ function argparser_set_env_vars() {
         "ARGPARSER_ADD_HELP                  :            : add-help                  :              : true                 :            : bool : 0      : Options   :       : add ARGPARSER_HELP_OPTIONS and --help as flags to call the help message                                 "
         "ARGPARSER_ADD_USAGE                 :            : add-usage                 :              : true                 :            : bool : 0      : Options   :       : add ARGPARSER_USAGE_OPTIONS and --usage as flags to call the usage message                              "
         "ARGPARSER_ADD_VERSION               :            : add-version               :              : true                 :            : bool : 0      : Options   :       : add ARGPARSER_VERSION_OPTIONS and --version as flags to call the version message                        "
+        "ARGPARSER_ALLOW_FLAG_NEGATION       :            : allow-flag-negation       :              : true                 :            : bool : 0      : Options   :       : allow the user to negate long-option flags by prefixing them with \"no-\"                               "
         "ARGPARSER_ALLOW_OPTION_ABBREVIATION :            : allow-option-abbreviation :              : false                :            : bool : 0      : Options   :       : allow the user to give long option names in abbreviated form                                            "
         "ARGPARSER_ALLOW_OPTION_MERGING      :            : allow-option-merging      :              : false                :            : bool : 0      : Options   :       : allow the user to give short option names in merged (concatenated) form                                 "
         "ARGPARSER_ARG_ARRAY_NAME            :            : arg-array-name            : NAME         : args                 :            : str  : 1      : Options   :       : the indexed array for the raw arguments and the associative array for the parsed arguments              "
@@ -1194,6 +1197,7 @@ function argparser_set_env_vars() {
     ARGPARSER_ADD_HELP=true \
         ARGPARSER_ADD_USAGE=true \
         ARGPARSER_ADD_VERSION=true \
+        ARGPARSER_ALLOW_FLAG_NEGATION=true \
         ARGPARSER_ALLOW_OPTION_ABBREVIATION=false \
         ARGPARSER_ALLOW_OPTION_MERGING=false \
         ARGPARSER_ARG_ARRAY_NAME="ARGPARSER_ARGS" \
@@ -1338,6 +1342,7 @@ function argparser_check_env_vars() {
     # - ARGPARSER_ADD_HELP (read-only)
     # - ARGPARSER_ADD_USAGE (read-only)
     # - ARGPARSER_ADD_VERSION (read-only)
+    # - ARGPARSER_ALLOW_FLAG_NEGATION (read-only)
     # - ARGPARSER_ALLOW_OPTION_ABBREVIATION (read-only)
     # - ARGPARSER_ALLOW_OPTION_MERGING (read-only)
     # - ARGPARSER_ARG_ARRAY_NAME (read-only)
@@ -1411,6 +1416,7 @@ function argparser_check_env_vars() {
         ARGPARSER_ADD_HELP
         ARGPARSER_ADD_USAGE
         ARGPARSER_ADD_VERSION
+        ARGPARSER_ALLOW_FLAG_NEGATION
         ARGPARSER_ALLOW_OPTION_ABBREVIATION
         ARGPARSER_ALLOW_OPTION_MERGING
         ARGPARSER_ARG_DEF_FILE_HAS_HEADER
@@ -3808,16 +3814,19 @@ function argparser_parse_long_option() {
     #   or "Value: ", as indexed array
     #
     # Environment:
+    # - ARGPARSER_ALLOW_FLAG_NEGATION (read-only)
     # - ARGPARSER_ALLOW_OPTION_ABBREVIATION (read-only)
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
 
     # Define the local variables.
     local abbr_long_option
     local -A abbr_long_options
+    local actual_prefix
     local arg_key
     local count
     local error_message
     local given_arg
+    local is_negated
     local long_option
     local -a long_options
     local option_name
@@ -3841,6 +3850,26 @@ function argparser_parse_long_option() {
         values=("")
     fi
     argparser_get_arg_key "long" "${option_name}"
+
+    # If no argument identifier for the entire option name has been
+    # found, the option name starts with "no-", and flag negation is
+    # enabled, trim the "no-" prefix, convert it to a "+", and set the
+    # option name's remainder as new option name.
+    if [[ "${ARGPARSER_ALLOW_FLAG_NEGATION}" == true \
+        && -z "${arg_key}" \
+        && "${option_name::3}" == "no-" ]]
+    then
+        is_negated=true
+        option_name="${option_name:3}"
+        argparser_get_arg_key "long" "${option_name}"
+
+        actual_prefix="${prefix}"
+        if [[ "${prefix}" == "-" ]]; then
+            prefix="+"
+        else
+            prefix="-"
+        fi
+    fi
 
     # Output the argument, split into the option name and values, or an
     # error message.  In the latter case, output also the given
@@ -3910,12 +3939,23 @@ function argparser_parse_long_option() {
         else
             # Since the argument hasn't been found in the definition,
             # output an error message and the argument.
-            error_message="Error: The long option \"\$1\" is unknown."
-            argparser_translate "Error long option unknown" \
-                "${error_message}" "${given_arg%%=*}"
-            error_message="${translation}"
-            messages+=("${error_message}")
-            messages+=("Argument: ${given_arg}")
+            if [[ "${is_negated}" == true ]]; then
+                error_message="Error: The long option \"\$1\" is negated, but "
+                error_message+="its affirmative version \"\$2\" is unknown."
+                argparser_translate "Error long option negation" \
+                    "${error_message}" "${given_arg%%=*}" \
+                    "${actual_prefix}${actual_prefix}${option_name}"
+                error_message="${translation}"
+                messages+=("${error_message}")
+                messages+=("Argument: ${given_arg}")
+            else
+                error_message="Error: The long option \"\$1\" is unknown."
+                argparser_translate "Error long option unknown" \
+                    "${error_message}" "${given_arg%%=*}"
+                error_message="${translation}"
+                messages+=("${error_message}")
+                messages+=("Argument: ${given_arg}")
+            fi
         fi
     else
         if [[ -n "${arg_key}" ]]; then
@@ -3935,12 +3975,23 @@ function argparser_parse_long_option() {
         else
             # Since the argument hasn't been found in the definition,
             # output an error message and the argument.
-            error_message="Error: The long option \"\$1\" is unknown."
-            argparser_translate "Error long option unknown" \
-                "${error_message}" "${given_arg%%=*}"
-            error_message="${translation}"
-            messages+=("${error_message}")
-            messages+=("Argument: ${given_arg}")
+            if [[ "${is_negated}" == true ]]; then
+                error_message="Error: The long option \"\$1\" is negated, but "
+                error_message+="its affirmative version \"\$2\" is unknown."
+                argparser_translate "Error long option negation" \
+                    "${error_message}" "${given_arg%%=*}" \
+                    "${actual_prefix}${actual_prefix}${option_name}"
+                error_message="${translation}"
+                messages+=("${error_message}")
+                messages+=("Argument: ${given_arg}")
+            else
+                error_message="Error: The long option \"\$1\" is unknown."
+                argparser_translate "Error long option unknown" \
+                    "${error_message}" "${given_arg%%=*}"
+                error_message="${translation}"
+                messages+=("${error_message}")
+                messages+=("Argument: ${given_arg}")
+            fi
         fi
     fi
 }
@@ -4319,7 +4370,7 @@ function argparser_check_arg_values() {
     for prefix in "${prefixes[@]}"; do
         if [[ "${prefix}" == "+" && "${arg_number}" != 0 ]]; then
             error_message="Error: The option \"\$1\" is no flag and thus "
-            error_message+="cannot be given with a \"+\" prefix."
+            error_message+="cannot be given with a \"+\" or \"no-\" prefix."
 
             argparser_translate "Error arg no flag" "${error_message}" \
                 "${option_names}"
@@ -7354,6 +7405,7 @@ function argparser_main() {
         unset ARGPARSER_ADD_HELP
         unset ARGPARSER_ADD_USAGE
         unset ARGPARSER_ADD_VERSION
+        unset ARGPARSER_ALLOW_FLAG_NEGATION
         unset ARGPARSER_ALLOW_OPTION_ABBREVIATION
         unset ARGPARSER_ALLOW_OPTION_MERGING
         unset ARGPARSER_ARG_ARRAY_NAME

@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-04-11
+# Last Modification: 2025-05-07
 
 # 1.    Define the translations for the arguments parsing.
 ---
@@ -803,6 +803,14 @@ Error arg unknown:
   de: >
     Fehler: Das Argument "$1" ist unbekannt.
 
+Error long option negation:
+  en: >
+    Error: The long option "$1" is negated, but its affirmative version "$2" is
+    unknown.
+  de: >
+    Fehler: Die lange Option "$1" ist negiert, ihre bejahende Version "$2" ist
+    aber unbekannt.
+
 Error long option match:
   en: >
     Error: The long option "$1" matches multiple long options.
@@ -845,11 +853,11 @@ Error pos arg count 2:
 ---
 Error arg no flag:
   en: >
-    Error: The option "$1" is no flag and thus cannot be given with a "+"
-    prefix.
+    Error: The option "$1" is no flag and thus cannot be given with a "+" or
+    "no-" prefix.
   de: >
     Fehler: Die Option "$1" ist kein Flag und kann daher nicht mit einem
-    "+"-Präfix gegeben werden.
+    "+"- oder "no-"-Präfix gegeben werden.
 
 Error mandatory arg:
   en: >
