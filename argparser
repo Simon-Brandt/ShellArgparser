@@ -804,6 +804,7 @@ function argparser_read_configuration() {
     # ARGPARSER_ADD_HELP
     # ARGPARSER_ADD_USAGE
     # ARGPARSER_ADD_VERSION
+    # ARGPARSER_ALLOW_FLAG_INVERSION
     # ARGPARSER_ALLOW_FLAG_NEGATION
     # ARGPARSER_ALLOW_OPTION_ABBREVIATION
     # ARGPARSER_ALLOW_OPTION_MERGING
@@ -1033,6 +1034,7 @@ function argparser_set_env_vars() {
     # ARGPARSER_ADD_HELP
     # ARGPARSER_ADD_USAGE
     # ARGPARSER_ADD_VERSION
+    # ARGPARSER_ALLOW_FLAG_INVERSION
     # ARGPARSER_ALLOW_FLAG_NEGATION
     # ARGPARSER_ALLOW_OPTION_ABBREVIATION
     # ARGPARSER_ALLOW_OPTION_MERGING
@@ -1136,6 +1138,7 @@ function argparser_set_env_vars() {
         "ARGPARSER_ADD_HELP                  :            : add-help                  :              : true                 :            : bool : 0      : Options   :       : add ARGPARSER_HELP_OPTIONS and --help as flags to call the help message                                 "
         "ARGPARSER_ADD_USAGE                 :            : add-usage                 :              : true                 :            : bool : 0      : Options   :       : add ARGPARSER_USAGE_OPTIONS and --usage as flags to call the usage message                              "
         "ARGPARSER_ADD_VERSION               :            : add-version               :              : true                 :            : bool : 0      : Options   :       : add ARGPARSER_VERSION_OPTIONS and --version as flags to call the version message                        "
+        "ARGPARSER_ALLOW_FLAG_INVERSION      :            : allow-flag-inversion      :              : true                 :            : bool : 0      : Options   :       : allow the user to invert flags by prefixing them with \"+\" (short options) or \"++\" (long options)    "
         "ARGPARSER_ALLOW_FLAG_NEGATION       :            : allow-flag-negation       :              : true                 :            : bool : 0      : Options   :       : allow the user to negate long-option flags by prefixing them with \"no-\"                               "
         "ARGPARSER_ALLOW_OPTION_ABBREVIATION :            : allow-option-abbreviation :              : false                :            : bool : 0      : Options   :       : allow the user to give long option names in abbreviated form                                            "
         "ARGPARSER_ALLOW_OPTION_MERGING      :            : allow-option-merging      :              : false                :            : bool : 0      : Options   :       : allow the user to give short option names in merged (concatenated) form                                 "
@@ -1197,6 +1200,7 @@ function argparser_set_env_vars() {
     ARGPARSER_ADD_HELP=true \
         ARGPARSER_ADD_USAGE=true \
         ARGPARSER_ADD_VERSION=true \
+        ARGPARSER_ALLOW_FLAG_INVERSION=true \
         ARGPARSER_ALLOW_FLAG_NEGATION=true \
         ARGPARSER_ALLOW_OPTION_ABBREVIATION=false \
         ARGPARSER_ALLOW_OPTION_MERGING=false \
@@ -1342,6 +1346,7 @@ function argparser_check_env_vars() {
     # - ARGPARSER_ADD_HELP (read-only)
     # - ARGPARSER_ADD_USAGE (read-only)
     # - ARGPARSER_ADD_VERSION (read-only)
+    # - ARGPARSER_ALLOW_FLAG_INVERSION (read-only)
     # - ARGPARSER_ALLOW_FLAG_NEGATION (read-only)
     # - ARGPARSER_ALLOW_OPTION_ABBREVIATION (read-only)
     # - ARGPARSER_ALLOW_OPTION_MERGING (read-only)
@@ -1416,6 +1421,7 @@ function argparser_check_env_vars() {
         ARGPARSER_ADD_HELP
         ARGPARSER_ADD_USAGE
         ARGPARSER_ADD_VERSION
+        ARGPARSER_ALLOW_FLAG_INVERSION
         ARGPARSER_ALLOW_FLAG_NEGATION
         ARGPARSER_ALLOW_OPTION_ABBREVIATION
         ARGPARSER_ALLOW_OPTION_MERGING
@@ -3511,6 +3517,7 @@ function argparser_parse_arg() {
     # - ARGPARSER_ADD_HELP (read-only)
     # - ARGPARSER_ADD_USAGE (read-only)
     # - ARGPARSER_ADD_VERSION (read-only)
+    # - ARGPARSER_ALLOW_FLAG_INVERSION (read-only)
     # - ARGPARSER_USE_LONG_OPTIONS (read-only)
     # - ARGPARSER_USE_SHORT_OPTIONS (read-only)
 
@@ -3774,17 +3781,32 @@ function argparser_parse_arg() {
         # ${ARGPARSER_USE_LONG_OPTIONS} is necessary.
         messages+=("Logo")
     elif [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true \
-        && ("${given_arg::2}" == "--" || "${given_arg::2}" == "++") ]]
+        && ("${given_arg::2}" == "--" \
+            || ("${ARGPARSER_ALLOW_FLAG_INVERSION}" == true \
+                && "${given_arg::2}" == "++")) ]]
     then
-        # The argument is a long option, so check whether the given
-        # argument is defined.
+        # The argument is a long option, with a double hyphen or an
+        # activated doubled plus sign as prefix,  so check whether the
+        # given argument is defined.
         argparser_parse_long_option "${given_arg}"
     elif [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true \
-        && "${given_arg::2}" == [-+][!-+] ]]
+        && ("${given_arg::2}" == -[!-+] \
+            || ("${ARGPARSER_ALLOW_FLAG_INVERSION}" == true \
+                && "${given_arg::2}" == +[!-+])) ]]
     then
         # The argument is a short option, so check whether the given
         # argument is defined.
         argparser_parse_short_option "${given_arg}"
+    elif [[ "${given_arg::2}" == +[!-] ]]
+    then
+        # The argument is given with a deactivated plus sign (possibly
+        # doubled) as prefix.
+        error_message="Error: Inverting flags with a \"+\" prefix is "
+        error_message+="deactivated."
+        argparser_translate "Error arg inversion" "${error_message}"
+        error_message="${translation}"
+        messages+=("${error_message}")
+        messages+=("Argument: ${given_arg}")
     else
         # The argument hasn't been matched by any condition, so deem it
         # unknown.  This is true if the prefix is neither "--", "++", a
@@ -7419,6 +7441,7 @@ function argparser_main() {
         unset ARGPARSER_ADD_HELP
         unset ARGPARSER_ADD_USAGE
         unset ARGPARSER_ADD_VERSION
+        unset ARGPARSER_ALLOW_FLAG_INVERSION
         unset ARGPARSER_ALLOW_FLAG_NEGATION
         unset ARGPARSER_ALLOW_OPTION_ABBREVIATION
         unset ARGPARSER_ALLOW_OPTION_MERGING

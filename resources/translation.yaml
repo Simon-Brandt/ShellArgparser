@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-05-07
+# Last Modification: 2025-05-08
 
 # 1.    Define the translations for the arguments parsing.
 ---
@@ -796,6 +796,12 @@ Error arg version 3:
     Error: The option "-V" takes no value.
   de: >
     Fehler: Die Option "-V" nimmt keinen Wert.
+
+Error arg inversion:
+  en: >
+    Error: Inverting flags with a "+" prefix is deactivated.
+  de: >
+    Fehler: Flags mit einem "-"-Präfix zu invertieren ist deaktiviert.
 
 Error arg unknown:
   en: >
