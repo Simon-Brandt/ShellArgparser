@@ -647,13 +647,13 @@ $ head --lines=10 options.cfg
 add-help                  = true
 add-usage                 = true
 add-version               = true
+allow-flag-inversion      = true
+allow-flag-negation       = true
 allow-option-abbreviation = false
 allow-option-merging      = false
 arg-array-name            = "args"
 arg-def-file              = ""
 arg-def-file-has-header   = true
-arg-def-has-header        = true
-arg-delimiter-1           = "|"
 ```
 
 For demonstration, we take a stripped-down version of our `try_argparser.sh` script as `try_config_file.sh`, where we omit the alias names for the short and long options, for the sake of brevity. Note that using [`readlink`](https://man7.org/linux/man-pages/man1/readlink.1.html "man7.org &rightarrow; man pages &rightarrow; readlink(1)") is only required here to cope with the configuration file residing in the [resources](resources) directory, it is not necessary if you use absolute paths or store the configuration file alongside your script in the same directory&mdash;or won't invoke your script from multiple working directories.
@@ -1342,6 +1342,11 @@ Options:
 [--add-version]                  add ARGPARSER_VERSION_OPTIONS and --version as
                                  flags to call the version message (default:
                                  true)
+[--allow-flag-inversion]         allow the user to invert flags by prefixing
+                                 them with "+" (short options) or "++" (long
+                                 options) (default: true)
+[--allow-flag-negation]          allow the user to negate long-option flags by
+                                 prefixing them with "no-" (default: true)
 [--allow-option-abbreviation]    allow the user to give long option names in
                                  abbreviated form (default: false)
 [--allow-option-merging]         allow the user to give short option names in

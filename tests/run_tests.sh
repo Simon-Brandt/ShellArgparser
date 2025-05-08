@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-04-09
+# Last Modification: 2025-05-08
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -1533,6 +1533,8 @@ Usage: argparser [--help | --usage | --version]
                  [--add-help]
                  [--add-usage]
                  [--add-version]
+                 [--allow-flag-inversion]
+                 [--allow-flag-negation]
                  [--allow-option-abbreviation]
                  [--allow-option-merging]
                  [--arg-array-name=NAME]
@@ -1615,6 +1617,11 @@ Options:
 [--add-version]                  add ARGPARSER_VERSION_OPTIONS and --version as
                                  flags to call the version message (default:
                                  true)
+[--allow-flag-inversion]         allow the user to invert flags by prefixing
+                                 them with "+" (short options) or "++" (long
+                                 options) (default: true)
+[--allow-flag-negation]          allow the user to negate long-option flags by
+                                 prefixing them with "no-" (default: true)
 [--allow-option-abbreviation]    allow the user to give long option names in
                                  abbreviated form (default: false)
 [--allow-option-merging]         allow the user to give short option names in
