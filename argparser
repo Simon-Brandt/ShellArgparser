@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-05-07
+# Last Modification: 2025-05-08
 
 # TODO: Support mutually exclusive argument groups.
 # TODO: Consider using the Bash 5.3 form "${ command ... ; }" for the
@@ -3820,7 +3820,7 @@ function argparser_parse_long_option() {
 
     # Define the local variables.
     local abbr_long_option
-    local -A abbr_long_options
+    local -a abbr_long_options
     local actual_prefix
     local arg_key
     local count
@@ -3880,6 +3880,7 @@ function argparser_parse_long_option() {
     then
         # Check if the argument is an abbreviated long option, since no
         # argument identifier for the entire option name has been found.
+        abbr_long_options=( )
         for arg_key in "${!all_long_options[@]}"; do
             # Read the argument's definition.
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a long_options \
@@ -3887,13 +3888,11 @@ function argparser_parse_long_option() {
 
             # Abbreviate the long option names by shortening them to the
             # length of the given option name and add them to the
-            # associative array.  Ignore arguments without long option
-            # name.
+            # indexed array.  Ignore arguments without long option name.
             for long_option in "${long_options[@]}"; do
-                if [[ -z "${long_option}" ]]; then
-                    break
+                if [[ -n "${long_option}" ]]; then
+                    abbr_long_options+=("${long_option::${#option_name}}")
                 fi
-                abbr_long_options[${arg_key}]="${long_option::${#option_name}}"
             done
         done
 
@@ -3905,11 +3904,26 @@ function argparser_parse_long_option() {
         argparser_count "${option_name}" "${abbr_long_options[@]}"
         if (( count == 1 )); then
             # Get the argument identifier for the abbreviated argument.
-            for arg_key in "${!abbr_long_options[@]}"; do
-                abbr_long_option="${abbr_long_options[${arg_key}]}"
-                if [[ "${option_name}" == "${abbr_long_option}"* ]]; then
-                    break
-                fi
+            for arg_key in "${!all_long_options[@]}"; do
+                # Read the argument's definition.
+                IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a long_options \
+                    <<< "${all_long_options[${arg_key}]}"
+
+                # Abbreviate the long option names by shortening them to
+                # the length of the given option name.  Ignore arguments
+                # without long option name.  As soon as the abbreviated
+                # option name matches the given one, the argument
+                # identifier has been found, so break both loops.
+                for long_option in "${long_options[@]}"; do
+                    if [[ -z "${long_option}" ]]; then
+                        continue
+                    fi
+
+                    abbr_long_option="${long_option::${#option_name}}"
+                    if [[ "${option_name}" == "${abbr_long_option}"* ]]; then
+                        break 2
+                    fi
+                done
             done
 
             if [[ -n "${values[0]}" ]]; then
