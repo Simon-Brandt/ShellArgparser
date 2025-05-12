@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-05-08
+# Last Modification: 2025-05-12
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -1416,7 +1416,7 @@ print_section "pipeline"
 # 11.1. Test the normal output.
 test_number="11.1"
 test_type="output"
-cmd="sh test_pipeline.sh 1 2 --var-1 1 --var-2 2 --var-3 A"
+cmd="dash test_pipeline.sh 1 2 --var-1 1 --var-2 2 --var-3 A"
 output="$(cat << EOF
 The keyword argument "var_1" is set to "1".
 The keyword argument "var_2" is set to "2".
@@ -1446,7 +1446,7 @@ print_diff "${cmd}" "${output}" "${error}"
 # 11.2. Test the version message.
 test_number="11.2"
 test_type="version"
-cmd="sh test_pipeline.sh --version"
+cmd="dash test_pipeline.sh --version"
 output="$(cat << EOF
 test_pipeline.sh v1.0.0
 EOF
@@ -1457,7 +1457,7 @@ print_diff "${cmd}" "${output}" "${error}"
 # 11.3. Test the usage message.
 test_number="11.3"
 test_type="usage"
-cmd="sh test_pipeline.sh --usage"
+cmd="dash test_pipeline.sh --usage"
 output="$(cat << EOF
 Usage: test_pipeline.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 EOF
@@ -1468,7 +1468,7 @@ print_diff "${cmd}" "${output}" "${error}"
 # 11.4. Test the help message.
 test_number="11.4"
 test_type="help"
-cmd="sh test_pipeline.sh --help"
+cmd="dash test_pipeline.sh --help"
 output="$(cat << EOF
 Usage: test_pipeline.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 
