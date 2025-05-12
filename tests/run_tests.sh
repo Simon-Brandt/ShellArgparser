@@ -575,9 +575,12 @@ Optional options:
 [-g, -G], [--var-7, --var-g]               (DEPRECATED) no value (flag) with
                                            default (default: true)
 
--h, -?,   --help                           display this help and exit
--u,       --usage                          display the usage and exit
--V,       --version                        display the version and exit
+[-h, -?], [--help]                         display this help and exit (default:
+                                           false)
+[-u],     [--usage]                        display the usage and exit (default:
+                                           false)
+[-V],     [--version]                      display the version and exit
+                                           (default: false)
 EOF
 )"
 error=""
@@ -614,9 +617,12 @@ Optional options:
 [-g, -G], [--var-7, --var-g]               (DEPRECATED) no value (flag) with
                                            default (default: true)
 
--h, -?,   --help                           display this help and exit
--u,       --usage                          display the usage and exit
--V,       --version                        display the version and exit
+[-h, -?], [--help]                         display this help and exit (default:
+                                           false)
+[-u],     [--usage]                        display the usage and exit (default:
+                                           false)
+[-V],     [--version]                      display the version and exit
+                                           (default: false)
 EOF
 )"
 error=""
@@ -717,9 +723,9 @@ Optional options:
 [-f, -F]           no value (flag) with default (default: false)
 [-g, -G]           (DEPRECATED) no value (flag) with default (default: true)
 
--h, -?             display this help and exit
--u                 display the usage and exit
--V                 display the version and exit
+[-h, -?]           display this help and exit (default: false)
+[-u]               display the usage and exit (default: false)
+[-V]               display the version and exit (default: false)
 EOF
 )"
 error=""
@@ -849,9 +855,9 @@ Optional options:
 [--var-7, --var-g]               (DEPRECATED) no value (flag) with default
                                  (default: true)
 
---help                           display this help and exit
---usage                          display the usage and exit
---version                        display the version and exit
+[--help]                         display this help and exit (default: false)
+[--usage]                        display the usage and exit (default: false)
+[--version]                      display the version and exit (default: false)
 EOF
 )"
 error=""
@@ -919,10 +925,10 @@ Optional options:
 [-f], [--var-6]       no value (flag) with default (default: false)
 [-g], [--var-7]       (DEPRECATED) no value (flag) with default (default: true)
 
--h,   --help          display this help and exit
--?,
--u,   --usage         display the usage and exit
--V,   --version       display the version and exit
+[-h,  [--help]        display this help and exit (default: false)
+-?],
+[-u], [--usage]       display the usage and exit (default: false)
+[-V], [--version]     display the version and exit (default: false)
 EOF
 )"
 error=""
@@ -975,13 +981,13 @@ Usage: test_positional_arguments.sh [pos_1] pos_2
 Mandatory arguments to long options are mandatory for short options too.
 
 Positional arguments:
-[pos_1={1,2}]   one positional argument with default and choice (default: 2)
-pos_2           two positional arguments without default or choice
+[pos_1={1,2}]     one positional argument with default and choice (default: 2)
+pos_2             two positional arguments without default or choice
 
--h,   --help    display this help and exit
--?,
--u,   --usage   display the usage and exit
--V,   --version display the version and exit
+[-h,  [--help]    display this help and exit (default: false)
+-?],
+[-u], [--usage]   display the usage and exit (default: false)
+[-V], [--version] display the version and exit (default: false)
 EOF
 )"
 error=""
@@ -1086,10 +1092,10 @@ Optional options:
 [-f], [--var-6]       no value (flag) with default (default: false)
 [-g], [--var-7]       (DEPRECATED) no value (flag) with default (default: true)
 
--h,   --help          display this help and exit
--?,
--u,   --usage         display the usage and exit
--V,   --version       display the version and exit
+[-h,  [--help]        display this help and exit (default: false)
+-?],
+[-u], [--usage]       display the usage and exit (default: false)
+[-V], [--version]     display the version and exit (default: false)
 EOF
 )"
 error=""
@@ -1164,10 +1170,10 @@ Optional options:
 [-f], [--var-6]       no value (flag) with default (default: false)
 [-g], [--var-7]       (DEPRECATED) no value (flag) with default (default: true)
 
--h,   --help          display this help and exit
--?,
--u,   --usage         display the usage and exit
--V,   --version       display the version and exit
+[-h,  [--help]        display this help and exit (default: false)
+-?],
+[-u], [--usage]       display the usage and exit (default: false)
+[-V], [--version]     display the version and exit (default: false)
 EOF
 )"
 error=""
@@ -1247,10 +1253,10 @@ Optional options:
 [-g], [--var-7]       (DEPRECATED) no value (flag) with default (default: true)
 
 There are always three options for the help messages.
--h,   --help          display this help and exit
--?,
--u,   --usage         display the usage and exit
--V,   --version       display the version and exit
+[-h,  [--help]        display this help and exit (default: false)
+-?],
+[-u], [--usage]       display the usage and exit (default: false)
+[-V], [--version]     display the version and exit (default: false)
 EOF
 )"
 error=""
@@ -1360,10 +1366,10 @@ Optional options:
 [-g], [--var-7]       (DEPRECATED) no value (flag) with default (default: true)
 
 There are always three options for the help messages.
--h,   --help          display this help and exit
--?,
--u,   --usage         display the usage and exit
--V,   --version       display the version and exit
+[-h,  [--help]        display this help and exit (default: false)
+-?],
+[-u], [--usage]       display the usage and exit (default: false)
+[-V], [--version]     display the version and exit (default: false)
 EOF
 )"
 error=""
@@ -1400,10 +1406,10 @@ Optionale Optionen:
 [-g], [--var-7]       (VERALTET) kein Wert (Flag) mit Vorgabe (Vorgabe: wahr)
 
 Es gibt grundsätzlich drei Optionen für die Hilfe-Meldungen.
--h,   --help          diese Hilfe anzeigen und beenden
--?,
--u,   --usage         den Aufruf anzeigen und beenden
--V,   --version       die Version anzeigen und beenden
+[-h,  [--help]        diese Hilfe anzeigen und beenden (Vorgabe: falsch)
+-?],
+[-u], [--usage]       den Aufruf anzeigen und beenden (Vorgabe: falsch)
+[-V], [--version]     die Version anzeigen und beenden (Vorgabe: falsch)
 EOF
 )"
 error=""
@@ -1490,10 +1496,10 @@ Optional options:
 [-f], [--var-6]       no value (flag) with default (default: false)
 [-g], [--var-7]       (DEPRECATED) no value (flag) with default (default: true)
 
--h,   --help          display this help and exit
--?,
--u,   --usage         display the usage and exit
--V,   --version       display the version and exit
+[-h,  [--help]        display this help and exit (default: false)
+-?],
+[-u], [--usage]       display the usage and exit (default: false)
+[-V], [--version]     display the version and exit (default: false)
 EOF
 )"
 error=""
@@ -1549,6 +1555,7 @@ Usage: argparser [--help | --usage | --version]
                  [--count-flags]
                  [--error-exit-code=INT]
                  [--error-style=STYLE...]
+                 [--help-arg-group=NAME]
                  [--help-exit-code=INT]
                  [--help-file=FILE]
                  [--help-file-include-char=CHAR]
@@ -1655,6 +1662,9 @@ Options:
                                  parsing (default: 1)
 [--error-style=STYLE]            the color and style specification for error
                                  messages (default: "red,bold,reverse")
+[--help-arg-group=NAME]          the name of the argument group holding all
+                                 help options, i.e., --help, --usage, and
+                                 --version (default: "Help options")
 [--help-exit-code=INT]           the exit code for help messages (default: 0)
 [--help-file=FILE]               the path to a file holding the extended help
                                  message (default: "''")
@@ -1742,9 +1752,9 @@ Options:
                                  ARGPARSER_ARG_ARRAY_NAME to STDOUT (default:
                                  false)
 
---help                           display this help and exit
---usage                          display the usage and exit
---version                        display the version and exit
+[--help]                         display this help and exit (default: false)
+[--usage]                        display the usage and exit (default: false)
+[--version]                      display the version and exit (default: false)
 EOF
 )"
 error=""

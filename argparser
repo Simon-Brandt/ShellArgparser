@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-05-08
+# Last Modification: 2025-05-12
 
 # TODO: Support mutually exclusive argument groups.
 # TODO: Consider using the Bash 5.3 form "${ command ... ; }" for the
@@ -820,6 +820,7 @@ function argparser_read_configuration() {
     # ARGPARSER_COUNT_FLAGS
     # ARGPARSER_ERROR_EXIT_CODE
     # ARGPARSER_ERROR_STYLE
+    # ARGPARSER_HELP_ARG_GROUP
     # ARGPARSER_HELP_EXIT_CODE
     # ARGPARSER_HELP_FILE
     # ARGPARSER_HELP_FILE_INCLUDE_CHAR
@@ -1052,6 +1053,7 @@ function argparser_set_env_vars() {
     # ARGPARSER_COUNT_FLAGS
     # ARGPARSER_ERROR_EXIT_CODE
     # ARGPARSER_ERROR_STYLE
+    # ARGPARSER_HELP_ARG_GROUP
     # ARGPARSER_HELP_EXIT_CODE
     # ARGPARSER_HELP_FILE
     # ARGPARSER_HELP_FILE_INCLUDE_CHAR
@@ -1154,6 +1156,7 @@ function argparser_set_env_vars() {
         "ARGPARSER_COUNT_FLAGS               :            : count-flags               :              : false                :            : bool : 0      : Options   :       : count flags instead of setting them to true or false based on the last prefix used on the command line  "
         "ARGPARSER_ERROR_EXIT_CODE           :            : error-exit-code           : INT          : 1                    :            : int  : 1      : Options   :       : the exit code when errors occurred upon parsing                                                         "
         "ARGPARSER_ERROR_STYLE               :            : error-style               : STYLE        : red,bold,reverse     :            : str  : +      : Options   :       : the color and style specification for error messages                                                    "
+        "ARGPARSER_HELP_ARG_GROUP            :            : help-arg-group            : NAME         : Help options         :            : str  : 1      : Options   :       : the name of the argument group holding all help options, i.e., --help, --usage, and --version           "
         "ARGPARSER_HELP_EXIT_CODE            :            : help-exit-code            : INT          : 0                    :            : int  : 1      : Options   :       : the exit code for help messages                                                                         "
         "ARGPARSER_HELP_FILE                 :            : help-file                 : FILE         : ''                   :            : file : 1      : Options   :       : the path to a file holding the extended help message                                                    "
         "ARGPARSER_HELP_FILE_INCLUDE_CHAR    :            : help-file-include-char    : CHAR         : @                    :            : char : 1      : Options   :       : the character that introduces an include directive in an ARGPARSER_HELP_FILE                            "
@@ -1216,6 +1219,7 @@ function argparser_set_env_vars() {
         ARGPARSER_COUNT_FLAGS=false \
         ARGPARSER_ERROR_EXIT_CODE=1 \
         ARGPARSER_ERROR_STYLE="red,bold,reverse" \
+        ARGPARSER_HELP_ARG_GROUP="Help options" \
         ARGPARSER_HELP_EXIT_CODE=0 \
         ARGPARSER_HELP_FILE="" \
         ARGPARSER_HELP_FILE_INCLUDE_CHAR="@" \
@@ -1331,6 +1335,7 @@ function argparser_check_env_vars() {
     # - ARGPARSER_ARGPARSER_VERSION (auto-set)
     # - ARGPARSER_ARGS (auto-set)
     # - ARGPARSER_DICTIONARY (checked earlier / auto-set)
+    # - ARGPARSER_HELP_ARG_GROUP (arbitrary value)
     # - ARGPARSER_LANGUAGE (arbitrary value)
     # - ARGPARSER_POSITIONAL_ARG_GROUP (arbitrary value)
     # - ARGPARSER_SCRIPT_ARGS (auto-set)
@@ -1745,8 +1750,8 @@ function argparser_check_env_vars() {
             # another environment variable's value.
             if argparser_in_array "${short_option}" \
                 "${!checked_short_options[@]}" \
-                && [[ "${checked_short_options[${short_option}]}" != \
-                    "${var}" ]]
+                && [[ "${checked_short_options[${short_option}]}" \
+                    != "${var}" ]]
             then
                 error_message="Error: The environment variable \"\$1\" has the "
                 error_message+="short option \"-\$2\" given, but that is "
@@ -2479,8 +2484,11 @@ function argparser_check_args_definition_names() {
     # - ARGPARSER_ADD_USAGE (read-only)
     # - ARGPARSER_ADD_VERSION (read-only)
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+    # - ARGPARSER_HELP_OPTIONS (read-only)
+    # - ARGPARSER_USAGE_OPTIONS (read-only)
     # - ARGPARSER_USE_LONG_OPTIONS (read-only)
     # - ARGPARSER_USE_SHORT_OPTIONS (read-only)
+    # - ARGPARSER_VERSION_OPTIONS (read-only)
 
     # Define the local variables.
     local arg_key
@@ -2626,8 +2634,8 @@ function argparser_check_args_definition_names() {
                 # another argument's definition.
                 if argparser_in_array "${short_option}" \
                     "${!checked_short_options[@]}" \
-                    && [[ "${checked_short_options[${short_option}]}" != \
-                        "${arg_key}" ]]
+                    && [[ "${checked_short_options[${short_option}]}" \
+                        != "${arg_key}" ]]
                 then
                     error_message="Error: The argument with the identifier "
                     error_message+="\"\$1\" has the short option \"-\$2\" "
@@ -2746,8 +2754,8 @@ function argparser_check_args_definition_names() {
                 # another argument's definition.
                 if argparser_in_array "${long_option}" \
                     "${!checked_long_options[@]}" \
-                    && [[ "${checked_long_options[${long_option}]}" != \
-                        "${arg_key}" ]]
+                    && [[ "${checked_long_options[${long_option}]}" \
+                        != "${arg_key}" ]]
                 then
                     error_message="Error: The argument with the identifier "
                     error_message+="\"\$1\" has the long option \"--\$2\" "
@@ -3353,6 +3361,117 @@ function argparser_check_args_definition_option_values() {
     done
 }
 
+function argparser_add_args_definition_help_options() {
+    # Add the help, usage, and/or version message options to the
+    # arguments definition's associative arrays.
+    #
+    # Nonlocals:
+    # - all_arg_groups: the associative array holding the argument
+    #   groups
+    # - all_arg_numbers: the associative array holding the argument
+    #   numbers
+    # - all_choice_values: the associative array holding the choice
+    #   values
+    # - all_default_values: the associative array holding the default
+    #   values
+    # - all_help_texts: the associative array holding the help texts
+    # - all_long_options: the associative array holding the long option
+    #   names
+    # - all_notes: the associative array holding the notes
+    # - all_short_options: the associative array holding the short
+    #   option names
+    # - all_types: the associative array holding the argument types
+    # - all_value_names: the associative array holding the value names
+    #
+    # Environment:
+    # - ARGPARSER_ADD_HELP (read-only)
+    # - ARGPARSER_ADD_USAGE (read-only)
+    # - ARGPARSER_ADD_VERSION (read-only)
+    # - ARGPARSER_HELP_ARG_GROUP (read-only)
+    # - ARGPARSER_HELP_OPTIONS (read-only)
+    # - ARGPARSER_USAGE_OPTIONS (read-only)
+    # - ARGPARSER_USE_LONG_OPTIONS (read-only)
+    # - ARGPARSER_USE_SHORT_OPTIONS (read-only)
+    # - ARGPARSER_VERSION_OPTIONS (read-only)
+
+    # Define the local variables.
+    local arg_key
+    local -a arg_keys
+    local -a help_texts
+    local i
+    local -a long_options
+    local -a short_options
+    local translation
+    local value
+    local var
+    local -a vars
+
+    # Set the definition fields for the help, usage, and version message
+    # options.  Translate the strings for the help texts.
+    arg_keys=(
+        "help"
+        "usage"
+        "version"
+    )
+    short_options=(
+        "${ARGPARSER_HELP_OPTIONS}"
+        "${ARGPARSER_USAGE_OPTIONS}"
+        "${ARGPARSER_VERSION_OPTIONS}"
+    )
+    long_options=(
+        "help"
+        "usage"
+        "version"
+    )
+
+    help_texts=()
+    argparser_translate "--help" "display this help and exit"
+    help_texts+=("${translation}")
+
+    argparser_translate "--usage" "display the usage and exit"
+    help_texts+=("${translation}")
+
+    argparser_translate "--version" "display the version and exit"
+    help_texts+=("${translation}")
+
+    # If requested, add the help, usage, and version message options to
+    # the arguments definition's associative arrays.
+    vars=(
+        ARGPARSER_ADD_HELP
+        ARGPARSER_ADD_USAGE
+        ARGPARSER_ADD_VERSION
+    )
+    for i in "${!vars[@]}"; do
+        var="${vars[i]}"
+        value="${!var}"
+        if [[ "${value}" == true ]]; then
+            arg_key="${arg_keys[i]}"
+
+            if [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true \
+                && "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]
+            then
+                all_short_options[${arg_key}]="${short_options[i]}"
+                all_long_options[${arg_key}]="${long_options[i]}"
+            elif [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
+                all_short_options[${arg_key}]="${short_options[i]}"
+                all_long_options[${arg_key}]=""
+            elif [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]; then
+                all_short_options[${arg_key}]=""
+                all_long_options[${arg_key}]="${long_options[i]}"
+            fi
+
+            all_value_names[${arg_key}]=""
+            all_default_values[${arg_key}]="false"
+            all_choice_values[${arg_key}]=""
+            all_types[${arg_key}]="bool"
+            all_arg_numbers[${arg_key}]="0"
+            all_arg_groups[${arg_key}]="${ARGPARSER_HELP_ARG_GROUP}"
+            all_notes[${arg_key}]=""
+            all_help_texts[${arg_key}]="${help_texts[i]}"
+        fi
+    done
+}
+
 # Define the argparser functions for the argument parsing.
 function argparser_get_arg_key() {
     # Get the argument identifier (key) for a given short or long option
@@ -3524,21 +3643,10 @@ function argparser_parse_arg() {
     # Define the local variables.
     local error_message
     local given_arg
-    local -a help_options
     local translation
-    local -a usage_options
-    local -a version_options
 
     # Read the argument.
     given_arg="$1"
-
-    # Read the short help, usage, and version option names.
-    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a help_options \
-        <<< "${ARGPARSER_HELP_OPTIONS}"
-    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a usage_options \
-        <<< "${ARGPARSER_USAGE_OPTIONS}"
-    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a version_options \
-        <<< "${ARGPARSER_VERSION_OPTIONS}"
 
     # Output the argument, split into option names and values, or an
     # error message.  In the latter case, output also the given
@@ -3573,201 +3681,6 @@ function argparser_parse_arg() {
         # followed by an illegal equals sign ("=").
         error_message="Error: The special option \"++\" takes no value."
         argparser_translate "Error arg double plus" "${error_message}"
-        error_message="${translation}"
-        messages+=("${error_message}")
-        messages+=("Argument: ${given_arg}")
-    elif [[ "${ARGPARSER_ADD_HELP}" == true \
-        && "${ARGPARSER_USE_LONG_OPTIONS}" == true \
-        && "${given_arg}" == "--help" ]]
-    then
-        # The argument is for the help message, using the long option
-        # name.
-        messages+=("Help")
-    elif [[ "${ARGPARSER_ADD_HELP}" == true \
-        && "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]] \
-        && argparser_in_array "${given_arg:1}" "${help_options[@]}"
-    then
-        # The argument is for the help message, using the short option
-        # name.
-        messages+=("Help")
-    elif [[ "${ARGPARSER_ADD_HELP}" == true \
-        && "${ARGPARSER_USE_LONG_OPTIONS}" == true \
-        && "${ARGPARSER_USE_SHORT_OPTIONS}" == true \
-        && "${given_arg}" == "--help="* ]]
-    then
-        # The argument is for the help message, but followed by an
-        # illegal equals sign ("="), using the long option name.
-        error_message="Error: The option \"-\$1,--help\" takes no value."
-        argparser_translate "Error arg help 1" "${error_message}" \
-            "${ARGPARSER_HELP_OPTIONS//${ARGPARSER_ARG_DELIMITER_2}/,-}"
-        error_message="${translation}"
-        messages+=("${error_message}")
-        messages+=("Argument: ${given_arg}")
-    elif [[ "${ARGPARSER_ADD_HELP}" == true \
-        && "${ARGPARSER_USE_LONG_OPTIONS}" == true \
-        && "${ARGPARSER_USE_SHORT_OPTIONS}" == true \
-        && "${given_arg}" == -?=* ]] \
-        && argparser_in_array "${given_arg:1:1}" "${help_options[@]}"
-    then
-        # The argument is for the help message, but followed by an
-        # illegal equals sign ("="), using the short option name.
-        error_message="Error: The option \"-\$1,--help\" takes no value."
-        argparser_translate "Error arg help 1" "${error_message}" \
-            "${ARGPARSER_HELP_OPTIONS//${ARGPARSER_ARG_DELIMITER_2}/,-}"
-        error_message="${translation}"
-        messages+=("${error_message}")
-        messages+=("Argument: ${given_arg}")
-    elif [[ "${ARGPARSER_ADD_HELP}" == true \
-        && "${ARGPARSER_USE_LONG_OPTIONS}" == true \
-        && "${given_arg}" == "--help="* ]]
-    then
-        # The argument is for the help message, but followed by an
-        # illegal equals sign ("="), using the long option name.
-        error_message="Error: The option \"--help\" takes no value."
-        argparser_translate "Error arg help 2" "${error_message}"
-        error_message="${translation}"
-        messages+=("${error_message}")
-        messages+=("Argument: ${given_arg}")
-    elif [[ "${ARGPARSER_ADD_HELP}" == true \
-        && "${ARGPARSER_USE_SHORT_OPTIONS}" == true \
-        && "${given_arg}" == -?=* ]] \
-        && argparser_in_array "${given_arg:1:1}" "${help_options[@]}"
-    then
-        # The argument is for the help message, but followed by an
-        # illegal equals sign ("="), using the short option name.
-        error_message="Error: The option \"-\$1\" takes no value."
-        argparser_translate "Error arg help 3" "${error_message}" \
-            "${ARGPARSER_HELP_OPTIONS//${ARGPARSER_ARG_DELIMITER_2}/,-}"
-        error_message="${translation}"
-        messages+=("${error_message}")
-        messages+=("Argument: ${given_arg}")
-    elif [[ "${ARGPARSER_ADD_USAGE}" == true \
-        && "${ARGPARSER_USE_LONG_OPTIONS}" == true \
-        && "${given_arg}" == "--usage" ]]
-    then
-        # The argument is for the usage message, using the long option
-        # name.
-        messages+=("Usage")
-    elif [[ "${ARGPARSER_ADD_USAGE}" == true \
-        && "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]] \
-        && argparser_in_array "${given_arg:1}" "${usage_options[@]}"
-    then
-        # The argument is for the usage message, using the short option
-        # name.
-        messages+=("Usage")
-    elif [[ "${ARGPARSER_ADD_USAGE}" == true \
-        && "${ARGPARSER_USE_LONG_OPTIONS}" == true \
-        && "${ARGPARSER_USE_SHORT_OPTIONS}" == true \
-        && "${given_arg}" == "--usage="* ]]
-    then
-        # The argument is for the usage message, but followed by an
-        # illegal equals sign ("="), using the long option name.
-        error_message="Error: The option \"-\$1,--usage\" takes no value."
-        argparser_translate "Error arg usage 1" "${error_message}" \
-            "${ARGPARSER_USAGE_OPTIONS//${ARGPARSER_ARG_DELIMITER_2}/,-}"
-        error_message="${translation}"
-        messages+=("${error_message}")
-        messages+=("Argument: ${given_arg}")
-    elif [[ "${ARGPARSER_ADD_USAGE}" == true \
-        && "${ARGPARSER_USE_LONG_OPTIONS}" == true \
-        && "${ARGPARSER_USE_SHORT_OPTIONS}" == true \
-        && "${given_arg}" == -?=* ]] \
-        && argparser_in_array "${given_arg:1:1}" "${usage_options[@]}"
-    then
-        # The argument is for the usage message, but followed by an
-        # illegal equals sign ("="), using the short option name.
-        error_message="Error: The option \"-\$1,--usage\" takes no value."
-        argparser_translate "Error arg usage 1" "${error_message}" \
-            "${ARGPARSER_USAGE_OPTIONS//${ARGPARSER_ARG_DELIMITER_2}/,-}"
-        error_message="${translation}"
-        messages+=("${error_message}")
-        messages+=("Argument: ${given_arg}")
-    elif [[ "${ARGPARSER_ADD_USAGE}" == true \
-        && "${ARGPARSER_USE_LONG_OPTIONS}" == true \
-        && "${given_arg}" == "--usage="* ]]
-    then
-        # The argument is for the usage message, but followed by an
-        # illegal equals sign ("="), using the long option name.
-        error_message="Error: The option \"--usage\" takes no value."
-        argparser_translate "Error arg usage 2" "${error_message}"
-        error_message="${translation}"
-        messages+=("${error_message}")
-        messages+=("Argument: ${given_arg}")
-    elif [[ "${ARGPARSER_ADD_USAGE}" == true \
-        && "${ARGPARSER_USE_SHORT_OPTIONS}" == true \
-        && "${given_arg}" == -?=* ]] \
-        && argparser_in_array "${given_arg:1:1}" "${usage_options[@]}"
-    then
-        # The argument is for the usage message, but followed by an
-        # illegal equals sign ("="), using the short option name.
-        error_message="Error: The option \"-\$1\" takes no value."
-        argparser_translate "Error arg usage 3" "${error_message}" \
-            "${ARGPARSER_USAGE_OPTIONS//${ARGPARSER_ARG_DELIMITER_2}/,-}"
-        error_message="${translation}"
-        messages+=("${error_message}")
-        messages+=("Argument: ${given_arg}")
-    elif [[ "${ARGPARSER_ADD_VERSION}" == true \
-        && "${ARGPARSER_USE_LONG_OPTIONS}" == true \
-        && "${given_arg}" == "--version" ]]
-    then
-        # The argument is for the version message, using the long option
-        # name.
-        messages+=("Version")
-    elif [[ "${ARGPARSER_ADD_VERSION}" == true \
-        && "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]] \
-        && argparser_in_array "${given_arg:1}" "${version_options[@]}"
-    then
-        # The argument is for the version message, using the short
-        # option name.
-        messages+=("Version")
-    elif [[ "${ARGPARSER_ADD_VERSION}" == true \
-        && "${ARGPARSER_USE_LONG_OPTIONS}" == true \
-        && "${ARGPARSER_USE_SHORT_OPTIONS}" == true \
-        && "${given_arg}" == "--version="* ]]
-    then
-        # The argument is for the version message, but followed by an
-        # illegal equals sign ("="), using the long option name.
-        error_message="Error: The option \"-\$1,--version\" takes no value."
-        argparser_translate "Error arg version 1" "${error_message}" \
-            "${ARGPARSER_VERSION_OPTIONS//${ARGPARSER_ARG_DELIMITER_2}/,-}"
-        error_message="${translation}"
-        messages+=("${error_message}")
-        messages+=("Argument: ${given_arg}")
-    elif [[ "${ARGPARSER_ADD_VERSION}" == true \
-        && "${ARGPARSER_USE_LONG_OPTIONS}" == true \
-        && "${ARGPARSER_USE_SHORT_OPTIONS}" == true \
-        && "${given_arg}" == -?=* ]] \
-        && argparser_in_array "${given_arg:1:1}" "${version_options[@]}"
-    then
-        # The argument is for the version message, but followed by an
-        # illegal equals sign ("="), using the short option name.
-        error_message="Error: The option \"-\$1,--version\" takes no value."
-        argparser_translate "Error arg version 1" "${error_message}" \
-            "${ARGPARSER_VERSION_OPTIONS//${ARGPARSER_ARG_DELIMITER_2}/,-}"
-        error_message="${translation}"
-        messages+=("${error_message}")
-        messages+=("Argument: ${given_arg}")
-    elif [[ "${ARGPARSER_ADD_VERSION}" == true \
-        && "${ARGPARSER_USE_LONG_OPTIONS}" == true \
-        && "${given_arg}" == "--version="* ]]
-    then
-        # The argument is for the version message, but followed by an
-        # illegal equals sign ("="), using the long option name.
-        error_message="Error: The option \"--version\" takes no value."
-        argparser_translate "Error arg version 2" "${error_message}"
-        error_message="${translation}"
-        messages+=("${error_message}")
-        messages+=("Argument: ${given_arg}")
-    elif [[ "${ARGPARSER_ADD_VERSION}" == true \
-        && "${ARGPARSER_USE_SHORT_OPTIONS}" == true \
-        && "${given_arg}" == -?=* ]] \
-        && argparser_in_array "${given_arg:1:1}" "${version_options[@]}"
-    then
-        # The argument is for the version message, but followed by an
-        # illegal equals sign ("="), using the short option name.
-        error_message="Error: The option \"-\$1\" takes no value."
-        argparser_translate "Error arg version 3" "${error_message}" \
-            "${ARGPARSER_VERSION_OPTIONS//${ARGPARSER_ARG_DELIMITER_2}/,-}"
         error_message="${translation}"
         messages+=("${error_message}")
         messages+=("Argument: ${given_arg}")
@@ -4696,6 +4609,12 @@ function argparser_parse_args() {
     # - $@: the arguments to parse
     #
     # Nonlocals:
+    # - all_arg_groups: the associative array holding the argument
+    #   groups (read-only)
+    # - all_positional_args: the indexed array holding the positional
+    #   argument names
+    # - all_short_options: the associative array holding the short
+    #   option names
     # - is_sourced: whether the argparser has been sourced (read-only)
     # - source_level: the depth of recursion upon sourcing the argparser
     #   (read-only)
@@ -4709,6 +4628,7 @@ function argparser_parse_args() {
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_CHECK_ARG_DEF (read-only)
     # - ARGPARSER_ERROR_EXIT_CODE (read-only)
+    # - ARGPARSER_HELP_ARG_GROUP (read-only)
     # - ARGPARSER_SILENCE_ERRORS (read-only)
 
     # Define the local variables.  If the variable that
@@ -4716,17 +4636,7 @@ function argparser_parse_args() {
     # prefixed with "arg" are searched, later.  In order to not shadow
     # them by local variables, all locals starting with "arg" are
     # defined later.
-    local -A all_arg_groups
-    local -A all_arg_numbers
-    local -A all_choice_values
-    local -A all_default_values
-    local -A all_help_texts
-    local -A all_long_options
-    local -A all_notes
-    local -a all_positional_args
-    local -A all_short_options
-    local -A all_types
-    local -A all_value_names
+    local -a arg_prefixes
     local error_message
     local -a error_messages
     local given_arg
@@ -4922,11 +4832,12 @@ function argparser_parse_args() {
             "${error_messages[@]}"
     fi
 
+    # Possibly, add the help, usage, and version message options to the
+    # arguments definition.
+    argparser_add_args_definition_help_options
+
     # Parse the script's given arguments.
-    is_help=false
     is_logo=false
-    is_usage=false
-    is_version=false
     is_positional=true
     is_positional_only=false
     error_messages=( )
@@ -4947,12 +4858,7 @@ function argparser_parse_args() {
         # value or prefix to the previously given ones.
         for message in "${messages[@]}"; do
             case "${message}" in
-                Help) is_help=true ;;
-                Usage) is_usage=true ;;
-                Version) is_version=true ;;
-                ${translated_error}*)
-                    error_messages+=("${message}")
-                    ;;
+                ${translated_error}*) error_messages+=("${message}") ;;
                 Positional_Start)
                     # Set the flag that the positional-only arguments
                     # delimiter "--" has been set, such that all
@@ -5001,7 +4907,34 @@ function argparser_parse_args() {
     done
 
     # If the help, usage, or version message, or the logo was requested
-    # (in this order of priority), print it.
+    # (in this order of priority), print it.  To this end, check whether
+    # the respective argument identifier (except for the logo, which was
+    # parsed earlier) is given and has a prefix of "-", since "+" should
+    # deactivate it.  To respect the priority of help > usage > version,
+    # use intermediate variables as flags to be assigned to "true", and
+    # check their values afterwards in the intended order (while the
+    # associative array ${prefixes[@]} is unordered, just as the
+    # command-line arguments may be).
+    is_help=false
+    is_usage=false
+    is_version=false
+    for arg_key in "${!prefixes[@]}"; do
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a arg_prefixes \
+            <<< "${prefixes[${arg_key}]}"
+
+        for prefix in "${arg_prefixes[@]}"; do
+            if [[ "${prefix}" != "-" ]]; then
+                continue
+            elif [[ "${arg_key}" == "help" ]]; then
+                is_help=true
+            elif [[ "${arg_key}" == "usage" ]]; then
+                is_usage=true
+            elif [[ "${arg_key}" == "version" ]]; then
+                is_version=true
+            fi
+        done
+    done
+
     if [[ "${is_help}" == true ]]; then
         argparser_print_help_or_usage_message "help" true 1
     elif [[ "${is_usage}" == true ]]; then
@@ -5111,6 +5044,15 @@ function argparser_parse_args() {
         fi
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
     fi
+
+    # Remove the help options from the associative array ${args}.
+    for arg_key in "${!args[@]}"; do
+        if [[ "${all_arg_groups[${arg_key}]}" \
+            == "${ARGPARSER_HELP_ARG_GROUP}" ]]
+        then
+            unset 'args[${arg_key}]'
+        fi
+    done
 
     # Copy the values of the associative array ${args} to the variable
     # ${ARGPARSER_ARG_ARRAY_NAME} refers to.  Thereby, declare prints
@@ -5257,6 +5199,7 @@ function argparser_create_help_message() {
     # - ARGPARSER_ADD_USAGE (read-only)
     # - ARGPARSER_ADD_VERSION (read-only)
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+    # - ARGPARSER_HELP_ARG_GROUP (read-only)
     # - ARGPARSER_HELP_OPTIONS (read-only)
     # - ARGPARSER_MAX_COL_WIDTH_1 (read-only)
     # - ARGPARSER_MAX_COL_WIDTH_2 (read-only)
@@ -5289,8 +5232,6 @@ function argparser_create_help_message() {
     local has_default_args
     local has_required_args
     local help_message
-    local help_option
-    local -a help_options
     local help_text
     local i
     local index
@@ -5332,11 +5273,7 @@ function argparser_create_help_message() {
     local translation
     local type
     local usage
-    local usage_option
-    local -a usage_options
     local -a value_names
-    local version_option
-    local -a version_options
     local -a whitespace_1
     local -a whitespace_2
     local whitespace_len_1
@@ -5347,7 +5284,8 @@ function argparser_create_help_message() {
     # later upon iterating over them.
     arg_groups=( )
     for arg_group in "${all_arg_groups[@]}"; do
-        if [[ "${arg_group}" != "${ARGPARSER_POSITIONAL_ARG_GROUP}" ]] \
+        if [[ "${arg_group}" != "${ARGPARSER_POSITIONAL_ARG_GROUP}" \
+            && "${arg_group}" != "${ARGPARSER_HELP_ARG_GROUP}" ]] \
             && ! argparser_in_array "${arg_group}" "${arg_groups[@]}"
         then
             arg_groups+=("${arg_group}")
@@ -5475,8 +5413,9 @@ function argparser_create_help_message() {
         col_3+=("")
     fi
 
-    # Compute the columns for the keyword arguments.
-    for arg_group in "${arg_groups[@]}"; do
+    # Compute the columns for the keyword arguments, with the help
+    # options last.
+    for arg_group in "${arg_groups[@]}" "${ARGPARSER_HELP_ARG_GROUP}"; do
         new_col_1=( )
         new_col_2=( )
         new_col_3=( )
@@ -5518,10 +5457,12 @@ function argparser_create_help_message() {
 
             # Set a flag whether the option has default values for
             # adjustment of the help message header, later.
-            if [[ -n "${default_values_str}" ]]; then
-                has_default_args=true
-            else
-                has_required_args=true
+            if [[ "${arg_group}" != "${ARGPARSER_HELP_ARG_GROUP}" ]]; then
+                if [[ -n "${default_values_str}" ]]; then
+                    has_default_args=true
+                else
+                    has_required_args=true
+                fi
             fi
 
             # Set a flag whether the option is deprecated.
@@ -5773,101 +5714,6 @@ function argparser_create_help_message() {
         col_2+=("")
         col_3+=("")
     done
-
-    # Add the help, usage, and version flags that always exist (if
-    # defined).
-    if [[ "${ARGPARSER_ADD_HELP}" == true ]]; then
-        if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true
-            && "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]
-        then
-            col_1+=("")
-            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a help_options \
-                <<< "${ARGPARSER_HELP_OPTIONS}"
-            for help_option in "${help_options[@]}"; do
-                col_1[-1]+="-${help_option}, "
-            done
-            col_2+=("--help")
-        elif [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
-            col_1+=("")
-            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a help_options \
-                <<< "${ARGPARSER_HELP_OPTIONS}"
-            for help_option in "${help_options[@]}"; do
-                col_1[-1]+="-${help_option}, "
-            done
-            col_1[-1]="${col_1[-1]%, }"
-            col_2+=("")
-        elif [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]; then
-            col_1+=("")
-            col_2+=("--help")
-        else
-            col_1+=("")
-            col_2+=("")
-        fi
-        argparser_translate "--help" "display this help and exit"
-        col_3+=("${translation}")
-    fi
-
-    if [[ "${ARGPARSER_ADD_USAGE}" == true ]]; then
-        if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true
-            && "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]
-        then
-            col_1+=("")
-            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a usage_options \
-                <<< "${ARGPARSER_USAGE_OPTIONS}"
-            for usage_option in "${usage_options[@]}"; do
-                col_1[-1]+="-${usage_option}, "
-            done
-            col_2+=("--usage")
-        elif [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
-            col_1+=("")
-            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a usage_options \
-                <<< "${ARGPARSER_USAGE_OPTIONS}"
-            for usage_option in "${usage_options[@]}"; do
-                col_1[-1]+="-${usage_option}, "
-            done
-            col_1[-1]="${col_1[-1]%, }"
-            col_2+=("")
-        elif [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]; then
-            col_1+=("")
-            col_2+=("--usage")
-        else
-            col_1+=("")
-            col_2+=("")
-        fi
-        argparser_translate "--usage" "display the usage and exit"
-        col_3+=("${translation}")
-    fi
-
-    if [[ "${ARGPARSER_ADD_VERSION}" == true ]]; then
-        if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true
-            && "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]
-        then
-            col_1+=("")
-            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a version_options \
-                <<< "${ARGPARSER_VERSION_OPTIONS}"
-            for version_option in "${version_options[@]}"; do
-                col_1[-1]+="-${version_option}, "
-            done
-            col_2+=("--version")
-        elif [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
-            col_1+=("")
-            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a version_options \
-                <<< "${ARGPARSER_VERSION_OPTIONS}"
-            for version_option in "${version_options[@]}"; do
-                col_1[-1]+="-${version_option}, "
-            done
-            col_1[-1]="${col_1[-1]%, }"
-            col_2+=("")
-        elif [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]; then
-            col_1+=("")
-            col_2+=("--version")
-        else
-            col_1+=("")
-            col_2+=("")
-        fi
-        argparser_translate "--version" "display the version and exit"
-        col_3+=("${translation}")
-    fi
 
     # Limit the width of the first two columns of the help message to
     # ${ARGPARSER_MAX_COL_WIDTH_*}, and of the third column to
@@ -6153,7 +5999,7 @@ function argparser_create_help_message() {
     # Set the argument groups for printing.  If there are positional
     # arguments, include the positional argument group as first one.  If
     # there are keyword arguments, add them afterwards.  Finally, add
-    # the "Help" group if any help option shall be added.
+    # the help options' group, if existing.
     if (( "${#all_positional_args[@]}" > 0 )); then
         arg_groups=("${ARGPARSER_POSITIONAL_ARG_GROUP}" "${arg_groups[@]}")
     fi
@@ -6162,14 +6008,14 @@ function argparser_create_help_message() {
         || "${ARGPARSER_ADD_USAGE}" == true \
         || "${ARGPARSER_ADD_VERSION}" == true ]]
     then
-        arg_groups+=("Help")
+        arg_groups+=("${ARGPARSER_HELP_ARG_GROUP}")
     fi
 
     # For each argument group, print its arguments.
     index=0
     for arg_group in "${arg_groups[@]}"; do
         # Set the argument group's name for output.
-        if [[ "${arg_group}" == "Help" ]]; then
+        if [[ "${arg_group}" == "${ARGPARSER_HELP_ARG_GROUP}" ]]; then
             help_message=""
         else
             help_message="${arg_group}:"
@@ -6206,6 +6052,8 @@ function argparser_create_usage_message() {
     # Create a usage message for the script's arguments.
     #
     # Nonlocals:
+    # - all_arg_groups: the associative array holding the argument
+    #   groups (read-only)
     # - all_arg_numbers: the associative array holding the argument
     #   numbers (read-only)
     # - all_choice_values: the associative array holding the choice
@@ -6228,6 +6076,7 @@ function argparser_create_usage_message() {
     # - ARGPARSER_ADD_USAGE (read-only)
     # - ARGPARSER_ADD_VERSION (read-only)
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+    # - ARGPARSER_HELP_ARG_GROUP (read-only)
     # - ARGPARSER_HELP_OPTIONS (read-only)
     # - ARGPARSER_SCRIPT_NAME (read-only)
     # - ARGPARSER_USAGE_MESSAGE_OPTION_TYPE(read-only)
@@ -6250,8 +6099,8 @@ function argparser_create_usage_message() {
     local -a long_option_default_args
     local -a long_option_required_args
     local -a long_options
-    local help_option
-    local -a help_options
+    local -a help_option_args
+    local help_options
     local -a positional_default_args
     local -a positional_required_args
     local short_option
@@ -6261,11 +6110,7 @@ function argparser_create_usage_message() {
     local -a sorted_array
     local translation
     local usage_message
-    local usage_option
-    local -a usage_options
     local value_names
-    local version_option
-    local -a version_options
     local whitespace
 
     # Output the usage message's header, giving the script's name and
@@ -6274,75 +6119,59 @@ function argparser_create_usage_message() {
     header="${translation}: ${ARGPARSER_SCRIPT_NAME}"
     usage_message="${header}"
 
-    if [[ ("${ARGPARSER_USAGE_MESSAGE_OPTION_TYPE}" == "short" \
-        && "${ARGPARSER_USE_SHORT_OPTIONS}" == true) \
-        || "${ARGPARSER_USE_LONG_OPTIONS}" == false ]]
-    then
-        short_options=""
-        if [[ "${ARGPARSER_ADD_HELP}" == true ]]; then
-            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a help_options \
-                <<< "${ARGPARSER_HELP_OPTIONS}"
-            for help_option in "${help_options[@]}"; do
-                short_options+="-${help_option},"
+    # Get the help options and sort them by the argument identifier,
+    # such that the order is always "help", "usage", "version".
+    help_option_args=( )
+    for arg_key in "${!all_short_options[@]}"; do
+        if [[ "${all_arg_groups[${arg_key}]}" \
+            == "${ARGPARSER_HELP_ARG_GROUP}" ]]
+        then
+            help_option_args+=("${arg_key}")
+        fi
+    done
+
+    if (( "${#help_option_args[@]}" > 0 )); then
+        argparser_sort false "${help_option_args[@]}"
+        help_option_args=("${sorted_array[@]}")
+    fi
+
+    # Concatenate the short or long option names of each help option.
+    help_options=""
+    for arg_key in "${help_option_args[@]}"; do
+        # Read the argument's definition.
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a short_options \
+            <<< "${all_short_options[${arg_key}]}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a long_options \
+            <<< "${all_long_options[${arg_key}]}"
+
+        # Separate the help options' names by pipes.
+        if [[ -n "${help_options}" ]]; then
+            help_options+=" | "
+        fi
+
+        # Set the help options' names.
+        if [[ ("${ARGPARSER_USAGE_MESSAGE_OPTION_TYPE}" == "short" \
+                && "${ARGPARSER_USE_SHORT_OPTIONS}" == true) \
+            || "${ARGPARSER_USE_LONG_OPTIONS}" == false ]]
+        then
+            # Prepend a hyphen to each short option name and concatenate
+            # them by ${ARGPARSER_ARG_DELIMITER_2} characters.
+            for short_option in "${short_options[@]}"; do
+                help_options+="-${short_option}${ARGPARSER_ARG_DELIMITER_2}"
             done
-            short_options="${short_options%,}"
+            help_options="${help_options%"${ARGPARSER_ARG_DELIMITER_2}"}"
+        elif [[ ("${ARGPARSER_USAGE_MESSAGE_OPTION_TYPE}" == "long" \
+                && "${ARGPARSER_USE_LONG_OPTIONS}" == true) \
+            || "${ARGPARSER_USE_SHORT_OPTIONS}" == false ]]
+        then
+            # Prepend a double hyphen for the current long option name.
+            help_options+="--${long_options[0]}"
         fi
+    done
 
-        if [[ "${ARGPARSER_ADD_USAGE}" == true ]]; then
-            if [[ -n "${short_options}" ]]; then
-                short_options+=" | "
-            fi
-
-            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a usage_options \
-                <<< "${ARGPARSER_USAGE_OPTIONS}"
-            for usage_option in "${usage_options[@]}"; do
-                short_options+="-${usage_option},"
-            done
-            short_options="${short_options%,}"
-        fi
-
-        if [[ "${ARGPARSER_ADD_VERSION}" == true ]]; then
-            if [[ -n "${short_options}" ]]; then
-                short_options+=" | "
-            fi
-
-            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a version_options \
-                <<< "${ARGPARSER_VERSION_OPTIONS}"
-            for version_option in "${version_options[@]}"; do
-                short_options+="-${version_option},"
-            done
-            short_options="${short_options%,}"
-        fi
-
-        if [[ -n "${short_options}" ]]; then
-            usage_message+=" [${short_options}]"
-        fi
-    elif [[ ("${ARGPARSER_USAGE_MESSAGE_OPTION_TYPE}" == "long" \
-        && "${ARGPARSER_USE_LONG_OPTIONS}" == true) \
-        || "${ARGPARSER_USE_SHORT_OPTIONS}" == false ]]
-    then
-        short_options=""
-        if [[ "${ARGPARSER_ADD_HELP}" == true ]]; then
-            short_options+="--help"
-        fi
-
-        if [[ "${ARGPARSER_ADD_USAGE}" == true ]]; then
-            if [[ -n "${short_options}" ]]; then
-                short_options+=" | "
-            fi
-            short_options+="--usage"
-        fi
-
-        if [[ "${ARGPARSER_ADD_VERSION}" == true ]]; then
-            if [[ -n "${short_options}" ]]; then
-                short_options+=" | "
-            fi
-            short_options+="--version"
-        fi
-
-        if [[ -n "${short_options}" ]]; then
-            usage_message+=" [${short_options}]"
-        fi
+    # Add the help options to the usage message.
+    if [[ -n "${help_options}" ]]; then
+        usage_message+=" [${help_options}]"
     fi
 
     # To keep all arguments aligned in columnar output, compute the
@@ -6373,19 +6202,26 @@ function argparser_create_usage_message() {
     long_option_required_args=( )
     if [[ "${ARGPARSER_USAGE_MESSAGE_OPTION_TYPE}" == "short" ]]; then
         for arg_key in "${!all_short_options[@]}"; do
+            # Skip the help options.
+            if [[ "${all_arg_groups[${arg_key}]}" \
+                == "${ARGPARSER_HELP_ARG_GROUP}" ]]
+            then
+                continue
+            fi
+
             # Read the argument's definition.
-            short_options="${all_short_options[${arg_key}]}"
+            short_options=("${all_short_options[${arg_key}]}")
             default_values="${all_default_values[${arg_key}]}"
 
             # Add the argument to the respective array.
             if [[ -z "${default_values}" ]]; then
-                if [[ -z "${short_options}" ]]; then
+                if [[ -z "${short_options[0]}" ]]; then
                     long_option_required_args+=("${arg_key}")
                 else
                     short_option_required_args+=("${arg_key}")
                 fi
             else
-                if [[ -z "${short_options}" ]]; then
+                if [[ -z "${short_options[0]}" ]]; then
                     long_option_default_args+=("${arg_key}")
                 else
                     short_option_default_args+=("${arg_key}")
@@ -6394,19 +6230,26 @@ function argparser_create_usage_message() {
         done
     else
         for arg_key in "${!all_short_options[@]}"; do
+            # Skip the help options.
+            if [[ "${all_arg_groups[${arg_key}]}" \
+                == "${ARGPARSER_HELP_ARG_GROUP}" ]]
+            then
+                continue
+            fi
+
             # Read the argument's definition.
-            long_options="${all_long_options[${arg_key}]}"
+            long_options=("${all_long_options[${arg_key}]}")
             default_values="${all_default_values[${arg_key}]}"
 
             # Add the argument to the respective array.
             if [[ -z "${default_values}" ]]; then
-                if [[ -z "${long_options}" ]]; then
+                if [[ -z "${long_options[0]}" ]]; then
                     short_option_required_args+=("${arg_key}")
                 else
                     long_option_required_args+=("${arg_key}")
                 fi
             else
-                if [[ -z "${long_options}" ]]; then
+                if [[ -z "${long_options[0]}" ]]; then
                     short_option_default_args+=("${arg_key}")
                 else
                     long_option_default_args+=("${arg_key}")
@@ -6482,7 +6325,7 @@ function argparser_create_usage_message() {
     if (( "${#lines[@]}" > 0 )); then
         argparser_sort false "${lines[@]}"
         lines=("${sorted_array[@]}")
-    
+
         for line in "${lines[@]}"; do
             usage_message+="${whitespace}${line}"
         done
@@ -6756,6 +6599,7 @@ function argparser_print_help_or_usage_message() {
     #   message's groups usable as include directive (read-only)
     #
     # Environment:
+    # - ARGPARSER_HELP_ARG_GROUP (read-only)
     # - ARGPARSER_HELP_EXIT_CODE (read-only)
     # - ARGPARSER_HELP_FILE (read-only)
     # - ARGPARSER_HELP_FILE_INCLUDE_CHAR (read-only)
@@ -6813,19 +6657,27 @@ function argparser_print_help_or_usage_message() {
     # message.
     arg_groups=( )
     for arg_group in "${all_arg_groups[@]}"; do
-        if [[ "${arg_group}" != "${ARGPARSER_POSITIONAL_ARG_GROUP}" ]] \
+        if [[ "${arg_group}" != "${ARGPARSER_POSITIONAL_ARG_GROUP}" \
+            && "${arg_group}" != "${ARGPARSER_HELP_ARG_GROUP}" ]] \
             && ! argparser_in_array "${arg_group}" "${arg_groups[@]}"
         then
             arg_groups+=("${arg_group}")
         fi
     done
 
-    # Sort the argument groups and prepend the positional arguments
-    # group.
+    # Sort the argument groups, prepend the positional arguments group
+    # and append the help options' group.
     argparser_sort false "${arg_groups[@]}"
     arg_groups=("${sorted_array[@]}")
     if (( "${#all_positional_args[@]}" > 0 )); then
         arg_groups=("${ARGPARSER_POSITIONAL_ARG_GROUP}" "${arg_groups[@]}")
+    fi
+
+    if [[ "${ARGPARSER_ADD_HELP}" == true \
+        || "${ARGPARSER_ADD_USAGE}" == true \
+        || "${ARGPARSER_ADD_VERSION}" == true ]]
+    then
+        arg_groups+=("${ARGPARSER_HELP_ARG_GROUP}")
     fi
 
     # Create the help or usage message groups, which are saved in an
@@ -6869,18 +6721,19 @@ function argparser_print_help_or_usage_message() {
                     message+="${help_message_groups["Remark"]}"
                     message+=$'\n'
 
-                    for arg_group in "${arg_groups[@]}"; do
-                        message+="${help_message_groups[${arg_group}]}"
-                        message+=$'\n'
+                    for i in "${!arg_groups[@]}"; do
+                        message+="${help_message_groups[${arg_groups[i]}]}"
+                        if (( i < "${#arg_groups[@]}" - 1 )); then
+                            message+=$'\n'
+                        fi
                     done
-
-                    message+="${help_message_groups["Help"]}"
                 elif [[ "${include_directive}" == "Header" ]]; then
                     message+="${help_message_groups["Usage"]}"
                     message+=$'\n'
                     message+="${help_message_groups["Remark"]}"
-                elif argparser_in_array "${include_directive}" "Help" \
-                    "Remark" "Usage"
+                elif [[ "${include_directive}" == "Help" ]]; then
+                    message+="${help_message_groups["${ARGPARSER_HELP_ARG_GROUP}"]}"
+                elif argparser_in_array "${include_directive}" "Remark" "Usage"
                 then
                     message+="${help_message_groups["${include_directive}"]}"
                 elif argparser_in_array "${include_directive}" \
@@ -7264,6 +7117,7 @@ function argparser_main() {
     # variables, to read, parse, and set the script's arguments.
     #
     # Environment:
+    # - ARGPARSER_HELP_ARG_GROUP
     # - ARGPARSER_CHECK_ENV_VARS (read-only)
     # - ARGPARSER_CONFIG_FILE (read-only)
     # - ARGPARSER_POSITIONAL_ARG_GROUP
@@ -7278,6 +7132,17 @@ function argparser_main() {
     # - ARGPARSER_WRITE_ARGS (read-only)
 
     # Define the local variables.
+    local -A all_arg_groups
+    local -A all_arg_numbers
+    local -A all_choice_values
+    local -A all_default_values
+    local -A all_help_texts
+    local -A all_long_options
+    local -A all_notes
+    local -a all_positional_args
+    local -A all_short_options
+    local -A all_types
+    local -A all_value_names
     local translation
 
     # Detect whether the argparser is sourced or run as standalone
@@ -7330,14 +7195,18 @@ function argparser_main() {
 
     # If ${ARGPARSER_TRANSLATION_FILE} isn't set to the empty string,
     # read the translation file.  To be able to use the localized name
-    # of ${ARGPARSER_POSITIONAL_ARG_GROUP} in the arguments definition
-    # and help message, translate it.
+    # of ${ARGPARSER_POSITIONAL_ARG_GROUP} and
+    # ${ARGPARSER_HELP_ARG_GROUP} in the arguments definition and help
+    # message, translate it.
     if [[ -n "${ARGPARSER_TRANSLATION_FILE}" ]]; then
         argparser_read_translation
 
         argparser_translate "Positional arguments" \
             "${ARGPARSER_POSITIONAL_ARG_GROUP}"
         ARGPARSER_POSITIONAL_ARG_GROUP="${translation}"
+
+        argparser_translate "Help options" "${ARGPARSER_HELP_ARG_GROUP}"
+        ARGPARSER_HELP_ARG_GROUP="${translation}"
     fi
 
     # If ${ARGPARSER_CHECK_ENV_VARS} isn't set to false, check if the
@@ -7384,6 +7253,7 @@ function argparser_main() {
     # those starting with "argparser_") from the calling script that
     # stand in no relation to the argparser.
     if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
+        unset -f argparser_add_args_definition_help_options
         unset -f argparser_check_arg_values
         unset -f argparser_check_args_definition_names
         unset -f argparser_check_args_definition_option_values
@@ -7460,6 +7330,7 @@ function argparser_main() {
         unset ARGPARSER_DICTIONARY
         unset ARGPARSER_ERROR_EXIT_CODE
         unset ARGPARSER_ERROR_STYLE
+        unset ARGPARSER_HELP_ARG_GROUP
         unset ARGPARSER_HELP_EXIT_CODE
         unset ARGPARSER_HELP_FILE
         unset ARGPARSER_HELP_FILE_INCLUDE_CHAR

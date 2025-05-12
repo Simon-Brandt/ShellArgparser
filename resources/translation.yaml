@@ -1,12 +1,16 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-05-08
+# Last Modification: 2025-05-09
 
 # 1.    Define the translations for the arguments parsing.
 ---
 Positional arguments:
   en: Positional arguments
   de: Positionale Argumente
+
+Help options:
+  en: Help options
+  de: Hilfsoptionen
 
 Error:
   en: Error
