@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-05-12
+# Last Modification: 2025-05-13
 
 # TODO: Support mutually exclusive argument groups.
 # TODO: Consider using the Bash 5.3 form "${ command ... ; }" for the
@@ -3562,7 +3562,7 @@ function argparser_get_option_names() {
     # - all_value_names: the associative array holding the value names
     #   (read-only)
     # - option_names: the name of all short and long options as
-    #   comma-separated string
+    #   ${ARGPARSER_ARG_DELIMITER_2}-separated string
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
@@ -3596,22 +3596,34 @@ function argparser_get_option_names() {
         value_names="${all_value_names[${arg_key}]}"
     fi
 
-    # Concatenate the name of all short and long options.
-    printf -v short_option_names -- '-%s,' "${short_options[@]}"
-    printf -v long_option_names -- '--%s,' "${long_options[@]}"
+    # Concatenate the names of all short and long options.
+    short_option_names=""
+    for short_option in "${short_options[@]}"; do
+        short_option_names+="-${short_option}${ARGPARSER_ARG_DELIMITER_2}"
+    done
+
+    long_option_names=""
+    for long_option in "${long_options[@]}"; do
+        long_option_names+="--${long_option}${ARGPARSER_ARG_DELIMITER_2}"
+    done
+
+    # Merge the names of all short and long options, if any is given, or
+    # use the value names as fallback.
     if [[ -n "${short_options[0]}" && -n "${long_options[0]}" ]]; then
         if [[ "${order}" == "short-long" ]]; then
-            option_names="${short_option_names}${long_option_names%,}"
+            option_names="${short_option_names}${long_option_names}"
         elif [[ "${order}" == "long-short" ]]; then
+            option_names="${long_option_names}${short_option_names}"
             option_names="${long_option_names}${short_option_names%,}"
         fi
     elif [[ -n "${short_options[0]}" ]]; then
-        option_names="${short_option_names%,}"
+        option_names="${short_option_names}"
     elif [[ -n "${long_options[0]}" ]]; then
-        option_names="${long_option_names%,}"
+        option_names="${long_option_names}"
     else
         option_names="${value_names}"
     fi
+    option_names="${option_names%"${ARGPARSER_ARG_DELIMITER_2}"}"
 }
 
 function argparser_parse_arg() {
