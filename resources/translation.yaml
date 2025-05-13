@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-05-09
+# Last Modification: 2025-05-13
 
 # 1.    Define the translations for the arguments parsing.
 ---
@@ -746,60 +746,6 @@ Error arg double plus:
     Error: The special option "++" takes no value.
   de: >
     Fehler: Die besondere Option "++" nimmt keinen Wert.
-
-Error arg help 1:
-  en: >
-    Error: The option "-$1,--help" takes no value.
-  de: >
-    Fehler: Die Option "-$1,--help" nimmt keinen Wert.
-
-Error arg help 2:
-  en: >
-    Error: The option "--help" takes no value.
-  de: >
-    Fehler: Die Option "--help" nimmt keinen Wert.
-
-Error arg help 3:
-  en: >
-    Error: The option "-$1" takes no value.
-  de: >
-    Fehler: Die Option "-$1" nimmt keinen Wert.
-
-Error arg usage 1:
-  en: >
-    Error: The option "-u,--usage" takes no value.
-  de: >
-    Fehler: Die Option "-u,--usage" nimmt keinen Wert.
-
-Error arg usage 2:
-  en: >
-    Error: The option "--usage" takes no value.
-  de: >
-    Fehler: Die Option "--usage" nimmt keinen Wert.
-
-Error arg usage 3:
-  en: >
-    Error: The option "-u" takes no value.
-  de: >
-    Fehler: Die Option "-u" nimmt keinen Wert.
-
-Error arg version 1:
-  en: >
-    Error: The option "-V,--version" takes no value.
-  de: >
-    Fehler: Die Option "-V,--version" nimmt keinen Wert.
-
-Error arg version 2:
-  en: >
-    Error: The option "--version" takes no value.
-  de: >
-    Fehler: Die Option "--version" nimmt keinen Wert.
-
-Error arg version 3:
-  en: >
-    Error: The option "-V" takes no value.
-  de: >
-    Fehler: Die Option "-V" nimmt keinen Wert.
 
 Error arg inversion:
   en: >
