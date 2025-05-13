@@ -5,9 +5,6 @@
 # Last Modification: 2025-05-13
 
 # TODO: Support mutually exclusive argument groups.
-# TODO: Consider using the Bash 5.3 form "${ command ... ; }" for the
-#       command substitutions instead of "$(command ...)" or nonlocal
-#       variables.
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -365,9 +362,6 @@ function argparser_trim() {
     #
     # Nonlocals:
     # - trimmed_string: the trimmed string
-
-    # TODO: Instead of a nonlocal ${trimmed_string}, give output via
-    # command substitution using the Bash 5.3 form "${ printf ... ; }".
 
     # Define the local variable.
     local string
