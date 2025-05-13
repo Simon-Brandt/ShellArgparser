@@ -3552,7 +3552,8 @@ function argparser_get_option_names() {
     #
     # Arguments:
     # - $1: the argument's name (key)
-    # - $2: the order of the options ("short-long" or "long-short")
+    # - $2: the order of the options ("short-long", "long-short",
+    #       "short", or "long")
     #
     # Nonlocals:
     # - all_long_options: the associative array holding the long option
@@ -3570,9 +3571,11 @@ function argparser_get_option_names() {
     # Define the local variables.
     local arg_key
     local long_option_names
+    local long_option
     local -a long_options
     local order
     local short_option_names
+    local short_option
     local -a short_options
     local value_names
 
@@ -3614,7 +3617,10 @@ function argparser_get_option_names() {
             option_names="${short_option_names}${long_option_names}"
         elif [[ "${order}" == "long-short" ]]; then
             option_names="${long_option_names}${short_option_names}"
-            option_names="${long_option_names}${short_option_names%,}"
+        elif [[ "${order}" == "short" ]]; then
+            option_names="${short_option_names}"
+        elif [[ "${order}" == "long" ]]; then
+            option_names="${long_option_names}"
         fi
     elif [[ -n "${short_options[0]}" ]]; then
         option_names="${short_option_names}"
