@@ -4,7 +4,7 @@ The argparser is a designed to be an easy-to-use, yet powerful command-line argu
 
 Applying the argparser should lead to shorter and more concise code than the traditionally used [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)")/[`getopts`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-getopts "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; getopts") or a bare suite of conditionals in a [`case..esac`](https://www.gnu.org/software/bash/manual/html_node/Conditional-Constructs.html#index-case "gnu.org &rightarrow; Conditional Constructs &rightarrow; case") statement allow. More importantly, the user-friendliness of argparser-powered command-line parsing is far superior thanks to a wide range of checked conditions with meaningful error messages.
 
-The argparser is entirely written in pure Bash, without invoking external commands. Thus, using it does not add additional dependencies to your script&mdash;except of course the argparser itself&mdash;, especially not differing versions/implementations of a program (like with [`awk`](https://man7.org/linux/man-pages/man1/awk.1p.html "man7.org &rightarrow; man pages &rightarrow; awk(1p)")). Additionally, its design choices of not calling external commands and running almost without forking into subshells lead to a good runtime despite the extensive parsing and checking steps. The argparser is inspired by the [Python argparse module](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module").
+The argparser is entirely written in pure Bash, without invoking external commands. Thus, using it does not add additional dependencies to your script&mdash;except of course the argparser itself&mdash;, especially not differing versions/implementations of a program (like with [`awk`](https://man7.org/linux/man-pages/man1/awk.1p.html "man7.org &rightarrow; man pages &rightarrow; awk(1p)")). Additionally, its design choices of not calling external commands and running almost without forking into subshells lead to a good runtime despite the extensive parsing and checking steps. The argparser is inspired by the Python [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module") module.
 
 <!-- <toc> -->
 ## Table of contents
@@ -207,7 +207,7 @@ PATH="/path/to/bash_argparser:${PATH}"
 To give you an idea about the argparser's application, the following sections show some excerpts of scripts used for internal testing purposes, in the herein given form located in the [tutorial](tutorial) directory, trying to guide you through the various features.
 
 > [!NOTE]
-> For the terminology in argument parsing, refer to the [Python optparse module documentation](https://docs.python.org/3/library/optparse.html#terminology "python.org &rightarrow; Python documentation &rightarrow; optparse module &rightarrow; terminology"). Additionally, for consistency with the positional arguments, options are herein partly referred to as keyword arguments.
+> For the terminology in argument parsing, refer to the Python [`optparse` documentation](https://docs.python.org/3/library/optparse.html#terminology "python.org &rightarrow; Python documentation &rightarrow; optparse module &rightarrow; terminology"). Additionally, for consistency with the positional arguments, options are herein partly referred to as keyword arguments.
 
 <!-- <toc title="Table of contents (Tutorial)"> -->
 ### Table of contents (Tutorial)
@@ -1607,7 +1607,7 @@ The argparser defines several data types an argument may have. Using the regular
 
 The argument count defines the number of values a keyword or positional argument may accept. Independent of this count, the argparser will aggregate any non-hyphenated value to the previous keyword argument, or, if none is yet given, set it to the positional arguments. The argument count may be given as natural number (*i.e.*, as unsigned integer), including `0` as sign for flags, or as plus sign (`+`). The latter means to accept as many values as given, at least one.
 
-The [Python argparse module](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module") further defines `*` to accept any argument count, and `?` to accept exactly zero or one argument. Both features aren't yet supported by the argparser, but the characters are reserved for future usage as such, invalidating them as values for [`ARGPARSER_ARG_DELIMITER_1`](#4513-argparser_arg_delimiter_1) and [`ARGPARSER_ARG_DELIMITER_2`](#4514-argparser_arg_delimiter_2).
+The Python [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module") module further defines `*` to accept any argument count, and `?` to accept exactly zero or one argument. Both features aren't yet supported by the argparser, but the characters are reserved for future usage as such, invalidating them as values for [`ARGPARSER_ARG_DELIMITER_1`](#4513-argparser_arg_delimiter_1) and [`ARGPARSER_ARG_DELIMITER_2`](#4514-argparser_arg_delimiter_2).
 
 #### 4.1.9. Argument group (`arg_group`)
 
