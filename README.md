@@ -1316,7 +1316,7 @@ It is possible to customize the appearance of error, warning, help, usage, and v
 
 The following colors and styles are available (with the actual appearance depending on the output device):
 
-| colors                                  | styles        |
+| Colors                                  | Styles        |
 |-----------------------------------------|---------------|
 | $\small\textsf{\color{black}black}$     | `normal`      |
 | $\small\textsf{\color{red}red}$         | `bold`        |
@@ -1629,7 +1629,7 @@ When [`ARGPARSER_USE_STYLES_IN_FILES`](#4558-argparser_use_styles_in_files) is s
 
 A number of colors and styles is available. You don't need to remember the SGR codes, they're only internally used and given here for reference of what to expect from the keywords for the colors and styles. Further note that the actual RGB/Hex color values will depend on the output device.
 
-| color                                   | SGR code |
+| Color                                   | SGR code |
 |-----------------------------------------|----------|
 | $\small\textsf{\color{black}black}$     | `30`     |
 | $\small\textsf{\color{red}red}$         | `31`     |
@@ -1640,7 +1640,7 @@ A number of colors and styles is available. You don't need to remember the SGR c
 | $\small\textsf{\color{cyan}cyan}$       | `36`     |
 | $\small\textsf{\color{lightgray}white}$ | `37`     |
 
-| style         | SGR code |
+| Style         | SGR code |
 |---------------|----------|
 | `normal`      | `22`     |
 | `bold`        | `1`      |
