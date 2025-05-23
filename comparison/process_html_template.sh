@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-05-22
+# Last Modification: 2025-05-23
 
 # Usage: Source this script with "source process_html_template.sh".
 
@@ -20,6 +20,7 @@
 
 # Copy the template HTML file.
 if [[ "${verbose}" == true ]]; then
+    printf "Verbose output enabled.\n"
     printf 'Copying HTML template from %s to %s...\n' "${in_file}" \
         "${out_file}"
 fi

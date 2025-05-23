@@ -1776,10 +1776,6 @@ in_file="$1"
 out_file="$2"
 
 # Run the HTML processor.
-if [[ "${verbose}" == true ]]; then
-    printf "Verbose output enabled.\n"
-fi
-
 source process_html_template.sh
 ```
 
@@ -1956,10 +1952,6 @@ in_file="$1"
 out_file="$2"
 
 # Run the HTML processor.
-if [[ "${verbose}" == true ]]; then
-    printf "Verbose output enabled.\n"
-fi
-
 source process_html_template.sh
 ```
 
