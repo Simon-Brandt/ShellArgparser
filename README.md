@@ -1598,44 +1598,52 @@ The [feature comparison](#41-feature-comparison) compares the various features f
 
 In the following table, "&#10008;" marks the absence of a feature, "&#10004;" its presence, and "&#10033;" its partial presence, mainly due to a not-yet complete implementation.
 
-| Function                                    | `getopts` | `getopt` | shFlags  | docopt   | `argparse` | argparser |
-|---------------------------------------------|-----------|----------|----------|----------|------------|-----------|
-| Short options                               | &#10004;  | &#10004; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Long options                                | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Positional arguments                        | &#10033;  | &#10033; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Mandatory options                           | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Flags                                       | &#10004;  | &#10004; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Mutually exclusive arguments                | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10008;  |
-| Intermixed positional and keyword arguments | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10008;  |
-| Argument groups                             | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Positional arguments delimiter `--`         | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Positional arguments delimiter `++`         | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Alternative option characters (`+`/`/`)     | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10008;  |
-| Default values                              | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Choice values                               | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Any argument number                         | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10033;  |
-| Metavariables (value names)                 | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Data type checking                          | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Deprecation note                            | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Option merging                              | &#10004;  | &#10004; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Option abbreviation                         | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Flag counting                               | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Flag negation                               | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Flag inversion                              | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Inheritable arguments definition            | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Arguments auto-set to variables             | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Error/warning silencing                     | &#10004;  | &#10004; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Help message                                | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Usage message                               | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Version message                             | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Stylized messages                           | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Customizable message text                   | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Customizable help options                   | &#10033;  | &#10033; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Customizable exit codes                     | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Configurable parsing                        | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Internationalization / localization         | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;  |
-| Debug mode                                  | &#10008;  | &#10008; | &#10008; | &#10008; | &#10008;   | &#10008;  |
-| Shell independence (Bash, Dash, ksh93...)   | &#10004;  | &#10004; | &#10008; | &#10008; | &#10008;   | &#10004;  |
+| Function                                    | `getopts`    | `getopt` | shFlags  | docopt   | `argparse` | argparser    |
+|---------------------------------------------|--------------|----------|----------|----------|------------|--------------|
+| Short options                               | &#10004;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Long options                                | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Positional arguments                        | &#10033;[^1] | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Mandatory options                           | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Flags                                       | &#10004;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Mutually exclusive arguments                | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10008;[^2] |
+| Intermixed positional and keyword arguments | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10008;[^3]  |
+| Argument groups                             | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Positional arguments delimiter `--`         | &#10004;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Positional arguments delimiter `++`         | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Alternative option characters (`+`/`/`)     | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10008;[^3] |
+| Default values                              | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Choice values                               | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Any argument number                         | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10033;[^2] |
+| Metavariables (value names)                 | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Data type checking                          | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Deprecation note                            | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Option merging                              | &#10004;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Option abbreviation                         | &#10008;[^4] | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Flag counting                               | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Flag negation                               | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Flag inversion                              | &#10008;[^4] | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Inheritable arguments definition            | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Arguments auto-set to variables             | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Error/warning silencing                     | &#10004;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Help message                                | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Usage message                               | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Version message                             | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Stylized messages                           | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Customizable message text                   | &#10033;[^5] | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Customizable help options                   | &#10033;[^6] | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Customizable exit codes                     | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Configurable parsing                        | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Internationalization / localization         | &#10004;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Debug mode                                  | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10008;[^2] |
+| Shell independence (Bash, Dash, ksh93...)   | &#10004;[^7] | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+
+[^1]: Not rejected, but not parsed and only usable by manual parsing.
+[^2]: To be implemented in a future version.
+[^3]: By design decision, might still be implemented in a future version.
+[^4]: Not applicable for lack of long options.
+[^5]: Not builtin, only due to need to write messages manually.
+[^6]: Except the common `?`.
+[^7]: Regarding its application in scripts, would need equivalent builtins in other shells.
 
 ### 4.2. Example scripts
 
@@ -2232,78 +2240,78 @@ The argparser defines a large set of environment variables, each following the n
 
 #### 5.5.1. Overview
 
-| Variable name                                                                      | Type[^1]  | Default value [^2][^3]   |
-|------------------------------------------------------------------------------------|-----------|--------------------------|
-| [`ARGPARSER_ADD_HELP`](#552-argparser_add_help)                                    | *bool*    | `true`                   |
-| [`ARGPARSER_ADD_USAGE`](#553-argparser_add_usage)                                  | *bool*    | `true`                   |
-| [`ARGPARSER_ADD_VERSION`](#554-argparser_add_version)                              | *bool*    | `true`                   |
-| [`ARGPARSER_ALLOW_FLAG_INVERSION`](#555-argparser_allow_flag_inversion)            | *bool*    | `true`                   |
-| [`ARGPARSER_ALLOW_FLAG_NEGATION`](#556-argparser_allow_flag_negation)              | *bool*    | `true`                   |
-| [`ARGPARSER_ALLOW_OPTION_ABBREVIATION`](#557-argparser_allow_option_abbreviation)  | *bool*    | `false`                  |
-| [`ARGPARSER_ALLOW_OPTION_MERGING`](#558-argparser_allow_option_merging)            | *bool*    | `false`                  |
-| [`ARGPARSER_ARG_ARRAY_NAME`](#559-argparser_arg_array_name)                        | *str*[^4] | `"args"`                 |
-| [`ARGPARSER_ARG_DEF_FILE`](#5510-argparser_arg_def_file)                           | *file*    | `""`                     |
-| [`ARGPARSER_ARG_DEF_FILE_HAS_HEADER`](#5511-argparser_arg_def_file_has_header)     | *bool*    | `true`                   |
-| [`ARGPARSER_ARG_DEF_HAS_HEADER`](#5512-argparser_arg_def_has_header)               | *bool*    | `true`                   |
-| [`ARGPARSER_ARG_DELIMITER_1`](#5513-argparser_arg_delimiter_1)                     | *char*    | `"\|"`[^5]               |
-| [`ARGPARSER_ARG_DELIMITER_2`](#5514-argparser_arg_delimiter_2)                     | *char*    | `","`[^5]                |
-| [`ARGPARSER_ARGPARSER_VERSION`](#5515-argparser_argparser_version)                 | *str*     | *None* (unset)           |
-| [`ARGPARSER_ARGS`](#5516-argparser_args)                                           | *arr*     | *None* (unset)           |
-| [`ARGPARSER_CHECK_ARG_DEF`](#5517-argparser_check_arg_def)                         | *bool*    | `false`                  |
-| [`ARGPARSER_CHECK_ENV_VARS`](#5518-argparser_check_env_vars)                       | *bool*    | `false`                  |
-| [`ARGPARSER_CONFIG_FILE`](#5519-argparser_config_file)                             | *file*    | `""`                     |
-| [`ARGPARSER_COUNT_FLAGS`](#5520-argparser_count_flags)                             | *bool*    | `false`                  |
-| [`ARGPARSER_DICTIONARY`](#5521-argparser_dictionary)                               | *dict*    | *None* (unset)           |
-| [`ARGPARSER_ERROR_EXIT_CODE`](#5522-argparser_error_exit_code)                     | *int*     | `1`                      |
-| [`ARGPARSER_ERROR_STYLE`](#5523-argparser_error_style)                             | *str*     | `"red,bold,reverse"`     |
-| [`ARGPARSER_HELP_EXIT_CODE`](#5525-argparser_help_exit_code)                       | *int*     | `0`                      |
-| [`ARGPARSER_HELP_ARG_GROUP`](#5524-argparser_help_arg_group)                       | *str*     | `"Help options"`         |
-| [`ARGPARSER_HELP_FILE`](#5526-argparser_help_file)                                 | *file*    | `""`                     |
-| [`ARGPARSER_HELP_FILE_INCLUDE_CHAR`](#5527-argparser_help_file_include_char)       | *char*    | `"@"`                    |
-| [`ARGPARSER_HELP_FILE_KEEP_COMMENTS`](#5528-argparser_help_file_keep_comments)     | *bool*    | `false`                  |
-| [`ARGPARSER_HELP_OPTIONS`](#5529-argparser_help_options)                           | *char*    | `"h,?"`                  |
-| [`ARGPARSER_HELP_STYLE`](#5530-argparser_help_style)                               | *str*     | `"italic"`               |
-| [`ARGPARSER_LANGUAGE`](#5531-argparser_language)                                   | *str*     | `"en"`                   |
-| [`ARGPARSER_MAX_COL_WIDTH_1`](#5532-argparser_max_col_width_1)                     | *uint*    | `5`[^6]                  |
-| [`ARGPARSER_MAX_COL_WIDTH_2`](#5533-argparser_max_col_width_2)                     | *uint*    | `33`[^6]                 |
-| [`ARGPARSER_MAX_COL_WIDTH_3`](#5534-argparser_max_col_width_3)                     | *uint*    | `0`[^6]                  |
-| [`ARGPARSER_MAX_WIDTH`](#5535-argparser_max_width)                                 | *uint*    | `79`                     |
-| [`ARGPARSER_POSITIONAL_ARG_GROUP`](#5536-argparser_positional_arg_group)           | *str*     | `"Positional arguments"` |
-| [`ARGPARSER_READ_ARGS`](#5537-argparser_read_args)                                 | *bool*    | `true`                   |
-| [`ARGPARSER_SCRIPT_ARGS`](#5538-argparser_script_args)                             | *arr*     | *None* (unset)           |
-| [`ARGPARSER_SCRIPT_NAME`](#5539-argparser_script_name)                             | *str*     | `"${0##*/}"`             |
-| [`ARGPARSER_SET_ARGS`](#5540-argparser_set_args)                                   | *bool*    | `true`                   |
-| [`ARGPARSER_SET_ARRAYS`](#5541-argparser_set_arrays)                               | *bool*    | `true`                   |
-| [`ARGPARSER_SILENCE_ERRORS`](#5542-argparser_silence_errors)                       | *bool*    | `false`                  |
-| [`ARGPARSER_SILENCE_WARNINGS`](#5543-argparser_silence_warnings)                   | *bool*    | `false`                  |
-| [`ARGPARSER_TRANSLATION_FILE`](#5544-argparser_translation_file)                   | *file*    | `""`                     |
-| [`ARGPARSER_UNSET_ARGS`](#5545-argparser_unset_args)                               | *bool*    | `true`                   |
-| [`ARGPARSER_UNSET_ENV_VARS`](#5546-argparser_unset_env_vars)                       | *bool*    | `true`                   |
-| [`ARGPARSER_UNSET_FUNCTIONS`](#5547-argparser_unset_functions)                     | *bool*    | `true`                   |
-| [`ARGPARSER_USAGE_EXIT_CODE`](#5548-argparser_usage_exit_code)                     | *int*     | `0`                      |
-| [`ARGPARSER_USAGE_FILE`](#5549-argparser_usage_file)                               | *file*    | `""`                     |
-| [`ARGPARSER_USAGE_FILE_INCLUDE_CHAR`](#5550-argparser_usage_file_include_char)     | *char*    | `"@"`                    |
-| [`ARGPARSER_USAGE_FILE_KEEP_COMMENTS`](#5551-argparser_usage_file_keep_comments)   | *bool*    | `false`                  |
-| [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](#5552-argparser_usage_message_option_type) | *str*     | `"short"`                |
-| [`ARGPARSER_USAGE_MESSAGE_ORIENTATION`](#5553-argparser_usage_message_orientation) | *str*     | `"row"`                  |
-| [`ARGPARSER_USAGE_OPTIONS`](#5554-argparser_usage_options)                         | *char*    | `"u"`                    |
-| [`ARGPARSER_USAGE_STYLE`](#5555-argparser_usage_style)                             | *str*     | `"italic"`               |
-| [`ARGPARSER_USE_LONG_OPTIONS`](#5556-argparser_use_long_options)                   | *bool*    | `true`                   |
-| [`ARGPARSER_USE_SHORT_OPTIONS`](#5557-argparser_use_short_options)                 | *bool*    | `true`                   |
-| [`ARGPARSER_USE_STYLES_IN_FILES`](#5558-argparser_use_styles_in_files)             | *bool*    | `false`                  |
-| [`ARGPARSER_VERSION`](#5559-argparser_version)                                     | *str*     | `"1.0.0"`                |
-| [`ARGPARSER_VERSION_EXIT_CODE`](#5560-argparser_version_exit_code)                 | *int*     | `0`                      |
-| [`ARGPARSER_VERSION_OPTIONS`](#5561-argparser_version_options)                     | *char*    | `"V"`                    |
-| [`ARGPARSER_VERSION_STYLE`](#5562-argparser_version_style)                         | *str*     | `"bold"`                 |
-| [`ARGPARSER_WARNING_STYLE`](#5563-argparser_warning_style)                         | *str*     | `"red,bold"`             |
-| [`ARGPARSER_WRITE_ARGS`](#5564-argparser_write_args)                               | *bool*    | `false`                  |
+| Variable name                                                                      | Type[^8]   | Default value[^9][^10]   |
+|------------------------------------------------------------------------------------|------------|--------------------------|
+| [`ARGPARSER_ADD_HELP`](#552-argparser_add_help)                                    | *bool*     | `true`                   |
+| [`ARGPARSER_ADD_USAGE`](#553-argparser_add_usage)                                  | *bool*     | `true`                   |
+| [`ARGPARSER_ADD_VERSION`](#554-argparser_add_version)                              | *bool*     | `true`                   |
+| [`ARGPARSER_ALLOW_FLAG_INVERSION`](#555-argparser_allow_flag_inversion)            | *bool*     | `true`                   |
+| [`ARGPARSER_ALLOW_FLAG_NEGATION`](#556-argparser_allow_flag_negation)              | *bool*     | `true`                   |
+| [`ARGPARSER_ALLOW_OPTION_ABBREVIATION`](#557-argparser_allow_option_abbreviation)  | *bool*     | `false`                  |
+| [`ARGPARSER_ALLOW_OPTION_MERGING`](#558-argparser_allow_option_merging)            | *bool*     | `false`                  |
+| [`ARGPARSER_ARG_ARRAY_NAME`](#559-argparser_arg_array_name)                        | *str*[^11] | `"args"`                 |
+| [`ARGPARSER_ARG_DEF_FILE`](#5510-argparser_arg_def_file)                           | *file*     | `""`                     |
+| [`ARGPARSER_ARG_DEF_FILE_HAS_HEADER`](#5511-argparser_arg_def_file_has_header)     | *bool*     | `true`                   |
+| [`ARGPARSER_ARG_DEF_HAS_HEADER`](#5512-argparser_arg_def_has_header)               | *bool*     | `true`                   |
+| [`ARGPARSER_ARG_DELIMITER_1`](#5513-argparser_arg_delimiter_1)                     | *char*     | `"\|"`[^12]              |
+| [`ARGPARSER_ARG_DELIMITER_2`](#5514-argparser_arg_delimiter_2)                     | *char*     | `","`[^12]               |
+| [`ARGPARSER_ARGPARSER_VERSION`](#5515-argparser_argparser_version)                 | *str*      | *None* (unset)           |
+| [`ARGPARSER_ARGS`](#5516-argparser_args)                                           | *arr*      | *None* (unset)           |
+| [`ARGPARSER_CHECK_ARG_DEF`](#5517-argparser_check_arg_def)                         | *bool*     | `false`                  |
+| [`ARGPARSER_CHECK_ENV_VARS`](#5518-argparser_check_env_vars)                       | *bool*     | `false`                  |
+| [`ARGPARSER_CONFIG_FILE`](#5519-argparser_config_file)                             | *file*     | `""`                     |
+| [`ARGPARSER_COUNT_FLAGS`](#5520-argparser_count_flags)                             | *bool*     | `false`                  |
+| [`ARGPARSER_DICTIONARY`](#5521-argparser_dictionary)                               | *dict*     | *None* (unset)           |
+| [`ARGPARSER_ERROR_EXIT_CODE`](#5522-argparser_error_exit_code)                     | *int*      | `1`                      |
+| [`ARGPARSER_ERROR_STYLE`](#5523-argparser_error_style)                             | *str*      | `"red,bold,reverse"`     |
+| [`ARGPARSER_HELP_EXIT_CODE`](#5525-argparser_help_exit_code)                       | *int*      | `0`                      |
+| [`ARGPARSER_HELP_ARG_GROUP`](#5524-argparser_help_arg_group)                       | *str*      | `"Help options"`         |
+| [`ARGPARSER_HELP_FILE`](#5526-argparser_help_file)                                 | *file*     | `""`                     |
+| [`ARGPARSER_HELP_FILE_INCLUDE_CHAR`](#5527-argparser_help_file_include_char)       | *char*     | `"@"`                    |
+| [`ARGPARSER_HELP_FILE_KEEP_COMMENTS`](#5528-argparser_help_file_keep_comments)     | *bool*     | `false`                  |
+| [`ARGPARSER_HELP_OPTIONS`](#5529-argparser_help_options)                           | *char*     | `"h,?"`                  |
+| [`ARGPARSER_HELP_STYLE`](#5530-argparser_help_style)                               | *str*      | `"italic"`               |
+| [`ARGPARSER_LANGUAGE`](#5531-argparser_language)                                   | *str*      | `"en"`                   |
+| [`ARGPARSER_MAX_COL_WIDTH_1`](#5532-argparser_max_col_width_1)                     | *uint*     | `5`[^13]                 |
+| [`ARGPARSER_MAX_COL_WIDTH_2`](#5533-argparser_max_col_width_2)                     | *uint*     | `33`[^13]                |
+| [`ARGPARSER_MAX_COL_WIDTH_3`](#5534-argparser_max_col_width_3)                     | *uint*     | `0`[^13]                 |
+| [`ARGPARSER_MAX_WIDTH`](#5535-argparser_max_width)                                 | *uint*     | `79`                     |
+| [`ARGPARSER_POSITIONAL_ARG_GROUP`](#5536-argparser_positional_arg_group)           | *str*      | `"Positional arguments"` |
+| [`ARGPARSER_READ_ARGS`](#5537-argparser_read_args)                                 | *bool*     | `true`                   |
+| [`ARGPARSER_SCRIPT_ARGS`](#5538-argparser_script_args)                             | *arr*      | *None* (unset)           |
+| [`ARGPARSER_SCRIPT_NAME`](#5539-argparser_script_name)                             | *str*      | `"${0##*/}"`             |
+| [`ARGPARSER_SET_ARGS`](#5540-argparser_set_args)                                   | *bool*     | `true`                   |
+| [`ARGPARSER_SET_ARRAYS`](#5541-argparser_set_arrays)                               | *bool*     | `true`                   |
+| [`ARGPARSER_SILENCE_ERRORS`](#5542-argparser_silence_errors)                       | *bool*     | `false`                  |
+| [`ARGPARSER_SILENCE_WARNINGS`](#5543-argparser_silence_warnings)                   | *bool*     | `false`                  |
+| [`ARGPARSER_TRANSLATION_FILE`](#5544-argparser_translation_file)                   | *file*     | `""`                     |
+| [`ARGPARSER_UNSET_ARGS`](#5545-argparser_unset_args)                               | *bool*     | `true`                   |
+| [`ARGPARSER_UNSET_ENV_VARS`](#5546-argparser_unset_env_vars)                       | *bool*     | `true`                   |
+| [`ARGPARSER_UNSET_FUNCTIONS`](#5547-argparser_unset_functions)                     | *bool*     | `true`                   |
+| [`ARGPARSER_USAGE_EXIT_CODE`](#5548-argparser_usage_exit_code)                     | *int*      | `0`                      |
+| [`ARGPARSER_USAGE_FILE`](#5549-argparser_usage_file)                               | *file*     | `""`                     |
+| [`ARGPARSER_USAGE_FILE_INCLUDE_CHAR`](#5550-argparser_usage_file_include_char)     | *char*     | `"@"`                    |
+| [`ARGPARSER_USAGE_FILE_KEEP_COMMENTS`](#5551-argparser_usage_file_keep_comments)   | *bool*     | `false`                  |
+| [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](#5552-argparser_usage_message_option_type) | *str*      | `"short"`                |
+| [`ARGPARSER_USAGE_MESSAGE_ORIENTATION`](#5553-argparser_usage_message_orientation) | *str*      | `"row"`                  |
+| [`ARGPARSER_USAGE_OPTIONS`](#5554-argparser_usage_options)                         | *char*     | `"u"`                    |
+| [`ARGPARSER_USAGE_STYLE`](#5555-argparser_usage_style)                             | *str*      | `"italic"`               |
+| [`ARGPARSER_USE_LONG_OPTIONS`](#5556-argparser_use_long_options)                   | *bool*     | `true`                   |
+| [`ARGPARSER_USE_SHORT_OPTIONS`](#5557-argparser_use_short_options)                 | *bool*     | `true`                   |
+| [`ARGPARSER_USE_STYLES_IN_FILES`](#5558-argparser_use_styles_in_files)             | *bool*     | `false`                  |
+| [`ARGPARSER_VERSION`](#5559-argparser_version)                                     | *str*      | `"1.0.0"`                |
+| [`ARGPARSER_VERSION_EXIT_CODE`](#5560-argparser_version_exit_code)                 | *int*      | `0`                      |
+| [`ARGPARSER_VERSION_OPTIONS`](#5561-argparser_version_options)                     | *char*     | `"V"`                    |
+| [`ARGPARSER_VERSION_STYLE`](#5562-argparser_version_style)                         | *str*      | `"bold"`                 |
+| [`ARGPARSER_WARNING_STYLE`](#5563-argparser_warning_style)                         | *str*      | `"red,bold"`             |
+| [`ARGPARSER_WRITE_ARGS`](#5564-argparser_write_args)                               | *bool*     | `false`                  |
 
-[^1]: Bash is weakly typed, hence the denoted types are just a guidance.
-[^2]: Strings can optionally be enclosed by quotes.
-[^3]: Bools must be lowercase, *i.e.*, `true` or `false`.
-[^4]: In fact, any legit Bash variable identifier.
-[^5]: Values must be different from each other.
-[^6]: Sum of values is recommended to be 77.
+[^8]: Bash is weakly typed, hence the denoted types are just a guidance.
+[^9]: Strings can optionally be enclosed by quotes.
+[^10]: Bools must be lowercase, *i.e.*, `true` or `false`.
+[^11]: In fact, any legit Bash variable identifier.
+[^12]: Values must be different from each other.
+[^13]: Sum of values is recommended to be 77.
 
 #### 5.5.2. `ARGPARSER_ADD_HELP`
 
