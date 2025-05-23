@@ -6477,8 +6477,7 @@ function argparser_create_usage_message() {
         done
     fi
 
-    # Output each positional argument with default values and sort them
-    # alphabetically.
+    # Output each positional argument with default values.
     lines=( )
     for arg_key in "${positional_default_args[@]}"; do
         # Read the argument's definition.
@@ -6505,16 +6504,12 @@ function argparser_create_usage_message() {
     done
 
     if (( "${#lines[@]}" > 0 )); then
-        argparser_sort false "${lines[@]}"
-        lines=("${sorted_array[@]}")
-
         for line in "${lines[@]}"; do
             usage_message+="${whitespace}${line}"
         done
     fi
 
-    # Output each positional argument without default values and sort
-    # them alphabetically.
+    # Output each positional argument without default values.
     lines=( )
     for arg_key in "${positional_required_args[@]}"; do
         # Read the argument's definition.
@@ -6541,9 +6536,6 @@ function argparser_create_usage_message() {
     done
 
     if (( "${#lines[@]}" > 0 )); then
-        argparser_sort false "${lines[@]}"
-        lines=("${sorted_array[@]}")
-
         for line in "${lines[@]}"; do
             usage_message+="${whitespace}${line}"
         done
