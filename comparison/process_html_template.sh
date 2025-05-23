@@ -13,10 +13,10 @@
 # without sourcing it from a command-line parsing script.
 : "${in_file:-/dev/stdin}"
 : "${out_file:-/dev/stdout}"
-: "${verbose:-false}"
 : "${name:-${USER}}"
-: "${age:-2}"
+: "${age:-18}"
 : "${role:-user}"
+: "${verbose:-false}"
 
 # Copy the template HTML file.
 if [[ "${verbose}" == true ]]; then

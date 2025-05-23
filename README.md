@@ -1663,15 +1663,15 @@ In the following table, "&#10008;" marks the absence of a feature, "&#10004;" it
 function help() {
     # Define the help message.
     cat << EOF | sed 's/^    //'
-    Usage: $0 [OPTIONS] source destination
+    Usage: $0 [OPTIONS] ARGUMENTS source destination
 
     Positional arguments:
     source       the template HTML file to fill in
     destination  the output HTML file
 
     Mandatory options:
-    -n NAME      the name of the homepage's owner
     -a AGE       the current age of the homepage's owner
+    -n NAME      the name of the homepage's owner
     -r {u,m,b}   the role of the homepage's owner (u: user, m: moderator, b:
                  bot)
 
@@ -1687,7 +1687,7 @@ EOF
 function usage() {
     # Define the usage message.
     local usage
-    usage="Usage: $0 [-h | -u | -V] [-v] -n=NAME -a=AGE -r={u,m,b} source "
+    usage="Usage: $0 [-h | -u | -V] [-v] -a=AGE -n=NAME -r={u,m,b} source "
     usage+="destination"
     printf '%s\n' "${usage}"
 }
@@ -1816,15 +1816,17 @@ Notes:
 function help() {
     # Define the help message.
     cat << EOF | sed 's/^    //'
-    Usage: $0 [OPTIONS] source destination
+    Usage: $0 [OPTIONS] ARGUMENTS source destination
+
+    Mandatory arguments to long options are mandatory for short options too.
 
     Positional arguments:
     source                   the template HTML file to fill in
     destination              the output HTML file
 
     Mandatory options:
-    -n,       --name=NAME    the name of the homepage's owner
     -a,       --age=AGE      the current age of the homepage's owner
+    -n,       --name=NAME    the name of the homepage's owner
     -r,       --role={u,m,b} the role of the homepage's owner (u: user, m:
                              moderator, b: bot)
 
@@ -1840,7 +1842,7 @@ EOF
 function usage() {
     # Define the usage message.
     local usage
-    usage="Usage: $0 [-h,-? | -u | -V] [-v] -n=NAME -a=AGE -r={u,m,b} source "
+    usage="Usage: $0 [-h,-? | -u | -V] [-v] -a=AGE -n=NAME -r={u,m,b} source "
     usage+="destination"
     printf '%s\n' "${usage}"
 }
