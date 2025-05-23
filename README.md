@@ -1569,21 +1569,12 @@ In short, it is possible to run the argparser in standalone mode from other shel
 
 ## 4. Comparison of command-line parsers
 
-Several other shell command-line parsers predate the argparser and were in part influential in its design choices. The table below aims at comparing their features or lack thereof, intended to be as comprehensive as possible. If you're missing a function, please open an issue, such that the function can be added. Manual argument parsing, the easiest method, is excluded here since in theory anything could be done, therein&mdash;it would just require a proportionate amount of work.
+Several other shell command-line parsers predate the argparser and were in part influential in its design choices. The table below aims at comparing their features or lack thereof, intended to be as comprehensive as possible. If you're missing a function, please open an issue, such that the function can be added. Manual argument parsing, the easiest (just most complex) method, is excluded here since in theory anything could be done, therein&mdash;it would just require a proportionate amount of work.
 
-The following command-line parsers are compared:
+The [feature comparison](#41-feature-comparison) compares the various features for argument parsing, while some [example scripts](#42-example-scripts) later demonstrate the usage for the different parsers.
 
-- [`getopts`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-getopts "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; getopts"): Bash-builtin, POSIX-compliant command-line parser, from Bash `v5.2`
-- [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)"): legacy command-line parser with GNU extensions, from `util-linux v2.39.3`
-- [shFlags](https://github.com/kward/shflags "github.com &rightarrow; kward &rightarrow; shFlags"): Google [`gflags`](https://gflags.github.io/gflags/ "github.io &rightarrow; gflags") clone for Unix shells, `v1.3.0`
-- [docopt](https://github.com/docopt/docopts "github.com &rightarrow; docopt &rightarrow; docopts"): platform-independent command-line interface description language and parser, `v0.6.4`
-- [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module"): Python module from the stdlib, from Python `v3.13`
-- argparser: novel command-line parser, `v0.1.0`
-
-The [feature comparison](#41-feature-comparison) compares the various features for argument parsing, while some example scripts later demonstrate the usage for the different parsers.
-
-<!-- <toc title="Table of contents (Comparison)"> -->
-### Table of contents (Comparison)
+<!-- <toc title="Table of contents (Feature comparison)"> -->
+### Table of contents (Feature comparison)
 
 1. [Feature comparison](#41-feature-comparison)
 1. [Example scripts](#42-example-scripts)
@@ -1596,7 +1587,16 @@ The [feature comparison](#41-feature-comparison) compares the various features f
 
 ### 4.1. Feature comparison
 
-In the following table, "&#10008;" marks the absence of a feature, "&#10004;" its presence, and "&#10033;" its partial presence, mainly due to a not-yet complete implementation.
+The following command-line parsers are compared in the given versions:
+
+- [`getopts`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-getopts "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; getopts"): Bash-builtin, POSIX-compliant command-line parser, from Bash `v5.2`
+- [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)"): legacy command-line parser with GNU extensions, from `util-linux v2.39.3`
+- [shFlags](https://github.com/kward/shflags "github.com &rightarrow; kward &rightarrow; shFlags"): Google [`gflags`](https://gflags.github.io/gflags/ "github.io &rightarrow; gflags") clone for Unix shells, `v1.3.0`
+- [docopt](https://github.com/docopt/docopts "github.com &rightarrow; docopt &rightarrow; docopts"): platform-independent command-line interface description language and parser, `v0.6.4`
+- [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module"): Python module from the stdlib, from Python `v3.13`
+- argparser: novel shell command-line parser, `v0.1.0`
+
+In the following table, "&#10008;" marks the absence of a feature, "&#10004;" its presence, and "&#10033;" its partial presence, *e.g.*, due to a not-yet complete implementation.
 
 | Function                                    | `getopts`    | `getopt`     | shFlags  | docopt   | `argparse` | argparser    |
 |---------------------------------------------|--------------|--------------|----------|----------|------------|--------------|
