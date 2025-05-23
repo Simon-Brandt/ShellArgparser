@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-05-22
+# Last Modification: 2025-05-23
 
 # Usage: Run this script with "bash getopts_wrapper.sh".
 
@@ -23,7 +23,7 @@ function help() {
     -r {u,m,b}   the role of the homepage's owner (u: user, m: moderator, b:
                  bot)
 
-    Optional options
+    Optional options:
     [-v]         output verbose information
 
     [-h]         display this help and exit
@@ -42,7 +42,7 @@ function usage() {
 
 # Parse the arguments.
 verbose=false
-while getopts "n:a:r:vh?uV" arg; do
+while getopts "n:a:r:vhuV" arg; do
     case "${arg}" in
         n) name="${OPTARG}" ;;
         a) age="${OPTARG}" ;;
