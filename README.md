@@ -1598,52 +1598,56 @@ The [feature comparison](#41-feature-comparison) compares the various features f
 
 In the following table, "&#10008;" marks the absence of a feature, "&#10004;" its presence, and "&#10033;" its partial presence, mainly due to a not-yet complete implementation.
 
-| Function                                    | `getopts`    | `getopt` | shFlags  | docopt   | `argparse` | argparser    |
-|---------------------------------------------|--------------|----------|----------|----------|------------|--------------|
-| Short options                               | &#10004;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Long options                                | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Positional arguments                        | &#10033;[^1] | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Mandatory options                           | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Flags                                       | &#10004;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Mutually exclusive arguments                | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10008;[^2] |
-| Intermixed positional and keyword arguments | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10008;[^3]  |
-| Argument groups                             | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Positional arguments delimiter `--`         | &#10004;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Positional arguments delimiter `++`         | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Alternative option characters (`+`/`/`)     | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10008;[^3] |
-| Default values                              | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Choice values                               | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Any argument number                         | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10033;[^2] |
-| Metavariables (value names)                 | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Data type checking                          | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Deprecation note                            | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Option merging                              | &#10004;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Option abbreviation                         | &#10008;[^4] | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Flag counting                               | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Flag negation                               | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Flag inversion                              | &#10008;[^4] | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Inheritable arguments definition            | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Arguments auto-set to variables             | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Error/warning silencing                     | &#10004;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Help message                                | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Usage message                               | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Version message                             | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Stylized messages                           | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Customizable message text                   | &#10033;[^5] | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Customizable help options                   | &#10033;[^6] | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Customizable exit codes                     | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Configurable parsing                        | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Internationalization / localization         | &#10004;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
-| Debug mode                                  | &#10008;     | &#10008; | &#10008; | &#10008; | &#10008;   | &#10008;[^2] |
-| Shell independence (Bash, Dash, ksh93...)   | &#10004;[^7] | &#10008; | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Function                                    | `getopts`    | `getopt`     | shFlags  | docopt   | `argparse` | argparser    |
+|---------------------------------------------|--------------|--------------|----------|----------|------------|--------------|
+| Short options                               | &#10004;     | &#10004;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Long options                                | &#10008;     | &#10004;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Positional arguments                        | &#10033;[^1] | &#10033;[^1] | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Mandatory options                           | &#10008;     | &#10008;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Flags                                       | &#10004;     | &#10004;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Mutually exclusive arguments                | &#10008;     | &#10008;     | &#10008; | &#10008; | &#10008;   | &#10008;[^2] |
+| Intermixed positional and keyword arguments | &#10008;     | &#10004;     | &#10008; | &#10008; | &#10008;   | &#10008;[^3] |
+| Argument groups                             | &#10008;     | &#10008;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Positional arguments delimiter `--`         | &#10004;     | &#10004;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Positional arguments delimiter `++`         | &#10008;     | &#10008;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Single-hyphen long options                  | &#10008;[^4] | &#10004;     | &#10008; | &#10008; | &#10008;   | &#10008;[^3] |
+| Alternative option characters (`+`/`/`)     | &#10008;     | &#10008;     | &#10008; | &#10008; | &#10008;   | &#10008;[^3] |
+| Default values                              | &#10008;     | &#10008;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Choice values                               | &#10008;     | &#10008;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Any argument number                         | &#10008;     | &#10008;     | &#10008; | &#10008; | &#10008;   | &#10033;[^2] |
+| Metavariables (value names)                 | &#10008;     | &#10008;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Data type checking                          | &#10008;     | &#10008;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Deprecation note                            | &#10008;     | &#10008;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Option merging                              | &#10004;     | &#10004;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Option abbreviation                         | &#10008;[^4] | &#10004;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Flag counting                               | &#10008;     | &#10008;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Flag negation                               | &#10008;     | &#10008;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Flag inversion                              | &#10008;[^4] | &#10008;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Inheritable arguments definition            | &#10004;[^5] | &#10004;[^5] | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Arguments auto-set to variables             | &#10008;     | &#10008;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Error/warning silencing                     | &#10004;     | &#10004;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Help message                                | &#10008;     | &#10008;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Usage message                               | &#10008;     | &#10008;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Version message                             | &#10008;     | &#10008;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Stylized messages                           | &#10008;     | &#10008;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Customizable message text                   | &#10033;[^6] | &#10033;[^6] | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Customizable help options                   | &#10033;[^7] | &#10004;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Customizable exit codes                     | &#10008;     | &#10008;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Configurable parsing                        | &#10008;     | &#10004;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Internationalization / localization         | &#10004;     | &#10004;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| Debug mode                                  | &#10008;     | &#10008;     | &#10008; | &#10008; | &#10008;   | &#10008;[^2] |
+| Shell independence (Bash, Dash, ksh93...)   | &#10004;[^8] | &#10004;     | &#10008; | &#10008; | &#10008;   | &#10004;     |
+| POSIX compliance                            | &#10004;     | &#10033;[^9] | &#10008; | &#10008; | &#10008;   | &#10008;[^3] |
 
 [^1]: Not rejected, but not parsed and only usable by manual parsing.
 [^2]: To be implemented in a future version.
 [^3]: By design decision, might still be implemented in a future version.
 [^4]: Not applicable for lack of long options.
-[^5]: Not builtin, only due to need to write messages manually.
-[^6]: Except the common `?`.
-[^7]: Regarding its application in scripts, would need equivalent builtins in other shells.
+[^5]: As exported variable.
+[^6]: Not builtin, only due to need to write messages manually.
+[^7]: Except the common `?`.
+[^8]: Regarding its application in scripts, would need equivalent builtins in other shells.
+[^9]: Opt-in feature *via* environment variable (`POSIXLY_CORRECT`).
 
 ### 4.2. Example scripts
 
@@ -2240,7 +2244,7 @@ The argparser defines a large set of environment variables, each following the n
 
 #### 5.5.1. Overview
 
-| Variable name                                                                      | Type[^8]   | Default value[^9][^10]   |
+| Variable name                                                                      | Type[^10]  | Default value[^11][^12]  |
 |------------------------------------------------------------------------------------|------------|--------------------------|
 | [`ARGPARSER_ADD_HELP`](#552-argparser_add_help)                                    | *bool*     | `true`                   |
 | [`ARGPARSER_ADD_USAGE`](#553-argparser_add_usage)                                  | *bool*     | `true`                   |
@@ -2249,12 +2253,12 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_ALLOW_FLAG_NEGATION`](#556-argparser_allow_flag_negation)              | *bool*     | `true`                   |
 | [`ARGPARSER_ALLOW_OPTION_ABBREVIATION`](#557-argparser_allow_option_abbreviation)  | *bool*     | `false`                  |
 | [`ARGPARSER_ALLOW_OPTION_MERGING`](#558-argparser_allow_option_merging)            | *bool*     | `false`                  |
-| [`ARGPARSER_ARG_ARRAY_NAME`](#559-argparser_arg_array_name)                        | *str*[^11] | `"args"`                 |
+| [`ARGPARSER_ARG_ARRAY_NAME`](#559-argparser_arg_array_name)                        | *str*[^13] | `"args"`                 |
 | [`ARGPARSER_ARG_DEF_FILE`](#5510-argparser_arg_def_file)                           | *file*     | `""`                     |
 | [`ARGPARSER_ARG_DEF_FILE_HAS_HEADER`](#5511-argparser_arg_def_file_has_header)     | *bool*     | `true`                   |
 | [`ARGPARSER_ARG_DEF_HAS_HEADER`](#5512-argparser_arg_def_has_header)               | *bool*     | `true`                   |
-| [`ARGPARSER_ARG_DELIMITER_1`](#5513-argparser_arg_delimiter_1)                     | *char*     | `"\|"`[^12]              |
-| [`ARGPARSER_ARG_DELIMITER_2`](#5514-argparser_arg_delimiter_2)                     | *char*     | `","`[^12]               |
+| [`ARGPARSER_ARG_DELIMITER_1`](#5513-argparser_arg_delimiter_1)                     | *char*     | `"\|"`[^14]              |
+| [`ARGPARSER_ARG_DELIMITER_2`](#5514-argparser_arg_delimiter_2)                     | *char*     | `","`[^14]               |
 | [`ARGPARSER_ARGPARSER_VERSION`](#5515-argparser_argparser_version)                 | *str*      | *None* (unset)           |
 | [`ARGPARSER_ARGS`](#5516-argparser_args)                                           | *arr*      | *None* (unset)           |
 | [`ARGPARSER_CHECK_ARG_DEF`](#5517-argparser_check_arg_def)                         | *bool*     | `false`                  |
@@ -2272,9 +2276,9 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_HELP_OPTIONS`](#5529-argparser_help_options)                           | *char*     | `"h,?"`                  |
 | [`ARGPARSER_HELP_STYLE`](#5530-argparser_help_style)                               | *str*      | `"italic"`               |
 | [`ARGPARSER_LANGUAGE`](#5531-argparser_language)                                   | *str*      | `"en"`                   |
-| [`ARGPARSER_MAX_COL_WIDTH_1`](#5532-argparser_max_col_width_1)                     | *uint*     | `5`[^13]                 |
-| [`ARGPARSER_MAX_COL_WIDTH_2`](#5533-argparser_max_col_width_2)                     | *uint*     | `33`[^13]                |
-| [`ARGPARSER_MAX_COL_WIDTH_3`](#5534-argparser_max_col_width_3)                     | *uint*     | `0`[^13]                 |
+| [`ARGPARSER_MAX_COL_WIDTH_1`](#5532-argparser_max_col_width_1)                     | *uint*     | `5`[^15]                 |
+| [`ARGPARSER_MAX_COL_WIDTH_2`](#5533-argparser_max_col_width_2)                     | *uint*     | `33`[^15]                |
+| [`ARGPARSER_MAX_COL_WIDTH_3`](#5534-argparser_max_col_width_3)                     | *uint*     | `0`[^15]                 |
 | [`ARGPARSER_MAX_WIDTH`](#5535-argparser_max_width)                                 | *uint*     | `79`                     |
 | [`ARGPARSER_POSITIONAL_ARG_GROUP`](#5536-argparser_positional_arg_group)           | *str*      | `"Positional arguments"` |
 | [`ARGPARSER_READ_ARGS`](#5537-argparser_read_args)                                 | *bool*     | `true`                   |
@@ -2306,12 +2310,12 @@ The argparser defines a large set of environment variables, each following the n
 | [`ARGPARSER_WARNING_STYLE`](#5563-argparser_warning_style)                         | *str*      | `"red,bold"`             |
 | [`ARGPARSER_WRITE_ARGS`](#5564-argparser_write_args)                               | *bool*     | `false`                  |
 
-[^8]: Bash is weakly typed, hence the denoted types are just a guidance.
-[^9]: Strings can optionally be enclosed by quotes.
-[^10]: Bools must be lowercase, *i.e.*, `true` or `false`.
-[^11]: In fact, any legit Bash variable identifier.
-[^12]: Values must be different from each other.
-[^13]: Sum of values is recommended to be 77.
+[^10]: Bash is weakly typed, hence the denoted types are just a guidance.
+[^11]: Strings can optionally be enclosed by quotes.
+[^12]: Bools must be lowercase, *i.e.*, `true` or `false`.
+[^13]: In fact, any legit Bash variable identifier.
+[^14]: Values must be different from each other.
+[^15]: Sum of values is recommended to be 77.
 
 #### 5.5.2. `ARGPARSER_ADD_HELP`
 
