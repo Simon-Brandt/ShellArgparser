@@ -1,6 +1,7 @@
 # Look for sourced files relative to the checked script.
 source-path=SCRIPTDIR
 source-path=SCRIPTDIR/..
+source-path=SCRIPTDIR/../../shflags
 
 # Allow opening any sourced file, even if not specified as input.
 external-sources=true

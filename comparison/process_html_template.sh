@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-05-23
+# Last Modification: 2025-05-26
 
 # Usage: Source this script with "source process_html_template.sh".
 
@@ -14,7 +14,7 @@
 : "${in_file:-/dev/stdin}"
 : "${out_file:-/dev/stdout}"
 : "${name:-${USER}}"
-: "${age:-18}"
+: "${age:-0}"
 : "${role:-user}"
 : "${verbose:-false}"
 

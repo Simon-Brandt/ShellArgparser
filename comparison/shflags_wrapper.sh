@@ -1,0 +1,116 @@
+#!/bin/bash
+
+# Author: Simon Brandt
+# E-Mail: simon.brandt@uni-greifswald.de
+# Last Modification: 2025-05-26
+
+# Usage: Run this script with "bash shflags_wrapper.sh".
+
+# Purpose: Parse the command line using shFlags.
+
+function usage() {
+    # Define the usage message.
+    local usage
+    usage="Usage: $0 [-h,-? | -u | -V] [-v] -a=AGE -n=NAME -r={u,m,b} source "
+    usage+="destination"
+    printf '%s\n' "${usage}"
+}
+
+# Define the help message.
+FLAGS_HELP="$(cat << EOF | sed 's/^    //'
+    Usage: $0 [OPTIONS] ARGUMENTS source destination
+
+    Mandatory arguments to long options are mandatory for short options too.
+
+    positional arguments:
+    source:  the template HTML file to fill in
+    destination:  the output HTML file
+EOF
+)"
+FLAGS_HELP+=$'\n'
+
+# Parse the arguments.
+source shflags
+
+DEFINE_string "name" "?" "the name of the homepage's owner" "n"
+DEFINE_integer "age" "-1" "the current age of the homepage's owner" "a"
+DEFINE_string "role" "?" "the role of the homepage's owner (u: user, m: moderator, b: bot)" "r"
+DEFINE_boolean "verbose" false "output verbose information" "v"
+DEFINE_boolean "usage" false "display the usage and exit" "u"
+DEFINE_boolean "version" false "display the version and exit" "V"
+
+if ! FLAGS "$@"; then
+    exit "$?"
+fi
+eval set -- "${FLAGS_ARGV}"
+
+if [[ "${FLAGS_usage}" == "${FLAGS_TRUE}" ]]; then
+    usage
+    exit
+elif [[ "${FLAGS_version}" == "${FLAGS_TRUE}" ]]; then
+    printf '%s v1.0.0\n' "$0"
+    exit
+fi
+
+# Check the arguments' values.
+if (( "$#" == 1 )); then
+    printf '%s: Error: 2 positional arguments are required, but 1 is given.\n' \
+        "$0"
+    usage >&2
+    exit 1
+elif (( "$#" != 2 )); then
+    printf '%s: Error: 2 positional arguments are required, but %s are given.\n' \
+        "$0" "$#"
+    usage >&2
+    exit 1
+fi
+
+if [[ "${FLAGS_name}" == "?" ]]; then
+    printf '%s: Error: The option -n,--name is mandatory, but not given.\n' \
+        "$0"
+    usage >&2
+    exit 1
+fi
+name="${FLAGS_name}"
+
+if (( "${FLAGS_age}" == -1 )); then
+    printf '%s: Error: The option -a,--age is mandatory, but not given.\n' "$0"
+    usage >&2
+    exit 1
+fi
+age="${FLAGS_age}"
+
+if [[ "${FLAGS_role}" == "?" ]]; then
+    printf '%s: Error: The option -r,--role is mandatory, but not given.\n' \
+        "$0"
+    usage >&2
+    exit 1
+elif [[ "${FLAGS_role}" != [[:print:]] ]]; then
+    printf '%s: Error: The option -r,--role must be a single character.\n' "$0"
+    usage >&2
+    exit 1
+fi
+
+case "${FLAGS_role}" in
+    u) role="User" ;;
+    m) role="Moderator" ;;
+    b) role="Bot" ;;
+    *)
+        printf '%s: Error: The option -r,--role must be in {u, m, b}.\n' "$0"
+        usage >&2
+        exit 1
+        ;;
+esac
+
+if [[ "${FLAGS_verbose}" == "${FLAGS_TRUE}" ]]; then
+    verbose=true
+else
+    verbose=false
+fi
+
+# Set the positional arguments to variables.
+in_file="$1"
+out_file="$2"
+
+# Run the HTML processor.
+source process_html_template.sh
