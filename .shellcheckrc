@@ -1,7 +1,9 @@
-# Look for sourced files relative to the checked script.
+# Look for sourced files relative to the checked script, and in
+# ${HOME}/bin.
 source-path=SCRIPTDIR
 source-path=SCRIPTDIR/..
-source-path=SCRIPTDIR/../../shflags
+source-path=/home/simon/bin/shflags
+source-path=/home/simon/bin/docopts
 
 # Allow opening any sourced file, even if not specified as input.
 external-sources=true
