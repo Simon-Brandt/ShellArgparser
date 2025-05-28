@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-05-26
+# Last Modification: 2025-05-28
 
 # Usage: Run this script with "bash shflags_wrapper.sh".
 
@@ -44,6 +44,7 @@ if ! FLAGS "$@"; then
 fi
 eval set -- "${FLAGS_ARGV}"
 
+# Check for the usage and version options.
 if [[ "${FLAGS_usage}" == "${FLAGS_TRUE}" ]]; then
     usage
     exit

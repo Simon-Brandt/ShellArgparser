@@ -29,7 +29,7 @@ The argparser is entirely written in pure Bash, without invoking external comman
       1. [`getopts`](#421-getopts)
       1. [`getopt`](#422-getopt)
       1. [shFlags](#423-shflags)
-      1. [docopt](#424-docopt)
+      1. [docopts](#424-docopts)
       1. [argparser](#425-argparser)
 1. [Reference](#5-reference)
    1. [Arguments definition](#51-arguments-definition)
@@ -1581,7 +1581,7 @@ The [feature comparison](#41-feature-comparison) compares the various features f
    1. [`getopts`](#421-getopts)
    1. [`getopt`](#422-getopt)
    1. [shFlags](#423-shflags)
-   1. [docopt](#424-docopt)
+   1. [docopts](#424-docopts)
    1. [argparser](#425-argparser)
 <!-- </toc> -->
 
@@ -1592,7 +1592,7 @@ The following command-line parsers are compared in the given versions:
 - [`getopts`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-getopts "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; getopts"): Bash-builtin, POSIX-compliant command-line parser, from Bash `v5.2`
 - [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)"): legacy command-line parser with GNU extensions, from `util-linux v2.39.3`
 - [shFlags](https://github.com/kward/shflags "github.com &rightarrow; kward &rightarrow; shFlags"): clone of Google's C++ [`gflags`](https://gflags.github.io/gflags/ "github.io &rightarrow; gflags") library for Unix-like shells, `v1.3.0`
-- [docopt](https://github.com/docopt/docopts "github.com &rightarrow; docopt &rightarrow; docopts"): platform-independent command-line interface description language and parser, `v0.6.4`
+- [docopts](https://github.com/docopt/docopts "github.com &rightarrow; docopt &rightarrow; docopts"): platform-independent command-line interface description language and parser, `v0.6.4`
 - [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module"): Python module from the stdlib, from Python `v3.13`
 - argparser: novel shell command-line parser, `v0.1.0`
 
@@ -1788,13 +1788,13 @@ Example calls:
 
 ```bash
 # Short options.
-bash getopts_wrapper.sh -v -n 'A. R. G. Parser' -a 2 -r b template.html argparser.html
+bash getopts_wrapper.sh -v -n "A. R. G. Parser" -a 2 -r b template.html argparser.html
 
 # Merged short options.
-bash getopts_wrapper.sh -vn 'A. R. G. Parser' -a2 -rb template.html argparser.html
+bash getopts_wrapper.sh -vn "A. R. G. Parser" -a2 -rb template.html argparser.html
 
 # Positional arguments delimiter "--".
-bash getopts_wrapper.sh -vn 'A. R. G. Parser' -a2 -rb -- template.html argparser.html
+bash getopts_wrapper.sh -vn "A. R. G. Parser" -a2 -rb -- template.html argparser.html
 
 # Help, usage, and version messages.
 bash getopts_wrapper.sh -h
@@ -1966,22 +1966,22 @@ Example calls:
 
 ```bash
 # Long options.
-bash getopt_wrapper.sh --verbose --name='A. R. G. Parser' --age=2 --role=b template.html argparser.html
+bash getopt_wrapper.sh --verbose --name="A. R. G. Parser" --age=2 --role=b template.html argparser.html
 
 # Short options.
-bash getopt_wrapper.sh -v -n 'A. R. G. Parser' -a 2 -r b template.html argparser.html
+bash getopt_wrapper.sh -v -n "A. R. G. Parser" -a 2 -r b template.html argparser.html
 
 # Merged short options.
-bash getopt_wrapper.sh -vn 'A. R. G. Parser' -a2 -rb template.html argparser.html
+bash getopt_wrapper.sh -vn "A. R. G. Parser" -a2 -rb template.html argparser.html
 
 # Positional arguments delimiter "--".
-bash getopt_wrapper.sh -vn 'A. R. G. Parser' -a2 -rb -- template.html argparser.html
+bash getopt_wrapper.sh -vn "A. R. G. Parser" -a2 -rb -- template.html argparser.html
 
 # Leading positional arguments.
-bash getopt_wrapper.sh template.html argparser.html -vn 'A. R. G. Parser' -a2 -rb
+bash getopt_wrapper.sh template.html argparser.html -vn "A. R. G. Parser" -a2 -rb
 
 # Intermixed positional arguments.
-bash getopt_wrapper.sh -vn 'A. R. G. Parser' template.html -a2 argparser.html -rb
+bash getopt_wrapper.sh -vn "A. R. G. Parser" template.html -a2 argparser.html -rb
 
 # Help, usage, and version messages.
 bash getopt_wrapper.sh --help
@@ -2026,9 +2026,9 @@ FLAGS_HELP+=$'\n'
 # Parse the arguments.
 source shflags
 
-DEFINE_string "name" "${USER}" "the name of the homepage's owner" "n"
-DEFINE_integer "age" "0" "the current age of the homepage's owner" "a"
-DEFINE_string "role" "u" "the role of the homepage's owner (u: user, m: moderator, b: bot)" "r"
+DEFINE_string "name" "?" "the name of the homepage's owner" "n"
+DEFINE_integer "age" "-1" "the current age of the homepage's owner" "a"
+DEFINE_string "role" "?" "the role of the homepage's owner (u: user, m: moderator, b: bot)" "r"
 DEFINE_boolean "verbose" false "output verbose information" "v"
 DEFINE_boolean "usage" false "display the usage and exit" "u"
 DEFINE_boolean "version" false "display the version and exit" "V"
@@ -2038,6 +2038,7 @@ if ! FLAGS "$@"; then
 fi
 eval set -- "${FLAGS_ARGV}"
 
+# Check for the usage and version options.
 if [[ "${FLAGS_usage}" == "${FLAGS_TRUE}" ]]; then
     usage
     exit
@@ -2059,7 +2060,7 @@ elif (( "$#" != 2 )); then
     exit 1
 fi
 
-if [[ -z "${FLAGS_name}" ]]; then
+if [[ "${FLAGS_name}" == "?" ]]; then
     printf '%s: Error: The option -n,--name is mandatory, but not given.\n' \
         "$0"
     usage >&2
@@ -2067,14 +2068,14 @@ if [[ -z "${FLAGS_name}" ]]; then
 fi
 name="${FLAGS_name}"
 
-if [[ -z "${FLAGS_age}" ]]; then
+if (( "${FLAGS_age}" == -1 )); then
     printf '%s: Error: The option -a,--age is mandatory, but not given.\n' "$0"
     usage >&2
     exit 1
 fi
 age="${FLAGS_age}"
 
-if [[ -z "${FLAGS_role}" ]]; then
+if [[ "${FLAGS_role}" == "?" ]]; then
     printf '%s: Error: The option -r,--role is mandatory, but not given.\n' \
         "$0"
     usage >&2
@@ -2116,22 +2117,22 @@ Example calls:
 
 ```bash
 # Long options.
-bash shflags_wrapper.sh --verbose --name='A. R. G. Parser' --age=2 --role=b template.html argparser.html
+bash shflags_wrapper.sh --verbose --name="A. R. G. Parser" --age=2 --role=b template.html argparser.html
 
 # Short options.
-bash shflags_wrapper.sh -v -n 'A. R. G. Parser' -a 2 -r b template.html argparser.html
+bash shflags_wrapper.sh -v -n "A. R. G. Parser" -a 2 -r b template.html argparser.html
 
 # Merged short options.
-bash shflags_wrapper.sh -vn 'A. R. G. Parser' -a2 -rb template.html argparser.html
+bash shflags_wrapper.sh -vn "A. R. G. Parser" -a2 -rb template.html argparser.html
 
 # Positional arguments delimiter "--".
-bash shflags_wrapper.sh -vn 'A. R. G. Parser' -a2 -rb -- template.html argparser.html
+bash shflags_wrapper.sh -vn "A. R. G. Parser" -a2 -rb -- template.html argparser.html
 
 # Leading positional arguments.
-bash shflags_wrapper.sh template.html argparser.html -vn 'A. R. G. Parser' -a2 -rb
+bash shflags_wrapper.sh template.html argparser.html -vn "A. R. G. Parser" -a2 -rb
 
 # Intermixed positional arguments.
-bash shflags_wrapper.sh -vn 'A. R. G. Parser' template.html -a2 argparser.html -rb
+bash shflags_wrapper.sh -vn "A. R. G. Parser" template.html -a2 argparser.html -rb
 
 # Help, usage, and version messages.
 bash shflags_wrapper.sh --help
@@ -2146,8 +2147,9 @@ Notes:
 - Likewise, options are available in the environment as `FLAGS_option_name`, not by a different identifier.
 - Mandatory options aren't supported.  *In lieu* of checking for their existence on the command line, "impossible" default values are set and then checked against.
 - The help message is partly auto-generated. In order to comply with the style decisions in shFlags, the manually set header is adapted to them.
+- The question mark `?` for the help message is not supported.
 
-#### 4.2.4. docopt
+#### 4.2.4. docopts
 
 #### 4.2.5. argparser
 
@@ -2187,16 +2189,16 @@ Example calls:
 
 ```bash
 # Long options.
-bash argparser_wrapper.sh --verbose --name='A. R. G. Parser' --age=2 --role=b -- template.html argparser.html
+bash argparser_wrapper.sh --verbose --name="A. R. G. Parser" --age=2 --role=b -- template.html argparser.html
 
 # Short options.
-bash argparser_wrapper.sh -v -n 'A. R. G. Parser' -a 2 -r b -- template.html argparser.html
+bash argparser_wrapper.sh -v -n "A. R. G. Parser" -a 2 -r b -- template.html argparser.html
 
 # Leading positional arguments.
-bash argparser_wrapper.sh template.html argparser.html -v -n 'A. R. G. Parser' -a 2 -r b
+bash argparser_wrapper.sh template.html argparser.html -v -n "A. R. G. Parser" -a 2 -r b
 
 # Positional arguments delimiter "++".
-bash argparser_wrapper.sh -v -n 'A. R. G. Parser' -- template.html argparser.html ++ -a 2 -r b
+bash argparser_wrapper.sh -v -n "A. R. G. Parser" -- template.html argparser.html ++ -a 2 -r b
 
 # Help, usage, and version messages.
 bash argparser_wrapper.sh --help
