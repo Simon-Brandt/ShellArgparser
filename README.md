@@ -31,6 +31,7 @@ The argparser is entirely written in pure Bash, without invoking external comman
       1. [shFlags](#423-shflags)
       1. [docopts](#424-docopts)
       1. [argparser](#425-argparser)
+   1. [Summary](#43-summary)
 1. [Reference](#5-reference)
    1. [Arguments definition](#51-arguments-definition)
       1. [Argument ID (`id`)](#511-argument-id-id)
@@ -1583,6 +1584,7 @@ The [feature comparison](#41-feature-comparison) compares the various features f
    1. [shFlags](#423-shflags)
    1. [docopts](#424-docopts)
    1. [argparser](#425-argparser)
+1. [Summary](#43-summary)
 <!-- </toc> -->
 
 ### 4.1. Feature comparison
@@ -1592,7 +1594,7 @@ The following command-line parsers are compared in the given versions:
 - [`getopts`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-getopts "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; getopts"): Bash-builtin, POSIX-compliant command-line parser, from Bash `v5.2`
 - [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)"): legacy command-line parser with GNU extensions, from `util-linux v2.39.3`
 - [shFlags](https://github.com/kward/shflags "github.com &rightarrow; kward &rightarrow; shFlags"): clone of Google's C++ [`gflags`](https://gflags.github.io/gflags/ "github.io &rightarrow; gflags") library for Unix-like shells, `v1.3.0`
-- [docopts](https://github.com/docopt/docopts "github.com &rightarrow; docopt &rightarrow; docopts"): platform-independent command-line interface description language and parser, `v0.6.4`
+- [docopts](https://github.com/docopt/docopts "github.com &rightarrow; docopt &rightarrow; docopts"): Go implementation of the platform-independent command-line interface description language and parser `docopt` with Bash wrapper, `v0.6.4`
 - [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module"): Python module from the stdlib, from Python `v3.13`
 - argparser: novel shell command-line parser, `v0.1.0`
 
@@ -2368,6 +2370,20 @@ Notes:
 
 - Trailing positional arguments must be delimited with `--` since the argparser aggregates all values after option names to them, as design decision.
 - Intermixing positional and keyword arguments can be emulated by using the positional arguments delimiter `++`. True intermixing is yet disabled as design decision.
+
+### 4.3. Summary
+
+When comparing the different approaches to command-line parsing, it is apparent that&mdash;as expected&mdash;the more recent parsers have a larger set of features. While the Bash-builtin `getopts` parser comprises only minimal functionality (not even long options), it is the only one that implements the POSIX standard. A slightly greater number of features comes with GNU `getopt`, like long options and the ability to abbreviate them.
+
+Later parsers as shFlags and especially docopts implement far more sophisticated functionality, like default values, mandatory options, or even an auto-generated help message. Still, they lack, *e.g.*, choice values or the ability to localize messages.
+
+Most of the argparser's features are inspired by the Python [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module") module, with extensions like the `++` positional arguments delimiter or the ability to negate and invert flags. This renders the argparser far more powerful than even docopts, while at the same time trying to be more user-friendly.
+
+This is especially noticeable for error messages when building the command line, where the argparser gives detailled error messages instead of a generic text that just states that something failed. Further, the docopt(s) specification is rather complex, requiring elaborate comprehension on how to write the help message. The argparser, in contrast, aims at a clearer user interface even for the programmer, by requiring a tabular arguments definition with optional headers.
+
+Further, the development of shFlags and docopts seemingly have stalled, with no release or even commit for years. This renders it unlikely that these libraries will implement additional functionality, increasing the potential use for the argparser.
+
+Finally, the argparser is extensively documented, unlike the other tools relying on a brief readme or man page. This hopefully makes the transition to the argparser&mdash;if deemed useful at all&mdash;easier.
 
 ## 5. Reference
 
