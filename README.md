@@ -242,6 +242,7 @@ First, let's see how we can use the argparser to parse the arguments given to yo
 
 <summary>Contents of <code>try_argparser.sh</code></summary>
 
+<!-- <include command="sed '3,10d;/shellcheck/d' tutorial/try_argparser.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -280,6 +281,7 @@ for arg in "${!pos@}"; do
     (( index++ ))
 done
 ```
+<!-- </include> -->
 
 </details>
 
@@ -541,6 +543,7 @@ Now that you have seen how the argparser serves in parsing and interpreting the 
 
 <summary>Contents of <code>try_argparser.sh</code></summary>
 
+<!-- <include command="sed '3,10d;/shellcheck/d' tutorial/try_argparser.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -579,6 +582,7 @@ for arg in "${!pos@}"; do
     (( index++ ))
 done
 ```
+<!-- </include> -->
 
 </details>
 
@@ -676,6 +680,7 @@ For demonstration, we take a stripped-down version of our `try_argparser.sh` scr
 
 <summary>Contents of <code>try_config_file.sh</code></summary>
 
+<!-- <include command="sed '3,11d;/shellcheck/d' tutorial/try_config_file.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -714,6 +719,9 @@ for arg in "${!pos@}"; do
     (( index++ ))
 done
 ```
+<!-- </include> -->
+
+</details>
 
 The script can now be invoked as any other script, yielding the same results:
 
@@ -729,8 +737,6 @@ The keyword argument "var_7" is set to "true".
 The positional argument "pos_1" on index 1 is set to "2".
 The positional argument "pos_2" on index 2 is set to "1,2".
 ```
-
-</details>
 
 Further, all environment variables can also be given as command-line parameters upon sourcing the argparser. Thereby, the options have the same name as in the configuration file ("kebab case"), and are only valid for the given argparser call.
 
@@ -762,6 +768,7 @@ Using a separate arguments definition file allows you to share the definition ac
 
 <summary>Contents of <code>try_arg_def_file.sh</code></summary>
 
+<!-- <include command="sed '3,11d;/shellcheck/d' tutorial/try_arg_def_file.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -799,6 +806,7 @@ for arg in "${!pos@}"; do
     (( index++ ))
 done
 ```
+<!-- </include> -->
 
 </details>
 
@@ -967,6 +975,7 @@ The argparser is not only able to compile a help message, but can also be guided
 
 <summary>Contents of <code>try_help_file.sh</code></summary>
 
+<!-- <include command="sed '3,11d;/shellcheck/d' tutorial/try_help_file.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -990,6 +999,7 @@ args=(
 )
 source argparser -- "$@"
 ```
+<!-- </include> -->
 
 </details>
 
@@ -1086,6 +1096,7 @@ then, in your script, you can set the `ARGPARSER_ARG_DEF_FILE` and `ARGPARSER_HE
 
 <summary>Contents of <code>try_localization.sh</code></summary>
 
+<!-- <include command="sed '3,11d;/shellcheck/d' tutorial/try_localization.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -1113,6 +1124,7 @@ args=(
 )
 source argparser -- "$@"
 ```
+<!-- </include> -->
 
 </details>
 
@@ -1157,10 +1169,10 @@ Finally, we need a translation file for the auto-generated parts. Note that here
 
 <details open>
 
-<summary>Contents of <code>translation.yaml</code></summary>
+<summary>Beginning of <code>translation.yaml</code></summary>
 
+<!-- <include command="sed '1,4d;80q' resources/translation.yaml" lang="yaml"> -->
 ```yaml
-$ head --lines=80 translation.yaml
 # 1.    Define the translations for the arguments parsing.
 ---
 Positional arguments:
@@ -1237,6 +1249,7 @@ true:
   de: wahr
 ...
 ```
+<!-- </include> -->
 
 </details>
 
@@ -1503,6 +1516,7 @@ The second, and perhaps more important way of standalone usage is included for c
 
 <summary>Contents of <code>try_pipeline.sh</code></summary>
 
+<!-- <include command="sed '3,11d;/shellcheck/d' tutorial/try_pipeline.sh" lang="sh"> -->
 ```sh
 #!/bin/sh
 
@@ -1540,6 +1554,7 @@ fi
 # The arguments can now be accessed as variables from the environment.
 # In case of errors, eval hasn't been able to set them, thus the tested
 # expansion ${var_1+set} will be empty, so nothing would get printed.
+
 if [ -n "${var_1+set}" ]; then
     printf 'The keyword argument "var_1" is set to "%s".\n' "${var_1}"
     printf 'The keyword argument "var_2" is set to "%s".\n' "${var_2}"
@@ -1555,6 +1570,9 @@ if [ -n "${var_1+set}" ]; then
         "${pos_2}"
 fi | sort
 ```
+<!-- </include> -->
+
+</details>
 
 As you can see, the script is written POSIX conformantly and by this already executable by `sh` or `dash`. Since POSIX doesn't specify useful programming constructs like arrays, the arguments definition must be a single string, delimited by linefeeds. By passing this string to the argparser via its STDIN stream (piping from `printf` to `argparser`), it is possible to feed the arguments definition to the argparser without requiring the usual [`ARGPARSER_ARG_ARRAY_NAME`](#559-argparser_arg_array_name). Just as when sourcing, the argparser requires your script's command line as argument, separated from its own arguments by a double hyphen.
 
@@ -1565,8 +1583,6 @@ In our example script, the whole pipeline is run in a subshell, such that STDOUT
 Another point to notice is the need to set the [`ARGPARSER_SCRIPT_NAME`](#5539-argparser_script_name) prior running the argparser, since from within its child process, it cannot access your script's name without requiring non-builtin commands like [`ps`](https://man7.org/linux/man-pages/man1/ps.1.html "man7.org &rightarrow; man pages &rightarrow; ps(1)").
 
 In short, it is possible to run the argparser in standalone mode from other shells, but this comes with the caveats of subprocesses&mdash;which the sourcing in Bash overcomes. Still, the only feature that your shell must support, is calling processes in pipes or *via* process substitutions to pass data to the argparser's STDIN and read its STDOUT. Since pipes are defined by POSIX, most shells should support this feature.
-
-</details>
 
 ## 4. Comparison of command-line parsers
 
@@ -1664,6 +1680,7 @@ In the following table, "&#10008;" marks the absence of a feature, "&#10004;" it
 
 <summary>Contents of <code>getopts_wrapper.sh</code></summary>
 
+<!-- <include command="sed '3,10d;/shellcheck/d' comparison/getopts_wrapper.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -1785,6 +1802,7 @@ out_file="$2"
 # Run the HTML processor.
 source process_html_template.sh
 ```
+<!-- </include> -->
 
 </details>
 
@@ -1817,6 +1835,7 @@ Notes:
 
 <summary>Contents of <code>getopt_wrapper.sh</code></summary>
 
+<!-- <include command="sed '3,10d;/shellcheck/d' comparison/getopt_wrapper.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -1963,6 +1982,7 @@ out_file="$2"
 # Run the HTML processor.
 source process_html_template.sh
 ```
+<!-- </include> -->
 
 </details>
 
@@ -2003,6 +2023,7 @@ Notes:
 
 <summary>Contents of <code>shflags_wrapper.sh</code></summary>
 
+<!-- <include command="sed '3,10d;/shellcheck/d' comparison/shflags_wrapper.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -2114,6 +2135,7 @@ out_file="$2"
 # Run the HTML processor.
 source process_html_template.sh
 ```
+<!-- </include> -->
 
 </details>
 
@@ -2159,6 +2181,7 @@ Notes:
 
 <summary>Contents of <code>docopts_wrapper.sh</code></summary>
 
+<!-- <include command="sed '3,8d;/shellcheck/d' comparison/docopts_wrapper.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -2275,6 +2298,7 @@ esac
 # Run the HTML processor.
 source process_html_template.sh
 ```
+<!-- </include> -->
 
 </details>
 
@@ -2317,6 +2341,7 @@ Notes:
 
 <summary>Contents of <code>argparser_wrapper.sh</code></summary>
 
+<!-- <include command="sed '3,10d;/shellcheck/d' comparison/argparser_wrapper.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -2342,6 +2367,7 @@ esac
 # Run the HTML processor.
 source process_html_template.sh
 ```
+<!-- </include> -->
 
 </details>
 
