@@ -653,18 +653,20 @@ The argument-defining entries in the indexed array named by [`ARGPARSER_ARG_ARRA
 This argparser-specific tabular format consists of eleven columns, each separated from each other by an [`ARGPARSER_ARG_DELIMITER_1`](#5513-argparser_arg_delimiter_1) character, defaulting to a pipe (`"|"`). Multi-value fields are delimited by an [`ARGPARSER_ARG_DELIMITER_2`](#5514-argparser_arg_delimiter_2) character, defaulting to a comma (`","`). The columns are defined as follows:
 
 - `id`: the unique argument identifier (like `var_1`)
-- `short_opts`: the short options (one hyphen, like `-a` and `-A` for `var_1`)
-- `long_opts`: the long options (two hyphens, like `--var-1` and `--var-a` for `var_1`)
-- `val_names`: the value names for the help message, instead of uppercased short/long option names (like `VAL_1` for `var_1`)
-- `defaults`: the default values (like `"A"` for `var_4`)
-- `choices`: the choice values for options with a limited set of values to choose from (like `"A"`, `"B"`, and `"C"` for `var_4`)
-- `type`: the data type the argument shall have and will be tested on (like `"char"` for `var_4`)
-- `arg_no`: the number of required values (either numerical from `0` to infinity or `"+"`, meaning to accept as many values as given, at least one, like `1` for `var_4`)
-- `arg_group`: the argument group for grouping of keyword arguments in the help text (like `"Optional options"` for `var_4`)
-- `notes`: additional notes to the argparser, currently only `"deprecated"` is supported (like for `var_7`)
-- `help`: the help text for the `--help` flag (like `"one value with default and choice"` for `var_4`)
+- `short_opts`: the short options (one hyphen, like `-a` and `-A` for `var_1`, default: `""`)
+- `long_opts`: the long options (two hyphens, like `--var-1` and `--var-a` for `var_1`, default: `""`)
+- `val_names`: the value names for the help message, instead of uppercased short/long option names (like `VAL_1` for `var_1`, default: `""`)
+- `defaults`: the default values (like `"A"` for `var_4`, default: `""`)
+- `choices`: the choice values for options with a limited set of values to choose from (like `"A"`, `"B"`, and `"C"` for `var_4`, default: `""`)
+- `type`: the data type the argument shall have and will be tested on (like `"char"` for `var_4`, default: `"str"`)
+- `arg_no`: the number of required values (either numerical from `0` to infinity or `"+"`, meaning to accept as many values as given, at least one, like `1` for `var_4`, default: `1`)
+- `arg_group`: the argument group for grouping of keyword arguments in the help text (like `"Optional options"` for `var_4`, default: [`ARGPARSER_POSITIONAL_ARG_GROUP`](#5536-argparser_positional_arg_group))
+- `notes`: additional notes to the argparser, currently only `"deprecated"` is supported (like for `var_7`, default: `""`)
+- `help`: the help text for the `--help` flag (like `"one value with default and choice"` for `var_4`, default: `""`)
 
 If [`ARGPARSER_ARG_DEF_HAS_HEADER`](#5512-argparser_arg_def_has_header) is set to `true` (the default), then these names must be given as a header above all argument definitions. Providing a header has the advantage that the order of the columns does not matter, as long as the first column is the `id`. If you omit the header, the above order is mandatory.
+
+Moreover, when using a header, you can omit any column but the `id`. Then, the default values listed above are used, allowing for a briefer arguments definition. For example, if no argument is deprecated, there is no need to still include the `notes` column, which would be empty, then. Likewise, for scripts with only positional arguments, the `short_opts` and `long_opts` columns are empty and can be neglected. If you don't have default or choice values, you may opt to skip the `defaults` and `choices` columns. Still, while technically possible, it is not overly useful to omit the `help` column, since this is the most important source of information for your script's users (besides the manual), particularly since the default value for it is the empty string. And even though *e.g.* the `arg_no` column has a default value of `1`, it may render the arguments definition more legible to include it nonetheless.
 
 Keyword arguments can have multiple short and/or long option names, optional default values, and/or an arbitrary number of choice values. The same holds for positional arguments, which are identified by having neither short nor long option names. Generally, absence of a value is indicated by the empty string (`""`). This allows the usage of hyphens, besides their special meaning on the command line (as option names), for the convention of regarding files given as `"-"` as sign to read from STDIN.
 
@@ -809,6 +811,7 @@ ARGPARSER_ARG_DEF_FILE="${dir}/arguments.csv"
 
 # Set the arguments.
 args=(
+    id
     pos_1
     pos_2
     var_1
@@ -1166,6 +1169,7 @@ ARGPARSER_TRANSLATION_FILE="${dir}/translation.yaml"
 
 # Set the arguments.
 args=(
+    id
     pos_1
     pos_2
     var_1
