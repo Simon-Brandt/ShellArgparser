@@ -4,8 +4,6 @@
 # E-Mail: simon.brandt@uni-greifswald.de
 # Last Modification: 2025-06-04
 
-# TODO: Support mutually exclusive argument groups.
-
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
 # is set to true (the default), the arguments will be parsed upon
