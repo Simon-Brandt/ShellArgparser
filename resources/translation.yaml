@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-05-13
+# Last Modification: 2025-06-04
 
 # 1.    Define the translations for the arguments parsing.
 ---
@@ -331,12 +331,6 @@ Error arg array 3:
     entsprechend) oder du hast vergessen, das Array überhaupt zu definieren
     (dann definiere es).
 
-Error wrong arg def:
-  en: >
-    Error: Invalid argument definition for "$1".
-  de: >
-    Fehler: Fehlerhafte Argumentdefinition für "$1".
-
 Error no arg def:
   en: >
     Error: No argument definition for "$1".
@@ -346,17 +340,35 @@ Error no arg def:
 
 # 3.3.  Define the translations for parsing the arguments definition.
 ---
-Error arg def field:
+Error arg def id:
   en: >
-    Error: In the arguments definition in "$1", the column "$2" is missing.
+    Error: In the arguments definition in "$1", the column "id" is missing.
   de: >
-    Fehler: In der Argumentdefinition in "$1" fehlt die Spalte "$2".
+    Fehler: In der Argumentdefinition in "$1" fehlt die Spalte "id".
 
-Error arg def file field:
+Error arg def file id:
   en: >
-    Error: In the arguments definition file "$1", the column "$2" is missing.
+    Error: In the arguments definition file "$1", the column "id" is missing.
   de: >
-    Fehler: In der Argumentdefinitionsdatei "$1" fehlt die Spalte "$2".
+    Fehler: In der Argumentdefinitionsdatei "$1" fehlt die Spalte "id".
+
+Error arg def field count:
+  en: >
+    Error: In the arguments definition in "$1", the field count of the line
+    "$2" ($3) doesn't match the header's field count ($4).
+  de: >
+    Fehler: In der Argumentdefinition in "$1" stimmt die Anzahl Felder der
+    Zeile "$2" ($3) nicht mit der Anzahl Felder in der Überschrift ($4)
+    überein.
+
+Error arg def file field count:
+  en: >
+    Error: In the arguments definition file "$1", the field count of the line
+    "$2" ($3) doesn't match the header's field count ($4).
+  de: >
+    Fehler: In der Argumentdefinitionsdatei "$1" stimmt die Anzahl Felder der
+    Zeile "$2" ($3) nicht mit der Anzahl Felder in der Überschrift ($4)
+    überein.
 ...
 
 # 3.4.  Define the translations for checking the names of the arguments

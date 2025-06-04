@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-05-12
+# Last Modification: 2025-06-04
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -1545,8 +1545,6 @@ Usage: argparser [--help | --usage | --version]
                  [--allow-option-merging]
                  [--arg-array-name=NAME]
                  [--arg-def-file=FILE]
-                 [--arg-def-file-has-header]
-                 [--arg-def-has-header]
                  [--arg-delimiter-1=CHAR]
                  [--arg-delimiter-2=CHAR]
                  [--check-arg-def]
@@ -1638,11 +1636,6 @@ Options:
                                  (default: "args")
 [--arg-def-file=FILE]            the path to a file holding the definition of
                                  the arguments (default: "''")
-[--arg-def-file-has-header]      whether the arguments definition file has a
-                                 header explaining the columns (default: true)
-[--arg-def-has-header]           whether the arguments definition in the script
-                                 has a header explaining the columns (default:
-                                 true)
 [--arg-delimiter-1=CHAR]         the primary delimiter that separates the
                                  fields in the arguments definition (default:
                                  "|")

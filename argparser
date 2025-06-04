@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-03
+# Last Modification: 2025-06-04
 
 # TODO: Support mutually exclusive argument groups.
 
@@ -804,8 +804,6 @@ function argparser_read_configuration() {
     # ARGPARSER_ALLOW_OPTION_MERGING
     # ARGPARSER_ARG_ARRAY_NAME
     # ARGPARSER_ARG_DEF_FILE
-    # ARGPARSER_ARG_DEF_FILE_HAS_HEADER
-    # ARGPARSER_ARG_DEF_HAS_HEADER
     # ARGPARSER_ARG_DELIMITER_1
     # ARGPARSER_ARG_DELIMITER_2
     # ARGPARSER_CHECK_ARG_DEF
@@ -1035,8 +1033,6 @@ function argparser_set_env_vars() {
     # ARGPARSER_ALLOW_OPTION_MERGING
     # ARGPARSER_ARG_ARRAY_NAME
     # ARGPARSER_ARG_DEF_FILE
-    # ARGPARSER_ARG_DEF_FILE_HAS_HEADER
-    # ARGPARSER_ARG_DEF_HAS_HEADER
     # ARGPARSER_ARG_DELIMITER_1
     # ARGPARSER_ARG_DELIMITER_2
     # ARGPARSER_ARGPARSER_VERSION (read-only)
@@ -1140,8 +1136,6 @@ function argparser_set_env_vars() {
         "ARGPARSER_ALLOW_OPTION_MERGING      :            : allow-option-merging      :              : false                :            : bool : 0      : Options   :       : allow the user to give short option names in merged (concatenated) form                                 "
         "ARGPARSER_ARG_ARRAY_NAME            :            : arg-array-name            : NAME         : args                 :            : str  : 1      : Options   :       : the indexed array for the raw arguments and the associative array for the parsed arguments              "
         "ARGPARSER_ARG_DEF_FILE              :            : arg-def-file              : FILE         : ''                   :            : file : 1      : Options   :       : the path to a file holding the definition of the arguments                                              "
-        "ARGPARSER_ARG_DEF_FILE_HAS_HEADER   :            : arg-def-file-has-header   :              : true                 :            : bool : 0      : Options   :       : whether the arguments definition file has a header explaining the columns                               "
-        "ARGPARSER_ARG_DEF_HAS_HEADER        :            : arg-def-has-header        :              : true                 :            : bool : 0      : Options   :       : whether the arguments definition in the script has a header explaining the columns                      "
         "ARGPARSER_ARG_DELIMITER_1           :            : arg-delimiter-1           : CHAR         : |                    :            : char : 1      : Options   :       : the primary delimiter that separates the fields in the arguments definition                             "
         "ARGPARSER_ARG_DELIMITER_2           :            : arg-delimiter-2           : CHAR         : ,                    :            : char : 1      : Options   :       : the secondary delimiter that separates the elements of sequences in the arguments definition            "
         "ARGPARSER_CHECK_ARG_DEF             :            : check-arg-def             :              : false                :            : bool : 0      : Options   :       : check if the arguments definition is consistent                                                         "
@@ -1203,8 +1197,6 @@ function argparser_set_env_vars() {
         ARGPARSER_ALLOW_OPTION_MERGING=false \
         ARGPARSER_ARG_ARRAY_NAME="ARGPARSER_ARGS" \
         ARGPARSER_ARG_DEF_FILE="" \
-        ARGPARSER_ARG_DEF_FILE_HAS_HEADER=true \
-        ARGPARSER_ARG_DEF_HAS_HEADER=true \
         ARGPARSER_ARG_DELIMITER_1=":" \
         ARGPARSER_ARG_DELIMITER_2="," \
         ARGPARSER_CHECK_ARG_DEF=false \
@@ -1351,8 +1343,6 @@ function argparser_check_env_vars() {
     # - ARGPARSER_ALLOW_OPTION_MERGING (read-only)
     # - ARGPARSER_ARG_ARRAY_NAME (read-only)
     # - ARGPARSER_ARG_DEF_FILE (read-only)
-    # - ARGPARSER_ARG_DEF_FILE_HAS_HEADER (read-only)
-    # - ARGPARSER_ARG_DEF_HAS_HEADER (read-only)
     # - ARGPARSER_ARG_DELIMITER_1 (read-only)
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_CHECK_ARG_DEF (read-only)
@@ -1424,8 +1414,6 @@ function argparser_check_env_vars() {
         ARGPARSER_ALLOW_FLAG_NEGATION
         ARGPARSER_ALLOW_OPTION_ABBREVIATION
         ARGPARSER_ALLOW_OPTION_MERGING
-        ARGPARSER_ARG_DEF_FILE_HAS_HEADER
-        ARGPARSER_ARG_DEF_HAS_HEADER
         ARGPARSER_CHECK_ARG_DEF
         ARGPARSER_CHECK_ENV_VARS
         ARGPARSER_COUNT_FLAGS
@@ -2101,27 +2089,20 @@ function argparser_read_args_definition() {
     # - $@: the arguments known to the script
     #
     # Nonlocals:
-    # - messages: the parsed arguments definition as message or an error
+    # - messages: the read arguments definition as message or an error
     #   message, starting with "File: ", "Script: ", or "Error: "
     #   (translated), as indexed array
     #
     # Environment:
     # - ARGPARSER_ARG_DEF_FILE (read-only)
-    # - ARGPARSER_ARG_DEF_FILE_HAS_HEADER (read-only)
-    # - ARGPARSER_ARG_DEF_HAS_HEADER (read-only)
     # - ARGPARSER_ARG_DELIMITER_1 (read-only)
 
     # Define the local variables.
     local arg
     local arg_key
     local -a args
-    local column
-    local -a columns
-    local def_pattern
     local error_message
     local header
-    local i
-    local key_pattern
     local line
     local lines
     local translation
@@ -2131,71 +2112,15 @@ function argparser_read_args_definition() {
     # shellcheck disable=SC2190  # Indexed, not associative array.
     args=("$@")
 
-    # Define the pattern how the arguments definition's keys look like,
-    # as well as the pattern of the entire definition.  For the default
-    # value of ${ARGPARSER_ARG_DELIMITER_1}, a pipe, the definition
-    # pattern describes alternating sequences of eleven non-pipes, i.e.,
-    # "+([^|])", and ten pipes, i.e., "|", in Bash's extglob syntax.  In
-    # PCRE syntax, the non-pipe pattern would be written as "[^|]+".
-    # The key pattern only consists of one non-pipe pattern.  This
-    # reflects the structure of the arguments definition irrespective of
-    # the order of the columns.
-    key_pattern="+([^${ARGPARSER_ARG_DELIMITER_1}])"
-    def_pattern="${key_pattern}"
-    for (( i = 0; i < 10; i++ )); do
-        def_pattern+="${ARGPARSER_ARG_DELIMITER_1}${key_pattern}"
-    done
-
     # Read and output the header for a possible arguments definition in
-    # the script. If none is given or the first line does not match the
-    # columnar argparser syntax matched by the definition pattern, then
-    # assume a default header and re-read the arguments, leaving the
-    # zeroth element, interpreted as header in the loop below, empty.
-    columns=(
-        "id"
-        "short_opts"
-        "long_opts"
-        "val_names"
-        "defaults"
-        "choices"
-        "type"
-        "arg_no"
-        "arg_group"
-        "notes"
-        "help"
-    )
-
-    # shellcheck disable=SC2053  # Intentional pattern matching.
-    # shellcheck disable=SC2190  # Indexed, not associative array.
-    if [[ "${ARGPARSER_ARG_DEF_HAS_HEADER}" == false \
-        && "${args[0]}" != ${def_pattern} ]]
-    then
-        args=( )
-        args[0]=""
-        for column in "${columns[@]}"; do
-            args[0]+="${column}${ARGPARSER_ARG_DELIMITER_1}"
-        done
-
-        for arg in "$@"; do
-            args+=("${arg}")
-        done
-    fi
+    # the script.
     header="${args[0]}"
     messages+=("Script: ${header}")
 
     # If ${ARGPARSER_ARG_DEF_FILE} isn't set to the empty string, read
-    # the arguments definition file and output the header.  Again, if
-    # none is given, assume a default header.
+    # the arguments definition file and output the header.
     if [[ -n "${ARGPARSER_ARG_DEF_FILE}" ]]; then
-        if [[ "${ARGPARSER_ARG_DEF_FILE_HAS_HEADER}" == true ]]; then
-            mapfile -t lines < "${ARGPARSER_ARG_DEF_FILE}"
-        else
-            mapfile -t -O 1 lines < "${ARGPARSER_ARG_DEF_FILE}"
-            lines[0]=""
-            for column in "${columns[@]}"; do
-                lines[0]+="${column}${ARGPARSER_ARG_DELIMITER_1}"
-            done
-        fi
+        mapfile -t lines < "${ARGPARSER_ARG_DEF_FILE}"
         header="${lines[0]}"
         messages+=("File: ${header}")
     fi
@@ -2207,37 +2132,25 @@ function argparser_read_args_definition() {
     # only given as their key.  If the structure differs, and no header
     # is given (so columns may be omitted), output an error message.
     for arg in "${args[@]:1}"; do
-        # shellcheck disable=SC2053  # Intentional pattern matching.
-        if [[ "${arg}" == ${key_pattern} && -n "${ARGPARSER_ARG_DEF_FILE}" ]]
+        if [[ "${arg}" != *"${ARGPARSER_ARG_DELIMITER_1}"* \
+            && -n "${ARGPARSER_ARG_DEF_FILE}" ]]
         then
-            # The argument matches the key pattern and an arguments
-            # definition file is given. Iterate over all arguments
-            # definition lines from the file. When the argument key in
-            # one line matches the given key and the line matches the
-            # definition pattern, output the key and definition, then
-            # continue the outer loop (with index 2).  If the inner loop
-            # doesn't get aborted by the continuation, it means that no
-            # fitting argument definition has been found.  Thus, output
-            # an error message.
+            # The argument contains no ${ARGPARSER_ARG_DELIMITER_1} and
+            # thus only the key, and an arguments definition file is
+            # given. Iterate over all arguments definition lines from
+            # the file.  When the argument key in one line matches the
+            # given key, output the key and definition, then continue
+            # the outer loop (with index 2).  If the inner loop doesn't
+            # get aborted by the continuation, it means that no fitting
+            # argument definition has been found.  Thus, output an error
+            # message.
             for line in "${lines[@]:1}"; do
                 arg_key="${line%%"${ARGPARSER_ARG_DELIMITER_1}"*}"
                 argparser_trim "${arg_key}"
                 arg_key="${trimmed_string}"
 
                 if [[ "${arg_key}" == "${arg}" ]]; then
-                    if [[ "${line}" == ${def_pattern} \
-                        || "${ARGPARSER_ARG_DEF_FILE_HAS_HEADER}" == true ]]
-                    then
-                        messages+=("File: ${line}")
-                    else
-                        error_message="Error: Invalid argument definition for "
-                        error_message+="\"\$1\"."
-
-                        argparser_translate "Error wrong arg def" \
-                            "${error_message}" "${arg}"
-                        error_message="${translation}"
-                        messages+=("${error_message}")
-                    fi
+                    messages+=("File: ${line}")
                     continue 2
                 fi
             done
@@ -2245,20 +2158,10 @@ function argparser_read_args_definition() {
             argparser_translate "Error no arg def" "${error_message}" "${arg}"
             error_message="${translation}"
             messages+=("${error_message}")
-        elif [[ "${arg}" == ${def_pattern} \
-            || "${ARGPARSER_ARG_DEF_HAS_HEADER}" == true ]]
-        then
-            # The argument matches the entire definition pattern.
-            # Output its definition.
-            messages+=("Script: ${arg}")
         else
-            # The argument doesn't match any pattern and is thus deemed
-            # invalid, so output an error message.
-            error_message="Error: Invalid argument definition for \"\$1\"."
-            argparser_translate "Error wrong arg def" "${error_message}" \
-                "${arg}"
-            error_message="${translation}"
-            messages+=("${error_message}")
+            # The argument contains an ${ARGPARSER_ARG_DELIMITER_1} and
+            # thus potentially an entire definition.  Output this.
+            messages+=("Script: ${arg}")
         fi
     done
 }
@@ -2294,8 +2197,6 @@ function argparser_parse_args_definition() {
     #
     # Environment:
     # - ARGPARSER_ARG_DEF_FILE (read-only)
-    # - ARGPARSER_ARG_DEF_FILE_HAS_HEADER (read-only)
-    # - ARGPARSER_ARG_DEF_HAS_HEADER (read-only)
     # - ARGPARSER_ARG_DELIMITER_1 (read-only)
     # - ARGPARSER_POSITIONAL_ARG_GROUP (read-only)
     # - ARGPARSER_SCRIPT_NAME (read-only)
@@ -2307,12 +2208,12 @@ function argparser_parse_args_definition() {
     local -a args_definition
     local choice_values
     local column_index
+    local -A column_indices
     local default_values
     local definition_type
     local error_message
-    local -a error_messages
     local field
-    local -A fields
+    local -a fields
     local -a header
     local help_text
     local i
@@ -2339,9 +2240,8 @@ function argparser_parse_args_definition() {
         header[column_index]="${trimmed_string}"
     done
 
-    # Get the column indices of all fields known to the current
-    # argparser version.
-    fields=(
+    # Get the column indices of all fields.
+    column_indices=(
         [id]=""
         [short_opts]=""
         [long_opts]=""
@@ -2355,45 +2255,35 @@ function argparser_parse_args_definition() {
         [help]=""
     )
 
-    for field in "${!fields[@]}"; do
+    for field in "${!column_indices[@]}"; do
         for column_index in "${!header[@]}"; do
             if [[ "${header[column_index]}" == "${field}" ]]; then
-                fields[${field}]="${column_index}"
+                column_indices[${field}]="${column_index}"
             fi
         done
     done
 
-    # If any column isn't given, and no header is given, output an error
-    # message.
+    # If the column with the argument identifiers isn't given, output an
+    # error message.
     error_messages=( )
-    for field in "${!fields[@]}"; do
-        column_index="${fields[${field}]}"
+    if [[ -z "${column_index}" ]]; then
         if [[ "${definition_type}" == "script" ]]; then
-            if [[ -z "${column_index}" \
-                && "${ARGPARSER_ARG_DEF_HAS_HEADER}" == false ]]
-            then
-                error_message="Error: In the arguments definition in \"\$1\", "
-                error_message+="the column \"\$2\" is missing."
+            error_message="Error: In the arguments definition in \"\$1\", "
+            error_message+="the column \"id\" is missing."
 
-                argparser_translate "Error arg def field" "${error_message}" \
-                    "${ARGPARSER_SCRIPT_NAME}" "${field}"
-                error_message="${translation}"
-                error_messages+=("${error_message}")
-            fi
+            argparser_translate "Error arg def id" "${error_message}" \
+                "${ARGPARSER_SCRIPT_NAME}"
+            error_message="${translation}"
         else
-            if [[ -z "${column_index}" \
-                && "${ARGPARSER_ARG_DEF_FILE_HAS_HEADER}" == false ]]
-            then
-                error_message="Error: In the arguments definition file "
-                error_message+="\"\$1\", the column \"\$2\" is missing."
+            error_message="Error: In the arguments definition file "
+            error_message+="\"\$1\", the column \"\$2\" is missing."
 
-                argparser_translate "Error arg def file field" \
-                    "${error_message}" "${ARGPARSER_ARG_DEF_FILE}" "${field}"
-                error_message="${translation}"
-                error_messages+=("${error_message}")
-            fi
+            argparser_translate "Error arg def file id" \
+                "${error_message}" "${ARGPARSER_ARG_DEF_FILE}"
+            error_message="${translation}"
         fi
-    done
+        error_messages+=("${error_message}")
+    fi
 
     # If there are error messages, sort, colorize, and print them, then
     # exit.
@@ -2402,33 +2292,64 @@ function argparser_parse_args_definition() {
 
     # Read all lines of the arguments definition and save the fields in
     # an associative array per column, using the argument identifier as
-    # key and the definition in the field as value.  If neither a short
-    # nor a long option name is given, interpret the argument as
-    # positional and add it to the respective indexed array.  If only
-    # short or long option names shall be accepted, set the respective
-    # other value to the empty string, indicating absence of an option
-    # name.  Skip arguments that have no short or long option name, if
-    # only the other one is accepted, since these can never be given.
+    # key and the definition in the field (or a default value) as value.
+    # If neither a short nor a long option name is given, interpret the
+    # argument as positional and add it to the respective indexed array.
+    # If only short or long option names shall be accepted, set the
+    # respective other value to the empty string, indicating absence of
+    # an option name.  Skip arguments that have no short or long option
+    # name, if only the other one is accepted, since these can never be
+    # given.
     for line in "${args_definition[@]:1}"; do
-        IFS="${ARGPARSER_ARG_DELIMITER_1}" read -r -a line <<< "${line}"
+        IFS="${ARGPARSER_ARG_DELIMITER_1}" read -r -a fields <<< "${line}"
 
-        argparser_trim "${line[${fields["id"]}]}"
+        # If the line has more or less columns than the header, output
+        # an error message.
+        if [[ "${#fields[@]}" != "${#header[@]}" ]]; then
+            if [[ "${definition_type}" == "script" ]]; then
+                error_message="Error: In the arguments definition in \"\$1\", "
+                error_message+="the field count of the line \"\$2\" (\$3) "
+                error_message+="doesn't match the header's field count (\$4)."
+
+                argparser_translate "Error arg def field count" \
+                    "${error_message}" "${ARGPARSER_SCRIPT_NAME}" "${line}" \
+                    "${#fields[@]}" "${#header[@]}"
+                error_message="${translation}"
+            else
+                error_message="Error: In the arguments definition file "
+                error_message+="\"\$1\", the field count of the line \"\$2\" "
+                error_message+="(\$3) doesn't match the header's field count "
+                error_message+="(\$4)."
+
+                argparser_translate "Error arg def file field count" \
+                    "${error_message}" "${ARGPARSER_ARG_DEF_FILE}" "${line}" \
+                    "${#fields[@]}" "${#header[@]}"
+                error_message="${translation}"
+            fi
+            error_messages+=("${error_message}")
+        fi
+
+        # Get the argument identifier.
+        argparser_trim "${fields[${column_indices["id"]}]}"
         arg_key="${trimmed_string}"
 
-        if [[ -n "${fields["short_opts"]}" ]]; then
-            argparser_trim "${line[${fields["short_opts"]}]}"
+        # Get the short option names.
+        if [[ -n "${column_indices["short_opts"]}" ]]; then
+            argparser_trim "${fields[${column_indices["short_opts"]}]}"
             short_options="${trimmed_string}"
         else
             short_options=""
         fi
 
-        if [[ -n "${fields["long_opts"]}" ]]; then
-            argparser_trim "${line[${fields["long_opts"]}]}"
+        # Get the long option names.
+        if [[ -n "${column_indices["long_opts"]}" ]]; then
+            argparser_trim "${fields[${column_indices["long_opts"]}]}"
             long_options="${trimmed_string}"
         else
             long_options=""
         fi
 
+        # Save the option names.
         if [[ -z "${short_options}" && -z "${long_options}" ]]; then
             all_positional_args+=("${arg_key}")
         elif [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true \
@@ -2450,70 +2371,83 @@ function argparser_parse_args_definition() {
             continue
         fi
 
-        if [[ -n "${fields["val_names"]}" ]]; then
-            argparser_trim "${line[${fields["val_names"]}]}"
+        # Get the value names.
+        if [[ -n "${column_indices["val_names"]}" ]]; then
+            argparser_trim "${fields[${column_indices["val_names"]}]}"
             value_names="${trimmed_string}"
         else
             value_names=""
         fi
         all_value_names[${arg_key}]="${value_names}"
 
-        if [[ -n "${fields["defaults"]}" ]]; then
-            argparser_trim "${line[${fields["defaults"]}]}"
+        # Get the default values.
+        if [[ -n "${column_indices["defaults"]}" ]]; then
+            argparser_trim "${fields[${column_indices["defaults"]}]}"
             default_values="${trimmed_string}"
         else
             default_values=""
         fi
         all_default_values[${arg_key}]="${default_values}"
 
-        if [[ -n "${fields["choices"]}" ]]; then
-            argparser_trim "${line[${fields["choices"]}]}"
+        # Get the choice values.
+        if [[ -n "${column_indices["choices"]}" ]]; then
+            argparser_trim "${fields[${column_indices["choices"]}]}"
             choice_values="${trimmed_string}"
         else
             choice_values=""
         fi
         all_choice_values[${arg_key}]="${choice_values}"
 
-        if [[ -n "${fields["type"]}" ]]; then
-            argparser_trim "${line[${fields["type"]}]}"
+        # Get the data type.
+        if [[ -n "${column_indices["type"]}" ]]; then
+            argparser_trim "${fields[${column_indices["type"]}]}"
             type="${trimmed_string}"
         else
             type="str"
         fi
         all_types[${arg_key}]="${type}"
 
-        if [[ -n "${fields["arg_no"]}" ]]; then
-            argparser_trim "${line[${fields["arg_no"]}]}"
+        # Get the argument number.
+        if [[ -n "${column_indices["arg_no"]}" ]]; then
+            argparser_trim "${fields[${column_indices["arg_no"]}]}"
             arg_number="${trimmed_string}"
         else
             arg_number=1
         fi
         all_arg_numbers[${arg_key}]="${arg_number}"
 
-        if [[ -n "${fields["arg_group"]}" ]]; then
-            argparser_trim "${line[${fields["arg_group"]}]}"
+        # Get the argument group.
+        if [[ -n "${column_indices["arg_group"]}" ]]; then
+            argparser_trim "${fields[${column_indices["arg_group"]}]}"
             arg_group="${trimmed_string}"
         else
             arg_group="${ARGPARSER_POSITIONAL_ARG_GROUP}"
         fi
         all_arg_groups[${arg_key}]="${arg_group}"
 
-        if [[ -n "${fields["notes"]}" ]]; then
-            argparser_trim "${line[${fields["notes"]}]}"
+        # Get the notes.
+        if [[ -n "${column_indices["notes"]}" ]]; then
+            argparser_trim "${fields[${column_indices["notes"]}]}"
             notes="${trimmed_string}"
         else
             notes=""
         fi
         all_notes[${arg_key}]="${notes}"
 
-        if [[ -n "${fields["help"]}" ]]; then
-            argparser_trim "${line[${fields["help"]}]}"
+        # Get the help text.
+        if [[ -n "${column_indices["help"]}" ]]; then
+            argparser_trim "${fields[${column_indices["help"]}]}"
             help_text="${trimmed_string}"
         else
             help_text=""
         fi
         all_help_texts[${arg_key}]="${help_text}"
     done
+
+    # If there are error messages, sort, colorize, and print them, then
+    # exit.
+    argparser_print_error_or_warning_message "error" false true \
+        "${error_messages[@]}"
 }
 
 function argparser_check_args_definition_names() {
@@ -7344,8 +7278,6 @@ function argparser_main() {
         unset ARGPARSER_ALLOW_OPTION_MERGING
         unset ARGPARSER_ARG_ARRAY_NAME
         unset ARGPARSER_ARG_DEF_FILE
-        unset ARGPARSER_ARG_DEF_FILE_HAS_HEADER
-        unset ARGPARSER_ARG_DEF_HAS_HEADER
         unset ARGPARSER_ARG_DELIMITER_1
         unset ARGPARSER_ARG_DELIMITER_2
         unset ARGPARSER_ARGPARSER_VERSION
