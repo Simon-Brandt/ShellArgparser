@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-04
+# Last Modification: 2025-06-05
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -5539,7 +5539,8 @@ function argparser_create_help_message() {
                     done
                     new_col_1_value="${new_col_1_value%, }"
                 fi
-            elif [[ "${arg_number}" == 0 ]]; then  # Long option, flag.
+            elif [[ "${arg_number}" == 0 || -n "${default_values_str}" ]]
+            then  # Long option, flag or default.
                 new_col_1_value="["
                 for short_option in "${short_options[@]}"; do
                     new_col_1_value+="-${short_option}, "

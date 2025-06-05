@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-04
+# Last Modification: 2025-06-05
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -566,9 +566,9 @@ Mandatory options:
 -c, -C,   --var-3={A,B}, --var-c={A,B}     at least one value with choice
 
 Optional options:
--d, -D,   [--var-4={A,B,C}],               one value with default and choice
+[-d, -D], [--var-4={A,B,C}],               one value with default and choice
           [--var-d={A,B,C}]                (default: "A")
--e, -E,   [--var-5=VAL_5], [--var-e=VAR_E] one value with default (default:
+[-e, -E], [--var-5=VAL_5], [--var-e=VAR_E] one value with default (default:
                                            "E")
 [-f, -F], [--var-6, --var-f]               no value (flag) with default
                                            (default: false)
@@ -608,9 +608,9 @@ Mandatory options:
 -c, -C,   --var-3={A,B}, --var-c={A,B}     at least one value with choice
 
 Optional options:
--d, -D,   [--var-4={A,B,C}],               one value with default and choice
+[-d, -D], [--var-4={A,B,C}],               one value with default and choice
           [--var-d={A,B,C}]                (default: "A")
--e, -E,   [--var-5=VAL_5], [--var-e=VAR_E] one value with default (default:
+[-e, -E], [--var-5=VAL_5], [--var-e=VAR_E] one value with default (default:
                                            "E")
 [-f, -F], [--var-6, --var-f]               no value (flag) with default
                                            (default: false)
