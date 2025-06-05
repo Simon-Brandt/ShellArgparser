@@ -41,7 +41,7 @@ The argparser is entirely written in pure Bash, without invoking external comman
       1. [Intermixed positional and keyword arguments](#515-intermixed-positional-and-keyword-arguments)
       1. [Single-hyphen long options](#516-single-hyphen-long-options)
       1. [POSIX compliance](#517-posix-compliance)
-      1. [Alternative option prefixes (`+`/`/`)](#518-alternative-option-prefixes)
+      1. [Alternative option prefixes (`+`/`/`)](#518-alternative-option-prefixes-)
    1. [Known bugs](#52-known-bugs)
 1. [Reference](#6-reference)
    1. [Arguments definition](#61-arguments-definition)
