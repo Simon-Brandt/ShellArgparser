@@ -1,3 +1,4 @@
+<!-- <section file="introduction.md"> -->
 # Bash argparser
 
 The argparser is a designed to be an easy-to-use, yet powerful command-line argument parser for your shell scripts. It is mainly targeting Bash, but other shells are supported, as well. Shells other than Bash just require a slightly different method of invokation (*i.e.*, running the argparser in a pipe or process substitution, not by sourcing it).
@@ -5,7 +6,9 @@ The argparser is a designed to be an easy-to-use, yet powerful command-line argu
 Applying the argparser should lead to shorter and more concise code than the traditionally used [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)")/[`getopts`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-getopts "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; getopts") or a bare suite of conditionals in a [`case..esac`](https://www.gnu.org/software/bash/manual/html_node/Conditional-Constructs.html#index-case "gnu.org &rightarrow; Conditional Constructs &rightarrow; case") statement allow. More importantly, the user-friendliness of argparser-powered command-line parsing is far superior thanks to a wide range of checked conditions with meaningful error messages.
 
 The argparser is entirely written in pure Bash, without invoking external commands. Thus, using it does not add additional dependencies to your script&mdash;except of course the argparser itself&mdash;, especially not differing versions/implementations of a program (like with [`awk`](https://man7.org/linux/man-pages/man1/awk.1p.html "man7.org &rightarrow; man pages &rightarrow; awk(1p)")). Additionally, its design choices of not calling external commands and running almost without forking into subshells lead to a good runtime despite the extensive parsing and checking steps. The argparser is inspired by the Python [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module") module.
+<!-- </section> -->
 
+<!-- <section file="toc.md"> -->
 <!-- <toc> -->
 ## Table of contents
 
@@ -176,7 +179,9 @@ The argparser is entirely written in pure Bash, without invoking external comman
       1. [`ARGPARSER_WARNING_STYLE`](#6561-argparser_warning_style)
       1. [`ARGPARSER_WRITE_ARGS`](#6562-argparser_write_args)
 <!-- </toc> -->
+<!-- </section> -->
 
+<!-- <section file="features.md"> -->
 ## 1. Features
 
 The argparser:
@@ -189,7 +194,9 @@ The argparser:
 - creates and prints a verbose and customizable **help** or a brief **usage message**, as well as a short **version message**
 - can give **localized** help, usage, error, and warning messages in any language you define
 - can be widely **configured** to your needs by a large set of environment variables and optional companion files to your script
+<!-- </section> -->
 
+<!-- <section file="installation.md"> -->
 ## 2. Installation
 
 > [!WARNING]
@@ -220,14 +227,18 @@ PATH="/path/to/bash_argparser:${PATH}"
 
 > [!CAUTION]
 > Be wary not to forget the final `${PATH}` component in the above command, or else you will override the [`PATH`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Variables.html#index-PATH "gnu.org &rightarrow; Bourne Shell Variables &rightarrow; PATH")) for all future shell sessions, meaning no other (non-builtin) command will be resolvable, anymore.
+<!-- </section> -->
 
+<!-- <section file="tutorial/introduction.md"> -->
 ## 3. Tutorial
 
 To give you an idea about the argparser's application, the following sections show some excerpts of scripts used for internal testing purposes, in the herein given form located in the [tutorial](../tutorial) directory, trying to guide you through the various features.
 
 > [!NOTE]
 > For the terminology in argument parsing, refer to the Python [`optparse` documentation](https://docs.python.org/3/library/optparse.html#terminology "python.org &rightarrow; Python documentation &rightarrow; optparse module &rightarrow; terminology"). Additionally, for consistency with the positional arguments, options are herein partly referred to as keyword arguments.
+<!-- </section> -->
 
+<!-- <section file="tutorial/toc.md"> -->
 <!-- <toc title="Table of contents (Tutorial)"> -->
 ### Table of contents (Tutorial)
 
@@ -243,7 +254,9 @@ To give you an idea about the argparser's application, the following sections sh
 1. [Message styles](#310-message-styles)
 1. [Standalone usage](#311-standalone-usage)
 <!-- </toc> -->
+<!-- </section> -->
 
+<!-- <section file="tutorial/argument_passing.md"> -->
 ### 3.1. Argument passing
 
 First, let's see how we can use the argparser to parse the arguments given to your script, here saved as `try_argparser.sh` in the CWD. You can uncover the script if you want to test and try it, but we'll come back to it in the next section. For now, only the output is relevant, when we call the script from the command line.
@@ -570,7 +583,9 @@ Usage: try_argparser.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] 
 <!-- </include> -->
 
 The tiny change of the prefix for the `fgcA` compound argument made our whole attempt fail: Since `var_3` is not a flag, we can't use the boolean negation, here, and thus the argparser yields an error. So, although specifying `+fg` is no problem, the merged `c` makes the parsing fail. Were `g` also defined to accept a value, the argparser would have reported the error already here, since the following `cA` would have been seen as value to the option `+g`. This shows that care should be taken when merging option names.
+<!-- </section> -->
 
+<!-- <section file="tutorial/argparser_invokation.md"> -->
 ### 3.2. Argparser invokation
 
 Now that you have seen how the argparser serves in parsing and interpreting the command-line arguments given to your script, it's time to explain what you need to do to employ the argparser in your script. As promised, here's the code of `try_argparser.sh` again. You can cover it if you already read it above (and memorize the lines of code&hellip;).
@@ -683,7 +698,9 @@ Keyword arguments can have multiple short and/or long option names, optional def
 As you saw above, the argparser will aggregate all arguments (values) given after a word starting with a hyphen (*i.e.*, an option name) to this option. If the number doesn't match the number of required values, an error is thrown instead of cutting the values. If an argument gets a wrong number of values, but has a default value, only a warning is thrown and the default value is taken.
 
 Thereby, errors abort the script, while warnings just write a message to `STDERR`. Even after parsing or value checking errors occurred, the parsing or value checking continues and the argparser aggregates the error messages until the end, when all are printed, to simplify the correction of multiple mistakes.
+<!-- </section> -->
 
+<!-- <section file="tutorial/argparser_configuration.md"> -->
 ### 3.3. Argparser configuration
 
 The argparser accepts over 50 options for configuring the argument parsing, checking their values and the consistency of the arguments definition, creating the various message types (see below), and setting the required companion files. These options are available as [environment variables](#65-environment-variables). By this, you can set them directly in your script, and even [`export`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-export "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; export") them to child processes. Thus, you can set these variables once and use them throughout your script suite.
@@ -799,7 +816,9 @@ Since the argparser parses its options like it does for your script's ones (by n
 Not surprisingly, you need to read the arguments before you set them, but you can perform arbitrary steps in-between. This could come handy when you want to use the variable names the argparser sets for some task or want to manipulate the associative array prior having the values set.
 
 If you [`export`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-export "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; export") (or [`declare -x`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-declare "gnu.org &rightarrow; Bash Builtins &rightarrow; declare")) environment variables like [`ARGPARSER_READ_ARGS`](#6535-argparser_read_args) and [`ARGPARSER_SET_ARGS`](#6538-argparser_set_args) to child processes (like scripts called from your master script), they will inherit these variables. If, in your child script, you use a bare `source argparser -- "$@"`, *i.e.*, without specifying an option to the argparser, the settings from the inherited environment variables will be used. However, you can always override them by specifying an argparser option. By this, you may set the environment variables in your master script and use the settings in some child scripts, with the others setting their own options. Thus, to rule out any possible influence of the environment on reading and setting, using the two respective option flags might be recommendable for certain use cases.
+<!-- </section> -->
 
+<!-- <section file="tutorial/arguments_definition_files.md"> -->
 ### 3.4. Arguments definition files
 
 In the previous sections, we always provided the arguments definition directly in the script, right before we sourced the argparser. However, it is possible to "outsource" the definition (or part of it) in a bespoke file that is referred to by the [`ARGPARSER_ARG_DEF_FILE`](#6510-argparser_arg_def_file) environment variable.
@@ -898,7 +917,9 @@ $ bash ../tutorial/try_arg_def_file.sh -u
 Usage: try_arg_def_file.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 ```
 <!-- </include> -->
+<!-- </section> -->
 
+<!-- <section file="tutorial/help_and_usage_messages.md"> -->
 ### 3.5. Help and usage messages
 
 No matter how many keyword arguments are defined, as long as [`ARGPARSER_ADD_HELP`](#652-argparser_add_help) and [`ARGPARSER_ADD_USAGE`](#653-argparser_add_usage) are set to `true` (the default), the argparser interprets the flags from the [`ARGPARSER_HELP_OPTIONS`](#6527-argparser_help_options) (default: `-h` and `-?`) and `--help` as call for a verbose help message and the flags from the [`ARGPARSER_USAGE_OPTIONS`](#6552-argparser_usage_options) (default: `-u`) and `--usage` as call for a brief usage message. Then, these options are automatically added to the script's argument definition and override any same-named argument name (yielding an error message if [`ARGPARSER_CHECK_ARG_DEF`](#6515-argparser_check_arg_def) is set to `true`). This is to ensure that the novice user of your script can do exactly what we did, above: trying the most common variants to get some help over how to use a program or script by typing
@@ -1023,7 +1044,9 @@ The help message details all short and long option names, their optionality (*i.
 The help message's structure aims at reproducing the commonly found structure in command-line programs. By setting [`ARGPARSER_MAX_COL_WIDTH_1`](#6530-argparser_max_col_width_1), [`ARGPARSER_MAX_COL_WIDTH_2`](#6531-argparser_max_col_width_2), or [`ARGPARSER_MAX_COL_WIDTH_3`](#6532-argparser_max_col_width_3) (as done in `try_argparser.sh`), the column widths may be adapted to your needs, recommendably totalling 77 characters (thus 79 characters including the separating spaces). Note that columns are automatically shrunk, when their content is narrower, but they're not expanded, when their content is wider. This is to guarantee that the help message, when *e.g.* sent as logging output, nicely fits in the space you have.
 
 Alternatively, you may want to set [`ARGPARSER_MAX_WIDTH`](#6533-argparser_max_width). By this, the help message will have a defined width, independent of shrunk columns. This is achieved by expanding the third column (with the help text) to the remaining width. For this to work, [`ARGPARSER_MAX_COL_WIDTH_3`](#6532-argparser_max_col_width_3) must be set to `0`.
+<!-- </section> -->
 
+<!-- <section file="tutorial/help_and_usage_message_files.md"> -->
 ### 3.6. Help and usage message files
 
 The argparser is not only able to compile a help message, but can also be guided by a separate file. Using the [`ARGPARSER_HELP_FILE`](#6524-argparser_help_file) environment variable pointing to this file, to a certain degree, you can customize the help message's look and structure by moving the blocks the message consists of around and enriching it by arbitrary text. Again, we use a simplified script as `try_help_file.sh` without alias names for the short and long options.
@@ -1140,7 +1163,9 @@ Thereby, `<ArgumentGroup>` can be the name of any argument group given in the ar
 Further, lines starting with a `"#"` character in the help file aren't printed if [`ARGPARSER_HELP_FILE_KEEP_COMMENTS`](#6526-argparser_help_file_keep_comments) is set to `false` (the default). This allows you to comment your help file, perhaps to explain the structure&mdash;or just to write a header or footer with your name and debug email address inside.
 
 The same as for help messages can be done for usage messages, using the [`ARGPARSER_USAGE_FILE`](#6547-argparser_usage_file), [`ARGPARSER_USAGE_FILE_INCLUDE_CHAR`](#6548-argparser_usage_file_include_char), and [`ARGPARSER_USAGE_FILE_KEEP_COMMENTS`](#6549-argparser_usage_file_keep_comments) environment variables. However there, only the `@All` directive is supported, yet.
+<!-- </section> -->
 
+<!-- <section file="tutorial/help_and_usage_message_localization.md"> -->
 ### 3.7. Help and usage message localization
 
 It is even possible to localize your script's help and usage message. For the usage message, all you need is an [`ARGPARSER_TRANSLATION_FILE`](#6542-argparser_translation_file), a simplified YAML file giving the translation of the auto-generated parts in the messages. For each section, you give the language identifier for the language you want the message to be translated to, *i.e.*, the [`ARGPARSER_LANGUAGE`](#6529-argparser_language). For the usage message, this suffices, but in the help message, also non-auto-generated parts are included, especially each argument's help text. For them to be translated, you need a dedicated [`ARGPARSER_ARG_DEF_FILE`](#6510-argparser_arg_def_file) and possibly a localized [`ARGPARSER_HELP_FILE`](#6524-argparser_help_file).
@@ -1392,7 +1417,9 @@ $ LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -u
 Aufruf: try_localization.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 ```
 <!-- </include> -->
+<!-- </section> -->
 
+<!-- <section file="tutorial/version_messages.md"> -->
 ### 3.8. Version messages
 
 Besides the the [`ARGPARSER_HELP_OPTIONS`](#6527-argparser_help_options), `--help`, the [`ARGPARSER_USAGE_OPTIONS`](#6552-argparser_usage_options), and `--usage`, there is a third option intended to help the user, the [`ARGPARSER_VERSION_OPTIONS`](#6559-argparser_version_options) (default: `-V`) and `--version`. This flag compiles a brief version message for your script, showing its canonical name (the [`ARGPARSER_SCRIPT_NAME`](#6537-argparser_script_name)) and the version number (the [`ARGPARSER_VERSION`](#6557-argparser_version)). Just as for the help and usage messages, you can disable the version message (and its corresponding flags) by setting [`ARGPARSER_ADD_VERSION`](#654-argparser_add_version) to `false`. Note that the default short option name is an uppercase `V`, such that you can use the lowercase `v` (as `-v`) for your purposes, like `--verbatim` or `--verbose`. This is in line with the common behavior of command-line programs. By setting `ARGPARSER_VERSION_OPTIONS` accordingly, you can of course change it to your needs, if desired.
@@ -1405,7 +1432,9 @@ $ bash ../tutorial/try_argparser.sh -V
 try_argparser.sh v1.0.0
 ```
 <!-- </include> -->
+<!-- </section> -->
 
+<!-- <section file="tutorial/error_and_warning_messages.md"> -->
 ### 3.9. Error and warning messages
 
 The argparser outputs about a hundred different error and warning messages to give both you and your script's user as detailled feedback as possible about what went wrong with the argument parsing. Each message starts with your script's canonical name (the [`ARGPARSER_SCRIPT_NAME`](#6537-argparser_script_name)), followed by either `"Error:"` or `"Warning:"` and the respective message. Using the same simplified YAML file as for the help and usage messages (the [`ARGPARSER_TRANSLATION_FILE`](#6542-argparser_translation_file)), also the error and warning messages can be fully localized.
@@ -1413,7 +1442,9 @@ The argparser outputs about a hundred different error and warning messages to gi
 Generally, errors may lead to abortion of the script, while warnings just write the message to `STDERR`. Thus, warnings are less problematic errors, usually since some default or fallback value can be used, instead. The warning message then informs about this decision. Only for deprecated arguments, no default is used, simply because the argparser does not use the information about deprecation other than for creating a message to your script's user. After all, a deprecated argument should still be fully functional, until the deprecation time has passed and you decide to fully remove the argument (or replace it by a dummy implementation&mdash;then without deprecation note&mdash;whose application raises an error within your script).
 
 Using [`ARGPARSER_SILENCE_ERRORS`](#6540-argparser_silence_errors) and [`ARGPARSER_SILENCE_WARNINGS`](#6541-argparser_silence_warnings), it is possible to prevent the emission of error or warning messages. Still, in case of critical errors, the argparser exits, just not informing you or your user about its failure. Silencing errors may not be needed at all, except when you want to keep log files clean, but silencing warnings may improve the user experience.
+<!-- </section> -->
 
+<!-- <section file="tutorial/message_styles.md"> -->
 ### 3.10. Message styles
 
 It is possible to customize the appearance of error, warning, help, usage, and version messages using the respective environment variable, *viz.*, [`ARGPARSER_HELP_STYLE`](#6528-argparser_help_style), [`ARGPARSER_USAGE_STYLE`](#6553-argparser_usage_style), [`ARGPARSER_VERSION_STYLE`](#6560-argparser_version_style), [`ARGPARSER_ERROR_STYLE`](#6521-argparser_error_style), and [`ARGPARSER_WARNING_STYLE`](#6561-argparser_warning_style). Using [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters"), messages can be colorized and stylized. This is especially useful to quickly see errors when logging, but requires that the terminal or text editor, with which you opened the log file, supports interpreting the escape codes. This is, *e.g.*, supported by [`less --raw-control-chars <filename>`](https://man7.org/linux/man-pages/man1/less.1.html "man7.org &rightarrow; man pages &rightarrow; less(1)"). Further, when [`ARGPARSER_USE_STYLES_IN_FILES`](#6556-argparser_use_styles_in_files) is set to `false` (the default), the escape sequences are only included when `STDOUT`/`STDERR` is a terminal, not a file.
@@ -1434,7 +1465,9 @@ The following colors and styles are available (with the actual appearance depend
 |                                         | `reverse`     |
 
 Colors overwrite each other, whereas styles may be combined, like `"red,bold,reverse"` as default value for `ARGPARSER_ERROR_STYLE`. Styles may be given in any order; for colors, the last one is effectively visible. Still, the escape codes are concatenated in their order of definition in the style setting.
+<!-- </section> -->
 
+<!-- <section file="tutorial/standalone_usage.md"> -->
 ### 3.11. Standalone usage
 
 Although the usual way to run the argparser is sourcing, you can also invoke it directly. By this, you can obtain the help, usage, and version message for the argparser itself, *e.g.* when you're looking for a certain option name, but don't want to or can't consult the manual. The invokation is identical to your script's:
@@ -1662,13 +1695,17 @@ In our example script, the whole pipeline is run in a subshell, such that STDOUT
 Another point to notice is the need to set the [`ARGPARSER_SCRIPT_NAME`](#6537-argparser_script_name) prior running the argparser, since from within its child process, it cannot access your script's name without requiring non-builtin commands like [`ps`](https://man7.org/linux/man-pages/man1/ps.1.html "man7.org &rightarrow; man pages &rightarrow; ps(1)").
 
 In short, it is possible to run the argparser in standalone mode from other shells, but this comes with the caveats of subprocesses&mdash;which the sourcing in Bash overcomes. Still, the only feature that your shell must support, is calling processes in pipes or *via* process substitutions to pass data to the argparser's STDIN and read its STDOUT. Since pipes are defined by POSIX, most shells should support this feature.
+<!-- </section> -->
 
+<!-- <section file="comparison/introduction.md"> -->
 ## 4. Comparison of command-line parsers
 
 Several other shell command-line parsers predate the argparser and were in part influential in its design choices. The table below aims at comparing their features or lack thereof, intended to be as comprehensive as possible. If you're missing a function, please open an issue, such that the function can be added. Manual argument parsing, the easiest (just most complex) method, is excluded here since in theory anything could be done, therein&mdash;it would just require a proportionate amount of work.
 
 The [feature comparison](#41-feature-comparison) compares the various features for argument parsing, while some [example scripts](#42-example-scripts) later demonstrate the usage for the different parsers.
+<!-- </section> -->
 
+<!-- <section file="comparison/toc.md"> -->
 <!-- <toc title="Table of contents (Feature comparison)"> -->
 ### Table of contents (Feature comparison)
 
@@ -1681,7 +1718,9 @@ The [feature comparison](#41-feature-comparison) compares the various features f
    1. [argparser](#425-argparser)
 1. [Summary](#43-summary)
 <!-- </toc> -->
+<!-- </section> -->
 
+<!-- <section file="comparison/feature_comparison.md"> -->
 ### 4.1. Feature comparison
 
 The following command-line parsers are compared in the given versions:
@@ -1750,7 +1789,9 @@ In the following table, "&#10008;" marks the absence of a feature, "&#10004;" it
 [^11]: Regarding its application in scripts, would need equivalent builtins in other shells.
 [^12]: Not applicable as not designed for usage from within shells.
 [^13]: Opt-in feature *via* environment variable (`POSIXLY_CORRECT`).
+<!-- </section> -->
 
+<!-- <section file="comparison/example_scripts/getopts.md"> -->
 ### 4.2. Example scripts
 
 #### 4.2.1. `getopts`
@@ -1907,7 +1948,9 @@ Notes:
 
 - Long options aren't supported, so no attempt is made to still parse them.
 - The question mark `?` is used as sign for an invalid option name on the command line, thus preventing its use for invoking the help message.
+<!-- </section> -->
 
+<!-- <section file="comparison/example_scripts/getopt.md"> -->
 #### 4.2.2. `getopt`
 
 <details open>
@@ -2095,7 +2138,9 @@ bash getopt_wrapper.sh --version
 Notes:
 
 - Using whitespace between options with optional arguments (*i.e.*, an argument number of zero or higher) and their values is disallowed.
+<!-- </section> -->
 
+<!-- <section file="comparison/example_scripts/shflags.md"> -->
 #### 4.2.3. shFlags
 
 <details open>
@@ -2253,7 +2298,9 @@ Notes:
 - Mandatory options aren't supported.  *In lieu* of checking for their existence on the command line, "impossible" default values are set and then checked against.
 - The help message is partly auto-generated. In order to comply with the style decisions in shFlags, the manually set header is adapted to them.
 - The question mark `?` for the help message is not supported.
+<!-- </section> -->
 
+<!-- <section file="comparison/example_scripts/docopts.md"> -->
 #### 4.2.4. docopts
 
 <details open>
@@ -2413,7 +2460,9 @@ Notes:
 - Instead of defining the arguments and letting the parser create the help message, in docopts, the help message must be manually provided and the arguments definition gets extracted from there.
 - Due to the rather complicated grammar, the usage string is likely incorrect, as the arguments to short options are interpreted as positional arguments. This requires some boilerplate code to get the actual values. Moreover, when using short options, they must be given in the order defined in the usage string as their values are normal positional arguments and as such parsed from left to right, irrespective of the preceding short option "flag" (as the parser interprets the definition). Thus, in the example calls, the long options are used, when necessary.
 - The question mark `?` for the help message is not supported, but emulated as `--help` by a separate call.
+<!-- </section> -->
 
+<!-- <section file="comparison/example_scripts/argparser.md"> -->
 #### 4.2.5. argparser
 
 <details open>
@@ -2475,7 +2524,9 @@ Notes:
 
 - Trailing positional arguments must be delimited with `--` since the argparser aggregates all values after option names to them, as design decision.
 - Intermixing positional and keyword arguments can be emulated by using the positional arguments delimiter `++`. True intermixing is yet disabled as design decision.
+<!-- </section> -->
 
+<!-- <section file="comparison/summary.md"> -->
 ### 4.3. Summary
 
 When comparing the different approaches to command-line parsing, it is apparent that&mdash;as expected&mdash;the more recent parsers have a larger set of features. While the Bash-builtin `getopts` parser comprises only minimal functionality (not even long options), it is the only one that implements the POSIX standard. A slightly greater number of features comes with GNU `getopt`, like long options and the ability to abbreviate them.
@@ -2489,7 +2540,9 @@ This is especially noticeable for error messages when building the command line,
 Further, the development of shFlags and docopts seemingly have stalled, with no release or even commit for years. This renders it unlikely that these libraries will implement additional functionality, increasing the potential use for the argparser.
 
 Finally, the argparser is extensively documented, unlike the other tools relying on a brief readme or man page. This hopefully makes the transition to the argparser&mdash;if deemed useful at all&mdash;easier.
+<!-- </section> -->
 
+<!-- <section file="roadmap.md"> -->
 ## 5. Roadmap
 
 Future argparser versions will add several new features and address known issues. The following sections shall give an overview over them.
@@ -2541,11 +2594,15 @@ The following features are considered for addition in a future version. If you m
 ### 5.2. Known bugs
 
 - If the column width in the help message is extremely narrow (like 2 characters), the content may be broken on wrong positions, leading to an omission of arguments.
+<!-- </section> -->
 
+<!-- <section file="reference/introduction.md"> -->
 ## 6. Reference
 
 The reference details the actual definitions of all [colors and styles](#62-colors-and-styles), [include directives](#63-include-directives), and [environment variables](#65-environment-variables). While it may be advantageous to read it once in its entirety to see all features not discussed in the [tutorial](#3-tutorial), it is more designed as manual for specific questions regarding certain features.
+<!-- </section> -->
 
+<!-- <section file="reference/toc.md"> -->
 <!-- <toc title="Table of contents (Reference)"> -->
 ### Table of contents (Reference)
 
@@ -2681,7 +2738,9 @@ The reference details the actual definitions of all [colors and styles](#62-colo
    1. [`ARGPARSER_WARNING_STYLE`](#6561-argparser_warning_style)
    1. [`ARGPARSER_WRITE_ARGS`](#6562-argparser_write_args)
 <!-- </toc> -->
+<!-- </section> -->
 
+<!-- <section file="reference/arguments_definition.md"> -->
 ### 6.1. Arguments definition
 
 The arguments definition that the argparser uses to parse the arguments and to create the help and usage messages shows a tabular structure with eleven columns. These columns are delimited by an [`ARGPARSER_ARG_DELIMITER_1`](#6511-argparser_arg_delimiter_1) character each, by default a pipe (`"|"`). Since fields can be surrounded by an arbitrary number of spaces, visual alignment as true table is possible.
@@ -2759,7 +2818,9 @@ The notes are intended to give additional information about arguments that don't
 #### 6.1.11. Help text (`help`)
 
 The help text should consist of a terse summary of the argument's function, like turning a feature on or off (which may be accomplished by flags), what a file is used for (like for input or output), or how your script's output may be modified. A help text can take any form, but be wary of it being wrapped to fit the width of the third column in the help message (if [`ARGPARSER_MAX_COL_WIDTH_3`](#6532-argparser_max_col_width_3) is non-zero) or the total line length ([`ARGPARSER_MAX_WIDTH`](#6533-argparser_max_width)). Help messages are no replacement for the manual, so the help text shouldn't be overly verbose.
+<!-- </section> -->
 
+<!-- <section file="reference/colors_and_styles.md"> -->
 ### 6.2. Colors and styles
 
 The argparser employs [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters") to set the appearance of error, warning, help, usage, and version messages. To this end, five environment variable are defined, *viz.*, [`ARGPARSER_HELP_STYLE`](#6528-argparser_help_style), [`ARGPARSER_USAGE_STYLE`](#6553-argparser_usage_style), [`ARGPARSER_VERSION_STYLE`](#6560-argparser_version_style), [`ARGPARSER_ERROR_STYLE`](#6521-argparser_error_style), and [`ARGPARSER_WARNING_STYLE`](#6561-argparser_warning_style). Since the escape codes are nonprintable, not any terminal or text editor may support them. Many terminals do, while *e.g.* [`less`](https://man7.org/linux/man-pages/man1/less.1.html "man7.org &rightarrow; man pages &rightarrow; less(1)") has a dedicated flag, `--raw-control-chars`.
@@ -2793,7 +2854,9 @@ A number of colors and styles is available. You don't need to remember the SGR c
 | `reverse`     | `7`      |
 
 While colors overwrite each other, some styles can be combined. For instance, the default value for `ARGPARSER_ERROR_STYLE` is `"red,bold,reverse"`, meaning to colorize the message in red and to format it in bold font, using reverse video. Other useful combinations may include `"faint"` and `"italic"` or `"bold"` and `"underline"`. The order of giving the colors and styles in the environment variables' values does only matter if multiple colors are given, when the last one "wins". Else, the colors and styles are simply composed (concatenated).
+<!-- </section> -->
 
+<!-- <section file="reference/include_directives.md"> -->
 ### 6.3. Include directives
 
 Six section names (include directives) are supported in the help and usage files. These are introduced with the [`ARGPARSER_HELP_FILE_INCLUDE_CHAR`](#6525-argparser_help_file_include_char) or [`ARGPARSER_USAGE_FILE_INCLUDE_CHAR`](#6548-argparser_usage_file_include_char), respectively, defaulting to `"@"`.
@@ -2852,14 +2915,18 @@ The `@Usage` directive prints the line `Usage: <script_name> ...`, with `<script
 #### 6.3.6. `@Help` directive
 
 The `@Help` directive prints the help text for the `--help`, `--usage`, and `--version` flags (if added to the arguments definition by [`ARGPARSER_ADD_HELP`](#652-argparser_add_help), [`ARGPARSER_ADD_USAGE`](#653-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](#654-argparser_add_version)). Usually, you want to give this at the very end of all options.
+<!-- </section> -->
 
+<!-- <section file="reference/translations/introduction.md"> -->
 ### 6.4. Translations
 
 In order to facilitate translators the translation of the argparser-generated strings, most importantly the error and warning messages, and including the interpolated variables, they are listed here for reference, sorted by their occurence in the provided [translation.yaml](../resources/translation.yaml). Further, this should give an overview over the most likely reasons for argument parsing failures.
 
 > [!NOTE]
 > The translation keys in the simplified YAML file are subject to change, if messages are added or removed. Since missing keys only generate warnings (which can even be silenced using [`ARGPARSER_SILENCE_WARNINGS`](#6541-argparser_silence_warnings)), such changes are *not* considered breaking changes, and by this would *not* lead to an increase in the argparser's major version number. However, as few modifications as possible are anticipated, and only when other breaking changes are introduced, larger refactorings should occur.
+<!-- </section> -->
 
+<!-- <section file="reference/translations/toc.md"> -->
 <!-- <toc title="Table of contents (Translations)"> -->
 #### Table of contents (Translations)
 
@@ -2911,7 +2978,9 @@ In order to facilitate translators the translation of the argparser-generated st
 1. [`Error arg def field count`](#6446-error-arg-def-field-count)
 1. [`Error arg def file id`](#6447-error-arg-def-file-id)
 <!-- </toc> -->
+<!-- </section> -->
 
+<!-- <section file="reference/translations/translations.md"> -->
 #### 6.4.1. `Positional arguments`
 
 - ***Description:*** The name of the positional arguments' argument group in the arguments definition, to be shown in the help message, *i.e.*, the translated [`ARGPARSER_POSITIONAL_ARG_GROUP`](#6534-argparser_positional_arg_group).
@@ -3217,11 +3286,15 @@ In order to facilitate translators the translation of the argparser-generated st
   - `$2`: The current line.
   - `$3`: The current line's number of fields.
   - `$4`: The header's number of fields.
+<!-- </section> -->
 
+<!-- <section file="reference/environment_variables/introduction.md"> -->
 ### 6.5. Environment variables
 
 The argparser defines a large set of environment variables, each following the naming pattern `"ARGPARSER_*"`. They are used to control the behavior of the argument parsing, help and usage message generation, and much more. Note that, if for some reason your script or environment is using a variable with the same name as one of the argparser variables, the argparser might not work as expected. If you want to be 100&#8239;% safe, you can unset any variable following the given pattern prior setting any desired argparser variables and sourcing the argparser&mdash;with the caveat that in turn the program that set the variable might not work, anymore.
+<!-- </section> -->
 
+<!-- <section file="reference/environment_variables/toc.md"> -->
 <!-- <toc title="Table of contents (Environment variables)"> -->
 #### Table of contents (Environment variables)
 
@@ -3288,7 +3361,9 @@ The argparser defines a large set of environment variables, each following the n
 1. [`ARGPARSER_WARNING_STYLE`](#6561-argparser_warning_style)
 1. [`ARGPARSER_WRITE_ARGS`](#6562-argparser_write_args)
 <!-- </toc> -->
+<!-- </section> -->
 
+<!-- <section file="reference/environment_variables/overview.md"> -->
 #### 6.5.1. Overview
 
 | Variable name                                                                      | Type[^14]  | Default value[^15][^16]  |
@@ -3361,7 +3436,9 @@ The argparser defines a large set of environment variables, each following the n
 [^17]: In fact, any legit Bash variable identifier.
 [^18]: Values must be different from each other.
 [^19]: Sum of values is recommended to be 77.
+<!-- </section> -->
 
+<!-- <section file="reference/environment_variables/environment_variables.md"> -->
 #### 6.5.2. `ARGPARSER_ADD_HELP`
 
 - ***Type:*** *bool* (Boolean)
@@ -3796,3 +3873,4 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
 - ***Description:*** Whether to write the arguments from [`ARGPARSER_ARG_ARRAY_NAME`](#659-argparser_arg_array_name) to STDOUT. This is required for running the argparser in a pipe to be able to access the parsed arguments. These are output as key&ndash;value pairs, separated by linefeeds.
+<!-- </section> -->
