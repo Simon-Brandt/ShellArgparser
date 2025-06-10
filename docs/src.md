@@ -193,7 +193,7 @@ The argparser:
 ## 2. Installation
 
 > [!WARNING]
-> The argparser requires Bash 4.0 or higher (try `bash --version`). It is extensively tested with Bash 5.2, precisely, with `GNU bash, Version 5.2.21(1)-release (x86_64-pc-linux-gnu)`. With `BASH_COMPAT` set to `40` or higher, the [tests](tests) still succeed, but if you encounter errors for versions earlier than 5.2, please file an issue, such that the minimum requirement can be adjusted. For the execution (not invokation) of the argparser, shells other than Bash aren't supported, and the argparser aborts with an error message.
+> The argparser requires Bash 4.0 or higher (try `bash --version`). It is extensively tested with Bash 5.2, precisely, with `GNU bash, Version 5.2.21(1)-release (x86_64-pc-linux-gnu)`. With `BASH_COMPAT` set to `40` or higher, the [tests](../tests) still succeed, but if you encounter errors for versions earlier than 5.2, please file an issue, such that the minimum requirement can be adjusted. For the execution (not invokation) of the argparser, shells other than Bash aren't supported, and the argparser aborts with an error message.
 
 No actual installation is necessary, as the argparser is just a Bash script that can be located in an arbitrary directory of your choice, like `/usr/local/bin`. Thus, the "installation" is as simple as cloning the repository in this very directory:
 
@@ -223,7 +223,7 @@ PATH="/path/to/bash_argparser:${PATH}"
 
 ## 3. Tutorial
 
-To give you an idea about the argparser's application, the following sections show some excerpts of scripts used for internal testing purposes, in the herein given form located in the [tutorial](tutorial) directory, trying to guide you through the various features.
+To give you an idea about the argparser's application, the following sections show some excerpts of scripts used for internal testing purposes, in the herein given form located in the [tutorial](../tutorial) directory, trying to guide you through the various features.
 
 > [!NOTE]
 > For the terminology in argument parsing, refer to the Python [`optparse` documentation](https://docs.python.org/3/library/optparse.html#terminology "python.org &rightarrow; Python documentation &rightarrow; optparse module &rightarrow; terminology"). Additionally, for consistency with the positional arguments, options are herein partly referred to as keyword arguments.
@@ -252,7 +252,7 @@ First, let's see how we can use the argparser to parse the arguments given to yo
 
 <summary>Contents of <code>try_argparser.sh</code></summary>
 
-<!-- <include command="sed '3,10d;/shellcheck/d' tutorial/try_argparser.sh" lang="bash"> -->
+<!-- <include command="sed '3,10d;/shellcheck/d' ../tutorial/try_argparser.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -297,9 +297,9 @@ done
 
 When you (as a user) have to deal with unknown scripts or programs, maybe the first thing to try is to run the script with the `--help` flag. As we're currently seeing `try_argparser.sh` as sort of a "black box", we assume not to know any implementation detail. So we're trying to run:
 
-<!-- <include command="bash tutorial/try_argparser.sh --help" lang="console"> -->
+<!-- <include command="bash ../tutorial/try_argparser.sh --help" lang="console"> -->
 ```console
-$ bash tutorial/try_argparser.sh --help
+$ bash ../tutorial/try_argparser.sh --help
 Usage: try_argparser.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
@@ -339,9 +339,9 @@ This already gives us plenty of information. Even though we don't know yet where
 
 Now that we had a look at the options (or keyword arguments, to cope with the fact that some are mandatory), we know that some of them, `--var-4` through `--var-7`, as well as `pos_1`, to be precise, have default arguments. These are indicated by the square brackets in the help message, and since they are optional, we try not to care about them. Instead, we run `try_argparser.sh` as follows:
 
-<!-- <include command="bash tutorial/try_argparser.sh 1 --var-1=1 --var-2=2 --var-3=A" lang="console"> -->
+<!-- <include command="bash ../tutorial/try_argparser.sh 1 --var-1=1 --var-2=2 --var-3=A" lang="console"> -->
 ```console
-$ bash tutorial/try_argparser.sh 1 --var-1=1 --var-2=2 --var-3=A
+$ bash ../tutorial/try_argparser.sh 1 --var-1=1 --var-2=2 --var-3=A
 try_argparser.sh: Error: The argument "pos_2" requires 2 values, but has 1 given.
 
 Usage: try_argparser.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
@@ -350,9 +350,9 @@ Usage: try_argparser.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] 
 
 This gives us an error message&mdash;certainly not what we wanted. Trying to understand the reason, we see that we guesstimated that there should be one value for the positional argument `pos_2` (we chose a literal `1`), but the error message tells us it should be two. Further, the argparser tries to help us by giving a line with the general usage for `try_argparser.sh`, but the error message seems clear enough for us, here. So we try it again, this time using `1` and `2` as positional arguments:
 
-<!-- <include command="bash tutorial/try_argparser.sh 1 2 --var-1=1 --var-2=2 --var-3=A" lang="console"> -->
+<!-- <include command="bash ../tutorial/try_argparser.sh 1 2 --var-1=1 --var-2=2 --var-3=A" lang="console"> -->
 ```console
-$ bash tutorial/try_argparser.sh 1 2 --var-1=1 --var-2=2 --var-3=A
+$ bash ../tutorial/try_argparser.sh 1 2 --var-1=1 --var-2=2 --var-3=A
 The keyword argument "var_1" is set to "1".
 The keyword argument "var_2" is set to "2".
 The keyword argument "var_3" is set to "A".
@@ -371,9 +371,9 @@ Likewise, `pos_2` is reported to be `"1,2"`, so some sort of sequence of the two
 
 From the help message above, we know that there are also short versions of the keyword arguments, and that it's possible to give positional arguments after a `--`, fitting with our command-line experience. So, let's see what happens with the following type of call:
 
-<!-- <include command="bash tutorial/try_argparser.sh -a 1 -b 2 -c A -- 1 2" lang="console"> -->
+<!-- <include command="bash ../tutorial/try_argparser.sh -a 1 -b 2 -c A -- 1 2" lang="console"> -->
 ```console
-$ bash tutorial/try_argparser.sh -a 1 -b 2 -c A -- 1 2
+$ bash ../tutorial/try_argparser.sh -a 1 -b 2 -c A -- 1 2
 The keyword argument "var_1" is set to "1".
 The keyword argument "var_2" is set to "2".
 The keyword argument "var_3" is set to "A".
@@ -390,9 +390,9 @@ That's exactly the same output as before. We set the three mandatory options wit
 
 There is an argparser-specific additional feature, intended to facilitate the mixing of positional and keyword arguments: the special keyword argument `++`:
 
-<!-- <include command="bash tutorial/try_argparser.sh -a 1 -b 2 -- 1 2 ++ -c A" lang="console"> -->
+<!-- <include command="bash ../tutorial/try_argparser.sh -a 1 -b 2 -- 1 2 ++ -c A" lang="console"> -->
 ```console
-$ bash tutorial/try_argparser.sh -a 1 -b 2 -- 1 2 ++ -c A
+$ bash ../tutorial/try_argparser.sh -a 1 -b 2 -- 1 2 ++ -c A
 The keyword argument "var_1" is set to "1".
 The keyword argument "var_2" is set to "2".
 The keyword argument "var_3" is set to "A".
@@ -415,9 +415,9 @@ As we saw in the two examples, options can have name aliases, *i.e.*, any number
 
 Further, long option names can be abbreviated, as long as no collision with other names arises (like when giving `--verb` in the example above). This requires [`ARGPARSER_ALLOW_OPTION_ABBREVIATION`](#657-argparser_allow_option_abbreviation) to be set to `true`. In contrast, short option names may be merged with their value or other short option names (if they're flags, see below), given that [`ARGPARSER_ALLOW_OPTION_MERGING`](#658-argparser_allow_option_merging) is set to `true`. For the sake of an example without needing a novel script, we'll set the latter variable to the environment of the script execution by prefixing the assignments to the usual command line:
 
-<!-- <include command="ARGPARSER_ALLOW_OPTION_MERGING=true bash tutorial/try_argparser.sh -a1 -b2 -cA -- 1 2" lang="console"> -->
+<!-- <include command="ARGPARSER_ALLOW_OPTION_MERGING=true bash ../tutorial/try_argparser.sh -a1 -b2 -cA -- 1 2" lang="console"> -->
 ```console
-$ ARGPARSER_ALLOW_OPTION_MERGING=true bash tutorial/try_argparser.sh -a1 -b2 -cA -- 1 2
+$ ARGPARSER_ALLOW_OPTION_MERGING=true bash ../tutorial/try_argparser.sh -a1 -b2 -cA -- 1 2
 The keyword argument "var_1" is set to "1".
 The keyword argument "var_2" is set to "2".
 The keyword argument "var_3" is set to "A".
@@ -434,9 +434,9 @@ That's again the same output, somehow suggesting it may be hardcoded in the scri
 
 And since the long option names only differ in their last character, here, it is impossible to abbreviate them without ambiguity:
 
-<!-- <include command="ARGPARSER_ALLOW_OPTION_ABBREVIATION=true bash tutorial/try_argparser.sh --var-1 1 --var-2 2 --var -- 1 2" lang="console"> -->
+<!-- <include command="ARGPARSER_ALLOW_OPTION_ABBREVIATION=true bash ../tutorial/try_argparser.sh --var-1 1 --var-2 2 --var -- 1 2" lang="console"> -->
 ```console
-$ ARGPARSER_ALLOW_OPTION_ABBREVIATION=true bash tutorial/try_argparser.sh --var-1 1 --var-2 2 --var -- 1 2
+$ ARGPARSER_ALLOW_OPTION_ABBREVIATION=true bash ../tutorial/try_argparser.sh --var-1 1 --var-2 2 --var -- 1 2
 try_argparser.sh: Error: The long option "--var" matches multiple long options.
 
 Usage: try_argparser.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
@@ -451,9 +451,9 @@ Moreover, using an equals sign is the only way of providing arguments starting w
 
 Let's have a look at another example invokation:
 
-<!-- <include command="bash tutorial/try_argparser.sh 1 2 -a 1 -b 2 3 -c A,B -b 4" lang="console"> -->
+<!-- <include command="bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 3 -c A,B -b 4" lang="console"> -->
 ```console
-$ bash tutorial/try_argparser.sh 1 2 -a 1 -b 2 3 -c A,B -b 4
+$ bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 3 -c A,B -b 4
 The keyword argument "var_1" is set to "1".
 The keyword argument "var_2" is set to "2,3,4".
 The keyword argument "var_3" is set to "A,B".
@@ -474,9 +474,9 @@ As you can see from the `-c` option, you can also use commas (again actually [`A
 
 Regarding the positional arguments, we'll try the following:
 
-<!-- <include command="bash tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A -- 3" lang="console"> -->
+<!-- <include command="bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A -- 3" lang="console"> -->
 ```console
-$ bash tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A -- 3
+$ bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A -- 3
 The keyword argument "var_1" is set to "1".
 The keyword argument "var_2" is set to "2".
 The keyword argument "var_3" is set to "A".
@@ -495,9 +495,9 @@ It may be worth noting that, if a positional argument accepts an infinite number
 
 Since there were some additional options given in the help message, let's have a look at another example invokation:
 
-<!-- <include command="bash tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A -f +g" lang="console"> -->
+<!-- <include command="bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A -f +g" lang="console"> -->
 ```console
-$ bash tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A -f +g
+$ bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A -f +g
 try_argparser.sh: Warning: The argument "-g,-G,--var-7,--var-g" is deprecated and will be removed in the future.
 The keyword argument "var_1" is set to "1".
 The keyword argument "var_2" is set to "2".
@@ -523,9 +523,9 @@ Another interesting fact is that the argparser output a warning that `-g,-G,--va
 
 Taking one final set of example invokations, we can see how the option merging works for flags:
 
-<!-- <include command="ARGPARSER_ALLOW_OPTION_MERGING=true bash tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A +fg" lang="console"> -->
+<!-- <include command="ARGPARSER_ALLOW_OPTION_MERGING=true bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A +fg" lang="console"> -->
 ```console
-$ ARGPARSER_ALLOW_OPTION_MERGING=true bash tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A +fg
+$ ARGPARSER_ALLOW_OPTION_MERGING=true bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A +fg
 try_argparser.sh: Warning: The argument "-g,-G,--var-7,--var-g" is deprecated and will be removed in the future.
 The keyword argument "var_1" is set to "1".
 The keyword argument "var_2" is set to "2".
@@ -541,9 +541,9 @@ The positional argument "pos_2" on index 2 is set to "1,2".
 
 We merged `--var_6` and `-var_7` in one call, `+fg`, thus setting them both to `false`.
 
-<!-- <include command="ARGPARSER_ALLOW_OPTION_MERGING=true bash tutorial/try_argparser.sh 1 2 -a 1 -b 2 -fgcA" lang="console"> -->
+<!-- <include command="ARGPARSER_ALLOW_OPTION_MERGING=true bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -fgcA" lang="console"> -->
 ```console
-$ ARGPARSER_ALLOW_OPTION_MERGING=true bash tutorial/try_argparser.sh 1 2 -a 1 -b 2 -fgcA
+$ ARGPARSER_ALLOW_OPTION_MERGING=true bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -fgcA
 try_argparser.sh: Warning: The argument "-g,-G,--var-7,--var-g" is deprecated and will be removed in the future.
 The keyword argument "var_1" is set to "1".
 The keyword argument "var_2" is set to "2".
@@ -559,9 +559,9 @@ The positional argument "pos_2" on index 2 is set to "1,2".
 
 Now, we gave them together with `var_3` and its value, and we see that the flags are set to `true`, owing to the hyphen, and that `-c` correctly interprets the following `A` as value, not as option `-A` (which would be an alias for `-var_1`).
 
-<!-- <include command="ARGPARSER_ALLOW_OPTION_MERGING=true bash tutorial/try_argparser.sh 1 2 -a 1 -b 2 +fgcA" lang="console"> -->
+<!-- <include command="ARGPARSER_ALLOW_OPTION_MERGING=true bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 +fgcA" lang="console"> -->
 ```console
-$ ARGPARSER_ALLOW_OPTION_MERGING=true bash tutorial/try_argparser.sh 1 2 -a 1 -b 2 +fgcA
+$ ARGPARSER_ALLOW_OPTION_MERGING=true bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 +fgcA
 try_argparser.sh: Error: The option "-c,-C,--var-3,--var-c" is no flag and thus cannot be given with a "+" or "no-" prefix.
 try_argparser.sh: Warning: The argument "-g,-G,--var-7,--var-g" is deprecated and will be removed in the future.
 
@@ -579,7 +579,7 @@ Now that you have seen how the argparser serves in parsing and interpreting the 
 
 <summary>Contents of <code>try_argparser.sh</code></summary>
 
-<!-- <include command="sed '3,10d;/shellcheck/d' tutorial/try_argparser.sh" lang="bash"> -->
+<!-- <include command="sed '3,10d;/shellcheck/d' ../tutorial/try_argparser.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -690,7 +690,7 @@ The argparser accepts over 50 options for configuring the argument parsing, chec
 
 Still, it is likely that, after some time or for a specific project, you'll settle with a certain set of options that you'll want to reuse for all or many scripts. Then, setting the environment variables in any script becomes a tedious task, wasting space in each script. Additionally, should you want to change a value, you'd need to change it in any file.
 
-For this reason, the argparser also supports configuration by a config file (see the [example](resources/options.cfg)), given by the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file) environment variable. This file contains the options in a key&ndash;value syntax and can be shared by multiple scripts, which only need to point to the same configuration file. The options have the same name as the environment variables, with a stripped leading `"ARGPARSER_"` and being written in lowercase, and with underscores replaced by hyphens. *I.e.*, the "screaming snake case" is replaced by the "kebab case".
+For this reason, the argparser also supports configuration by a config file (see the [example](../resources/options.cfg)), given by the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file) environment variable. This file contains the options in a key&ndash;value syntax and can be shared by multiple scripts, which only need to point to the same configuration file. The options have the same name as the environment variables, with a stripped leading `"ARGPARSER_"` and being written in lowercase, and with underscores replaced by hyphens. *I.e.*, the "screaming snake case" is replaced by the "kebab case".
 
 The keys and values must be separated by an equals sign (`=`), but can be surrounded by spaces, allowing for a table-like arrangement. Further, empty or commented lines (those starting with a hashmark, *i.e.*, `#`) are ignored, and thus can be used to explain certain values. In-line comments aren't supported to simplify the parsing of values containing a hashmark. It is possible to quote strings, but not necessary, which allows the one-by-one replacement of values from scripts to the configuration file and *vice versa*.
 
@@ -698,9 +698,9 @@ Thereby, you can override options from the file with some given in your script. 
 
 Now, let's have a look at the configuration file (or at least, at the first ten lines to save some space):
 
-<!-- <include command="head --lines=10 resources/options.cfg" lang="console"> -->
+<!-- <include command="head --lines=10 ../resources/options.cfg" lang="console"> -->
 ```console
-$ head --lines=10 resources/options.cfg
+$ head --lines=10 ../resources/options.cfg
 add-help                  = true
 add-usage                 = true
 add-version               = true
@@ -714,13 +714,13 @@ arg-delimiter-1           = "|"
 ```
 <!-- </include> -->
 
-For demonstration, we take a stripped-down version of our `try_argparser.sh` script as `try_config_file.sh`, where we omit the alias names for the short and long options, for the sake of brevity. Note that using [`readlink`](https://man7.org/linux/man-pages/man1/readlink.1.html "man7.org &rightarrow; man pages &rightarrow; readlink(1)") is only required here to cope with the configuration file residing in the [resources](resources) directory, it is not necessary if you use absolute paths or store the configuration file alongside your script in the same directory&mdash;or won't invoke your script from multiple working directories.
+For demonstration, we take a stripped-down version of our `try_argparser.sh` script as `try_config_file.sh`, where we omit the alias names for the short and long options, for the sake of brevity. Note that using [`readlink`](https://man7.org/linux/man-pages/man1/readlink.1.html "man7.org &rightarrow; man pages &rightarrow; readlink(1)") is only required here to cope with the configuration file residing in the [resources](../resources) directory, it is not necessary if you use absolute paths or store the configuration file alongside your script in the same directory&mdash;or won't invoke your script from multiple working directories.
 
 <details open>
 
 <summary>Contents of <code>try_config_file.sh</code></summary>
 
-<!-- <include command="sed '3,11d;/shellcheck/d' tutorial/try_config_file.sh" lang="bash"> -->
+<!-- <include command="sed '3,11d;/shellcheck/d' ../tutorial/try_config_file.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -765,9 +765,9 @@ done
 
 The script can now be invoked as any other script, yielding the same results:
 
-<!-- <include command="bash tutorial/try_config_file.sh 1 2 -a 1 -b 2 -c A" lang="console"> -->
+<!-- <include command="bash ../tutorial/try_config_file.sh 1 2 -a 1 -b 2 -c A" lang="console"> -->
 ```console
-$ bash tutorial/try_config_file.sh 1 2 -a 1 -b 2 -c A
+$ bash ../tutorial/try_config_file.sh 1 2 -a 1 -b 2 -c A
 The keyword argument "var_1" is set to "1".
 The keyword argument "var_2" is set to "2".
 The keyword argument "var_3" is set to "A".
@@ -810,7 +810,7 @@ Using a separate arguments definition file allows you to share the definition ac
 
 <summary>Contents of <code>try_arg_def_file.sh</code></summary>
 
-<!-- <include command="sed '3,11d;/shellcheck/d' tutorial/try_arg_def_file.sh" lang="bash"> -->
+<!-- <include command="sed '3,11d;/shellcheck/d' ../tutorial/try_arg_def_file.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -857,9 +857,9 @@ At the same time, we need an arguments definition file, herein aptly called `arg
 
 Again, you need to add the header to explain the fields. Then, you can set your text editor to interpret the data as CSV file, possibly syntax-highlighting the columns with the given header or aligning the columns (as done by the [Rainbow CSV](https://marketplace.visualstudio.com/items?itemName=mechatroner.rainbow-csv "Visual Studio Code &rightarrow; Marketplace &rightarrow; Rainbow CSV Extension") extension in [Visual Studio Code](https://code.visualstudio.com/ "Visual Studio Code")). Since the argparser strips leading and trailing whitespace off the fields, you can save the file with this alignment:
 
-<!-- <include command="cat resources/arguments.csv" lang="console"> -->
+<!-- <include command="cat ../resources/arguments.csv" lang="console"> -->
 ```console
-$ cat resources/arguments.csv
+$ cat ../resources/arguments.csv
 id    | short_opts | long_opts | val_names | defaults | choices | type | arg_no | arg_group            | notes      | help
 pos_1 |            |           | pos_1     | 2        | 1,2     | int  | 1      | Positional arguments |            | one positional argument with default and choice
 pos_2 |            |           | pos_2     |          |         | int  | 2      | Positional arguments |            | two positional arguments without default or choice
@@ -875,9 +875,9 @@ var_7 | g          | var-7     | VAL_7     | true     |         | bool | 0      
 
 When passing the usual argument names and values, we see that all arguments are still recognized:
 
-<!-- <include command="bash tutorial/try_arg_def_file.sh 1 2 -a 1 -b 2 -c A" lang="console"> -->
+<!-- <include command="bash ../tutorial/try_arg_def_file.sh 1 2 -a 1 -b 2 -c A" lang="console"> -->
 ```console
-$ bash tutorial/try_arg_def_file.sh 1 2 -a 1 -b 2 -c A
+$ bash ../tutorial/try_arg_def_file.sh 1 2 -a 1 -b 2 -c A
 The keyword argument "var_1" is set to "1".
 The keyword argument "var_2" is set to "2".
 The keyword argument "var_3" is set to "A".
@@ -892,9 +892,9 @@ The positional argument "pos_2" on index 2 is set to "1,2".
 
 Likewise, the [usage (and help) message](#35-help-and-usage-messages) is completely unaffected:
 
-<!-- <include command="bash tutorial/try_arg_def_file.sh -u" lang="console"> -->
+<!-- <include command="bash ../tutorial/try_arg_def_file.sh -u" lang="console"> -->
 ```console
-$ bash tutorial/try_arg_def_file.sh -u
+$ bash ../tutorial/try_arg_def_file.sh -u
 Usage: try_arg_def_file.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 ```
 <!-- </include> -->
@@ -931,9 +931,9 @@ As a huge convenience, the argparser will build the help and usage messages from
 
 As we already saw upon the occasion of an error, our `try_argparser.sh` usage message looks as follows:
 
-<!-- <include command="bash tutorial/try_argparser.sh --usage" lang="console"> -->
+<!-- <include command="bash ../tutorial/try_argparser.sh --usage" lang="console"> -->
 ```console
-$ bash tutorial/try_argparser.sh --usage
+$ bash ../tutorial/try_argparser.sh --usage
 Usage: try_argparser.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
 ```
 <!-- </include> -->
@@ -942,9 +942,9 @@ The usage message clearly summarizes the arguments, including name aliases (alwa
 
 For a better overview when having lots of arguments, we can choose a columnar layout instead of the single row, using [`ARGPARSER_USAGE_MESSAGE_ORIENTATION`](#6551-argparser_usage_message_orientation):
 
-<!-- <include command="ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash tutorial/try_argparser.sh --usage" lang="console"> -->
+<!-- <include command="ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash ../tutorial/try_argparser.sh --usage" lang="console"> -->
 ```console
-$ ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash tutorial/try_argparser.sh --usage
+$ ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash ../tutorial/try_argparser.sh --usage
 Usage: try_argparser.sh [-h,-? | -u | -V]
                         [-d,-D={A,B,C}]
                         [-e,-E=VAL_5]
@@ -960,9 +960,9 @@ Usage: try_argparser.sh [-h,-? | -u | -V]
 
 Additionally, we may choose to show the long options by [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](#6550-argparser_usage_message_option_type):
 
-<!-- <include command="ARGPARSER_USAGE_MESSAGE_OPTION_TYPE=long ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash tutorial/try_argparser.sh --usage" lang="console"> -->
+<!-- <include command="ARGPARSER_USAGE_MESSAGE_OPTION_TYPE=long ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash ../tutorial/try_argparser.sh --usage" lang="console"> -->
 ```console
-$ ARGPARSER_USAGE_MESSAGE_OPTION_TYPE=long ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash tutorial/try_argparser.sh --usage
+$ ARGPARSER_USAGE_MESSAGE_OPTION_TYPE=long ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash ../tutorial/try_argparser.sh --usage
 Usage: try_argparser.sh [--help | --usage | --version]
                         [--var-4,--var-d={A,B,C}]
                         [--var-5,--var-e=VAL_5]
@@ -980,9 +980,9 @@ Of course, you would normally give these environment variables in your script an
 
 Likewise, we can investigate the help message (just as we did above, with the very same result):
 
-<!-- <include command="bash tutorial/try_argparser.sh --help" lang="console"> -->
+<!-- <include command="bash ../tutorial/try_argparser.sh --help" lang="console"> -->
 ```console
-$ bash tutorial/try_argparser.sh --help
+$ bash ../tutorial/try_argparser.sh --help
 Usage: try_argparser.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
@@ -1032,7 +1032,7 @@ The argparser is not only able to compile a help message, but can also be guided
 
 <summary>Contents of <code>try_help_file.sh</code></summary>
 
-<!-- <include command="sed '3,11d;/shellcheck/d' tutorial/try_help_file.sh" lang="bash"> -->
+<!-- <include command="sed '3,11d;/shellcheck/d' ../tutorial/try_help_file.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -1062,9 +1062,9 @@ source argparser -- "$@"
 
 Additionally, we need a separate file, which we'll call `help_message.txt` and have passed as value to [`ARGPARSER_HELP_FILE`](#6524-argparser_help_file). This plain-text file stores the help message's structure and can contain arbitrary additional content.
 
-<!-- <include command="sed '1,14d' resources/help_message.txt" lang="console"> -->
+<!-- <include command="sed '1,14d' ../resources/help_message.txt" lang="console"> -->
 ```console
-$ sed '1,14d' resources/help_message.txt
+$ sed '1,14d' ../resources/help_message.txt
 # Print the header.
 A brief header summarizes the way how to interpret the help message.
 @Header
@@ -1089,9 +1089,9 @@ There are always three options for the help messages.
 
 Now, we get the following help message:
 
-<!-- <include command="bash tutorial/try_help_file.sh -h" lang="console"> -->
+<!-- <include command="bash ../tutorial/try_help_file.sh -h" lang="console"> -->
 ```console
-$ bash tutorial/try_help_file.sh -h
+$ bash ../tutorial/try_help_file.sh -h
 A brief header summarizes the way how to interpret the help message.
 Usage: try_help_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 
@@ -1147,13 +1147,13 @@ It is even possible to localize your script's help and usage message. For the us
 
 If you set these environment variables to files whose filename contains the language, like so:
 
-<!-- <include command="ls -1 resources/arguments_*.csv resources/help_message_*.txt" lang="console"> -->
+<!-- <include command="ls -1 ../resources/arguments_*.csv ../resources/help_message_*.txt" lang="console"> -->
 ```console
-$ ls -1 resources/arguments_*.csv resources/help_message_*.txt
-resources/arguments_de.csv
-resources/arguments_en.csv
-resources/help_message_de.txt
-resources/help_message_en.txt
+$ ls -1 ../resources/arguments_*.csv ../resources/help_message_*.txt
+../resources/arguments_de.csv
+../resources/arguments_en.csv
+../resources/help_message_de.txt
+../resources/help_message_en.txt
 ```
 <!-- </include> -->
 
@@ -1163,7 +1163,7 @@ then, in your script, you can set the `ARGPARSER_ARG_DEF_FILE` and `ARGPARSER_HE
 
 <summary>Contents of <code>try_localization.sh</code></summary>
 
-<!-- <include command="sed '3,11d;/shellcheck/d' tutorial/try_localization.sh" lang="bash"> -->
+<!-- <include command="sed '3,11d;/shellcheck/d' ../tutorial/try_localization.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -1197,9 +1197,9 @@ source argparser -- "$@"
 
 You need to manually translate the arguments definition (only the argument groups and the help texts) in the new arguments definition file:
 
-<!-- <include command="cat resources/arguments_de.csv" lang="console"> -->
+<!-- <include command="cat ../resources/arguments_de.csv" lang="console"> -->
 ```console
-$ cat resources/arguments_de.csv
+$ cat ../resources/arguments_de.csv
 id    | short_opts | long_opts | val_names | defaults | choices | type | arg_no | arg_group              | notes      | help
 pos_1 |            |           | pos_1     | 2        | 1,2     | int  | 1      | Positionale Argumente  |            | ein positionales Argument mit Vorgabe und Auswahl
 pos_2 |            |           | pos_2     |          |         | int  | 2      | Positionale Argumente  |            | zwei positionale Argumente ohne Vorgabe oder Auswahl
@@ -1215,9 +1215,9 @@ var_7 | g          | var-7     | VAL_7     | true     |         | bool | 0      
 
 The same is necessary for the printable part of the help file:
 
-<!-- <include command="sed '1,14d' resources/help_message_de.txt" lang="console"> -->
+<!-- <include command="sed '1,14d' ../resources/help_message_de.txt" lang="console"> -->
 ```console
-$ sed '1,14d' resources/help_message_de.txt
+$ sed '1,14d' ../resources/help_message_de.txt
 # Print the header.
 Eine kurze Kopfzeile fasst zusammen, wie die Hilfe-Meldung zu interpretieren
 ist.
@@ -1247,7 +1247,7 @@ Finally, we need a translation file for the auto-generated parts. Note that here
 
 <summary>Beginning of <code>translation.yaml</code></summary>
 
-<!-- <include command="sed '1,4d;80q' resources/translation.yaml" lang="yaml"> -->
+<!-- <include command="sed '1,4d;80q' ../resources/translation.yaml" lang="yaml"> -->
 ```yaml
 # 1.    Define the translations for the arguments parsing.
 ---
@@ -1348,9 +1348,9 @@ $ LANG=de_DE.UTF-8 bash try_localization.sh --help
 
 The former command prints the American English help message, the latter its German translation, as you can see in full detail, here:
 
-<!-- <include command="LANG=de_DE.UTF-8 bash tutorial/try_localization.sh -h" lang="console"> -->
+<!-- <include command="LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -h" lang="console"> -->
 ```console
-$ LANG=de_DE.UTF-8 bash tutorial/try_localization.sh -h
+$ LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -h
 Eine kurze Kopfzeile fasst zusammen, wie die Hilfe-Meldung zu interpretieren
 ist.
 Aufruf: try_localization.sh [OPTIONEN] ARGUMENTE -- [pos_1] pos_2
@@ -1386,9 +1386,9 @@ Es gibt grundsätzlich drei Optionen für die Hilfe-Meldungen.
 
 Likewise, the usage message is localized:
 
-<!-- <include command="LANG=de_DE.UTF-8 bash tutorial/try_localization.sh -u" lang="console"> -->
+<!-- <include command="LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -u" lang="console"> -->
 ```console
-$ LANG=de_DE.UTF-8 bash tutorial/try_localization.sh -u
+$ LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -u
 Aufruf: try_localization.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 ```
 <!-- </include> -->
@@ -1399,9 +1399,9 @@ Besides the the [`ARGPARSER_HELP_OPTIONS`](#6527-argparser_help_options), `--hel
 
 The output version message is very simple:
 
-<!-- <include command="bash tutorial/try_argparser.sh -V" lang="console"> -->
+<!-- <include command="bash ../tutorial/try_argparser.sh -V" lang="console"> -->
 ```console
-$ bash tutorial/try_argparser.sh -V
+$ bash ../tutorial/try_argparser.sh -V
 try_argparser.sh v1.0.0
 ```
 <!-- </include> -->
@@ -1595,7 +1595,7 @@ The second, and perhaps more important way of standalone usage is included for c
 
 <summary>Contents of <code>try_pipeline.sh</code></summary>
 
-<!-- <include command="sed '3,11d;/shellcheck/d' tutorial/try_pipeline.sh" lang="sh"> -->
+<!-- <include command="sed '3,11d;/shellcheck/d' ../tutorial/try_pipeline.sh" lang="sh"> -->
 ```sh
 #!/bin/sh
 
@@ -1759,7 +1759,7 @@ In the following table, "&#10008;" marks the absence of a feature, "&#10004;" it
 
 <summary>Contents of <code>getopts_wrapper.sh</code></summary>
 
-<!-- <include command="sed '3,10d;/shellcheck/d' comparison/getopts_wrapper.sh" lang="bash"> -->
+<!-- <include command="sed '3,10d;/shellcheck/d' ../comparison/getopts_wrapper.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -1914,7 +1914,7 @@ Notes:
 
 <summary>Contents of <code>getopt_wrapper.sh</code></summary>
 
-<!-- <include command="sed '3,10d;/shellcheck/d' comparison/getopt_wrapper.sh" lang="bash"> -->
+<!-- <include command="sed '3,10d;/shellcheck/d' ../comparison/getopt_wrapper.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -2102,7 +2102,7 @@ Notes:
 
 <summary>Contents of <code>shflags_wrapper.sh</code></summary>
 
-<!-- <include command="sed '3,10d;/shellcheck/d' comparison/shflags_wrapper.sh" lang="bash"> -->
+<!-- <include command="sed '3,10d;/shellcheck/d' ../comparison/shflags_wrapper.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -2260,7 +2260,7 @@ Notes:
 
 <summary>Contents of <code>docopts_wrapper.sh</code></summary>
 
-<!-- <include command="sed '3,8d;/shellcheck/d' comparison/docopts_wrapper.sh" lang="bash"> -->
+<!-- <include command="sed '3,8d;/shellcheck/d' ../comparison/docopts_wrapper.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -2420,7 +2420,7 @@ Notes:
 
 <summary>Contents of <code>argparser_wrapper.sh</code></summary>
 
-<!-- <include command="sed '3,10d;/shellcheck/d' comparison/argparser_wrapper.sh" lang="bash"> -->
+<!-- <include command="sed '3,10d;/shellcheck/d' ../comparison/argparser_wrapper.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -2703,7 +2703,7 @@ The `@Help` directive prints the help text for the `--help`, `--usage`, and `--v
 
 ### 6.4. Translations
 
-In order to facilitate translators the translation of the argparser-generated strings, most importantly the error and warning messages, and including the interpolated variables, they are listed here for reference, sorted by their occurence in the provided [translation.yaml](resources/translation.yaml). Further, this should give an overview over the most likely reasons for argument parsing failures.
+In order to facilitate translators the translation of the argparser-generated strings, most importantly the error and warning messages, and including the interpolated variables, they are listed here for reference, sorted by their occurence in the provided [translation.yaml](../resources/translation.yaml). Further, this should give an overview over the most likely reasons for argument parsing failures.
 
 > [!NOTE]
 > The translation keys in the simplified YAML file are subject to change, if messages are added or removed. Since missing keys only generate warnings (which can even be silenced using [`ARGPARSER_SILENCE_WARNINGS`](#6541-argparser_silence_warnings)), such changes are *not* considered breaking changes, and by this would *not* lead to an increase in the argparser's major version number. However, as few modifications as possible are anticipated, and only when other breaking changes are introduced, larger refactorings should occur.
