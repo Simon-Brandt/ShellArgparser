@@ -31,6 +31,7 @@ for file in "${files[@]}"; do
             -- \
             "${file}"
         bash include_file.sh "${file}"
-        git add "${file}"
+        bash split_sections.sh "${file}"
+        git add .
     fi
 done
