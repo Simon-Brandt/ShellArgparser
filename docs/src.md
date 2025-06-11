@@ -1,7 +1,7 @@
 <!-- <section file="introduction.md"> -->
 # Bash argparser
 
-The argparser is a designed to be an easy-to-use, yet powerful command-line argument parser for your shell scripts. It is mainly targeting Bash, but other shells are supported, as well. Shells other than Bash just require a slightly different method of invokation (*i.e.*, running the argparser in a pipe or process substitution, not by sourcing it).
+The argparser is designed to be an easy-to-use, yet powerful command-line argument parser for your shell scripts. It is mainly targeting Bash, but other shells are supported, as well. Shells other than Bash just require a slightly different method of invokation (*i.e.*, running the argparser in a pipe or process substitution, not by sourcing it).
 
 Applying the argparser should lead to shorter and more concise code than the traditionally used [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)")/[`getopts`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-getopts "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; getopts") or a bare suite of conditionals in a [`case..esac`](https://www.gnu.org/software/bash/manual/html_node/Conditional-Constructs.html#index-case "gnu.org &rightarrow; Conditional Constructs &rightarrow; case") statement allow. More importantly, the user-friendliness of argparser-powered command-line parsing is far superior thanks to a wide range of checked conditions with meaningful error messages.
 
@@ -188,11 +188,14 @@ The argparser:
 
 - parses your script's **positional** and **keyword (option) arguments**
 - allows **any number** of **short** and **long option names** for the same option (as aliases)
+- accepts and parses **default** and **choice values**
+- performs (basic) **type checking**
+- emits a **deprecation note** for your script's legacy arguments
 - gives proper **error** and **warning messages** for wrongly set arguments or unset mandatory options, according to a concise definition provided by your script
 - assigns the positional and keyword arguments' values to **corresponding variables** in your script's scope
-- can use parts of an arguments definition **shared across multiple scripts**
 - creates and prints a verbose and customizable **help** or a brief **usage message**, as well as a short **version message**
 - can give **localized** help, usage, error, and warning messages in any language you define
+- can use parts of an arguments definition **shared across multiple scripts**
 - can be widely **configured** to your needs by a large set of environment variables and optional companion files to your script
 <!-- </section> -->
 
