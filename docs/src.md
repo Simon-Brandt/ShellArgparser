@@ -41,10 +41,11 @@ The argparser is entirely written in pure Bash, without invoking external comman
       1. [Any argument number](#512-any-argument-number)
       1. [Script description](#513-script-description)
       1. [Debug mode](#514-debug-mode)
-      1. [Intermixed positional and keyword arguments](#515-intermixed-positional-and-keyword-arguments)
-      1. [Single-hyphen long options](#516-single-hyphen-long-options)
-      1. [POSIX compliance](#517-posix-compliance)
-      1. [Alternative option prefixes (`+`/`/`)](#518-alternative-option-prefixes-)
+      1. [Value ranges](#515-value-ranges)
+      1. [Intermixed positional and keyword arguments](#516-intermixed-positional-and-keyword-arguments)
+      1. [Single-hyphen long options](#517-single-hyphen-long-options)
+      1. [POSIX compliance](#518-posix-compliance)
+      1. [Alternative option prefixes (`+`/`/`)](#519-alternative-option-prefixes-)
    1. [Known bugs](#52-known-bugs)
 1. [Reference](#6-reference)
    1. [Arguments definition](#61-arguments-definition)
@@ -2478,13 +2479,13 @@ Notes:
 
 # Parse the arguments.
 args=(
-    "id       | short_opts | long_opts | val_names   | defaults | choices | type | arg_no | arg_group            | notes | help                                                            "
-    "in_file  |            |           | source      |          |         | file | 1      | Positional arguments |       | the template HTML file to fill in                               "
-    "out_file |            |           | destination |          |         | file | 1      | Positional arguments |       | the output HTML file                                            "
-    "name     | n          | name      | NAME        |          |         | str  | 1      | Mandatory options    |       | the name of the homepage's owner                                "
-    "age      | a          | age       | AGE         |          |         | uint | 1      | Mandatory options    |       | the current age of the homepage's owner                         "
-    "role     | r          | role      | ROLE        |          | u,m,b   | char | 1      | Mandatory options    |       | the role of the homepage's owner (u: user, m: moderator, b: bot)"
-    "verbose  | v          | verbose   |             | false    |         | bool | 0      | Optional options     |       | output verbose information                                      "
+    "id       | short_opts | long_opts | val_names   | defaults | choices | type | arg_no | arg_group            | help                                                            "
+    "in_file  |            |           | source      |          |         | file | 1      | Positional arguments | the template HTML file to fill in                               "
+    "out_file |            |           | destination |          |         | file | 1      | Positional arguments | the output HTML file                                            "
+    "name     | n          | name      | NAME        |          |         | str  | 1      | Mandatory options    | the name of the homepage's owner                                "
+    "age      | a          | age       | AGE         |          |         | uint | 1      | Mandatory options    | the current age of the homepage's owner                         "
+    "role     | r          | role      | ROLE        |          | u,m,b   | char | 1      | Mandatory options    | the role of the homepage's owner (u: user, m: moderator, b: bot)"
+    "verbose  | v          | verbose   |             | false    |         | bool | 0      | Optional options     | output verbose information                                      "
 )
 source argparser -- "$@"
 
@@ -2574,22 +2575,27 @@ The following features are considered for addition in a future version. If you m
 - ***Description:*** A debug mode facilitates the finding of errors within the argparser. As a useful tool in development, it will be added at some point.
 - ***Implementation likelihood:*** High.
 
-#### 5.1.5. Intermixed positional and keyword arguments
+#### 5.1.5. Value ranges
+
+- ***Description:*** Default and choice values may be specified as ranges. Integer and character ranges should be rather easily implemented, while float ranges suffer from the lack of built-in support for floats in Bash < 5.3.
+- ***Implementation likelihood:*** High.
+
+#### 5.1.6. Intermixed positional and keyword arguments
 
 - ***Description:*** Currently, positional arguments must be delimited by a `--` from keyword arguments, and subsequent keyword arguments by a `++` from positional arguments. It may be useful to reflect the rather usual behavior of allowing truly intermixed positional and keyword arguments by distinguishing them based on the argument number an argument requires.
 - ***Implementation likelihood:*** Medium.
 
-#### 5.1.6. Single-hyphen long options
+#### 5.1.7. Single-hyphen long options
 
 - ***Description:*** On certain platforms, long options may be given with only one hyphen, sometimes exclusively, sometimes as an alternative to two hyphens. Even programs like GNU [`find`](https://man7.org/linux/man-pages/man1/find.1.html "man7.org &rightarrow; man pages &rightarrow; find(1)") act like this. However, there is a natural ambiguity whether an argument with one hyphen is a single-hyphen long option or a set of concatenated (merged) short options. Allowing single-hyphen long options would require a far more complex parsing step, when an argument with one hyphen is interpreted as long option, as long as one with this name exists, or as a set of short options, else (if allowed at all).
 - ***Implementation likelihood:*** Medium.
 
-#### 5.1.7. POSIX compliance
+#### 5.1.8. POSIX compliance
 
 - ***Description:*** POSIX allows very few constructs for argument parsing, like no long options. Since there are perfectly suitable alternatives for this simple parsing, and the argparser aims at a way more sophisticated command-line interface, opt-in POSIX compliance seems unnecessary for now.
 - ***Implementation likelihood:*** Low.
 
-#### 5.1.8. Alternative option prefixes (`+`/`/`)
+#### 5.1.9. Alternative option prefixes (`+`/`/`)
 
 - ***Description:*** On certain platforms, options are given with other prefixes, like `/` on DOS-like systems. The argparser targets Unix-like platforms, and allowing other characters would require a massive change to the codebase. Further, plus signs are used as tokens for flag negation, so for using them as regular prefixes, the hyphen would take their role. More importantly, there is no such equivalent for the forward slash&mdash;a backslash would feel most natural, but would collide with the path separator on DOS-like platforms. Considering the massive efforts needed to implement this, it is unlikely to ever be done.
 - ***Implementation likelihood:*** Almost zero.
