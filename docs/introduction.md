@@ -1,4 +1,4 @@
-# Bash argparser
+# Shell Argparser
 
 The argparser is designed to be an easy-to-use, yet powerful command-line argument parser for your shell scripts. It is mainly targeting Bash, but other shells are supported, as well. Shells other than Bash just require a slightly different method of invokation (*i.e.*, running the argparser in a pipe or process substitution, not by sourcing it).
 

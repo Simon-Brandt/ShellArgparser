@@ -119,6 +119,9 @@ case "${role}" in
 esac
 
 # Run the HTML processor.
+if [[ "$0" == */* ]]; then
+    cd "${0%/*.sh}" || exit 1
+fi
 source process_html_template.sh
 ```
 <!-- </include> -->

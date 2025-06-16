@@ -1,4 +1,4 @@
-# Bash argparser
+# Shell Argparser
 
 The argparser is designed to be an easy-to-use, yet powerful command-line argument parser for your shell scripts. It is mainly targeting Bash, but other shells are supported, as well.
 
@@ -27,10 +27,10 @@ No installation of the argparser is necessary, just clone the repository and add
 cd /path/to/directory
 
 # Clone the repository.
-git clone https://github.com/Simon-Brandt/bash_argparser.git
+git clone https://github.com/Simon-Brandt/ShellArgparser.git
 
 # Adjust the PATH.
-PATH="/path/to/bash_argparser:${PATH}"
+PATH="/path/to/ShellArgparser:${PATH}"
 ```
 
 There is ample documentation in the [docs](docs) directory, which you should consult to learn all the functionality the argparser provides.

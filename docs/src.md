@@ -1,5 +1,5 @@
 <!-- <section file="introduction.md"> -->
-# Bash argparser
+# Shell Argparser
 
 The argparser is designed to be an easy-to-use, yet powerful command-line argument parser for your shell scripts. It is mainly targeting Bash, but other shells are supported, as well. Shells other than Bash just require a slightly different method of invokation (*i.e.*, running the argparser in a pipe or process substitution, not by sourcing it).
 
@@ -213,13 +213,13 @@ No actual installation is necessary, as the argparser is just a Bash script that
 cd /path/to/directory
 
 # Clone the repository.
-git clone https://github.com/Simon-Brandt/bash_argparser.git
+git clone https://github.com/Simon-Brandt/ShellArgparser.git
 ```
 
 To be able to refer to the argparser directly by its name, without providing the entire path (which enhances the portability of your script to other machines), you may want to add
 
 ```bash
-PATH="/path/to/bash_argparser:${PATH}"
+PATH="/path/to/ShellArgparser:${PATH}"
 ```
 
 (replace the `/path/to` with your actual path) to either of the following files (see `info bash` or `man bash`):
@@ -1924,6 +1924,9 @@ in_file="$1"
 out_file="$2"
 
 # Run the HTML processor.
+if [[ "$0" == */* ]]; then
+    cd "${0%/*.sh}" || exit 1
+fi
 source process_html_template.sh
 ```
 <!-- </include> -->
@@ -2106,6 +2109,9 @@ in_file="$1"
 out_file="$2"
 
 # Run the HTML processor.
+if [[ "$0" == */* ]]; then
+    cd "${0%/*.sh}" || exit 1
+fi
 source process_html_template.sh
 ```
 <!-- </include> -->
@@ -2261,6 +2267,9 @@ in_file="$1"
 out_file="$2"
 
 # Run the HTML processor.
+if [[ "$0" == */* ]]; then
+    cd "${0%/*.sh}" || exit 1
+fi
 source process_html_template.sh
 ```
 <!-- </include> -->
@@ -2426,6 +2435,9 @@ case "${role}" in
 esac
 
 # Run the HTML processor.
+if [[ "$0" == */* ]]; then
+    cd "${0%/*.sh}" || exit 1
+fi
 source process_html_template.sh
 ```
 <!-- </include> -->
@@ -2497,6 +2509,9 @@ case "${role}" in
 esac
 
 # Run the HTML processor.
+if [[ "$0" == */* ]]; then
+    cd "${0%/*.sh}" || exit 1
+fi
 source process_html_template.sh
 ```
 <!-- </include> -->
