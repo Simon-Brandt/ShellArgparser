@@ -49,9 +49,9 @@ function get_commands()::Dict{String, Cmd}
 end
 
 function get_runtimes(command::Cmd)::Dict{String, Integer}
-    # Run the command 100 times and return the runtimes.
+    # Run the command 1000 times and return the runtimes.
     runtimes = Dict()
-    for i in 1:100
+    for i in 1:1000
         start_time = Dates.datetime2epochms(Dates.now())
         run(pipeline(command, stdout=devnull))
         end_time = Dates.datetime2epochms(Dates.now())
