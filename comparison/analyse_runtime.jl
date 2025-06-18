@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-17
+# Last Modification: 2025-06-18
 
 using Dates: Dates
 using Statistics: Statistics
@@ -61,7 +61,7 @@ end
 
 function compute_runtime_stats(
     runtimes::Dict{String, Integer}
-)::Dict{String, Any}
+)::Dict{String, Number}
     # Compute the mean, standard deviation, and median for the runtimes.
     stats = Dict(
         "Mean" => Statistics.mean(values(runtimes)),
@@ -74,7 +74,7 @@ end
 
 function plot_runtime_stats(
     runtimes::Dict{String, Dict{String, Integer}},
-)::StatsPlots.Plot
+)::StatsPlots.Plots.Plot
     # Create an empty violin plot to fill it later with the data series.
     plot = StatsPlots.violin(
         size=(1600, 900),
@@ -102,8 +102,8 @@ end
 
 function main()::Nothing
     # Compute the runtimes for the scripts for comparison.
-    runtimes = Dict()
-    stats = Dict()
+    runtimes = Dict{String, Dict{String, Integer}}()
+    stats = Dict{String, Dict{String, Number}}()
 
     commands = get_commands()
     for (script_name, command) in pairs(commands)
