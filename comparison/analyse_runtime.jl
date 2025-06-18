@@ -4,9 +4,11 @@
 # E-Mail: simon.brandt@uni-greifswald.de
 # Last Modification: 2025-06-18
 
+using CSV: CSV
 using Dates: Dates
 using Statistics: Statistics
 using StatsPlots: StatsPlots
+using Tables: Tables
 
 function get_commands()::Dict{String, Cmd}
     # Set the scripts and their common command-line arguments.
@@ -100,6 +102,32 @@ function plot_runtime_stats(
     return plot
 end
 
+function write_runtime_stats(
+    csv_file::String,
+    stats::Dict{String, Dict{String, Number}},
+)::Nothing
+    # Save the the mean, standard deviation, and median for the runtimes
+    # as CSV file.
+    header = ("Script", "Mean", "Std dev", "Median")
+    lines = nothing
+    for script_name in sort(collect(keys(stats)))
+        line = Union{String, Number}[script_name]
+        for stat in ("Mean", "Std dev", "Median")
+            push!(line, stats[script_name][stat])
+        end
+
+        if isnothing(lines)
+            lines = permutedims(line)
+        else
+            lines = vcat(lines, permutedims(line))
+        end
+    end
+
+    CSV.write(csv_file, Tables.table(lines; header))
+
+    return nothing
+end
+
 function main()::Nothing
     # Compute the runtimes for the scripts for comparison.
     runtimes = Dict{String, Dict{String, Integer}}()
@@ -111,14 +139,20 @@ function main()::Nothing
         stats[script_name] = compute_runtime_stats(runtimes[script_name])
     end
 
-    # Plot the runtimes and save the plot as SVG file.
+    # Plot the runtimes.
     plot = plot_runtime_stats(runtimes)
 
+    # Save the plot as SVG file and create a CSV file with the runtime
+    # stats.
+    csv_file = "stats.csv"
     plot_file = "stats.svg"
     if basename(pwd()) != "comparison"
+        csv_file = "comparison/$csv_file"
         plot_file = "comparison/$plot_file"
     end
+
     StatsPlots.savefig(plot, plot_file)
+    write_runtime_stats(csv_file, stats)
 
     return nothing
 end
