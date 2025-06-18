@@ -75,8 +75,9 @@ function compute_runtime_stats(
 end
 
 function plot_runtime_stats(
+    plot_file::String,
     runtimes::Dict{String, Dict{String, Integer}},
-)::StatsPlots.Plots.Plot
+)::Nothing
     # Create an empty violin plot to fill it later with the data series.
     plot = StatsPlots.violin(
         size=(1600, 900),
@@ -99,7 +100,9 @@ function plot_runtime_stats(
         )
     end
 
-    return plot
+    StatsPlots.savefig(plot, plot_file)
+
+    return nothing
 end
 
 function write_runtime_stats(
@@ -139,11 +142,8 @@ function main()::Nothing
         stats[script_name] = compute_runtime_stats(runtimes[script_name])
     end
 
-    # Plot the runtimes.
-    plot = plot_runtime_stats(runtimes)
-
-    # Save the plot as SVG file and create a CSV file with the runtime
-    # stats.
+    # Plot the runtimes and save the plot as SVG file.  Additionally,
+    # create a CSV file with the runtime stats.
     csv_file = "stats.csv"
     plot_file = "stats.svg"
     if basename(pwd()) != "comparison"
@@ -151,7 +151,7 @@ function main()::Nothing
         plot_file = "comparison/$plot_file"
     end
 
-    StatsPlots.savefig(plot, plot_file)
+    plot_runtime_stats(plot_file, runtimes)
     write_runtime_stats(csv_file, stats)
 
     return nothing
