@@ -4,7 +4,15 @@ The argparser is designed to be an easy-to-use, yet powerful command-line argume
 
 Applying the argparser should lead to shorter and more concise code than the traditional [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)") and [`getopts`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-getopts "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; getopts") allow. More importantly, the user-friendliness of argparser-powered command-line parsing is far superior thanks to a wide range of checked conditions with meaningful error messages. The argparser is inspired by the Python [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module") module.
 
-## Features
+<!-- <toc> -->
+## Table of contents
+
+1. [Features](#1-features)
+1. [Quick start](#2-quick-start)
+1. [Dependencies](#3-dependencies)
+<!-- </toc> -->
+
+## 1. Features
 
 - Parsing of positional and keyword (option) arguments
 - Any number of short and long option names for the same option (as aliases)
@@ -16,7 +24,7 @@ Applying the argparser should lead to shorter and more concise code than the tra
 - Inheritable arguments definition across multiple scripts
 - Large configurability by environment variables and companion files to your script
 
-## Quick start
+## 2. Quick start
 
 No installation of the argparser is necessary, just clone the repository and add its location to the [`PATH`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Variables.html#index-PATH "gnu.org &rightarrow; Bourne Shell Variables &rightarrow; PATH") variable. Alternatively, you may move the [argparser executable](argparser) into a directory which is already covered by your `PATH`. All other files within the repository serve documentation and testing purposes, and you don't need to keep them.
 
@@ -84,7 +92,7 @@ done
 
 First, you need to define the arguments your script shall accept, in a tabular manner. Then, you [`source`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash Builtins &rightarrow; source") the argparser with the current command line (sourcing means in-place execution without forking). Upon this, the argparser will parse your script's command line, check the arguments for validity, set default values, and assign the values to variables in your script's environment. Many of these steps can be customized by [environment variables](docs/reference/environment_variables/overview.md). The script's remainder just prints the optional and required keyword and positional arguments, and is not a part of the argparser invokation.
 
-## Dependencies
+## 3. Dependencies
 
 The argparser is a plain Bash script that does not invoke external commands (only builtins) by design decision. This allows running your script on multiple platforms, as long as Bash is installed, without adding further dependencies to your script.
 
