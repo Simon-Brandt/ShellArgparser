@@ -18,9 +18,7 @@ Applying the argparser should lead to shorter and more concise code than the tra
 
 ## Quick start
 
-Being a plain Bash script, not invoking external commands, the argparser does not add further dependencies to your script, apart from Bash and the argparser itself. Bash >4.0 is known to be required, but testing occurred solely on Bash 5.2. Thus, please file an issue if you encounter errors for versions earlier than 5.2.
-
-No installation of the argparser is necessary, just clone the repository and add its location to the `PATH` variable. Alternatively, you may move the [argparser executable](argparser) into a directory which is already covered by your `PATH`. All other files within the repository serve documentation and testing purposes, and you don't need to keep them.
+No installation of the argparser is necessary, just clone the repository and add its location to the [`PATH`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Variables.html#index-PATH "gnu.org &rightarrow; Bourne Shell Variables &rightarrow; PATH") variable. Alternatively, you may move the [argparser executable](argparser) into a directory which is already covered by your `PATH`. All other files within the repository serve documentation and testing purposes, and you don't need to keep them.
 
 ```bash
 # Switch to the installation directory of your choice, e.g., /usr/local/bin.
@@ -85,3 +83,34 @@ done
 </details>
 
 First, you need to define the arguments your script shall accept, in a tabular manner. Then, you [`source`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash Builtins &rightarrow; source") the argparser with the current command line (sourcing means in-place execution without forking). Upon this, the argparser will parse your script's command line, check the arguments for validity, set default values, and assign the values to variables in your script's environment. Many of these steps can be customized by [environment variables](docs/reference/environment_variables/overview.md). The script's remainder just prints the optional and required keyword and positional arguments, and is not a part of the argparser invokation.
+
+## Dependencies
+
+The argparser is a plain Bash script that does not invoke external commands (only builtins) by design decision. This allows running your script on multiple platforms, as long as Bash is installed, without adding further dependencies to your script.
+
+**For running:**
+
+- Bash &geq; 4.0
+
+For simply running the argparser, only Bash is required. Bash &geq; 4.0 is known to be mandatory, but testing occurred solely on Bash 5.2. Thus, please file an issue if you encounter errors for versions earlier than 5.2, to update the minimum version, here.
+
+**For contributing:**
+
+- Documentation:
+  - [Markdown Tools](https://github.com/Simon-Brandt/MarkdownTools "github.com &rightarrow; Simon-Brandt &rightarrow; MarkdownTools")
+- Comparison:
+  - [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)")
+  - [shFlags](https://github.com/kward/shflags "github.com &rightarrow; kward &rightarrow; shFlags") 1.3.0
+  - [docopts](https://github.com/docopt/docopts "github.com &rightarrow; docopt &rightarrow; docopts") 0.6.4
+  - [`sed`](https://man7.org/linux/man-pages/man1/sed.1.html "man7.org &rightarrow; man pages &rightarrow; sed(1)")
+  - [Julia](https://julialang.org/ "julialang.org") &geq; 1.11
+    - [`CSV.jl`](https://csv.juliadata.org/stable/ "csv.juliadata.org") &geq; 0.10.15
+    - [`Statistics.jl`](https://docs.julialang.org/en/v1/stdlib/Statistics/ "docs.julialang.org &rightarrow; Statistics.jl") &geq; 1.11.1
+    - [`StatsPlots.jl`](https://docs.juliaplots.org/stable/generated/statsplots/ "docs.juliaplots.org &rightarrow; StatsPlots.jl") &geq; 0.15.7
+    - [`Tables.jl`](https://tables.juliadata.org/stable/ "tables.juliadata.org") &geq; 1.12.1
+
+When contributing to the repository, you may to install need additional dependencies.
+
+The [Markdown Tools](https://github.com/Simon-Brandt/MarkdownTools "github.com &rightarrow; Simon-Brandt &rightarrow; MarkdownTools") are required to create the documentation. This does not necessarily apply for small changes, if you change both the [source](docs/src.sh) and the respective documentation chapter by hand. If you modify headings or want to include files, the Markdown Tools are indispensable, since, *e.g.*, they automatically adjust the heading numbering and hyperlinks.
+
+For comparing the argparser to other command-line parsers, [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)"), [shFlags](https://github.com/kward/shflags "github.com &rightarrow; kward &rightarrow; shFlags"), and [docopts](https://github.com/docopt/docopts "github.com &rightarrow; docopt &rightarrow; docopts") must be installed and added to your [`PATH`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Variables.html#index-PATH "gnu.org &rightarrow; Bourne Shell Variables &rightarrow; PATH"). Within the invoked [`process_html_template.sh`](comparison/process_html_template.sh), [`sed`](https://man7.org/linux/man-pages/man1/sed.1.html "man7.org &rightarrow; man pages &rightarrow; sed(1)") is called. Finally, [Julia](https://julialang.org/ "julialang.org") and its libraries are used to benchmark the scripts. Unless contributing an entirely new feature to the argparser, you don't need to bother about executing the comparison scripts, and thus don't need to install these dependencies.
