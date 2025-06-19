@@ -17,14 +17,14 @@ function usage() {
 }
 
 # Define the help message.
-FLAGS_HELP="$(cat << EOF | sed 's/^    //'
-    Usage: $0 [OPTIONS] ARGUMENTS source destination
+FLAGS_HELP="$(cat << EOF
+Usage: $0 [OPTIONS] ARGUMENTS source destination
 
-    Mandatory arguments to long options are mandatory for short options too.
+Mandatory arguments to long options are mandatory for short options too.
 
-    positional arguments:
-    source:  the template HTML file to fill in
-    destination:  the output HTML file
+positional arguments:
+source:  the template HTML file to fill in
+destination:  the output HTML file
 EOF
 )"
 FLAGS_HELP+=$'\n'

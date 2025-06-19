@@ -100,7 +100,7 @@ The argparser is a plain Bash script that does not invoke external commands (onl
 
 - Bash &geq; 4.0
 
-For simply running the argparser, only Bash is required. Bash &geq; 4.0 is known to be mandatory, but testing occurred solely on Bash 5.2. Thus, please file an issue if you encounter errors for versions earlier than 5.2, to update the minimum version, here.
+For simply running the argparser, only Bash is required. Bash &geq; 4.0 is known to be mandatory, but testing occurred solely on Bash 5.2. Thus, please file an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues") if you encounter errors for versions earlier than 5.2, to update the minimum version, here.
 
 **For contributing:**
 

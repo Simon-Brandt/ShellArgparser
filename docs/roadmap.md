@@ -4,7 +4,7 @@ Future argparser versions will add several new features and address known issues
 
 ### 5.1. Future enhancements
 
-The following features are considered for addition in a future version. If you miss one, feel free to open an issue to propose it.
+The following features are considered for addition in a future version. If you miss one, feel free to open an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues") to propose it.
 
 #### 5.1.1. Mutually exclusive argument groups
 

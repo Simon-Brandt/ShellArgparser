@@ -204,7 +204,7 @@ The argparser:
 ## 2. Installation
 
 > [!WARNING]
-> The argparser requires Bash 4.0 or higher (try `bash --version`). It is extensively tested with Bash 5.2, precisely, with `GNU bash, Version 5.2.21(1)-release (x86_64-pc-linux-gnu)`. With `BASH_COMPAT` set to `40` or higher, the [tests](../tests) still succeed, but if you encounter errors for versions earlier than 5.2, please file an issue, such that the minimum requirement can be adjusted. For the execution (not invokation) of the argparser, shells other than Bash aren't supported, and the argparser aborts with an error message.
+> The argparser requires Bash 4.0 or higher (try `bash --version`). It is extensively tested with Bash 5.2, precisely, with `GNU bash, Version 5.2.21(1)-release (x86_64-pc-linux-gnu)`. With `BASH_COMPAT` set to `40` or higher, the [tests](../tests) still succeed, but if you encounter errors for versions earlier than 5.2, please file an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues"), such that the minimum requirement can be adjusted. For the execution (not invokation) of the argparser, shells other than Bash aren't supported, and the argparser aborts with an error message.
 
 No actual installation is necessary, as the argparser is just a Bash script that can be located in an arbitrary directory of your choice, like `/usr/local/bin`. Thus, the "installation" is as simple as cloning the repository in this very directory:
 
@@ -1704,7 +1704,7 @@ In short, it is possible to run the argparser in standalone mode from other shel
 <!-- <section file="comparison/introduction.md"> -->
 ## 4. Comparison of command-line parsers
 
-Several other shell command-line parsers predate the argparser and were in part influential in its design choices. The table below aims at comparing their features or lack thereof, intended to be as comprehensive as possible. If you're missing a function, please open an issue, such that the function can be added. Manual argument parsing, the easiest (just most complex) method, is excluded here since in theory anything could be done, therein&mdash;it would just require a proportionate amount of work.
+Several other shell command-line parsers predate the argparser and were in part influential in its design choices. The table below aims at comparing their features or lack thereof, intended to be as comprehensive as possible. If you're missing a function, please open an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues"), such that the function can be added. Manual argument parsing, the easiest (just most complex) method, is excluded here since in theory anything could be done, therein&mdash;it would just require a proportionate amount of work.
 
 The [feature comparison](#41-feature-comparison) compares the various features for argument parsing, while some [example scripts](#42-example-scripts) later demonstrate the usage for the different parsers.
 <!-- </section> -->
@@ -2170,14 +2170,14 @@ function usage() {
 }
 
 # Define the help message.
-FLAGS_HELP="$(cat << EOF | sed 's/^    //'
-    Usage: $0 [OPTIONS] ARGUMENTS source destination
+FLAGS_HELP="$(cat << EOF
+Usage: $0 [OPTIONS] ARGUMENTS source destination
 
-    Mandatory arguments to long options are mandatory for short options too.
+Mandatory arguments to long options are mandatory for short options too.
 
-    positional arguments:
-    source:  the template HTML file to fill in
-    destination:  the output HTML file
+positional arguments:
+source:  the template HTML file to fill in
+destination:  the output HTML file
 EOF
 )"
 FLAGS_HELP+=$'\n'
@@ -2568,7 +2568,7 @@ Future argparser versions will add several new features and address known issues
 
 ### 5.1. Future enhancements
 
-The following features are considered for addition in a future version. If you miss one, feel free to open an issue to propose it.
+The following features are considered for addition in a future version. If you miss one, feel free to open an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues") to propose it.
 
 #### 5.1.1. Mutually exclusive argument groups
 
