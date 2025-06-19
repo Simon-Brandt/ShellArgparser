@@ -10,6 +10,7 @@ Applying the argparser should lead to shorter and more concise code than the tra
 1. [Features](#1-features)
 1. [Quick start](#2-quick-start)
 1. [Dependencies](#3-dependencies)
+1. [Contributions](#4-contributions)
 <!-- </toc> -->
 
 ## 1. Features
@@ -122,3 +123,17 @@ When contributing to the repository, you may to install need additional dependen
 The [Markdown Tools](https://github.com/Simon-Brandt/MarkdownTools "github.com &rightarrow; Simon-Brandt &rightarrow; MarkdownTools") are required to create the documentation. This does not necessarily apply for small changes, if you change both the [source](docs/src.sh) and the respective documentation chapter by hand. If you modify headings or want to include files, the Markdown Tools are indispensable, since, *e.g.*, they automatically adjust the heading numbering and hyperlinks.
 
 For comparing the argparser to other command-line parsers, [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)"), [shFlags](https://github.com/kward/shflags "github.com &rightarrow; kward &rightarrow; shFlags"), and [docopts](https://github.com/docopt/docopts "github.com &rightarrow; docopt &rightarrow; docopts") must be installed and added to your [`PATH`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Variables.html#index-PATH "gnu.org &rightarrow; Bourne Shell Variables &rightarrow; PATH"). Within the invoked [`process_html_template.sh`](comparison/process_html_template.sh), [`sed`](https://man7.org/linux/man-pages/man1/sed.1.html "man7.org &rightarrow; man pages &rightarrow; sed(1)") is called. Finally, [Julia](https://julialang.org/ "julialang.org") and its libraries are used to benchmark the scripts. Unless contributing an entirely new feature to the argparser, you don't need to bother about executing the comparison scripts, and thus don't need to install these dependencies.
+
+## 4. Contributions
+
+Please open an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues") if you:
+
+- found a bug in the argparser
+- discovered an error in the [documentation](docs) (even a spelling or grammar mistake!)
+- want to propose a new feature
+- want to contribute code (please don't start a pull request prior opening an issue)
+- need help with running the argparser, after having consulted the docs to no avail
+
+You're invited to fix issues yourself, especially trivial mistakes in the docs. To this end, [fork](https://github.com/Simon-Brandt/ShellArgparser/fork) the repository, make the necessary changes, and open a [pull request (PR)](https://github.com/Simon-Brandt/ShellArgparser/compare "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Pull Requests") to merge your changes.
+
+Prior committing non-trivial edits, especially for code, please make sure to have read and followed the [contribution guidelines](CONTRIBUTING.md). This makes it easier to merge the modifications.
