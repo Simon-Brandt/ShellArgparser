@@ -14,6 +14,9 @@ In order to facilitate the seemless integration of your commits with the Argpars
    1. [Adding functionality](#21-adding-functionality)
    1. [Coding style](#22-coding-style)
    1. [ShellCheck](#23-shellcheck)
+1. [Documentation](#3-documentation)
+   1. [Files](#31-files)
+   1. [Documentation style](#32-documentation-style)
 <!-- </toc> -->
 
 ## 1. General advice
@@ -30,7 +33,7 @@ Keep the commit messages brief. Rather explain the reasons in the issue or pull 
 
 ### 2.1. Adding functionality
 
-If you want to add features to the Argparser, write the respective function(s) directly into the main script. By design decision, the Argparser consists of exactly [one file](argparser). This overcomes the general impossibility to find accompanying files (like libraries) from within the script, when its location is arbitrary. Even more importantly, the Argparser can be sourced or executed, leading to different call trees that make it impossible to decide for sure where the components reside.
+If you want to add features to the Argparser, write the respective function(s) directly into the main script. By design decision, the Argparser consists of exactly one file, [`argparser`](argparser). This overcomes the general impossibility to find accompanying files (like libraries) from within the script, when its location is arbitrary. Even more importantly, the Argparser can be sourced or executed, leading to different call trees that make it impossible to decide for sure where the components reside.
 
 Novel features require dedicated [tests](tests), [error message translations](docs/reference/translations/translations.md), and/or [tutorial](docs/tutorial/introduction.md) and [reference](docs/reference/introduction.md) sections. You aren't required to write them, but asked to at least provide enough information for others to document the features.
 
@@ -95,3 +98,36 @@ The coding style for the Argparser can be seen as a mixture of [Python's PEP 8](
 Bash comes with a lot of quirks one needs to be aware of. [ShellCheck](https://github.com/koalaman/shellcheck "github.com &rightarrow; koalaman &rightarrow; shellcheck") is a very powerful linter which flags many common mistakes, and you are highly encouraged to use it, as well. Please use the provided [`.shellcheckrc`](.shellcheckrc) and edit the absolute filepaths to your directory structure.
 
 Only use directives to ignore ShellCheck warnings when the linter is wrong (which happens *e.g.* with indexed *vs.* associative arrays), not because you disagree with a certain coding style. Add a comment after the directive to explain why you disabled the check.
+
+## 3. Documentation
+
+### 3.1. Files
+
+For convenience upon writing, the documentation consists of one file, [`.src.md`](docs/.src.md), besides a brief summary in the [`README.md`](README.md). Changes should only happen there, as the [Markdown Tools](https://github.com/Simon-Brandt/MarkdownTools "github.com &rightarrow; Simon-Brandt &rightarrow; MarkdownTools") handle the creation of the tables of contents, the inclusion of files and command outputs, as well as the splitting of `.src.md` into separate files per section.
+
+For very small changes (like fixing spelling mistakes), you can manually change the respective target file in the documentation, without needing to have the Markdown Tools installed.
+
+### 3.2. Documentation style
+
+The documentation is written in Markdown ([GitHub Flavored Markdown (GFM)](https://github.github.com/gfm/ "github.github.com &rightarrow; GFM") flavor). However, since the specification allows several different tokens for some features (like code blocks), and is rather lenient against whitespace, a few additional, project-specific stylistic guides are needed. If you're using [Visual Studio Code](https://code.visualstudio.com/ "Visual Studio Code"), the [Markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint "Visual Studio Code &rightarrow; Marketplace &rightarrow; Markdownlint Extension") extension may help you accord to them.
+
+- ***Line length:*** There is no limit to the line length for non-code blocks. To avoid the need for re-ordering the words whenever a word on a previous line is deleted, don't wrap lines.
+- ***Paragraphs:*** Paragraphs should be separated by one blank line from each other.
+- ***Sentences:*** Separate sentences with one space, not two. This goes against the recommendation for [code](#22-coding-style).
+- ***Headings:***
+  - Headings use the ATX style with hashmarks (`#`), starting with one hashmark for the top-level heading and appending one hashmark per heading level. Don't use the setext style of underlining with equals signs (`=`) and hyphens (`-`), since this only allows two heading levels.
+  - Headings must be surrounded by one blank line each.
+  - Use little formatting within headings. In-line code is fine, since headings often reflect *e.g.* the name of an environment variable, and need to be typeset accordingly.
+  - When a section is large enough to deserve its own documentation file, surround it with a `<!-- <section> -->` comment for the [Markdown Tools](https://github.com/Simon-Brandt/MarkdownTools "github.com &rightarrow; Simon-Brandt &rightarrow; MarkdownTools") (see there for the exact syntax).
+- ***Lists:***
+  - Use hyphens (`-`) to markup unnumbered lists, not asterisks (`*`) or plus signs (`+`). Use a literal `1.` for numbered lists, irrespective of the actual number. This facilitates re-ordering the list and deleting elements, without needing to refactor it in its entirety.
+  - Top-level lists must be surrounded by one blank line each. Nested lists don't need blank lines.
+  - Use exactly one space after the list marker.
+- ***Code blocks:***
+  - Feel free to use a copious number of code blocks to show code examples.
+  - Surround code blocks by blank lines and triple backticks (```` ``` ````). Use a language specification to enable syntax highlighting, even when none exists (like for `text`). Don't use tildes or indented code blocks.
+- ***Emphasis:***
+  - Emphasize text with asterisks (`*`), *i.e.*, `*italic*`, `**bold**`, and `***italic and bold***`. Don't use underscores (`_`).
+  - Use bold font sparingly, to draw attention to a certain point. Use italics for normal emphasis and foreign-language words like Latin abbreviations.
+- ***Miscellaneous:***
+  - Don't edit tables of contents or heading numbers, the [Markdown Tools](https://github.com/Simon-Brandt/MarkdownTools "github.com &rightarrow; Simon-Brandt &rightarrow; MarkdownTools") will do it for you. This makes mistakes less likely, especially regarding hyperlinks.
