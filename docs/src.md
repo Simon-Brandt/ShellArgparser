@@ -1,11 +1,11 @@
 <!-- <section file="introduction.md"> -->
 # Shell Argparser
 
-The argparser is designed to be an easy-to-use, yet powerful command-line argument parser for your shell scripts. It is mainly targeting Bash, but other shells are supported, as well. Shells other than Bash just require a slightly different method of invokation (*i.e.*, running the argparser in a pipe or process substitution, not by sourcing it).
+The Argparser is designed to be an easy-to-use, yet powerful command-line argument parser for your shell scripts. It is mainly targeting Bash, but other shells are supported, as well. Shells other than Bash just require a slightly different method of invokation (*i.e.*, running the Argparser in a pipe or process substitution, not by sourcing it).
 
-Applying the argparser should lead to shorter and more concise code than the traditionally used [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)")/[`getopts`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-getopts "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; getopts") or a bare suite of conditionals in a [`case..esac`](https://www.gnu.org/software/bash/manual/html_node/Conditional-Constructs.html#index-case "gnu.org &rightarrow; Conditional Constructs &rightarrow; case") statement allow. More importantly, the user-friendliness of argparser-powered command-line parsing is far superior thanks to a wide range of checked conditions with meaningful error messages.
+Applying the Argparser should lead to shorter and more concise code than the traditionally used [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)")/[`getopts`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-getopts "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; getopts") or a bare suite of conditionals in a [`case..esac`](https://www.gnu.org/software/bash/manual/html_node/Conditional-Constructs.html#index-case "gnu.org &rightarrow; Conditional Constructs &rightarrow; case") statement allow. More importantly, the user-friendliness of Argparser-powered command-line parsing is far superior thanks to a wide range of checked conditions with meaningful error messages.
 
-The argparser is entirely written in pure Bash, without invoking external commands. Thus, using it does not add additional dependencies to your script&mdash;except of course the argparser itself&mdash;, especially not differing versions/implementations of a program (like with [`awk`](https://man7.org/linux/man-pages/man1/awk.1p.html "man7.org &rightarrow; man pages &rightarrow; awk(1p)")). Additionally, its design choices of not calling external commands and running almost without forking into subshells lead to a good runtime despite the extensive parsing and checking steps. The argparser is inspired by the Python [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module") module.
+The Argparser is entirely written in pure Bash, without invoking external commands. Thus, using it does not add additional dependencies to your script&mdash;except of course the Argparser itself&mdash;, especially not differing versions/implementations of a program (like with [`awk`](https://man7.org/linux/man-pages/man1/awk.1p.html "man7.org &rightarrow; man pages &rightarrow; awk(1p)")). Additionally, its design choices of not calling external commands and running almost without forking into subshells lead to a good runtime despite the extensive parsing and checking steps. The Argparser is inspired by the Python [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module") module.
 <!-- </section> -->
 
 <!-- <section file="toc.md"> -->
@@ -33,7 +33,7 @@ The argparser is entirely written in pure Bash, without invoking external comman
       1. [`getopt`](#422-getopt)
       1. [shFlags](#423-shflags)
       1. [docopts](#424-docopts)
-      1. [argparser](#425-argparser)
+      1. [Argparser](#425-argparser)
    1. [Summary](#43-summary)
 1. [Roadmap](#5-roadmap)
    1. [Future enhancements](#51-future-enhancements)
@@ -185,7 +185,7 @@ The argparser is entirely written in pure Bash, without invoking external comman
 <!-- <section file="features.md"> -->
 ## 1. Features
 
-The argparser:
+The Argparser:
 
 - parses your script's **positional** and **keyword (option) arguments**
 - allows **any number** of **short** and **long option names** for the same option (as aliases)
@@ -204,9 +204,9 @@ The argparser:
 ## 2. Installation
 
 > [!WARNING]
-> The argparser requires Bash 4.0 or higher (try `bash --version`). It is extensively tested with Bash 5.2, precisely, with `GNU bash, Version 5.2.21(1)-release (x86_64-pc-linux-gnu)`. With `BASH_COMPAT` set to `40` or higher, the [tests](../tests) still succeed, but if you encounter errors for versions earlier than 5.2, please file an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues"), such that the minimum requirement can be adjusted. For the execution (not invokation) of the argparser, shells other than Bash aren't supported, and the argparser aborts with an error message.
+> The Argparser requires Bash 4.0 or higher (try `bash --version`). It is extensively tested with Bash 5.2, precisely, with `GNU bash, Version 5.2.21(1)-release (x86_64-pc-linux-gnu)`. With `BASH_COMPAT` set to `40` or higher, the [tests](../tests) still succeed, but if you encounter errors for versions earlier than 5.2, please file an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues"), such that the minimum requirement can be adjusted. For the execution (not invokation) of the Argparser, shells other than Bash aren't supported, and the Argparser aborts with an error message.
 
-No actual installation is necessary, as the argparser is just a Bash script that can be located in an arbitrary directory of your choice, like `/usr/local/bin`. Thus, the "installation" is as simple as cloning the repository in this very directory:
+No actual installation is necessary, as the Argparser is just a Bash script that can be located in an arbitrary directory of your choice, like `/usr/local/bin`. Thus, the "installation" is as simple as cloning the repository in this very directory:
 
 ```bash
 # Switch to the installation directory of your choice, e.g., /usr/local/bin.
@@ -216,7 +216,7 @@ cd /path/to/directory
 git clone https://github.com/Simon-Brandt/ShellArgparser.git
 ```
 
-To be able to refer to the argparser directly by its name, without providing the entire path (which enhances the portability of your script to other machines), you may want to add
+To be able to refer to the Argparser directly by its name, without providing the entire path (which enhances the portability of your script to other machines), you may want to add
 
 ```bash
 PATH="/path/to/ShellArgparser:${PATH}"
@@ -236,7 +236,7 @@ PATH="/path/to/ShellArgparser:${PATH}"
 <!-- <section file="tutorial/introduction.md"> -->
 ## 3. Tutorial
 
-To give you an idea about the argparser's application, the following sections show some excerpts of scripts used for internal testing purposes, in the herein given form located in the [tutorial](../tutorial) directory, trying to guide you through the various features.
+To give you an idea about the Argparser's application, the following sections show some excerpts of scripts used for internal testing purposes, in the herein given form located in the [tutorial](../tutorial) directory, trying to guide you through the various features.
 
 > [!NOTE]
 > For the terminology in argument parsing, refer to the Python [`optparse` documentation](https://docs.python.org/3/library/optparse.html#terminology "python.org &rightarrow; Python documentation &rightarrow; optparse module &rightarrow; terminology"). Additionally, for consistency with the positional arguments, options are herein partly referred to as keyword arguments.
@@ -263,7 +263,7 @@ To give you an idea about the argparser's application, the following sections sh
 <!-- <section file="tutorial/argument_passing.md"> -->
 ### 3.1. Argument passing
 
-First, let's see how we can use the argparser to parse the arguments given to your script, here saved as `try_argparser.sh` in the CWD. You can uncover the script if you want to test and try it, but we'll come back to it in the next section. For now, only the output is relevant, when we call the script from the command line.
+First, let's see how we can use the Argparser to parse the arguments given to your script, here saved as `try_argparser.sh` in the CWD. You can uncover the script if you want to test and try it, but we'll come back to it in the next section. For now, only the output is relevant, when we call the script from the command line.
 
 <details>
 
@@ -273,7 +273,7 @@ First, let's see how we can use the argparser to parse the arguments given to yo
 ```bash
 #!/bin/bash
 
-# Source the argparser.  As the arguments have multiple short and long
+# Source the Argparser.  As the arguments have multiple short and long
 # options, override the default column widths for the help message.
 ARGPARSER_MAX_COL_WIDTH_1=9
 ARGPARSER_MAX_COL_WIDTH_2=33
@@ -352,7 +352,7 @@ Optional options:
 ```
 <!-- </include> -->
 
-This already gives us plenty of information. Even though we don't know yet where it comes from (it's generated by the argparser, not hardcoded in the script), we can see that `try_argparser.sh` accepts two positional arguments and seven different options, (more or less) aptly named `--var-1` through `--var-7`. There are other names referring to the same options, but we'll come back to this later.
+This already gives us plenty of information. Even though we don't know yet where it comes from (it's generated by the Argparser, not hardcoded in the script), we can see that `try_argparser.sh` accepts two positional arguments and seven different options, (more or less) aptly named `--var-1` through `--var-7`. There are other names referring to the same options, but we'll come back to this later.
 
 Now that we had a look at the options (or keyword arguments, to cope with the fact that some are mandatory), we know that some of them, `--var-4` through `--var-7`, as well as `pos_1`, to be precise, have default arguments. These are indicated by the square brackets in the help message, and since they are optional, we try not to care about them. Instead, we run `try_argparser.sh` as follows:
 
@@ -365,7 +365,7 @@ Usage: try_argparser.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] 
 ```
 <!-- </include> -->
 
-This gives us an error message&mdash;certainly not what we wanted. Trying to understand the reason, we see that we guesstimated that there should be one value for the positional argument `pos_2` (we chose a literal `1`), but the error message tells us it should be two. Further, the argparser tries to help us by giving a line with the general usage for `try_argparser.sh`, but the error message seems clear enough for us, here. So we try it again, this time using `1` and `2` as positional arguments:
+This gives us an error message&mdash;certainly not what we wanted. Trying to understand the reason, we see that we guesstimated that there should be one value for the positional argument `pos_2` (we chose a literal `1`), but the error message tells us it should be two. Further, the Argparser tries to help us by giving a line with the general usage for `try_argparser.sh`, but the error message seems clear enough for us, here. So we try it again, this time using `1` and `2` as positional arguments:
 
 <!-- <include command="bash ../tutorial/try_argparser.sh 1 2 --var-1=1 --var-2=2 --var-3=A" lang="console"> -->
 ```console
@@ -382,7 +382,7 @@ The positional argument "pos_2" on index 2 is set to "1,2".
 ```
 <!-- </include> -->
 
-And now we got something that looks like the intended output (and yes, it is). Even without fully understanding yet what the argparser does, you can see that we set *three* options and their arguments ([`IFS`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Variables.html#index-IFS "gnu.org &rightarrow; Bourne Shell Variables &rightarrow; IFS") whitespace&ndash;delimited) on the command-line invokation of `try_argparser.sh`, *viz.* `--var-1`, `--var-2`, and `--var-3`. Nonetheless, the script reports *seven* options to be given. This is due to `var_4` through `var_7` (note that the *identifiers* use underscores ("snake case"), while the *option names* use hyphens ("kebab case"), here) having said default values that are used when the argument is not given on the command line. For `var_1` through `var_3`, the reported values are exactly what we specified, *i.e.*, `"1"`, `"2"`, and `"A"`, respectively.
+And now we got something that looks like the intended output (and yes, it is). Even without fully understanding yet what the Argparser does, you can see that we set *three* options and their arguments ([`IFS`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Variables.html#index-IFS "gnu.org &rightarrow; Bourne Shell Variables &rightarrow; IFS") whitespace&ndash;delimited) on the command-line invokation of `try_argparser.sh`, *viz.* `--var-1`, `--var-2`, and `--var-3`. Nonetheless, the script reports *seven* options to be given. This is due to `var_4` through `var_7` (note that the *identifiers* use underscores ("snake case"), while the *option names* use hyphens ("kebab case"), here) having said default values that are used when the argument is not given on the command line. For `var_1` through `var_3`, the reported values are exactly what we specified, *i.e.*, `"1"`, `"2"`, and `"A"`, respectively.
 
 Likewise, `pos_2` is reported to be `"1,2"`, so some sort of sequence of the two values we gave (more precise: the concatenation of the two values, joined by an [`ARGPARSER_ARG_DELIMITER_2`](#6512-argparser_arg_delimiter_2) character, as we'll see later), and `pos_1` has been assigned a default value of `"2"`. Note that the quotes here are added by `try_argparser.sh` upon printing the values; internally, they are unquoted.
 
@@ -405,7 +405,7 @@ The positional argument "pos_2" on index 2 is set to "1,2".
 
 That's exactly the same output as before. We set the three mandatory options with arguments, *viz.* `-a 1`, `-b 2`, and `-c A`, but none is reported in the script's output. Then, we set a double hyphen (`--`) and two values, `1` and `2`. Thus, it is possible to give positional arguments after the special keyword argument `--`, *i.e.*, a double hyphen with no name behind. This is the usual way of saying "end of keyword arguments".
 
-There is an argparser-specific additional feature, intended to facilitate the mixing of positional and keyword arguments: the special keyword argument `++`:
+There is an Argparser-specific additional feature, intended to facilitate the mixing of positional and keyword arguments: the special keyword argument `++`:
 
 <!-- <include command="bash ../tutorial/try_argparser.sh -a 1 -b 2 -- 1 2 ++ -c A" lang="console"> -->
 ```console
@@ -422,13 +422,13 @@ The positional argument "pos_2" on index 2 is set to "1,2".
 ```
 <!-- </include> -->
 
-Two plus signs together are interpreted by the argparser as sign to re-start the parsing of keyword arguments. You can imagine the plus signs as crossed hyphens, thus negating their meaning (as is done for flags in a later example).
+Two plus signs together are interpreted by the Argparser as sign to re-start the parsing of keyword arguments. You can imagine the plus signs as crossed hyphens, thus negating their meaning (as is done for flags in a later example).
 
 Setting `--` after the positional argument&ndash;only part has started (*i.e.*, after a previous `--`) makes this second `--` a positional argument. In contrast, setting `++` after `--` re-starts the usual parsing, so the following argument is parsed as keyword argument if it starts with a hyphen (or a plus sign for flags, see below), and as positional argument, else.
 
 Setting `--` after `++` stops the parsing (possibly again), while setting `++` after `++` means to parse a following non-hyphenated argument as positional, instead of as value to the previous keyword argument. You may rarely need the `++`, but a possible use case for scripts would be to gather command-line arguments or values from different processes, like *via* command/process substitution. Then, you can just combine the two streams, without needing to care whether both may set a `--`. Just join them with a `++` and the parsing occurs as expected.
 
-As we saw in the two examples, options can have name aliases, *i.e.*, any number of synonymous option names pointing to the same entity (argument identifier in the arguments definition). Thereby, not only aliases with two hyphens (so-called long options) are possible, but also some with only one leading hyphen (short options). For fast command-line usage, short options are convenient to quickly write a command; but for scripts, the long options should be preferred as they carry more information due to their verbose name (like, what does `-v` mean&mdash;is it `--version`, `--verbose`, or even `--verbatim`?). The argparser allows an arbitrary number of short and/or long option names for a keyword argument to be defined, and options can be provided by any alias on the command line.
+As we saw in the two examples, options can have name aliases, *i.e.*, any number of synonymous option names pointing to the same entity (argument identifier in the arguments definition). Thereby, not only aliases with two hyphens (so-called long options) are possible, but also some with only one leading hyphen (short options). For fast command-line usage, short options are convenient to quickly write a command; but for scripts, the long options should be preferred as they carry more information due to their verbose name (like, what does `-v` mean&mdash;is it `--version`, `--verbose`, or even `--verbatim`?). The Argparser allows an arbitrary number of short and/or long option names for a keyword argument to be defined, and options can be provided by any alias on the command line.
 
 Further, long option names can be abbreviated, as long as no collision with other names arises (like when giving `--verb` in the example above). This requires [`ARGPARSER_ALLOW_OPTION_ABBREVIATION`](#657-argparser_allow_option_abbreviation) to be set to `true`. In contrast, short option names may be merged with their value or other short option names (if they're flags, see below), given that [`ARGPARSER_ALLOW_OPTION_MERGING`](#658-argparser_allow_option_merging) is set to `true`. For the sake of an example without needing a novel script, we'll set the latter variable to the environment of the script execution by prefixing the assignments to the usual command line:
 
@@ -460,9 +460,9 @@ Usage: try_argparser.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] 
 ```
 <!-- </include> -->
 
-You may have noticed that we didn't use an equals sign (`=`) to delimit option names and their values, here. Though from the former examples it may seem as if it was related to the usage of short option names, for the argparser, it is completely arbitrary whether you use spaces or equals signs. Again, typing spaces is faster on the command line, but using the explicit equals sign makes a script's code more legible.
+You may have noticed that we didn't use an equals sign (`=`) to delimit option names and their values, here. Though from the former examples it may seem as if it was related to the usage of short option names, for the Argparser, it is completely arbitrary whether you use spaces or equals signs. Again, typing spaces is faster on the command line, but using the explicit equals sign makes a script's code more legible.
 
-This has the additional advantage that it's clear to a user (reading *e.g.* your script's manual) that the value belongs to the option before, and that it's not a flag followed by a positional argument. As long as this user doesn't know that the argparser only treats values following option names as positional arguments when they're separated by a double hyphen or doubled plus sign, it may look confusing.
+This has the additional advantage that it's clear to a user (reading *e.g.* your script's manual) that the value belongs to the option before, and that it's not a flag followed by a positional argument. As long as this user doesn't know that the Argparser only treats values following option names as positional arguments when they're separated by a double hyphen or doubled plus sign, it may look confusing.
 
 Moreover, using an equals sign is the only way of providing arguments starting with a hyphen to an option, since a whitespace-separated word would be interpreted as (possibly nonexistent) option name. By this, you can give negative numbers on the command line.
 
@@ -532,11 +532,11 @@ Enter: flags. The options `-f`, aliased to `--var-6`, and `+g`, aliased to `++va
 
 Similarly, `var_7` has become `false` instead of the default `true`. Here, unusually, the option name was not introduced by a hyphen, but a plus sign. For flags only, and only when [`ARGPARSER_ALLOW_FLAG_INVERSION`](#655-argparser_allow_flag_inversion) is set to `true` (the default), it is possible to set the value to `true` by the normal hyphen, and to `false` by the plus sign, which, again, can be imagined as crossed hyphen. The default value is only taken when the flag is absent, else, their presence gives the value as `true` or `false`.
 
-Precisely, giving `-g` or `--var-7` sets `var_7` to `true`, and giving `+g` or `++var-7` sets `var_7` to `false` (a crossed, *i.e.* negated, `true`). This behavior is used, for example, by the Bash [`set`](https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html "gnu.org &rightarrow; The Set Builtin") builtin (like `set -x` to activate `xtrace` and `set +x` to deactivate it). Though the usage for long options is uncommon, it is enabled by the argparser for consistency, such that long option&ndash;only flags can be used along normal long option&ndash;only arguments.
+Precisely, giving `-g` or `--var-7` sets `var_7` to `true`, and giving `+g` or `++var-7` sets `var_7` to `false` (a crossed, *i.e.* negated, `true`). This behavior is used, for example, by the Bash [`set`](https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html "gnu.org &rightarrow; The Set Builtin") builtin (like `set -x` to activate `xtrace` and `set +x` to deactivate it). Though the usage for long options is uncommon, it is enabled by the Argparser for consistency, such that long option&ndash;only flags can be used along normal long option&ndash;only arguments.
 
 Further, when [`ARGPARSER_ALLOW_FLAG_NEGATION`](#656-argparser_allow_flag_negation) is set to `true` (the default), flags can also be given by prepending their long option name by `no-`, *i.e.*, `--var-7` would become `--no-var-7`. This negates the flag's value as well, doubling its effect for `++no-var-7`&mdash;which would be a very obfuscated of saying `--var-7`.
 
-Another interesting fact is that the argparser output a warning that `-g,-G,--var-7,--var-g` would be deprecated. This shows us that we can define arguments, and years later, when we want to change the command-line interface, we can set the obsolete arguments as deprecated, allowing the user to gradually adapt to the changes in his workflows employing your script. A common application would be the renaming of an option or the entire removal of its function.
+Another interesting fact is that the Argparser output a warning that `-g,-G,--var-7,--var-g` would be deprecated. This shows us that we can define arguments, and years later, when we want to change the command-line interface, we can set the obsolete arguments as deprecated, allowing the user to gradually adapt to the changes in his workflows employing your script. A common application would be the renaming of an option or the entire removal of its function.
 
 Taking one final set of example invokations, we can see how the option merging works for flags:
 
@@ -586,13 +586,13 @@ Usage: try_argparser.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] 
 ```
 <!-- </include> -->
 
-The tiny change of the prefix for the `fgcA` compound argument made our whole attempt fail: Since `var_3` is not a flag, we can't use the boolean negation, here, and thus the argparser yields an error. So, although specifying `+fg` is no problem, the merged `c` makes the parsing fail. Were `g` also defined to accept a value, the argparser would have reported the error already here, since the following `cA` would have been seen as value to the option `+g`. This shows that care should be taken when merging option names.
+The tiny change of the prefix for the `fgcA` compound argument made our whole attempt fail: Since `var_3` is not a flag, we can't use the boolean negation, here, and thus the Argparser yields an error. So, although specifying `+fg` is no problem, the merged `c` makes the parsing fail. Were `g` also defined to accept a value, the Argparser would have reported the error already here, since the following `cA` would have been seen as value to the option `+g`. This shows that care should be taken when merging option names.
 <!-- </section> -->
 
 <!-- <section file="tutorial/argparser_invokation.md"> -->
 ### 3.2. Argparser invokation
 
-Now that you have seen how the argparser serves in parsing and interpreting the command-line arguments given to your script, it's time to explain what you need to do to employ the argparser in your script. As promised, here's the code of `try_argparser.sh` again. You can cover it if you already read it above (and memorize the lines of code&hellip;).
+Now that you have seen how the Argparser serves in parsing and interpreting the command-line arguments given to your script, it's time to explain what you need to do to employ the Argparser in your script. As promised, here's the code of `try_argparser.sh` again. You can cover it if you already read it above (and memorize the lines of code&hellip;).
 
 <details open>
 
@@ -602,7 +602,7 @@ Now that you have seen how the argparser serves in parsing and interpreting the 
 ```bash
 #!/bin/bash
 
-# Source the argparser.  As the arguments have multiple short and long
+# Source the Argparser.  As the arguments have multiple short and long
 # options, override the default column widths for the help message.
 ARGPARSER_MAX_COL_WIDTH_1=9
 ARGPARSER_MAX_COL_WIDTH_2=33
@@ -641,23 +641,23 @@ done
 
 </details>
 
-As you can see, there are three sections in the code that are specific to the argparser. The accession at the end only serves us to gain insights into the values of the arguments and are not necessary to include&mdash;you would replace this by the actual workings of your script.
+As you can see, there are three sections in the code that are specific to the Argparser. The accession at the end only serves us to gain insights into the values of the arguments and are not necessary to include&mdash;you would replace this by the actual workings of your script.
 
-The first section sets argparser-specific [environment variables](#65-environment-variables) to optimize the visual output, which we'll investigate later. Then, the arguments are defined, and finally, the argparser is called. This call is central to the script as it is the line that runs the argparser. So, most simply, from your Bash script whose command-line arguments you want to be parsed, the main thing you need to do is to [`source`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash Builtins &rightarrow; source") the argparser (sourcing means in-place execution without forking):
+The first section sets Argparser-specific [environment variables](#65-environment-variables) to optimize the visual output, which we'll investigate later. Then, the arguments are defined, and finally, the Argparser is called. This call is central to the script as it is the line that runs the Argparser. So, most simply, from your Bash script whose command-line arguments you want to be parsed, the main thing you need to do is to [`source`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash Builtins &rightarrow; source") the Argparser (sourcing means in-place execution without forking):
 
 ```bash
 source argparser -- "$@"
 ```
 
-Shells other than Bash require a slightly different approach, the [standalone usage](#311-standalone-usage) in a pipe, but most things still hold for this case. As a result of the argparser's configurability (see below), it is necessary to give cour script's command line after a double hyphen, *i.e.*, using `-- "$@"`.
+Shells other than Bash require a slightly different approach, the [standalone usage](#311-standalone-usage) in a pipe, but most things still hold for this case. As a result of the Argparser's configurability (see below), it is necessary to give cour script's command line after a double hyphen, *i.e.*, using `-- "$@"`.
 
-Alternatively to `source`, but not recommended for the lack of the command's clearness, you could use the synonymous [dot operator](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-_002e "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; dot operator") inherited from the Bourne shell (which cannot run the argparser, which is a Bash script!):
+Alternatively to `source`, but not recommended for the lack of the command's clearness, you could use the synonymous [dot operator](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-_002e "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; dot operator") inherited from the Bourne shell (which cannot run the Argparser, which is a Bash script!):
 
 ```bash
 . argparser -- "$@"
 ```
 
-This is the simplest form of invoking the argparser. It will read your script's command line, parse the arguments, and set them to variables in your script. And this is the reason for sourcing instead of normal calling as in:
+This is the simplest form of invoking the Argparser. It will read your script's command line, parse the arguments, and set them to variables in your script. And this is the reason for sourcing instead of normal calling as in:
 
 ```bash
 bash argparser
@@ -669,17 +669,17 @@ or:
 ./argparser
 ```
 
-since you don't want the arguments to be set in a subprocess created after forking, as these will be gone when the argparser (and with it, the subprocess) exits. Still, this is the required way for other shells, which make use of the argparser's ability to write the arguments to STDOUT, if [`ARGPARSER_WRITE_ARGS`](#6562-argparser_write_args) is set to `true`.
+since you don't want the arguments to be set in a subprocess created after forking, as these will be gone when the Argparser (and with it, the subprocess) exits. Still, this is the required way for other shells, which make use of the Argparser's ability to write the arguments to STDOUT, if [`ARGPARSER_WRITE_ARGS`](#6562-argparser_write_args) is set to `true`.
 
-As stated, the argparser sets an associative array to store the arguments in. For maximum control over the variables in your script's scope, you can configure its name via [`ARGPARSER_ARG_ARRAY_NAME`](#659-argparser_arg_array_name), defaulting to `"args"`. In `try_argparser.sh`, we obtained the report by accessing exactly this associative array, looping over all variables known to the script that start with `var` or `pos`, respectively. At the same time, this variable name is used to provide the arguments definition.
+As stated, the Argparser sets an associative array to store the arguments in. For maximum control over the variables in your script's scope, you can configure its name via [`ARGPARSER_ARG_ARRAY_NAME`](#659-argparser_arg_array_name), defaulting to `"args"`. In `try_argparser.sh`, we obtained the report by accessing exactly this associative array, looping over all variables known to the script that start with `var` or `pos`, respectively. At the same time, this variable name is used to provide the arguments definition.
 
-While the single line `source argparser -- "$@"` provides the argparser's functionality by running it, the positional and keyword arguments need to be defined somewhere. Thus, prior to the argparser's invokation (and, in our case, after setting some environment variables to set the maximum column widths for the help message), the arguments are defined. Thereby, the indexed array `args` defines which command-line arguments are acceptable for the script, possibly giving an argument definition in an argparser-specific tabular manner. Alternatively, this definition could be given as a separate [arguments definition file](#34-arguments-definition-files), indicated as [`ARGPARSER_ARG_DEF_FILE`](#6510-argparser_arg_def_file).
+While the single line `source argparser -- "$@"` provides the Argparser's functionality by running it, the positional and keyword arguments need to be defined somewhere. Thus, prior to the Argparser's invokation (and, in our case, after setting some environment variables to set the maximum column widths for the help message), the arguments are defined. Thereby, the indexed array `args` defines which command-line arguments are acceptable for the script, possibly giving an argument definition in an Argparser-specific tabular manner. Alternatively, this definition could be given as a separate [arguments definition file](#34-arguments-definition-files), indicated as [`ARGPARSER_ARG_DEF_FILE`](#6510-argparser_arg_def_file).
 
 The rationale for allowing `args` to store both the arguments alone and them along their definition gets clear when you realize that it's possible to share an arguments definition file across multiple scripts and only require a limited subset of the arguments for the current script. Then, you can give these arguments a common definition, identical for any script using them. Additionally, it is even possible to use an arguments definition file and definitions in `args` together, with the latter expanding on the former or overriding them, thus providing the opportunity to use arguments with the same name, but different definitions, in separate scripts. This offers great flexibility when writing wrapper scripts around pipelines, when you want to pass common arguments to different programs in your pipeline. Just define an argument within your wrapper script and pass its value to both programs.
 
-The argument-defining entries in the indexed array named by [`ARGPARSER_ARG_ARRAY_NAME`](#659-argparser_arg_array_name), defaulting to `"args"`, can be understood as some sort of key&ndash;value pair for each argument, but merged in one string (not as true keys and values in associative arrays). The key is a unique identifier for the argparser functions, and the name under which the argument's value can be obtained from the associative array `args`. The corresponding value provides the argument's definition to the argparser.
+The argument-defining entries in the indexed array named by [`ARGPARSER_ARG_ARRAY_NAME`](#659-argparser_arg_array_name), defaulting to `"args"`, can be understood as some sort of key&ndash;value pair for each argument, but merged in one string (not as true keys and values in associative arrays). The key is a unique identifier for the Argparser functions, and the name under which the argument's value can be obtained from the associative array `args`. The corresponding value provides the argument's definition to the Argparser.
 
-This argparser-specific tabular format consists of eleven columns, each separated from each other by an [`ARGPARSER_ARG_DELIMITER_1`](#6511-argparser_arg_delimiter_1) character, defaulting to a pipe (`"|"`). Multi-value fields are delimited by an [`ARGPARSER_ARG_DELIMITER_2`](#6512-argparser_arg_delimiter_2) character, defaulting to a comma (`","`). The columns are defined as follows:
+This Argparser-specific tabular format consists of eleven columns, each separated from each other by an [`ARGPARSER_ARG_DELIMITER_1`](#6511-argparser_arg_delimiter_1) character, defaulting to a pipe (`"|"`). Multi-value fields are delimited by an [`ARGPARSER_ARG_DELIMITER_2`](#6512-argparser_arg_delimiter_2) character, defaulting to a comma (`","`). The columns are defined as follows:
 
 - `id`: the unique argument identifier (like `var_1`)
 - `short_opts`: the short options (one hyphen, like `-a` and `-A` for `var_1`, default: `""`)
@@ -690,7 +690,7 @@ This argparser-specific tabular format consists of eleven columns, each separate
 - `type`: the data type the argument shall have and will be tested on (like `"char"` for `var_4`, default: `"str"`)
 - `arg_no`: the number of required values (either numerical from `0` to infinity or `"+"`, meaning to accept as many values as given, at least one, like `1` for `var_4`, default: `1`)
 - `arg_group`: the argument group for grouping of keyword arguments in the help text (like `"Optional options"` for `var_4`, default: [`ARGPARSER_POSITIONAL_ARG_GROUP`](#6534-argparser_positional_arg_group))
-- `notes`: additional notes to the argparser, currently only `"deprecated"` is supported (like for `var_7`, default: `""`)
+- `notes`: additional notes to the Argparser, currently only `"deprecated"` is supported (like for `var_7`, default: `""`)
 - `help`: the help text for the `--help` flag (like `"one value with default and choice"` for `var_4`, default: `""`)
 
 These names must be given as a header above all argument definitions. Providing a header has the advantage that the order of the columns does not matter, and in the future, additional columns can be added or removed without breaking your code.
@@ -699,23 +699,23 @@ Moreover, when using a header, you can omit any column but the `id`. Then, the d
 
 Keyword arguments can have multiple short and/or long option names, optional default values, and/or an arbitrary number of choice values. The same holds for positional arguments, which are identified by having neither short nor long option names. Generally, absence of a value is indicated by the empty string (`""`). This allows the usage of hyphens, besides their special meaning on the command line (as option names), for the convention of regarding files given as `"-"` as sign to read from STDIN.
 
-As you saw above, the argparser will aggregate all arguments (values) given after a word starting with a hyphen (*i.e.*, an option name) to this option. If the number doesn't match the number of required values, an error is thrown instead of cutting the values. If an argument gets a wrong number of values, but has a default value, only a warning is thrown and the default value is taken.
+As you saw above, the Argparser will aggregate all arguments (values) given after a word starting with a hyphen (*i.e.*, an option name) to this option. If the number doesn't match the number of required values, an error is thrown instead of cutting the values. If an argument gets a wrong number of values, but has a default value, only a warning is thrown and the default value is taken.
 
-Thereby, errors abort the script, while warnings just write a message to `STDERR`. Even after parsing or value checking errors occurred, the parsing or value checking continues and the argparser aggregates the error messages until the end, when all are printed, to simplify the correction of multiple mistakes.
+Thereby, errors abort the script, while warnings just write a message to `STDERR`. Even after parsing or value checking errors occurred, the parsing or value checking continues and the Argparser aggregates the error messages until the end, when all are printed, to simplify the correction of multiple mistakes.
 <!-- </section> -->
 
 <!-- <section file="tutorial/argparser_configuration.md"> -->
 ### 3.3. Argparser configuration
 
-The argparser accepts over 50 options for configuring the argument parsing, checking their values and the consistency of the arguments definition, creating the various message types (see below), and setting the required companion files. These options are available as [environment variables](#65-environment-variables). By this, you can set them directly in your script, and even [`export`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-export "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; export") them to child processes. Thus, you can set these variables once and use them throughout your script suite.
+The Argparser accepts over 50 options for configuring the argument parsing, checking their values and the consistency of the arguments definition, creating the various message types (see below), and setting the required companion files. These options are available as [environment variables](#65-environment-variables). By this, you can set them directly in your script, and even [`export`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-export "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; export") them to child processes. Thus, you can set these variables once and use them throughout your script suite.
 
 Still, it is likely that, after some time or for a specific project, you'll settle with a certain set of options that you'll want to reuse for all or many scripts. Then, setting the environment variables in any script becomes a tedious task, wasting space in each script. Additionally, should you want to change a value, you'd need to change it in any file.
 
-For this reason, the argparser also supports configuration by a config file (see the [example](../resources/options.cfg)), given by the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file) environment variable. This file contains the options in a key&ndash;value syntax and can be shared by multiple scripts, which only need to point to the same configuration file. The options have the same name as the environment variables, with a stripped leading `"ARGPARSER_"` and being written in lowercase, and with underscores replaced by hyphens. *I.e.*, the "screaming snake case" is replaced by the "kebab case".
+For this reason, the Argparser also supports configuration by a config file (see the [example](../resources/options.cfg)), given by the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file) environment variable. This file contains the options in a key&ndash;value syntax and can be shared by multiple scripts, which only need to point to the same configuration file. The options have the same name as the environment variables, with a stripped leading `"ARGPARSER_"` and being written in lowercase, and with underscores replaced by hyphens. *I.e.*, the "screaming snake case" is replaced by the "kebab case".
 
 The keys and values must be separated by an equals sign (`=`), but can be surrounded by spaces, allowing for a table-like arrangement. Further, empty or commented lines (those starting with a hashmark, *i.e.*, `#`) are ignored, and thus can be used to explain certain values. In-line comments aren't supported to simplify the parsing of values containing a hashmark. It is possible to quote strings, but not necessary, which allows the one-by-one replacement of values from scripts to the configuration file and *vice versa*.
 
-Thereby, you can override options from the file with some given in your script. Should an option be defined in neither place, a default is used. This allows you to list only necessary options in your configuration file and let the argparser set everything else.
+Thereby, you can override options from the file with some given in your script. Should an option be defined in neither place, a default is used. This allows you to list only necessary options in your configuration file and let the Argparser set everything else.
 
 Now, let's have a look at the configuration file (or at least, at the first ten lines to save some space):
 
@@ -745,7 +745,7 @@ For demonstration, we take a stripped-down version of our `try_argparser.sh` scr
 ```bash
 #!/bin/bash
 
-# Source the argparser, reading the configuration from a file.
+# Source the Argparser, reading the configuration from a file.
 dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
 dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
 ARGPARSER_CONFIG_FILE="${dir}/options.cfg"
@@ -801,11 +801,11 @@ The positional argument "pos_2" on index 2 is set to "1,2".
 ```
 <!-- </include> -->
 
-Further, all environment variables can also be given as command-line parameters upon sourcing the argparser. Thereby, the options have the same name as in the configuration file ("kebab case"), and are only valid for the given argparser call.
+Further, all environment variables can also be given as command-line parameters upon sourcing the Argparser. Thereby, the options have the same name as in the configuration file ("kebab case"), and are only valid for the given Argparser call.
 
-You can give the options right before your script's command line and the delimiting double hyphen. The argparser interprets all options given before the first double hyphen as options belonging to the argparser, the remainder is interpreted as your script's command line. This especially means that you cannot use the double hyphen to delimit positional arguments for the argparser&mdash;but since none are supported (apart from the command line), an error would be given, anyways.
+You can give the options right before your script's command line and the delimiting double hyphen. The Argparser interprets all options given before the first double hyphen as options belonging to the Argparser, the remainder is interpreted as your script's command line. This especially means that you cannot use the double hyphen to delimit positional arguments for the Argparser&mdash;but since none are supported (apart from the command line), an error would be given, anyways.
 
-Due to the manner the [`source`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash Builtins &rightarrow; source") builtin is defined, the argparser cannot distinguish whether it was sourced with arguments, so mandates them in any case. This means that you must explicitly state the `-- "$@"` to pass the arguments to the argparser, even if you don't use any option. The `--` is required to separate the argparser modification from the actual arguments&mdash;after all, it is not too unlikely that some of your scripts might want to use one of the argparser options for themselves. To still be able to distinguish between an option for the argparser and an argument to your script, the double hyphen is used as delimiter.
+Due to the manner the [`source`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash Builtins &rightarrow; source") builtin is defined, the Argparser cannot distinguish whether it was sourced with arguments, so mandates them in any case. This means that you must explicitly state the `-- "$@"` to pass the arguments to the Argparser, even if you don't use any option. The `--` is required to separate the Argparser modification from the actual arguments&mdash;after all, it is not too unlikely that some of your scripts might want to use one of the Argparser options for themselves. To still be able to distinguish between an option for the Argparser and an argument to your script, the double hyphen is used as delimiter.
 
 So the general call would look like this:
 
@@ -815,17 +815,17 @@ source argparser [--option...] -- "$@"
 
 with `option` being any environment variable's transformed name.
 
-Since the argparser parses its options like it does for your script's ones (by non-recursively sourcing itself), the same special syntax regarding flags is used. That means, if you set `++set-args` as option, then the argparser will only read the command-line arguments, parsing them into an associative array you can access afterwards, denoted by the name the environment variable [`ARGPARSER_ARG_ARRAY_NAME`](#659-argparser_arg_array_name) refers to (per default, `"args"`)&mdash;but it won't set them as variables to your script.  The opposite holds for the option `++read-args`, which deactivates the reading. Finally, if `--read-args` and `--set-args` are set, the arguments will both be read and set (in this order). Since the default value for both options is `true`, these actions are also carried out when only one option or none is given.
+Since the Argparser parses its options like it does for your script's ones (by non-recursively sourcing itself), the same special syntax regarding flags is used. That means, if you set `++set-args` as option, then the Argparser will only read the command-line arguments, parsing them into an associative array you can access afterwards, denoted by the name the environment variable [`ARGPARSER_ARG_ARRAY_NAME`](#659-argparser_arg_array_name) refers to (per default, `"args"`)&mdash;but it won't set them as variables to your script.  The opposite holds for the option `++read-args`, which deactivates the reading. Finally, if `--read-args` and `--set-args` are set, the arguments will both be read and set (in this order). Since the default value for both options is `true`, these actions are also carried out when only one option or none is given.
 
-Not surprisingly, you need to read the arguments before you set them, but you can perform arbitrary steps in-between. This could come handy when you want to use the variable names the argparser sets for some task or want to manipulate the associative array prior having the values set.
+Not surprisingly, you need to read the arguments before you set them, but you can perform arbitrary steps in-between. This could come handy when you want to use the variable names the Argparser sets for some task or want to manipulate the associative array prior having the values set.
 
-If you [`export`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-export "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; export") (or [`declare -x`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-declare "gnu.org &rightarrow; Bash Builtins &rightarrow; declare")) environment variables like [`ARGPARSER_READ_ARGS`](#6535-argparser_read_args) and [`ARGPARSER_SET_ARGS`](#6538-argparser_set_args) to child processes (like scripts called from your master script), they will inherit these variables. If, in your child script, you use a bare `source argparser -- "$@"`, *i.e.*, without specifying an option to the argparser, the settings from the inherited environment variables will be used. However, you can always override them by specifying an argparser option. By this, you may set the environment variables in your master script and use the settings in some child scripts, with the others setting their own options. Thus, to rule out any possible influence of the environment on reading and setting, using the two respective option flags might be recommendable for certain use cases.
+If you [`export`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-export "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; export") (or [`declare -x`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-declare "gnu.org &rightarrow; Bash Builtins &rightarrow; declare")) environment variables like [`ARGPARSER_READ_ARGS`](#6535-argparser_read_args) and [`ARGPARSER_SET_ARGS`](#6538-argparser_set_args) to child processes (like scripts called from your master script), they will inherit these variables. If, in your child script, you use a bare `source argparser -- "$@"`, *i.e.*, without specifying an option to the Argparser, the settings from the inherited environment variables will be used. However, you can always override them by specifying an Argparser option. By this, you may set the environment variables in your master script and use the settings in some child scripts, with the others setting their own options. Thus, to rule out any possible influence of the environment on reading and setting, using the two respective option flags might be recommendable for certain use cases.
 <!-- </section> -->
 
 <!-- <section file="tutorial/arguments_definition_files.md"> -->
 ### 3.4. Arguments definition files
 
-In the previous sections, we always provided the arguments definition directly in the script, right before we sourced the argparser. However, it is possible to "outsource" the definition (or part of it) in a bespoke file that is referred to by the [`ARGPARSER_ARG_DEF_FILE`](#6510-argparser_arg_def_file) environment variable.
+In the previous sections, we always provided the arguments definition directly in the script, right before we sourced the Argparser. However, it is possible to "outsource" the definition (or part of it) in a bespoke file that is referred to by the [`ARGPARSER_ARG_DEF_FILE`](#6510-argparser_arg_def_file) environment variable.
 
 Using a separate arguments definition file allows you to share the definition across multiple scripts that use partially or entirely identical arguments, a common case in program suites or when wrapper scripts are used. Should some scripts require an argument to have the same name, but different definitions, they can be given in their respective scripts, in addition to the remainder from the file. Moreover, this attempt allows a separation of concerns, as we can move the arguments definition (static) away from their manipulation (dynamic). This shrinks our trial file once more, yielding `try_arg_def_file.sh`.
 
@@ -837,7 +837,7 @@ Using a separate arguments definition file allows you to share the definition ac
 ```bash
 #!/bin/bash
 
-# Set the argparser, reading the arguments definition from a file.
+# Set the Argparser, reading the arguments definition from a file.
 dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
 dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
 ARGPARSER_ARG_DEF_FILE="${dir}/arguments.csv"
@@ -878,7 +878,7 @@ done
 
 At the same time, we need an arguments definition file, herein aptly called `arguments.csv`. Its structure is identical to the arguments definition we previously used, allowing you to easily move a definition between your script and the separate file.
 
-Again, you need to add the header to explain the fields. Then, you can set your text editor to interpret the data as CSV file, possibly syntax-highlighting the columns with the given header or aligning the columns (as done by the [Rainbow CSV](https://marketplace.visualstudio.com/items?itemName=mechatroner.rainbow-csv "Visual Studio Code &rightarrow; Marketplace &rightarrow; Rainbow CSV Extension") extension in [Visual Studio Code](https://code.visualstudio.com/ "Visual Studio Code")). Since the argparser strips leading and trailing whitespace off the fields, you can save the file with this alignment:
+Again, you need to add the header to explain the fields. Then, you can set your text editor to interpret the data as CSV file, possibly syntax-highlighting the columns with the given header or aligning the columns (as done by the [Rainbow CSV](https://marketplace.visualstudio.com/items?itemName=mechatroner.rainbow-csv "Visual Studio Code &rightarrow; Marketplace &rightarrow; Rainbow CSV Extension") extension in [Visual Studio Code](https://code.visualstudio.com/ "Visual Studio Code")). Since the Argparser strips leading and trailing whitespace off the fields, you can save the file with this alignment:
 
 <!-- <include command="cat ../resources/arguments.csv" lang="console"> -->
 ```console
@@ -926,7 +926,7 @@ Usage: try_arg_def_file.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL
 <!-- <section file="tutorial/help_and_usage_messages.md"> -->
 ### 3.5. Help and usage messages
 
-No matter how many keyword arguments are defined, as long as [`ARGPARSER_ADD_HELP`](#652-argparser_add_help) and [`ARGPARSER_ADD_USAGE`](#653-argparser_add_usage) are set to `true` (the default), the argparser interprets the flags from the [`ARGPARSER_HELP_OPTIONS`](#6527-argparser_help_options) (default: `-h` and `-?`) and `--help` as call for a verbose help message and the flags from the [`ARGPARSER_USAGE_OPTIONS`](#6552-argparser_usage_options) (default: `-u`) and `--usage` as call for a brief usage message. Then, these options are automatically added to the script's argument definition and override any same-named argument name (yielding an error message if [`ARGPARSER_CHECK_ARG_DEF`](#6515-argparser_check_arg_def) is set to `true`). This is to ensure that the novice user of your script can do exactly what we did, above: trying the most common variants to get some help over how to use a program or script by typing
+No matter how many keyword arguments are defined, as long as [`ARGPARSER_ADD_HELP`](#652-argparser_add_help) and [`ARGPARSER_ADD_USAGE`](#653-argparser_add_usage) are set to `true` (the default), the Argparser interprets the flags from the [`ARGPARSER_HELP_OPTIONS`](#6527-argparser_help_options) (default: `-h` and `-?`) and `--help` as call for a verbose help message and the flags from the [`ARGPARSER_USAGE_OPTIONS`](#6552-argparser_usage_options) (default: `-u`) and `--usage` as call for a brief usage message. Then, these options are automatically added to the script's argument definition and override any same-named argument name (yielding an error message if [`ARGPARSER_CHECK_ARG_DEF`](#6515-argparser_check_arg_def) is set to `true`). This is to ensure that the novice user of your script can do exactly what we did, above: trying the most common variants to get some help over how to use a program or script by typing
 
 ```bash
 try_argparser.sh --help
@@ -952,7 +952,7 @@ help try_argparser.sh
 
 won't work as the [`help`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-help "gnu.org &rightarrow; Bash Builtins &rightarrow; help") command only recognizes Bash builtins.
 
-As a huge convenience, the argparser will build the help and usage messages from the defined arguments for your script, if either of the `ARGPARSER_HELP_OPTIONS`, `--help`, `ARGPARSER_USAGE_OPTIONS`, or `--usage` options is given on the command line (even along with others). These messages indicate the short and/or long names, as well as the default and choice values. In the case of the help message, the argument group, the notes, and the help text from the arguments' definitions are printed, too.
+As a huge convenience, the Argparser will build the help and usage messages from the defined arguments for your script, if either of the `ARGPARSER_HELP_OPTIONS`, `--help`, `ARGPARSER_USAGE_OPTIONS`, or `--usage` options is given on the command line (even along with others). These messages indicate the short and/or long names, as well as the default and choice values. In the case of the help message, the argument group, the notes, and the help text from the arguments' definitions are printed, too.
 
 As we already saw upon the occasion of an error, our `try_argparser.sh` usage message looks as follows:
 
@@ -1053,7 +1053,7 @@ Alternatively, you may want to set [`ARGPARSER_MAX_WIDTH`](#6533-argparser_max_w
 <!-- <section file="tutorial/help_and_usage_message_files.md"> -->
 ### 3.6. Help and usage message files
 
-The argparser is not only able to compile a help message, but can also be guided by a separate file. Using the [`ARGPARSER_HELP_FILE`](#6524-argparser_help_file) environment variable pointing to this file, to a certain degree, you can customize the help message's look and structure by moving the blocks the message consists of around and enriching it by arbitrary text. Again, we use a simplified script as `try_help_file.sh` without alias names for the short and long options.
+The Argparser is not only able to compile a help message, but can also be guided by a separate file. Using the [`ARGPARSER_HELP_FILE`](#6524-argparser_help_file) environment variable pointing to this file, to a certain degree, you can customize the help message's look and structure by moving the blocks the message consists of around and enriching it by arbitrary text. Again, we use a simplified script as `try_help_file.sh` without alias names for the short and long options.
 
 <details open>
 
@@ -1063,7 +1063,7 @@ The argparser is not only able to compile a help message, but can also be guided
 ```bash
 #!/bin/bash
 
-# Source the argparser, reading the help message from a file.
+# Source the Argparser, reading the help message from a file.
 dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
 dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
 ARGPARSER_HELP_FILE="${dir}/help_message.txt"
@@ -1196,7 +1196,7 @@ then, in your script, you can set the `ARGPARSER_ARG_DEF_FILE` and `ARGPARSER_HE
 ```bash
 #!/bin/bash
 
-# Set the argparser, reading the arguments definition, help message, and
+# Set the Argparser, reading the arguments definition, help message, and
 # translation from a file.
 dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
 dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
@@ -1358,15 +1358,15 @@ true:
 
 </details>
 
-Regarding the structure of the simplified and strictly line-oriented YAML file, the groups used as identifiers for the translations are given without indentation, followed by a colon. This creates a key in an associative array. The respective value is another associative array, this time holding the translation, with the language identifier as key and the translated string as value. The key must be indented by exactly two spaces, followed by a colon and another space. Then, either the translation can be given or a greater-than sign (`">"`). All lines given afterwards that are indented by exactly four spaces are concatenated and used as translated string. In the translation, you can (and should) use the format specifier `$n`, with $n \in \{1, 2, 3, 4\},$ to denote the $n$-th position that the argparser should use for the interpolation with variable values, which cannot be directly given in the translation.
+Regarding the structure of the simplified and strictly line-oriented YAML file, the groups used as identifiers for the translations are given without indentation, followed by a colon. This creates a key in an associative array. The respective value is another associative array, this time holding the translation, with the language identifier as key and the translated string as value. The key must be indented by exactly two spaces, followed by a colon and another space. Then, either the translation can be given or a greater-than sign (`">"`). All lines given afterwards that are indented by exactly four spaces are concatenated and used as translated string. In the translation, you can (and should) use the format specifier `$n`, with $n \in \{1, 2, 3, 4\},$ to denote the $n$-th position that the Argparser should use for the interpolation with variable values, which cannot be directly given in the translation.
 
-You can optionally add line comments, though not in-line comments, and structure the file using empty lines or YAML blocks with three hyphens (`"---"`) or three dots (`"..."`). Since the purpose of the YAML file is to store a translation, not to serialize arbitrary data, more advanced features (like JSON-like in-line associative arrays) aren't supported by the argparser, and an error is thrown for unrecognized structures.
+You can optionally add line comments, though not in-line comments, and structure the file using empty lines or YAML blocks with three hyphens (`"---"`) or three dots (`"..."`). Since the purpose of the YAML file is to store a translation, not to serialize arbitrary data, more advanced features (like JSON-like in-line associative arrays) aren't supported by the Argparser, and an error is thrown for unrecognized structures.
 
-If a group identifier is missing, the argparser will emit a warning if and only if the state which uses the translation is reached, most commonly when the user requests the help message. In order not to miss a key, you can simply re-use the YAML file provided with the argparser.
+If a group identifier is missing, the Argparser will emit a warning if and only if the state which uses the translation is reached, most commonly when the user requests the help message. In order not to miss a key, you can simply re-use the YAML file provided with the Argparser.
 
-Now, the argparser is given the arguments definition, help, and translation file for the current locale. Thus, the help message can be generated in localized form, according to the user's `LANG`.
+Now, the Argparser is given the arguments definition, help, and translation file for the current locale. Thus, the help message can be generated in localized form, according to the user's `LANG`.
 
-You might also want to set the locale only for your script upon invokation from another script. Then, just prefix the invokation with the desired locale for the `LANG` variable. By this, you limit the effect of changing to the script call (just as we did above for the argparser environment variables):
+You might also want to set the locale only for your script upon invokation from another script. Then, just prefix the invokation with the desired locale for the `LANG` variable. By this, you limit the effect of changing to the script call (just as we did above for the Argparser environment variables):
 
 ```console
 $ LANG=en_US.UTF-8 bash try_localization.sh --help
@@ -1441,11 +1441,11 @@ try_argparser.sh v1.0.0
 <!-- <section file="tutorial/error_and_warning_messages.md"> -->
 ### 3.9. Error and warning messages
 
-The argparser outputs about a hundred different error and warning messages to give both you and your script's user as detailled feedback as possible about what went wrong with the argument parsing. Each message starts with your script's canonical name (the [`ARGPARSER_SCRIPT_NAME`](#6537-argparser_script_name)), followed by either `"Error:"` or `"Warning:"` and the respective message. Using the same simplified YAML file as for the help and usage messages (the [`ARGPARSER_TRANSLATION_FILE`](#6542-argparser_translation_file)), also the error and warning messages can be fully localized.
+The Argparser outputs about a hundred different error and warning messages to give both you and your script's user as detailled feedback as possible about what went wrong with the argument parsing. Each message starts with your script's canonical name (the [`ARGPARSER_SCRIPT_NAME`](#6537-argparser_script_name)), followed by either `"Error:"` or `"Warning:"` and the respective message. Using the same simplified YAML file as for the help and usage messages (the [`ARGPARSER_TRANSLATION_FILE`](#6542-argparser_translation_file)), also the error and warning messages can be fully localized.
 
-Generally, errors may lead to abortion of the script, while warnings just write the message to `STDERR`. Thus, warnings are less problematic errors, usually since some default or fallback value can be used, instead. The warning message then informs about this decision. Only for deprecated arguments, no default is used, simply because the argparser does not use the information about deprecation other than for creating a message to your script's user. After all, a deprecated argument should still be fully functional, until the deprecation time has passed and you decide to fully remove the argument (or replace it by a dummy implementation&mdash;then without deprecation note&mdash;whose application raises an error within your script).
+Generally, errors may lead to abortion of the script, while warnings just write the message to `STDERR`. Thus, warnings are less problematic errors, usually since some default or fallback value can be used, instead. The warning message then informs about this decision. Only for deprecated arguments, no default is used, simply because the Argparser does not use the information about deprecation other than for creating a message to your script's user. After all, a deprecated argument should still be fully functional, until the deprecation time has passed and you decide to fully remove the argument (or replace it by a dummy implementation&mdash;then without deprecation note&mdash;whose application raises an error within your script).
 
-Using [`ARGPARSER_SILENCE_ERRORS`](#6540-argparser_silence_errors) and [`ARGPARSER_SILENCE_WARNINGS`](#6541-argparser_silence_warnings), it is possible to prevent the emission of error or warning messages. Still, in case of critical errors, the argparser exits, just not informing you or your user about its failure. Silencing errors may not be needed at all, except when you want to keep log files clean, but silencing warnings may improve the user experience.
+Using [`ARGPARSER_SILENCE_ERRORS`](#6540-argparser_silence_errors) and [`ARGPARSER_SILENCE_WARNINGS`](#6541-argparser_silence_warnings), it is possible to prevent the emission of error or warning messages. Still, in case of critical errors, the Argparser exits, just not informing you or your user about its failure. Silencing errors may not be needed at all, except when you want to keep log files clean, but silencing warnings may improve the user experience.
 <!-- </section> -->
 
 <!-- <section file="tutorial/message_styles.md"> -->
@@ -1474,7 +1474,7 @@ Colors overwrite each other, whereas styles may be combined, like `"red,bold,rev
 <!-- <section file="tutorial/standalone_usage.md"> -->
 ### 3.11. Standalone usage
 
-Although the usual way to run the argparser is sourcing, you can also invoke it directly. By this, you can obtain the help, usage, and version message for the argparser itself, *e.g.* when you're looking for a certain option name, but don't want to or can't consult the manual. The invokation is identical to your script's:
+Although the usual way to run the Argparser is sourcing, you can also invoke it directly. By this, you can obtain the help, usage, and version message for the Argparser itself, *e.g.* when you're looking for a certain option name, but don't want to or can't consult the manual. The invokation is identical to your script's:
 
 <!-- <include command="argparser --help" lang="console"> -->
 ```console
@@ -1484,7 +1484,7 @@ Usage: argparser [OPTIONS] [--] command_line
 Mandatory arguments to long options are mandatory for short options too.
 
 Positional arguments:
-command_line                     the indexed array in which the argparser
+command_line                     the indexed array in which the Argparser
                                  stores the script's command line upon parsing
                                  its own arguments
 
@@ -1519,9 +1519,9 @@ Options:
                                  definition (default: ",")
 [--check-arg-def]                check if the arguments definition is
                                  consistent (default: false)
-[--check-env-vars]               check if the argparser environment variables
+[--check-env-vars]               check if the Argparser environment variables
                                  accord to their definition (default: false)
-[--config-file=FILE]             the path to a file holding the argparser
+[--config-file=FILE]             the path to a file holding the Argparser
                                  configuration (default: "''")
 [--count-flags]                  count flags instead of setting them to true or
                                  false based on the last prefix used on the
@@ -1577,9 +1577,9 @@ Options:
                                  "''")
 [--unset-args]                   unset (remove) all command-line arguments
                                  given to the script (default: true)
-[--unset-env-vars]               unset (remove) the argparser environment
+[--unset-env-vars]               unset (remove) the Argparser environment
                                  variables from the environment (default: true)
-[--unset-functions]              unset (remove) the argparser functions from
+[--unset-functions]              unset (remove) the Argparser functions from
                                  the environment (default: true)
 [--usage-exit-code=INT]          the exit code for usage messages (default: 0)
 [--usage-file=FILE]              the path to a file holding the extended usage
@@ -1626,7 +1626,7 @@ Options:
 ```
 <!-- </include> -->
 
-The second, and perhaps more important way of standalone usage is included for compatibility with other shells. Since only Bash can successfully source Bash scripts (at least, when they rely on Bashisms, which is the case for the argparser), the argparser would only be usable from within Bash scripts. While this remains the central point of application, there is also a way to run the argparser from other shell's scripts. As an example, let's have a look at the `try_pipeline.sh` script:
+The second, and perhaps more important way of standalone usage is included for compatibility with other shells. Since only Bash can successfully source Bash scripts (at least, when they rely on Bashisms, which is the case for the Argparser), the Argparser would only be usable from within Bash scripts. While this remains the central point of application, there is also a way to run the Argparser from other shell's scripts. As an example, let's have a look at the `try_pipeline.sh` script:
 
 <details open>
 
@@ -1636,7 +1636,7 @@ The second, and perhaps more important way of standalone usage is included for c
 ```sh
 #!/bin/sh
 
-# Run the argparser in standalone mode from POSIX sh, reading from and
+# Run the Argparser in standalone mode from POSIX sh, reading from and
 # writing to a pipe.
 export ARGPARSER_SCRIPT_NAME="${0##*/}"
 export ARGPARSER_WRITE_ARGS=true
@@ -1690,21 +1690,21 @@ fi | sort
 
 </details>
 
-As you can see, the script is written POSIX conformantly and by this already executable by `sh` or `dash`. Since POSIX doesn't specify useful programming constructs like arrays, the arguments definition must be a single string, delimited by linefeeds. By passing this string to the argparser via its STDIN stream (piping from `printf` to `argparser`), it is possible to feed the arguments definition to the argparser without requiring the usual [`ARGPARSER_ARG_ARRAY_NAME`](#659-argparser_arg_array_name). Just as when sourcing, the argparser requires your script's command line as argument, separated from its own arguments by a double hyphen.
+As you can see, the script is written POSIX conformantly and by this already executable by `sh` or `dash`. Since POSIX doesn't specify useful programming constructs like arrays, the arguments definition must be a single string, delimited by linefeeds. By passing this string to the Argparser via its STDIN stream (piping from `printf` to `argparser`), it is possible to feed the arguments definition to the Argparser without requiring the usual [`ARGPARSER_ARG_ARRAY_NAME`](#659-argparser_arg_array_name). Just as when sourcing, the Argparser requires your script's command line as argument, separated from its own arguments by a double hyphen.
 
-It is important to set [`ARGPARSER_WRITE_ARGS`](#6562-argparser_write_args) to `true`. By this, the argparser will write the parsed arguments as key&ndash;value pairs to its STDOUT stream, since setting them as variables to the environment would result in them being lost when the child process the argparser is running in terminates.
+It is important to set [`ARGPARSER_WRITE_ARGS`](#6562-argparser_write_args) to `true`. By this, the Argparser will write the parsed arguments as key&ndash;value pairs to its STDOUT stream, since setting them as variables to the environment would result in them being lost when the child process the Argparser is running in terminates.
 
-In our example script, the whole pipeline is run in a subshell, such that STDOUT gets captured by `eval`. This facilitates the setting of the variables to the main environment, as the argparser outputs one argument per line, with an `=` sign as delimiter between key and value. In other terms, the argparser produces output which may be re-used as input to `eval`&mdash;here assuming that no special shell characters are included. For the purpose of this example, calls for the help, usage, and version message are caught in a separate branch to circumvent the parsing by `eval`&mdash;after all, these messages are also written to STDOUT, while the usual error and warning messages end in STDERR. Depending on your shell, you may find more sophisticated solutions.
+In our example script, the whole pipeline is run in a subshell, such that STDOUT gets captured by `eval`. This facilitates the setting of the variables to the main environment, as the Argparser outputs one argument per line, with an `=` sign as delimiter between key and value. In other terms, the Argparser produces output which may be re-used as input to `eval`&mdash;here assuming that no special shell characters are included. For the purpose of this example, calls for the help, usage, and version message are caught in a separate branch to circumvent the parsing by `eval`&mdash;after all, these messages are also written to STDOUT, while the usual error and warning messages end in STDERR. Depending on your shell, you may find more sophisticated solutions.
 
-Another point to notice is the need to set the [`ARGPARSER_SCRIPT_NAME`](#6537-argparser_script_name) prior running the argparser, since from within its child process, it cannot access your script's name without requiring non-builtin commands like [`ps`](https://man7.org/linux/man-pages/man1/ps.1.html "man7.org &rightarrow; man pages &rightarrow; ps(1)").
+Another point to notice is the need to set the [`ARGPARSER_SCRIPT_NAME`](#6537-argparser_script_name) prior running the Argparser, since from within its child process, it cannot access your script's name without requiring non-builtin commands like [`ps`](https://man7.org/linux/man-pages/man1/ps.1.html "man7.org &rightarrow; man pages &rightarrow; ps(1)").
 
-In short, it is possible to run the argparser in standalone mode from other shells, but this comes with the caveats of subprocesses&mdash;which the sourcing in Bash overcomes. Still, the only feature that your shell must support, is calling processes in pipes or *via* process substitutions to pass data to the argparser's STDIN and read its STDOUT. Since pipes are defined by POSIX, most shells should support this feature.
+In short, it is possible to run the Argparser in standalone mode from other shells, but this comes with the caveats of subprocesses&mdash;which the sourcing in Bash overcomes. Still, the only feature that your shell must support, is calling processes in pipes or *via* process substitutions to pass data to the Argparser's STDIN and read its STDOUT. Since pipes are defined by POSIX, most shells should support this feature.
 <!-- </section> -->
 
 <!-- <section file="comparison/introduction.md"> -->
 ## 4. Comparison of command-line parsers
 
-Several other shell command-line parsers predate the argparser and were in part influential in its design choices. The table below aims at comparing their features or lack thereof, intended to be as comprehensive as possible. If you're missing a function, please open an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues"), such that the function can be added. Manual argument parsing, the easiest (just most complex) method, is excluded here since in theory anything could be done, therein&mdash;it would just require a proportionate amount of work.
+Several other shell command-line parsers predate the Argparser and were in part influential in its design choices. The table below aims at comparing their features or lack thereof, intended to be as comprehensive as possible. If you're missing a function, please open an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues"), such that the function can be added. Manual argument parsing, the easiest (just most complex) method, is excluded here since in theory anything could be done, therein&mdash;it would just require a proportionate amount of work.
 
 The [feature comparison](#41-feature-comparison) compares the various features for argument parsing, while some [example scripts](#42-example-scripts) later demonstrate the usage for the different parsers.
 <!-- </section> -->
@@ -1719,7 +1719,7 @@ The [feature comparison](#41-feature-comparison) compares the various features f
    1. [`getopt`](#422-getopt)
    1. [shFlags](#423-shflags)
    1. [docopts](#424-docopts)
-   1. [argparser](#425-argparser)
+   1. [Argparser](#425-argparser)
 1. [Summary](#43-summary)
 <!-- </toc> -->
 <!-- </section> -->
@@ -1734,11 +1734,11 @@ The following command-line parsers are compared in the given versions:
 - [shFlags](https://github.com/kward/shflags "github.com &rightarrow; kward &rightarrow; shFlags"): clone of Google's C++ [`gflags`](https://gflags.github.io/gflags/ "github.io &rightarrow; gflags") library for Unix-like shells, `v1.3.0`
 - [docopts](https://github.com/docopt/docopts "github.com &rightarrow; docopt &rightarrow; docopts"): Go implementation of the platform-independent command-line interface description language and parser `docopt` with Bash wrapper, `v0.6.4`
 - [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module"): Python module from the stdlib, from Python `v3.13`
-- argparser: novel shell command-line parser, `v0.1.0`
+- Argparser: novel shell command-line parser, `v0.1.0`
 
 In the following table, "&#10008;" marks the absence of a feature, "&#10004;" its presence, and "&#10033;" its partial presence, *e.g.*, due to a not-yet complete implementation.
 
-| Function                                    | `getopts`     | `getopt`      | shFlags      | docopts      | `argparse`    | argparser    |
+| Function                                    | `getopts`     | `getopt`      | shFlags      | docopts      | `argparse`    | Argparser    |
 |---------------------------------------------|---------------|---------------|--------------|--------------|---------------|--------------|
 | Short options                               | &#10004;      | &#10004;      | &#10004;     | &#10004;     | &#10004;      | &#10004;     |
 | Long options                                | &#10008;      | &#10004;      | &#10004;     | &#10004;     | &#10004;      | &#10004;     |
@@ -2479,7 +2479,7 @@ Notes:
 <!-- </section> -->
 
 <!-- <section file="comparison/example_scripts/argparser.md"> -->
-#### 4.2.5. argparser
+#### 4.2.5. Argparser
 
 <details open>
 
@@ -2541,7 +2541,7 @@ bash argparser_wrapper.sh --version
 
 Notes:
 
-- Trailing positional arguments must be delimited with `--` since the argparser aggregates all values after option names to them, as design decision.
+- Trailing positional arguments must be delimited with `--` since the Argparser aggregates all values after option names to them, as design decision.
 - Intermixing positional and keyword arguments can be emulated by using the positional arguments delimiter `++`. True intermixing is yet disabled as design decision.
 <!-- </section> -->
 
@@ -2552,19 +2552,19 @@ When comparing the different approaches to command-line parsing, it is apparent 
 
 Later parsers as shFlags and especially docopts implement far more sophisticated functionality, like default values, mandatory options, or even an auto-generated help message. Still, they lack, *e.g.*, choice values or the ability to localize messages.
 
-Most of the argparser's features are inspired by the Python [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module") module, with extensions like the `++` positional arguments delimiter or the ability to negate and invert flags. This renders the argparser far more powerful than even docopts, while at the same time trying to be more user-friendly.
+Most of the Argparser's features are inspired by the Python [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module") module, with extensions like the `++` positional arguments delimiter or the ability to negate and invert flags. This renders the Argparser far more powerful than even docopts, while at the same time trying to be more user-friendly.
 
-This is especially noticeable for error messages when building the command line, where the argparser gives detailled error messages instead of a generic text that just states that something failed. Further, the docopt(s) specification is rather complex, requiring elaborate comprehension on how to write the help message. The argparser, in contrast, aims at a clearer user interface even for the programmer, by requiring a tabular arguments definition with optional headers.
+This is especially noticeable for error messages when building the command line, where the Argparser gives detailled error messages instead of a generic text that just states that something failed. Further, the docopt(s) specification is rather complex, requiring elaborate comprehension on how to write the help message. The Argparser, in contrast, aims at a clearer user interface even for the programmer, by requiring a tabular arguments definition with optional headers.
 
-Further, the development of shFlags and docopts seemingly have stalled, with no release or even commit for years. This renders it unlikely that these libraries will implement additional functionality, increasing the potential use for the argparser.
+Further, the development of shFlags and docopts seemingly have stalled, with no release or even commit for years. This renders it unlikely that these libraries will implement additional functionality, increasing the potential use for the Argparser.
 
-Finally, the argparser is extensively documented, unlike the other tools relying on a brief readme or man page. This hopefully makes the transition to the argparser&mdash;if deemed useful at all&mdash;easier.
+Finally, the Argparser is extensively documented, unlike the other tools relying on a brief readme or man page. This hopefully makes the transition to the Argparser&mdash;if deemed useful at all&mdash;easier.
 <!-- </section> -->
 
 <!-- <section file="roadmap.md"> -->
 ## 5. Roadmap
 
-Future argparser versions will add several new features and address known issues. The following sections shall give an overview over them.
+Future Argparser versions will add several new features and address known issues. The following sections shall give an overview over them.
 
 ### 5.1. Future enhancements
 
@@ -2587,7 +2587,7 @@ The following features are considered for addition in a future version. If you m
 
 #### 5.1.4. Debug mode
 
-- ***Description:*** A debug mode facilitates the finding of errors within the argparser. As a useful tool in development, it will be added at some point.
+- ***Description:*** A debug mode facilitates the finding of errors within the Argparser. As a useful tool in development, it will be added at some point.
 - ***Implementation likelihood:*** High.
 
 #### 5.1.5. Value ranges
@@ -2607,12 +2607,12 @@ The following features are considered for addition in a future version. If you m
 
 #### 5.1.8. POSIX compliance
 
-- ***Description:*** POSIX allows very few constructs for argument parsing, like no long options. Since there are perfectly suitable alternatives for this simple parsing, and the argparser aims at a way more sophisticated command-line interface, opt-in POSIX compliance seems unnecessary for now.
+- ***Description:*** POSIX allows very few constructs for argument parsing, like no long options. Since there are perfectly suitable alternatives for this simple parsing, and the Argparser aims at a way more sophisticated command-line interface, opt-in POSIX compliance seems unnecessary for now.
 - ***Implementation likelihood:*** Low.
 
 #### 5.1.9. Alternative option prefixes (`+`/`/`)
 
-- ***Description:*** On certain platforms, options are given with other prefixes, like `/` on DOS-like systems. The argparser targets Unix-like platforms, and allowing other characters would require a massive change to the codebase. Further, plus signs are used as tokens for flag negation, so for using them as regular prefixes, the hyphen would take their role. More importantly, there is no such equivalent for the forward slash&mdash;a backslash would feel most natural, but would collide with the path separator on DOS-like platforms. Considering the massive efforts needed to implement this, it is unlikely to ever be done.
+- ***Description:*** On certain platforms, options are given with other prefixes, like `/` on DOS-like systems. The Argparser targets Unix-like platforms, and allowing other characters would require a massive change to the codebase. Further, plus signs are used as tokens for flag negation, so for using them as regular prefixes, the hyphen would take their role. More importantly, there is no such equivalent for the forward slash&mdash;a backslash would feel most natural, but would collide with the path separator on DOS-like platforms. Considering the massive efforts needed to implement this, it is unlikely to ever be done.
 - ***Implementation likelihood:*** Almost zero.
 
 ### 5.2. Known bugs
@@ -2767,7 +2767,7 @@ The reference details the actual definitions of all [colors and styles](#62-colo
 <!-- <section file="reference/arguments_definition.md"> -->
 ### 6.1. Arguments definition
 
-The arguments definition that the argparser uses to parse the arguments and to create the help and usage messages shows a tabular structure with eleven columns. These columns are delimited by an [`ARGPARSER_ARG_DELIMITER_1`](#6511-argparser_arg_delimiter_1) character each, by default a pipe (`"|"`). Since fields can be surrounded by an arbitrary number of spaces, visual alignment as true table is possible.
+The arguments definition that the Argparser uses to parse the arguments and to create the help and usage messages shows a tabular structure with eleven columns. These columns are delimited by an [`ARGPARSER_ARG_DELIMITER_1`](#6511-argparser_arg_delimiter_1) character each, by default a pipe (`"|"`). Since fields can be surrounded by an arbitrary number of spaces, visual alignment as true table is possible.
 
 Additionally, a header must be given, using the identifiers shown below. By this, the order of the columns is arbitrary, but there should be little reason to deviate from the default order. Still, it is possible to omit columns, whose fields are populated by default values.
 
@@ -2815,7 +2815,7 @@ It is possible to restrict the range of acceptable values for an argument to a s
 
 #### 6.1.7. Data type (`type`)
 
-The argparser defines several data types an argument may have. Using the regular expressions denoted below, the argument's value is compared to the data type. Still, Bash is weakly typed, and by this, the existence of a data type does not change the behavior of the variable. Nonetheless, you can use the type-checked value for certain computations, later on. It is mandatory that all default and choice values accord to the data type. The following data types are distinguished by the argparser:
+The Argparser defines several data types an argument may have. Using the regular expressions denoted below, the argument's value is compared to the data type. Still, Bash is weakly typed, and by this, the existence of a data type does not change the behavior of the variable. Nonetheless, you can use the type-checked value for certain computations, later on. It is mandatory that all default and choice values accord to the data type. The following data types are distinguished by the Argparser:
 
 - *bool* (Boolean): either `true` or `false`, to be used for flags
 - *char* (Character): a string with length one
@@ -2827,9 +2827,9 @@ The argparser defines several data types an argument may have. Using the regular
 
 #### 6.1.8. Argument count (`arg_no`)
 
-The argument count defines the number of values a keyword or positional argument may accept. Independent of this count, the argparser will aggregate any non-hyphenated value to the previous keyword argument, or, if none is yet given, set it to the positional arguments. The argument count may be given as natural number (*i.e.*, as unsigned integer), including `0` as sign for flags, or as plus sign (`+`). The latter means to accept as many values as given, at least one.
+The argument count defines the number of values a keyword or positional argument may accept. Independent of this count, the Argparser will aggregate any non-hyphenated value to the previous keyword argument, or, if none is yet given, set it to the positional arguments. The argument count may be given as natural number (*i.e.*, as unsigned integer), including `0` as sign for flags, or as plus sign (`+`). The latter means to accept as many values as given, at least one.
 
-The Python [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module") module further defines `*` to accept any argument count, and `?` to accept exactly zero or one argument. Both features aren't yet supported by the argparser, but the characters are reserved for future usage as such, invalidating them as values for [`ARGPARSER_ARG_DELIMITER_1`](#6511-argparser_arg_delimiter_1) and [`ARGPARSER_ARG_DELIMITER_2`](#6512-argparser_arg_delimiter_2).
+The Python [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module") module further defines `*` to accept any argument count, and `?` to accept exactly zero or one argument. Both features aren't yet supported by the Argparser, but the characters are reserved for future usage as such, invalidating them as values for [`ARGPARSER_ARG_DELIMITER_1`](#6511-argparser_arg_delimiter_1) and [`ARGPARSER_ARG_DELIMITER_2`](#6512-argparser_arg_delimiter_2).
 
 #### 6.1.9. Argument group (`arg_group`)
 
@@ -2837,7 +2837,7 @@ The argument groups serve to group arguments in the help message. The first grou
 
 #### 6.1.10. Notes (`notes`)
 
-The notes are intended to give additional information about arguments that don't warrant the introduction of a new column in the arguments definition. This is usually true for notes that are rarely used, where thus the column's fields would be mostly empty. Currently, only `"deprecated"` is supported, but this is expected to change. This token advises the argparser to treat an argument as deprecated, emitting a warning, when it is given on the command line. Since command-line interfaces are prone to change over time, this warning allows you to gradually change your CLI, introducing replacement option names or even removing the functionality prior to removing the argument itself. By this, your script's users can slowly adapt to the new CLI.
+The notes are intended to give additional information about arguments that don't warrant the introduction of a new column in the arguments definition. This is usually true for notes that are rarely used, where thus the column's fields would be mostly empty. Currently, only `"deprecated"` is supported, but this is expected to change. This token advises the Argparser to treat an argument as deprecated, emitting a warning, when it is given on the command line. Since command-line interfaces are prone to change over time, this warning allows you to gradually change your CLI, introducing replacement option names or even removing the functionality prior to removing the argument itself. By this, your script's users can slowly adapt to the new CLI.
 
 #### 6.1.11. Help text (`help`)
 
@@ -2847,7 +2847,7 @@ The help text should consist of a terse summary of the argument's function, like
 <!-- <section file="reference/colors_and_styles.md"> -->
 ### 6.2. Colors and styles
 
-The argparser employs [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters") to set the appearance of error, warning, help, usage, and version messages. To this end, five environment variable are defined, *viz.*, [`ARGPARSER_HELP_STYLE`](#6528-argparser_help_style), [`ARGPARSER_USAGE_STYLE`](#6553-argparser_usage_style), [`ARGPARSER_VERSION_STYLE`](#6560-argparser_version_style), [`ARGPARSER_ERROR_STYLE`](#6521-argparser_error_style), and [`ARGPARSER_WARNING_STYLE`](#6561-argparser_warning_style). Since the escape codes are nonprintable, not any terminal or text editor may support them. Many terminals do, while *e.g.* [`less`](https://man7.org/linux/man-pages/man1/less.1.html "man7.org &rightarrow; man pages &rightarrow; less(1)") has a dedicated flag, `--raw-control-chars`.
+The Argparser employs [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters") to set the appearance of error, warning, help, usage, and version messages. To this end, five environment variable are defined, *viz.*, [`ARGPARSER_HELP_STYLE`](#6528-argparser_help_style), [`ARGPARSER_USAGE_STYLE`](#6553-argparser_usage_style), [`ARGPARSER_VERSION_STYLE`](#6560-argparser_version_style), [`ARGPARSER_ERROR_STYLE`](#6521-argparser_error_style), and [`ARGPARSER_WARNING_STYLE`](#6561-argparser_warning_style). Since the escape codes are nonprintable, not any terminal or text editor may support them. Many terminals do, while *e.g.* [`less`](https://man7.org/linux/man-pages/man1/less.1.html "man7.org &rightarrow; man pages &rightarrow; less(1)") has a dedicated flag, `--raw-control-chars`.
 
 When [`ARGPARSER_USE_STYLES_IN_FILES`](#6556-argparser_use_styles_in_files) is set to `false`, the escape sequences are only included when `STDOUT`/`STDERR` is a terminal, keeping files plain 7-bit ASCII for simpler parsing. Note that, when your arguments definition or help file includes non-ASCII characters (as is usual for almost any language other than English varieties), the output contains these characters as well.
 
@@ -2944,10 +2944,10 @@ The `@Help` directive prints the help text for the `--help`, `--usage`, and `--v
 <!-- <section file="reference/translations/introduction.md"> -->
 ### 6.4. Translations
 
-In order to facilitate translators the translation of the argparser-generated strings, most importantly the error and warning messages, and including the interpolated variables, they are listed here for reference, sorted by their occurence in the provided [translation.yaml](../resources/translation.yaml). Further, this should give an overview over the most likely reasons for argument parsing failures.
+In order to facilitate translators the translation of the Argparser-generated strings, most importantly the error and warning messages, and including the interpolated variables, they are listed here for reference, sorted by their occurence in the provided [translation.yaml](../resources/translation.yaml). Further, this should give an overview over the most likely reasons for argument parsing failures.
 
 > [!NOTE]
-> The translation keys in the simplified YAML file are subject to change, if messages are added or removed. Since missing keys only generate warnings (which can even be silenced using [`ARGPARSER_SILENCE_WARNINGS`](#6541-argparser_silence_warnings)), such changes are *not* considered breaking changes, and by this would *not* lead to an increase in the argparser's major version number. However, as few modifications as possible are anticipated, and only when other breaking changes are introduced, larger refactorings should occur.
+> The translation keys in the simplified YAML file are subject to change, if messages are added or removed. Since missing keys only generate warnings (which can even be silenced using [`ARGPARSER_SILENCE_WARNINGS`](#6541-argparser_silence_warnings)), such changes are *not* considered breaking changes, and by this would *not* lead to an increase in the Argparser's major version number. However, as few modifications as possible are anticipated, and only when other breaking changes are introduced, larger refactorings should occur.
 <!-- </section> -->
 
 <!-- <section file="reference/translations/toc.md"> -->
@@ -3068,7 +3068,7 @@ In order to facilitate translators the translation of the argparser-generated st
 #### 6.4.16. `Error env var bool`
 
 - ***Description:*** The error that an environment variable is not a boolean.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, has a value other than `true` and `false`.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value other than `true` and `false`.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -3076,7 +3076,7 @@ In order to facilitate translators the translation of the argparser-generated st
 #### 6.4.17. `Error env var char`
 
 - ***Description:*** The error that an environment variable is not a character.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, has a value whose length differs from one.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value whose length differs from one.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -3084,7 +3084,7 @@ In order to facilitate translators the translation of the argparser-generated st
 #### 6.4.18. `Error env var identifier`
 
 - ***Description:*** The error that an environment variable is not usable as a Bash variable identifier.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, has a value not matched by the regular expression `[[:alpha:]_]*([[:word:]])` in Bash's extglob syntax.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value not matched by the regular expression `[[:alpha:]_]*([[:word:]])` in Bash's extglob syntax.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -3092,7 +3092,7 @@ In order to facilitate translators the translation of the argparser-generated st
 #### 6.4.19. `Error env var int`
 
 - ***Description:*** The error that an environment variable is not an integer.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, has a value containing non-digit characters (excluding a leading sign).
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value containing non-digit characters (excluding a leading sign).
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -3100,7 +3100,7 @@ In order to facilitate translators the translation of the argparser-generated st
 #### 6.4.20. `Error env var uint`
 
 - ***Description:*** The error that an environment variable is not an unsigned integer.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, has a value containing non-digit characters (including a leading sign).
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value containing non-digit characters (including a leading sign).
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -3108,7 +3108,7 @@ In order to facilitate translators the translation of the argparser-generated st
 #### 6.4.21. `Error env var file 0001`
 
 - ***Description:*** The error that an environment variable refers to an empty file.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found empty.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found empty.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -3116,7 +3116,7 @@ In order to facilitate translators the translation of the argparser-generated st
 #### 6.4.22. `Error env var file 0010`
 
 - ***Description:*** The error that an environment variable refers to a file which is not readable.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found not to be readable.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found not to be readable.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -3124,7 +3124,7 @@ In order to facilitate translators the translation of the argparser-generated st
 #### 6.4.23. `Error env var file 0011`
 
 - ***Description:*** The error that an environment variable refers to an empty file which is also not readable.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found empty and not to be readable.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found empty and not to be readable.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -3132,7 +3132,7 @@ In order to facilitate translators the translation of the argparser-generated st
 #### 6.4.24. `Error env var file 0100`
 
 - ***Description:*** The error that an environment variable refers to a file which is not a regular file.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found not to be a regular file, like a directory, pipe, or socket.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found not to be a regular file, like a directory, pipe, or socket.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -3140,7 +3140,7 @@ In order to facilitate translators the translation of the argparser-generated st
 #### 6.4.25. `Error env var file 0101`
 
 - ***Description:*** The error that an environment variable refers to an empty file which is also not a regular file.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found empty and not to be a regular file, like a directory, pipe, or socket.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found empty and not to be a regular file, like a directory, pipe, or socket.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -3148,7 +3148,7 @@ In order to facilitate translators the translation of the argparser-generated st
 #### 6.4.26. `Error env var file 0110`
 
 - ***Description:*** The error that an environment variable refers to a file which is not a regular file and also not readable.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found not to be a regular file, like a directory, pipe, or socket, and also not readable.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found not to be a regular file, like a directory, pipe, or socket, and also not readable.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -3156,7 +3156,7 @@ In order to facilitate translators the translation of the argparser-generated st
 #### 6.4.27. `Error env var file 0111`
 
 - ***Description:*** The error that an environment variable refers to an empty file which is also not a regular file and not readable.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found empty and not to be a regular file, like a directory, pipe, or socket, and also not readable.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found empty and not to be a regular file, like a directory, pipe, or socket, and also not readable.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -3164,7 +3164,7 @@ In order to facilitate translators the translation of the argparser-generated st
 #### 6.4.28. `Error env var file 1111`
 
 - ***Description:*** The error that an environment variable refers to a nonexistent file.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file does not exist.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file does not exist.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -3172,7 +3172,7 @@ In order to facilitate translators the translation of the argparser-generated st
 #### 6.4.29. `Error env var styles`
 
 - ***Description:*** The error that an environment variable refers to an undefined [color or style](#62-colors-and-styles).
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, has a value intended to set a message color or style which does not exist.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to set a message color or style which does not exist.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -3180,26 +3180,26 @@ In order to facilitate translators the translation of the argparser-generated st
 #### 6.4.30. `Error env var option type`
 
 - ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](#6550-argparser_usage_message_option_type) is not set to `long` or `short`.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that the environment variable `ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, has a value other than `long` and `short`.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variable `ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value other than `long` and `short`.
 - ***Interpolated variables:***
   - `$1`: The environment variable's value.
 
 #### 6.4.31. `Error env var orientation`
 
 - ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_ORIENTATION`](#6551-argparser_usage_message_orientation) is not set to `row` or `column`.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that the environment variable `ARGPARSER_USAGE_MESSAGE_ORIENTATION`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, has a value other than `row` and `column`.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variable `ARGPARSER_USAGE_MESSAGE_ORIENTATION`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value other than `row` and `column`.
 - ***Interpolated variables:***
   - `$1`: The environment variable's value.
 
 #### 6.4.32. `Error env var delimiters`
 
 - ***Description:*** The error that the environment variables [`ARGPARSER_ARG_DELIMITER_1`](#6511-argparser_arg_delimiter_1) and [`ARGPARSER_ARG_DELIMITER_2`](#6512-argparser_arg_delimiter_2) have an identical value.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that the environment variables `ARGPARSER_ARG_DELIMITER_1` and `ARGPARSER_ARG_DELIMITER_2`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, have the same value, rendering parsing of the arguments definition impossible.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variables `ARGPARSER_ARG_DELIMITER_1` and `ARGPARSER_ARG_DELIMITER_2`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, have the same value, rendering parsing of the arguments definition impossible.
 
 #### 6.4.33. `Error env var short name empty`
 
 - ***Description:*** The error that an environment variable uses the empty string (`""`) as short option name.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, has the empty string (`""`) given as one of the short option names.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has the empty string (`""`) given as one of the short option names.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The number of short option names.
@@ -3207,7 +3207,7 @@ In order to facilitate translators the translation of the argparser-generated st
 #### 6.4.34. `Error env var short name length`
 
 - ***Description:*** The error that an environment variable has a too long short option name given.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, has a short option name given whose length is greater than one, which contradicts the definition of short options.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a short option name given whose length is greater than one, which contradicts the definition of short options.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The short option's name.
@@ -3215,7 +3215,7 @@ In order to facilitate translators the translation of the argparser-generated st
 #### 6.4.35. `Error env var short name inner duplication`
 
 - ***Description:*** The error that an environment variable has a short option name given multiple times.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, has a short option name given more than once in its own value.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a short option name given more than once in its own value.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The short option's name.
@@ -3224,7 +3224,7 @@ In order to facilitate translators the translation of the argparser-generated st
 #### 6.4.36. `Error env var short name outer duplication`
 
 - ***Description:*** The error that two environment variables have the same short option name given.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, has a short option name that was already given to an earlier parsed environment variable.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a short option name that was already given to an earlier parsed environment variable.
 - ***Interpolated variables:***
   - `$1`: The current environment variable's name.
   - `$2`: The short option's name.
@@ -3233,32 +3233,32 @@ In order to facilitate translators the translation of the argparser-generated st
 #### 6.4.37. `Error env var short options`
 
 - ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](#6430-error-env-var-option-type) requests short option names, while [`ARGPARSER_USE_SHORT_OPTIONS`](#6555-argparser_use_short_options) prohibits this.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that the environment variable `ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, is set to `short`, while `ARGPARSER_USE_SHORT_OPTIONS` is set to `false`. Consequently, the usage message could not be created, since no short option name is available.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variable `ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, is set to `short`, while `ARGPARSER_USE_SHORT_OPTIONS` is set to `false`. Consequently, the usage message could not be created, since no short option name is available.
 
 #### 6.4.38. `Error env var long options`
 
 - ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](#6430-error-env-var-option-type) requests long option names, while [`ARGPARSER_USE_LONG_OPTIONS`](#6554-argparser_use_long_options) prohibits this.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that the environment variable `ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, is set to `long`, while `ARGPARSER_USE_LONG_OPTIONS` is set to `false`. Consequently, the usage message could not be created, since no long option name is available.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variable `ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, is set to `long`, while `ARGPARSER_USE_LONG_OPTIONS` is set to `false`. Consequently, the usage message could not be created, since no long option name is available.
 
 #### 6.4.39. `Error env var files`
 
 - ***Description:*** The error that two environment variables refer to the same file.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the argparser invokation command line, or as an environment variable, has a value pointing to the same file as an earlier parsed environment variable. Since the files referred to by these environment variables have different meanings (like the argparser configuration and translation), it is impossible that both information is given in the same file.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](#6516-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](#6517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value pointing to the same file as an earlier parsed environment variable. Since the files referred to by these environment variables have different meanings (like the Argparser configuration and translation), it is impossible that both information is given in the same file.
 - ***Interpolated variables:***
   - `$1`: The first environment variable's name.
   - `$2`: The second environment variable's name.
 
 #### 6.4.40. `Error arg array 1`
 
-- ***Description:*** The error that no arguments definition has been provided upon calling the argparser.
-- ***Reasons for error:*** When calling (and not sourcing) the argparser, the arguments definition must be provided through STDIN, either by piping or by process substitution. However, STDIN (file descriptor 0) has been deemed empty.
+- ***Description:*** The error that no arguments definition has been provided upon calling the Argparser.
+- ***Reasons for error:*** When calling (and not sourcing) the Argparser, the arguments definition must be provided through STDIN, either by piping or by process substitution. However, STDIN (file descriptor 0) has been deemed empty.
 - ***Interpolated variables:***
-  - `$1`: The path to the argparser, as [`ARGPARSER_SCRIPT_NAME`](#6537-argparser_script_name).
+  - `$1`: The path to the Argparser, as [`ARGPARSER_SCRIPT_NAME`](#6537-argparser_script_name).
 
 #### 6.4.41. `Error arg array 2`
 
 - ***Description:*** The error that [`ARGPARSER_ARG_ARRAY_NAME`](#659-argparser_arg_array_name) refers to a variable that's not defined.
-- ***Reasons for error:*** The arguments definition must be provided as an array variable whose name is stored in `ARGPARSER_ARG_ARRAY_NAME`. If this variable is not defined, the argparser tries to guess how it might have been called by looking for all variable names starting with `"arg"` and reports the first match.
+- ***Reasons for error:*** The arguments definition must be provided as an array variable whose name is stored in `ARGPARSER_ARG_ARRAY_NAME`. If this variable is not defined, the Argparser tries to guess how it might have been called by looking for all variable names starting with `"arg"` and reports the first match.
 - ***Interpolated variables:***
   - `$1`: The variable `ARGPARSER_ARG_ARRAY_NAME` refers to.
   - `$2`: The guesstimated actual name of the variable.
@@ -3266,35 +3266,35 @@ In order to facilitate translators the translation of the argparser-generated st
 #### 6.4.42. `Error arg array 3`
 
 - ***Description:*** The error that [`ARGPARSER_ARG_ARRAY_NAME`](#659-argparser_arg_array_name) refers to a variable that's not defined.
-- ***Reasons for error:*** The arguments definition must be provided as an array variable whose name is stored in `ARGPARSER_ARG_ARRAY_NAME`. If this variable is not defined, the argparser tries to guess how it might have been called by looking for all variable names starting with `"arg"`, but didn't find any match.
+- ***Reasons for error:*** The arguments definition must be provided as an array variable whose name is stored in `ARGPARSER_ARG_ARRAY_NAME`. If this variable is not defined, the Argparser tries to guess how it might have been called by looking for all variable names starting with `"arg"`, but didn't find any match.
 - ***Interpolated variables:***
   - `$1`: The variable `ARGPARSER_ARG_ARRAY_NAME` refers to.
 
 #### 6.4.43. `Error no arg def`
 
 - ***Description:*** The error that an argument is lacking a definition.
-- ***Reasons for error:*** When reading the arguments definition, the argparser found a definition line giving only an argument name, but no definition corresponding to this argument in the accompanying [`ARGPARSER_ARG_DEF_FILE`](#6510-argparser_arg_def_file).
+- ***Reasons for error:*** When reading the arguments definition, the Argparser found a definition line giving only an argument name, but no definition corresponding to this argument in the accompanying [`ARGPARSER_ARG_DEF_FILE`](#6510-argparser_arg_def_file).
 - ***Interpolated variables:***
   - `$1`: The problematic arguments definition line with the argument.
 
 #### 6.4.44. `Error arg def id`
 
 - ***Description:*** The error that the arguments definition in the script lacks the `id` column.
-- ***Reasons for error:*** When parsing the arguments definition from the script, the argparser found the definition lacking the token `id` in the header.
+- ***Reasons for error:*** When parsing the arguments definition from the script, the Argparser found the definition lacking the token `id` in the header.
 - ***Interpolated variables:***
   - `$1`: The [`ARGPARSER_SCRIPT_NAME`](#6537-argparser_script_name) with the problematic definition.
 
 #### 6.4.45. `Error arg def file id`
 
 - ***Description:*** The error that the arguments definition in the [`ARGPARSER_ARG_DEF_FILE`](#6510-argparser_arg_def_file) lacks a column, instead giving an unused one.
-- ***Reasons for error:*** When parsing the arguments definition from the `ARGPARSER_ARG_DEF_FILE`, the argparser found the definition lacking the token `id` in the header.
+- ***Reasons for error:*** When parsing the arguments definition from the `ARGPARSER_ARG_DEF_FILE`, the Argparser found the definition lacking the token `id` in the header.
 - ***Interpolated variables:***
   - `$1`: The [`ARGPARSER_ARG_DEF_FILE`](#6510-argparser_arg_def_file) with the problematic definition.
 
 #### 6.4.46. `Error arg def field count`
 
 - ***Description:*** The error that in the arguments definition in the script, the lines have differing field counts.
-- ***Reasons for error:*** When parsing the arguments definition from the script, the argparser found a line in the definition having a different number of fields (columns) than the header. Thus, the header fields cannot be mapped to the line's fields.
+- ***Reasons for error:*** When parsing the arguments definition from the script, the Argparser found a line in the definition having a different number of fields (columns) than the header. Thus, the header fields cannot be mapped to the line's fields.
 - ***Interpolated variables:***
   - `$1`: The [`ARGPARSER_SCRIPT_NAME`](#6537-argparser_script_name) with the problematic definition.
   - `$2`: The current line.
@@ -3304,7 +3304,7 @@ In order to facilitate translators the translation of the argparser-generated st
 #### 6.4.47. `Error arg def file id`
 
 - ***Description:*** The error that in the arguments definition in the [`ARGPARSER_ARG_DEF_FILE`](#6510-argparser_arg_def_file), the lines have differing field counts.
-- ***Reasons for error:*** When parsing the arguments definition from the `ARGPARSER_ARG_DEF_FILE`, the argparser found a line in the definition having a different number of fields (columns) than the header. Thus, the header fields cannot be mapped to the line's fields.
+- ***Reasons for error:*** When parsing the arguments definition from the `ARGPARSER_ARG_DEF_FILE`, the Argparser found a line in the definition having a different number of fields (columns) than the header. Thus, the header fields cannot be mapped to the line's fields.
 - ***Interpolated variables:***
   - `$1`: The [`ARGPARSER_ARG_DEF_FILE`](#6510-argparser_arg_def_file) with the problematic definition.
   - `$2`: The current line.
@@ -3315,7 +3315,7 @@ In order to facilitate translators the translation of the argparser-generated st
 <!-- <section file="reference/environment_variables/introduction.md"> -->
 ### 6.5. Environment variables
 
-The argparser defines a large set of environment variables, each following the naming pattern `"ARGPARSER_*"`. They are used to control the behavior of the argument parsing, help and usage message generation, and much more. Note that, if for some reason your script or environment is using a variable with the same name as one of the argparser variables, the argparser might not work as expected. If you want to be 100&#8239;% safe, you can unset any variable following the given pattern prior setting any desired argparser variables and sourcing the argparser&mdash;with the caveat that in turn the program that set the variable might not work, anymore.
+The Argparser defines a large set of environment variables, each following the naming pattern `"ARGPARSER_*"`. They are used to control the behavior of the argument parsing, help and usage message generation, and much more. Note that, if for some reason your script or environment is using a variable with the same name as one of the Argparser variables, the Argparser might not work as expected. If you want to be 100&#8239;% safe, you can unset any variable following the given pattern prior setting any desired Argparser variables and sourcing the Argparser&mdash;with the caveat that in turn the program that set the variable might not work, anymore.
 <!-- </section> -->
 
 <!-- <section file="reference/environment_variables/toc.md"> -->
@@ -3545,15 +3545,15 @@ The argparser defines a large set of environment variables, each following the n
 - ***Type:*** *str* (String)
 - ***Allowed values:*** *None*
 - ***Default value:*** *None* (unset)
-- ***Description:*** The version number of the argparser to be used in the version message, using [semantic versioning](https://semver.org/ "semver.org"), *i.e.*, with the version numbers given by major version, minor version, and patch, separated by dots. This variable is read-only and *must not be set* by your script, else, an error is thrown. The argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#6544-argparser_unset_env_vars) is set to `false`).  
-Besides the version message you (not your script's user) can call, the main purpose of `ARGPARSER_ARGPARSER_VERSION` is to simplify the transition to newer argparser versions. Whenever breaking changes are made, there will be scripts given in the repository that will try to automatically upgrade your code, as far as possible, to comply with new features.
+- ***Description:*** The version number of the Argparser to be used in the version message, using [semantic versioning](https://semver.org/ "semver.org"), *i.e.*, with the version numbers given by major version, minor version, and patch, separated by dots. This variable is read-only and *must not be set* by your script, else, an error is thrown. The Argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#6544-argparser_unset_env_vars) is set to `false`).  
+Besides the version message you (not your script's user) can call, the main purpose of `ARGPARSER_ARGPARSER_VERSION` is to simplify the transition to newer Argparser versions. Whenever breaking changes are made, there will be scripts given in the repository that will try to automatically upgrade your code, as far as possible, to comply with new features.
 
 #### 6.5.14. `ARGPARSER_ARGS`
 
 - ***Type:*** *arr* (Indexed, later associative array)
 - ***Allowed values:*** *None*
 - ***Default value:*** *None* (unset)
-- ***Description:*** The indexed array in which the argparser's options are stored, and later, the associative array for their values. This array *must not be set* by your script, else, an error is thrown. The argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#6544-argparser_unset_env_vars) is set to `false`).
+- ***Description:*** The indexed array in which the Argparser's options are stored, and later, the associative array for their values. This array *must not be set* by your script, else, an error is thrown. The Argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#6544-argparser_unset_env_vars) is set to `false`).
 
 #### 6.5.15. `ARGPARSER_CHECK_ARG_DEF`
 
@@ -3567,17 +3567,17 @@ Besides the version message you (not your script's user) can call, the main purp
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
-- ***Description:*** Whether to check if the argparser environment variables accord to their definition. Again, this may only need to only be turned on (set to `true`) for testing purposes, while in production environments, keeping it deactivated saves some (minimal) computation time. Still, if the user can modify the environment variables at some point (not recommended as it may lead to code injection!), you should activate it.
+- ***Description:*** Whether to check if the Argparser environment variables accord to their definition. Again, this may only need to only be turned on (set to `true`) for testing purposes, while in production environments, keeping it deactivated saves some (minimal) computation time. Still, if the user can modify the environment variables at some point (not recommended as it may lead to code injection!), you should activate it.
 
 #### 6.5.17. `ARGPARSER_CONFIG_FILE`
 
 - ***Type:*** *file* (Filepath)
 - ***Allowed values:*** Any legit filepath or the empty string `""`
 - ***Default value:*** `""`
-- ***Description:*** The path to a file holding the argparser configuration. The lines will be read into environment variables, but those that are already defined within your script or environment override the specification in the `ARGPARSER_CONFIG_FILE`. This file may be used by multiple scripts.
+- ***Description:*** The path to a file holding the Argparser configuration. The lines will be read into environment variables, but those that are already defined within your script or environment override the specification in the `ARGPARSER_CONFIG_FILE`. This file may be used by multiple scripts.
 
 > [!CAUTION]
-> The argparser reads the lines into variables without checking them! If the user can modify the `ARGPARSER_CONFIG_FILE`, this is prone to command injection!
+> The Argparser reads the lines into variables without checking them! If the user can modify the `ARGPARSER_CONFIG_FILE`, this is prone to command injection!
 
 #### 6.5.18. `ARGPARSER_COUNT_FLAGS`
 
@@ -3591,7 +3591,7 @@ Besides the version message you (not your script's user) can call, the main purp
 - ***Type:*** *dict* (Dictionary / associative array)
 - ***Allowed values:*** *None*
 - ***Default value:*** *None* (unset)
-- ***Description:*** The associative array in which to store the translation from the [`ARGPARSER_TRANSLATION_FILE`](#6542-argparser_translation_file) for the [`ARGPARSER_LANGUAGE`](#6529-argparser_language). This array *must not be set* by your script, else, an error is thrown. The argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#6544-argparser_unset_env_vars) is set to `false`).
+- ***Description:*** The associative array in which to store the translation from the [`ARGPARSER_TRANSLATION_FILE`](#6542-argparser_translation_file) for the [`ARGPARSER_LANGUAGE`](#6529-argparser_language). This array *must not be set* by your script, else, an error is thrown. The Argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#6544-argparser_unset_env_vars) is set to `false`).
 
 #### 6.5.20. `ARGPARSER_ERROR_EXIT_CODE`
 
@@ -3711,7 +3711,7 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Type:*** *arr* (Indexed array)
 - ***Allowed values:*** *None*
 - ***Default value:*** *None* (unset)
-- ***Description:*** The indexed array in which the argparser stores your script's command line upon parsing its own arguments. This array *must not be set* by your script, else, an error is thrown. The argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#6544-argparser_unset_env_vars) is set to `false`).
+- ***Description:*** The indexed array in which the Argparser stores your script's command line upon parsing its own arguments. This array *must not be set* by your script, else, an error is thrown. The Argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#6544-argparser_unset_env_vars) is set to `false`).
 
 #### 6.5.37. `ARGPARSER_SCRIPT_NAME`
 
@@ -3728,28 +3728,28 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Description:*** Whether to set the (read and parsed) arguments from the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#659-argparser_arg_array_name) refers to as variables in the calling script's scope.
 
 > [!CAUTION]
-> The argparser performs no complex sanity checks for argument values! Automatically setting them as variables to the script is prone to command injection!
+> The Argparser performs no complex sanity checks for argument values! Automatically setting them as variables to the script is prone to command injection!
 
 #### 6.5.39. `ARGPARSER_SET_ARRAYS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to set arguments intended to have multiple values as indexed array. This is only evaluated if [`ARGPARSER_SET_ARGS`](#6538-argparser_set_args) is `true`. While it can be very helpful in a script to have the multiple values already set to an array that can be iterated over, the drawback is that arrays are hard to transfer to other scripts and may need to be serialized. Since they come in serialized form from the argparser, a temporary expansion to an array might be unnecessary.
+- ***Description:*** Whether to set arguments intended to have multiple values as indexed array. This is only evaluated if [`ARGPARSER_SET_ARGS`](#6538-argparser_set_args) is `true`. While it can be very helpful in a script to have the multiple values already set to an array that can be iterated over, the drawback is that arrays are hard to transfer to other scripts and may need to be serialized. Since they come in serialized form from the Argparser, a temporary expansion to an array might be unnecessary.
 
 #### 6.5.40. `ARGPARSER_SILENCE_ERRORS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
-- ***Description:*** Whether to silence the emission (output) of error messages. This should rarely be needed since the argparser still stops running after a critical failure (which is the reason for error messages), but it may clean up your output when logging. See also [`ARGPARSER_SILENCE_WARNINGS`](#6541-argparser_silence_warnings).
+- ***Description:*** Whether to silence the emission (output) of error messages. This should rarely be needed since the Argparser still stops running after a critical failure (which is the reason for error messages), but it may clean up your output when logging. See also [`ARGPARSER_SILENCE_WARNINGS`](#6541-argparser_silence_warnings).
 
 #### 6.5.41. `ARGPARSER_SILENCE_WARNINGS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
-- ***Description:*** Whether to silence the emission (output) of warning messages. Like [`ARGPARSER_SILENCE_ERRORS`](#6540-argparser_silence_errors), this should rarely be needed, but as the argparser continues running after a non-critical failure (which is the reason for warning messages), these messages may not strictly be required for your script's user.
+- ***Description:*** Whether to silence the emission (output) of warning messages. Like [`ARGPARSER_SILENCE_ERRORS`](#6540-argparser_silence_errors), this should rarely be needed, but as the Argparser continues running after a non-critical failure (which is the reason for warning messages), these messages may not strictly be required for your script's user.
 
 #### 6.5.42. `ARGPARSER_TRANSLATION_FILE`
 
@@ -3763,21 +3763,21 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to unset (remove) all command-line arguments given to the script. This is usually what you want, as the argparser re-sets these values in parsed form.
+- ***Description:*** Whether to unset (remove) all command-line arguments given to the script. This is usually what you want, as the Argparser re-sets these values in parsed form.
 
 #### 6.5.44. `ARGPARSER_UNSET_ENV_VARS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to unset (remove) the argparser environment variables from the environment. As long as you don't need these variables anymore or want to reset them prior to the next argparser invokation, this is usually what you want. This prevents accidental (but also deliberate) inheritance to child scripts when passing the entire environment to them.
+- ***Description:*** Whether to unset (remove) the Argparser environment variables from the environment. As long as you don't need these variables anymore or want to reset them prior to the next Argparser invokation, this is usually what you want. This prevents accidental (but also deliberate) inheritance to child scripts when passing the entire environment to them.
 
 #### 6.5.45. `ARGPARSER_UNSET_FUNCTIONS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to unset (remove) the argparser functions from the environment. You should not need them separated from an argparser invokation, where they're automatically defined (set) upon sourcing it. By unsetting them, the namespace is kept clean.
+- ***Description:*** Whether to unset (remove) the Argparser functions from the environment. You should not need them separated from an Argparser invokation, where they're automatically defined (set) upon sourcing it. By unsetting them, the namespace is kept clean.
 
 #### 6.5.46. `ARGPARSER_USAGE_EXIT_CODE`
 
@@ -3840,14 +3840,14 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to accept long option names upon parsing and creating the help and usage messages. If your script doesn't take any long option, it may be practical to disable also the long options the argparser sets, *viz.* `--help`, `--usage`, and `--version` (given that [`ARGPARSER_ADD_HELP`](#652-argparser_add_help), [`ARGPARSER_ADD_USAGE`](#653-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](#654-argparser_add_version), respectively, are set). Additionally, the help message will only have two columns (the short option names and the help texts), then.
+- ***Description:*** Whether to accept long option names upon parsing and creating the help and usage messages. If your script doesn't take any long option, it may be practical to disable also the long options the Argparser sets, *viz.* `--help`, `--usage`, and `--version` (given that [`ARGPARSER_ADD_HELP`](#652-argparser_add_help), [`ARGPARSER_ADD_USAGE`](#653-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](#654-argparser_add_version), respectively, are set). Additionally, the help message will only have two columns (the short option names and the help texts), then.
 
 #### 6.5.55. `ARGPARSER_USE_SHORT_OPTIONS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to accept short option names upon parsing and creating the help and usage messages. If your script doesn't take any short option, it may be practical to disable also the short options the argparser sets, *viz.* the [`ARGPARSER_HELP_OPTIONS`](#6527-argparser_help_options), the [`ARGPARSER_USAGE_OPTIONS`](#6552-argparser_usage_options), and the [`ARGPARSER_VERSION_OPTIONS`](#6559-argparser_version_options) (given that [`ARGPARSER_ADD_HELP`](#652-argparser_add_help), [`ARGPARSER_ADD_USAGE`](#653-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](#654-argparser_add_version), respectively, are set). Additionally, the help message will only have two columns (the long option names and the help texts), then.
+- ***Description:*** Whether to accept short option names upon parsing and creating the help and usage messages. If your script doesn't take any short option, it may be practical to disable also the short options the Argparser sets, *viz.* the [`ARGPARSER_HELP_OPTIONS`](#6527-argparser_help_options), the [`ARGPARSER_USAGE_OPTIONS`](#6552-argparser_usage_options), and the [`ARGPARSER_VERSION_OPTIONS`](#6559-argparser_version_options) (given that [`ARGPARSER_ADD_HELP`](#652-argparser_add_help), [`ARGPARSER_ADD_USAGE`](#653-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](#654-argparser_add_version), respectively, are set). Additionally, the help message will only have two columns (the long option names and the help texts), then.
 
 #### 6.5.56. `ARGPARSER_USE_STYLES_IN_FILES`
 
@@ -3896,5 +3896,5 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
-- ***Description:*** Whether to write the arguments from [`ARGPARSER_ARG_ARRAY_NAME`](#659-argparser_arg_array_name) to STDOUT. This is required for running the argparser in a pipe to be able to access the parsed arguments. These are output as key&ndash;value pairs, separated by linefeeds.
+- ***Description:*** Whether to write the arguments from [`ARGPARSER_ARG_ARRAY_NAME`](#659-argparser_arg_array_name) to STDOUT. This is required for running the Argparser in a pipe to be able to access the parsed arguments. These are output as key&ndash;value pairs, separated by linefeeds.
 <!-- </section> -->

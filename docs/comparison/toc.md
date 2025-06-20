@@ -7,7 +7,7 @@
    1. [`getopt`](example_scripts/getopt.md#422-getopt)
    1. [shFlags](example_scripts/shflags.md#423-shflags)
    1. [docopts](example_scripts/docopts.md#424-docopts)
-   1. [argparser](example_scripts/argparser.md#425-argparser)
+   1. [Argparser](example_scripts/argparser.md#425-argparser)
 1. [Summary](summary.md#43-summary)
 <!-- </toc> -->
 

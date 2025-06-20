@@ -1,4 +1,4 @@
-#### 4.2.5. argparser
+#### 4.2.5. Argparser
 
 <details open>
 
@@ -60,7 +60,7 @@ bash argparser_wrapper.sh --version
 
 Notes:
 
-- Trailing positional arguments must be delimited with `--` since the argparser aggregates all values after option names to them, as design decision.
+- Trailing positional arguments must be delimited with `--` since the Argparser aggregates all values after option names to them, as design decision.
 - Intermixing positional and keyword arguments can be emulated by using the positional arguments delimiter `++`. True intermixing is yet disabled as design decision.
 
 [&#129092;&nbsp;`docopts.md`](docopts.md)

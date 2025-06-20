@@ -2,13 +2,13 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-04
+# Last Modification: 2025-06-20
 
 # Usage: Run this script with "bash test_localization.sh".
 
-# Purpose: Test the functionality of the argparser.
+# Purpose: Test the functionality of the Argparser.
 
-# Set the argparser, reading the arguments definition, help message, and
+# Set the Argparser, reading the arguments definition, help message, and
 # translation from a file.
 dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
 dir="$(readlink --canonicalize-existing "${dir}/../resources/")"

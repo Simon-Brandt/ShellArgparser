@@ -2,11 +2,11 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-16
+# Last Modification: 2025-06-20
 
 # Usage: Run this script with "bash argparser_wrapper.sh".
 
-# Purpose: Parse the command line using the argparser.
+# Purpose: Parse the command line using the Argparser.
 
 # Parse the arguments.
 # shellcheck disable=SC2190  # Indexed, not associative array.

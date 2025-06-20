@@ -7,11 +7,11 @@ The following command-line parsers are compared in the given versions:
 - [shFlags](https://github.com/kward/shflags "github.com &rightarrow; kward &rightarrow; shFlags"): clone of Google's C++ [`gflags`](https://gflags.github.io/gflags/ "github.io &rightarrow; gflags") library for Unix-like shells, `v1.3.0`
 - [docopts](https://github.com/docopt/docopts "github.com &rightarrow; docopt &rightarrow; docopts"): Go implementation of the platform-independent command-line interface description language and parser `docopt` with Bash wrapper, `v0.6.4`
 - [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module"): Python module from the stdlib, from Python `v3.13`
-- argparser: novel shell command-line parser, `v0.1.0`
+- Argparser: novel shell command-line parser, `v0.1.0`
 
 In the following table, "&#10008;" marks the absence of a feature, "&#10004;" its presence, and "&#10033;" its partial presence, *e.g.*, due to a not-yet complete implementation.
 
-| Function                                    | `getopts`     | `getopt`      | shFlags      | docopts      | `argparse`    | argparser    |
+| Function                                    | `getopts`     | `getopt`      | shFlags      | docopts      | `argparse`    | Argparser    |
 |---------------------------------------------|---------------|---------------|--------------|--------------|---------------|--------------|
 | Short options                               | &#10004;      | &#10004;      | &#10004;     | &#10004;     | &#10004;      | &#10004;     |
 | Long options                                | &#10008;      | &#10004;      | &#10004;     | &#10004;     | &#10004;      | &#10004;     |

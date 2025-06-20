@@ -2,14 +2,14 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-03
+# Last Modification: 2025-06-20
 
 # Usage: Run this script with "bash try_arg_def_file.sh".
 
-# Purpose: Demonstrate the functionality of the argparser regarding the
+# Purpose: Demonstrate the functionality of the Argparser regarding the
 # inclusion of an arguments definition file.
 
-# Set the argparser, reading the arguments definition from a file.
+# Set the Argparser, reading the arguments definition from a file.
 dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
 dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
 ARGPARSER_ARG_DEF_FILE="${dir}/arguments.csv"

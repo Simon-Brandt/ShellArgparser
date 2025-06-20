@@ -2,14 +2,14 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-04-02
+# Last Modification: 2025-06-20
 
 # Usage: Run this script with "sh test_pipeline.sh".
 
-# Purpose: Demonstrate the functionality of the argparser regarding the
+# Purpose: Demonstrate the functionality of the Argparser regarding the
 # standalone mode as part of a pipeline.
 
-# Run the argparser in standalone mode from POSIX sh, reading from and
+# Run the Argparser in standalone mode from POSIX sh, reading from and
 # writing to a pipe.
 export ARGPARSER_SCRIPT_NAME="${0##*/}"
 export ARGPARSER_WRITE_ARGS=true

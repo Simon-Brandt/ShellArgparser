@@ -22,7 +22,7 @@
       1. [`getopt`](comparison/example_scripts/getopt.md#422-getopt)
       1. [shFlags](comparison/example_scripts/shflags.md#423-shflags)
       1. [docopts](comparison/example_scripts/docopts.md#424-docopts)
-      1. [argparser](comparison/example_scripts/argparser.md#425-argparser)
+      1. [Argparser](comparison/example_scripts/argparser.md#425-argparser)
    1. [Summary](comparison/summary.md#43-summary)
 1. [Roadmap](roadmap.md#5-roadmap)
    1. [Future enhancements](roadmap.md#51-future-enhancements)

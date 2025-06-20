@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-04
+# Last Modification: 2025-06-20
 
 # 1.    Define the translations for the arguments parsing.
 ---
@@ -293,9 +293,9 @@ Error env var files:
 ---
 Error arg array 1:
   en: >
-    Error: Calling (instead of sourcing) the argparser requires the arguments
+    Error: Calling (instead of sourcing) the Argparser requires the arguments
     definition to be provided through STDIN, separated by newlines.  Either
-    pipe to the argparser or use process substitution to give input. 
+    pipe to the Argparser or use process substitution to give input. 
     Alternatively, try "$1 --help" to get a help message with further
     information.
   de: >

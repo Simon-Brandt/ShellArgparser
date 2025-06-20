@@ -1,8 +1,8 @@
 # Shell Argparser
 
-The argparser is designed to be an easy-to-use, yet powerful command-line argument parser for your shell scripts. It is mainly targeting Bash, but other shells are supported, as well.
+The Argparser is designed to be an easy-to-use, yet powerful command-line argument parser for your shell scripts. It is mainly targeting Bash, but other shells are supported, as well.
 
-Applying the argparser should lead to shorter and more concise code than the traditional [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)") and [`getopts`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-getopts "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; getopts") allow. More importantly, the user-friendliness of argparser-powered command-line parsing is far superior thanks to a wide range of checked conditions with meaningful error messages. The argparser is inspired by the Python [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module") module.
+Applying the Argparser should lead to shorter and more concise code than the traditional [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)") and [`getopts`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-getopts "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; getopts") allow. More importantly, the user-friendliness of Argparser-powered command-line parsing is far superior thanks to a wide range of checked conditions with meaningful error messages. The Argparser is inspired by the Python [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module") module.
 
 <!-- <toc> -->
 ## Table of contents
@@ -27,7 +27,7 @@ Applying the argparser should lead to shorter and more concise code than the tra
 
 ## 2. Quick start
 
-No installation of the argparser is necessary, just clone the repository and add its location to the [`PATH`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Variables.html#index-PATH "gnu.org &rightarrow; Bourne Shell Variables &rightarrow; PATH") variable. Alternatively, you may move the [argparser executable](argparser) into a directory which is already covered by your `PATH`. All other files within the repository serve documentation and testing purposes, and you don't need to keep them.
+No installation of the Argparser is necessary, just clone the repository and add its location to the [`PATH`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Variables.html#index-PATH "gnu.org &rightarrow; Bourne Shell Variables &rightarrow; PATH") variable. Alternatively, you may move the [Argparser executable](argparser) into a directory which is already covered by your `PATH`. All other files within the repository serve documentation and testing purposes, and you don't need to keep them.
 
 ```bash
 # Switch to the installation directory of your choice, e.g., /usr/local/bin.
@@ -40,7 +40,7 @@ git clone https://github.com/Simon-Brandt/ShellArgparser.git
 PATH="/path/to/ShellArgparser:${PATH}"
 ```
 
-There is ample documentation in the [docs](docs) directory, which you should consult to learn all the functionality the argparser provides.
+There is ample documentation in the [docs](docs) directory, which you should consult to learn all the functionality the Argparser provides.
 
 A very simple quick-start script may look like this:
 
@@ -52,7 +52,7 @@ A very simple quick-start script may look like this:
 ```bash
 #!/bin/bash
 
-# Source the argparser.  As the arguments have multiple short and long
+# Source the Argparser.  As the arguments have multiple short and long
 # options, override the default column widths for the help message.
 ARGPARSER_MAX_COL_WIDTH_1=9
 ARGPARSER_MAX_COL_WIDTH_2=33
@@ -91,17 +91,17 @@ done
 
 </details>
 
-First, you need to define the arguments your script shall accept, in a tabular manner. Then, you [`source`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash Builtins &rightarrow; source") the argparser with the current command line (sourcing means in-place execution without forking). Upon this, the argparser will parse your script's command line, check the arguments for validity, set default values, and assign the values to variables in your script's environment. Many of these steps can be customized by [environment variables](docs/reference/environment_variables/overview.md). The script's remainder just prints the optional and required keyword and positional arguments, and is not a part of the argparser invokation.
+First, you need to define the arguments your script shall accept, in a tabular manner. Then, you [`source`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash Builtins &rightarrow; source") the Argparser with the current command line (sourcing means in-place execution without forking). Upon this, the Argparser will parse your script's command line, check the arguments for validity, set default values, and assign the values to variables in your script's environment. Many of these steps can be customized by [environment variables](docs/reference/environment_variables/overview.md). The script's remainder just prints the optional and required keyword and positional arguments, and is not a part of the Argparser invokation.
 
 ## 3. Dependencies
 
-The argparser is a plain Bash script that does not invoke external commands (only builtins) by design decision. This allows running your script on multiple platforms, as long as Bash is installed, without adding further dependencies to your script.
+The Argparser is a plain Bash script that does not invoke external commands (only builtins) by design decision. This allows running your script on multiple platforms, as long as Bash is installed, without adding further dependencies to your script.
 
 **For running:**
 
 - Bash &geq; 4.0
 
-For simply running the argparser, only Bash is required. Bash &geq; 4.0 is known to be mandatory, but testing occurred solely on Bash 5.2. Thus, please file an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues") if you encounter errors for versions earlier than 5.2, to update the minimum version, here.
+For simply running the Argparser, only Bash is required. Bash &geq; 4.0 is known to be mandatory, but testing occurred solely on Bash 5.2. Thus, please file an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues") if you encounter errors for versions earlier than 5.2, to update the minimum version, here.
 
 **For contributing:**
 
@@ -122,17 +122,17 @@ When contributing to the repository, you may to install need additional dependen
 
 The [Markdown Tools](https://github.com/Simon-Brandt/MarkdownTools "github.com &rightarrow; Simon-Brandt &rightarrow; MarkdownTools") are required to create the documentation. This does not necessarily apply for small changes, if you change both the [source](docs/src.sh) and the respective documentation chapter by hand. If you modify headings or want to include files, the Markdown Tools are indispensable, since, *e.g.*, they automatically adjust the heading numbering and hyperlinks.
 
-For comparing the argparser to other command-line parsers, [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)"), [shFlags](https://github.com/kward/shflags "github.com &rightarrow; kward &rightarrow; shFlags"), and [docopts](https://github.com/docopt/docopts "github.com &rightarrow; docopt &rightarrow; docopts") must be installed and added to your [`PATH`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Variables.html#index-PATH "gnu.org &rightarrow; Bourne Shell Variables &rightarrow; PATH"). Within the invoked [`process_html_template.sh`](comparison/process_html_template.sh), [`sed`](https://man7.org/linux/man-pages/man1/sed.1.html "man7.org &rightarrow; man pages &rightarrow; sed(1)") is called. Finally, [Julia](https://julialang.org/ "julialang.org") and its libraries are used to benchmark the scripts. Unless contributing an entirely new feature to the argparser, you don't need to bother about executing the comparison scripts, and thus don't need to install these dependencies.
+For comparing the Argparser to other command-line parsers, [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)"), [shFlags](https://github.com/kward/shflags "github.com &rightarrow; kward &rightarrow; shFlags"), and [docopts](https://github.com/docopt/docopts "github.com &rightarrow; docopt &rightarrow; docopts") must be installed and added to your [`PATH`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Variables.html#index-PATH "gnu.org &rightarrow; Bourne Shell Variables &rightarrow; PATH"). Within the invoked [`process_html_template.sh`](comparison/process_html_template.sh), [`sed`](https://man7.org/linux/man-pages/man1/sed.1.html "man7.org &rightarrow; man pages &rightarrow; sed(1)") is called. Finally, [Julia](https://julialang.org/ "julialang.org") and its libraries are used to benchmark the scripts. Unless contributing an entirely new feature to the Argparser, you don't need to bother about executing the comparison scripts, and thus don't need to install these dependencies.
 
 ## 4. Contributions
 
 Please open an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues") if you:
 
-- found a bug in the argparser
+- found a bug in the Argparser
 - discovered an error in the [documentation](docs) (even a spelling or grammar mistake!)
 - want to propose a new feature
 - want to contribute code (please don't start a pull request prior opening an issue)
-- need help with running the argparser, after having consulted the docs to no avail
+- need help with running the Argparser, after having consulted the docs to no avail
 
 You're invited to fix issues yourself, especially trivial mistakes in the docs. To this end, [fork](https://github.com/Simon-Brandt/ShellArgparser/fork) the repository, make the necessary changes, and open a [pull request (PR)](https://github.com/Simon-Brandt/ShellArgparser/compare "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Pull Requests") to merge your changes.
 

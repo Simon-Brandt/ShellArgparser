@@ -80,15 +80,15 @@
 - ***Type:*** *str* (String)
 - ***Allowed values:*** *None*
 - ***Default value:*** *None* (unset)
-- ***Description:*** The version number of the argparser to be used in the version message, using [semantic versioning](https://semver.org/ "semver.org"), *i.e.*, with the version numbers given by major version, minor version, and patch, separated by dots. This variable is read-only and *must not be set* by your script, else, an error is thrown. The argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#6544-argparser_unset_env_vars) is set to `false`).  
-Besides the version message you (not your script's user) can call, the main purpose of `ARGPARSER_ARGPARSER_VERSION` is to simplify the transition to newer argparser versions. Whenever breaking changes are made, there will be scripts given in the repository that will try to automatically upgrade your code, as far as possible, to comply with new features.
+- ***Description:*** The version number of the Argparser to be used in the version message, using [semantic versioning](https://semver.org/ "semver.org"), *i.e.*, with the version numbers given by major version, minor version, and patch, separated by dots. This variable is read-only and *must not be set* by your script, else, an error is thrown. The Argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#6544-argparser_unset_env_vars) is set to `false`).  
+Besides the version message you (not your script's user) can call, the main purpose of `ARGPARSER_ARGPARSER_VERSION` is to simplify the transition to newer Argparser versions. Whenever breaking changes are made, there will be scripts given in the repository that will try to automatically upgrade your code, as far as possible, to comply with new features.
 
 #### 6.5.14. `ARGPARSER_ARGS`
 
 - ***Type:*** *arr* (Indexed, later associative array)
 - ***Allowed values:*** *None*
 - ***Default value:*** *None* (unset)
-- ***Description:*** The indexed array in which the argparser's options are stored, and later, the associative array for their values. This array *must not be set* by your script, else, an error is thrown. The argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#6544-argparser_unset_env_vars) is set to `false`).
+- ***Description:*** The indexed array in which the Argparser's options are stored, and later, the associative array for their values. This array *must not be set* by your script, else, an error is thrown. The Argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#6544-argparser_unset_env_vars) is set to `false`).
 
 #### 6.5.15. `ARGPARSER_CHECK_ARG_DEF`
 
@@ -102,17 +102,17 @@ Besides the version message you (not your script's user) can call, the main purp
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
-- ***Description:*** Whether to check if the argparser environment variables accord to their definition. Again, this may only need to only be turned on (set to `true`) for testing purposes, while in production environments, keeping it deactivated saves some (minimal) computation time. Still, if the user can modify the environment variables at some point (not recommended as it may lead to code injection!), you should activate it.
+- ***Description:*** Whether to check if the Argparser environment variables accord to their definition. Again, this may only need to only be turned on (set to `true`) for testing purposes, while in production environments, keeping it deactivated saves some (minimal) computation time. Still, if the user can modify the environment variables at some point (not recommended as it may lead to code injection!), you should activate it.
 
 #### 6.5.17. `ARGPARSER_CONFIG_FILE`
 
 - ***Type:*** *file* (Filepath)
 - ***Allowed values:*** Any legit filepath or the empty string `""`
 - ***Default value:*** `""`
-- ***Description:*** The path to a file holding the argparser configuration. The lines will be read into environment variables, but those that are already defined within your script or environment override the specification in the `ARGPARSER_CONFIG_FILE`. This file may be used by multiple scripts.
+- ***Description:*** The path to a file holding the Argparser configuration. The lines will be read into environment variables, but those that are already defined within your script or environment override the specification in the `ARGPARSER_CONFIG_FILE`. This file may be used by multiple scripts.
 
 > [!CAUTION]
-> The argparser reads the lines into variables without checking them! If the user can modify the `ARGPARSER_CONFIG_FILE`, this is prone to command injection!
+> The Argparser reads the lines into variables without checking them! If the user can modify the `ARGPARSER_CONFIG_FILE`, this is prone to command injection!
 
 #### 6.5.18. `ARGPARSER_COUNT_FLAGS`
 
@@ -126,7 +126,7 @@ Besides the version message you (not your script's user) can call, the main purp
 - ***Type:*** *dict* (Dictionary / associative array)
 - ***Allowed values:*** *None*
 - ***Default value:*** *None* (unset)
-- ***Description:*** The associative array in which to store the translation from the [`ARGPARSER_TRANSLATION_FILE`](#6542-argparser_translation_file) for the [`ARGPARSER_LANGUAGE`](#6529-argparser_language). This array *must not be set* by your script, else, an error is thrown. The argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#6544-argparser_unset_env_vars) is set to `false`).
+- ***Description:*** The associative array in which to store the translation from the [`ARGPARSER_TRANSLATION_FILE`](#6542-argparser_translation_file) for the [`ARGPARSER_LANGUAGE`](#6529-argparser_language). This array *must not be set* by your script, else, an error is thrown. The Argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#6544-argparser_unset_env_vars) is set to `false`).
 
 #### 6.5.20. `ARGPARSER_ERROR_EXIT_CODE`
 
@@ -246,7 +246,7 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Type:*** *arr* (Indexed array)
 - ***Allowed values:*** *None*
 - ***Default value:*** *None* (unset)
-- ***Description:*** The indexed array in which the argparser stores your script's command line upon parsing its own arguments. This array *must not be set* by your script, else, an error is thrown. The argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#6544-argparser_unset_env_vars) is set to `false`).
+- ***Description:*** The indexed array in which the Argparser stores your script's command line upon parsing its own arguments. This array *must not be set* by your script, else, an error is thrown. The Argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#6544-argparser_unset_env_vars) is set to `false`).
 
 #### 6.5.37. `ARGPARSER_SCRIPT_NAME`
 
@@ -263,28 +263,28 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Description:*** Whether to set the (read and parsed) arguments from the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#659-argparser_arg_array_name) refers to as variables in the calling script's scope.
 
 > [!CAUTION]
-> The argparser performs no complex sanity checks for argument values! Automatically setting them as variables to the script is prone to command injection!
+> The Argparser performs no complex sanity checks for argument values! Automatically setting them as variables to the script is prone to command injection!
 
 #### 6.5.39. `ARGPARSER_SET_ARRAYS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to set arguments intended to have multiple values as indexed array. This is only evaluated if [`ARGPARSER_SET_ARGS`](#6538-argparser_set_args) is `true`. While it can be very helpful in a script to have the multiple values already set to an array that can be iterated over, the drawback is that arrays are hard to transfer to other scripts and may need to be serialized. Since they come in serialized form from the argparser, a temporary expansion to an array might be unnecessary.
+- ***Description:*** Whether to set arguments intended to have multiple values as indexed array. This is only evaluated if [`ARGPARSER_SET_ARGS`](#6538-argparser_set_args) is `true`. While it can be very helpful in a script to have the multiple values already set to an array that can be iterated over, the drawback is that arrays are hard to transfer to other scripts and may need to be serialized. Since they come in serialized form from the Argparser, a temporary expansion to an array might be unnecessary.
 
 #### 6.5.40. `ARGPARSER_SILENCE_ERRORS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
-- ***Description:*** Whether to silence the emission (output) of error messages. This should rarely be needed since the argparser still stops running after a critical failure (which is the reason for error messages), but it may clean up your output when logging. See also [`ARGPARSER_SILENCE_WARNINGS`](#6541-argparser_silence_warnings).
+- ***Description:*** Whether to silence the emission (output) of error messages. This should rarely be needed since the Argparser still stops running after a critical failure (which is the reason for error messages), but it may clean up your output when logging. See also [`ARGPARSER_SILENCE_WARNINGS`](#6541-argparser_silence_warnings).
 
 #### 6.5.41. `ARGPARSER_SILENCE_WARNINGS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
-- ***Description:*** Whether to silence the emission (output) of warning messages. Like [`ARGPARSER_SILENCE_ERRORS`](#6540-argparser_silence_errors), this should rarely be needed, but as the argparser continues running after a non-critical failure (which is the reason for warning messages), these messages may not strictly be required for your script's user.
+- ***Description:*** Whether to silence the emission (output) of warning messages. Like [`ARGPARSER_SILENCE_ERRORS`](#6540-argparser_silence_errors), this should rarely be needed, but as the Argparser continues running after a non-critical failure (which is the reason for warning messages), these messages may not strictly be required for your script's user.
 
 #### 6.5.42. `ARGPARSER_TRANSLATION_FILE`
 
@@ -298,21 +298,21 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to unset (remove) all command-line arguments given to the script. This is usually what you want, as the argparser re-sets these values in parsed form.
+- ***Description:*** Whether to unset (remove) all command-line arguments given to the script. This is usually what you want, as the Argparser re-sets these values in parsed form.
 
 #### 6.5.44. `ARGPARSER_UNSET_ENV_VARS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to unset (remove) the argparser environment variables from the environment. As long as you don't need these variables anymore or want to reset them prior to the next argparser invokation, this is usually what you want. This prevents accidental (but also deliberate) inheritance to child scripts when passing the entire environment to them.
+- ***Description:*** Whether to unset (remove) the Argparser environment variables from the environment. As long as you don't need these variables anymore or want to reset them prior to the next Argparser invokation, this is usually what you want. This prevents accidental (but also deliberate) inheritance to child scripts when passing the entire environment to them.
 
 #### 6.5.45. `ARGPARSER_UNSET_FUNCTIONS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to unset (remove) the argparser functions from the environment. You should not need them separated from an argparser invokation, where they're automatically defined (set) upon sourcing it. By unsetting them, the namespace is kept clean.
+- ***Description:*** Whether to unset (remove) the Argparser functions from the environment. You should not need them separated from an Argparser invokation, where they're automatically defined (set) upon sourcing it. By unsetting them, the namespace is kept clean.
 
 #### 6.5.46. `ARGPARSER_USAGE_EXIT_CODE`
 
@@ -375,14 +375,14 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to accept long option names upon parsing and creating the help and usage messages. If your script doesn't take any long option, it may be practical to disable also the long options the argparser sets, *viz.* `--help`, `--usage`, and `--version` (given that [`ARGPARSER_ADD_HELP`](#652-argparser_add_help), [`ARGPARSER_ADD_USAGE`](#653-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](#654-argparser_add_version), respectively, are set). Additionally, the help message will only have two columns (the short option names and the help texts), then.
+- ***Description:*** Whether to accept long option names upon parsing and creating the help and usage messages. If your script doesn't take any long option, it may be practical to disable also the long options the Argparser sets, *viz.* `--help`, `--usage`, and `--version` (given that [`ARGPARSER_ADD_HELP`](#652-argparser_add_help), [`ARGPARSER_ADD_USAGE`](#653-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](#654-argparser_add_version), respectively, are set). Additionally, the help message will only have two columns (the short option names and the help texts), then.
 
 #### 6.5.55. `ARGPARSER_USE_SHORT_OPTIONS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to accept short option names upon parsing and creating the help and usage messages. If your script doesn't take any short option, it may be practical to disable also the short options the argparser sets, *viz.* the [`ARGPARSER_HELP_OPTIONS`](#6527-argparser_help_options), the [`ARGPARSER_USAGE_OPTIONS`](#6552-argparser_usage_options), and the [`ARGPARSER_VERSION_OPTIONS`](#6559-argparser_version_options) (given that [`ARGPARSER_ADD_HELP`](#652-argparser_add_help), [`ARGPARSER_ADD_USAGE`](#653-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](#654-argparser_add_version), respectively, are set). Additionally, the help message will only have two columns (the long option names and the help texts), then.
+- ***Description:*** Whether to accept short option names upon parsing and creating the help and usage messages. If your script doesn't take any short option, it may be practical to disable also the short options the Argparser sets, *viz.* the [`ARGPARSER_HELP_OPTIONS`](#6527-argparser_help_options), the [`ARGPARSER_USAGE_OPTIONS`](#6552-argparser_usage_options), and the [`ARGPARSER_VERSION_OPTIONS`](#6559-argparser_version_options) (given that [`ARGPARSER_ADD_HELP`](#652-argparser_add_help), [`ARGPARSER_ADD_USAGE`](#653-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](#654-argparser_add_version), respectively, are set). Additionally, the help message will only have two columns (the long option names and the help texts), then.
 
 #### 6.5.56. `ARGPARSER_USE_STYLES_IN_FILES`
 
@@ -431,6 +431,6 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
-- ***Description:*** Whether to write the arguments from [`ARGPARSER_ARG_ARRAY_NAME`](#659-argparser_arg_array_name) to STDOUT. This is required for running the argparser in a pipe to be able to access the parsed arguments. These are output as key&ndash;value pairs, separated by linefeeds.
+- ***Description:*** Whether to write the arguments from [`ARGPARSER_ARG_ARRAY_NAME`](#659-argparser_arg_array_name) to STDOUT. This is required for running the Argparser in a pipe to be able to access the parsed arguments. These are output as key&ndash;value pairs, separated by linefeeds.
 
 [&#129092;&nbsp;`overview.md`](overview.md)

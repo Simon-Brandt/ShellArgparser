@@ -2,13 +2,13 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-05
+# Last Modification: 2025-06-20
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
 # Usage: Run this script with "bash run_tests.sh".
 
-# Purpose: Test the functionality of the argparser by running all test
+# Purpose: Test the functionality of the Argparser by running all test
 # scripts and comparing their output and errors to expected values.
 
 # Define the functions for colorizing and printing the colored output.
@@ -1514,7 +1514,7 @@ test_type="output"
 cmd="bash ../argparser"
 output=""
 error="$(cat << EOF
-argparser: Error: Calling (instead of sourcing) the argparser requires the arguments definition to be provided through STDIN, separated by newlines.  Either pipe to the argparser or use process substitution to give input.  Alternatively, try "argparser --help" to get a help message with further information.
+argparser: Error: Calling (instead of sourcing) the Argparser requires the arguments definition to be provided through STDIN, separated by newlines.  Either pipe to the Argparser or use process substitution to give input.  Alternatively, try "argparser --help" to get a help message with further information.
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
@@ -1609,7 +1609,7 @@ Usage: argparser [OPTIONS] [--] command_line
 Mandatory arguments to long options are mandatory for short options too.
 
 Positional arguments:
-command_line                     the indexed array in which the argparser
+command_line                     the indexed array in which the Argparser
                                  stores the script's command line upon parsing
                                  its own arguments
 
@@ -1644,9 +1644,9 @@ Options:
                                  definition (default: ",")
 [--check-arg-def]                check if the arguments definition is
                                  consistent (default: false)
-[--check-env-vars]               check if the argparser environment variables
+[--check-env-vars]               check if the Argparser environment variables
                                  accord to their definition (default: false)
-[--config-file=FILE]             the path to a file holding the argparser
+[--config-file=FILE]             the path to a file holding the Argparser
                                  configuration (default: "''")
 [--count-flags]                  count flags instead of setting them to true or
                                  false based on the last prefix used on the
@@ -1702,9 +1702,9 @@ Options:
                                  "''")
 [--unset-args]                   unset (remove) all command-line arguments
                                  given to the script (default: true)
-[--unset-env-vars]               unset (remove) the argparser environment
+[--unset-env-vars]               unset (remove) the Argparser environment
                                  variables from the environment (default: true)
-[--unset-functions]              unset (remove) the argparser functions from
+[--unset-functions]              unset (remove) the Argparser functions from
                                  the environment (default: true)
 [--usage-exit-code=INT]          the exit code for usage messages (default: 0)
 [--usage-file=FILE]              the path to a file holding the extended usage

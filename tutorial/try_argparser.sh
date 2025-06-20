@@ -2,13 +2,13 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-04-02
+# Last Modification: 2025-06-20
 
 # Usage: Run this script with "bash try_argparser.sh".
 
-# Purpose: Demonstrate the basic functionality of the argparser.
+# Purpose: Demonstrate the basic functionality of the Argparser.
 
-# Source the argparser.  As the arguments have multiple short and long
+# Source the Argparser.  As the arguments have multiple short and long
 # options, override the default column widths for the help message.
 ARGPARSER_MAX_COL_WIDTH_1=9
 ARGPARSER_MAX_COL_WIDTH_2=33

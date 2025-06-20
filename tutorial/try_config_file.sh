@@ -2,14 +2,14 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-04-02
+# Last Modification: 2025-06-20
 
 # Usage: Run this script with "bash try_config_file.sh".
 
-# Purpose: Demonstrate the functionality of the argparser regarding the
+# Purpose: Demonstrate the functionality of the Argparser regarding the
 # inclusion of a configuration file.
 
-# Source the argparser, reading the configuration from a file.
+# Source the Argparser, reading the configuration from a file.
 dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
 dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
 ARGPARSER_CONFIG_FILE="${dir}/options.cfg"

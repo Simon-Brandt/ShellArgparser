@@ -1,6 +1,6 @@
 ## 5. Roadmap
 
-Future argparser versions will add several new features and address known issues. The following sections shall give an overview over them.
+Future Argparser versions will add several new features and address known issues. The following sections shall give an overview over them.
 
 ### 5.1. Future enhancements
 
@@ -23,7 +23,7 @@ The following features are considered for addition in a future version. If you m
 
 #### 5.1.4. Debug mode
 
-- ***Description:*** A debug mode facilitates the finding of errors within the argparser. As a useful tool in development, it will be added at some point.
+- ***Description:*** A debug mode facilitates the finding of errors within the Argparser. As a useful tool in development, it will be added at some point.
 - ***Implementation likelihood:*** High.
 
 #### 5.1.5. Value ranges
@@ -43,12 +43,12 @@ The following features are considered for addition in a future version. If you m
 
 #### 5.1.8. POSIX compliance
 
-- ***Description:*** POSIX allows very few constructs for argument parsing, like no long options. Since there are perfectly suitable alternatives for this simple parsing, and the argparser aims at a way more sophisticated command-line interface, opt-in POSIX compliance seems unnecessary for now.
+- ***Description:*** POSIX allows very few constructs for argument parsing, like no long options. Since there are perfectly suitable alternatives for this simple parsing, and the Argparser aims at a way more sophisticated command-line interface, opt-in POSIX compliance seems unnecessary for now.
 - ***Implementation likelihood:*** Low.
 
 #### 5.1.9. Alternative option prefixes (`+`/`/`)
 
-- ***Description:*** On certain platforms, options are given with other prefixes, like `/` on DOS-like systems. The argparser targets Unix-like platforms, and allowing other characters would require a massive change to the codebase. Further, plus signs are used as tokens for flag negation, so for using them as regular prefixes, the hyphen would take their role. More importantly, there is no such equivalent for the forward slash&mdash;a backslash would feel most natural, but would collide with the path separator on DOS-like platforms. Considering the massive efforts needed to implement this, it is unlikely to ever be done.
+- ***Description:*** On certain platforms, options are given with other prefixes, like `/` on DOS-like systems. The Argparser targets Unix-like platforms, and allowing other characters would require a massive change to the codebase. Further, plus signs are used as tokens for flag negation, so for using them as regular prefixes, the hyphen would take their role. More importantly, there is no such equivalent for the forward slash&mdash;a backslash would feel most natural, but would collide with the path separator on DOS-like platforms. Considering the massive efforts needed to implement this, it is unlikely to ever be done.
 - ***Implementation likelihood:*** Almost zero.
 
 ### 5.2. Known bugs

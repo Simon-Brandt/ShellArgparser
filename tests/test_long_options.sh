@@ -2,13 +2,13 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-04-02
+# Last Modification: 2025-06-20
 
 # Usage: Run this script with "bash test_long_options.sh".
 
-# Purpose: Test the functionality of the argparser.
+# Purpose: Test the functionality of the Argparser.
 
-# Source the argparser.  As the arguments have multiple long options,
+# Source the Argparser.  As the arguments have multiple long options,
 # override the default column width for the help message.
 ARGPARSER_MAX_COL_WIDTH_2=33
 ARGPARSER_USE_SHORT_OPTIONS=false

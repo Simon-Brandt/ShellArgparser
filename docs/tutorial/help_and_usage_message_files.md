@@ -1,6 +1,6 @@
 ### 3.6. Help and usage message files
 
-The argparser is not only able to compile a help message, but can also be guided by a separate file. Using the [`ARGPARSER_HELP_FILE`](../reference/environment_variables/environment_variables.md#6524-argparser_help_file) environment variable pointing to this file, to a certain degree, you can customize the help message's look and structure by moving the blocks the message consists of around and enriching it by arbitrary text. Again, we use a simplified script as `try_help_file.sh` without alias names for the short and long options.
+The Argparser is not only able to compile a help message, but can also be guided by a separate file. Using the [`ARGPARSER_HELP_FILE`](../reference/environment_variables/environment_variables.md#6524-argparser_help_file) environment variable pointing to this file, to a certain degree, you can customize the help message's look and structure by moving the blocks the message consists of around and enriching it by arbitrary text. Again, we use a simplified script as `try_help_file.sh` without alias names for the short and long options.
 
 <details open>
 
@@ -10,7 +10,7 @@ The argparser is not only able to compile a help message, but can also be guided
 ```bash
 #!/bin/bash
 
-# Source the argparser, reading the help message from a file.
+# Source the Argparser, reading the help message from a file.
 dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
 dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
 ARGPARSER_HELP_FILE="${dir}/help_message.txt"

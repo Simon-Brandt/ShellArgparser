@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-05
+# Last Modification: 2025-06-20
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -10,16 +10,16 @@
 # sourcing.  If ${ARGPARSER_SET_ARGS} is set to true (the default), the
 # arguments will also be set to variables upon sourcing, else, the
 # associative array which ${ARGPARSER_ARG_ARRAY_NAME} points to needs to
-# be accessed.  Refer to the README.md for details.
+# be accessed.  Refer to the documentation for details.
 
 # Purpose: Parse a script's arguments, giving proper error and warning
 # messages for wrongly set arguments, assigning the values to the
 # respective variables, as well as creating and printing a help, usage,
-# and version message.  Refer to the README.md for details.
+# and version message.  Refer to the documentation for details.
 
 ########################################################################
 
-# Define the argparser functions to check that the argparser is run by
+# Define the Argparser functions to check that the Argparser is run by
 # Bash 4.0 or higher, and execute the former immediately, such that the
 # rest of the script doesn't get parsed (which would create errors since
 # it's written in Bash, not POSIX compliantly).
@@ -70,7 +70,7 @@ function argparser_check_bash_version() {
     fi
 }
 
-# Define the argparser functions used for general tests.
+# Define the Argparser functions used for general tests.
 function argparser_in_array() {
     # Check if an element occurs in an array.
     #
@@ -351,7 +351,7 @@ function argparser_check_file() {
     fi
 }
 
-# Define the general argparser util functions.
+# Define the general Argparser util functions.
 function argparser_trim() {
     # Trim leading an trailing space characters from a string.
     #
@@ -685,7 +685,7 @@ function argparser_colorize() {
     # ${ARGPARSER_ARG_DELIMITER_2} characters and replace it with the
     # corresponding escape sequence, if writing to a terminal or the
     # escape sequences shall be included in the file.  The test assumes
-    # that argparser_colorize is never run through command substitution,
+    # that Argparser_colorize is never run through command substitution,
     # else [[ -t ${file_descriptor} ]] would always be false, i.e., it
     # would impossible to tell if the final STDOUT/STDERR goes to a
     # terminal.
@@ -714,11 +714,11 @@ function argparser_colorize() {
     fi
 }
 
-# Define the argparser functions for reading the configuration and
+# Define the Argparser functions for reading the configuration and
 # setting and checking the environment variables.
 function argparser_set_internal_vars() {
     # Check that no "environment" variable for internal usage by the
-    # argparser is set, then set them.
+    # Argparser is set, then set them.
     #
     # Environment:
     # ARGPARSER_ARGPARSER_VERSION
@@ -1014,12 +1014,12 @@ function argparser_read_configuration() {
 }
 
 function argparser_set_env_vars() {
-    # Set the argparser environment variables, as long as they aren't
+    # Set the Argparser environment variables, as long as they aren't
     # already set by the calling script or environment to prevent
     # overriding them.
     #
     # Arguments:
-    # - $@: the command line upon sourcing the argparser
+    # - $@: the command line upon sourcing the Argparser
     #
     # Environment:
     # ARGPARSER_ADD_HELP
@@ -1089,18 +1089,18 @@ function argparser_set_env_vars() {
     local -a args
     local value
 
-    # As the argparser can be sourced with command-line arguments,
+    # As the Argparser can be sourced with command-line arguments,
     # separate them from the script's command line.  Any argument until
-    # the first "--" is seen as argument to the argparser.  Lastly,
+    # the first "--" is seen as argument to the Argparser.  Lastly,
     # shift also the "--" and set ${ARGPARSER_SCRIPT_ARGS} to the
     # remainder of the command line.
     # In order to show the need for the script's command line in the
-    # argparser's help and usage message, ${ARGPARSER_SCRIPT_ARGS} is
-    # added to the argparser's arguments definition as mandatory
+    # Argparser's help and usage message, ${ARGPARSER_SCRIPT_ARGS} is
+    # added to the Argparser's arguments definition as mandatory
     # positional argument.  Since using its actual value would mean that
     # upon parsing, a "++" in the script's arguments would be
     # interpreted as sign to re-evaluate the arguments as keyword
-    # arguments for the argparser (and not for the script), set the
+    # arguments for the Argparser (and not for the script), set the
     # string "argparser" as dummy value for the positional argument.  As
     # only keyword arguments are set as environment variables, below,
     # the actual value of ${ARGPARSER_SCRIPT_ARGS} won't be overridden
@@ -1120,8 +1120,8 @@ function argparser_set_env_vars() {
     args+=("--" "argparser")
 
     # Set all non-internal environment variables by reading the
-    # argparser's command line given upon sourcing the argparser, using
-    # the argparser itself with default values for all environment
+    # Argparser's command line given upon sourcing the Argparser, using
+    # the Argparser itself with default values for all environment
     # variables (which are yet to be set).
     ARGPARSER_ARGS=(
         "id                                  : short_opts : long_opts                 : val_names    : defaults             : choices    : type : arg_no : arg_group : notes : help                                                                                                    "
@@ -1137,8 +1137,8 @@ function argparser_set_env_vars() {
         "ARGPARSER_ARG_DELIMITER_1           :            : arg-delimiter-1           : CHAR         : |                    :            : char : 1      : Options   :       : the primary delimiter that separates the fields in the arguments definition                             "
         "ARGPARSER_ARG_DELIMITER_2           :            : arg-delimiter-2           : CHAR         : ,                    :            : char : 1      : Options   :       : the secondary delimiter that separates the elements of sequences in the arguments definition            "
         "ARGPARSER_CHECK_ARG_DEF             :            : check-arg-def             :              : false                :            : bool : 0      : Options   :       : check if the arguments definition is consistent                                                         "
-        "ARGPARSER_CHECK_ENV_VARS            :            : check-env-vars            :              : false                :            : bool : 0      : Options   :       : check if the argparser environment variables accord to their definition                                 "
-        "ARGPARSER_CONFIG_FILE               :            : config-file               : FILE         : ''                   :            : file : 1      : Options   :       : the path to a file holding the argparser configuration                                                  "
+        "ARGPARSER_CHECK_ENV_VARS            :            : check-env-vars            :              : false                :            : bool : 0      : Options   :       : check if the Argparser environment variables accord to their definition                                 "
+        "ARGPARSER_CONFIG_FILE               :            : config-file               : FILE         : ''                   :            : file : 1      : Options   :       : the path to a file holding the Argparser configuration                                                  "
         "ARGPARSER_COUNT_FLAGS               :            : count-flags               :              : false                :            : bool : 0      : Options   :       : count flags instead of setting them to true or false based on the last prefix used on the command line  "
         "ARGPARSER_ERROR_EXIT_CODE           :            : error-exit-code           : INT          : 1                    :            : int  : 1      : Options   :       : the exit code when errors occurred upon parsing                                                         "
         "ARGPARSER_ERROR_STYLE               :            : error-style               : STYLE        : red,bold,reverse     :            : str  : +      : Options   :       : the color and style specification for error messages                                                    "
@@ -1156,7 +1156,7 @@ function argparser_set_env_vars() {
         "ARGPARSER_MAX_WIDTH                 :            : max-width                 : INT          : 79                   :            : uint : 1      : Options   :       : the maximum width of the help message                                                                   "
         "ARGPARSER_POSITIONAL_ARG_GROUP      :            : positional-arg-group      : NAME         : Positional arguments :            : str  : 1      : Options   :       : the name of the argument group holding all positional arguments                                         "
         "ARGPARSER_READ_ARGS                 :            : read-args                 :              : true                 :            : bool : 0      : Options   :       : read the arguments and parse them to ARGPARSER_ARG_ARRAY_NAME                                           "
-        "ARGPARSER_SCRIPT_ARGS               :            :                           : command_line :                      :            : str  : +      : Options   :       : the indexed array in which the argparser stores the script's command line upon parsing its own arguments"
+        "ARGPARSER_SCRIPT_ARGS               :            :                           : command_line :                      :            : str  : +      : Options   :       : the indexed array in which the Argparser stores the script's command line upon parsing its own arguments"
         "ARGPARSER_SCRIPT_NAME               :            : script-name               : NAME         : ''                   :            : str  : 1      : Options   :       : the script's name for the help, usage, version, error, and warning messages                             "
         "ARGPARSER_SET_ARGS                  :            : set-args                  :              : true                 :            : bool : 0      : Options   :       : set the arguments from ARGPARSER_ARG_ARRAY_NAME as variables in the script's scope                      "
         "ARGPARSER_SET_ARRAYS                :            : set-arrays                :              : true                 :            : bool : 0      : Options   :       : set arguments intended to have multiple values as indexed array                                         "
@@ -1164,8 +1164,8 @@ function argparser_set_env_vars() {
         "ARGPARSER_SILENCE_WARNINGS          :            : silence-warnings          :              : false                :            : bool : 0      : Options   :       : silence the emission (output) of warning messages                                                       "
         "ARGPARSER_TRANSLATION_FILE          :            : translation-file          : FILE         : ''                   :            : file : 1      : Options   :       : the path to a simplified YAML file holding the translation to ARGPARSER_LANGUAGE                        "
         "ARGPARSER_UNSET_ARGS                :            : unset-args                :              : true                 :            : bool : 0      : Options   :       : unset (remove) all command-line arguments given to the script                                           "
-        "ARGPARSER_UNSET_ENV_VARS            :            : unset-env-vars            :              : true                 :            : bool : 0      : Options   :       : unset (remove) the argparser environment variables from the environment                                 "
-        "ARGPARSER_UNSET_FUNCTIONS           :            : unset-functions           :              : true                 :            : bool : 0      : Options   :       : unset (remove) the argparser functions from the environment                                             "
+        "ARGPARSER_UNSET_ENV_VARS            :            : unset-env-vars            :              : true                 :            : bool : 0      : Options   :       : unset (remove) the Argparser environment variables from the environment                                 "
+        "ARGPARSER_UNSET_FUNCTIONS           :            : unset-functions           :              : true                 :            : bool : 0      : Options   :       : unset (remove) the Argparser functions from the environment                                             "
         "ARGPARSER_USAGE_EXIT_CODE           :            : usage-exit-code           : INT          : 0                    :            : int  : 1      : Options   :       : the exit code for usage messages                                                                        "
         "ARGPARSER_USAGE_FILE                :            : usage-file                : FILE         : ''                   :            : file : 1      : Options   :       : the path to a file holding the extended usage message                                                   "
         "ARGPARSER_USAGE_FILE_INCLUDE_CHAR   :            : usage-file-include-char   : CHAR         : @                    :            : char : 1      : Options   :       : the character that introduces an include directive in an ARGPARSER_USAGE_FILE                           "
@@ -1248,8 +1248,8 @@ function argparser_set_env_vars() {
     # Set the environment variables that aren't set yet as global
     # variables.  For all environment variables that weren't given by
     # neither a config file, nor as an environment variable assignment,
-    # nor as a command-line parameter to the argparser, use the default
-    # value the argparser has assigned.  If the environment variable has
+    # nor as a command-line parameter to the Argparser, use the default
+    # value the Argparser has assigned.  If the environment variable has
     # been given before, check if it was also given on the command line,
     # then override the previous value, else, keep the previous value.
     # By this, the command-line parameters have a higher importance than
@@ -1277,7 +1277,7 @@ function argparser_set_env_vars() {
                 # If the command-line argument is the current
                 # environment variable, override its value with the one
                 # given on the command line, which was parsed by the
-                # argparser.
+                # Argparser.
                 if [[ "${arg}" == "${arg_key}" ]]; then
                     value="${ARGPARSER_ARGS[${arg_key}]}"
                     if [[ "${value}" == "''" ]]; then
@@ -1293,7 +1293,7 @@ function argparser_set_env_vars() {
             done
         else
             # The environment variable is yet unset, so set it to the
-            # value the argparser has set upon parsing, i.e., either the
+            # value the Argparser has set upon parsing, i.e., either the
             # value from the command line, or, if absent, the default
             # value.
             value="${ARGPARSER_ARGS[${arg_key}]}"
@@ -1310,7 +1310,7 @@ function argparser_set_env_vars() {
 }
 
 function argparser_check_env_vars() {
-    # Check if the argparser envirnoment variables accord to their
+    # Check if the Argparser environment variables accord to their
     # definition.  This should always be true for production scripts,
     # but maybe not while testing, and also not if the user is allowed
     # to set the variables himself.
@@ -1823,7 +1823,7 @@ function argparser_check_env_vars() {
         "${error_messages[@]}"
 }
 
-# Define the argparser functions for reading the translation and
+# Define the Argparser functions for reading the translation and
 # translating strings.
 function argparser_read_translation() {
     # Read the translation of the auto-generated text for help and usage
@@ -1950,7 +1950,7 @@ function argparser_read_translation() {
             is_continued=false
         else
             # The line uses a YAML feature not supported by the
-            # argparser, thus, output an error message.
+            # Argparser, thus, output an error message.
             error_message="Error: The YAML line \"\$1\" could not be "
             error_message+="recognized."
 
@@ -2077,7 +2077,7 @@ function argparser_translate() {
     translation="${string}"
 }
 
-# Define the argparser functions for reading, parsing, and checking the
+# Define the Argparser functions for reading, parsing, and checking the
 # arguments definition.
 function argparser_read_args_definition() {
     # Read the arguments definition from the script and arguments
@@ -2125,7 +2125,7 @@ function argparser_read_args_definition() {
 
     # Get the definition for each argument (excluding the header as
     # zeroth element in ${args}).  These arguments may either be defined
-    # in the script, where they're given in the columnar argparser
+    # in the script, where they're given in the columnar Argparser
     # syntax, or in a separate arguments definition file, so they're
     # only given as their key.  If the structure differs, and no header
     # is given (so columns may be omitted), output an error message.
@@ -3454,7 +3454,7 @@ function argparser_add_args_definition_help_options() {
     done
 }
 
-# Define the argparser functions for the argument parsing.
+# Define the Argparser functions for the argument parsing.
 function argparser_get_arg_key() {
     # Get the argument identifier (key) for a given short or long option
     # name.
@@ -3624,12 +3624,12 @@ function argparser_parse_arg() {
     # - is_positional_only: whether the positional arguments delimiter
     #   "--" has already been set and has not been unset by "++"
     #   (read-only)
-    # - is_sourced: whether the argparser has been sourced (read-only)
+    # - is_sourced: whether the Argparser has been sourced (read-only)
     # - messages: the parsed argument as message or an error message,
     #   starting with "Help", "Usage", "Version", "Logo",
     #   "Positional_Start", "Positional_End", "Error: " (translated),
     #   "Argument: ", "Prefix: ", or "Value: ", as indexed array
-    # - source_level: the depth of recursion upon sourcing the argparser
+    # - source_level: the depth of recursion upon sourcing the Argparser
     #   (read-only)
     #
     # Environment:
@@ -3688,9 +3688,9 @@ function argparser_parse_arg() {
         && "${is_sourced}" == false \
         && "${source_level}" == 2 ]]
     then
-        # The argument is the magic string for the argparser, which was
+        # The argument is the magic string for the Argparser, which was
         # directly called and not run from another script.  Since the
-        # argparser accepts only long options by design, no test for
+        # Argparser accepts only long options by design, no test for
         # ${ARGPARSER_USE_LONG_OPTIONS} is necessary.
         messages+=("Logo")
     elif [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true \
@@ -4508,7 +4508,7 @@ function argparser_check_arg_values() {
             && ! argparser_is_variable_bool "${value}"
         then
             # Check if the value is a boolean.  If the argument is a
-            # flag, then the values are set by the argparser to
+            # flag, then the values are set by the Argparser to
             # booleans, or, if ${ARGPARSER_COUNT_FLAGS} is set to true,
             # to unsigned integers.  Since both automatically have the
             # correct type, don't check them.
@@ -4615,8 +4615,8 @@ function argparser_parse_args() {
     #   argument names
     # - all_short_options: the associative array holding the short
     #   option names
-    # - is_sourced: whether the argparser has been sourced (read-only)
-    # - source_level: the depth of recursion upon sourcing the argparser
+    # - is_sourced: whether the Argparser has been sourced (read-only)
+    # - source_level: the depth of recursion upon sourcing the Argparser
     #   (read-only)
     #
     # Globals:
@@ -4678,10 +4678,10 @@ function argparser_parse_args() {
     is_extglob_set="$?"
     shopt -s extglob
 
-    # If the argparser is run as standalone script and not sourced, read
+    # If the Argparser is run as standalone script and not sourced, read
     # the arguments definition from STDIN into ${args} and remove
     # leading blank lines.  If STDIN is empty, output an error message.
-    # If the argparser is sourced, check if the variable that
+    # If the Argparser is sourced, check if the variable that
     # ${ARGPARSER_ARG_ARRAY_NAME} refers to is defined.  If not, guess
     # how it may be called by searching the set variables for a variable
     # name starting with "arg" to give a clearer error message.  If no
@@ -4697,10 +4697,10 @@ function argparser_parse_args() {
                 args=("${args[@]:1}")
             done
         else
-            error_message="Error: Calling (instead of sourcing) the argparser "
+            error_message="Error: Calling (instead of sourcing) the Argparser "
             error_message+="requires the arguments definition to be provided "
             error_message+="through STDIN, separated by newlines.  Either "
-            error_message+="pipe to the argparser or use process substitution "
+            error_message+="pipe to the Argparser or use process substitution "
             error_message+="to give input.  Alternatively, try \"\$1 --help\" "
             error_message+="to get a help message with further information."
 
@@ -5165,9 +5165,9 @@ function argparser_write_args() {
     printf '%s\n' "${sorted_array[@]}"
 }
 
-# Define the argparser functions for creating and printing the help,
+# Define the Argparser functions for creating and printing the help,
 # usage, and version messages, as well as for printing error and warning
-# messages, and the argparser logo.
+# messages, and the Argparser logo.
 function argparser_create_help_message() {
     # Create a help message for the script's arguments.
     #
@@ -6881,7 +6881,7 @@ function argparser_print_error_or_warning_message() {
 }
 
 function argparser_print_logo() {
-    # Print the argparser logo in ANSI art.
+    # Print the Argparser logo in ANSI art.
 
     # Define the local variables.
     local font_1
@@ -7071,9 +7071,9 @@ function argparser_print_logo() {
     printf '\n'
 }
 
-# Define the main argparser function.
+# Define the main Argparser function.
 function argparser_main() {
-    # Run the argparser, depending on the values of its environment
+    # Run the Argparser, depending on the values of its environment
     # variables, to read, parse, and set the script's arguments.
     #
     # Environment:
@@ -7105,7 +7105,7 @@ function argparser_main() {
     local -A all_value_names
     local translation
 
-    # Detect whether the argparser is sourced or run as standalone
+    # Detect whether the Argparser is sourced or run as standalone
     # script.  Is it is sourced, discern whether it has sourced itself.
     if [[ ! -v is_sourced ]]; then
         local source_level
@@ -7128,7 +7128,7 @@ function argparser_main() {
         source_level=1
     fi
 
-    # If the argparser hasn't sourced itself (i.e., the current
+    # If the Argparser hasn't sourced itself (i.e., the current
     # recursion level is the outer one from the calling script), set the
     # internal "environment" variables.
     if [[ "${source_level}" == 1 ]]; then
@@ -7141,12 +7141,12 @@ function argparser_main() {
         argparser_read_configuration
     fi
 
-    # If the argparser hasn't sourced itself (i.e., the current
+    # If the Argparser hasn't sourced itself (i.e., the current
     # recursion level is the outer one from the calling script), set the
     # environment variables that aren't already set by the calling
     # script or environment or read from the configuration file to
     # prevent overriding them.  Then, set the script's command-line
-    # arguments (with the argparser arguments being removed) as the
+    # arguments (with the Argparser arguments being removed) as the
     # current command line.
     if [[ "${source_level}" == 1 ]]; then
         argparser_set_env_vars "$@"
@@ -7208,10 +7208,10 @@ function argparser_main() {
     fi
 
     # If ${ARGPARSER_UNSET_FUNCTIONS} is set to true, unset all
-    # argparser functions.  The names are used instead of a glob to
+    # Argparser functions.  The names are used instead of a glob to
     # limit side effects with potentially same-named functions (i.e.,
     # those starting with "argparser_") from the calling script that
-    # stand in no relation to the argparser.
+    # stand in no relation to the Argparser.
     if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
         unset -f argparser_add_args_definition_help_options
         unset -f argparser_check_arg_values
@@ -7262,11 +7262,11 @@ function argparser_main() {
         unset -f argparser_write_args
     fi
 
-    # If ${ARGPARSER_UNSET_ENV_VARS} is set to true, unset all argparser
+    # If ${ARGPARSER_UNSET_ENV_VARS} is set to true, unset all Argparser
     # environment variables.  Again, the names are used instead of a
     # glob to limit side effects with potentially same-named variables
     # (i.e., those starting with "ARGPARSER_") from the calling script
-    # that stand in no relation to the argparser.
+    # that stand in no relation to the Argparser.
     if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
         unset ARGPARSER_ADD_HELP
         unset ARGPARSER_ADD_USAGE
@@ -7337,5 +7337,5 @@ function argparser_main() {
 # Check the version of the current Bash instance.
 argparser_check_bash_version
 
-# Run the argparser.
+# Run the Argparser.
 argparser_main "$@"

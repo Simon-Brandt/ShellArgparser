@@ -1,6 +1,6 @@
 ## 1. Features
 
-The argparser:
+The Argparser:
 
 - parses your script's **positional** and **keyword (option) arguments**
 - allows **any number** of **short** and **long option names** for the same option (as aliases)

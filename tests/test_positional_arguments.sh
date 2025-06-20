@@ -2,11 +2,11 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-04-02
+# Last Modification: 2025-06-20
 
 # Usage: Run this script with "bash test_positional_arguments.sh".
 
-# Purpose: Test the functionality of the argparser.
+# Purpose: Test the functionality of the Argparser.
 
 # Define the arguments.
 # shellcheck disable=SC2190  # Indexed, not associative array.
