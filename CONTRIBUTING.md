@@ -17,6 +17,7 @@ In order to facilitate the seemless integration of your commits with the Argpars
 1. [Documentation](#3-documentation)
    1. [Files](#31-files)
    1. [Documentation style](#32-documentation-style)
+1. [Translations](#4-translations)
 <!-- </toc> -->
 
 ## 1. General advice
@@ -131,3 +132,11 @@ The documentation is written in Markdown ([GitHub Flavored Markdown (GFM)](https
   - Use bold font sparingly, to draw attention to a certain point. Use italics for normal emphasis and foreign-language words like Latin abbreviations.
 - ***Miscellaneous:***
   - Don't edit tables of contents or heading numbers, the [Markdown Tools](https://github.com/Simon-Brandt/MarkdownTools "github.com &rightarrow; Simon-Brandt &rightarrow; MarkdownTools") will do it for you. This makes mistakes less likely, especially regarding hyperlinks.
+
+## 4. Translations
+
+The Argparser emits a lot of error and warning messages for faulty arguments. Both them and the help and usage messages are internationalized. It would strongly help the Argparser's adoption if it could be localized to more languages&mdash;currently, there are only English and German available. So, if you want to provide translations for the message parts, feel free to add them into the [`translations.yaml`](resources/translation.yaml).
+
+Within the YAML file, just add a new line below each existing translation, start it with the language identifier for your locale after two spaces indentation, add a colon and space, and then the translated text. If it doesn't fit the 79 characters line length, add a greater-than sign (`>`) after the language identifier and write the translation on the next line(s), indented by four spaces. Use `$n` (with n as natural number) as placeholder for the variables the Argparser interpolates. Refer to the [documentation](docs/reference/translations/translations.md) for the meaning of each value.
+
+Try to use the tone and wording commonly found in command-line tool descriptions in your language. Don't just use machine translations, without having checked their validity. By this, the Argparser's output seemlessly integrates into the command-line workflows even in languages other than English.

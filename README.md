@@ -133,6 +133,8 @@ Please open an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new
 - want to propose a new feature
 - want to contribute code (please don't start a pull request prior opening an issue)
 - need help with running the Argparser, after having consulted the docs to no avail
+- want to enhance the documentation
+- want to provide [translations](docs/reference/translations/introduction.md) for the error and warning messages (*very* appreciated!)
 
 You're invited to fix issues yourself, especially trivial mistakes in the docs. To this end, [fork](https://github.com/Simon-Brandt/ShellArgparser/fork) the repository, make the necessary changes, and open a [pull request (PR)](https://github.com/Simon-Brandt/ShellArgparser/compare "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Pull Requests") to merge your changes.
 
