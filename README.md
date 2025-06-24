@@ -106,12 +106,18 @@ For simply running the Argparser, only Bash is required. Bash &geq; 4.0 is known
 **For contributing:**
 
 - Documentation:
+  - Bash &geq; 4.0
   - [Markdown Tools](https://github.com/Simon-Brandt/MarkdownTools "github.com &rightarrow; Simon-Brandt &rightarrow; MarkdownTools")
+  - [`cat`](https://man7.org/linux/man-pages/man1/cat.1.html "man7.org &rightarrow; man pages &rightarrow; cat(1)")
+  - [`head`](https://man7.org/linux/man-pages/man1/head.1.html "man7.org &rightarrow; man pages &rightarrow; head(1)")
+  - [`ls`](https://man7.org/linux/man-pages/man1/ls.1.html "man7.org &rightarrow; man pages &rightarrow; ls(1)")
+  - [`sed`](https://man7.org/linux/man-pages/man1/sed.1.html "man7.org &rightarrow; man pages &rightarrow; sed(1)")
 - Comparison:
+  - Bash &geq; 4.0
   - [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)")
+  - [`sed`](https://man7.org/linux/man-pages/man1/sed.1.html "man7.org &rightarrow; man pages &rightarrow; sed(1)")
   - [shFlags](https://github.com/kward/shflags "github.com &rightarrow; kward &rightarrow; shFlags") 1.3.0
   - [docopts](https://github.com/docopt/docopts "github.com &rightarrow; docopt &rightarrow; docopts") 0.6.4
-  - [`sed`](https://man7.org/linux/man-pages/man1/sed.1.html "man7.org &rightarrow; man pages &rightarrow; sed(1)")
   - [Julia](https://julialang.org/ "julialang.org") &geq; 1.11
     - [`CSV.jl`](https://csv.juliadata.org/stable/ "csv.juliadata.org") &geq; 0.10.15
     - [`Statistics.jl`](https://docs.julialang.org/en/v1/stdlib/Statistics/ "docs.julialang.org &rightarrow; Statistics.jl") &geq; 1.11.1
@@ -120,7 +126,7 @@ For simply running the Argparser, only Bash is required. Bash &geq; 4.0 is known
 
 When contributing to the repository, you may to install need additional dependencies.
 
-The [Markdown Tools](https://github.com/Simon-Brandt/MarkdownTools "github.com &rightarrow; Simon-Brandt &rightarrow; MarkdownTools") are required to create the documentation. This does not necessarily apply for small changes, if you change both the [source](docs/src.sh) and the respective documentation chapter by hand. If you modify headings or want to include files, the Markdown Tools are indispensable, since, *e.g.*, they automatically adjust the heading numbering and hyperlinks.
+The [Markdown Tools](https://github.com/Simon-Brandt/MarkdownTools "github.com &rightarrow; Simon-Brandt &rightarrow; MarkdownTools") are required to create the documentation. This does not necessarily apply for small changes, if you change both the [source](docs/src.sh) and the respective documentation chapter by hand. If you modify headings or want to include files, the Markdown Tools are indispensable, since, *e.g.*, they automatically adjust the heading numbering and hyperlinks. The calls to the Markdown Tools within the documentation rely on [`cat`](https://man7.org/linux/man-pages/man1/cat.1.html "man7.org &rightarrow; man pages &rightarrow; cat(1)"), [`head`](https://man7.org/linux/man-pages/man1/head.1.html "man7.org &rightarrow; man pages &rightarrow; head(1)"), [`ls`](https://man7.org/linux/man-pages/man1/ls.1.html "man7.org &rightarrow; man pages &rightarrow; ls(1)"), and [`sed`](https://man7.org/linux/man-pages/man1/sed.1.html "man7.org &rightarrow; man pages &rightarrow; sed(1)") for file inclusion.
 
 For comparing the Argparser to other command-line parsers, [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)"), [shFlags](https://github.com/kward/shflags "github.com &rightarrow; kward &rightarrow; shFlags"), and [docopts](https://github.com/docopt/docopts "github.com &rightarrow; docopt &rightarrow; docopts") must be installed and added to your [`PATH`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Variables.html#index-PATH "gnu.org &rightarrow; Bourne Shell Variables &rightarrow; PATH"). Within the invoked [`process_html_template.sh`](comparison/process_html_template.sh), [`sed`](https://man7.org/linux/man-pages/man1/sed.1.html "man7.org &rightarrow; man pages &rightarrow; sed(1)") is called. Finally, [Julia](https://julialang.org/ "julialang.org") and its libraries are used to benchmark the scripts. Unless contributing an entirely new feature to the Argparser, you don't need to bother about executing the comparison scripts, and thus don't need to install these dependencies.
 
