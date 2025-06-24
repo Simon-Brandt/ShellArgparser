@@ -1,4 +1,4 @@
-### 4.1. Feature comparison
+### 5.1. Feature comparison
 
 The following command-line parsers are compared in the given versions:
 

@@ -1,6 +1,6 @@
-### 4.2. Example scripts
+### 5.2. Example scripts
 
-#### 4.2.1. `getopts`
+#### 5.2.1. `getopts`
 
 <details open>
 

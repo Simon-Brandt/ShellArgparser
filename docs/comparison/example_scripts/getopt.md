@@ -1,4 +1,4 @@
-#### 4.2.2. `getopt`
+#### 5.2.2. `getopt`
 
 <details open>
 

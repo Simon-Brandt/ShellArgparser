@@ -1,4 +1,4 @@
-### 4.3. Summary
+### 5.3. Summary
 
 When comparing the different approaches to command-line parsing, it is apparent that&mdash;as expected&mdash;the more recent parsers have a larger set of features. While the Bash-builtin `getopts` parser comprises only minimal functionality (not even long options), it is the only one that implements the POSIX standard. A slightly greater number of features comes with GNU `getopt`, like long options and the ability to abbreviate them.
 

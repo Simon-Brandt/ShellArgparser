@@ -1,6 +1,6 @@
-### 3.4. Arguments definition files
+### 4.4. Arguments definition files
 
-In the previous sections, we always provided the arguments definition directly in the script, right before we sourced the Argparser. However, it is possible to "outsource" the definition (or part of it) in a bespoke file that is referred to by the [`ARGPARSER_ARG_DEF_FILE`](../reference/environment_variables/environment_variables.md#7510-argparser_arg_def_file) environment variable.
+In the previous sections, we always provided the arguments definition directly in the script, right before we sourced the Argparser. However, it is possible to "outsource" the definition (or part of it) in a bespoke file that is referred to by the [`ARGPARSER_ARG_DEF_FILE`](../reference/environment_variables/environment_variables.md#8510-argparser_arg_def_file) environment variable.
 
 Using a separate arguments definition file allows you to share the definition across multiple scripts that use partially or entirely identical arguments, a common case in program suites or when wrapper scripts are used. Should some scripts require an argument to have the same name, but different definitions, they can be given in their respective scripts, in addition to the remainder from the file. Moreover, this attempt allows a separation of concerns, as we can move the arguments definition (static) away from their manipulation (dynamic). This shrinks our trial file once more, yielding `try_arg_def_file.sh`.
 
@@ -88,7 +88,7 @@ The positional argument "pos_2" on index 2 is set to "1,2".
 ```
 <!-- </include> -->
 
-Likewise, the [usage (and help) message](help_and_usage_messages.md#35-help-and-usage-messages) is completely unaffected:
+Likewise, the [usage (and help) message](help_and_usage_messages.md#45-help-and-usage-messages) is completely unaffected:
 
 <!-- <include command="bash ../tutorial/try_arg_def_file.sh -u" lang="console"> -->
 ```console

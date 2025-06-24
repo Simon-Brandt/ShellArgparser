@@ -95,7 +95,7 @@ First, you need to define the arguments your script shall accept, in a tabular m
 
 ## 3. Dependencies
 
-The Argparser is a plain Bash script that does not invoke external commands (only builtins) by design decision. This allows running your script on multiple platforms, as long as Bash is installed, without adding further dependencies to your script.
+The Argparser is a plain Bash script that does not invoke external commands (only Bash builtins) by design decision. This allows running your script on multiple platforms, as long as Bash is installed, without adding further dependencies to your script. When contributing, you may need the other software tools listed below and explained in greater detail in the [documentation](docs/dependencies.md).
 
 **For running:**
 
@@ -124,11 +124,9 @@ For simply running the Argparser, only Bash is required. Bash &geq; 4.0 is known
     - [`StatsPlots.jl`](https://docs.juliaplots.org/stable/generated/statsplots/ "docs.juliaplots.org &rightarrow; StatsPlots.jl") &geq; 0.15.7
     - [`Tables.jl`](https://tables.juliadata.org/stable/ "tables.juliadata.org") &geq; 1.12.1
 
-When contributing to the repository, you may to install need additional dependencies.
+When contributing to the repository, you may need to install additional dependencies, among which the [Markdown Tools](https://github.com/Simon-Brandt/MarkdownTools "github.com &rightarrow; Simon-Brandt &rightarrow; MarkdownTools") to create the documentation. The other tools are usually pre-installed in any Unix-like OS distribution.
 
-The [Markdown Tools](https://github.com/Simon-Brandt/MarkdownTools "github.com &rightarrow; Simon-Brandt &rightarrow; MarkdownTools") are required to create the documentation. This does not necessarily apply for small changes, if you change both the [source](docs/src.sh) and the respective documentation chapter by hand. If you modify headings or want to include files, the Markdown Tools are indispensable, since, *e.g.*, they automatically adjust the heading numbering and hyperlinks. The calls to the Markdown Tools within the documentation rely on [`cat`](https://man7.org/linux/man-pages/man1/cat.1.html "man7.org &rightarrow; man pages &rightarrow; cat(1)"), [`head`](https://man7.org/linux/man-pages/man1/head.1.html "man7.org &rightarrow; man pages &rightarrow; head(1)"), [`ls`](https://man7.org/linux/man-pages/man1/ls.1.html "man7.org &rightarrow; man pages &rightarrow; ls(1)"), and [`sed`](https://man7.org/linux/man-pages/man1/sed.1.html "man7.org &rightarrow; man pages &rightarrow; sed(1)") for file inclusion.
-
-For comparing the Argparser to other command-line parsers, [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)"), [shFlags](https://github.com/kward/shflags "github.com &rightarrow; kward &rightarrow; shFlags"), and [docopts](https://github.com/docopt/docopts "github.com &rightarrow; docopt &rightarrow; docopts") must be installed and added to your [`PATH`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Variables.html#index-PATH "gnu.org &rightarrow; Bourne Shell Variables &rightarrow; PATH"). Within the invoked [`process_html_template.sh`](comparison/process_html_template.sh), [`sed`](https://man7.org/linux/man-pages/man1/sed.1.html "man7.org &rightarrow; man pages &rightarrow; sed(1)") is called. Finally, [Julia](https://julialang.org/ "julialang.org") and its libraries are used to benchmark the scripts. Unless contributing an entirely new feature to the Argparser, you don't need to bother about executing the comparison scripts, and thus don't need to install these dependencies.
+Several further non-standard dependencies are needed for comparing the Argparser to other command-line parsers. However, you shouldn't need them at all, unless you'd like to contribute an entirely new feature to the Argparser, which changes its behavior.
 
 ## 4. Contributions
 
