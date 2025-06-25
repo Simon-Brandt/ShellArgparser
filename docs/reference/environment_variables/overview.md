@@ -1,7 +1,7 @@
 #### 8.5.1. Overview
 
 | Variable name                                                                      | Type[^14]  | Default value[^15][^16]  |
-|------------------------------------------------------------------------------------|------------|--------------------------|
+| ---------------------------------------------------------------------------------- | ---------- | ------------------------ |
 | [`ARGPARSER_ADD_HELP`](environment_variables.md#852-argparser_add_help)                                    | *bool*     | `true`                   |
 | [`ARGPARSER_ADD_USAGE`](environment_variables.md#853-argparser_add_usage)                                  | *bool*     | `true`                   |
 | [`ARGPARSER_ADD_VERSION`](environment_variables.md#854-argparser_add_version)                              | *bool*     | `true`                   |

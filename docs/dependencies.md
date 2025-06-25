@@ -5,7 +5,7 @@ By design, the Argparser only requires Bash to run. However, for creating the do
 In the following table, "&#10004;" marks the tools necessary for the respective task, "&#10008;" those that aren't required. When no version number is given, any recent version is expected to work.
 
 | Tool                                                                                                                              | Version    | Execution | Documentation | Comparison |
-|-----------------------------------------------------------------------------------------------------------------------------------|------------|-----------|---------------|------------|
+| --------------------------------------------------------------------------------------------------------------------------------- | ---------- | --------- | ------------- | ---------- |
 | Bash                                                                                                                              | &geq; 4.0  | &#10004;  | &#10004;      | &#10004;   |
 | [Markdown Tools](https://github.com/Simon-Brandt/MarkdownTools "github.com &rightarrow; Simon-Brandt &rightarrow; MarkdownTools") |            | &#10008;  | &#10004;      | &#10008;   |
 | [`cat`](https://man7.org/linux/man-pages/man1/cat.1.html "man7.org &rightarrow; man pages &rightarrow; cat(1)")                   |            | &#10008;  | &#10004;      | &#10008;   |

@@ -7,7 +7,7 @@ When [`ARGPARSER_USE_STYLES_IN_FILES`](environment_variables/environment_variabl
 A number of colors and styles is available. You don't need to remember the SGR codes, they're only internally used and given here for reference of what to expect from the keywords for the colors and styles. Further note that the actual RGB/Hex color values will depend on the output device.
 
 | Color                                   | SGR code |
-|-----------------------------------------|----------|
+| --------------------------------------- | -------- |
 | $\small\textsf{\color{black}black}$     | `30`     |
 | $\small\textsf{\color{red}red}$         | `31`     |
 | $\small\textsf{\color{green}green}$     | `32`     |
@@ -18,7 +18,7 @@ A number of colors and styles is available. You don't need to remember the SGR c
 | $\small\textsf{\color{lightgray}white}$ | `37`     |
 
 | Style         | SGR code |
-|---------------|----------|
+| ------------- | -------- |
 | `normal`      | `22`     |
 | `bold`        | `1`      |
 | `faint`       | `2`      |

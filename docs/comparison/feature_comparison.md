@@ -12,7 +12,7 @@ The following command-line parsers are compared in the given versions:
 In the following table, "&#10008;" marks the absence of a feature, "&#10004;" its presence, and "&#10033;" its partial presence, *e.g.*, due to a not-yet complete implementation.
 
 | Function                                    | `getopts`     | `getopt`      | shFlags      | docopts      | `argparse`    | Argparser    |
-|---------------------------------------------|---------------|---------------|--------------|--------------|---------------|--------------|
+| ------------------------------------------- | ------------- | ------------- | ------------ | ------------ | ------------- | ------------ |
 | Short options                               | &#10004;      | &#10004;      | &#10004;     | &#10004;     | &#10004;      | &#10004;     |
 | Long options                                | &#10008;      | &#10004;      | &#10004;     | &#10004;     | &#10004;      | &#10004;     |
 | Positional arguments                        | &#10033;[^1]  | &#10033;[^1]  | &#10033;[^1] | &#10004;     | &#10004;      | &#10004;     |

@@ -5,7 +5,7 @@ It is possible to customize the appearance of error, warning, help, usage, and v
 The following colors and styles are available (with the actual appearance depending on the output device):
 
 | Colors                                  | Styles        |
-|-----------------------------------------|---------------|
+| --------------------------------------- | ------------- |
 | $\small\textsf{\color{black}black}$     | `normal`      |
 | $\small\textsf{\color{red}red}$         | `bold`        |
 | $\small\textsf{\color{green}green}$     | `faint`       |
