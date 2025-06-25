@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-18
+# Last Modification: 2025-06-25
 
 using CSV: CSV
 using Dates: Dates
@@ -82,7 +82,11 @@ function plot_runtime_stats(
     plot = StatsPlots.violin(
         size=(1600, 900),
         legend=false,
+        xlabel="Command-line parser",
+        ylabel="Runtime [ms]",
+        labelfontsize=18,
         tickfontsize=18,
+        margin=(36, :px),
     )
 
     # For each script, extract the runtimes from the dictionary and plot
