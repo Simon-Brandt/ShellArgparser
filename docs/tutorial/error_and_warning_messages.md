@@ -6,5 +6,5 @@ Generally, errors may lead to abortion of the script, while warnings just write 
 
 Using [`ARGPARSER_SILENCE_ERRORS`](../reference/environment_variables/environment_variables.md#8540-argparser_silence_errors) and [`ARGPARSER_SILENCE_WARNINGS`](../reference/environment_variables/environment_variables.md#8541-argparser_silence_warnings), it is possible to prevent the emission of error or warning messages. Still, in case of critical errors, the Argparser exits, just not informing you or your user about its failure. Silencing errors may not be needed at all, except when you want to keep log files clean, but silencing warnings may improve the user experience.
 
-[&#129092;&nbsp;`version_messages.md`](version_messages.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[`message_styles.md`&nbsp;&#129094;](message_styles.md)
+[&#129092;&nbsp;4.8. Version messages](version_messages.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.10. Message styles&nbsp;&#129094;](message_styles.md)

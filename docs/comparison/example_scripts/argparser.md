@@ -63,5 +63,5 @@ Notes:
 - Trailing positional arguments must be delimited with `--` since the Argparser aggregates all values after option names to them, as design decision.
 - Intermixing positional and keyword arguments can be emulated by using the positional arguments delimiter `++`. True intermixing is yet disabled as design decision.
 
-[&#129092;&nbsp;`docopts.md`](docopts.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[`../summary.md`&nbsp;&#129094;](../summary.md)
+[&#129092;&nbsp;5.2.4. docopts](docopts.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.3. Summary&nbsp;&#129094;](../summary.md)

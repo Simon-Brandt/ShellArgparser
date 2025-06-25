@@ -143,5 +143,5 @@ Within the YAML file, just add a new line below each existing translation, start
 Try to use the tone and wording commonly found in command-line tool descriptions in your language. Don't just use machine translations, without having checked their validity. By this, the Argparser's output seemlessly integrates into the command-line workflows even in languages other than English.
 <!-- </include> -->
 
-[&#129092;&nbsp;`roadmap.md`](roadmap.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[`reference/introduction.md`&nbsp;&#129094;](reference/introduction.md)
+[&#129092;&nbsp;6. Roadmap](roadmap.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[8. Reference&nbsp;&#129094;](reference/introduction.md)

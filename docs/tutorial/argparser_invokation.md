@@ -111,5 +111,5 @@ As you saw above, the Argparser will aggregate all arguments (values) given afte
 
 Thereby, errors abort the script, while warnings just write a message to `STDERR`. Even after parsing or value checking errors occurred, the parsing or value checking continues and the Argparser aggregates the error messages until the end, when all are printed, to simplify the correction of multiple mistakes.
 
-[&#129092;&nbsp;`argument_passing.md`](argument_passing.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[`argparser_configuration.md`&nbsp;&#129094;](argparser_configuration.md)
+[&#129092;&nbsp;4.1. Argument passing](argument_passing.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3. Argparser configuration&nbsp;&#129094;](argparser_configuration.md)

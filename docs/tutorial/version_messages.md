@@ -11,5 +11,5 @@ try_argparser.sh v1.0.0
 ```
 <!-- </include> -->
 
-[&#129092;&nbsp;`help_and_usage_message_localization.md`](help_and_usage_message_localization.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[`error_and_warning_messages.md`&nbsp;&#129094;](error_and_warning_messages.md)
+[&#129092;&nbsp;4.7. Help and usage message localization](help_and_usage_message_localization.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.9. Error and warning messages&nbsp;&#129094;](error_and_warning_messages.md)

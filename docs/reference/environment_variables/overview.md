@@ -71,5 +71,5 @@
 [^18]: Values must be different from each other.
 [^19]: Sum of values is recommended to be 77.
 
-[&#129092;&nbsp;`toc.md`](toc.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[`environment_variables.md`&nbsp;&#129094;](environment_variables.md)
+[&#129092;&nbsp;](toc.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[8.5.2. `ARGPARSER_ADD_HELP`&nbsp;&#129094;](environment_variables.md)

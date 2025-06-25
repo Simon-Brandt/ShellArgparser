@@ -134,5 +134,5 @@
    1. [`ARGPARSER_WRITE_ARGS`](environment_variables/environment_variables.md#8562-argparser_write_args)
 <!-- </toc> -->
 
-[&#129092;&nbsp;`introduction.md`](introduction.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[`arguments_definition.md`&nbsp;&#129094;](arguments_definition.md)
+[&#129092;&nbsp;8. Reference](introduction.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[8.1. Arguments definition&nbsp;&#129094;](arguments_definition.md)

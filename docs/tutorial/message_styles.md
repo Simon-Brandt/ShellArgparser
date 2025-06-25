@@ -19,5 +19,5 @@ The following colors and styles are available (with the actual appearance depend
 
 Colors overwrite each other, whereas styles may be combined, like `"red,bold,reverse"` as default value for `ARGPARSER_ERROR_STYLE`. Styles may be given in any order; for colors, the last one is effectively visible. Still, the escape codes are concatenated in their order of definition in the style setting.
 
-[&#129092;&nbsp;`error_and_warning_messages.md`](error_and_warning_messages.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[`standalone_usage.md`&nbsp;&#129094;](standalone_usage.md)
+[&#129092;&nbsp;4.9. Error and warning messages](error_and_warning_messages.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.11. Standalone usage&nbsp;&#129094;](standalone_usage.md)

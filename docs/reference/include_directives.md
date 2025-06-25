@@ -57,5 +57,5 @@ The `@Usage` directive prints the line `Usage: <script_name> ...`, with `<script
 
 The `@Help` directive prints the help text for the `--help`, `--usage`, and `--version` flags (if added to the arguments definition by [`ARGPARSER_ADD_HELP`](environment_variables/environment_variables.md#852-argparser_add_help), [`ARGPARSER_ADD_USAGE`](environment_variables/environment_variables.md#853-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](environment_variables/environment_variables.md#854-argparser_add_version)). Usually, you want to give this at the very end of all options.
 
-[&#129092;&nbsp;`colors_and_styles.md`](colors_and_styles.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[`translations/introduction.md`&nbsp;&#129094;](translations/introduction.md)
+[&#129092;&nbsp;8.2. Colors and styles](colors_and_styles.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[8.4. Translations&nbsp;&#129094;](translations/introduction.md)

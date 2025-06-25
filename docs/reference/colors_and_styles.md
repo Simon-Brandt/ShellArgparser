@@ -32,5 +32,5 @@ A number of colors and styles is available. You don't need to remember the SGR c
 
 While colors overwrite each other, some styles can be combined. For instance, the default value for `ARGPARSER_ERROR_STYLE` is `"red,bold,reverse"`, meaning to colorize the message in red and to format it in bold font, using reverse video. Other useful combinations may include `"faint"` and `"italic"` or `"bold"` and `"underline"`. The order of giving the colors and styles in the environment variables' values does only matter if multiple colors are given, when the last one "wins". Else, the colors and styles are simply composed (concatenated).
 
-[&#129092;&nbsp;`arguments_definition.md`](arguments_definition.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[`include_directives.md`&nbsp;&#129094;](include_directives.md)
+[&#129092;&nbsp;8.1. Arguments definition](arguments_definition.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[8.3. Include directives&nbsp;&#129094;](include_directives.md)

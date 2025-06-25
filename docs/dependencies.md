@@ -30,5 +30,5 @@ For Julia, the following external packages are needed:
 - [`StatsPlots.jl`](https://docs.juliaplots.org/stable/generated/statsplots/ "docs.juliaplots.org &rightarrow; StatsPlots.jl") &geq; 0.15.7
 - [`Tables.jl`](https://tables.juliadata.org/stable/ "tables.juliadata.org") &geq; 1.12.1
 
-[&#129092;&nbsp;`installation.md`](installation.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[`tutorial/introduction.md`&nbsp;&#129094;](tutorial/introduction.md)
+[&#129092;&nbsp;2. Installation](installation.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4. Tutorial&nbsp;&#129094;](tutorial/introduction.md)

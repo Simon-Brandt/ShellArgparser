@@ -14,5 +14,5 @@
 1. [Standalone usage](standalone_usage.md#411-standalone-usage)
 <!-- </toc> -->
 
-[&#129092;&nbsp;`introduction.md`](introduction.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[`argument_passing.md`&nbsp;&#129094;](argument_passing.md)
+[&#129092;&nbsp;4. Tutorial](introduction.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.1. Argument passing&nbsp;&#129094;](argument_passing.md)

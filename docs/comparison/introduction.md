@@ -4,5 +4,5 @@ Several other shell command-line parsers predate the Argparser and were in part 
 
 The [feature comparison](feature_comparison.md#51-feature-comparison) compares the various features for argument parsing, while some [example scripts](example_scripts/getopts.md#52-example-scripts) later demonstrate the usage for the different parsers.
 
-[&#129092;&nbsp;`../tutorial/standalone_usage.md`](../tutorial/standalone_usage.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[`toc.md`&nbsp;&#129094;](toc.md)
+[&#129092;&nbsp;4.11. Standalone usage](../tutorial/standalone_usage.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;&#129094;](toc.md)

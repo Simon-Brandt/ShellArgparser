@@ -226,5 +226,5 @@ Another point to notice is the need to set the [`ARGPARSER_SCRIPT_NAME`](../refe
 
 In short, it is possible to run the Argparser in standalone mode from other shells, but this comes with the caveats of subprocesses&mdash;which the sourcing in Bash overcomes. Still, the only feature that your shell must support, is calling processes in pipes or *via* process substitutions to pass data to the Argparser's STDIN and read its STDOUT. Since pipes are defined by POSIX, most shells should support this feature.
 
-[&#129092;&nbsp;`message_styles.md`](message_styles.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[`../comparison/introduction.md`&nbsp;&#129094;](../comparison/introduction.md)
+[&#129092;&nbsp;4.10. Message styles](message_styles.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5. Comparison of command-line parsers&nbsp;&#129094;](../comparison/introduction.md)

@@ -123,5 +123,5 @@ The help message's structure aims at reproducing the commonly found structure in
 
 Alternatively, you may want to set [`ARGPARSER_MAX_WIDTH`](../reference/environment_variables/environment_variables.md#8533-argparser_max_width). By this, the help message will have a defined width, independent of shrunk columns. This is achieved by expanding the third column (with the help text) to the remaining width. For this to work, [`ARGPARSER_MAX_COL_WIDTH_3`](../reference/environment_variables/environment_variables.md#8532-argparser_max_col_width_3) must be set to `0`.
 
-[&#129092;&nbsp;`arguments_definition_files.md`](arguments_definition_files.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[`help_and_usage_message_files.md`&nbsp;&#129094;](help_and_usage_message_files.md)
+[&#129092;&nbsp;4.4. Arguments definition files](arguments_definition_files.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.6. Help and usage message files&nbsp;&#129094;](help_and_usage_message_files.md)

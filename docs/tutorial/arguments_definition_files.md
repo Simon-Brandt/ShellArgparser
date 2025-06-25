@@ -97,5 +97,5 @@ Usage: try_arg_def_file.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL
 ```
 <!-- </include> -->
 
-[&#129092;&nbsp;`argparser_configuration.md`](argparser_configuration.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[`help_and_usage_messages.md`&nbsp;&#129094;](help_and_usage_messages.md)
+[&#129092;&nbsp;4.3. Argparser configuration](argparser_configuration.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.5. Help and usage messages&nbsp;&#129094;](help_and_usage_messages.md)

@@ -115,5 +115,5 @@ Further, lines starting with a `"#"` character in the help file aren't printed i
 
 The same as for help messages can be done for usage messages, using the [`ARGPARSER_USAGE_FILE`](../reference/environment_variables/environment_variables.md#8547-argparser_usage_file), [`ARGPARSER_USAGE_FILE_INCLUDE_CHAR`](../reference/environment_variables/environment_variables.md#8548-argparser_usage_file_include_char), and [`ARGPARSER_USAGE_FILE_KEEP_COMMENTS`](../reference/environment_variables/environment_variables.md#8549-argparser_usage_file_keep_comments) environment variables. However there, only the `@All` directive is supported, yet.
 
-[&#129092;&nbsp;`help_and_usage_messages.md`](help_and_usage_messages.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[`help_and_usage_message_localization.md`&nbsp;&#129094;](help_and_usage_message_localization.md)
+[&#129092;&nbsp;4.5. Help and usage messages](help_and_usage_messages.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.7. Help and usage message localization&nbsp;&#129094;](help_and_usage_message_localization.md)

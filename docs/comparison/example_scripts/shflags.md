@@ -159,5 +159,5 @@ Notes:
 - The help message is partly auto-generated. In order to comply with the style decisions in shFlags, the manually set header is adapted to them.
 - The question mark `?` for the help message is not supported.
 
-[&#129092;&nbsp;`getopt.md`](getopt.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[`docopts.md`&nbsp;&#129094;](docopts.md)
+[&#129092;&nbsp;5.2.2. `getopt`](getopt.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.2.4. docopts&nbsp;&#129094;](docopts.md)

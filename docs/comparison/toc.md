@@ -11,5 +11,5 @@
 1. [Summary](summary.md#53-summary)
 <!-- </toc> -->
 
-[&#129092;&nbsp;`introduction.md`](introduction.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[`feature_comparison.md`&nbsp;&#129094;](feature_comparison.md)
+[&#129092;&nbsp;5. Comparison of command-line parsers](introduction.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.1. Feature comparison&nbsp;&#129094;](feature_comparison.md)

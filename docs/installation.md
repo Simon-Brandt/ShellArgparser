@@ -29,5 +29,5 @@ PATH="/path/to/ShellArgparser:${PATH}"
 > [!CAUTION]
 > Be wary not to forget the final `${PATH}` component in the above command, or else you will override the [`PATH`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Variables.html#index-PATH "gnu.org &rightarrow; Bourne Shell Variables &rightarrow; PATH")) for all future shell sessions, meaning no other (non-builtin) command will be resolvable, anymore.
 
-[&#129092;&nbsp;`features.md`](features.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[`dependencies.md`&nbsp;&#129094;](dependencies.md)
+[&#129092;&nbsp;1. Features](features.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[3. Dependencies&nbsp;&#129094;](dependencies.md)

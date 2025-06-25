@@ -12,5 +12,5 @@ Further, the development of shFlags and docopts seemingly have stalled, with no 
 
 Finally, the Argparser is extensively documented, unlike the other tools relying on a brief readme or man page. This hopefully makes the transition to the Argparser&mdash;if deemed useful at all&mdash;easier.
 
-[&#129092;&nbsp;`example_scripts/argparser.md`](example_scripts/argparser.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[`../roadmap.md`&nbsp;&#129094;](../roadmap.md)
+[&#129092;&nbsp;5.2.5. Argparser](example_scripts/argparser.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[6. Roadmap&nbsp;&#129094;](../roadmap.md)

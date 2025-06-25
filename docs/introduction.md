@@ -6,4 +6,4 @@ Applying the Argparser should lead to shorter and more concise code than the tra
 
 The Argparser is entirely written in pure Bash, without invoking external commands. Thus, using it does not add additional dependencies to your script&mdash;except of course the Argparser itself&mdash;, especially not differing versions/implementations of a program (like with [`awk`](https://man7.org/linux/man-pages/man1/awk.1p.html "man7.org &rightarrow; man pages &rightarrow; awk(1p)")). Additionally, its design choices of not calling external commands and running almost without forking into subshells lead to a good runtime despite the extensive parsing and checking steps. The Argparser is inspired by the Python [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module") module.
 
-[`toc.md`&nbsp;&#129094;](toc.md)
+[&nbsp;&#129094;](toc.md)

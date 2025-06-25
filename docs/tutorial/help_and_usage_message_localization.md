@@ -250,5 +250,5 @@ Aufruf: try_localization.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VA
 ```
 <!-- </include> -->
 
-[&#129092;&nbsp;`help_and_usage_message_files.md`](help_and_usage_message_files.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[`version_messages.md`&nbsp;&#129094;](version_messages.md)
+[&#129092;&nbsp;4.6. Help and usage message files](help_and_usage_message_files.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.8. Version messages&nbsp;&#129094;](version_messages.md)
