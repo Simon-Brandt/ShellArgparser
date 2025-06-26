@@ -64,4 +64,4 @@ Notes:
 - Intermixing positional and keyword arguments can be emulated by using the positional arguments delimiter `++`. True intermixing is yet disabled as design decision.
 
 [&#129092;&nbsp;5.2.4. docopts](docopts.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.3. Summary&nbsp;&#129094;](../summary.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.3. Runtime comparison&nbsp;&#129094;](../runtime_comparison.md)

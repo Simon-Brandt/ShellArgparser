@@ -8,7 +8,8 @@
    1. [shFlags](example_scripts/shflags.md#523-shflags)
    1. [docopts](example_scripts/docopts.md#524-docopts)
    1. [Argparser](example_scripts/argparser.md#525-argparser)
-1. [Summary](summary.md#53-summary)
+1. [Runtime comparison](runtime_comparison.md#53-runtime-comparison)
+1. [Summary](summary.md#54-summary)
 <!-- </toc> -->
 
 [&#129092;&nbsp;5. Comparison of command-line parsers](introduction.md)

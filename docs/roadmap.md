@@ -55,5 +55,5 @@ The following features are considered for addition in a future version. If you m
 
 - If the column width in the help message is extremely narrow (like 2 characters), the content may be broken on wrong positions, leading to an omission of arguments.
 
-[&#129092;&nbsp;5.3. Summary](comparison/summary.md)
+[&#129092;&nbsp;5.4. Summary](comparison/summary.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[7. Contribution guide&nbsp;&#129094;](contribution_guide.md)
