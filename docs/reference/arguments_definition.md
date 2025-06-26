@@ -76,5 +76,5 @@ The notes are intended to give additional information about arguments that don't
 
 The help text should consist of a terse summary of the argument's function, like turning a feature on or off (which may be accomplished by flags), what a file is used for (like for input or output), or how your script's output may be modified. A help text can take any form, but be wary of it being wrapped to fit the width of the third column in the help message (if [`ARGPARSER_MAX_COL_WIDTH_3`](environment_variables/environment_variables.md#8532-argparser_max_col_width_3) is non-zero) or the total line length ([`ARGPARSER_MAX_WIDTH`](environment_variables/environment_variables.md#8533-argparser_max_width)). Help messages are no replacement for the manual, so the help text shouldn't be overly verbose.
 
-[&#129092;&nbsp;](toc.md)
+[&#129092;&nbsp;Table of contents (Reference)](toc.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[8.2. Colors and styles&nbsp;&#129094;](colors_and_styles.md)

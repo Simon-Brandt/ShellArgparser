@@ -6,4 +6,4 @@ In order to facilitate translators the translation of the Argparser-generated st
 > The translation keys in the simplified YAML file are subject to change, if messages are added or removed. Since missing keys only generate warnings (which can even be silenced using [`ARGPARSER_SILENCE_WARNINGS`](../environment_variables/environment_variables.md#8541-argparser_silence_warnings)), such changes are *not* considered breaking changes, and by this would *not* lead to an increase in the Argparser's major version number. However, as few modifications as possible are anticipated, and only when other breaking changes are introduced, larger refactorings should occur.
 
 [&#129092;&nbsp;8.3. Include directives](../include_directives.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;&#129094;](toc.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Table of contents (Translations)&nbsp;&#129094;](toc.md)

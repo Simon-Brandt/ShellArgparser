@@ -14,5 +14,5 @@ The Argparser:
 - can use parts of an arguments definition **shared across multiple scripts**
 - can be widely **configured** to your needs by a large set of environment variables and optional companion files to your script
 
-[&#129092;&nbsp;](toc.md)
+[&#129092;&nbsp;Table of contents](toc.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[2. Installation&nbsp;&#129094;](installation.md)

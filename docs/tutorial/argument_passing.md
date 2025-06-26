@@ -325,5 +325,5 @@ Usage: try_argparser.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] 
 
 The tiny change of the prefix for the `fgcA` compound argument made our whole attempt fail: Since `var_3` is not a flag, we can't use the boolean negation, here, and thus the Argparser yields an error. So, although specifying `+fg` is no problem, the merged `c` makes the parsing fail. Were `g` also defined to accept a value, the Argparser would have reported the error already here, since the following `cA` would have been seen as value to the option `+g`. This shows that care should be taken when merging option names.
 
-[&#129092;&nbsp;](toc.md)
+[&#129092;&nbsp;Table of contents (Tutorial)](toc.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.2. Argparser invokation&nbsp;&#129094;](argparser_invokation.md)

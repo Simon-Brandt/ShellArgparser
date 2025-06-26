@@ -67,5 +67,5 @@ In the following table, "&#10008;" marks the absence of a feature, "&#10004;" it
 [^12]: Not applicable as not designed for usage from within shells.
 [^13]: Opt-in feature *via* environment variable (`POSIXLY_CORRECT`).
 
-[&#129092;&nbsp;](toc.md)
+[&#129092;&nbsp;Table of contents (Feature comparison)](toc.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.2. Example scripts&nbsp;&#129094;](example_scripts/getopts.md)
