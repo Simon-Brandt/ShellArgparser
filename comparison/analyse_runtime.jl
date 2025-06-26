@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-25
+# Last Modification: 2025-06-26
 
 using CSV: CSV
 using Dates: Dates
@@ -120,7 +120,7 @@ function write_runtime_stats(
     for script_name in sort(collect(keys(stats)))
         line = Union{String, Number}[script_name]
         for stat in ("Mean", "Std dev", "Median")
-            push!(line, stats[script_name][stat])
+            push!(line, round(stats[script_name][stat], digits=1))
         end
 
         if isnothing(lines)
