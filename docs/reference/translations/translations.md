@@ -60,7 +60,7 @@
 
 #### 8.4.16. `Error env var bool`
 
-- ***Description:*** The error that an environment variable is not a boolean.
+- ***Description:*** The error that an environment variable is not a Boolean.
 - ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#8516-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#8517-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value other than `true` and `false`.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
