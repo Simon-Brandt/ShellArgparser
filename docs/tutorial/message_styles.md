@@ -4,6 +4,9 @@ It is possible to customize the appearance of error, warning, help, usage, and v
 
 The following colors and styles are available (with the actual appearance depending on the output device):
 
+<!-- <table caption="Available colors and styles"> -->
+*Tab. 2: Available colors and styles.*
+
 | Colors                                  | Styles        |
 | --------------------------------------- | ------------- |
 | $\small\textsf{\color{black}black}$     | `normal`      |

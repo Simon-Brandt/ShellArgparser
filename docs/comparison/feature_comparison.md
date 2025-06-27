@@ -11,6 +11,9 @@ The following command-line parsers are compared in the given versions:
 
 In the following table, "&#10008;" marks the absence of a feature, "&#10004;" its presence, and "&#10033;" its partial presence, *e.g.*, due to a not-yet complete implementation.
 
+<!-- <table caption="Present or absent features of various command-line parsers"> -->
+*Tab. 3: Present or absent features of various command-line parsers.*
+
 | Function                                    | `getopts`     | `getopt`      | shFlags      | docopts      | `argparse`    | Argparser    |
 | ------------------------------------------- | ------------- | ------------- | ------------ | ------------ | ------------- | ------------ |
 | Short options                               | &#10004;      | &#10004;      | &#10004;     | &#10004;     | &#10004;      | &#10004;     |

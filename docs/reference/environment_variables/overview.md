@@ -1,5 +1,8 @@
 #### 8.5.1. Overview
 
+<!-- <table caption="Overview over the Argparser environment variables"> -->
+*Tab. 7: Overview over the Argparser environment variables.*
+
 | Variable name                                                                      | Type[^14]  | Default value[^15][^16]  |
 | ---------------------------------------------------------------------------------- | ---------- | ------------------------ |
 | [`ARGPARSER_ADD_HELP`](environment_variables.md#852-argparser_add_help)                                    | *bool*     | `true`                   |

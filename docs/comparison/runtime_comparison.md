@@ -2,9 +2,14 @@
 
 Using the [Julia](https://julialang.org/ "julialang.org") script [`analyse_runtime.jl`](../../comparison/analyse_runtime.jl), we can compare the different runtimes of the command-line parsers. The violin plots of 1000 iterations each are shown in the following figure:
 
+<!-- <figure file="../comparison/stats.svg" caption="Violin plot of all command-line parsers' runtimes"> -->
 ![Violin plot of all command-line parsers' runtimes](../../comparison/stats.svg)
+*Fig. 1: Violin plot of all command-line parsers' runtimes.*
 
 The runtime statistics are given in the following table:
+
+<!-- <table caption="Runtimes of all command-line parsers"> -->
+*Tab. 4: Runtimes of all command-line parsers.*
 
 <!-- <include command="sed --regexp-extended 's/\w+\.sh/`&`/;s/,/ | /g;s/^/| /;s/$/ |/;2i | --- | --- | --- | --- |' ../comparison/stats.csv"> -->
 | Script | Mean | Std dev | Median |

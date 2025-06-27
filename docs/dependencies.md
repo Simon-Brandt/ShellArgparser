@@ -4,6 +4,9 @@ By design, the Argparser only requires Bash to run. However, for creating the do
 
 In the following table, "&#10004;" marks the tools necessary for the respective task, "&#10008;" those that aren't required. When no version number is given, any recent version is expected to work.
 
+<!-- <table caption="Dependencies of the Argparser execution, documentation, and feature comparison"> -->
+*Tab. 1: Dependencies of the Argparser execution, documentation, and feature comparison.*
+
 | Tool                                                                                                                              | Version    | Execution | Documentation | Comparison |
 | --------------------------------------------------------------------------------------------------------------------------------- | ---------- | --------- | ------------- | ---------- |
 | Bash                                                                                                                              | &geq; 4.0  | &#10004;  | &#10004;      | &#10004;   |
