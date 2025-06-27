@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-20
+# Last Modification: 2025-06-27
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -977,8 +977,6 @@ test_type="help"
 cmd="bash test_positional_arguments.sh --help"
 output="$(cat << EOF
 Usage: test_positional_arguments.sh [pos_1] pos_2
-
-Mandatory arguments to long options are mandatory for short options too.
 
 Positional arguments:
 [pos_1={1,2}]     one positional argument with default and choice (default: 2)

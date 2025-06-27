@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-20
+# Last Modification: 2025-06-27
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -6553,6 +6553,8 @@ function argparser_print_help_or_usage_message() {
     #   groups (read-only)
     # - all_positional_args: the indexed array holding the positional
     #   argument names (read-only)
+    # - all_short_options: the associative array holding the short
+    #   option names (read-only)
     # - help_message_groups: the associative array holding the help
     #   message's groups usable as include directive (read-only)
     # - usage_message_groups: the associative array holding the usage
@@ -6575,6 +6577,7 @@ function argparser_print_help_or_usage_message() {
     # Define the local variables.
     local arg_group
     local -a arg_groups
+    local count
     local error_message
     local -a error_messages
     local exit
@@ -6640,6 +6643,18 @@ function argparser_print_help_or_usage_message() {
         arg_groups+=("${ARGPARSER_HELP_ARG_GROUP}")
     fi
 
+    # Count the keyword arguments that aren't used for the help, usage,
+    # or version message.  This count is used to conditionally add the
+    # remark to the help message, below.  By counting the number of
+    # "true" values in ${ARGPARSER_ADD_HELP}, ${ARGPARSER_ADD_USAGE},
+    # and ${ARGPARSER_ADD_VERSION}, it is possible to check which help
+    # options are defined.  All other arguments that have an entry in
+    # ${!all_short_options} are actual keyword arguments needed for the
+    # remark.
+    argparser_count "true" "${ARGPARSER_ADD_HELP}" "${ARGPARSER_ADD_USAGE}" \
+        "${ARGPARSER_ADD_VERSION}"
+    (( keyword_args_count = "${#all_short_options[@]}" - "${count}" ))
+
     # Create the help or usage message groups, which are saved in an
     # associative array using the include directives as keys.
     if [[ "${help_type}" == "help" ]]; then
@@ -6669,7 +6684,8 @@ function argparser_print_help_or_usage_message() {
         # empty (but not commented).  Thus, empty lines following
         # comments still have ${line_type} set to "comment".  For
         # include directives, add the requested groups from the help or
-        # usage message.
+        # usage message.  Only add the remark if keyword arguments are
+        # given.
         if [[ "${line::1}" == "${include_char}" ]]; then
             line_type="include directive"
             include_directive="${line:1}"
@@ -6678,8 +6694,10 @@ function argparser_print_help_or_usage_message() {
                     message+="${help_message_groups["Usage"]}"
                     message+=$'\n'
 
-                    message+="${help_message_groups["Remark"]}"
-                    message+=$'\n'
+                    if (( keyword_args_count > 0 )); then
+                        message+="${help_message_groups["Remark"]}"
+                        message+=$'\n'
+                    fi
 
                     for i in "${!arg_groups[@]}"; do
                         message+="${help_message_groups[${arg_groups[i]}]}"
@@ -6689,13 +6707,19 @@ function argparser_print_help_or_usage_message() {
                     done
                 elif [[ "${include_directive}" == "Header" ]]; then
                     message+="${help_message_groups["Usage"]}"
-                    message+=$'\n'
-                    message+="${help_message_groups["Remark"]}"
+
+                    if (( keyword_args_count > 0 )); then
+                        message+=$'\n'
+                        message+="${help_message_groups["Remark"]}"
+                    fi
                 elif [[ "${include_directive}" == "Help" ]]; then
                     message+="${help_message_groups["${ARGPARSER_HELP_ARG_GROUP}"]}"
-                elif argparser_in_array "${include_directive}" "Remark" "Usage"
-                then
-                    message+="${help_message_groups["${include_directive}"]}"
+                elif [[ "${include_directive}" == "Remark" ]]; then
+                    if (( keyword_args_count > 0 )); then
+                        message+="${help_message_groups["Remark"]}"
+                    fi
+                elif [[ "${include_directive}" == "Usage" ]]; then
+                    message+="${help_message_groups["Usage"]}"
                 elif argparser_in_array "${include_directive}" \
                     "${arg_groups[@]}"
                 then
