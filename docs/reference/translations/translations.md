@@ -420,5 +420,134 @@
   - `$2`: The long option name.
   - `$3`: The previously parsed argument's identifier.
 
+#### 8.4.62. `Error arg def pos default 1`
+
+- ***Description:*** The error that in the arguments definition of a positional argument, the number of default values doesn't match the number of required values, one.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined, whose number of default values doesn't match the number of required values, which is one. Since the latter is likely a requirement for your script, you could not rely on the number being correct when default values are used.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The number of default values.
+
+#### 8.4.63. `Error arg def pos default 2`
+
+- ***Description:*** The error that in the arguments definition of a positional argument, the number of default values doesn't match the number of required values.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined, whose number of default values doesn't match the number of required values. Since the latter is likely a requirement for your script, you could not rely on the number being correct when default values are used.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The number of required values.
+  - `$3`: The number of default values.
+
+#### 8.4.64. `Error arg def pos choice`
+
+- ***Description:*** The error that in the arguments definition of a positional argument, the default values aren't a subset of the choice values.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined, whose default values aren't completely given as choice values, contradicting the latter's purpose.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The choice values.
+  - `$3`: The default values.
+
+#### 8.4.65. `Error arg def pos optionals`
+
+- ***Description:*** The error that in the arguments definition, at least two positional arguments are optional.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined as optional, as another previously parsed argument is. In the general case, it is impossible to parse this, since it cannot be inferred which optional argument is given.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The previously parsed argument's identifier.
+
+#### 8.4.66. `Error arg def pos optional infinite`
+
+- ***Description:*** The error that in the arguments definition, at least one positional argument is optional, with another one accepting an infinite number of values.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined as optional, while another previously parsed argument accepts an infinite number of values. It is impossible to parse this, since it cannot be inferred whether the optional argument is given, when the value could also be accepted by the argument accepting an infinite number of values.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The previously parsed argument's identifier.
+
+#### 8.4.67. `Error arg def pos flag`
+
+- ***Description:*** The error that in the arguments definition of a positional argument, the number of required arguments is zero.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined as accepting no value, just as a flag. However, the presence of a flag is indicated by the presence of the respective keyword argument (option name), which does not exist for positional arguments. Thus, positional flags aren't possible.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+
+#### 8.4.68. `Error arg def pos infinites`
+
+- ***Description:*** The error that in the arguments definition, at least two positional arguments accept an infinite number of values.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined as accepting an infinite number of values, just as another previously parsed argument does. It is impossible to parse this, since it cannot be inferred which of these arguments would take a given value.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The previously parsed argument's identifier.
+
+#### 8.4.69. `Error arg def pos infinite optional 1`
+
+- ***Description:*** The error that in the arguments definition, a positional argument is both optional and accepts an infinite number of values.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined as optional, while accepting an infinite number of values. Although parsable in theory, the Argparser does not yet support this behavior (the argument count `*`).
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+
+#### 8.4.70. `Error arg def pos infinite optional 2`
+
+- ***Description:*** The error that in the arguments definition, at least one positional argument accepts an infinite number of values, with another one being optional.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined as accepting an infinite number of values, while another previously parsed argument is optional. It is impossible to parse this, since it cannot be inferred whether the optional argument is given, when the value could also be accepted by the argument accepting an infinite number of values.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The previously parsed argument's identifier.
+
+#### 8.4.71. `Error arg def pos type`
+
+- ***Description:*** The error that in the arguments definition, a positional argument has an unsupported data type.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined with a data type which the Argparser doesn't support. Although only simple regex-based type checks are performed, for clarity in the arguments definition, a correct data type must be given. These are `bool`, `char`, `float`, `file`, `int`, `str`, and `uint`. For arbitrary or unsupported data types, use `str` (or possibly `file`), which is unchecked.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The data type.
+
+#### 8.4.72. `Error arg def pos bool`
+
+- ***Description:*** The error that in the arguments definition of a positional argument, a choice value's data type is not a Boolean.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined with a choice value whose data type doesn't accord to the argument's data type, `bool`. These Boolean values must be either `true` or `false`.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The choice value.
+
+#### 8.4.73. `Error arg def pos char`
+
+- ***Description:*** The error that in the arguments definition of a positional argument, a choice value's data type is not a character.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined with a choice value whose data type doesn't accord to the argument's data type, `char`. These characters must be strings comprising one printable ASCII character.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The choice value.
+
+#### 8.4.74. `Error arg def pos float`
+
+- ***Description:*** The error that in the arguments definition of a positional argument, a choice value's data type is not a floating-point number.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined with a choice value whose data type doesn't accord to the argument's data type, `float`. These floating-point numbers must comprise only digits, a dot, and possibly a leading sign.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The choice value.
+
+#### 8.4.75. `Error arg def pos int`
+
+- ***Description:*** The error that in the arguments definition of a positional argument, a choice value's data type is not an integer.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined with a choice value whose data type doesn't accord to the argument's data type, `int`. These integers must comprise only digits and possibly a leading sign.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The choice value.
+
+#### 8.4.76. `Error arg def pos uint`
+
+- ***Description:*** The error that in the arguments definition of a positional argument, a choice value's data type is not an unsigned integer.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined with a choice value whose data type doesn't accord to the argument's data type, `uint`. These unsigned integers must comprise only digits and no sign.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The choice value.
+
+#### 8.4.77. `Error arg def pos note`
+
+- ***Description:*** The error that in the arguments definition of a positional argument, an unsupported note is given.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined with a note other than `"deprecated"`. Currently, the Argparser doesn't support any other note, but may do so in the future.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The note.
+
+
 [&#129092;&nbsp;Table of contents (Translations)](toc.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[8.5. Environment variables&nbsp;&#129094;](../environment_variables/introduction.md)
