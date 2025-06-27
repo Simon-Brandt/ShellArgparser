@@ -422,7 +422,7 @@
 
 #### 8.4.62. `Error arg def pos default 1`
 
-- ***Description:*** The error that in the arguments definition of a positional argument, the number of default values doesn't match the number of required values, one.
+- ***Description:*** The error that in the arguments definition of a positional argument, the number of default values doesn't match the number of required values, which is one.
 - ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined, whose number of default values doesn't match the number of required values, which is one. Since the latter is likely a requirement for your script, you could not rely on the number being correct when default values are used.
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
@@ -544,6 +544,104 @@
 
 - ***Description:*** The error that in the arguments definition of a positional argument, an unsupported note is given.
 - ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined with a note other than `"deprecated"`. Currently, the Argparser doesn't support any other note, but may do so in the future.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The note.
+
+#### 8.4.78. `Error arg def option flag`
+
+- ***Description:*** The error that in the arguments definition, a flag has a non-Boolean default value.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined as accepting no value, *i.e.*, as a flag. Thus, the default value must be either `true` or `false`.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The default value.
+
+#### 8.4.79. `Error arg def option default 1`
+
+- ***Description:*** The error that in the arguments definition of a keyword argument, the number of default values doesn't match the number of required values, which is one.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined, whose number of default values doesn't match the number of required values, which is one. Since the latter is likely a requirement for your script, you could not rely on the number being correct when default values are used.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The number of default values.
+
+#### 8.4.80. `Error arg def option default 2`
+
+- ***Description:*** The error that in the arguments definition of a keyword argument, the number of default values doesn't match the number of required values.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined, whose number of default values doesn't match the number of required values. Since the latter is likely a requirement for your script, you could not rely on the number being correct when default values are used.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The number of required values.
+  - `$3`: The number of default values.
+
+#### 8.4.81. `Error arg def option choice flag`
+
+- ***Description:*** The error that in the arguments definition, a flag has choice values.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined as flag, but with choice values. Since they are `true` and `false` by definition, and flags not accepting any value, specifying choice values is either redundant or wrong, depending on the point of view.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The choice values.
+
+#### 8.4.82. `Error arg def option choice`
+
+- ***Description:*** The error that in the arguments definition of a keyword argument, the default values aren't a subset of the choice values.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined, whose default values aren't completely given as choice values, contradicting the latter's purpose.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The choice values.
+  - `$3`: The default values.
+
+#### 8.4.83. `Error arg def option type`
+
+- ***Description:*** The error that in the arguments definition, a keyword argument has an unsupported data type.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined with a data type which the Argparser doesn't support. Although only simple regex-based type checks are performed, for clarity in the arguments definition, a correct data type must be given. These are `bool`, `char`, `float`, `file`, `int`, `str`, and `uint`. For arbitrary or unsupported data types, use `str` (or possibly `file`), which is unchecked.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The data type.
+
+#### 8.4.84. `Error arg def option bool`
+
+- ***Description:*** The error that in the arguments definition of a keyword argument, a choice value's data type is not a Boolean.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined with a choice value whose data type doesn't accord to the argument's data type, `bool`. These Boolean values must be either `true` or `false`.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The choice value.
+
+#### 8.4.85. `Error arg def option char`
+
+- ***Description:*** The error that in the arguments definition of a keyword argument, a choice value's data type is not a character.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined with a choice value whose data type doesn't accord to the argument's data type, `char`. These characters must be strings comprising one printable ASCII character.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The choice value.
+
+#### 8.4.86. `Error arg def option float`
+
+- ***Description:*** The error that in the arguments definition of a keyword argument, a choice value's data type is not a floating-point number.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined with a choice value whose data type doesn't accord to the argument's data type, `float`. These floating-point numbers must comprise only digits, a dot, and possibly a leading sign.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The choice value.
+
+#### 8.4.87. `Error arg def option int`
+
+- ***Description:*** The error that in the arguments definition of a keyword argument, a choice value's data type is not an integer.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined with a choice value whose data type doesn't accord to the argument's data type, `int`. These integers must comprise only digits and possibly a leading sign.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The choice value.
+
+#### 8.4.88. `Error arg def option uint`
+
+- ***Description:*** The error that in the arguments definition of a keyword argument, a choice value's data type is not an unsigned integer.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined with a choice value whose data type doesn't accord to the argument's data type, `uint`. These unsigned integers must comprise only digits and no sign.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The choice value.
+
+#### 8.4.89. `Error arg def option note`
+
+- ***Description:*** The error that in the arguments definition of a keyword argument, an unsupported note is given.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined with a note other than `"deprecated"`. Currently, the Argparser doesn't support any other note, but may do so in the future.
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
   - `$2`: The note.

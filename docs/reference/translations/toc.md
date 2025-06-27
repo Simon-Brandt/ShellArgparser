@@ -78,6 +78,18 @@
 1. [`Error arg def pos int`](translations.md#8475-error-arg-def-pos-int)
 1. [`Error arg def pos uint`](translations.md#8476-error-arg-def-pos-uint)
 1. [`Error arg def pos note`](translations.md#8477-error-arg-def-pos-note)
+1. [`Error arg def option flag`](translations.md#8478-error-arg-def-option-flag)
+1. [`Error arg def option default 1`](translations.md#8479-error-arg-def-option-default-1)
+1. [`Error arg def option default 2`](translations.md#8480-error-arg-def-option-default-2)
+1. [`Error arg def option choice flag`](translations.md#8481-error-arg-def-option-choice-flag)
+1. [`Error arg def option choice`](translations.md#8482-error-arg-def-option-choice)
+1. [`Error arg def option type`](translations.md#8483-error-arg-def-option-type)
+1. [`Error arg def option bool`](translations.md#8484-error-arg-def-option-bool)
+1. [`Error arg def option char`](translations.md#8485-error-arg-def-option-char)
+1. [`Error arg def option float`](translations.md#8486-error-arg-def-option-float)
+1. [`Error arg def option int`](translations.md#8487-error-arg-def-option-int)
+1. [`Error arg def option uint`](translations.md#8488-error-arg-def-option-uint)
+1. [`Error arg def option note`](translations.md#8489-error-arg-def-option-note)
 <!-- </toc> -->
 
 [&#129092;&nbsp;8.4. Translations](introduction.md)
