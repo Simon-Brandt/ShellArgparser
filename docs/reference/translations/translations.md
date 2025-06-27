@@ -294,7 +294,7 @@
   - `$3`: The current line's number of fields.
   - `$4`: The header's number of fields.
 
-#### 8.4.47. `Error arg def file id`
+#### 8.4.47. `Error arg def file field count`
 
 - ***Description:*** The error that in the arguments definition in the [`ARGPARSER_ARG_DEF_FILE`](../environment_variables/environment_variables.md#8510-argparser_arg_def_file), the lines have differing field counts.
 - ***Reasons for error:*** When parsing the arguments definition from the `ARGPARSER_ARG_DEF_FILE`, the Argparser found a line in the definition having a different number of fields (columns) than the header. Thus, the header fields cannot be mapped to the line's fields.
@@ -303,6 +303,122 @@
   - `$2`: The current line.
   - `$3`: The current line's number of fields.
   - `$4`: The header's number of fields.
+
+#### 8.4.48. `Error arg def short name empty`
+
+- ***Description:*** The error that in the arguments definition, an argument has an empty short option name.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a short option defined, where at least one name of which is empty. This option name could never be given on the command line.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The number of short option names.
+
+#### 8.4.49. `Error arg def short name help`
+
+- ***Description:*** The error that in the arguments definition, an argument has the same short option name as the help option.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a short option defined, where a name is identical to one of those used to invoke the help message. Since parsing the latter takes precedence, the option name would always refer to the help message on the command line.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The short option name.
+
+#### 8.4.50. `Error arg def short name usage`
+
+- ***Description:*** The error that in the arguments definition, an argument has the same short option name as the usage option.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a short option defined, where a name is identical to one of those used to invoke the usage message. Since parsing the latter takes precedence, the option name would always refer to the usage message on the command line.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The short option name.
+
+#### 8.4.51. `Error arg def short name version`
+
+- ***Description:*** The error that in the arguments definition, an argument has the same short option name as the version option.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a short option defined, where a name is identical to one of those used to invoke the version message. Since parsing the latter takes precedence, the option name would always refer to the version message on the command line.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The short option name.
+
+#### 8.4.52. `Error arg def short name length`
+
+- ***Description:*** The error that in the arguments definition, an argument has a short option name with more than one character length.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a short option defined, where a name is longer than one character. This contradicts the definition of short options, and would interfere with merging short options on the command line. Use a long option name, instead.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The short option name.
+
+#### 8.4.53. `Error arg def short name inner duplication`
+
+- ***Description:*** The error that in the arguments definition, an argument has a short option name given multiple times.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a short option defined, where a name is given more than once. This is likely a typo when wanting to specify similar name aliases. Although this would mean no harm for the end user, as giving that name would still refer to the correct option, the error is not just a warning for consistency with more serious errors.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The short option name.
+  - `$3`: The number of occurrences of the short option name.
+
+#### 8.4.54. `Error arg def short name outer duplication`
+
+- ***Description:*** The error that in the arguments definition, at least two arguments have the same short option name given.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a short option defined, which is already in use by a previously parsed argument. When given on the command line, it would be unclear which option would be referred to.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The short option name.
+  - `$3`: The previously parsed argument's identifier.
+
+#### 8.4.55. `Error arg def long name empty`
+
+- ***Description:*** The error that in the arguments definition, an argument has an empty long option name.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a long option defined, where at least one name of which is empty. This option name could never be given on the command line.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The number of long option names.
+
+#### 8.4.56. `Error arg def long name help`
+
+- ***Description:*** The error that in the arguments definition, an argument has the same long option name as the help option.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a long option defined, where a name is identical to one of those used to invoke the help message. Since parsing the latter takes precedence, the option name would always refer to the help message on the command line.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The long option name.
+
+#### 8.4.57. `Error arg def long name usage`
+
+- ***Description:*** The error that in the arguments definition, an argument has the same long option name as the usage option.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a long option defined, where a name is identical to one of those used to invoke the usage message. Since parsing the latter takes precedence, the option name would always refer to the usage message on the command line.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The long option name.
+
+#### 8.4.58. `Error arg def long name version`
+
+- ***Description:*** The error that in the arguments definition, an argument has the same long option name as the version option.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a long option defined, where a name is identical to one of those used to invoke the version message. Since parsing the latter takes precedence, the option name would always refer to the version message on the command line.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The long option name.
+
+#### 8.4.59. `Error arg def long name length`
+
+- ***Description:*** The error that in the arguments definition, an argument has a long option name with less than two characters length.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a long option defined, where a name is shorter than two characters. This contradicts the definition of long options. Use a short option name, instead.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The long option name.
+
+#### 8.4.60. `Error arg def long name inner duplication`
+
+- ***Description:*** The error that in the arguments definition, an argument has a long option name given multiple times.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a long option defined, where a name is given more than once. This is likely a typo when wanting to specify similar name aliases. Although this would mean no harm for the end user, as giving that name would still refer to the correct option, the error is not just a warning for consistency with more serious errors.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The long option name.
+  - `$3`: The number of occurrences of the long option name.
+
+#### 8.4.61. `Error arg def long name outer duplication`
+
+- ***Description:*** The error that in the arguments definition, at least two arguments have the same long option name given.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a long option defined, which is already in use by a previously parsed argument. When given on the command line, it would be unclear which option would be referred to.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The long option name.
+  - `$3`: The previously parsed argument's identifier.
 
 [&#129092;&nbsp;Table of contents (Translations)](toc.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[8.5. Environment variables&nbsp;&#129094;](../environment_variables/introduction.md)
