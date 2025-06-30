@@ -114,6 +114,12 @@
 1. [`Error arg uint`](translations.md#84111-error-arg-uint)
 1. [`Error YAML`](translations.md#84112-error-yaml)
 1. [`Error include directive`](translations.md#84113-error-include-directive)
+1. [`Warning wrong arg number 1`](translations.md#84114-warning-wrong-arg-number-1)
+1. [`Warning wrong arg number 2`](translations.md#84115-warning-wrong-arg-number-2)
+1. [`Warning wrong arg number 3`](translations.md#84116-warning-wrong-arg-number-3)
+1. [`Warning deprecation`](translations.md#84117-warning-deprecation)
+1. [`Warning no identifier`](translations.md#84118-warning-no-identifier)
+1. [`Warning no translation`](translations.md#84119-warning-no-translation)
 <!-- </toc> -->
 
 [&#129092;&nbsp;8.4. Translations](introduction.md)

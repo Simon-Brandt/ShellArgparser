@@ -821,5 +821,57 @@
 - ***Interpolated variables:***
   - `$1`: The include directive
 
+#### 8.4.114. `Warning wrong arg number 1`
+
+- ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring one.
+- ***Reasons for warning:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values, which is one. Thus, it falls back to the default values.
+- ***Interpolated variables:***
+  - `$1`: The argument's option or value names
+  - `$2`: The number of given values
+  - `$3`: The default values
+
+#### 8.4.115. `Warning wrong arg number 2`
+
+- ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring at least one.
+- ***Reasons for warning:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values, which is at least one. Thus, it falls back to the default values.
+- ***Interpolated variables:***
+  - `$1`: The argument's option or value names
+  - `$2`: The number of given values
+  - `$3`: The default values
+
+#### 8.4.116. `Warning wrong arg number 3`
+
+- ***Description:*** The warning that on the command line, an argument has a wrong number of values given.
+- ***Reasons for warning:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values. Thus, it falls back to the default values.
+- ***Interpolated variables:***
+  - `$1`: The argument's option or value names
+  - `$2`: The number of required values
+  - `$3`: The number of given values
+  - `$4`: The default values
+
+#### 8.4.117. `Warning deprecation`
+
+- ***Description:*** The warning that on the command line, a deprecated argument is given.
+- ***Reasons for warning:*** When parsing the command line, the Argparser found an argument which is defined as deprecated. Thus, it warns your script's user to adapt the workflow.
+- ***Interpolated variables:***
+  - `$1`: The argument's option or value names
+
+#### 8.4.118. `Warning no identifier`
+
+- ***Description:*** The warning that in a translation file, an identifier is missing.
+- ***Reasons for warning:*** When trying to translate a string from the [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#8542-argparser_translation_file), the Argparser found that the identifier is missing in the [`ARGPARSER_DICTIONARY`](../environment_variables/environment_variables.md#8519-argparser_dictionary), and by this, also in the translation file. Thus, it uses the untranslated English string as fallback.
+- ***Interpolated variables:***
+  - `$1`: The [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#8542-argparser_translation_file)
+  - `$2`: The missing identifier
+
+#### 8.4.119. `Warning no translation`
+
+- ***Description:*** The warning that in a translation file, an identifier's translation is missing.
+- ***Reasons for warning:*** When trying to translate a string from the [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#8542-argparser_translation_file), the Argparser found that the translation to the [`ARGPARSER_LANGUAGE`](../environment_variables/environment_variables.md#8529-argparser_language) for the identifier is missing in the [`ARGPARSER_DICTIONARY`](../environment_variables/environment_variables.md#8519-argparser_dictionary), and by this, also in the translation file. Thus, it uses the untranslated English string as fallback.
+- ***Interpolated variables:***
+  - `$1`: The [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#8542-argparser_translation_file)
+  - `$2`: The [`ARGPARSER_LANGUAGE_`](../environment_variables/environment_variables.md#8529-argparser_language)
+  - `$3`: The identifier with missing translation
+
 [&#129092;&nbsp;Table of contents (Translations)](toc.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[8.5. Environment variables&nbsp;&#129094;](../environment_variables/introduction.md)
