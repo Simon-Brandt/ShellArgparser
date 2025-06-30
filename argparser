@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-27
+# Last Modification: 2025-06-30
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -103,13 +103,13 @@ function argparser_in_array() {
 }
 
 function argparser_is_variable_bool() {
-    # Check if a variable's value is a boolean.
+    # Check if a variable's value is a Boolean.
     #
     # Arguments:
     # - $1: the variable whose value to check
     #
     # Return value:
-    # - 0, if the variable's value is a boolean
+    # - 0, if the variable's value is a Boolean
     # - 1, else
 
     # Define the local variable.
@@ -1401,7 +1401,7 @@ function argparser_check_env_vars() {
     local var_2
     local -a vars
 
-    # Check if all environment variables expected to be booleans are
+    # Check if all environment variables expected to be Booleans are
     # true or false.  Else, output an error message.
     error_messages=( )
     vars=(
@@ -1435,7 +1435,7 @@ function argparser_check_env_vars() {
         for value in "${values[@]}"; do
             if ! argparser_is_variable_bool "${value}"; then
                 error_message="Error: The environment variable \"\$1\" is set "
-                error_message+="to \"\$2\", but must be a boolean, i.e., true "
+                error_message+="to \"\$2\", but must be a Boolean, i.e., true "
                 error_message+="or false."
 
                 argparser_translate "Error env var bool" "${error_message}" \
@@ -3000,10 +3000,10 @@ function argparser_check_args_definition_positional_values() {
             if [[ "${type}" == "bool" ]] \
                 && ! argparser_is_variable_bool "${choice_value}"
             then
-                # Check if the choice value is a boolean.
+                # Check if the choice value is a Boolean.
                 error_message="Error: The positional argument with the "
                 error_message+="identifier \"\$1\" has \"\$2\" given as choice "
-                error_message+="value, which must be a boolean, i.e., true or "
+                error_message+="value, which must be a Boolean, i.e., true or "
                 error_message+="false."
 
                 argparser_translate "Error arg def pos bool" \
@@ -3262,10 +3262,10 @@ function argparser_check_args_definition_option_values() {
             if [[ "${type}" == "bool" ]] \
                 && ! argparser_is_variable_bool "${choice_value}"
             then
-                # Check if the choice value is a boolean.
+                # Check if the choice value is a Boolean.
                 error_message="Error: The argument with the identifier \"\$1\" "
                 error_message+="has \"\$2\" given as choice value, which must "
-                error_message+="be a boolean, i.e., true or false."
+                error_message+="be a Boolean, i.e., true or false."
 
                 argparser_translate "Error arg def option bool" \
                     "${error_message}" "${arg_key}" "${choice_value}"
@@ -4507,13 +4507,13 @@ function argparser_check_arg_values() {
         if [[ "${type}" == "bool" && "${arg_number}" != 0 ]] \
             && ! argparser_is_variable_bool "${value}"
         then
-            # Check if the value is a boolean.  If the argument is a
+            # Check if the value is a Boolean.  If the argument is a
             # flag, then the values are set by the Argparser to
-            # booleans, or, if ${ARGPARSER_COUNT_FLAGS} is set to true,
+            # Booleans, or, if ${ARGPARSER_COUNT_FLAGS} is set to true,
             # to unsigned integers.  Since both automatically have the
             # correct type, don't check them.
             error_message="Error: The argument \"\$1\" is set to \"\$2\", but "
-            error_message+="must be a boolean, i.e., true or false."
+            error_message+="must be a Boolean, i.e., true or false."
 
             argparser_translate "Error arg bool" "${error_message}" \
                 "${option_names}" "${value}"

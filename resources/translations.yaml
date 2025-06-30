@@ -83,7 +83,7 @@ true:
 ---
 Error env var bool:
   en: >
-    Error: The environment variable "$1" is set to "$2", but must be a boolean,
+    Error: The environment variable "$1" is set to "$2", but must be a Boolean,
     i.e., true or false.
   de: >
     Fehler: Die Umgebungsvariable "$1" ist auf "$2" gesetzt, muss aber ein
@@ -579,7 +579,7 @@ Error arg def pos type:
 Error arg def pos bool:
   en: >
     Error: The positional argument with the identifier "$1" has "$2" given as
-    choice value, which must be a boolean, i.e., true or false.
+    choice value, which must be a Boolean, i.e., true or false.
   de: >
     Fehler: Das positionale Argument mit dem Identifikator "$1" hat "$2" als
     Auswahlwert gegeben, welcher ein boolscher Wert (Boolean) sein muss, d. h.
@@ -690,7 +690,7 @@ Error arg def option type:
 Error arg def option bool:
   en: >
     Error: The argument with the identifier "$1" has "$2" given as choice
-    value, which must be a boolean, i.e., true or false.
+    value, which must be a Boolean, i.e., true or false.
   de: >
     Fehler: Das Argument mit dem Identifikator "$1" hat "$2" als Auswahlwert
     gegeben, welcher ein boolscher Wert (Boolean) sein muss, d. h. wahr (true)
@@ -859,7 +859,7 @@ Error arg choice:
 
 Error arg bool:
   en: >
-    Error: The argument "$1" is set to "$2", but must be a boolean, i.e., true
+    Error: The argument "$1" is set to "$2", but must be a Boolean, i.e., true
     or false.
   de: >
     Fehler: Das Argument "$1" ist auf "$2" gesetzt, muss aber ein boolscher
