@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-20
+# Last Modification: 2025-06-30
 
 # 1.    Define the translations for the arguments parsing.
 ---
@@ -771,6 +771,12 @@ Error arg unknown:
   de: >
     Fehler: Das Argument "$1" ist unbekannt.
 
+Error long option match:
+  en: >
+    Error: The long option "$1" matches multiple long options.
+  de: >
+    Fehler: Die lange Option "$1" passt auf mehrere lange Optionen.
+
 Error long option negation:
   en: >
     Error: The long option "$1" is negated, but its affirmative version "$2" is
@@ -778,12 +784,6 @@ Error long option negation:
   de: >
     Fehler: Die lange Option "$1" ist negiert, ihre bejahende Version "$2" ist
     aber unbekannt.
-
-Error long option match:
-  en: >
-    Error: The long option "$1" matches multiple long options.
-  de: >
-    Fehler: Die lange Option "$1" passt auf mehrere lange Optionen.
 
 Error long option unknown:
   en: >
