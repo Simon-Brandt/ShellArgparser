@@ -807,5 +807,19 @@
   - `$1`: The argument's option or value names
   - `$2`: The given value
 
+#### 8.4.112. `Error YAML`
+
+- ***Description:*** The error that a translation file's YAML line cannot be parsed.
+- ***Reasons for error:*** When parsing the [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#8542-argparser_translation_file), the Argparser found a YAML line that it doesn't recognize. This is most likely due to a YAML feature that the Argparser doesn't support to keep the parser simple.
+- ***Interpolated variables:***
+  - `$1`: The YAML line
+
+#### 8.4.113. `Error include directive`
+
+- ***Description:*** The error that an include directive cannot be parsed.
+- ***Reasons for error:*** When parsing the [`ARGPARSER_HELP_FILE`](../environment_variables/environment_variables.md#8524-argparser_help_file) or [`ARGPARSER_USAGE_FILE`](../environment_variables/environment_variables.md#8547-argparser_usage_file), the Argparser found an include directive that is not supported.
+- ***Interpolated variables:***
+  - `$1`: The include directive
+
 [&#129092;&nbsp;Table of contents (Translations)](toc.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[8.5. Environment variables&nbsp;&#129094;](../environment_variables/introduction.md)

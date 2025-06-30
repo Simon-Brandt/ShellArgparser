@@ -183,6 +183,8 @@
       1. [`Error arg float`](reference/translations/translations.md#84109-error-arg-float)
       1. [`Error arg int`](reference/translations/translations.md#84110-error-arg-int)
       1. [`Error arg uint`](reference/translations/translations.md#84111-error-arg-uint)
+      1. [`Error YAML`](reference/translations/translations.md#84112-error-yaml)
+      1. [`Error include directive`](reference/translations/translations.md#84113-error-include-directive)
    1. [Environment variables](reference/environment_variables/introduction.md#85-environment-variables)
       1. [Overview](reference/environment_variables/overview.md#851-overview)
       1. [`ARGPARSER_ADD_HELP`](reference/environment_variables/environment_variables.md#852-argparser_add_help)

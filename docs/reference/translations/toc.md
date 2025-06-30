@@ -112,6 +112,8 @@
 1. [`Error arg float`](translations.md#84109-error-arg-float)
 1. [`Error arg int`](translations.md#84110-error-arg-int)
 1. [`Error arg uint`](translations.md#84111-error-arg-uint)
+1. [`Error YAML`](translations.md#84112-error-yaml)
+1. [`Error include directive`](translations.md#84113-error-include-directive)
 <!-- </toc> -->
 
 [&#129092;&nbsp;8.4. Translations](introduction.md)
