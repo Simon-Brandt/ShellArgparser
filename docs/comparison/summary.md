@@ -10,7 +10,7 @@ This is especially noticeable for error messages when building the command line,
 
 Further, the development of shFlags and docopts seemingly have stalled, with no release or even commit for years. This renders it unlikely that these libraries will implement additional functionality, increasing the potential use for the Argparser.
 
-Regarding the runtimes, the compiled tools are faster by up to an order of magnitude. Still, the interpreted Bash scripts behind the Argparser and shFlags achieve a median runtime of about 140&nbsp;ms and 250&nbsp;ms, respectively, making the runtime a less important criterion when deciding which command-line parsing library to use.
+Regarding the runtimes, the compiled tools are faster by up to an order of magnitude. Still, the interpreted Bash scripts behind the Argparser and shFlags achieve a median runtime of about 140&nbsp;ms and 240&nbsp;ms, respectively, making the runtime a less important criterion when deciding which command-line parsing library to use.
 
 Finally, the Argparser is extensively documented, unlike the other tools relying on a brief readme or man page. This hopefully makes the transition to the Argparser&mdash;if deemed useful at all&mdash;easier.
 

@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-26
+# Last Modification: 2025-06-30
 
 using CSV: CSV
 using Dates: Dates
@@ -93,14 +93,14 @@ function plot_runtime_stats(
     # them together as violin plot.  Use an equally distributed set of
     # colors from the `:viridis` palette.
     script_names = sort(collect(keys(runtimes)))
-    palette = StatsPlots.get_color_palette(:viridis, 3)
+    palette = StatsPlots.palette(:viridis, length(script_names))
     for (i, script_name) in enumerate(script_names)
         label = chopsuffix(script_name, "_wrapper.sh")
         StatsPlots.violin!(
             plot,
             repeat([label], length(runtimes[script_name])),
             collect(values(runtimes[script_name])),
-            color=palette[length(palette) ÷ length(script_names) * i],
+            color=palette[i],
         )
     end
 
