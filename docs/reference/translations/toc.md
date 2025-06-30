@@ -101,6 +101,17 @@
 1. [`Error short option unknown`](translations.md#8498-error-short-option-unknown)
 1. [`Error pos arg count 1`](translations.md#8499-error-pos-arg-count-1)
 1. [`Error pos arg count 2`](translations.md#84100-error-pos-arg-count-2)
+1. [`Error arg no flag`](translations.md#84101-error-arg-no-flag)
+1. [`Error mandatory arg`](translations.md#84102-error-mandatory-arg)
+1. [`Error wrong arg number 1`](translations.md#84103-error-wrong-arg-number-1)
+1. [`Error wrong arg number 2`](translations.md#84104-error-wrong-arg-number-2)
+1. [`Error wrong arg number 3`](translations.md#84105-error-wrong-arg-number-3)
+1. [`Error arg choice`](translations.md#84106-error-arg-choice)
+1. [`Error arg bool`](translations.md#84107-error-arg-bool)
+1. [`Error arg def char`](translations.md#84108-error-arg-def-char)
+1. [`Error arg float`](translations.md#84109-error-arg-float)
+1. [`Error arg int`](translations.md#84110-error-arg-int)
+1. [`Error arg uint`](translations.md#84111-error-arg-uint)
 <!-- </toc> -->
 
 [&#129092;&nbsp;8.4. Translations](introduction.md)
