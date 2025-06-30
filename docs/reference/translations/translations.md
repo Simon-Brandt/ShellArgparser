@@ -709,169 +709,169 @@
 - ***Description:*** The error that on the command line, the number of given positional arguments doesn't match the number of required positional arguments, which is one.
 - ***Reasons for error:*** When parsing the command line, the Argparser found more or less than one positional argument being given, while one is required.
 - ***Interpolated variables:***
-  - `$1`: The number of given positional arguments
+  - `$1`: The number of given positional arguments.
 
 #### 8.4.100. `Error pos arg count 2`
 
 - ***Description:*** The error that on the command line, the number of given positional arguments doesn't match the number of required positional arguments.
 - ***Reasons for error:*** When parsing the command line, the Argparser found more or less positional arguments being given than required.
 - ***Interpolated variables:***
-  - `$1`: The number of required positional arguments
-  - `$2`: The number of given positional arguments
+  - `$1`: The number of required positional arguments.
+  - `$2`: The number of given positional arguments.
 
 #### 8.4.101. `Error arg no flag`
 
 - ***Description:*** The error that on the command line, a non-flag is inverted or negated.
 - ***Reasons for error:*** When parsing the command line and either [`ARGPARSER_ALLOW_FLAG_INVERSION`](../environment_variables/environment_variables.md#855-argparser_allow_flag_inversion) or [`ARGPARSER_ALLOW_FLAG_NEGATION`](../environment_variables/environment_variables.md#856-argparser_allow_flag_negation) is set to `true`, the Argparser found an option given with a `+` or `no-` prefix, but which has not been defined as flag in the arguments definition.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names
+  - `$1`: The argument's option or value names.
 
 #### 8.4.102. `Error mandatory arg`
 
 - ***Description:*** The error that on the command line, a mandatory argument is not given.
 - ***Reasons for error:*** When parsing the command line, the Argparser found an argument defined to be required, but not given on the command line.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names
+  - `$1`: The argument's option or value names.
 
 #### 8.4.103. `Error wrong arg number 1`
 
 - ***Description:*** The error that on the command line, an argument has a wrong number of values given, while requiring one.
 - ***Reasons for error:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values, which is one.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names
-  - `$2`: The number of given values
+  - `$1`: The argument's option or value names.
+  - `$2`: The number of given values.
 
 #### 8.4.104. `Error wrong arg number 2`
 
 - ***Description:*** The error that on the command line, an argument has a wrong number of values given, while requiring at least one.
 - ***Reasons for error:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values, which is at least one.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names
-  - `$2`: The number of given values
+  - `$1`: The argument's option or value names.
+  - `$2`: The number of given values.
 
 #### 8.4.105. `Error wrong arg number 3`
 
 - ***Description:*** The error that on the command line, an argument has a wrong number of values given.
 - ***Reasons for error:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names
-  - `$2`: The number of required values
-  - `$3`: The number of given values
+  - `$1`: The argument's option or value names.
+  - `$2`: The number of required values.
+  - `$3`: The number of given values.
 
 #### 8.4.106. `Error arg choice`
 
 - ***Description:*** The error that a given arguments' values aren't a subset of the choice values.
 - ***Reasons for error:*** When parsing the command line, the Argparser found an argument whose given values aren't completely included in the choice values.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names
-  - `$2`: The choice values
-  - `$3`: The given values
+  - `$1`: The argument's option or value names.
+  - `$2`: The choice values.
+  - `$3`: The given values.
 
 #### 8.4.107. `Error arg bool`
 
 - ***Description:*** The error that a given argument's value's data type is not a Boolean.
 - ***Reasons for error:*** When parsing the command line, the Argparser found given values value whose data type doesn't accord to the argument's data type, `bool`. These Boolean values must be either `true` or `false`.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names
-  - `$2`: The given value
+  - `$1`: The argument's option or value names.
+  - `$2`: The given value.
 
 #### 8.4.108. `Error arg def char`
 
 - ***Description:*** The error that a given argument's value's data type is not a character.
 - ***Reasons for error:*** When parsing the command line, the Argparser found given values value whose data type doesn't accord to the argument's data type, `char`. These characters must be strings comprising one printable ASCII character.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names
-  - `$2`: The given value
+  - `$1`: The argument's option or value names.
+  - `$2`: The given value.
 
 #### 8.4.109. `Error arg float`
 
 - ***Description:*** The error that a given argument's value's data type is not a floating-point number.
 - ***Reasons for error:*** When parsing the command line, the Argparser found given values value whose data type doesn't accord to the argument's data type, `float`. These floating-point numbers must comprise only digits, a dot, and possibly a leading sign.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names
-  - `$2`: The given value
+  - `$1`: The argument's option or value names.
+  - `$2`: The given value.
 
 #### 8.4.110. `Error arg int`
 
 - ***Description:*** The error that a given argument's value's data type is not an integer.
 - ***Reasons for error:*** When parsing the command line, the Argparser found given values value whose data type doesn't accord to the argument's data type, `int`. These integers must comprise only digits and possibly a leading sign.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names
-  - `$2`: The given value
+  - `$1`: The argument's option or value names.
+  - `$2`: The given value.
 
 #### 8.4.111. `Error arg uint`
 
 - ***Description:*** The error that a given argument's value's data type is not an unsigned integer.
 - ***Reasons for error:*** When parsing the command line, the Argparser found given values value whose data type doesn't accord to the argument's data type, `uint`. These unsigned integers must comprise only digits and no sign.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names
-  - `$2`: The given value
+  - `$1`: The argument's option or value names.
+  - `$2`: The given value.
 
 #### 8.4.112. `Error YAML`
 
 - ***Description:*** The error that a translation file's YAML line cannot be parsed.
 - ***Reasons for error:*** When parsing the [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#8542-argparser_translation_file), the Argparser found a YAML line that it doesn't recognize. This is most likely due to a YAML feature that the Argparser doesn't support to keep the parser simple.
 - ***Interpolated variables:***
-  - `$1`: The YAML line
+  - `$1`: The YAML line.
 
 #### 8.4.113. `Error include directive`
 
 - ***Description:*** The error that an include directive cannot be parsed.
 - ***Reasons for error:*** When parsing the [`ARGPARSER_HELP_FILE`](../environment_variables/environment_variables.md#8524-argparser_help_file) or [`ARGPARSER_USAGE_FILE`](../environment_variables/environment_variables.md#8547-argparser_usage_file), the Argparser found an include directive that is not supported.
 - ***Interpolated variables:***
-  - `$1`: The include directive
+  - `$1`: The include directive.
 
 #### 8.4.114. `Warning wrong arg number 1`
 
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring one.
 - ***Reasons for warning:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values, which is one. Thus, it falls back to the default values.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names
-  - `$2`: The number of given values
-  - `$3`: The default values
+  - `$1`: The argument's option or value names.
+  - `$2`: The number of given values.
+  - `$3`: The default values.
 
 #### 8.4.115. `Warning wrong arg number 2`
 
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring at least one.
 - ***Reasons for warning:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values, which is at least one. Thus, it falls back to the default values.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names
-  - `$2`: The number of given values
-  - `$3`: The default values
+  - `$1`: The argument's option or value names.
+  - `$2`: The number of given values.
+  - `$3`: The default values.
 
 #### 8.4.116. `Warning wrong arg number 3`
 
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given.
 - ***Reasons for warning:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values. Thus, it falls back to the default values.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names
-  - `$2`: The number of required values
-  - `$3`: The number of given values
-  - `$4`: The default values
+  - `$1`: The argument's option or value names.
+  - `$2`: The number of required values.
+  - `$3`: The number of given values.
+  - `$4`: The default values.
 
 #### 8.4.117. `Warning deprecation`
 
 - ***Description:*** The warning that on the command line, a deprecated argument is given.
 - ***Reasons for warning:*** When parsing the command line, the Argparser found an argument which is defined as deprecated. Thus, it warns your script's user to adapt the workflow.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names
+  - `$1`: The argument's option or value names.
 
 #### 8.4.118. `Warning no identifier`
 
 - ***Description:*** The warning that in a translation file, an identifier is missing.
 - ***Reasons for warning:*** When trying to translate a string from the [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#8542-argparser_translation_file), the Argparser found that the identifier is missing in the [`ARGPARSER_DICTIONARY`](../environment_variables/environment_variables.md#8519-argparser_dictionary), and by this, also in the translation file. Thus, it uses the untranslated English string as fallback.
 - ***Interpolated variables:***
-  - `$1`: The [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#8542-argparser_translation_file)
-  - `$2`: The missing identifier
+  - `$1`: The [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#8542-argparser_translation_file).
+  - `$2`: The missing identifier.
 
 #### 8.4.119. `Warning no translation`
 
 - ***Description:*** The warning that in a translation file, an identifier's translation is missing.
 - ***Reasons for warning:*** When trying to translate a string from the [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#8542-argparser_translation_file), the Argparser found that the translation to the [`ARGPARSER_LANGUAGE`](../environment_variables/environment_variables.md#8529-argparser_language) for the identifier is missing in the [`ARGPARSER_DICTIONARY`](../environment_variables/environment_variables.md#8519-argparser_dictionary), and by this, also in the translation file. Thus, it uses the untranslated English string as fallback.
 - ***Interpolated variables:***
-  - `$1`: The [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#8542-argparser_translation_file)
-  - `$2`: The [`ARGPARSER_LANGUAGE_`](../environment_variables/environment_variables.md#8529-argparser_language)
-  - `$3`: The identifier with missing translation
+  - `$1`: The [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#8542-argparser_translation_file).
+  - `$2`: The [`ARGPARSER_LANGUAGE_`](../environment_variables/environment_variables.md#8529-argparser_language).
+  - `$3`: The identifier with missing translation.
 
 [&#129092;&nbsp;Table of contents (Translations)](toc.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[8.5. Environment variables&nbsp;&#129094;](../environment_variables/introduction.md)
