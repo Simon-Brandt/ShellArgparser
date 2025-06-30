@@ -953,8 +953,8 @@ Warning deprecation:
     Warnung: Das Argument "$1" ist veraltet und wird in Zukunft entfernt.
 ...
 
-# 4.1.  Define the translations for checking the values of the
-#       arguments.
+# 4.2.  Define the translations for translating from the translation
+#       file.
 ---
 Warning no identifier:
   en: >
