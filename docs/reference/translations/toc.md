@@ -90,6 +90,17 @@
 1. [`Error arg def option int`](translations.md#8487-error-arg-def-option-int)
 1. [`Error arg def option uint`](translations.md#8488-error-arg-def-option-uint)
 1. [`Error arg def option note`](translations.md#8489-error-arg-def-option-note)
+1. [`Error arg double hyphen`](translations.md#8490-error-arg-double-hyphen)
+1. [`Error arg double plus`](translations.md#8491-error-arg-double-plus)
+1. [`Error arg inversion`](translations.md#8492-error-arg-inversion)
+1. [`Error arg unknown`](translations.md#8493-error-arg-unknown)
+1. [`Error long option match`](translations.md#8494-error-long-option-match)
+1. [`Error long option negation`](translations.md#8495-error-long-option-negation)
+1. [`Error long option unknown`](translations.md#8496-error-long-option-unknown)
+1. [`Error short option merge`](translations.md#8497-error-short-option-merge)
+1. [`Error short option unknown`](translations.md#8498-error-short-option-unknown)
+1. [`Error pos arg count 1`](translations.md#8499-error-pos-arg-count-1)
+1. [`Error pos arg count 2`](translations.md#84100-error-pos-arg-count-2)
 <!-- </toc> -->
 
 [&#129092;&nbsp;8.4. Translations](introduction.md)

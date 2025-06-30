@@ -646,5 +646,78 @@
   - `$1`: The argument identifier.
   - `$2`: The note.
 
+#### 8.4.90. `Error arg double hyphen`
+
+- ***Description:*** The error that on the command line, the option `--` has a value given.
+- ***Reasons for error:*** When parsing the command line, the Argparser found a double hyphen with an equals sign (`=`), possibly followed by a value. Since `--` acts as positional arguments delimiter, specifying a value would have no meaning.
+
+#### 8.4.91. `Error arg double plus`
+
+- ***Description:*** The error that on the command line, the option `++` has a value given.
+- ***Reasons for error:*** When parsing the command line, the Argparser found a doubled plus sign with an equals sign (`=`), possibly followed by a value. Since `++` acts as positional arguments delimiter, specifying a value would have no meaning.
+
+#### 8.4.92. `Error arg inversion`
+
+- ***Description:*** The error that on the command line, an option starts with a `+` or `++`, when flag inversion is deactivated.
+- ***Reasons for error:*** When parsing the command line, the Argparser found an option that starts with a plus sign, meaning the intention to invert the flag, but [`ARGPARSER_ALLOW_FLAG_INVERSION`](../environment_variables/environment_variables.md#855-argparser_allow_flag_inversion) is set to `false`. This removes the ability to use the `+` prefix.
+
+#### 8.4.93. `Error arg unknown`
+
+- ***Description:*** The error that on the command line, an undefined argument is given.
+- ***Reasons for error:*** When parsing the command line, the Argparser found an argument that has not been defined in the arguments definition, thus failing to parse it.
+- ***Interpolated variables:***
+  - `$1`: The unknown argument.
+
+#### 8.4.94. `Error long option match`
+
+- ***Description:*** The error that on the command line, an abbreviated long option matches multiple option names.
+- ***Reasons for error:*** When parsing the command line and [`ARGPARSER_ALLOW_OPTION_ABBREVIATION`](../environment_variables/environment_variables.md#857-argparser_allow_option_abbreviation) is set to `true`, the Argparser found a long option being abbreviated, but matching more than one defined long option in the arguments definition.
+- ***Interpolated variables:***
+  - `$1`: The ambiguous long option.
+
+#### 8.4.95. `Error long option negation`
+
+- ***Description:*** The error that on the command line, an undefined negated long option is given.
+- ***Reasons for error:*** When parsing the command line and [`ARGPARSER_ALLOW_FLAG_NEGATION`](../environment_variables/environment_variables.md#856-argparser_allow_flag_negation) is set to `true`, the Argparser found a long option starting with `--no-`, but the remaining (affirmative) version has not been defined in the arguments definition.
+- ***Interpolated variables:***
+  - `$1`: The negated long option.
+
+#### 8.4.96. `Error long option unknown`
+
+- ***Description:*** The error that on the command line, an unknown long option is given.
+- ***Reasons for error:*** When parsing the command line, the Argparser found a long option that has not been defined in the arguments definition.
+- ***Interpolated variables:***
+  - `$1`: The unknown long option.
+
+#### 8.4.97. `Error short option merge`
+
+- ***Description:*** The error that on the command line, an unknown short option is given in merged form.
+- ***Reasons for error:*** When parsing the command line and [`ARGPARSER_ALLOW_OPTION_MERGING`](../environment_variables/environment_variables.md#858-argparser_allow_option_merging) is set to `true`, the Argparser found a short option, merged with others, that has not been defined in the arguments definition.
+- ***Interpolated variables:***
+  - `$1`: The merged short options' common prefix.
+  - `$2`: The unknown short option.
+
+#### 8.4.98. `Error short option unknown`
+
+- ***Description:*** The error that on the command line, an unknown short option is given.
+- ***Reasons for error:*** When parsing the command line, the Argparser found a short option that has not been defined in the arguments definition.
+- ***Interpolated variables:***
+  - `$1`: The unknown short option.
+
+#### 8.4.99. `Error pos arg count 1`
+
+- ***Description:*** The error that on the command line, the number of given positional arguments doesn't match the number of required positional arguments, which is one.
+- ***Reasons for error:*** When parsing the command line, the Argparser found more or less than one positional argument being given, while one is required.
+- ***Interpolated variables:***
+  - `$1`: The number of given positional arguments
+
+#### 8.4.100. `Error pos arg count 2`
+
+- ***Description:*** The error that on the command line, the number of given positional arguments doesn't match the number of required positional arguments.
+- ***Reasons for error:*** When parsing the command line, the Argparser found more or less positional arguments being given than required.
+- ***Interpolated variables:***
+  - `$1`: The number of required positional arguments
+  - `$2`: The number of given positional arguments
+
 [&#129092;&nbsp;Table of contents (Translations)](toc.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[8.5. Environment variables&nbsp;&#129094;](../environment_variables/introduction.md)
