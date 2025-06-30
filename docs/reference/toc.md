@@ -129,7 +129,7 @@
    1. [`Error wrong arg number 3`](translations/translations.md#84105-error-wrong-arg-number-3)
    1. [`Error arg choice`](translations/translations.md#84106-error-arg-choice)
    1. [`Error arg bool`](translations/translations.md#84107-error-arg-bool)
-   1. [`Error arg def char`](translations/translations.md#84108-error-arg-def-char)
+   1. [`Error arg char`](translations/translations.md#84108-error-arg-char)
    1. [`Error arg float`](translations/translations.md#84109-error-arg-float)
    1. [`Error arg int`](translations/translations.md#84110-error-arg-int)
    1. [`Error arg uint`](translations/translations.md#84111-error-arg-uint)
