@@ -31,7 +31,7 @@ dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
 ARGPARSER_ARG_DEF_FILE="${dir}/arguments_${LANG::2}.csv"
 ARGPARSER_HELP_FILE="${dir}/help_message_${LANG::2}.txt"
 ARGPARSER_LANGUAGE="${LANG::2}"
-ARGPARSER_TRANSLATION_FILE="${dir}/translation.yaml"
+ARGPARSER_TRANSLATION_FILE="${dir}/translations.yaml"
 
 # Set the arguments.
 args=(
@@ -102,9 +102,9 @@ Finally, we need a translation file for the auto-generated parts. Note that here
 
 <details open>
 
-<summary>Beginning of <code>translation.yaml</code></summary>
+<summary>Beginning of <code>translations.yaml</code></summary>
 
-<!-- <include command="sed '1,4d;80q' ../resources/translation.yaml" lang="yaml"> -->
+<!-- <include command="sed '1,4d;80q' ../resources/translations.yaml" lang="yaml"> -->
 ```yaml
 # 1.    Define the translations for the arguments parsing.
 ---

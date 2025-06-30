@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-20
+# Last Modification: 2025-06-30
 
 # Usage: Run this script with "bash test_localization.sh".
 
@@ -15,7 +15,7 @@ dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
 ARGPARSER_ARG_DEF_FILE="${dir}/arguments_${LANG::2}.csv"
 ARGPARSER_HELP_FILE="${dir}/help_message_${LANG::2}.txt"
 ARGPARSER_LANGUAGE="${LANG::2}"
-ARGPARSER_TRANSLATION_FILE="${dir}/translation.yaml"
+ARGPARSER_TRANSLATION_FILE="${dir}/translations.yaml"
 
 # Set the arguments.
 # shellcheck disable=SC2190  # Indexed, not associative array.

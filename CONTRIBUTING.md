@@ -135,7 +135,7 @@ The documentation is written in Markdown ([GitHub Flavored Markdown (GFM)](https
 
 ## 4. Translations
 
-The Argparser emits a lot of error and warning messages for faulty arguments. Both them and the help and usage messages are internationalized. It would strongly help the Argparser's adoption if it could be localized to more languages&mdash;currently, there are only English and German available. So, if you want to provide translations for the message parts, feel free to add them into the [`translations.yaml`](resources/translation.yaml).
+The Argparser emits a lot of error and warning messages for faulty arguments. Both them and the help and usage messages are internationalized. It would strongly help the Argparser's adoption if it could be localized to more languages&mdash;currently, there are only English and German available. So, if you want to provide translations for the message parts, feel free to add them into the [`translations.yaml`](resources/translations.yaml).
 
 Within the YAML file, just add a new line below each existing translation, start it with the language identifier for your locale after two spaces indentation, add a colon and space, and then the translated text. If it doesn't fit the 79 characters line length, add a greater-than sign (`>`) after the language identifier and write the translation on the next line(s), indented by four spaces. Use `$n` (with n as natural number) as placeholder for the variables the Argparser interpolates. Refer to the [documentation](docs/reference/translations/translations.md) for the meaning of each value.
 
