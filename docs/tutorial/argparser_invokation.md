@@ -23,7 +23,7 @@ args=(
     "var_1 | a,A        | var-1,var-a | VAL_1     |          |         | uint | 1      | Mandatory options    |            | one value without default or choice               "
     "var_2 | b,B        | var-2,var-b | VAL_2     |          |         | int  | +      | Mandatory options    |            | at least one value without default or choice      "
     "var_3 | c,C        | var-3,var-c | VAL_3     |          | A,B     | char | +      | Mandatory options    |            | at least one value with choice                    "
-    "var_4 | d,D        | var-4,var-d | VAL_4     | A        | A,B,C   | char | 1      | Optional options     |            | one value with default and choice                 "
+    "var_4 | d,D        | var-4,var-d | VAL_4     | A        | A-C     | char | 1      | Optional options     |            | one value with default and choice                 "
     "var_5 | e,E        | var-5,var-e | VAL_5     | E        |         | str  | 1      | Optional options     |            | one value with default                            "
     "var_6 | f,F        | var-6,var-f | VAL_6     | false    |         | bool | 0      | Optional options     |            | no value (flag) with default                      "
     "var_7 | g,G        | var-7,var-g | VAL_7     | true     |         | bool | 0      | Optional options     | deprecated | no value (flag) with default                      "
@@ -94,7 +94,7 @@ This Argparser-specific tabular format consists of eleven columns, each separate
 - `long_opts`: the long options (two hyphens, like `--var-1` and `--var-a` for `var_1`, default: `""`)
 - `val_names`: the value names for the help message, instead of uppercased short/long option names (like `VAL_1` for `var_1`, default: `""`)
 - `defaults`: the default values (like `"A"` for `var_4`, default: `""`)
-- `choices`: the choice values for options with a limited set of values to choose from (like `"A"`, `"B"`, and `"C"` for `var_4`, default: `""`)
+- `choices`: the choice values for options with a limited set of values to choose from (like `"A-C"`, *i.e.*, `"A"`, `"B"`, and `"C"` for `var_4`, default: `""`)
 - `type`: the data type the argument shall have and will be tested on (like `"char"` for `var_4`, default: `"str"`)
 - `arg_no`: the number of required values (either numerical from `0` to infinity or `"+"`, meaning to accept as many values as given, at least one, like `1` for `var_4`, default: `1`)
 - `arg_group`: the argument group for grouping of keyword arguments in the help text (like `"Optional options"` for `var_4`, default: [`ARGPARSER_POSITIONAL_ARG_GROUP`](../reference/environment_variables/environment_variables.md#8534-argparser_positional_arg_group))

@@ -13,7 +13,7 @@ The following features are considered for addition in a future version. If you m
 
 #### 6.1.2. Any argument number
 
-- ***Description:*** Currently, the argument numbe rmay only be a natural number, including zero, or `+`. The Python argparse module supports also `?` for an argument with an optional value, and `*` for an argument with as many values as given, starting from zero (not one as with `+`). Still, their implementation requires further considerations for the necessary parsing steps.
+- ***Description:*** Currently, the argument number may only be a natural number, including zero, or `+`. The Python argparse module supports also `?` for an argument with an optional value, and `*` for an argument with as many values as given, starting from zero (not one as with `+`). Still, their implementation requires further considerations for the necessary parsing steps.
 - ***Implementation likelihood:*** High.
 
 #### 6.1.3. Script description
@@ -26,10 +26,10 @@ The following features are considered for addition in a future version. If you m
 - ***Description:*** A debug mode facilitates the finding of errors within the Argparser. As a useful tool in development, it will be added at some point.
 - ***Implementation likelihood:*** High.
 
-#### 6.1.5. Value ranges
+#### 6.1.5. Choice value ranges for floats
 
-- ***Description:*** Default and choice values may be specified as ranges. Integer and character ranges should be rather easily implemented, while float ranges suffer from the lack of built-in support for floats in Bash < 5.3.
-- ***Implementation likelihood:*** High.
+- ***Description:*** Choice values can be specified as ranges, but only for integer and alphabetical character ranges, yet. Float ranges suffer from the lack of built-in support for floats in Bash < 5.3, but may be implemented, once Bash 5.3 has seen some adoption.
+- ***Implementation likelihood:*** Medium.
 
 #### 6.1.6. Intermixed positional and keyword arguments
 

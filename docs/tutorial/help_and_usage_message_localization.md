@@ -63,7 +63,7 @@ pos_2 |            |           | pos_2     |          |         | int  | 2      
 var_1 | a          | var-1     | VAL_1     |          |         | uint | 1      | Erforderliche Optionen |            | ein Wert ohne Vorgabe oder Auswahl
 var_2 | b          | var-2     | VAL_2     |          |         | int  | +      | Erforderliche Optionen |            | mindestens ein Wert ohne Vorgabe oder Auswahl
 var_3 | c          | var-3     | VAL_3     |          | A,B     | char | +      | Erforderliche Optionen |            | mindestens ein Wert mit Auswahl
-var_4 | d          |           | VAL_4     | A        | A,B,C   | char | 1      | Optionale Optionen     |            | ein Wert mit Vorgabe und Auswahl
+var_4 | d          |           | VAL_4     | A        | A-C     | char | 1      | Optionale Optionen     |            | ein Wert mit Vorgabe und Auswahl
 var_5 |            | var-5     | VAL_5     | E        |         | str  | 1      | Optionale Optionen     |            | ein Wert mit Vorgabe
 var_6 | f          | var-6     | VAL_6     | false    |         | bool | 0      | Optionale Optionen     |            | kein Wert (Flag) mit Vorgabe
 var_7 | g          | var-7     | VAL_7     | true     |         | bool | 0      | Optionale Optionen     | deprecated | kein Wert (Flag) mit Vorgabe

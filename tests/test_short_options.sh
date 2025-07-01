@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-20
+# Last Modification: 2025-07-01
 
 # Usage: Run this script with "bash test_short_options.sh".
 
@@ -22,7 +22,7 @@ args=(
     "var_1 | a,A        |           | VAL_1     |          |         | uint | 1      | Mandatory options    |            | one value without default or choice               "
     "var_2 | b,B        |           | VAL_2     |          |         | int  | +      | Mandatory options    |            | at least one value without default or choice      "
     "var_3 | c,C        |           | VAL_3     |          | A,B     | char | +      | Mandatory options    |            | at least one value with choice                    "
-    "var_4 | d,D        |           | VAL_4     | A        | A,B,C   | char | 1      | Optional options     |            | one value with default and choice                 "
+    "var_4 | d,D        |           | VAL_4     | A        | A-C     | char | 1      | Optional options     |            | one value with default and choice                 "
     "var_5 | e,E        |           | VAL_5     | E        |         | str  | 1      | Optional options     |            | one value with default                            "
     "var_6 | f,F        |           | VAL_6     | false    |         | bool | 0      | Optional options     |            | no value (flag) with default                      "
     "var_7 | g,G        |           | VAL_7     | true     |         | bool | 0      | Optional options     | deprecated | no value (flag) with default                      "

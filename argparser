@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-30
+# Last Modification: 2025-07-01
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -100,6 +100,30 @@ function argparser_in_array() {
     done
 
     return 1
+}
+
+function argparser_is_variable_alpha() {
+    # Check if a variable's value is an alphabetical character.
+    #
+    # Arguments:
+    # - $1: the variable whose value to check
+    #
+    # Return value:
+    # - 0, if the variable's value is an alphabetical character
+    # - 1, else
+
+    # Define the local variable.
+    local var
+
+    # Read the argument.
+    var="$1"
+
+    # Check the variable's value.
+    if [[ "${var}" == [[:alpha:]] ]]; then
+        return 0
+    else
+        return 1
+    fi
 }
 
 function argparser_is_variable_bool() {
@@ -466,6 +490,90 @@ function argparser_fold() {
             largest_col_width="${col_width}"
         fi
     done
+}
+
+function argparser_seq() {
+    # Create a sequence of integer or string values, ranging from the
+    # start to the stop (inclusive), with a given step size.
+    #
+    # Arguments:
+    # - $1: the argument identifier
+    # - $2: the start value (as integer or string)
+    # - $3: the stop value (as integer or string)
+    # - $4: the step size (as integer, default: 1)
+    #
+    # Nonlocals:
+    # - error_messages: the error messages, starting with "Error: "
+    #   (translated), as indexed array
+    # - sequence: the created sequence
+
+    # Define the local variables.
+    local arg_key
+    local char
+    local i
+    local start
+    local stop
+    local step
+
+    # Read the arguments.
+    arg_key="$1"
+    start="$2"
+    stop="$3"
+    step="${4:-1}"
+
+    # For alphabetical characters, get the decimal value in the ASCII
+    # table for the start and stop.  For non-integer values, output an
+    # error message.
+    if argparser_is_variable_alpha "${start}" \
+        && argparser_is_variable_alpha "${stop}" \
+        && argparser_is_variable_int "${step}"
+    then
+        printf -v start '%d' "'${start}"
+        printf -v stop '%d' "'${stop}"
+    elif ! argparser_is_variable_int "${start}" \
+        || ! argparser_is_variable_int "${stop}" \
+        || ! argparser_is_variable_int "${step}"
+    then
+        error_message="Error: The argument with the identifier \"\$1\" has "
+        error_message+="choice values given with \"\$2\" as start, \"\$3\" as "
+        error_message+="stop, and \"\$4\" as step size, while only integer or "
+        error_message+="letter sequences are supported."
+
+        argparser_translate "Error arg def choice range" \
+            "${error_message}" "${arg_key}" "${start}" "${stop}" "${step}"
+        error_message="${translation}"
+        error_messages+=("${error_message}")
+        return
+    fi
+
+    # Create the actual sequence by iterating from the start to the stop
+    # value, incrementing or decrementing by the given step size as
+    # appropriate for the numerical order.
+    sequence=( )
+    if (( start <= stop )); then
+        for (( i = start; i <= stop; i += step )); do
+            sequence+=("${i}")
+        done
+    else
+        for (( i = start; i >= stop; i -= step )); do
+            sequence+=("${i}")
+        done
+    fi
+
+    # If the start values had been given as alphabetical characters,
+    # convert each number within the sequence to its hexadecimal
+    # representation and subsequently to the respective character in the
+    # ASCII table.
+    if ! argparser_is_variable_int "$2"; then
+        for i in "${!sequence[@]}"; do
+            char="${sequence[i]}"
+            printf -v char '%x' "${char}"
+
+            # shellcheck disable=SC2059  # Escape sequence in variable.
+            printf -v char "\x${char}"
+            sequence[i]="${char}"
+        done
+    fi
 }
 
 function argparser_count() {
@@ -2196,6 +2304,7 @@ function argparser_parse_args_definition() {
     # Environment:
     # - ARGPARSER_ARG_DEF_FILE (read-only)
     # - ARGPARSER_ARG_DELIMITER_1 (read-only)
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_POSITIONAL_ARG_GROUP (read-only)
     # - ARGPARSER_SCRIPT_NAME (read-only)
 
@@ -2204,12 +2313,16 @@ function argparser_parse_args_definition() {
     local arg_key
     local arg_number
     local -a args_definition
-    local choice_values
+    local choice_value
+    local -a choice_values_arr
+    local choice_values_range
+    local choice_values_str
     local column_index
     local -A column_indices
     local default_values
     local definition_type
     local error_message
+    local -a error_messages
     local field
     local -a fields
     local -a header
@@ -2218,6 +2331,10 @@ function argparser_parse_args_definition() {
     local -a line
     local long_options
     local notes
+    local range_start
+    local range_step
+    local range_stop
+    local sequence
     local short_options
     local translation
     local trimmed_string
@@ -2390,11 +2507,53 @@ function argparser_parse_args_definition() {
         # Get the choice values.
         if [[ -n "${column_indices["choices"]}" ]]; then
             argparser_trim "${fields[${column_indices["choices"]}]}"
-            choice_values="${trimmed_string}"
+            choice_values_arr="${trimmed_string}"
+
+            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values_arr \
+                <<< "${choice_values_arr}"
+            choice_values_str=""
+            for choice_values_range in "${choice_values_arr[@]}"; do
+                if [[ "${choice_values_range}" == *-*-*-* ]]; then
+                    error_message="Error: The argument with the identifier "
+                    error_message+="\"\$1\" has more hyphens in the choice "
+                    error_message+="values given than supported (2)."
+
+                    argparser_translate "Error arg def choice range hyphens" \
+                        "${error_message}" "${arg_key}"
+                    error_messages+=("${error_message}")
+                elif [[ "${choice_values_range}" == *-*-* ]]; then
+                    range_start="${choice_values_range%%-*}"
+                    range_stop="${choice_values_range#*-}"
+                    range_step="${range_stop#*-}"
+                    range_stop="${range_stop%%-*}"
+
+                    argparser_seq "${arg_key}" "${range_start}" \
+                        "${range_stop}" "${range_step}"
+
+                    for choice_value in "${sequence[@]}"; do
+                        choice_values_str+="${choice_value}"
+                        choice_values_str+="${ARGPARSER_ARG_DELIMITER_2}"
+                    done
+                elif [[ "${choice_values_range}" == *-* ]]; then
+                    range_start="${choice_values_range%%-*}"
+                    range_stop="${choice_values_range#*-}"
+
+                    argparser_seq "${arg_key}" "${range_start}" "${range_stop}"
+
+                    for choice_value in "${sequence[@]}"; do
+                        choice_values_str+="${choice_value}"
+                        choice_values_str+="${ARGPARSER_ARG_DELIMITER_2}"
+                    done
+                else
+                    choice_values_str+="${choice_values_range}"
+                    choice_values_str+="${ARGPARSER_ARG_DELIMITER_2}"
+                fi
+            done
+            choice_values_str="${choice_values_str%"${ARGPARSER_ARG_DELIMITER_2}"}"
         else
-            choice_values=""
+            choice_values_str=""
         fi
-        all_choice_values[${arg_key}]="${choice_values}"
+        all_choice_values[${arg_key}]="${choice_values_str}"
 
         # Get the data type.
         if [[ -n "${column_indices["type"]}" ]]; then
@@ -7255,6 +7414,7 @@ function argparser_main() {
         unset -f argparser_get_arg_key
         unset -f argparser_get_option_names
         unset -f argparser_in_array
+        unset -f argparser_is_variable_alpha
         unset -f argparser_is_variable_bool
         unset -f argparser_is_variable_char
         unset -f argparser_is_variable_float
@@ -7276,6 +7436,7 @@ function argparser_main() {
         unset -f argparser_read_args_definition
         unset -f argparser_read_configuration
         unset -f argparser_read_translation
+        unset -f argparser_seq
         unset -f argparser_set_args
         unset -f argparser_set_env_vars
         unset -f argparser_set_internal_vars
