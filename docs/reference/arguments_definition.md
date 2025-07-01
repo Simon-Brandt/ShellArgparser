@@ -44,7 +44,7 @@ Positional and keyword arguments may have default values, which are assigned to 
 
 #### 8.1.6. Choice values (`choices`)
 
-It is possible to restrict the range of acceptable values for an argument to a set indicated by the choice values. If [default values](#815-default-values-defaults) are given, they must lie within the choice values. The choice values are delimited by [`ARGPARSER_ARG_DELIMITER_2`](environment_variables/environment_variables.md#8412-argparser_arg_delimiter_2) characters, while each item may be given as range in the form `1-9` or `A-Z-2`. The first hyphen-delimited value is the start character, the second the stop character, and the optional third value the step size, defaulting to `1`. The start and stop characters must be either integers or alphabetical characters (from the `[:alpha:]` POSIX character class), the step an integer.
+It is possible to restrict the range of acceptable values for an argument to a set indicated by the choice values. If [default values](#815-default-values-defaults) are given, they must lie within the choice values. The choice values are delimited by [`ARGPARSER_ARG_DELIMITER_2`](environment_variables/environment_variables.md#8412-argparser_arg_delimiter_2) characters, while each item may be given as range in the form `1-9` or `A-Z-2`. The first hyphen-delimited value is the start character, the second the stop character, and the optional third value the step size, defaulting to `1`. The start and stop characters must be either integers, floats, or alphabetical characters (from the `[:alpha:]` POSIX character class), the step an integer or float (an integer for character sequences).
 
 #### 8.1.7. Data type (`type`)
 

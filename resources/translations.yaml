@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-30
+# Last Modification: 2025-07-01
 
 # 1.    Define the translations for the arguments parsing.
 ---
@@ -381,12 +381,12 @@ Error arg def choice range hyphens:
 Error arg def choice range:
   en: >
     Error: The argument with the identifier "$1" has choice values given with
-    "$2" as start, "$3" as stop, and "$4" as step size, while only integer or
-    letter sequences are supported.
+    "$2" as start, "$3" as stop, and "$4" as step size, while only integer,
+    float, or letter sequences are supported.
   de: >
     Fehler: Das Argument mit dem Identifikator "$1" hat Auswahlwerte gegeben
     mit "$2" als Start, "$3" als Stopp, und "$4" als Schrittweite, während nur
-    Ganzzahl- und Buchstaben-Sequenzen unterstützt werden.
+    Ganzzahl-, Gleitkommazahl- und Buchstaben-Sequenzen unterstützt werden.
 ...
 
 # 3.4.  Define the translations for checking the names of the arguments

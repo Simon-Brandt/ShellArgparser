@@ -361,9 +361,9 @@
 
 #### 8.5.49. Error arg def choice range`
 
-- ***Message:*** `Error: The argument with the identifier "$1" has choice values given with "$2" as start, "$3" as stop, and "$4" as step size, while only integer or letter sequences are supported.`
-- ***Description:*** The error that in the arguments definition, an argument uses non-integer or non-letter characters in a choice value range.
-- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a set of choice values defined, where at least one uses non-integer or non-letter characters to indicate a range. Both the start and stop value may be either integers or alphabetical characters (letters), the step size must be an integer. Any other character is not supported.
+- ***Message:*** `Error: The argument with the identifier "$1" has choice values given with "$2" as start, "$3" as stop, and "$4" as step size, while only integer, float, or letter sequences are supported.`
+- ***Description:*** The error that in the arguments definition, an argument uses non-integer, non-float, or non-letter characters in a choice value range.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a set of choice values defined, where at least one uses non-integer, non-float, or non-letter characters to indicate a range. Both the start and stop value may be either integers, floats, or alphabetical characters (letters), the step size may be an integer or float. It must be an integer for letter sequences. Any other character is not supported.
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
   - `$2`: The start value.
