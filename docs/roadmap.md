@@ -26,27 +26,22 @@ The following features are considered for addition in a future version. If you m
 - ***Description:*** A debug mode facilitates the finding of errors within the Argparser. As a useful tool in development, it will be added at some point.
 - ***Implementation likelihood:*** High.
 
-#### 6.1.5. Choice value ranges for floats
-
-- ***Description:*** Choice values can be specified as ranges, but only for integer and alphabetical character ranges, yet. Float ranges suffer from the lack of built-in support for floats in Bash < 5.3, but may be implemented, once Bash 5.3 has seen some adoption.
-- ***Implementation likelihood:*** Medium.
-
-#### 6.1.6. Intermixed positional and keyword arguments
+#### 6.1.5. Intermixed positional and keyword arguments
 
 - ***Description:*** Currently, positional arguments must be delimited by a `--` from keyword arguments, and subsequent keyword arguments by a `++` from positional arguments. It may be useful to reflect the rather usual behavior of allowing truly intermixed positional and keyword arguments by distinguishing them based on the argument number an argument requires.
 - ***Implementation likelihood:*** Medium.
 
-#### 6.1.7. Single-hyphen long options
+#### 6.1.6. Single-hyphen long options
 
 - ***Description:*** On certain platforms, long options may be given with only one hyphen, sometimes exclusively, sometimes as an alternative to two hyphens. Even programs like GNU [`find`](https://man7.org/linux/man-pages/man1/find.1.html "man7.org &rightarrow; man pages &rightarrow; find(1)") act like this. However, there is a natural ambiguity whether an argument with one hyphen is a single-hyphen long option or a set of concatenated (merged) short options. Allowing single-hyphen long options would require a far more complex parsing step, when an argument with one hyphen is interpreted as long option, as long as one with this name exists, or as a set of short options, else (if allowed at all).
 - ***Implementation likelihood:*** Medium.
 
-#### 6.1.8. POSIX compliance
+#### 6.1.7. POSIX compliance
 
 - ***Description:*** POSIX allows very few constructs for argument parsing, like no long options. Since there are perfectly suitable alternatives for this simple parsing, and the Argparser aims at a way more sophisticated command-line interface, opt-in POSIX compliance seems unnecessary for now.
 - ***Implementation likelihood:*** Low.
 
-#### 6.1.9. Alternative option prefixes (`+`/`/`)
+#### 6.1.8. Alternative option prefixes (`+`/`/`)
 
 - ***Description:*** On certain platforms, options are given with other prefixes, like `/` on DOS-like systems. The Argparser targets Unix-like platforms, and allowing other characters would require a massive change to the codebase. Further, plus signs are used as tokens for flag negation, so for using them as regular prefixes, the hyphen would take their role. More importantly, there is no such equivalent for the forward slash&mdash;a backslash would feel most natural, but would collide with the path separator on DOS-like platforms. Considering the massive efforts needed to implement this, it is unlikely to ever be done.
 - ***Implementation likelihood:*** Almost zero.
