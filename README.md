@@ -65,7 +65,7 @@ args=(
     "var_1 | a,A        | var-1,var-a | VAL_1     |          |         | uint | 1      | Mandatory options    |            | one value without default or choice               "
     "var_2 | b,B        | var-2,var-b | VAL_2     |          |         | int  | +      | Mandatory options    |            | at least one value without default or choice      "
     "var_3 | c,C        | var-3,var-c | VAL_3     |          | A,B     | char | +      | Mandatory options    |            | at least one value with choice                    "
-    "var_4 | d,D        | var-4,var-d | VAL_4     | A        | A,B,C   | char | 1      | Optional options     |            | one value with default and choice                 "
+    "var_4 | d,D        | var-4,var-d | VAL_4     | A        | A-C     | char | 1      | Optional options     |            | one value with default and choice                 "
     "var_5 | e,E        | var-5,var-e | VAL_5     | E        |         | str  | 1      | Optional options     |            | one value with default                            "
     "var_6 | f,F        | var-6,var-f | VAL_6     | false    |         | bool | 0      | Optional options     |            | no value (flag) with default                      "
     "var_7 | g,G        | var-7,var-g | VAL_7     | true     |         | bool | 0      | Optional options     | deprecated | no value (flag) with default                      "
@@ -114,6 +114,8 @@ For simply running the Argparser, only Bash is required. Bash &geq; 4.0 is known
   - [`sed`](https://man7.org/linux/man-pages/man1/sed.1.html "man7.org &rightarrow; man pages &rightarrow; sed(1)")
 - Comparison:
   - Bash &geq; 4.0
+  - [`cat`](https://man7.org/linux/man-pages/man1/cat.1.html "man7.org &rightarrow; man pages &rightarrow; cat(1)")
+  - [`cp`](https://man7.org/linux/man-pages/man1/cp.1.html "man7.org &rightarrow; man pages &rightarrow; cp(1)")
   - [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)")
   - [`sed`](https://man7.org/linux/man-pages/man1/sed.1.html "man7.org &rightarrow; man pages &rightarrow; sed(1)")
   - [shFlags](https://github.com/kward/shflags "github.com &rightarrow; kward &rightarrow; shFlags") 1.3.0
