@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-16
+# Last Modification: 2025-07-02
 
 # Usage: Run this script with "bash getopts_wrapper.sh".
 
@@ -24,6 +24,7 @@ function help() {
                  bot)
 
     Optional options:
+    [-e]         exit directly after parsing, for runtime assessment
     [-v]         output verbose information
 
     [-h]         display this help and exit
@@ -35,19 +36,20 @@ EOF
 function usage() {
     # Define the usage message.
     local usage
-    usage="Usage: $0 [-h | -u | -V] [-v] -a=AGE -n=NAME -r={u,m,b} source "
-    usage+="destination"
+    usage="Usage: $0 [-h | -u | -V] [-e] [-v] -a=AGE -n=NAME -r={u,m,b} "
+    usage+="source destination"
     printf '%s\n' "${usage}"
 }
 
 # Parse the arguments.
 verbose=false
-while getopts "n:a:r:vhuV" arg; do
+while getopts "n:a:r:vehuV" arg; do
     case "${arg}" in
         n) name="${OPTARG}" ;;
         a) age="${OPTARG}" ;;
         r) role="${OPTARG}" ;;
         v) verbose=true ;;
+        e) exit=true ;;
         h)
             help
             exit
@@ -122,6 +124,9 @@ esac
 # Set the positional arguments to variables.
 in_file="$1"
 out_file="$2"
+
+# Possibly, exit prematurely.
+[[ "${exit}" == true ]] && exit
 
 # Run the HTML processor.
 if [[ "$0" == */* ]]; then

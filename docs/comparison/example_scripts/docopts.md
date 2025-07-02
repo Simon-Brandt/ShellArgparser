@@ -9,7 +9,7 @@
 #!/bin/bash
 
 # Usage:
-#   docopts_wrapper.sh [-v | --verbose] (-a AGE | --age=AGE) (-n NAME | --name=NAME) (-r ROLE | --role=ROLE) [--] <source> <destination>
+#   docopts_wrapper.sh [-v | --verbose] [-e | --exit] (-a AGE | --age=AGE) (-n NAME | --name=NAME) (-r ROLE | --role=ROLE) [--] <source> <destination>
 #   docopts_wrapper.sh -h | -? | --help
 #   docopts_wrapper.sh -u | --usage
 #   docopts_wrapper.sh -V | --version
@@ -27,6 +27,7 @@
 #                       moderator, b: bot)
 #
 # Optional options:
+# -e,     --exit        exit directly after parsing, for runtime assessment
 # -v,     --verbose     output verbose information
 #
 # -h, -?, --help        display this help and exit
@@ -36,8 +37,8 @@
 function usage() {
     # Define the usage message.
     local usage
-    usage="Usage: $0 [-h,-? | -u | -V] [-v] -a=AGE -n=NAME -r={u,m,b} source "
-    usage+="destination"
+    usage="Usage: $0 [-h,-? | -u | -V] [-e] [-v] -a=AGE -n=NAME -r={u,m,b} "
+    usage+="source destination"
     printf '%s\n' "${usage}"
 }
 
@@ -68,6 +69,10 @@ fi
 
 if [[ "${ARGS[-v]}" == true  || "${ARGS[--verbose]}" == true ]]; then
     verbose=true
+fi
+
+if [[ "${ARGS[-e]}" == true  || "${ARGS[--exit]}" == true ]]; then
+    exit=true
 fi
 
 if [[ "${ARGS[-?]}" == true ]]; then
@@ -117,6 +122,9 @@ case "${role}" in
         exit 1
         ;;
 esac
+
+# Possibly, exit prematurely.
+[[ "${exit}" == true ]] && exit
 
 # Run the HTML processor.
 if [[ "$0" == */* ]]; then

@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-20
+# Last Modification: 2025-07-02
 
 # Usage: Run this script with "bash argparser_wrapper.sh".
 
@@ -18,6 +18,7 @@ args=(
     "age      | a          | age       | AGE         |          |         | uint | 1      | Mandatory options    | the current age of the homepage's owner                         "
     "role     | r          | role      | ROLE        |          | u,m,b   | char | 1      | Mandatory options    | the role of the homepage's owner (u: user, m: moderator, b: bot)"
     "verbose  | v          | verbose   |             | false    |         | bool | 0      | Optional options     | output verbose information                                      "
+    "exit     | e          | exit      |             | false    |         | bool | 0      | Optional options     | exit directly after parsing, for runtime assessment             "
 )
 source argparser -- "$@"
 
@@ -27,6 +28,9 @@ case "${role}" in
     m) role="Moderator" ;;
     b) role="Bot" ;;
 esac
+
+# Possibly, exit prematurely.
+[[ "${exit}" == true ]] && exit
 
 # Run the HTML processor.
 if [[ "$0" == */* ]]; then

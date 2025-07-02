@@ -14,11 +14,11 @@ The runtime statistics are given in the following table:
 <!-- <include command="sed --regexp-extended 's/\w+\.sh/`&`/;s/,/ | /g;s/^/| /;s/$/ |/;2i | --- | --- | --- | --- |' ../comparison/stats.csv"> -->
 | Script | Mean | Std dev | Median |
 | --- | --- | --- | --- |
-| `argparser_wrapper.sh` | 138.8 | 2.4 | 139.0 |
-| `docopts_wrapper.sh` | 24.1 | 5.6 | 24.0 |
-| `getopt_wrapper.sh` | 17.8 | 4.1 | 18.0 |
-| `getopts_wrapper.sh` | 15.7 | 3.7 | 16.0 |
-| `shflags_wrapper.sh` | 222.2 | 40.9 | 236.0 |
+| `argparser_wrapper.sh` | 134.9 | 2.1 | 135.0 |
+| `docopts_wrapper.sh` | 12.7 | 3.6 | 12.0 |
+| `getopt_wrapper.sh` | 5.7 | 1.5 | 6.0 |
+| `getopts_wrapper.sh` | 1.8 | 0.7 | 2.0 |
+| `shflags_wrapper.sh` | 259.1 | 43.1 | 273.5 |
 <!-- </include> -->
 
 As you can see, and unsurprisingly, the runtimes of the compiled programs (`docopts`, `getopt`, and `getopts`) is far lower than that of the interpreted programs (`argparser` and `shflags`). Nonetheless, even the two Bash scripts achieve a runtime of less than 300&nbsp;ms each. Thereby, the median runtime of the Argparser is lower (and more repeatable) than that of shFlags, while offering far more features. This can be attributed to the design decision of using only Bash builtins within the Argparser, whereas shFlags forks into multiple subshells for external tools.

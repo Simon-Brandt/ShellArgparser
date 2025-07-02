@@ -26,6 +26,8 @@ function help() {
                              moderator, b: bot)
 
     Optional options:
+    [-e],     [--exit]       exit directly after parsing, for runtime
+                             assessment
     [-v],     [--verbose]    output verbose information
 
     [-h, -?], [--help]       display this help and exit
@@ -37,14 +39,14 @@ EOF
 function usage() {
     # Define the usage message.
     local usage
-    usage="Usage: $0 [-h,-? | -u | -V] [-v] -a=AGE -n=NAME -r={u,m,b} source "
-    usage+="destination"
+    usage="Usage: $0 [-h,-? | -u | -V] [-e] [-v] -a=AGE -n=NAME -r={u,m,b} "
+    usage+="source destination"
     printf '%s\n' "${usage}"
 }
 
 # Parse the arguments.
-if ! args="$(getopt --options="n:a:r:vh?uV" \
-    --longoptions="name:,age:,role:,verbose,help,usage,version" -- "$@")"
+if ! args="$(getopt --options="n:a:r:veh?uV" \
+    --longoptions="name:,age:,role:,verbose,exit,help,usage,version" -- "$@")"
 then
     exit 1
 fi
@@ -67,6 +69,10 @@ while true; do
             ;;
         -v|--verbose)
             verbose=true
+            shift
+            ;;
+        -e|--exit)
+            exit=true
             shift
             ;;
         -h|--help)
@@ -147,6 +153,9 @@ esac
 # Set the positional arguments to variables.
 in_file="$1"
 out_file="$2"
+
+# Possibly, exit prematurely.
+[[ "${exit}" == true ]] && exit
 
 # Run the HTML processor.
 if [[ "$0" == */* ]]; then

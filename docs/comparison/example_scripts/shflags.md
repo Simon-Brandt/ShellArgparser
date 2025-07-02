@@ -11,8 +11,8 @@
 function usage() {
     # Define the usage message.
     local usage
-    usage="Usage: $0 [-h,-? | -u | -V] [-v] -a=AGE -n=NAME -r={u,m,b} source "
-    usage+="destination"
+    usage="Usage: $0 [-h,-? | -u | -V] [-e] [-v] -a=AGE -n=NAME -r={u,m,b} "
+    usage+="source destination"
     printf '%s\n' "${usage}"
 }
 
@@ -36,6 +36,7 @@ DEFINE_string "name" "?" "the name of the homepage's owner" "n"
 DEFINE_integer "age" "-1" "the current age of the homepage's owner" "a"
 DEFINE_string "role" "?" "the role of the homepage's owner (u: user, m: moderator, b: bot)" "r"
 DEFINE_boolean "verbose" false "output verbose information" "v"
+DEFINE_boolean "exit" false "exit directly after parsing, for runtime assessment" "e"
 DEFINE_boolean "usage" false "display the usage and exit" "u"
 DEFINE_boolean "version" false "display the version and exit" "V"
 
@@ -112,6 +113,9 @@ fi
 # Set the positional arguments to variables.
 in_file="$1"
 out_file="$2"
+
+# Possibly, exit prematurely.
+[[ "${FLAGS_exit}" == true ]] && exit
 
 # Run the HTML processor.
 if [[ "$0" == */* ]]; then

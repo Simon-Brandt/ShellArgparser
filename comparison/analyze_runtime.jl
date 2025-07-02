@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-30
+# Last Modification: 2025-07-02
 
 using CSV: CSV
 using Dates: Dates
@@ -21,6 +21,7 @@ function get_commands()::Dict{String, Cmd}
     )
     args=(
         "-v",
+        "-e",
         "-a",
         "2",
         "-n",
