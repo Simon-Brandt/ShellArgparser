@@ -1,5 +1,3 @@
-### 5.2. Example scripts
-
 #### 5.2.1. `getopts`
 
 <details open>
@@ -163,5 +161,5 @@ Notes:
 - Long options aren't supported, so no attempt is made to still parse them.
 - The question mark `?` is used as sign for an invalid option name on the command line, thus preventing its use for invoking the help message.
 
-[&#129092;&nbsp;5.1. Feature comparison](../feature_comparison.md)
+[&#129092;&nbsp;5.2. Example scripts](introduction.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.2.2. `getopt`&nbsp;&#129094;](getopt.md)

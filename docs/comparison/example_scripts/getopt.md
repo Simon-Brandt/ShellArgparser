@@ -198,5 +198,5 @@ Notes:
 
 - Using whitespace between options with optional arguments (*i.e.*, an argument number of zero or higher) and their values is disallowed.
 
-[&#129092;&nbsp;5.2. Example scripts](getopts.md)
+[&#129092;&nbsp;5.2.1. `getopts`](getopts.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.2.3. shFlags&nbsp;&#129094;](shflags.md)

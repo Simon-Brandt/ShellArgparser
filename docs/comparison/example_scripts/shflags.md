@@ -156,8 +156,8 @@ bash shflags_wrapper.sh --version
 
 Notes:
 
-- shFlags uses GNU `getopt` to parse long options, and fails parsing them on other `getopt` implementations.
-- Since shFlags is a `gflags` port, it uses a slightly strange and unintuitive syntax, like `DEFINE_string long_option default help short_option`.
+- shFlags uses GNU [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)") to parse long options, and fails parsing them on other `getopt` implementations.
+- Since shFlags is a [`gflags`](https://gflags.github.io/gflags/ "github.io &rightarrow; gflags") port, it uses a slightly strange and unintuitive syntax, like `DEFINE_string long_option default help short_option`.
 - Likewise, options are available in the environment as `FLAGS_option_name`, not by a different identifier.
 - Mandatory options aren't supported.  *In lieu* of checking for their existence on the command line, "impossible" default values are set and then checked against.
 - The help message is partly auto-generated. In order to comply with the style decisions in shFlags, the manually set header is adapted to them.

@@ -18,7 +18,7 @@
    1. [Standalone usage](tutorial/standalone_usage.md#411-standalone-usage)
 1. [Comparison of command-line parsers](comparison/introduction.md#5-comparison-of-command-line-parsers)
    1. [Feature comparison](comparison/feature_comparison.md#51-feature-comparison)
-   1. [Example scripts](comparison/example_scripts/getopts.md#52-example-scripts)
+   1. [Example scripts](comparison/example_scripts/introduction.md#52-example-scripts)
       1. [`getopts`](comparison/example_scripts/getopts.md#521-getopts)
       1. [`getopt`](comparison/example_scripts/getopt.md#522-getopt)
       1. [shFlags](comparison/example_scripts/shflags.md#523-shflags)

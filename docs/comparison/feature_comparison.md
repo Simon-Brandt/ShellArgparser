@@ -5,7 +5,7 @@ The following command-line parsers are compared in the given versions:
 - [`getopts`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-getopts "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; getopts"): Bash-builtin, POSIX-compliant command-line parser, from Bash `v5.2`
 - [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)"): legacy command-line parser with GNU extensions, from `util-linux v2.39.3`
 - [shFlags](https://github.com/kward/shflags "github.com &rightarrow; kward &rightarrow; shFlags"): clone of Google's C++ [`gflags`](https://gflags.github.io/gflags/ "github.io &rightarrow; gflags") library for Unix-like shells, `v1.3.0`
-- [docopts](https://github.com/docopt/docopts "github.com &rightarrow; docopt &rightarrow; docopts"): Go implementation of the platform-independent command-line interface description language and parser `docopt` with Bash wrapper, `v0.6.4`
+- [docopts](https://github.com/docopt/docopts "github.com &rightarrow; docopt &rightarrow; docopts"): Go implementation of the platform-independent command-line interface description language and parser [`docopt`](http://docopt.org/ "docopt.org") with Bash wrapper, `v0.6.4`
 - [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module"): Python module from the stdlib, from Python `v3.13`
 - Argparser: novel shell command-line parser, `v0.1.0`
 
@@ -71,4 +71,4 @@ In the following table, "&#10008;" marks the absence of a feature, "&#10004;" it
 [^13]: Opt-in feature *via* environment variable (`POSIXLY_CORRECT`).
 
 [&#129092;&nbsp;Table of contents (Feature comparison)](toc.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.2. Example scripts&nbsp;&#129094;](example_scripts/getopts.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.2. Example scripts&nbsp;&#129094;](example_scripts/introduction.md)
