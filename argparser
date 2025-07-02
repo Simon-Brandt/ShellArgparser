@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-07-01
+# Last Modification: 2025-07-02
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -102,7 +102,7 @@ function argparser_in_array() {
     return 1
 }
 
-function argparser_is_variable_alpha() {
+function argparser_is_alpha() {
     # Check if a variable's value is an alphabetical character.
     #
     # Arguments:
@@ -126,7 +126,7 @@ function argparser_is_variable_alpha() {
     fi
 }
 
-function argparser_is_variable_bool() {
+function argparser_is_bool() {
     # Check if a variable's value is a Boolean.
     #
     # Arguments:
@@ -150,7 +150,7 @@ function argparser_is_variable_bool() {
     fi
 }
 
-function argparser_is_variable_char() {
+function argparser_is_char() {
     # Check if a variable's value is a (printable) character.
     #
     # Arguments:
@@ -174,7 +174,7 @@ function argparser_is_variable_char() {
     fi
 }
 
-function argparser_is_variable_float() {
+function argparser_is_float() {
     # Check if a variable's value is a floating-point number.
     #
     # Arguments:
@@ -200,7 +200,7 @@ function argparser_is_variable_float() {
     fi
 }
 
-function argparser_is_variable_identifier() {
+function argparser_is_identifier() {
     # Check if a variable's value is usable as Bash variable identifier.
     #
     # Arguments:
@@ -224,7 +224,7 @@ function argparser_is_variable_identifier() {
     fi
 }
 
-function argparser_is_variable_int() {
+function argparser_is_int() {
     # Check if a variable's value is an integer.
     #
     # Arguments:
@@ -248,7 +248,7 @@ function argparser_is_variable_int() {
     fi
 }
 
-function argparser_is_variable_uint() {
+function argparser_is_uint() {
     # Check if a variable's value is an unsigned integer.
     #
     # Arguments:
@@ -527,24 +527,24 @@ function argparser_seq() {
     stop="$3"
     step="${4:-1}"
 
-    if argparser_is_variable_alpha "${start}" \
-        && argparser_is_variable_alpha "${stop}" \
-        && argparser_is_variable_int "${step}"
+    if argparser_is_alpha "${start}" \
+        && argparser_is_alpha "${stop}" \
+        && argparser_is_int "${step}"
     then
         # For alphabetical character sequences, get the decimal value in
         # the ASCII table for the start and stop. 
         printf -v start '%d' "'${start}"
         printf -v stop '%d' "'${stop}"
-    elif argparser_is_variable_int "${start}" \
-        && argparser_is_variable_int "${stop}" \
-        && argparser_is_variable_int "${step}"
+    elif argparser_is_int "${start}" \
+        && argparser_is_int "${stop}" \
+        && argparser_is_int "${step}"
     then
         # For entirely integer sequences, do nothing.  This is required
         # to simplify the subsequent comparisons.
         :
-    elif (argparser_is_variable_float "${start}" || argparser_is_variable_int "${start}") \
-        && (argparser_is_variable_float "${stop}" || argparser_is_variable_int "${stop}") \
-        && (argparser_is_variable_float "${step}" || argparser_is_variable_int "${step}")
+    elif (argparser_is_float "${start}" || argparser_is_int "${start}") \
+        && (argparser_is_float "${stop}" || argparser_is_int "${stop}") \
+        && (argparser_is_float "${step}" || argparser_is_int "${step}")
     then
         # For at least partially float sequences, get the decimal part
         # (after the period) and count its length.
@@ -647,7 +647,7 @@ function argparser_seq() {
         done
     fi
 
-    if argparser_is_variable_alpha "$2"; then
+    if argparser_is_alpha "$2"; then
         # If the start value (and, by this, also the stop and step
         # values) had been given as alphabetical character, convert each
         # number within the sequence to its hexadecimal representation
@@ -661,9 +661,9 @@ function argparser_seq() {
             printf -v char "\x${char}"
             sequence[i]="${char}"
         done
-    elif argparser_is_variable_float "$2" \
-        || argparser_is_variable_float "$3" \
-        || argparser_is_variable_float "$4"
+    elif argparser_is_float "$2" \
+        || argparser_is_float "$3" \
+        || argparser_is_float "$4"
     then
         # If either of the start, stop, and step value had been given as
         # float, convert the integers in the sequence to floats by
@@ -1643,7 +1643,7 @@ function argparser_check_env_vars() {
     for var in "${vars[@]}"; do
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values <<< "${!var}"
         for value in "${values[@]}"; do
-            if ! argparser_is_variable_bool "${value}"; then
+            if ! argparser_is_bool "${value}"; then
                 error_message="Error: The environment variable \"\$1\" is set "
                 error_message+="to \"\$2\", but must be a Boolean, i.e., true "
                 error_message+="or false."
@@ -1675,7 +1675,7 @@ function argparser_check_env_vars() {
         fi
 
         for value in "${values[@]}"; do
-            if ! argparser_is_variable_char "${value}"; then
+            if ! argparser_is_char "${value}"; then
                 error_message="Error: The environment variable \"\$1\" is set "
                 error_message+="to \"\$2\", but must be a character, i.e., a "
                 error_message+="string comprising one printable ASCII "
@@ -1698,7 +1698,7 @@ function argparser_check_env_vars() {
     for var in "${vars[@]}"; do
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values <<< "${!var}"
         for value in "${values[@]}"; do
-            if ! argparser_is_variable_identifier "${value}"; then
+            if ! argparser_is_identifier "${value}"; then
                 error_message="Error: The environment variable \"\$1\" is set "
                 error_message+="to \"\$2\", but designed to be used as Bash "
                 error_message+="variable identifier, i.e., its value must "
@@ -1725,7 +1725,7 @@ function argparser_check_env_vars() {
     for var in "${vars[@]}"; do
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values <<< "${!var}"
         for value in "${values[@]}"; do
-            if ! argparser_is_variable_int "${value}"; then
+            if ! argparser_is_int "${value}"; then
                 error_message="Error: The environment variable \"\$1\" is set "
                 error_message+="to \"\$2\", but must be an integer, i.e., "
                 error_message+="comprise only digits and possibly a leading "
@@ -1750,7 +1750,7 @@ function argparser_check_env_vars() {
     for var in "${vars[@]}"; do
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values <<< "${!var}"
         for value in "${values[@]}"; do
-            if ! argparser_is_variable_uint "${value}"; then
+            if ! argparser_is_uint "${value}"; then
                 error_message="Error: The environment variable \"\$1\" is set "
                 error_message+="to \"\$2\", but must be an unsigned integer, "
                 error_message+="i.e., comprise only digits and no sign."
@@ -3259,7 +3259,7 @@ function argparser_check_args_definition_positional_values() {
             fi
 
             if [[ "${type}" == "bool" ]] \
-                && ! argparser_is_variable_bool "${choice_value}"
+                && ! argparser_is_bool "${choice_value}"
             then
                 # Check if the choice value is a Boolean.
                 error_message="Error: The positional argument with the "
@@ -3272,7 +3272,7 @@ function argparser_check_args_definition_positional_values() {
                 error_message="${translation}"
                 error_messages+=("${error_message}")
             elif [[ "${type}" == "char" ]] \
-                && ! argparser_is_variable_char "${choice_value}"
+                && ! argparser_is_char "${choice_value}"
             then
                 # Check if the choice value is a character.
                 error_message="Error: The positional argument with the "
@@ -3286,7 +3286,7 @@ function argparser_check_args_definition_positional_values() {
                 error_message="${translation}"
                 error_messages+=("${error_message}")
             elif [[ "${type}" == "float" ]] \
-                && ! argparser_is_variable_float "${choice_value}"
+                && ! argparser_is_float "${choice_value}"
             then
                 # Check if the choice value is a floating-point number.
                 error_message="Error: The positional argument with the "
@@ -3300,7 +3300,7 @@ function argparser_check_args_definition_positional_values() {
                 error_message="${translation}"
                 error_messages+=("${error_message}")
             elif [[ "${type}" == "int" ]] \
-                && ! argparser_is_variable_int "${choice_value}"
+                && ! argparser_is_int "${choice_value}"
             then
                 # Check if the choice value is an integer.
                 error_message="Error: The positional argument with the "
@@ -3314,7 +3314,7 @@ function argparser_check_args_definition_positional_values() {
                 error_message="${translation}"
                 error_messages+=("${error_message}")
             elif [[ "${type}" == "uint" ]] \
-                && ! argparser_is_variable_uint "${choice_value}"
+                && ! argparser_is_uint "${choice_value}"
             then
                 # Check if the choice value is an unsigned integer.
                 error_message="Error: The positional argument with the "
@@ -3521,7 +3521,7 @@ function argparser_check_args_definition_option_values() {
             fi
 
             if [[ "${type}" == "bool" ]] \
-                && ! argparser_is_variable_bool "${choice_value}"
+                && ! argparser_is_bool "${choice_value}"
             then
                 # Check if the choice value is a Boolean.
                 error_message="Error: The argument with the identifier \"\$1\" "
@@ -3533,7 +3533,7 @@ function argparser_check_args_definition_option_values() {
                 error_message="${translation}"
                 error_messages+=("${error_message}")
             elif [[ "${type}" == "char" ]] \
-                && ! argparser_is_variable_char "${choice_value}"
+                && ! argparser_is_char "${choice_value}"
             then
                 # Check if the choice value is a character.
                 error_message="Error: The argument with the identifier \"\$1\" "
@@ -3546,7 +3546,7 @@ function argparser_check_args_definition_option_values() {
                 error_message="${translation}"
                 error_messages+=("${error_message}")
             elif [[ "${type}" == "float" ]] \
-                && ! argparser_is_variable_float "${choice_value}"
+                && ! argparser_is_float "${choice_value}"
             then
                 # Check if the choice value is a floating-point number.
                 error_message="Error: The argument with the identifier \"\$1\" "
@@ -3560,7 +3560,7 @@ function argparser_check_args_definition_option_values() {
                 error_message="${translation}"
                 error_messages+=("${error_message}")
             elif [[ "${type}" == "int" ]] \
-                && ! argparser_is_variable_int "${choice_value}"
+                && ! argparser_is_int "${choice_value}"
             then
                 # Check if the choice value is an integer.
                 error_message="Error: The argument with the identifier \"\$1\" "
@@ -3573,7 +3573,7 @@ function argparser_check_args_definition_option_values() {
                 error_message="${translation}"
                 error_messages+=("${error_message}")
             elif [[ "${type}" == "uint" ]] \
-                && ! argparser_is_variable_uint "${choice_value}"
+                && ! argparser_is_uint "${choice_value}"
             then
                 # Check if the choice value is an unsigned integer.
                 error_message="Error: The argument with the identifier \"\$1\" "
@@ -4766,7 +4766,7 @@ function argparser_check_arg_values() {
     # Check if the given values accord to the type.
     for value in "${values[@]}"; do
         if [[ "${type}" == "bool" && "${arg_number}" != 0 ]] \
-            && ! argparser_is_variable_bool "${value}"
+            && ! argparser_is_bool "${value}"
         then
             # Check if the value is a Boolean.  If the argument is a
             # flag, then the values are set by the Argparser to
@@ -4781,9 +4781,7 @@ function argparser_check_arg_values() {
             error_message="${translation}"
             messages+=("${error_message}")
             return
-        elif [[ "${type}" == "char" ]] \
-            && ! argparser_is_variable_char "${value}"
-        then
+        elif [[ "${type}" == "char" ]] && ! argparser_is_char "${value}"; then
             # Check if the value is a character.
             error_message="Error: The argument \"\$1\" is set to \"\$2\", but "
             error_message+="must be a character, i.e., a string comprising "
@@ -4794,8 +4792,7 @@ function argparser_check_arg_values() {
             error_message="${translation}"
             messages+=("${error_message}")
             return
-        elif [[ "${type}" == "float" ]] \
-            && ! argparser_is_variable_float "${value}"
+        elif [[ "${type}" == "float" ]] && ! argparser_is_float "${value}"
         then
             # Check if the value is a floating-point number.
             error_message="Error: The argument \"\$1\" is set to \"\$2\", but "
@@ -4807,9 +4804,7 @@ function argparser_check_arg_values() {
             error_message="${translation}"
             messages+=("${error_message}")
             return
-        elif [[ "${type}" == "int" ]] \
-            && ! argparser_is_variable_int "${value}"
-        then
+        elif [[ "${type}" == "int" ]] && ! argparser_is_int "${value}"; then
             # Check if the value is an integer.
             error_message="Error: The argument \"\$1\" is set to \"\$2\", but "
             error_message+="must be an integer, i.e., comprise only digits "
@@ -4820,9 +4815,7 @@ function argparser_check_arg_values() {
             error_message="${translation}"
             messages+=("${error_message}")
             return
-        elif [[ "${type}" == "uint" ]] \
-            && ! argparser_is_variable_uint "${value}"
-        then
+        elif [[ "${type}" == "uint" ]] && ! argparser_is_uint "${value}"; then
             # Check if the value is an unsigned integer.
             error_message="Error: The argument \"\$1\" is set to \"\$2\", but "
             error_message+="must be an unsigned integer, i.e., comprise only "
@@ -7516,13 +7509,13 @@ function argparser_main() {
         unset -f argparser_get_arg_key
         unset -f argparser_get_option_names
         unset -f argparser_in_array
-        unset -f argparser_is_variable_alpha
-        unset -f argparser_is_variable_bool
-        unset -f argparser_is_variable_char
-        unset -f argparser_is_variable_float
-        unset -f argparser_is_variable_identifier
-        unset -f argparser_is_variable_int
-        unset -f argparser_is_variable_uint
+        unset -f argparser_is_alpha
+        unset -f argparser_is_bool
+        unset -f argparser_is_char
+        unset -f argparser_is_float
+        unset -f argparser_is_identifier
+        unset -f argparser_is_int
+        unset -f argparser_is_uint
         unset -f argparser_main
         unset -f argparser_parse_arg
         unset -f argparser_parse_args
