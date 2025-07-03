@@ -6,9 +6,9 @@ Future Argparser versions will add several new features and address known issues
 
 The following features are considered for addition in a future version. If you miss one, feel free to open an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues") to propose it.
 
-#### 6.1.1. Mutually exclusive argument groups
+#### 6.1.1. Argument relations
 
-- ***Description:*** Arguments in mutually exclusive argument groups can only be given on the command line one at a time. This is useful for contradicting options, like `--verbose` and `-quiet`.
+- ***Description:*** Sometimes, multiple arguments may only be given together, or the existence of one argument mandates the existence of another one, which on itself could also be given alone. Secondly, options may contradict each other, like `--verbose` and `--quiet`, and so can only be given in an exclusive fashion on the command line. To enable this behavior, it is likely necessary to introduce another array showing the relations these arguments have. For example, some syntax like `var_a | var_b` may show contravalence (XOR) for mandatory arguments or exclusion (NAND) for optional arguments. This relation would set both arguments as mutually exclusive. Other operators, like `<-` for a prependency or `<->` for a biconditional, will need to be introduced for the aforementioned cases. However, in order to specify a minimal and clear syntax which facilitates application in scripts, and to find an optimal way of parsing, more exploratory trial work needs to be done.
 - ***Implementation likelihood:*** High.
 
 #### 6.1.2. Any argument number

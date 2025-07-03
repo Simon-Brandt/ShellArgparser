@@ -28,7 +28,7 @@
    1. [Summary](comparison/summary.md#54-summary)
 1. [Roadmap](roadmap.md#6-roadmap)
    1. [Future enhancements](roadmap.md#61-future-enhancements)
-      1. [Mutually exclusive argument groups](roadmap.md#611-mutually-exclusive-argument-groups)
+      1. [Argument relations](roadmap.md#611-argument-relations)
       1. [Any argument number](roadmap.md#612-any-argument-number)
       1. [Debug mode](roadmap.md#613-debug-mode)
       1. [Intermixed positional and keyword arguments](roadmap.md#614-intermixed-positional-and-keyword-arguments)
