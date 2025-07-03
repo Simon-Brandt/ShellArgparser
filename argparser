@@ -2054,6 +2054,7 @@ function argparser_read_translation() {
     # - ARGPARSER_TRANSLATION_FILE (read-only)
 
     # Define the local variables.
+    local -a error_lines
     local error_message
     local -a error_messages
     local file_attributes
@@ -2111,6 +2112,7 @@ function argparser_read_translation() {
     language=""
     translation="?"
     is_continued=false
+    error_lines=( )
     error_messages=( )
 
     for line in "${lines[@]}"; do
@@ -2173,13 +2175,16 @@ function argparser_read_translation() {
             is_continued=false
         else
             # The line uses a YAML feature not supported by the
-            # Argparser, thus, output an error message.
+            # Argparser, thus, output an error message.  The message
+            # must not yet be translated, as the translation requires
+            # translation identifiers that may not have been read, yet.
+            # This would lead to a warning message complaining that the
+            # identifier would be missing, despite being present.  For
+            # the necessary interpolation, below, save the current line.
             error_message="Error: The YAML line \"\$1\" could not be "
             error_message+="recognized."
-
-            argparser_translate "Error YAML" "${error_message}" "${line}"
-            error_message="${translation}"
             error_messages+=("${error_message}")
+            error_lines+=("${line}")
         fi
     done
 
@@ -2188,12 +2193,20 @@ function argparser_read_translation() {
         ARGPARSER_DICTIONARY[${group}]="${translation}"
     fi
 
-    # Sort, filter, colorize, and print all error messages.
+    # Sort, filter, colorize, translate, and print all error messages.
     if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
         ARGPARSER_ARG_DELIMITER_2=","
         ARGPARSER_ERROR_EXIT_CODE=1
         ARGPARSER_ERROR_STYLE="red,bold,reverse"
     fi
+
+    for i in "${!error_messages[@]}"; do
+        error_message="${error_messages[i]}"
+        line="${error_lines[i]}"
+        argparser_translate "Error YAML" "${error_message}" "${line}"
+        error_message="${translation}"
+        error_messages[i]="${error_message}"
+    done
 
     argparser_print_error_or_warning_message "error" true false \
         "${error_messages[@]}"
