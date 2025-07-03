@@ -2103,11 +2103,13 @@ function argparser_read_translation() {
             "${error_message}"
     fi
 
-    # Read the translation file.
+    # Read the translation file.  Use "?" as sentinel to denote the
+    # absence of a translation, to be overridden by the actual
+    # translation, once read.
     mapfile -t lines < "${ARGPARSER_TRANSLATION_FILE}"
     group=""
     language=""
-    translation=""
+    translation="?"
     is_continued=false
     error_messages=( )
 
@@ -2121,13 +2123,13 @@ function argparser_read_translation() {
         elif [[ "${line}" == "  ${ARGPARSER_LANGUAGE}: >" ]]; then
             # The line starts the translation to the desired language.
             language="${ARGPARSER_LANGUAGE}"
-            translation=""
+            translation="?"
             is_continued=true
         elif [[ "${line}" == "  ${ARGPARSER_LANGUAGE}:" ]]; then
             # The line contains the translation to the desired language
             # for an empty translation.
             language="${ARGPARSER_LANGUAGE}"
-            translation="${line#*:}"
+            translation=""
         elif [[ "${line}" == "  ${ARGPARSER_LANGUAGE}: "* ]]; then
             # The line contains the translation to the desired language.
             language="${ARGPARSER_LANGUAGE}"
@@ -2150,7 +2152,7 @@ function argparser_read_translation() {
             && "${is_continued}" == true ]]
         then
             # The line continues the translation from the previous line.
-            if [[ -z "${translation}" ]]; then
+            if [[ "${translation}" == "?" ]]; then
                 translation="${line#    }"
             else
                 translation+=" ${line#    }"
@@ -2167,7 +2169,7 @@ function argparser_read_translation() {
                 ARGPARSER_DICTIONARY[${group}]="${translation}"
             fi
             group="${line%:}"
-            translation=""
+            translation="?"
             is_continued=false
         else
             # The line uses a YAML feature not supported by the
@@ -2261,7 +2263,7 @@ function argparser_translate() {
 
             argparser_print_error_or_warning_message "warning" false false \
                 "${warning_message}"
-        elif [[ -z "${ARGPARSER_DICTIONARY[${key}]}" ]]; then
+        elif [[ "${ARGPARSER_DICTIONARY[${key}]}" == "?" ]]; then
             warning_message="Warning: In the translation file \"\$1\", the "
             warning_message+="translation to \"\$2\" for the identifier "
             warning_message+="\"\$3\" is missing.  For convenience, the "

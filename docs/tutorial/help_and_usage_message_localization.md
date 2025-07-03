@@ -209,7 +209,6 @@ The former command prints the American English help message, the latter its Germ
 <!-- <include command="LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -h" lang="console"> -->
 ```console
 $ LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -h
-try_localization.sh: Warnung: In der Übersetzungsdatei "/home/simon/Dokumente/Skripte/ShellArgparser/resources/translations.yaml" fehlt die Übersetzung nach "de" für den Identifikator "Help description".  Zwecks Einfachheit wird stattdessen die nicht übersetzte Zeichenkette genutzt.
 Eine kurze Kopfzeile fasst zusammen, wie die Hilfe-Meldung zu interpretieren
 ist.
 Aufruf: try_localization.sh [OPTIONEN] ARGUMENTE -- [pos_1] pos_2
@@ -248,7 +247,6 @@ Likewise, the usage message is localized:
 <!-- <include command="LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -u" lang="console"> -->
 ```console
 $ LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -u
-try_localization.sh: Warnung: In der Übersetzungsdatei "/home/simon/Dokumente/Skripte/ShellArgparser/resources/translations.yaml" fehlt die Übersetzung nach "de" für den Identifikator "Help description".  Zwecks Einfachheit wird stattdessen die nicht übersetzte Zeichenkette genutzt.
 Aufruf: try_localization.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 ```
 <!-- </include> -->
