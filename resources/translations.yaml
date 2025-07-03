@@ -1,8 +1,8 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-07-01
+# Last Modification: 2025-07-03
 
-# 1.    Define the translations for the arguments parsing.
+# 1.    Define the general translations.
 ---
 Positional arguments:
   en: Positional arguments
@@ -11,6 +11,10 @@ Positional arguments:
 Help options:
   en: Help options
   de: Hilfsoptionen
+
+Help description:
+  en:
+  de:
 
 Error:
   en: Error

@@ -59,6 +59,8 @@ Options:
 [--help-arg-group=NAME]          the name of the argument group holding all
                                  help options, i.e., --help, --usage, and
                                  --version (default: "Help options")
+[--help-description=TEXT]        the script's description (purpose) to show in
+                                 help message (default: "''")
 [--help-exit-code=INT]           the exit code for help messages (default: 0)
 [--help-file=FILE]               the path to a file holding the extended help
                                  message (default: "''")
@@ -218,11 +220,11 @@ fi | sort
 
 As you can see, the script is written POSIX conformantly and by this already executable by `sh` or `dash`. Since POSIX doesn't specify useful programming constructs like arrays, the arguments definition must be a single string, delimited by linefeeds. By passing this string to the Argparser via its STDIN stream (piping from `printf` to `argparser`), it is possible to feed the arguments definition to the Argparser without requiring the usual [`ARGPARSER_ARG_ARRAY_NAME`](../reference/environment_variables/environment_variables.md#849-argparser_arg_array_name). Just as when sourcing, the Argparser requires your script's command line as argument, separated from its own arguments by a double hyphen.
 
-It is important to set [`ARGPARSER_WRITE_ARGS`](../reference/environment_variables/environment_variables.md#8462-argparser_write_args) to `true`. By this, the Argparser will write the parsed arguments as key&ndash;value pairs to its STDOUT stream, since setting them as variables to the environment would result in them being lost when the child process the Argparser is running in terminates.
+It is important to set [`ARGPARSER_WRITE_ARGS`](../reference/environment_variables/environment_variables.md#8463-argparser_write_args) to `true`. By this, the Argparser will write the parsed arguments as key&ndash;value pairs to its STDOUT stream, since setting them as variables to the environment would result in them being lost when the child process the Argparser is running in terminates.
 
 In our example script, the whole pipeline is run in a subshell, such that STDOUT gets captured by `eval`. This facilitates the setting of the variables to the main environment, as the Argparser outputs one argument per line, with an `=` sign as delimiter between key and value. In other terms, the Argparser produces output which may be re-used as input to `eval`&mdash;here assuming that no special shell characters are included. For the purpose of this example, calls for the help, usage, and version message are caught in a separate branch to circumvent the parsing by `eval`&mdash;after all, these messages are also written to STDOUT, while the usual error and warning messages end in STDERR. Depending on your shell, you may find more sophisticated solutions.
 
-Another point to notice is the need to set the [`ARGPARSER_SCRIPT_NAME`](../reference/environment_variables/environment_variables.md#8437-argparser_script_name) prior running the Argparser, since from within its child process, it cannot access your script's name without requiring non-builtin commands like [`ps`](https://man7.org/linux/man-pages/man1/ps.1.html "man7.org &rightarrow; man pages &rightarrow; ps(1)").
+Another point to notice is the need to set the [`ARGPARSER_SCRIPT_NAME`](../reference/environment_variables/environment_variables.md#8438-argparser_script_name) prior running the Argparser, since from within its child process, it cannot access your script's name without requiring non-builtin commands like [`ps`](https://man7.org/linux/man-pages/man1/ps.1.html "man7.org &rightarrow; man pages &rightarrow; ps(1)").
 
 In short, it is possible to run the Argparser in standalone mode from other shells, but this comes with the caveats of subprocesses&mdash;which the sourcing in Bash overcomes. Still, the only feature that your shell must support, is calling processes in pipes or *via* process substitutions to pass data to the Argparser's STDIN and read its STDOUT. Since pipes are defined by POSIX, most shells should support this feature.
 

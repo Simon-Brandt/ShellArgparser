@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-06-27
+# Last Modification: 2025-07-03
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -1552,6 +1552,7 @@ Usage: argparser [--help | --usage | --version]
                  [--error-exit-code=INT]
                  [--error-style=STYLE...]
                  [--help-arg-group=NAME]
+                 [--help-description=TEXT]
                  [--help-exit-code=INT]
                  [--help-file=FILE]
                  [--help-file-include-char=CHAR]
@@ -1656,6 +1657,8 @@ Options:
 [--help-arg-group=NAME]          the name of the argument group holding all
                                  help options, i.e., --help, --usage, and
                                  --version (default: "Help options")
+[--help-description=TEXT]        the script's description (purpose) to show in
+                                 help message (default: "''")
 [--help-exit-code=INT]           the exit code for help messages (default: 0)
 [--help-file=FILE]               the path to a file holding the extended help
                                  message (default: "''")

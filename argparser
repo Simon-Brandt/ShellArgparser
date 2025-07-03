@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-07-02
+# Last Modification: 2025-07-03
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -1021,6 +1021,7 @@ function argparser_read_configuration() {
     # ARGPARSER_ERROR_EXIT_CODE
     # ARGPARSER_ERROR_STYLE
     # ARGPARSER_HELP_ARG_GROUP
+    # ARGPARSER_HELP_DESCRIPTION
     # ARGPARSER_HELP_EXIT_CODE
     # ARGPARSER_HELP_FILE
     # ARGPARSER_HELP_FILE_INCLUDE_CHAR
@@ -1252,6 +1253,7 @@ function argparser_set_env_vars() {
     # ARGPARSER_ERROR_EXIT_CODE
     # ARGPARSER_ERROR_STYLE
     # ARGPARSER_HELP_ARG_GROUP
+    # ARGPARSER_HELP_DESCRIPTION
     # ARGPARSER_HELP_EXIT_CODE
     # ARGPARSER_HELP_FILE
     # ARGPARSER_HELP_FILE_INCLUDE_CHAR
@@ -1353,6 +1355,7 @@ function argparser_set_env_vars() {
         "ARGPARSER_ERROR_EXIT_CODE           :            : error-exit-code           : INT          : 1                    :            : int  : 1      : Options   :       : the exit code when errors occurred upon parsing                                                         "
         "ARGPARSER_ERROR_STYLE               :            : error-style               : STYLE        : red,bold,reverse     :            : str  : +      : Options   :       : the color and style specification for error messages                                                    "
         "ARGPARSER_HELP_ARG_GROUP            :            : help-arg-group            : NAME         : Help options         :            : str  : 1      : Options   :       : the name of the argument group holding all help options, i.e., --help, --usage, and --version           "
+        "ARGPARSER_HELP_DESCRIPTION          :            : help-description          : TEXT         : ''                   :            : str  : 1      : Options   :       : the script's description (purpose) to show in help message                                              "
         "ARGPARSER_HELP_EXIT_CODE            :            : help-exit-code            : INT          : 0                    :            : int  : 1      : Options   :       : the exit code for help messages                                                                         "
         "ARGPARSER_HELP_FILE                 :            : help-file                 : FILE         : ''                   :            : file : 1      : Options   :       : the path to a file holding the extended help message                                                    "
         "ARGPARSER_HELP_FILE_INCLUDE_CHAR    :            : help-file-include-char    : CHAR         : @                    :            : char : 1      : Options   :       : the character that introduces an include directive in an ARGPARSER_HELP_FILE                            "
@@ -1414,6 +1417,7 @@ function argparser_set_env_vars() {
         ARGPARSER_ERROR_EXIT_CODE=1 \
         ARGPARSER_ERROR_STYLE="red,bold,reverse" \
         ARGPARSER_HELP_ARG_GROUP="Help options" \
+        ARGPARSER_HELP_DESCRIPTION="" \
         ARGPARSER_HELP_EXIT_CODE=0 \
         ARGPARSER_HELP_FILE="" \
         ARGPARSER_HELP_FILE_INCLUDE_CHAR="@" \
@@ -1530,6 +1534,7 @@ function argparser_check_env_vars() {
     # - ARGPARSER_ARGS (auto-set)
     # - ARGPARSER_DICTIONARY (checked earlier / auto-set)
     # - ARGPARSER_HELP_ARG_GROUP (arbitrary value)
+    # - ARGPARSER_HELP_DESCRIPTION (arbitrary value)
     # - ARGPARSER_LANGUAGE (arbitrary value)
     # - ARGPARSER_POSITIONAL_ARG_GROUP (arbitrary value)
     # - ARGPARSER_SCRIPT_ARGS (auto-set)
@@ -2108,16 +2113,21 @@ function argparser_read_translation() {
 
     for line in "${lines[@]}"; do
         if [[ -z "${line}" || "${line}" == \#* ]]; then
-            # Ignore the empty or commented line.
+            # The line is empty or commented.
             continue
         elif [[ "${line}" == "---" || "${line}" == "..." ]]; then
-            # Ignore the start or end of a YAML block.
+            # The line denotes the start or end of a YAML block.
             continue
         elif [[ "${line}" == "  ${ARGPARSER_LANGUAGE}: >" ]]; then
             # The line starts the translation to the desired language.
             language="${ARGPARSER_LANGUAGE}"
             translation=""
             is_continued=true
+        elif [[ "${line}" == "  ${ARGPARSER_LANGUAGE}:" ]]; then
+            # The line contains the translation to the desired language
+            # for an empty translation.
+            language="${ARGPARSER_LANGUAGE}"
+            translation="${line#*:}"
         elif [[ "${line}" == "  ${ARGPARSER_LANGUAGE}: "* ]]; then
             # The line contains the translation to the desired language.
             language="${ARGPARSER_LANGUAGE}"
@@ -2129,7 +2139,8 @@ function argparser_read_translation() {
             language="${line#* }"
             language="${language%:*}"
             is_continued=true
-        elif [[ "${line}" == "  "*([^ ])": "* ]]; then
+        elif [[ "${line}" == "  "*([^ ])":" || "${line}" == "  "*([^ ])": "* ]]
+        then
             # The line contains the translation to another language,
             # which can be ignored.
             language="${line#* }"
@@ -2148,7 +2159,7 @@ function argparser_read_translation() {
             # The line continues the translation to another language,
             # from the previous line, which can be ignored.
             continue
-        elif [[ "${line}" == *:  && "${line::1}" != " " ]]; then
+        elif [[ "${line}" == *: && "${line::1}" != " " ]]; then
             # The line starts a new group of translations.  Save the
             # previous translation under the previous group name, then
             # extract the new one.
@@ -5463,6 +5474,7 @@ function argparser_create_help_message() {
     # - ARGPARSER_ADD_VERSION (read-only)
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_HELP_ARG_GROUP (read-only)
+    # - ARGPARSER_HELP_DESCRIPTION (read-only)
     # - ARGPARSER_HELP_OPTIONS (read-only)
     # - ARGPARSER_MAX_COL_WIDTH_1 (read-only)
     # - ARGPARSER_MAX_COL_WIDTH_2 (read-only)
@@ -6251,6 +6263,17 @@ function argparser_create_help_message() {
     usage+=$'\n'
     help_message_groups["Usage"]="${usage}"
 
+    # Set the description.
+    if [[ -n "${ARGPARSER_HELP_DESCRIPTION}" ]]; then
+        description="${ARGPARSER_HELP_DESCRIPTION}"
+        argparser_fold "${description}" 3 "${ARGPARSER_MAX_WIDTH}" 0
+        description="${joined_words}"
+        description+=$'\n'
+    else
+        description=""
+    fi
+    help_message_groups["Description"]="${description}"
+
     # Set the remark.
     remark="Mandatory arguments to long options are mandatory for short "
     remark+="options too."
@@ -6957,6 +6980,11 @@ function argparser_print_help_or_usage_message() {
                     message+="${help_message_groups["Usage"]}"
                     message+=$'\n'
 
+                    if [[ -n "${help_message_groups["Description"]}" ]]; then
+                        message+="${help_message_groups["Description"]}"
+                        message+=$'\n'
+                    fi
+
                     if (( keyword_args_count > 0 )); then
                         message+="${help_message_groups["Remark"]}"
                         message+=$'\n'
@@ -6968,8 +6996,17 @@ function argparser_print_help_or_usage_message() {
                             message+=$'\n'
                         fi
                     done
+                elif [[ "${include_directive}" == "Description" ]]; then
+                    if [[ -n "${help_message_groups["Description"]}" ]]; then
+                        message+="${help_message_groups["Description"]}"
+                    fi
                 elif [[ "${include_directive}" == "Header" ]]; then
                     message+="${help_message_groups["Usage"]}"
+
+                    if [[ -n "${help_message_groups["Description"]}" ]]; then
+                        message+=$'\n'
+                        message+="${help_message_groups["Description"]}"
+                    fi
 
                     if (( keyword_args_count > 0 )); then
                         message+=$'\n'
@@ -7365,6 +7402,7 @@ function argparser_main() {
     #
     # Environment:
     # - ARGPARSER_HELP_ARG_GROUP
+    # - ARGPARSER_HELP_DESCRIPTION
     # - ARGPARSER_CHECK_ENV_VARS (read-only)
     # - ARGPARSER_CONFIG_FILE (read-only)
     # - ARGPARSER_POSITIONAL_ARG_GROUP
@@ -7441,10 +7479,10 @@ function argparser_main() {
     fi
 
     # If ${ARGPARSER_TRANSLATION_FILE} isn't set to the empty string,
-    # read the translation file.  To be able to use the localized name
-    # of ${ARGPARSER_POSITIONAL_ARG_GROUP} and
-    # ${ARGPARSER_HELP_ARG_GROUP} in the arguments definition and help
-    # message, translate it.
+    # read the translation file.  To be able to use the localized names
+    # of ${ARGPARSER_HELP_DESCRIPTION}, ${ARGPARSER_HELP_ARG_GROUP}, and
+    # ${ARGPARSER_POSITIONAL_ARG_GROUP} in the arguments definition and
+    # help message, translate them.
     if [[ -n "${ARGPARSER_TRANSLATION_FILE}" ]]; then
         argparser_read_translation
 
@@ -7454,6 +7492,9 @@ function argparser_main() {
 
         argparser_translate "Help options" "${ARGPARSER_HELP_ARG_GROUP}"
         ARGPARSER_HELP_ARG_GROUP="${translation}"
+
+        argparser_translate "Help description" "${ARGPARSER_HELP_DESCRIPTION}"
+        ARGPARSER_HELP_DESCRIPTION="${translation}"
     fi
 
     # If ${ARGPARSER_CHECK_ENV_VARS} isn't set to false, check if the
@@ -7578,6 +7619,7 @@ function argparser_main() {
         unset ARGPARSER_ERROR_EXIT_CODE
         unset ARGPARSER_ERROR_STYLE
         unset ARGPARSER_HELP_ARG_GROUP
+        unset ARGPARSER_HELP_DESCRIPTION
         unset ARGPARSER_HELP_EXIT_CODE
         unset ARGPARSER_HELP_FILE
         unset ARGPARSER_HELP_FILE_INCLUDE_CHAR

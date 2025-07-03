@@ -77,7 +77,7 @@ or:
 ./argparser
 ```
 
-since you don't want the arguments to be set in a subprocess created after forking, as these will be gone when the Argparser (and with it, the subprocess) exits. Still, this is the required way for other shells, which make use of the Argparser's ability to write the arguments to STDOUT, if [`ARGPARSER_WRITE_ARGS`](../reference/environment_variables/environment_variables.md#8462-argparser_write_args) is set to `true`.
+since you don't want the arguments to be set in a subprocess created after forking, as these will be gone when the Argparser (and with it, the subprocess) exits. Still, this is the required way for other shells, which make use of the Argparser's ability to write the arguments to STDOUT, if [`ARGPARSER_WRITE_ARGS`](../reference/environment_variables/environment_variables.md#8463-argparser_write_args) is set to `true`.
 
 As stated, the Argparser sets an associative array to store the arguments in. For maximum control over the variables in your script's scope, you can configure its name via [`ARGPARSER_ARG_ARRAY_NAME`](../reference/environment_variables/environment_variables.md#849-argparser_arg_array_name), defaulting to `"args"`. In `try_argparser.sh`, we obtained the report by accessing exactly this associative array, looping over all variables known to the script that start with `var` or `pos`, respectively. At the same time, this variable name is used to provide the arguments definition.
 
@@ -97,7 +97,7 @@ This Argparser-specific tabular format consists of eleven columns, each separate
 - `choices`: the choice values for options with a limited set of values to choose from (like `"A-C"`, *i.e.*, `"A"`, `"B"`, and `"C"` for `var_4`, default: `""`)
 - `type`: the data type the argument shall have and will be tested on (like `"char"` for `var_4`, default: `"str"`)
 - `arg_no`: the number of required values (either numerical from `0` to infinity or `"+"`, meaning to accept as many values as given, at least one, like `1` for `var_4`, default: `1`)
-- `arg_group`: the argument group for grouping of keyword arguments in the help text (like `"Optional options"` for `var_4`, default: [`ARGPARSER_POSITIONAL_ARG_GROUP`](../reference/environment_variables/environment_variables.md#8434-argparser_positional_arg_group))
+- `arg_group`: the argument group for grouping of keyword arguments in the help text (like `"Optional options"` for `var_4`, default: [`ARGPARSER_POSITIONAL_ARG_GROUP`](../reference/environment_variables/environment_variables.md#8435-argparser_positional_arg_group))
 - `notes`: additional notes to the Argparser, currently only `"deprecated"` is supported (like for `var_7`, default: `""`)
 - `help`: the help text for the `--help` flag (like `"one value with default and choice"` for `var_4`, default: `""`)
 

@@ -1,6 +1,6 @@
 ### 4.7. Help and usage message localization
 
-It is even possible to localize your script's help and usage message. For the usage message, all you need is an [`ARGPARSER_TRANSLATION_FILE`](../reference/environment_variables/environment_variables.md#8442-argparser_translation_file), a simplified YAML file giving the translation of the auto-generated parts in the messages. For each section, you give the language identifier for the language you want the message to be translated to, *i.e.*, the [`ARGPARSER_LANGUAGE`](../reference/environment_variables/environment_variables.md#8429-argparser_language). For the usage message, this suffices, but in the help message, also non-auto-generated parts are included, especially each argument's help text. For them to be translated, you need a dedicated [`ARGPARSER_ARG_DEF_FILE`](../reference/environment_variables/environment_variables.md#8410-argparser_arg_def_file) and possibly a localized [`ARGPARSER_HELP_FILE`](../reference/environment_variables/environment_variables.md#8424-argparser_help_file).
+It is even possible to localize your script's help and usage message. For the usage message, all you need is an [`ARGPARSER_TRANSLATION_FILE`](../reference/environment_variables/environment_variables.md#8443-argparser_translation_file), a simplified YAML file giving the translation of the auto-generated parts in the messages. For each section, you give the language identifier for the language you want the message to be translated to, *i.e.*, the [`ARGPARSER_LANGUAGE`](../reference/environment_variables/environment_variables.md#8430-argparser_language). For the usage message, this suffices, but in the help message, also non-auto-generated parts are included, especially each argument's help text. For them to be translated, you need a dedicated [`ARGPARSER_ARG_DEF_FILE`](../reference/environment_variables/environment_variables.md#8410-argparser_arg_def_file) and possibly a localized [`ARGPARSER_HELP_FILE`](../reference/environment_variables/environment_variables.md#8425-argparser_help_file).
 
 If you set these environment variables to files whose filename contains the language, like so:
 
@@ -106,7 +106,7 @@ Finally, we need a translation file for the auto-generated parts. Note that here
 
 <!-- <include command="sed '1,4d;80q' ../resources/translations.yaml" lang="yaml"> -->
 ```yaml
-# 1.    Define the translations for the arguments parsing.
+# 1.    Define the general translations.
 ---
 Positional arguments:
   en: Positional arguments
@@ -115,6 +115,10 @@ Positional arguments:
 Help options:
   en: Help options
   de: Hilfsoptionen
+
+Help description:
+  en:
+  de:
 
 Error:
   en: Error
@@ -178,9 +182,6 @@ false:
   de: falsch
 
 true:
-  en: true
-  de: wahr
-...
 ```
 <!-- </include> -->
 
@@ -208,6 +209,7 @@ The former command prints the American English help message, the latter its Germ
 <!-- <include command="LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -h" lang="console"> -->
 ```console
 $ LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -h
+try_localization.sh: Warnung: In der Übersetzungsdatei "/home/simon/Dokumente/Skripte/ShellArgparser/resources/translations.yaml" fehlt die Übersetzung nach "de" für den Identifikator "Help description".  Zwecks Einfachheit wird stattdessen die nicht übersetzte Zeichenkette genutzt.
 Eine kurze Kopfzeile fasst zusammen, wie die Hilfe-Meldung zu interpretieren
 ist.
 Aufruf: try_localization.sh [OPTIONEN] ARGUMENTE -- [pos_1] pos_2
@@ -246,6 +248,7 @@ Likewise, the usage message is localized:
 <!-- <include command="LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -u" lang="console"> -->
 ```console
 $ LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -u
+try_localization.sh: Warnung: In der Übersetzungsdatei "/home/simon/Dokumente/Skripte/ShellArgparser/resources/translations.yaml" fehlt die Übersetzung nach "de" für den Identifikator "Help description".  Zwecks Einfachheit wird stattdessen die nicht übersetzte Zeichenkette genutzt.
 Aufruf: try_localization.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 ```
 <!-- </include> -->
