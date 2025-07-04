@@ -9,8 +9,9 @@ Applying the Argparser should lead to shorter and more concise code than the tra
 
 1. [Features](#1-features)
 1. [Quick start](#2-quick-start)
-1. [Dependencies](#3-dependencies)
-1. [Contributions](#4-contributions)
+1. [Documentation](#3-documentation)
+1. [Dependencies](#4-dependencies)
+1. [Contributions](#5-contributions)
 <!-- </toc> -->
 
 ## 1. Features
@@ -39,8 +40,6 @@ git clone https://github.com/Simon-Brandt/ShellArgparser.git
 # Adjust the PATH.
 PATH="/path/to/ShellArgparser:${PATH}"
 ```
-
-There is ample documentation in the [docs](docs) directory, which you should consult to learn all the functionality the Argparser provides.
 
 A very simple quick-start script may look like this:
 
@@ -93,7 +92,13 @@ done
 
 First, you need to define the arguments your script shall accept, in a tabular manner. Then, you [`source`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash Builtins &rightarrow; source") the Argparser with the current command line (sourcing means in-place execution without forking). Upon this, the Argparser will parse your script's command line, check the arguments for validity, set default values, and assign the values to variables in your script's environment. Many of these steps can be customized by [environment variables](docs/reference/environment_variables/overview.md). The script's remainder just prints the optional and required keyword and positional arguments, and is not a part of the Argparser invokation.
 
-## 3. Dependencies
+## 3. Documentation
+
+The Argparser's extensive documentation is stored in the [docs](docs) directory, which you should consult to learn all the functionality the Argparser provides. Each file provides a chapter (section) of the documentation, and arrows on the bottom allow you to navigate through the sections, without needing to care about which file stores the requested chapter.
+
+If you want to read the documentation end-to-end, start with the [introduction](docs/introduction.md). For searching through the entire documentation, you can open the [source file](docs/.src.md) that is used to generate the chapters, or use the main [table of contents](docs/toc.md).
+
+## 4. Dependencies
 
 The Argparser is a plain Bash script that does not invoke external commands (only Bash builtins) by design decision. This allows running your script on multiple platforms, as long as Bash is installed, without adding further dependencies to your script. When contributing, you may need the other software tools listed below and explained in greater detail in the [documentation](docs/dependencies.md).
 
@@ -101,7 +106,7 @@ The Argparser is a plain Bash script that does not invoke external commands (onl
 
 - Bash &geq; 4.0
 
-For simply running the Argparser, only Bash is required. Bash &geq; 4.0 is known to be mandatory, but testing occurred solely on Bash 5.2. Thus, please file an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues") if you encounter errors for versions earlier than 5.2, to update the minimum version, here.
+For simply running the Argparser, only Bash is required. Bash &geq; 4.0 is known to be mandatory, but testing occurred solely on Bash 5.2. Thus, please file an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues") if you encounter errors for versions earlier than 5.2, such that the minimum version can be updated, here.
 
 **For contributing:**
 
@@ -130,7 +135,7 @@ When contributing to the repository, you may need to install additional dependen
 
 Several further non-standard dependencies are needed for comparing the Argparser to other command-line parsers. However, you shouldn't need them at all, unless you'd like to contribute an entirely new feature to the Argparser, which changes its behavior.
 
-## 4. Contributions
+## 5. Contributions
 
 Please open an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues") if you:
 
