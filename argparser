@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-07-03
+# Last Modification: 2025-07-22
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -1954,8 +1954,7 @@ function argparser_check_env_vars() {
                 error_message="Error: The environment variable \"\$1\" has "
                 error_message+="the short option \"-\$2\" given \$3 times."
 
-                argparser_translate \
-                    "Error env var short name inner duplication" \
+                argparser_translate "Error env var short name duplication 1" \
                     "${error_message}" "${var}" "${short_option}" "${count}"
                 error_message="${translation}"
                 error_messages+=("${error_message}")
@@ -1972,8 +1971,7 @@ function argparser_check_env_vars() {
                 error_message+="the short option \"-\$2\" given, but that is "
                 error_message+="already in use by \"\$3\"."
 
-                argparser_translate \
-                    "Error env var short name outer duplication" \
+                argparser_translate "Error env var short name duplication 2" \
                     "${error_message}" "${var}" "${short_option}" \
                     "${checked_short_options[${short_option}]}"
                 error_message="${translation}"
@@ -2913,7 +2911,7 @@ function argparser_check_args_definition_names() {
                     error_message+="given \$3 times."
 
                     argparser_translate \
-                        "Error arg def short name inner duplication" \
+                        "Error arg def short name duplication 1" \
                         "${error_message}" "${arg_key}" "${short_option}" \
                         "${count}"
                     error_message="${translation}"
@@ -2933,7 +2931,7 @@ function argparser_check_args_definition_names() {
                     error_message+="\"\$3\"."
 
                     argparser_translate \
-                        "Error arg def short name outer duplication" \
+                        "Error arg def short name duplication 2" \
                         "${error_message}" "${arg_key}" "${short_option}" \
                         "${checked_short_options[${short_option}]}"
                     error_message="${translation}"
@@ -3036,7 +3034,7 @@ function argparser_check_args_definition_names() {
                     error_message+="given \$3 times."
 
                     argparser_translate \
-                        "Error arg def long name inner duplication" \
+                        "Error arg def long name duplication 1" \
                         "${error_message}" "${arg_key}" "${long_option}" \
                         "${count}"
                     error_message="${translation}"
@@ -3056,7 +3054,7 @@ function argparser_check_args_definition_names() {
                     error_message+="\"\$3\"."
 
                     argparser_translate \
-                        "Error arg def long name outer duplication" \
+                        "Error arg def long name duplication 2" \
                         "${error_message}" "${arg_key}" "${long_option}" \
                         "${checked_long_options[${long_option}]}"
                     error_message="${translation}"

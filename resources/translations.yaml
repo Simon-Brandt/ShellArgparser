@@ -259,7 +259,7 @@ Error env var short name length:
     Fehler: Die Umgebungsvariable "$1" hat die kurze Option "-$2" mit mehr als
     einem Zeichen Länge definiert.
 
-Error env var short name inner duplication:
+Error env var short name duplication 1:
   en: >
     Error: The environment variable "$1" has the short option "-$2" given $3
     times.
@@ -267,7 +267,7 @@ Error env var short name inner duplication:
     Fehler: Die Umgebungsvariable "$1" hat die kurze Option "-$2" $3-mal
     gegeben.
 
-Error env var short name outer duplication:
+Error env var short name duplication 2:
   en: >
     Error: The environment variable "$1" has the short option "-$2" given, but
     that is already in use by "$3".
@@ -445,7 +445,7 @@ Error arg def short name length:
     Fehler: Das Argument mit dem Identifikator "$1" hat die kurze Option "-$2"
     mit mehr als einem Zeichen Länge definiert.
 
-Error arg def short name inner duplication:
+Error arg def short name duplication 1:
   en: >
     Error: The argument with the identifier "$1" has the short option "-$2"
     given $3 times.
@@ -453,7 +453,7 @@ Error arg def short name inner duplication:
     Fehler: Das Argument mit dem Identifikator "$1" hat die kurze Option "-$2"
     $3-mal gegeben.
 
-Error arg def short name outer duplication:
+Error arg def short name duplication 2:
   en: >
     Error: The argument with the identifier "$1" has the short option "-$2"
     given, but that is already in use by "$3".
@@ -501,7 +501,7 @@ Error arg def long name length:
     Fehler: Das Argument mit dem Identifikator "$1" hat die lange Option "--$2"
     mit weniger als zwei Zeichen Länge definiert.
 
-Error arg def long name inner duplication:
+Error arg def long name duplication 1:
   en: >
     Error: The argument with the identifier "$1" has the long option "--$2"
     given $3 times.
@@ -509,7 +509,7 @@ Error arg def long name inner duplication:
     Fehler: Das Argument mit dem Identifikator "$1" hat die lange Option "--$2"
     $3-mal gegeben.
 
-Error arg def long name outer duplication:
+Error arg def long name duplication 2:
   en: >
     Error: The argument with the identifier "$1" has the long option "--$2"
     given, but that is already in use by "$3".

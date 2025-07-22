@@ -255,7 +255,7 @@
   - `$1`: The environment variable's name.
   - `$2`: The short option name.
 
-#### 8.5.37. `Error env var short name inner duplication`
+#### 8.5.37. `Error env var short name duplication 1`
 
 - ***Message:*** `Error: The environment variable "$1" has the short option "-$2" given $3 times.`
 - ***Description:*** The error that an environment variable has a short option name given multiple times.
@@ -265,7 +265,7 @@
   - `$2`: The short option name.
   - `$3`: The number of occurrences of the short option name.
 
-#### 8.5.38. `Error env var short name outer duplication`
+#### 8.5.38. `Error env var short name duplication 2`
 
 - ***Message:*** `Error: The environment variable "$1" has the short option "-$2" given, but that is already in use by "$3".`
 - ***Description:*** The error that at least two environment variables have the same short option name given.
@@ -431,7 +431,7 @@
   - `$1`: The argument identifier.
   - `$2`: The short option name.
 
-#### 8.5.57. `Error arg def short name inner duplication`
+#### 8.5.57. `Error arg def short name duplication 1`
 
 - ***Message:*** `Error: The argument with the identifier "$1" has the short option "-$2" given $3 times.`
 - ***Description:*** The error that in the arguments definition, an argument has a short option name given multiple times.
@@ -441,7 +441,7 @@
   - `$2`: The short option name.
   - `$3`: The number of occurrences of the short option name.
 
-#### 8.5.58. `Error arg def short name outer duplication`
+#### 8.5.58. `Error arg def short name duplication 2`
 
 - ***Message:*** `Error: The argument with the identifier "$1" has the short option "-$2" given, but that is already in use by "$3".`
 - ***Description:*** The error that in the arguments definition, at least two arguments have the same short option name given.
@@ -496,7 +496,7 @@
   - `$1`: The argument identifier.
   - `$2`: The long option name.
 
-#### 8.5.64. `Error arg def long name inner duplication`
+#### 8.5.64. `Error arg def long name duplication 1`
 
 - ***Message:*** `Error: The argument with the identifier "$1" has the long option "--$2" given $3 times.`
 - ***Description:*** The error that in the arguments definition, an argument has a long option name given multiple times.
@@ -506,7 +506,7 @@
   - `$2`: The long option name.
   - `$3`: The number of occurrences of the long option name.
 
-#### 8.5.65. `Error arg def long name outer duplication`
+#### 8.5.65. `Error arg def long name duplication 2`
 
 - ***Message:*** `Error: The argument with the identifier "$1" has the long option "--$2" given, but that is already in use by "$3".`
 - ***Description:*** The error that in the arguments definition, at least two arguments have the same long option name given.
