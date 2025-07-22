@@ -50,7 +50,7 @@
 1. [`Error arg def field count`](translations.md#8547-error-arg-def-field-count)
 1. [`Error arg def file field count`](translations.md#8548-error-arg-def-file-field-count)
 1. [`Error arg def choice range hyphens`](translations.md#8549-error-arg-def-choice-range-hyphens)
-1. [Error arg def choice range`](translations.md#8550-error-arg-def-choice-range)
+1. [`Error arg def choice range`](translations.md#8550-error-arg-def-choice-range)
 1. [`Error arg def short name empty`](translations.md#8551-error-arg-def-short-name-empty)
 1. [`Error arg def short name help`](translations.md#8552-error-arg-def-short-name-help)
 1. [`Error arg def short name usage`](translations.md#8553-error-arg-def-short-name-usage)

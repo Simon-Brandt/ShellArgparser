@@ -1,6 +1,6 @@
 ### 4.2. Argparser invokation
 
-Now that you have seen how the Argparser serves in parsing and interpreting the command-line arguments given to your script, it's time to explain what you need to do to employ the Argparser in your script. As promised, here's the code of `try_argparser.sh` again. You can cover it if you already read it above (and memorize the lines of code&hellip;).
+Now that you have seen how the Argparser serves in parsing and interpreting the command-line arguments given to your script, it's time to explain what you need to do to employ the Argparser in your script. As promised, here's the code of [`try_argparser.sh`](../../tutorial/try_argparser.sh) again. You can cover it if you already read it above (and memorize the lines of code&hellip;).
 
 <details open>
 
@@ -51,15 +51,19 @@ done
 
 As you can see, there are three sections in the code that are specific to the Argparser. The accession at the end only serves us to gain insights into the values of the arguments and are not necessary to include&mdash;you would replace this by the actual workings of your script.
 
-The first section sets Argparser-specific [environment variables](../reference/environment_variables/introduction.md#84-environment-variables) to optimize the visual output, which we'll investigate later. Then, the arguments are defined, and finally, the Argparser is called. This call is central to the script as it is the line that runs the Argparser. So, most simply, from your Bash script whose command-line arguments you want to be parsed, the main thing you need to do is to [`source`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash Builtins &rightarrow; source") the Argparser (sourcing means in-place execution without forking):
+The first section sets Argparser-specific [environment variables](../reference/environment_variables/introduction.md#84-environment-variables) to optimize the visual output, which we'll investigate later. Then, the arguments are defined, and finally, the Argparser is called.
+
+#### 4.2.1. Argparser sourcing
+
+This call is central to the script as it is the line that runs the Argparser. So, most simply, from your Bash script whose command-line arguments you want to be parsed, the main thing you need to do is to [`source`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash Builtins &rightarrow; source") the Argparser (sourcing means in-place execution without forking):
 
 ```bash
 source argparser -- "$@"
 ```
 
-Shells other than Bash require a slightly different approach, the [standalone usage](standalone_usage.md#411-standalone-usage) in a pipe, but most things still hold for this case. As a result of the Argparser's configurability (see below), it is necessary to give cour script's command line after a double hyphen, *i.e.*, using `-- "$@"`.
+Shells other than Bash require a slightly different approach, the [standalone usage](standalone_usage.md#4112-invokation-from-other-shells) in a pipe, but most things still hold for this case. As a result of the Argparser's configurability (see below), it is necessary to give cour script's command line after a double hyphen, *i.e.*, using `-- "$@"`.
 
-Alternatively to `source`, but not recommended for the lack of the command's clearness, you could use the synonymous [dot operator](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-_002e "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; dot operator") inherited from the Bourne shell (which cannot run the Argparser, which is a Bash script!):
+Alternatively to `source`, but not recommended for the lack of the command's clearness, you could use the synonymous [dot operator](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-_002e "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; dot operator") inherited from the Bourne shell (which shell could not run the Argparser, being a Bash script):
 
 ```bash
 . argparser -- "$@"
@@ -77,7 +81,9 @@ or:
 ./argparser
 ```
 
-since you don't want the arguments to be set in a subprocess created after forking, as these will be gone when the Argparser (and with it, the subprocess) exits. Still, this is the required way for other shells, which make use of the Argparser's ability to write the arguments to STDOUT, if [`ARGPARSER_WRITE_ARGS`](../reference/environment_variables/environment_variables.md#8463-argparser_write_args) is set to `true`.
+since you don't want the arguments to be set in a subprocess created after forking, as these will be gone when the Argparser (and with it, the subprocess) exits. Still, this is the required way for other shells, which make use of the Argparser's ability to write the arguments to `STDOUT`, if [`ARGPARSER_WRITE_ARGS`](../reference/environment_variables/environment_variables.md#8463-argparser_write_args) is set to `true`.
+
+#### 4.2.2. Arguments definition and retrieval
 
 As stated, the Argparser sets an associative array to store the arguments in. For maximum control over the variables in your script's scope, you can configure its name via [`ARGPARSER_ARG_ARRAY_NAME`](../reference/environment_variables/environment_variables.md#849-argparser_arg_array_name), defaulting to `"args"`. In `try_argparser.sh`, we obtained the report by accessing exactly this associative array, looping over all variables known to the script that start with `var` or `pos`, respectively. At the same time, this variable name is used to provide the arguments definition.
 
@@ -92,7 +98,7 @@ This Argparser-specific tabular format consists of eleven columns, each separate
 - `id`: the unique argument identifier (like `var_1`)
 - `short_opts`: the short options (one hyphen, like `-a` and `-A` for `var_1`, default: `""`)
 - `long_opts`: the long options (two hyphens, like `--var-1` and `--var-a` for `var_1`, default: `""`)
-- `val_names`: the value names for the help message, instead of uppercased short/long option names (like `VAL_1` for `var_1`, default: `""`)
+- `val_names`: the value names for the help and usage message, instead of uppercased short/long option names (like `VAL_1` for `var_1`, default: `""`)
 - `defaults`: the default values (like `"A"` for `var_4`, default: `""`)
 - `choices`: the choice values for options with a limited set of values to choose from (like `"A-C"`, *i.e.*, `"A"`, `"B"`, and `"C"` for `var_4`, default: `""`)
 - `type`: the data type the argument shall have and will be tested on (like `"char"` for `var_4`, default: `"str"`)
@@ -105,11 +111,11 @@ These names must be given as a header above all argument definitions. Providing 
 
 Moreover, when using a header, you can omit any column but the `id`. Then, the default values listed above are used, allowing for a briefer arguments definition. For example, if no argument is deprecated, there is no need to still include the `notes` column, which would be empty, then. Likewise, for scripts with only positional arguments, the `short_opts` and `long_opts` columns are empty and can be neglected. If you don't have default or choice values, you may opt to skip the `defaults` and `choices` columns. Still, while technically possible, it is not overly useful to omit the `help` column, since this is the most important source of information for your script's users (besides the manual), particularly since the default value for it is the empty string. And even though *e.g.* the `arg_no` column has a default value of `1`, it may render the arguments definition more legible to include it nonetheless.
 
-Keyword arguments can have multiple short and/or long option names, optional default values, and/or an arbitrary number of choice values. The same holds for positional arguments, which are identified by having neither short nor long option names. Generally, absence of a value is indicated by the empty string (`""`). This allows the usage of hyphens, besides their special meaning on the command line (as option names), for the convention of regarding files given as `"-"` as sign to read from STDIN.
+Arguments can have multiple short and/or long option names, optional default values, and/or an arbitrary number of choice values. Positional and keyword arguments are told apart by identifying all arguments having neither short nor long option names as positional, and all others as keyword arguments. Generally, absence of a value is indicated by the empty string (`""`). This allows the usage of hyphens, besides their special meaning on the command line (as option names), for the convention of regarding files given as `"-"` as sign to read from `STDIN`.
 
 As you saw above, the Argparser will aggregate all arguments (values) given after a word starting with a hyphen (*i.e.*, an option name) to this option. If the number doesn't match the number of required values, an error is thrown instead of cutting the values. If an argument gets a wrong number of values, but has a default value, only a warning is thrown and the default value is taken.
 
-Thereby, errors abort the script, while warnings just write a message to `STDERR`. Even after parsing or value checking errors occurred, the parsing or value checking continues and the Argparser aggregates the error messages until the end, when all are printed, to simplify the correction of multiple mistakes.
+Thereby, [errors](error_and_warning_messages.mderror_and_warning_messages.md#49-error-and-warning-messages) abort the script, while [warnings](#49-error-and-warning-messages) just write a message to `STDERR`. Even after parsing or value checking errors occurred, the parsing or value checking continues and the Argparser aggregates the error messages until the end, when all are printed, to simplify the correction of multiple mistakes.
 
 [&#129092;&nbsp;4.1. Argument passing](argument_passing.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.3. Argparser configuration&nbsp;&#129094;](argparser_configuration.md)

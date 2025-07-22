@@ -1,6 +1,6 @@
 ### 4.7. Help and usage message localization
 
-It is even possible to localize your script's help and usage message. For the usage message, all you need is an [`ARGPARSER_TRANSLATION_FILE`](../reference/environment_variables/environment_variables.md#8443-argparser_translation_file), a simplified YAML file giving the translation of the auto-generated parts in the messages. For each section, you give the language identifier for the language you want the message to be translated to, *i.e.*, the [`ARGPARSER_LANGUAGE`](../reference/environment_variables/environment_variables.md#8430-argparser_language). For the usage message, this suffices, but in the help message, also non-auto-generated parts are included, especially each argument's help text. For them to be translated, you need a dedicated [`ARGPARSER_ARG_DEF_FILE`](../reference/environment_variables/environment_variables.md#8410-argparser_arg_def_file) and possibly a localized [`ARGPARSER_HELP_FILE`](../reference/environment_variables/environment_variables.md#8425-argparser_help_file).
+It is even possible to localize your script's help and usage message. For the usage message, all you need is an [`ARGPARSER_TRANSLATION_FILE`](../reference/environment_variables/environment_variables.md#8443-argparser_translation_file), a simplified [YAML](https://en.wikipedia.org/wiki/YAML "wikipedia.org &rightarrow; YAML") file giving the translation of the auto-generated parts in the messages. For each section, you give the language identifier for the language you want the message to be translated to, *i.e.*, the [`ARGPARSER_LANGUAGE`](../reference/environment_variables/environment_variables.md#8430-argparser_language). For the usage message, this suffices, but in the help message, also non-auto-generated parts are included, especially each argument's help text. For them to be translated, you need a dedicated [`ARGPARSER_ARG_DEF_FILE`](../reference/environment_variables/environment_variables.md#8410-argparser_arg_def_file) and possibly a localized [`ARGPARSER_HELP_FILE`](../reference/environment_variables/environment_variables.md#8425-argparser_help_file).
 
 If you set these environment variables to files whose filename contains the language, like so:
 
@@ -14,7 +14,7 @@ $ ls -1 ../resources/arguments_*.csv ../resources/help_message_*.txt
 ```
 <!-- </include> -->
 
-then, in your script, you can set the `ARGPARSER_ARG_DEF_FILE` and `ARGPARSER_HELP_FILE` accordingly, as in our new script `try_localization.sh`. There, we dynamically extract the language as the first two characters of the `LANG` (or, alternatively, `LC_ALL` or `LANGUAGE`) environment variable. Its value is defined as the language, the country or territory, and the codeset, like `"en_US.UTF-8"` or `"de_DE.UTF-8"`.
+then, in your script, you can set the `ARGPARSER_ARG_DEF_FILE` and `ARGPARSER_HELP_FILE` accordingly, as in our new script [`try_localization.sh`](../../tutorial/try_localization.sh). There, we dynamically extract the language as the first two characters of the `LANG` (or, alternatively, `LC_ALL` or `LANGUAGE`) environment variable. Its value is defined as the language, the country or territory, and the codeset, like `"en_US.UTF-8"` or `"de_DE.UTF-8"`.
 
 <details open>
 
@@ -52,7 +52,7 @@ source argparser -- "$@"
 
 </details>
 
-You need to manually translate the arguments definition (only the argument groups and the help texts) in the new arguments definition file:
+You need to manually translate the arguments definition (only the argument groups and the help texts) in the new arguments definition file (here [`arguments_de.csv`](../../resources/arguments_de.csv)):
 
 <!-- <include command="cat ../resources/arguments_de.csv" lang="console"> -->
 ```console
@@ -70,7 +70,7 @@ var_7 | g          | var-7     | VAL_7     | true     |         | bool | 0      
 ```
 <!-- </include> -->
 
-The same is necessary for the printable part of the help file:
+The same is necessary for the printable part of the help file (here [`help_message_de.txt`](../../resources/help_message_de.txt)):
 
 <!-- <include command="sed '1,14d' ../resources/help_message_de.txt" lang="console"> -->
 ```console
@@ -98,13 +98,13 @@ Es gibt grundsätzlich drei Optionen für die Hilfe-Meldungen.
 ```
 <!-- </include> -->
 
-Finally, we need a translation file for the auto-generated parts. Note that here, only the German locale is used, while you may want to add further rows if your target users come from multiple countries.
+Finally, we need a translation file (here [`translations.yaml`](../../resources/translations.yaml)) for the auto-generated parts. Note that here, only the German locale is used, while you may want to add further rows if your target users come from multiple countries.
 
 <details open>
 
 <summary>Beginning of <code>translations.yaml</code></summary>
 
-<!-- <include command="sed '1,4d;80q' ../resources/translations.yaml" lang="yaml"> -->
+<!-- <include command="sed '1,4d;83q' ../resources/translations.yaml" lang="yaml"> -->
 ```yaml
 # 1.    Define the general translations.
 ---
@@ -182,6 +182,9 @@ false:
   de: falsch
 
 true:
+  en: true
+  de: wahr
+...
 ```
 <!-- </include> -->
 

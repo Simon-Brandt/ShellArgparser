@@ -1,6 +1,6 @@
 ### 5.3. Runtime comparison
 
-Using the [Julia](https://julialang.org/ "julialang.org") script [`analyse_runtime.jl`](../../comparison/analyse_runtime.jl), we can compare the different runtimes of the command-line parsers (with `--exit` flag to exit prior running [`process_html_template.sh`](../../comparison/process_html_template.sh)). The violin plots of 1000 iterations each are shown in the following figure:
+Using the [Julia](https://julialang.org/ "julialang.org") script [`analyse_runtime.jl`](../../comparison/analyse_runtime.jl), we can compare the different runtimes of the command-line parsers (with the `--exit` flag to exit prior running [`process_html_template.sh`](../../comparison/process_html_template.sh)). The violin plots of 1000 iterations each are shown in the following figure:
 
 <!-- <figure file="../comparison/stats.svg" caption="Violin plot of all command-line parsers' runtimes"> -->
 ![Violin plot of all command-line parsers' runtimes](../../comparison/stats.svg)

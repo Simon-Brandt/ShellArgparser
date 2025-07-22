@@ -1,10 +1,14 @@
 ### 4.3. Argparser configuration
 
-The Argparser accepts over 50 options for configuring the argument parsing, checking their values and the consistency of the arguments definition, creating the various message types (see below), and setting the required companion files. These options are available as [environment variables](../reference/environment_variables/introduction.md#84-environment-variables). By this, you can set them directly in your script, and even [`export`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-export "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; export") them to child processes. Thus, you can set these variables once and use them throughout your script suite.
+The Argparser accepts over 50 options for configuring the argument parsing, checking their values and the consistency of the arguments definition, creating the various message types (see below), and accessing the required companion files. These options are available as [environment variables](../reference/environment_variables/introduction.md#84-environment-variables). By this, you can set them directly in your script, and even [`export`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-export "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; export") them to child processes. Thus, you can set these variables once and use them throughout your script suite.
 
 Still, it is likely that, after some time or for a specific project, you'll settle with a certain set of options that you'll want to reuse for all or many scripts. Then, setting the environment variables in any script becomes a tedious task, wasting space in each script. Additionally, should you want to change a value, you'd need to change it in any file.
 
-For this reason, the Argparser also supports configuration by a config file (see the [example](../../resources/options.cfg)), given by the [`ARGPARSER_CONFIG_FILE`](../reference/environment_variables/environment_variables.md#8417-argparser_config_file) environment variable. This file contains the options in a key&ndash;value syntax and can be shared by multiple scripts, which only need to point to the same configuration file. The options have the same name as the environment variables, with a stripped leading `"ARGPARSER_"` and being written in lowercase, and with underscores replaced by hyphens. *I.e.*, the "screaming snake case" is replaced by the "kebab case".
+For this reason, the Argparser also supports configuration by a config file (see the example [`options.cfg`](../../resources/options.cfg)), given by the [`ARGPARSER_CONFIG_FILE`](../reference/environment_variables/environment_variables.md#8417-argparser_config_file) environment variable, or by command-line options.
+
+#### 4.3.1. Configuration file
+
+The Argparser configuration file contains the options in a key&ndash;value syntax and can be shared by multiple scripts, which only need to point to the same configuration file. The options have the same name as the environment variables, with a stripped leading `"ARGPARSER_"` and being written in lowercase, and with underscores replaced by hyphens. *I.e.*, the "screaming snake case" is replaced by the "kebab case".
 
 The keys and values must be separated by an equals sign (`=`), but can be surrounded by spaces, allowing for a table-like arrangement. Further, empty or commented lines (those starting with a hashmark, *i.e.*, `#`) are ignored, and thus can be used to explain certain values. In-line comments aren't supported to simplify the parsing of values containing a hashmark. It is possible to quote strings, but not necessary, which allows the one-by-one replacement of values from scripts to the configuration file and *vice versa*.
 
@@ -28,7 +32,7 @@ arg-delimiter-1           = "|"
 ```
 <!-- </include> -->
 
-For demonstration, we take a stripped-down version of our `try_argparser.sh` script as `try_config_file.sh`, where we omit the alias names for the short and long options, for the sake of brevity. Note that using [`readlink`](https://man7.org/linux/man-pages/man1/readlink.1.html "man7.org &rightarrow; man pages &rightarrow; readlink(1)") is only required here to cope with the configuration file residing in the [resources](../../resources) directory, it is not necessary if you use absolute paths or store the configuration file alongside your script in the same directory&mdash;or won't invoke your script from multiple working directories.
+For demonstration, we take a stripped-down version of our [`try_argparser.sh`](../../tutorial/try_argparser.sh) script as [`try_config_file.sh`](../../tutorial/try_config_file.sh), where we omit the alias names for the short and long options, for the sake of brevity. Note that using [`readlink`](https://man7.org/linux/man-pages/man1/readlink.1.html "man7.org &rightarrow; man pages &rightarrow; readlink(1)") is only required here to cope with the configuration file residing in the [resources](../../resources) directory, it is not necessary if you use absolute paths or store the configuration file alongside your script in the same directory&mdash;or won't invoke your script from multiple working directories.
 
 <details open>
 
@@ -94,9 +98,11 @@ The positional argument "pos_2" on index 2 is set to "1,2".
 ```
 <!-- </include> -->
 
+#### 4.3.2. Command-line options
+
 Further, all environment variables can also be given as command-line parameters upon sourcing the Argparser. Thereby, the options have the same name as in the configuration file ("kebab case"), and are only valid for the given Argparser call.
 
-You can give the options right before your script's command line and the delimiting double hyphen. The Argparser interprets all options given before the first double hyphen as options belonging to the Argparser, the remainder is interpreted as your script's command line. This especially means that you cannot use the double hyphen to delimit positional arguments for the Argparser&mdash;but since none are supported (apart from the command line), an error would be given, anyways.
+You can give the options right before your script's command line and the delimiting double hyphen. The Argparser interprets all options given before the first double hyphen as options belonging to the Argparser, the remainder is interpreted as your script's command line. This especially means that you cannot use the double hyphen to delimit positional arguments for the Argparser&mdash;but since none are supported (apart from your script's command line), an error would be given, anyways.
 
 Due to the manner the [`source`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash Builtins &rightarrow; source") builtin is defined, the Argparser cannot distinguish whether it was sourced with arguments, so mandates them in any case. This means that you must explicitly state the `-- "$@"` to pass the arguments to the Argparser, even if you don't use any option. The `--` is required to separate the Argparser modification from the actual arguments&mdash;after all, it is not too unlikely that some of your scripts might want to use one of the Argparser options for themselves. To still be able to distinguish between an option for the Argparser and an argument to your script, the double hyphen is used as delimiter.
 
@@ -107,6 +113,8 @@ source argparser [--option...] -- "$@"
 ```
 
 with `option` being any environment variable's transformed name.
+
+#### 4.3.3. Option inheritance
 
 Since the Argparser parses its options like it does for your script's ones (by non-recursively sourcing itself), the same special syntax regarding flags is used. That means, if you set `++set-args` as option, then the Argparser will only read the command-line arguments, parsing them into an associative array you can access afterwards, denoted by the name the environment variable [`ARGPARSER_ARG_ARRAY_NAME`](../reference/environment_variables/environment_variables.md#849-argparser_arg_array_name) refers to (per default, `"args"`)&mdash;but it won't set them as variables to your script.  The opposite holds for the option `++read-args`, which deactivates the reading. Finally, if `--read-args` and `--set-args` are set, the arguments will both be read and set (in this order). Since the default value for both options is `true`, these actions are also carried out when only one option or none is given.
 

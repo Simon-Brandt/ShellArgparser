@@ -24,14 +24,14 @@
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to allow the user to give flags with a prefixed `+` instead of `-` (for short option names) or `++` instead of `--` (for long option names) to negate its value. If [`ARGPARSER_ALLOW_FLAG_NEGATION`](#846-argparser_allow_flag_negation) is set to `true`, this doubles with the effect of using `no-` as prefix for long option names.
+- ***Description:*** Whether to allow the user to give flags with a prefixed `+` instead of `-` (for short option names) or `++` instead of `--` (for long option names) to negate their value. If [`ARGPARSER_ALLOW_FLAG_NEGATION`](#846-argparser_allow_flag_negation) is set to `true`, this doubles with the effect of using `no-` as prefix for long option names.
 
 #### 8.4.6. `ARGPARSER_ALLOW_FLAG_NEGATION`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to allow the user to give long option names for flags with a prefixed `no-` to negate its value.  If [`ARGPARSER_ALLOW_FLAG_INVERSION`](#845-argparser_allow_flag_inversion) is set to `true`, this doubles with the effect of using `++` as prefix, instead of `--`.
+- ***Description:*** Whether to allow the user to give long option names for flags with a prefixed `no-` to negate their value.  If [`ARGPARSER_ALLOW_FLAG_INVERSION`](#845-argparser_allow_flag_inversion) is set to `true`, this doubles with the effect of using `++` as prefix, instead of `--`.
 
 #### 8.4.7. `ARGPARSER_ALLOW_OPTION_ABBREVIATION`
 
@@ -52,7 +52,7 @@
 - ***Type:*** *str* (String), but only characters allowed in a legit Bash variable identifier
 - ***Allowed values:*** Any legit Bash variable identifier
 - ***Default value:*** `"args"`
-- ***Description:*** The name of an indexed array, under which the arguments are provided, and of an associative array, under which the parsed arguments can be accessed. The former stores the argument's identifier as key and its definition as value, but joined to one string by an [`ARGPARSER_ARG_DELIMITER_1`](#8411-argparser_arg_delimiter_1) character, the latter stores the identifier as key and its values as value. If [`ARGPARSER_SET_ARGS`](#8439-argparser_set_args) is `true`, you usually don't need to access this array as the arguments will be set as variables.
+- ***Description:*** The name of an indexed array, under which the arguments are provided, and of an associative array, under which the parsed arguments can be accessed after calling the Argparser. The former stores the argument's identifier as key and its definition as value, but joined to one string by an [`ARGPARSER_ARG_DELIMITER_1`](#8411-argparser_arg_delimiter_1) character, the latter stores the identifier as key and its values as value. If [`ARGPARSER_SET_ARGS`](#8439-argparser_set_args) is `true`, you usually don't need to access this array as the arguments will be set as variables.
 
 #### 8.4.10. `ARGPARSER_ARG_DEF_FILE`
 
@@ -66,22 +66,21 @@
 - ***Type:*** *char* (Character)
 - ***Allowed values:*** Any unique character that's not used as [`ARGPARSER_ARG_DELIMITER_2`](#8412-argparser_arg_delimiter_2), no hyphen (`-`), plus sign (`+`), asterisk (`*`), or question mark (`?`)
 - ***Default value:*** `"|"`
-- ***Description:*** The primary delimiter that separates the fields in the arguments definition. Though you don't need to access this variable, you must ensure that it is set to a character or glyph that does not occur in the arguments definition or their values.
+- ***Description:*** The primary delimiter that separates the fields in the arguments definition. It must be set to a character or glyph that does not occur in the arguments definition or their values.
 
 #### 8.4.12. `ARGPARSER_ARG_DELIMITER_2`
 
 - ***Type:*** *char* (Character)
 - ***Allowed values:*** Any unique character that's not used as [`ARGPARSER_ARG_DELIMITER_1`](#8411-argparser_arg_delimiter_1), no hyphen (`-`), plus sign (`+`), asterisk (`*`), or question mark (`?`)
 - ***Default value:*** `","`
-- ***Description:*** The secondary delimiter that separates the elements of sequences in the arguments definition. Again, you don't need to access this variable, but you must ensure that it is set to a character or glyph that does not occur in the arguments definition or their values.
+- ***Description:*** The secondary delimiter that separates the elements of sequences in the arguments definition. It must be set to a character or glyph that does not occur in the arguments definition or their values.
 
 #### 8.4.13. `ARGPARSER_ARGPARSER_VERSION`
 
 - ***Type:*** *str* (String)
 - ***Allowed values:*** *None*
 - ***Default value:*** *None* (unset)
-- ***Description:*** The version number of the Argparser to be used in the version message, using [semantic versioning](https://semver.org/ "semver.org"), *i.e.*, with the version numbers given by major version, minor version, and patch, separated by dots. This variable is read-only and *must not be set* by your script, else, an error is thrown. The Argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#8445-argparser_unset_env_vars) is set to `false`).  
-Besides the version message you (not your script's user) can call, the main purpose of `ARGPARSER_ARGPARSER_VERSION` is to simplify the transition to newer Argparser versions. Whenever breaking changes are made, there will be scripts given in the repository that will try to automatically upgrade your code, as far as possible, to comply with new features.
+- ***Description:*** The version number of the Argparser to be used in the version message, using [semantic versioning](https://semver.org/ "semver.org"), *i.e.*, with the version numbers given by major version, minor version, and patch, separated by dots. This variable is read-only and *must not be set* by your script, else, an error is thrown. The Argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#8445-argparser_unset_env_vars) is set to `false`).
 
 #### 8.4.14. `ARGPARSER_ARGS`
 
@@ -102,7 +101,7 @@ Besides the version message you (not your script's user) can call, the main purp
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
-- ***Description:*** Whether to check if the Argparser environment variables accord to their definition. Again, this may only need to only be turned on (set to `true`) for testing purposes, while in production environments, keeping it deactivated saves some (minimal) computation time. Still, if the user can modify the environment variables at some point (not recommended as it may lead to code injection!), you should activate it.
+- ***Description:*** Whether to check if the Argparser environment variables accord to their definition. Again, this may only need to be turned on (set to `true`) for testing purposes, while in production environments, keeping it deactivated saves some (minimal) computation time. Still, if the user can modify the environment variables at some point (not recommended as it may lead to code injection!), you should activate it.
 
 #### 8.4.17. `ARGPARSER_CONFIG_FILE`
 
@@ -112,7 +111,7 @@ Besides the version message you (not your script's user) can call, the main purp
 - ***Description:*** The path to a file holding the Argparser configuration. The lines will be read into environment variables, but those that are already defined within your script or environment override the specification in the `ARGPARSER_CONFIG_FILE`. This file may be used by multiple scripts.
 
 > [!CAUTION]
-> The Argparser reads the lines into variables without checking them! If the user can modify the `ARGPARSER_CONFIG_FILE`, this is prone to command injection!
+> The Argparser reads the lines into variables without checking them! If the user can modify the `ARGPARSER_CONFIG_FILE` (either the variable's value or the referenced file), this is prone to command injection!
 
 #### 8.4.18. `ARGPARSER_COUNT_FLAGS`
 
@@ -203,7 +202,7 @@ Besides the version message you (not your script's user) can call, the main purp
 - ***Type:*** *str* (String)
 - ***Allowed values:*** Any string
 - ***Default value:*** `"en"`
-- ***Description:*** The language in which to localize the help, usage, error, and warning messages.
+- ***Description:*** The language in which to localize the help, usage, error, and warning messages. This is only evaluated if an [`ARGPARSER_TRANSLATION_FILE`](#8443-argparser_translation_file) is given.
 
 #### 8.4.31. `ARGPARSER_MAX_COL_WIDTH_1`
 
@@ -232,7 +231,7 @@ Besides the version message you (not your script's user) can call, the main purp
 - ***Allowed values:*** Any positive integer
 - ***Default value:*** `79`
 - ***Description:*** The maximum width of the entire generated help message. The widths of the first two columns are controlled by [`ARGPARSER_MAX_COL_WIDTH_1`](#8431-argparser_max_col_width_1) and [`ARGPARSER_MAX_COL_WIDTH_2`](#8432-argparser_max_col_width_2), respectively, whose contents are always wrapped by line breaks to fit this width, and shrunk if less wide. For the third column, [`ARGPARSER_MAX_COL_WIDTH_3`](#8433-argparser_max_col_width_3) may be set to `0` to disable this behavior in favor of a fixed width, set by `ARGPARSER_MAX_WIDTH`. Thereby, the third column takes up as much space as left, *i.e.*, the help message's maximum width minus the actual (not maximum) widths of the first two columns.  
-It is recommendable to have a total width of the help message of 79 characters. As one space is always inserted as separation between the first and second column, as well as between the second and third column, the sum of `ARGPARSER_MAX_COL_WIDTH_1`, `ARGPARSER_MAX_COL_WIDTH_2`, and `ARGPARSER_MAX_COL_WIDTH_3` should equal 77. As long options are longer than short options, the second column should be far wider than the first. The help text in the third column consists of human-readable words and is thus less bound to word wrapping restrictions. By this, it is easier to set the third column's width to 77 characters minus the total maximum width of the unwrapped first two columns to get an optimized help message layout&mdash;or use `ARGPARSER_MAX_WIDTH`.
+It is recommendable to have a total width of the help message of 79 characters. As one space is always inserted as separation between the first and second column, as well as between the second and third column, the sum of `ARGPARSER_MAX_COL_WIDTH_1`, `ARGPARSER_MAX_COL_WIDTH_2`, and `ARGPARSER_MAX_COL_WIDTH_3` should equal 77. As long options are longer than short options, the second column should be far wider than the first. The help text in the third column consists of human-readable words and is thus less bound to word wrapping restrictions. By this, it is easier to set the third column's maximum width to 77 characters minus the total maximum width of the unwrapped first two columns to get an optimized help message layout&mdash;or use `ARGPARSER_MAX_WIDTH` for an actual, not maximum, width.
 
 #### 8.4.35. `ARGPARSER_POSITIONAL_ARG_GROUP`
 
@@ -260,14 +259,16 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Type:*** *str* (String)
 - ***Allowed values:*** Any string
 - ***Default value:*** `"${0##*/}"`
-- ***Description:*** The name of your script as it should appear in the help, usage, version, error, and warning messages. By default, it is the name used upon invoking your script (`"$0"`), trimmed by everything before the last slash character (mimicking the behavior of [`basename`](https://man7.org/linux/man-pages/man1/basename.1.html "man7.org &rightarrow; man pages &rightarrow; basename(1)")). If, for example, you want to give your script a symlink, but don't want this symlink's name to be used in the help and usage messages, then you can provide a custom, canonicalized `ARGPARSER_SCRIPT_NAME`. Alternatively, if your script forms a sub-part of a larger program, it may be named `program_part.sh`, but should be called as `program name [ARGUMENTS]`. Then, `program.sh` could parse its positional argument `name` and call `program_part.sh`, but on the command line, you want to hide this implementation detail and refer to `program_part.sh` as `program name`, so you set `ARGPARSER_SCRIPT_NAME` accordingly.
+- ***Description:*** The name of your script as it should appear in the help, usage, version, error, and warning messages. By default, it is the name used upon invoking your script (`"$0"`), trimmed by everything before the last slash character (mimicking the behavior of [`basename`](https://man7.org/linux/man-pages/man1/basename.1.html "man7.org &rightarrow; man pages &rightarrow; basename(1)")).  
+If, for example, you want to give your script a symlink, but don't want this symlink's name to be used in the help and usage messages, then you can provide a custom, canonicalized `ARGPARSER_SCRIPT_NAME`. Alternatively, if your script forms a sub-part of a larger program, it may be named `program_part.sh`, but should be called as `program name [ARGUMENTS]`. Then, `program.sh` could parse its positional argument `name` and call `program_part.sh`, but on the command line, you want to hide this implementation detail and refer to `program_part.sh` as `program name`, so you set `ARGPARSER_SCRIPT_NAME` accordingly.  
+Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the Argparser from shells other than Bash, using pipes or process substitution. Then, it is impossible to obtain the caller's name using only Bash builtins and commands like [`ps`](https://man7.org/linux/man-pages/man1/ps.1.html "man7.org &rightarrow; man pages &rightarrow; ps(1)") would be needed&mdash;violating one of the Argparser's central design principles of no dependencies but Bash.
 
 #### 8.4.39. `ARGPARSER_SET_ARGS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to set the (read and parsed) arguments from the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#849-argparser_arg_array_name) refers to as variables in the calling script's scope.
+- ***Description:*** Whether to set the parsed arguments from the associative array the [`ARGPARSER_ARG_ARRAY_NAME`](#849-argparser_arg_array_name) refers to as variables in the calling script's scope.
 
 > [!CAUTION]
 > The Argparser performs no complex sanity checks for argument values! Automatically setting them as variables to the script is prone to command injection!
@@ -291,21 +292,21 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
-- ***Description:*** Whether to silence the emission (output) of warning messages. Like [`ARGPARSER_SILENCE_ERRORS`](#8441-argparser_silence_errors), this should rarely be needed, but as the Argparser continues running after a non-critical failure (which is the reason for warning messages), these messages may not strictly be required for your script's user.
+- ***Description:*** Whether to silence the emission (output) of warning messages. Like [`ARGPARSER_SILENCE_ERRORS`](#8441-argparser_silence_errors), this should rarely be needed, but as the Argparser continues running after a non-critical failure (which is the reason for warning messages), these messages may not be strictly required for your script's user.
 
 #### 8.4.43. `ARGPARSER_TRANSLATION_FILE`
 
 - ***Type:*** *file* (Filepath)
 - ***Allowed values:*** Any legit filepath or the empty string `""`
 - ***Default value:*** `""`
-- ***Description:*** The path to a simplified YAML file holding the translation of auto-generated parts in the help, usage, error, and warning messages. This file can be used by multiple scripts. As a YAML file, it contains the translation in a key&ndash;value layout, separated by colons and using significant indentation. Each group key must specify the language identifier used for the [`ARGPARSER_LANGUAGE`](#8430-argparser_language). As many languages as desired can be given, which allows the localization for multiple languages with just one `ARGPARSER_TRANSLATION_FILE`. The rows can be in any order.
+- ***Description:*** The path to a simplified [YAML](https://en.wikipedia.org/wiki/YAML "wikipedia.org &rightarrow; YAML") file holding the translation of (mostly) auto-generated parts in the help, usage, error, and warning messages. This file can be used by multiple scripts. As a YAML file, it contains the translation in a key&ndash;value layout, separated by colons and using significant indentation. Each group key must specify the language identifier used for the [`ARGPARSER_LANGUAGE`](#8430-argparser_language). As many languages as desired can be given, which allows the localization for multiple languages with just one `ARGPARSER_TRANSLATION_FILE`. The rows can be in any order, since they are read into the associative array [`ARGPARSER_DICTIONARY`](#8419-argparser_dictionary), which, by definition, has no order.
 
 #### 8.4.44. `ARGPARSER_UNSET_ARGS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to unset (remove) all command-line arguments given to the script. This is usually what you want, as the Argparser re-sets these values in parsed form.
+- ***Description:*** Whether to unset (remove) all command-line arguments given to the script. This is usually what you want, as the Argparser re-sets these values in parsed form. Note that this has no effect when the Argparser is called from shells other than Bash, since it would run in a child environment.
 
 #### 8.4.45. `ARGPARSER_UNSET_ENV_VARS`
 
@@ -361,7 +362,7 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Type:*** *str* (String)
 - ***Allowed values:*** `"row"` and `"column"`
 - ***Default value:*** `"row"`
-- ***Description:*** Whether to output the positional and keyword arguments in usage messages in a row or in a column.
+- ***Description:*** Whether to output the positional and keyword arguments in usage messages in a row-like or in a column-like fashion.
 
 #### 8.4.53. `ARGPARSER_USAGE_OPTIONS`
 
@@ -403,7 +404,7 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Type:*** *str* (String)
 - ***Allowed values:*** Any string
 - ***Default value:*** `"1.0.0"`
-- ***Description:*** The version number of your script to be used in the version message. Prefer using [semantic versioning](https://semver.org/ "semver.org"), *i.e.*, give version numbers by major version, minor version, and patch, separated by dots.
+- ***Description:*** The version number of your script to be used in the version message. Consider using [semantic versioning](https://semver.org/ "semver.org") or [calendar versioning](https://calver.org/ "calver.org"), *i.e.*, give version numbers by major version, minor version, and patch, separated by dots, or by year, month, and/or day of release, again separated by dots.
 
 #### 8.4.59. `ARGPARSER_VERSION_EXIT_CODE`
 
@@ -438,7 +439,7 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
-- ***Description:*** Whether to write the arguments from [`ARGPARSER_ARG_ARRAY_NAME`](#849-argparser_arg_array_name) to STDOUT. This is required for running the Argparser in a pipe to be able to access the parsed arguments. These are output as key&ndash;value pairs, separated by linefeeds.
+- ***Description:*** Whether to write the parsed arguments from [`ARGPARSER_ARG_ARRAY_NAME`](#849-argparser_arg_array_name) to `STDOUT`. This is required for running the Argparser in a pipe to be able to access the parsed arguments. These are output as key&ndash;value pairs, separated by linefeeds.
 
 [&#129092;&nbsp;8.4.1. Overview](overview.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[8.5. Translations&nbsp;&#129094;](../translations/introduction.md)

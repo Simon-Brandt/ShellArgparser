@@ -41,7 +41,7 @@
 #### 8.5.9. `Mandatory arguments`
 
 - ***Message:*** `Mandatory arguments to long options are mandatory for short options too.`
-- ***Description:*** The remark that mandatory arguments to long options are mandatory for short options too, to be used in the help message for the [`@Remark`](../include_directives.md#835-remark-directive) include directive.
+- ***Description:*** The remark that mandatory arguments to long options are mandatory for short options too, to be used in the help message for the [`@Remark`](../include_directives.md#836-remark-directive) include directive.
 
 #### 8.5.10. `Deprecated`
 
@@ -289,7 +289,7 @@
 
 - ***Message:*** `Error: Calling (instead of sourcing) the Argparser requires the arguments definition to be provided through STDIN, separated by newlines.  Either pipe to the Argparser or use process substitution to give input.  Alternatively, try "$1 --help" to get a help message with further information.`
 - ***Description:*** The error that no arguments definition has been provided upon calling the Argparser.
-- ***Reasons for error:*** When calling (and not sourcing) the Argparser, the arguments definition must be provided through STDIN, either by piping or by process substitution. However, STDIN (file descriptor 0) has been deemed empty.
+- ***Reasons for error:*** When calling (and not sourcing) the Argparser, the arguments definition must be provided through `STDIN`, either by piping or by process substitution. However, `STDIN` (file descriptor `0`) has been deemed empty.
 - ***Interpolated variables:***
   - `$1`: The path to the Argparser, as [`ARGPARSER_SCRIPT_NAME`](../environment_variables/environment_variables.md#8438-argparser_script_name).
 
@@ -360,11 +360,11 @@
 
 - ***Message:*** `Error: The argument with the identifier "$1" has more hyphens in the choice values given than supported (2).`
 - ***Description:*** The error that in the arguments definition, an argument uses more than two hyphens in a choice value range.
-- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a set of choice values defined, where at least one uses more than two hyphens to indicate a range. No hyphen means the literal value, one hyphen the range with step size `1`, and two hyphens the range with the given step size. Three hyphens or more aren't meaningful and hence not supported.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a set of choice values defined, where at least one uses more than two hyphens to indicate a range. Zero hyphens means the literal value, one hyphen the range with step size `1`, and two hyphens the range with the given step size. Three hyphens or more aren't meaningful and hence not supported.
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
 
-#### 8.5.50. Error arg def choice range`
+#### 8.5.50. `Error arg def choice range`
 
 - ***Message:*** `Error: The argument with the identifier "$1" has choice values given with "$2" as start, "$3" as stop, and "$4" as step size, while only integer, float, or letter sequences are supported.`
 - ***Description:*** The error that in the arguments definition, an argument uses non-integer, non-float, or non-letter characters in a choice value range.
@@ -452,8 +452,8 @@
 #### 8.5.59. `Error arg def long name help`
 
 - ***Message:*** `Error: The argument with the identifier "$1" has the long option "--$2" defined, which is reserved for invoking the help message.`
-- ***Description:*** The error that in the arguments definition, an argument has the same long option name as the help option.
-- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a long option defined, where a name is identical to one of those used to invoke the help message. Since parsing the latter takes precedence, the option name would always refer to the help message on the command line.
+- ***Description:*** The error that in the arguments definition, an argument has the same long option name as the help option, `--help`.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a long option defined, where a name is identical to the one used to invoke the help message, *i.e.*, `--help`. Since parsing the latter takes precedence, the option name would always refer to the help message on the command line.
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
   - `$2`: The long option name.
@@ -461,8 +461,8 @@
 #### 8.5.60. `Error arg def long name usage`
 
 - ***Message:*** `Error: The argument with the identifier "$1" has the long option "--$2" defined, which is reserved for invoking the usage message.`
-- ***Description:*** The error that in the arguments definition, an argument has the same long option name as the usage option.
-- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a long option defined, where a name is identical to one of those used to invoke the usage message. Since parsing the latter takes precedence, the option name would always refer to the usage message on the command line.
+- ***Description:*** The error that in the arguments definition, an argument has the same long option name as the usage option, `--usage`.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a long option defined, where a name is identical to the one used to invoke the usage message, *i.e.*, `--usage`. Since parsing the latter takes precedence, the option name would always refer to the usage message on the command line.
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
   - `$2`: The long option name.
@@ -470,8 +470,8 @@
 #### 8.5.61. `Error arg def long name version`
 
 - ***Message:*** `Error: The argument with the identifier "$1" has the long option "--$2" defined, which is reserved for invoking the version message.`
-- ***Description:*** The error that in the arguments definition, an argument has the same long option name as the version option.
-- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a long option defined, where a name is identical to one of those used to invoke the version message. Since parsing the latter takes precedence, the option name would always refer to the version message on the command line.
+- ***Description:*** The error that in the arguments definition, an argument has the same long option name as the version option, `--version`.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a long option defined, where a name is identical to the one used to invoke the version message, *i.e.*, `--version`. Since parsing the latter takes precedence, the option name would always refer to the version message on the command line.
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
   - `$2`: The long option name.
@@ -800,6 +800,7 @@
 - ***Reasons for error:*** When parsing the command line and [`ARGPARSER_ALLOW_FLAG_NEGATION`](../environment_variables/environment_variables.md#846-argparser_allow_flag_negation) is set to `true`, the Argparser found a long option starting with `--no-`, but the remaining (affirmative) version has not been defined in the arguments definition.
 - ***Interpolated variables:***
   - `$1`: The negated long option.
+  - `$2`: The affirmative long option.
 
 #### 8.5.99. `Error long option unknown`
 
@@ -901,7 +902,7 @@
 
 - ***Message:*** `Error: The argument "$1" is set to "$2", but must be a Boolean, i.e., true or false.`
 - ***Description:*** The error that a given argument's value's data type is not a Boolean.
-- ***Reasons for error:*** When parsing the command line, the Argparser found given values value whose data type doesn't accord to the argument's data type, `bool`. These Boolean values must be either `true` or `false`.
+- ***Reasons for error:*** When parsing the command line, the Argparser found a given value whose data type doesn't accord to the argument's data type, `bool`. These Boolean values must be either `true` or `false`.
 - ***Interpolated variables:***
   - `$1`: The argument's option or value names.
   - `$2`: The given value.
@@ -910,7 +911,7 @@
 
 - ***Message:*** `Error: The argument "$1" is set to "$2", but must be a character, i.e., a string comprising one printable ASCII character.`
 - ***Description:*** The error that a given argument's value's data type is not a character.
-- ***Reasons for error:*** When parsing the command line, the Argparser found given values value whose data type doesn't accord to the argument's data type, `char`. These characters must be strings comprising one printable ASCII character.
+- ***Reasons for error:*** When parsing the command line, the Argparser found a given value whose data type doesn't accord to the argument's data type, `char`. These characters must be strings comprising one printable ASCII character.
 - ***Interpolated variables:***
   - `$1`: The argument's option or value names.
   - `$2`: The given value.
@@ -919,7 +920,7 @@
 
 - ***Message:*** `Error: The argument "$1" is set to "$2", but must be a floating-point number, i.e., comprise only digits, a dot, and possibly a leading sign.`
 - ***Description:*** The error that a given argument's value's data type is not a floating-point number.
-- ***Reasons for error:*** When parsing the command line, the Argparser found given values value whose data type doesn't accord to the argument's data type, `float`. These floating-point numbers must comprise only digits, a dot, and possibly a leading sign.
+- ***Reasons for error:*** When parsing the command line, the Argparser found a given value whose data type doesn't accord to the argument's data type, `float`. These floating-point numbers must comprise only digits, a dot, and possibly a leading sign.
 - ***Interpolated variables:***
   - `$1`: The argument's option or value names.
   - `$2`: The given value.
@@ -928,7 +929,7 @@
 
 - ***Message:*** `Error: The argument "$1" is set to "$2", but must be an integer, i.e., comprise only digits and possibly a leading sign.`
 - ***Description:*** The error that a given argument's value's data type is not an integer.
-- ***Reasons for error:*** When parsing the command line, the Argparser found given values value whose data type doesn't accord to the argument's data type, `int`. These integers must comprise only digits and possibly a leading sign.
+- ***Reasons for error:*** When parsing the command line, the Argparser found a given value whose data type doesn't accord to the argument's data type, `int`. These integers must comprise only digits and possibly a leading sign.
 - ***Interpolated variables:***
   - `$1`: The argument's option or value names.
   - `$2`: The given value.
@@ -937,7 +938,7 @@
 
 - ***Message:*** `Error: The argument "$1" is set to "$2", but must be an unsigned integer, i.e., comprise only digits and no sign.`
 - ***Description:*** The error that a given argument's value's data type is not an unsigned integer.
-- ***Reasons for error:*** When parsing the command line, the Argparser found given values value whose data type doesn't accord to the argument's data type, `uint`. These unsigned integers must comprise only digits and no sign.
+- ***Reasons for error:*** When parsing the command line, the Argparser found a given value whose data type doesn't accord to the argument's data type, `uint`. These unsigned integers must comprise only digits and no sign.
 - ***Interpolated variables:***
   - `$1`: The argument's option or value names.
   - `$2`: The given value.
@@ -945,7 +946,7 @@
 #### 8.5.115. `Error YAML`
 
 - ***Message:*** `Error: The YAML line "$1" could not be recognized.`
-- ***Description:*** The error that a translation file's YAML line cannot be parsed.
+- ***Description:*** The error that a translation file's [YAML](https://en.wikipedia.org/wiki/YAML "wikipedia.org &rightarrow; YAML") line cannot be parsed.
 - ***Reasons for error:*** When parsing the [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#8443-argparser_translation_file), the Argparser found a YAML line that it doesn't recognize. This is most likely due to a YAML feature that the Argparser doesn't support to keep the parser simple.
 - ***Interpolated variables:***
   - `$1`: The YAML line.
@@ -1013,7 +1014,7 @@
 - ***Reasons for warning:*** When trying to translate a string from the [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#8443-argparser_translation_file), the Argparser found that the translation to the [`ARGPARSER_LANGUAGE`](../environment_variables/environment_variables.md#8430-argparser_language) for the identifier is missing in the [`ARGPARSER_DICTIONARY`](../environment_variables/environment_variables.md#8419-argparser_dictionary), and by this, also in the translation file. Thus, it uses the untranslated English string as fallback.
 - ***Interpolated variables:***
   - `$1`: The [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#8443-argparser_translation_file).
-  - `$2`: The [`ARGPARSER_LANGUAGE_`](../environment_variables/environment_variables.md#8430-argparser_language).
+  - `$2`: The [`ARGPARSER_LANGUAGE`](../environment_variables/environment_variables.md#8430-argparser_language).
   - `$3`: The identifier with missing translation.
 
 [&#129092;&nbsp;Table of contents (Translations)](toc.md)

@@ -1,5 +1,9 @@
 #### 8.4.1. Overview
 
+The following table shall give a brief overview over the expected data types and the default values for the Argparser's environment variables.
+
+Four variables (*viz.* [`ARGPARSER_ARGPARSER_VERSION`](environment_variables.md#8413-argparser_argparser_version), [`ARGPARSER_ARGS`](environment_variables.md#8414-argparser_args), [`ARGPARSER_DICTIONARY`](environment_variables.md#8419-argparser_dictionary), and [`ARGPARSER_SCRIPT_ARGS`](environment_variables.md#8437-argparser_script_args)) are for internal usage only and not part of the Argparser's command line. Still, for consistency with the other environment variables, they are currently set in global scope. Their default value is seen as implementation detail and thus shown as *"None"* here.
+
 <!-- <table caption="Overview over the Argparser environment variables"> -->
 *Tab. 7: Overview over the Argparser environment variables.*
 
@@ -72,7 +76,7 @@
 [^16]: Bools must be lowercase, *i.e.*, `true` or `false`.
 [^17]: In fact, any legit Bash variable identifier.
 [^18]: Values must be different from each other.
-[^19]: Sum of values is recommended to be 77.
+[^19]: Sum of values is recommended to be 77, except when [`ARGPARSER_MAX_COL_WIDTH_3`](environment_variables.md#8433-argparser_max_col_width_3) is `0`.
 
 [&#129092;&nbsp;Table of contents (Environment variables)](toc.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[8.4.2. `ARGPARSER_ADD_HELP`&nbsp;&#129094;](environment_variables.md)

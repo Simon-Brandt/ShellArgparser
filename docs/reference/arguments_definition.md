@@ -2,9 +2,9 @@
 
 The arguments definition that the Argparser uses to parse the arguments and to create the help and usage messages shows a tabular structure with eleven columns. These columns are delimited by an [`ARGPARSER_ARG_DELIMITER_1`](environment_variables/environment_variables.md#8411-argparser_arg_delimiter_1) character each, by default a pipe (`"|"`). Since fields can be surrounded by an arbitrary number of spaces, visual alignment as true table is possible.
 
-Additionally, a header must be given, using the identifiers shown below. By this, the order of the columns is arbitrary, but there should be little reason to deviate from the default order. Still, it is possible to omit columns, whose fields are populated by default values.
+Additionally, a header must be given, using the identifiers shown below. By this, the order of the columns is arbitrary, but there should be little reason to deviate from the default order. Still, it is possible to omit columns, whose fields are then populated by default values.
 
-The values in multi-value fields are delimited by an [`ARGPARSER_ARG_DELIMITER_2`](environment_variables/environment_variables.md#8412-argparser_arg_delimiter_2) character, by default a comma (`","`). Absence of value is indicated by the empty string, resulting after trimming spaces. That is, a field consisting of only spaces means absence.
+The values in multi-value fields are delimited by an [`ARGPARSER_ARG_DELIMITER_2`](environment_variables/environment_variables.md#8412-argparser_arg_delimiter_2) character, by default a comma (`","`). The absence of a value is indicated by the empty string, resulting after trimming spaces. That is, a field consisting of only spaces means absence.
 
 <!-- <toc title="Table of contents (Arguments definition)"> -->
 #### Table of contents (Arguments definition)
@@ -36,7 +36,7 @@ The long option names must comprise more than one character, thereby, no leading
 
 #### 8.1.4. Value names (`val_names`)
 
-The value names are used as substitute for the uppercased option names in help messages for non-flag options, *i.e.*, those requiring at least one argument. Setting a value name may render the help message clearer or more concise, like when having an option `--in-file` whose argument just needs to be shown as `FILE`. If no value name is given, or less than there are short or long option names, the remaining argument texts are filled with the respective option name in "screaming-snake-cased" (uppercased with underscores instead of hyphens) form. For positional arguments, the value name is the only name that can be shown, thus, it is required in this case.
+The value names are used as substitute for the uppercased option names in help and usage messages for non-flag options, *i.e.*, those requiring at least one argument. Setting a value name may render the help message clearer or more concise, like when having an option `--in-file` whose argument just needs to be shown as `FILE`. If no value name is given, or less than there are short or long option names, the remaining argument texts are filled with the respective option name in "screaming snake&ndash;cased" form, *i.e.*, uppercased with underscores instead of hyphens. For positional arguments, the value name is the only name that can be shown, thus, it is required in this case.
 
 #### 8.1.5. Default values (`defaults`)
 
@@ -44,33 +44,33 @@ Positional and keyword arguments may have default values, which are assigned to 
 
 #### 8.1.6. Choice values (`choices`)
 
-It is possible to restrict the range of acceptable values for an argument to a set indicated by the choice values. If [default values](#815-default-values-defaults) are given, they must lie within the choice values. The choice values are delimited by [`ARGPARSER_ARG_DELIMITER_2`](environment_variables/environment_variables.md#8412-argparser_arg_delimiter_2) characters, while each item may be given as range in the form `1-9` or `A-Z-2`. The first hyphen-delimited value is the start character, the second the stop character, and the optional third value the step size, defaulting to `1`. The start and stop characters must be either integers, floats, or alphabetical characters (from the `[:alpha:]` POSIX character class), the step an integer or float (an integer for character sequences).
+It is possible to restrict the range of acceptable values for an argument to a set indicated by the choice values. If [default values](#815-default-values-defaults) are given, they must lie within the choice values. The choice values are delimited by [`ARGPARSER_ARG_DELIMITER_2`](environment_variables/environment_variables.md#8412-argparser_arg_delimiter_2) characters, while each item may be given as range in the form `1-9` or `A-Z-2`. The first hyphen-delimited value is the start character, the second the stop character (both inclusive), and the optional third value the step size, defaulting to `1`. The start and stop characters must be either integers, floats, or alphabetical characters (from the `[:alpha:]` POSIX character class), the step an integer or float (an integer for character sequences).
 
 #### 8.1.7. Data type (`type`)
 
 The Argparser defines several data types an argument may have. Using the regular expressions denoted below, the argument's value is compared to the data type. Still, Bash is weakly typed, and by this, the existence of a data type does not change the behavior of the variable. Nonetheless, you can use the type-checked value for certain computations, later on. It is mandatory that all default and choice values accord to the data type. The following data types are distinguished by the Argparser:
 
 - *bool* (Boolean): either `true` or `false`, to be used for flags
-- *char* (Character): a string with length one
-- *float* (Floating-point number): digits, possibly with a period in-between, optionally with a leading hyphen as minus sign
-- *file* (Filepath): a filepath, currently unchecked
-- *int* (Integer): digits without period in-between, optionally with a leading hyphen as minus sign
-- *str* (String): anything not fitting into the other data types, unchecked
-- *uint* (Unsigned integer): digits with neither a period in-between nor a leading hyphen as minus sign
+- *char* (character): a string with length one (extglob regex: `[[:print:]]`)
+- *float* (floating-point number): digits, possibly with a period in-between, optionally with a leading plus sign or a leading hyphen as minus sign (extglob regex: `?([+-])+([[:digit:]]).*([[:digit:]]` or `?([+-])*([[:digit:]]).+([[:digit:]])`)
+- *file* (filepath): a filepath, currently unchecked
+- *int* (integer): digits without period in-between, optionally with a leading plus sign or a leading hyphen as minus sign (extglob regex: `?([+-])+([[:digit:]])`)
+- *str* (string): anything not fitting into the other data types, unchecked
+- *uint* (unsigned integer): digits with neither a period in-between nor a leading sign (extglob regex: `+([[:digit:]])`)
 
 #### 8.1.8. Argument count (`arg_no`)
 
-The argument count defines the number of values a keyword or positional argument may accept. Independent of this count, the Argparser will aggregate any non-hyphenated value to the previous keyword argument, or, if none is yet given, set it to the positional arguments. The argument count may be given as natural number (*i.e.*, as unsigned integer), including `0` as sign for flags, or as plus sign (`+`). The latter means to accept as many values as given, at least one.
+The argument count defines the number of values a keyword or positional argument may accept. Independent of this count, the Argparser will aggregate any non-hyphenated value to the previous keyword argument, or, if none is given yet, add it to the positional arguments. The argument count may be given as natural number (*i.e.*, as unsigned integer), including `0` as sign for flags, or as plus sign (`+`). The latter means to accept as many values as given, at least one.
 
 The Python [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module") module further defines `*` to accept any argument count, and `?` to accept exactly zero or one argument. Both features aren't yet supported by the Argparser, but the characters are reserved for future usage as such, invalidating them as values for [`ARGPARSER_ARG_DELIMITER_1`](environment_variables/environment_variables.md#8411-argparser_arg_delimiter_1) and [`ARGPARSER_ARG_DELIMITER_2`](environment_variables/environment_variables.md#8412-argparser_arg_delimiter_2).
 
 #### 8.1.9. Argument group (`arg_group`)
 
-The argument groups serve to group arguments in the help message. The first group shall comprise all positional arguments (if any is defined) and is named by [`ARGPARSER_POSITIONAL_ARG_GROUP`](environment_variables/environment_variables.md#8435-argparser_positional_arg_group). Any other argument group shall only contain keyword arguments (options), and is sorted alphabetically in the help message. In the future, argument groups will be expanded to allow actual grouping of arguments upon parsing, such that options may only be given together or mutually exclusively.
+The argument groups serve to group some arguments in the help message. One group shall comprise all positional arguments (if any is defined) and is named by [`ARGPARSER_POSITIONAL_ARG_GROUP`](environment_variables/environment_variables.md#8435-argparser_positional_arg_group). Any other argument group shall only contain keyword arguments (options), and is sorted alphabetically in the help message. In the future, argument groups might be expanded to allow actual grouping of arguments upon parsing, such that options may only be given together or mutually exclusively.
 
 #### 8.1.10. Notes (`notes`)
 
-The notes are intended to give additional information about arguments that don't warrant the introduction of a new column in the arguments definition. This is usually true for notes that are rarely used, where thus the column's fields would be mostly empty. Currently, only `"deprecated"` is supported, but this is expected to change. This token advises the Argparser to treat an argument as deprecated, emitting a warning, when it is given on the command line. Since command-line interfaces are prone to change over time, this warning allows you to gradually change your CLI, introducing replacement option names or even removing the functionality prior to removing the argument itself. By this, your script's users can slowly adapt to the new CLI.
+The notes are intended to give additional information about arguments that don't warrant the introduction of a new column in the arguments definition. This is usually true for notes that are rarely used, where thus the column's fields would be mostly empty. Currently, only `"deprecated"` is supported, but this is expected to change. This token advises the Argparser to treat an argument as deprecated, emitting a warning when it is given on the command line. Since command-line interfaces are prone to change over time, this warning allows you to gradually change your CLI, introducing replacement option names or even removing the functionality prior to removing the argument itself. By this, your script's users can slowly adapt to the new CLI.
 
 #### 8.1.11. Help text (`help`)
 
