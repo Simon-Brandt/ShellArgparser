@@ -1868,9 +1868,10 @@ function argparser_check_env_vars() {
         error_message="Error: The environment variables "
         error_message+="\"ARGPARSER_ARG_DELIMITER_1\" and "
         error_message+="\"ARGPARSER_ARG_DELIMITER_2\" must have different "
-        error_message+="values."
+        error_message+="values, but are both \"\$1\"."
 
-        argparser_translate "Error env var delimiters" "${error_message}"
+        argparser_translate "Error env var delimiters" "${error_message}" \
+            "${ARGPARSER_ARG_DELIMITER_1}"
         error_message="${translation}"
         error_messages+=("${error_message}")
     fi

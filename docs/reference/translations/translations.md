@@ -222,9 +222,11 @@
 
 #### 8.5.33. `Error env var delimiters`
 
-- ***Message:*** `Error: The environment variables "ARGPARSER_ARG_DELIMITER_1" and "ARGPARSER_ARG_DELIMITER_2" must have different values.`
+- ***Message:*** `Error: The environment variables "ARGPARSER_ARG_DELIMITER_1" and "ARGPARSER_ARG_DELIMITER_2" must have different values, but are both "$1".`
 - ***Description:*** The error that the environment variables [`ARGPARSER_ARG_DELIMITER_1`](../environment_variables/environment_variables.md#8411-argparser_arg_delimiter_1) and [`ARGPARSER_ARG_DELIMITER_2`](../environment_variables/environment_variables.md#8412-argparser_arg_delimiter_2) have an identical value.
 - ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#8416-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variables `ARGPARSER_ARG_DELIMITER_1` and `ARGPARSER_ARG_DELIMITER_2`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#8417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, have the same value. This renders parsing of the arguments definition impossible, as multi-value fields cannot be told apart from column delimiters.
+- ***Interpolated variables:***
+  - `$1`: The environment variables' common value.
 
 #### 8.5.34. `Error env var short name empty`
 

@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-07-03
+# Last Modification: 2025-07-22
 
 # 1.    Define the general translations.
 ---
@@ -229,10 +229,11 @@ Error env var orientation:
 Error env var delimiters:
   en: >
     Error: The environment variables "ARGPARSER_ARG_DELIMITER_1" and
-    "ARGPARSER_ARG_DELIMITER_2" must have different values.
+    "ARGPARSER_ARG_DELIMITER_2" must have different values, but are both "$1".
   de: >
     Fehler: Die Umgebungsvariablen "ARGPARSER_ARG_DELIMITER_1" und
-    "ARGPARSER_ARG_DELIMITER_2" müssen unterschiedliche Werte haben.
+    "ARGPARSER_ARG_DELIMITER_2" müssen unterschiedliche Werte haben, sind aber
+    beide "$1".
 
 Error env var short name empty:
   en: >
