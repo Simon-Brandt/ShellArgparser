@@ -80,14 +80,14 @@
 - ***Type:*** *str* (String)
 - ***Allowed values:*** *None*
 - ***Default value:*** *None* (unset)
-- ***Description:*** The version number of the Argparser to be used in the version message, using [semantic versioning](https://semver.org/ "semver.org"), *i.e.*, with the version numbers given by major version, minor version, and patch, separated by dots. This variable is read-only and *must not be set* by your script, else, an error is thrown. The Argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#8445-argparser_unset_env_vars) is set to `false`).
+- ***Description:*** The version number of the Argparser to be used in the version message, using [semantic versioning](https://semver.org/ "semver.org"), *i.e.*, with the version numbers given by major version, minor version, and patch, separated by dots. This variable is read-only and *must not be set* by your script, else, an error is thrown.
 
 #### 8.4.14. `ARGPARSER_ARGS`
 
 - ***Type:*** *arr* (Indexed, later associative array)
 - ***Allowed values:*** *None*
 - ***Default value:*** *None* (unset)
-- ***Description:*** The indexed array in which the Argparser's options are stored, and later, the associative array for their values. This array *must not be set* by your script, else, an error is thrown. The Argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#8445-argparser_unset_env_vars) is set to `false`).
+- ***Description:*** The indexed array in which the Argparser's options are stored, and later, the associative array for their values. This array *must not be set* by your script, else, an error is thrown.
 
 #### 8.4.15. `ARGPARSER_CHECK_ARG_DEF`
 
@@ -125,7 +125,7 @@
 - ***Type:*** *dict* (Dictionary / associative array)
 - ***Allowed values:*** *None*
 - ***Default value:*** *None* (unset)
-- ***Description:*** The associative array in which to store the translation from the [`ARGPARSER_TRANSLATION_FILE`](#8443-argparser_translation_file) for the [`ARGPARSER_LANGUAGE`](#8430-argparser_language). This array *must not be set* by your script, else, an error is thrown. The Argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#8445-argparser_unset_env_vars) is set to `false`).
+- ***Description:*** The associative array in which to store the translation from the [`ARGPARSER_TRANSLATION_FILE`](#8443-argparser_translation_file) for the [`ARGPARSER_LANGUAGE`](#8430-argparser_language). This array *must not be set* by your script, else, an error is thrown.
 
 #### 8.4.20. `ARGPARSER_ERROR_EXIT_CODE`
 
@@ -252,7 +252,7 @@ It is recommendable to have a total width of the help message of 79 characters. 
 - ***Type:*** *arr* (Indexed array)
 - ***Allowed values:*** *None*
 - ***Default value:*** *None* (unset)
-- ***Description:*** The indexed array in which the Argparser stores your script's command line upon parsing its own arguments. This array *must not be set* by your script, else, an error is thrown. The Argparser will declare it, but you can use it afterwards, if necessary (and [`ARGPARSER_UNSET_ENV_VARS`](#8445-argparser_unset_env_vars) is set to `false`).
+- ***Description:*** The indexed array in which the Argparser stores your script's command line upon parsing its own arguments. This array *must not be set* by your script, else, an error is thrown.
 
 #### 8.4.38. `ARGPARSER_SCRIPT_NAME`
 

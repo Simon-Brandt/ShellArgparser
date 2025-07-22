@@ -926,9 +926,9 @@ function argparser_colorize() {
 
 # Define the Argparser functions for reading the configuration and
 # setting and checking the environment variables.
-function argparser_set_internal_vars() {
+function argparser_check_internal_vars() {
     # Check that no "environment" variable for internal usage by the
-    # Argparser is set, then set them.
+    # Argparser is set.
     #
     # Environment:
     # ARGPARSER_ARGPARSER_VERSION
@@ -943,46 +943,34 @@ function argparser_set_internal_vars() {
     # Define the local variables.
     local error_message
     local -a error_messages
+    local var
+    local -a vars
 
     # Check that ${ARGPARSER_ARGPARSER_VERSION}, ${ARGPARSER_ARGS},
-    # ${ARGPARSER_DICTIONARY}, and ${ARGPARSER_SCRIPT_ARGS} are unset,
-    # then declare or set them.
+    # ${ARGPARSER_DICTIONARY}, and ${ARGPARSER_SCRIPT_ARGS} are unset.
     error_messages=( )
     if [[ -v "ARGPARSER_ARGPARSER_VERSION" ]]; then
         error_message="Error: ARGPARSER_ARGPARSER_VERSION is an internal "
         error_message+="variable and must not be set.  Did you mean "
         error_message+="\"ARGPARSER_VERSION\"?"
         error_messages+=("${error_message}")
-    else
-        ARGPARSER_ARGPARSER_VERSION="0.1.0"
     fi
 
-    if [[ -v "ARGPARSER_ARGS" ]]; then
-        error_message="Error: ARGPARSER_ARGS is an internal variable and must "
-        error_message+="not be set."
-        error_messages+=("${error_message}")
-    else
-        declare -g -a ARGPARSER_ARGS
-    fi
-
-    if [[ -v "ARGPARSER_DICTIONARY" ]]; then
-        error_message="Error: ARGPARSER_DICTIONARY is an internal variable "
-        error_message+="and must not be set."
-        error_messages+=("${error_message}")
-    else
-        declare -g -A ARGPARSER_DICTIONARY
-    fi
-
-    if [[ -v "ARGPARSER_SCRIPT_ARGS" ]]; then
-        error_message="Error: ARGPARSER_SCRIPT_ARGS is an internal variable "
-        error_message+="and must not be set."
-        error_messages+=("${error_message}")
-    else
-        declare -g -a ARGPARSER_SCRIPT_ARGS
-    fi
+    vars=(
+        ARGPARSER_ARGS
+        ARGPARSER_DICTIONARY
+        ARGPARSER_SCRIPT_ARGS
+    )
+    for var in "${vars[@]}"; do
+        if [[ -v "${var}" ]]; then
+            error_message="Error: ${var} is an internal variable and must not "
+            error_message+="be set."
+            error_messages+=("${error_message}")
+        fi
+    done
 
     # Output an error message for those internal environment variables
-    # that have been previously set.
+    # that have been previously set, then exit.
     if (( "${#error_messages[@]}" > 0 )); then
         if [[ ! -v "ARGPARSER_CHECK_ENV_VARS" \
             || "${ARGPARSER_CHECK_ENV_VARS}" != false ]]
@@ -7487,10 +7475,16 @@ function argparser_main() {
     fi
 
     # If the Argparser hasn't sourced itself (i.e., the current
-    # recursion level is the outer one from the calling script), set the
-    # internal "environment" variables.
+    # recursion level is the outer one from the calling script), set or
+    # declare the internal "environment" variables after having checked
+    # that none is already (erroneously) set within the environment.
     if [[ "${source_level}" == 1 ]]; then
-        argparser_set_internal_vars
+        argparser_check_internal_vars
+
+        local ARGPARSER_ARGPARSER_VERSION="0.1.0"
+        local -a ARGPARSER_ARGS
+        local -A ARGPARSER_DICTIONARY
+        local -a ARGPARSER_SCRIPT_ARGS
     fi
 
     # If ${ARGPARSER_CONFIG_FILE} is defined and not set to the empty
@@ -7583,6 +7577,7 @@ function argparser_main() {
         unset -f argparser_check_color_or_style
         unset -f argparser_check_env_vars
         unset -f argparser_check_file
+        unset -f argparser_check_internal_vars
         unset -f argparser_check_shell
         unset -f argparser_colorize
         unset -f argparser_count
@@ -7617,7 +7612,6 @@ function argparser_main() {
         unset -f argparser_seq
         unset -f argparser_set_args
         unset -f argparser_set_env_vars
-        unset -f argparser_set_internal_vars
         unset -f argparser_sort
         unset -f argparser_translate
         unset -f argparser_trim
