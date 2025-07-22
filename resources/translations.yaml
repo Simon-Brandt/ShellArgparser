@@ -193,6 +193,14 @@ Error env var file 1111:
     Fehler: Die Umgebungsvariable "$1" ist auf "$2" gesetzt, die referenzierte
     Datei existiert aber nicht.
 
+Error env var delimiters reserved:
+  en: >
+    Error: The environment variable "$1" is set to "$2", but hyphens, plus
+    signs, asterisks, and question marks are reserved characters.
+  de: >
+    Fehler: Die Umgebungsvariable "$1" ist auf "$2" gesetzt, Bindestriche,
+    Pluszeichen, Sternchen und Fragezeichen sind aber reservierte Zeichen.
+
 Error env var styles:
   en: >
     Error: The environment variable "$1" is set to "$2", but the values must
@@ -226,7 +234,7 @@ Error env var orientation:
     entweder auf "row" ("Zeile") oder "column" ("Spalte") gesetzt sein, ist
     aber "$1".
 
-Error env var delimiters:
+Error env var delimiters identical:
   en: >
     Error: The environment variables "ARGPARSER_ARG_DELIMITER_1" and
     "ARGPARSER_ARG_DELIMITER_2" must have different values, but are both "$1".

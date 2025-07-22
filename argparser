@@ -1807,7 +1807,26 @@ function argparser_check_env_vars() {
     # Check if all environment variables with a limited set of allowed
     # values have their values lying in them.  Else, output an error
     # message.
-    # First, check if all environment variables for styles only have
+    # First, check that the argument definition delimiters don't use the
+    # reserved characters.
+    vars=(
+        ARGPARSER_ARG_DELIMITER_1
+        ARGPARSER_ARG_DELIMITER_2
+    )
+    for var in "${vars[@]}"; do
+        if argparser_in_array "${!var}" "-" "+" "*" "?"; then
+            error_message="Error: The environment variable \"\$1\" is set to "
+            error_message+="\"\$2\", but hyphens, plus signs, asterisks, and "
+            error_message+="question marks are reserved characters."
+
+            argparser_translate "Error env var delimiters reserved" \
+                "${error_message}" "${var}" "${!var}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        fi
+    done
+
+    # Then, check if all environment variables for styles only have
     # values supported by argparser_colorize.
     vars=(
         ARGPARSER_ERROR_STYLE
@@ -1870,8 +1889,8 @@ function argparser_check_env_vars() {
         error_message+="\"ARGPARSER_ARG_DELIMITER_2\" must have different "
         error_message+="values, but are both \"\$1\"."
 
-        argparser_translate "Error env var delimiters" "${error_message}" \
-            "${ARGPARSER_ARG_DELIMITER_1}"
+        argparser_translate "Error env var delimiters identical" \
+            "${error_message}" "${ARGPARSER_ARG_DELIMITER_1}"
         error_message="${translation}"
         error_messages+=("${error_message}")
     fi
