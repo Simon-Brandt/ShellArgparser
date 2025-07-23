@@ -2870,7 +2870,7 @@ function argparser_check_args_definition_names() {
                 # Check if a long option name uses the reserved flag for
                 # the help message.
                 error_message="Error: The argument with the identifier "
-                error_message+="\"\$1\" has the long option \"--\$2\" "
+                error_message+="\"\$1\" has the long option \"--help\" "
                 error_message+="defined, which is reserved for invoking the "
                 error_message+="help message."
 
@@ -2885,7 +2885,7 @@ function argparser_check_args_definition_names() {
                 # Check if a long option name uses the reserved flag for
                 # the usage message.
                 error_message="Error: The argument with the identifier "
-                error_message+="\"\$1\" has the long option \"--\$2\" "
+                error_message+="\"\$1\" has the long option \"--usage\" "
                 error_message+="defined, which is reserved for invoking the "
                 error_message+="usage message."
 
@@ -2900,7 +2900,7 @@ function argparser_check_args_definition_names() {
                 # Check if a long option name uses the reserved flag for
                 # the version message.
                 error_message="Error: The argument with the identifier "
-                error_message+="\"\$1\" has the long option \"--\$2\" "
+                error_message+="\"\$1\" has the long option \"--version\" "
                 error_message+="defined, which is reserved for invoking the "
                 error_message+="version message."
 

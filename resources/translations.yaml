@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-07-22
+# Last Modification: 2025-07-23
 
 # 1.    Define the general translations.
 ---
@@ -471,27 +471,27 @@ Error arg def long name empty:
 
 Error arg def long name help:
   en: >
-    Error: The argument with the identifier "$1" has the long option "--$2"
+    Error: The argument with the identifier "$1" has the long option "--help"
     defined, which is reserved for invoking the help message.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat die lange Option "--$2"
-    definiert, die zum Aufruf der Hilfsnachricht reserviert ist.
+    Fehler: Das Argument mit dem Identifikator "$1" hat die lange Option
+    "--help" definiert, die zum Aufruf der Hilfsnachricht reserviert ist.
 
 Error arg def long name usage:
   en: >
-    Error: The argument with the identifier "$1" has the long option "--$2"
+    Error: The argument with the identifier "$1" has the long option "--usage"
     defined, which is reserved for invoking the usage message.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat die lange Option "--$2"
-    definiert, die zum Aufruf der Benutzungsnachricht reserviert ist.
+    Fehler: Das Argument mit dem Identifikator "$1" hat die lange Option
+    "--usage" definiert, die zum Aufruf der Benutzungsnachricht reserviert ist.
 
 Error arg def long name version:
   en: >
-    Error: The argument with the identifier "$1" has the long option "--$2"
-    defined, which is reserved for invoking the version message.
+    Error: The argument with the identifier "$1" has the long option
+    "--version" defined, which is reserved for invoking the version message.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat die lange Option "--$2"
-    definiert, die zum Aufruf der Versionsnachricht reserviert ist.
+    Fehler: Das Argument mit dem Identifikator "$1" hat die lange Option
+    "--version" definiert, die zum Aufruf der Versionsnachricht reserviert ist.
 
 Error arg def long name length:
   en: >
