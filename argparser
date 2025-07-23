@@ -1815,9 +1815,9 @@ function argparser_check_env_vars() {
         then
             # Check if the empty string is included in the short option
             # names.
-            error_message="Error: The environment variable \"\$1\" has a "
-            error_message+="placeholder \"\" given as one of the \$2 short "
-            error_message+="option names, instead of a legit name."
+            error_message="Error: The environment variable \"\$1\" has an "
+            error_message+="empty string given as one of the \$2 short option "
+            error_message+="names, instead of a legit name."
 
             argparser_translate "Error env var short name empty" \
                 "${error_message}" "${var}" "${#short_options[@]}"
@@ -2731,8 +2731,8 @@ function argparser_check_args_definition_names() {
             # Check if the empty string is included in the short option
             # names.
             error_message="Error: The argument with the identifier \"\$1\" "
-            error_message+="has a placeholder \"\" given as one of the \$2 "
-            error_message+="short option names, instead of a legit name."
+            error_message+="has an empty string given as one of the \$2 short "
+            error_message+="option names, instead of a legit name."
 
             argparser_translate "Error arg def short name empty" \
                 "${error_message}" "${arg_key}" "${#short_options[@]}"
@@ -2853,8 +2853,8 @@ function argparser_check_args_definition_names() {
             # Check if the empty string is included in the long option
             # names.
             error_message="Error: The argument with the identifier \"\$1\" "
-            error_message+="has a placeholder \"\" given as one of the \$2 "
-            error_message+="long option names, instead of a legit name."
+            error_message+="has an empty string given as one of the \$2 long "
+            error_message+="option names, instead of a legit name."
 
             argparser_translate "Error arg def long name empty" \
                 "${error_message}" "${arg_key}" "${#long_options[@]}"

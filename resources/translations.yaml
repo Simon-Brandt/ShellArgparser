@@ -245,10 +245,10 @@ Error env var delimiters identical:
 
 Error env var short name empty:
   en: >
-    Error: The environment variable "$1" has a placeholder "" given as one of
+    Error: The environment variable "$1" has an empty string given as one of
     the $2 short option names, instead of a legit name.
   de: >
-    Fehler: Die Umgebungsvariable "$1" hat ein Platzhalter-"" als einen der $2
+    Fehler: Die Umgebungsvariable "$1" hat einen Leerstring als einen der $2
     kurzen Optionsnamen gegeben statt einen zulässigen Namen.
 
 Error env var short name length:
@@ -407,10 +407,10 @@ Error arg def choice range:
 ---
 Error arg def short name empty:
   en: >
-    Error: The argument with the identifier "$1" has a placeholder "" given as
+    Error: The argument with the identifier "$1" has an empty string given as
     one of the $2 short option names, instead of a legit name.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat ein Platzhalter-"" als
+    Fehler: Das Argument mit dem Identifikator "$1" hat einen Leerstring als
     einen der $2 kurzen Optionsnamen gegeben statt einen zulässigen Namen.
 
 Error arg def short name help:
@@ -463,10 +463,10 @@ Error arg def short name duplication 2:
 
 Error arg def long name empty:
   en: >
-    Error: The argument with the identifier "$1" has a placeholder "" given as
+    Error: The argument with the identifier "$1" has an empty string given as
     one of the $2 long option names, instead of a legit name.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat ein Platzhalter-"" als
+    Fehler: Das Argument mit dem Identifikator "$1" hat einen Leerstring als
     einen der $2 langen Optionsnamen gegeben statt einen zulässigen Namen.
 
 Error arg def long name help:
