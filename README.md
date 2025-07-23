@@ -110,6 +110,16 @@ For simply running the Argparser, only Bash is required. Bash &geq; 4.0 is known
 
 **For contributing:**
 
+- Tests:
+  - Bash &geq; 4.0
+  - [`dash`](https://man7.org/linux/man-pages/man1/dash.1.html "man7.org &rightarrow; man pages &rightarrow; dash(1)")
+  - [`diff`](https://man7.org/linux/man-pages/man1/diff.1.html "man7.org &rightarrow; man pages &rightarrow; diff(1)")
+  - [`dirname`](https://man7.org/linux/man-pages/man1/dirname.1.html "man7.org &rightarrow; man pages &rightarrow; dirname(1)")
+  - [`readlink`](https://man7.org/linux/man-pages/man1/readlink.1.html "man7.org &rightarrow; man pages &rightarrow; readlink(1)")
+  - [`sed`](https://man7.org/linux/man-pages/man1/sed.1.html "man7.org &rightarrow; man pages &rightarrow; sed(1)")
+  - [`sort`](https://man7.org/linux/man-pages/man1/sort.1.html "man7.org &rightarrow; man pages &rightarrow; sort(1)")
+  - [`tee`](https://man7.org/linux/man-pages/man1/tee.1.html "man7.org &rightarrow; man pages &rightarrow; tee(1)")
+  - [`tr`](https://man7.org/linux/man-pages/man1/tr.1.html "man7.org &rightarrow; man pages &rightarrow; tr(1)")
 - Documentation:
   - Bash &geq; 4.0
   - [Markdown Tools](https://github.com/Simon-Brandt/MarkdownTools "github.com &rightarrow; Simon-Brandt &rightarrow; MarkdownTools")
