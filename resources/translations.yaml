@@ -308,14 +308,14 @@ Error arg array 1:
   en: >
     Error: Calling (instead of sourcing) the Argparser requires the arguments
     definition to be provided through STDIN, separated by newlines.  Either
-    pipe to the Argparser or use process substitution to give input. 
-    Alternatively, try "$1 --help" to get a help message with further
+    pipe to the Argparser or use process substitution to give
+    input.  Alternatively, try "$1 --help" to get a help message with further
     information.
   de: >
     Fehler: Das Aufrufen (statt Ausführen per source) des Argparsers erfordert,
     dass die Argumentdefinition per STDIN gegeben wird, getrennt durch
     Zeilenvorschübe.  Entweder lege eine Pipe zum Argparser oder nutze
-    Prozesssubstitution für die Eingabe. Probiere alternativ "$1 --help", um
+    Prozesssubstitution für die Eingabe.  Probiere alternativ "$1 --help", um
     eine Hilfsnachricht mit weiterer Information zu erhalten.
 
 Error arg array 2:
@@ -407,115 +407,115 @@ Error arg def choice range:
 ---
 Error arg def short name empty:
   en: >
-    Error: The argument with the identifier "$1" has an empty string given as
-    one of the $2 short option names, instead of a legit name.
+    Error: The short option with the identifier "$1" has an empty string given
+    as one of the $2 short option names, instead of a legit name.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat einen Leerstring als
-    einen der $2 kurzen Optionsnamen gegeben statt einen zulässigen Namen.
+    Fehler: Die kurze Option mit dem Identifikator "$1" hat einen Leerstring
+    als einen der $2 kurzen Optionsnamen gegeben statt einen zulässigen Namen.
 
 Error arg def short name help:
   en: >
-    Error: The argument with the identifier "$1" has the short option "-$2"
+    Error: The short option with the identifier "$1" has the short option "-$2"
     defined, which is reserved for invoking the help message.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat die kurze Option "-$2"
-    definiert, die zum Aufruf der Hilfsnachricht reserviert ist.
+    Fehler: Die kurze Option mit dem Identifikator "$1" hat die kurze Option
+    "-$2" definiert, die zum Aufruf der Hilfsnachricht reserviert ist.
 
 Error arg def short name usage:
   en: >
-    Error: The argument with the identifier "$1" has the short option "-$2"
+    Error: The short option with the identifier "$1" has the short option "-$2"
     defined, which is reserved for invoking the usage message.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat die kurze Option "-$2"
-    definiert, die zum Aufruf der Benutzungsnachricht reserviert ist.
+    Fehler: Die kurze Option mit dem Identifikator "$1" hat die kurze Option
+    "-$2" definiert, die zum Aufruf der Benutzungsnachricht reserviert ist.
 
 Error arg def short name version:
   en: >
-    Error: The argument with the identifier "$1" has the short option "-$2"
+    Error: The short option with the identifier "$1" has the short option "-$2"
     defined, which is reserved for invoking the version message.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat die kurze Option "-$2"
-    definiert, die zum Aufruf der Versionsnachricht reserviert ist.
+    Fehler: Die kurze Option mit dem Identifikator "$1" hat die kurze Option
+    "-$2" definiert, die zum Aufruf der Versionsnachricht reserviert ist.
 
 Error arg def short name length:
   en: >
-    Error: The argument with the identifier "$1" has the short option "-$2"
+    Error: The short option with the identifier "$1" has the short option "-$2"
     defined with more than 1 character length.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat die kurze Option "-$2"
-    mit mehr als einem Zeichen Länge definiert.
+    Fehler: Die kurze Option mit dem Identifikator "$1" hat die kurze Option
+    "-$2" mit mehr als einem Zeichen Länge definiert.
 
 Error arg def short name duplication 1:
   en: >
-    Error: The argument with the identifier "$1" has the short option "-$2"
+    Error: The short option with the identifier "$1" has the short option "-$2"
     given $3 times.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat die kurze Option "-$2"
-    $3-mal gegeben.
+    Fehler: Die kurze Option mit dem Identifikator "$1" hat die kurze Option
+    "-$2" $3-mal gegeben.
 
 Error arg def short name duplication 2:
   en: >
-    Error: The argument with the identifier "$1" has the short option "-$2"
+    Error: The short option with the identifier "$1" has the short option "-$2"
     given, but that is already in use by "$3".
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat die kurze Option "-$2"
-    gegeben, diese wird aber bereits von "$3" genutzt.
+    Fehler: Die kurze Option mit dem Identifikator "$1" hat die kurze Option
+    "-$2" gegeben, diese wird aber bereits von "$3" genutzt.
 
 Error arg def long name empty:
   en: >
-    Error: The argument with the identifier "$1" has an empty string given as
-    one of the $2 long option names, instead of a legit name.
+    Error: The long option with the identifier "$1" has an empty string given
+    as one of the $2 long option names, instead of a legit name.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat einen Leerstring als
-    einen der $2 langen Optionsnamen gegeben statt einen zulässigen Namen.
+    Fehler: Die lange Option mit dem Identifikator "$1" hat einen Leerstring
+    als einen der $2 langen Optionsnamen gegeben statt einen zulässigen Namen.
 
 Error arg def long name help:
   en: >
-    Error: The argument with the identifier "$1" has the long option "--help"
-    defined, which is reserved for invoking the help message.
+    Error: The long option with the identifier "$1" has the long option
+     "--help"defined, which is reserved for invoking the help message.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat die lange Option
+    Fehler: Die lange Option mit dem Identifikator "$1" hat die lange Option
     "--help" definiert, die zum Aufruf der Hilfsnachricht reserviert ist.
 
 Error arg def long name usage:
   en: >
-    Error: The argument with the identifier "$1" has the long option "--usage"
-    defined, which is reserved for invoking the usage message.
+    Error: The long option with the identifier "$1" has the long option
+    "--usage" defined, which is reserved for invoking the usage message.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat die lange Option
+    Fehler: Die lange Option mit dem Identifikator "$1" hat die lange Option
     "--usage" definiert, die zum Aufruf der Benutzungsnachricht reserviert ist.
 
 Error arg def long name version:
   en: >
-    Error: The argument with the identifier "$1" has the long option
+    Error: The long option with the identifier "$1" has the long option
     "--version" defined, which is reserved for invoking the version message.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat die lange Option
+    Fehler: Die lange Option mit dem Identifikator "$1" hat die lange Option
     "--version" definiert, die zum Aufruf der Versionsnachricht reserviert ist.
 
 Error arg def long name length:
   en: >
-    Error: The argument with the identifier "$1" has the long option "--$2"
+    Error: The long option with the identifier "$1" has the long option "--$2"
     defined with less than 2 characters length.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat die lange Option "--$2"
-    mit weniger als zwei Zeichen Länge definiert.
+    Fehler: Die lange Option mit dem Identifikator "$1" hat die lange Option
+    "--$2" mit weniger als zwei Zeichen Länge definiert.
 
 Error arg def long name duplication 1:
   en: >
-    Error: The argument with the identifier "$1" has the long option "--$2"
+    Error: The long option with the identifier "$1" has the long option "--$2"
     given $3 times.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat die lange Option "--$2"
-    $3-mal gegeben.
+    Fehler: Die lange Option mit dem Identifikator "$1" hat die lange Option
+    "--$2" $3-mal gegeben.
 
 Error arg def long name duplication 2:
   en: >
-    Error: The argument with the identifier "$1" has the long option "--$2"
+    Error: The long option with the identifier "$1" has the long option "--$2"
     given, but that is already in use by "$3".
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat die lange Option "--$2"
-    gegeben, diese wird aber bereits von "$3" genutzt.
+    Fehler: Die lange Option mit dem Identifikator "$1" hat die lange Option
+    "--$2" gegeben, diese wird aber bereits von "$3" genutzt.
 ...
 
 # 3.5.  Define the translations for checking the values of the
@@ -670,110 +670,109 @@ Error arg def pos note:
 ---
 Error arg def option flag:
   en: >
-    Error: The argument with the identifier "$1" must be true or false, but has
+    Error: The option with the identifier "$1" must be true or false, but has
     {$2} given as default.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" muss wahr (true) oder
-    falsch (false) sein, hat aber "$2" als Vorgabe gegeben.
+    Fehler: Die Option mit dem Identifikator "$1" muss wahr (true) oder falsch
+    (false) sein, hat aber "$2" als Vorgabe gegeben.
 
 Error arg def option default 1:
   en: >
-    Error: The argument with the identifier "$1" requires 1 value, but has $2
+    Error: The option with the identifier "$1" requires 1 value, but has $2
     given as default.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" erfordert 1 Wert, hat aber
-    $2 als Vorgabe gegeben.
+    Fehler: Die Option mit dem Identifikator "$1" erfordert 1 Wert, hat aber $2
+    als Vorgabe gegeben.
 
 Error arg def option default 2:
   en: >
-    Error: The argument with the identifier "$1" requires $2 values, but has $3
+    Error: The option with the identifier "$1" requires $2 values, but has $3
     given as default.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" erfordert $2 Werte, hat
-    aber $3 als Vorgabe gegeben.
+    Fehler: Die Option mit dem Identifikator "$1" erfordert $2 Werte, hat aber
+    $3 als Vorgabe gegeben.
 
 Error arg def option choice flag:
   en: >
-    Error: The argument with the identifier "$1" accepts no choice values, but
+    Error: The option with the identifier "$1" accepts no choice values, but
     has {$2} given.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" nimmt keine Auswahlwerte,
-    hat aber {$2} gegeben.
+    Fehler: Die Option mit dem Identifikator "$1" nimmt keine Auswahlwerte, hat
+    aber {$2} gegeben.
 
 Error arg def option choice:
   en: >
-    Error: The argument with the identifier "$1" accepts only the choice values
+    Error: The option with the identifier "$1" accepts only the choice values
     {$2}, but has {$3} given as default.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" nimmt nur die Auswahlwerte
+    Fehler: Die Option mit dem Identifikator "$1" nimmt nur die Auswahlwerte
     {$2}, hat aber {$3} als Vorgabe gegeben.
 
 Error arg def option type:
   en: >
-    Error: The argument with the identifier "$1" has "$2" given as data type,
-    but only "bool", "char", "float", "file", "int", "str", and "uint" are
+    Error: The option with the identifier "$1" has "$2" given as data type, but
+    only "bool", "char", "float", "file", "int", "str", and "uint" are
     supported.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat "$2" als Datentyp
+    Fehler: Die Option mit dem Identifikator "$1" hat "$2" als Datentyp
     gegeben, aber nur "bool", "char", "float", "file", "int", "str", und "uint"
     werden unterstützt.
 
 Error arg def option bool:
   en: >
-    Error: The argument with the identifier "$1" has "$2" given as choice
-    value, which must be a Boolean, i.e., true or false.
+    Error: The option with the identifier "$1" has "$2" given as choice value,
+    which must be a Boolean, i.e., true or false.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat "$2" als Auswahlwert
+    Fehler: Die Option mit dem Identifikator "$1" hat "$2" als Auswahlwert
     gegeben, welcher ein boolscher Wert (Boolean) sein muss, d. h. wahr (true)
     oder falsch (false).
 
 Error arg def option char:
   en: >
-    Error: The argument with the identifier "$1" has "$2" given as choice
-    value, which must be a character, i.e., a string comprising one printable
+    Error: The option with the identifier "$1" has "$2" given as choice value,
+    which must be a character, i.e., a string comprising one printable
     ASCII character.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat "$2" als
-    Auswahlwert gegeben, welcher ein einzelnes Zeichen sein muss, d. h. eine
-    Zeichenkette aus einem druckbaren ASCII-Zeichen.
+    Fehler: Die Option mit dem Identifikator "$1" hat "$2" als Auswahlwert
+    gegeben, welcher ein einzelnes Zeichen sein muss, d. h. eine Zeichenkette
+    aus einem druckbaren ASCII-Zeichen.
 
 Error arg def option float:
   en: >
-    Error: The argument with the identifier "$1" has "$2" given as choice
-    value, which must be a floating-point number, i.e., comprise only digits,
-    a dot, and possibly a leading sign.
+    Error: The option with the identifier "$1" has "$2" given as choice value,
+    which must be a floating-point number, i.e., comprise only digits, a dot,
+    and possibly a leading sign.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat "$2" als
-    Auswahlwert gegeben, welcher eine Gleitkommazahl sein muss, d. h. nur
-    Ziffern, einen Punkt, und ggf. ein Vorzeichen umfassen kann.
+    Fehler: Die Option mit dem Identifikator "$1" hat "$2" als Auswahlwert
+    gegeben, welcher eine Gleitkommazahl sein muss, d. h. nur Ziffern, einen
+    Punkt, und ggf. ein Vorzeichen umfassen kann.
 
 Error arg def option int:
   en: >
-    Error: The argument with the identifier "$1" has "$2" given as choice
-    value, which must be an integer, i.e., comprise only digits and possibly a
-    leading sign.
+    Error: The option with the identifier "$1" has "$2" given as choice value,
+    which must be an integer, i.e., comprise only digits and possibly a leading
+    sign.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat "$2" als
-    Auswahlwert gegeben, welcher eine Ganzzahl sein muss, d. h. nur Ziffern und
-    ggf. ein Vorzeichen umfassen kann.
+    Fehler: Die Option mit dem Identifikator "$1" hat "$2" als Auswahlwert
+    gegeben, welcher eine Ganzzahl sein muss, d. h. nur Ziffern und ggf. ein
+    Vorzeichen umfassen kann.
 
 Error arg def option uint:
   en: >
-    Error: The argument with the identifier "$1" has "$2" given as choice
-    value, which must be an unsigned integer, i.e., comprise only digits and no
-    sign.
+    Error: The option with the identifier "$1" has "$2" given as choice value,
+    which must be an unsigned integer, i.e., comprise only digits and no sign.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat "$2" als
-    Auswahlwert gegeben, welcher eine natürliche Zahl sein muss, d. h. nur
-    Ziffern und kein Vorzeichen umfassen kann.
+    Fehler: Die Option mit dem Identifikator "$1" hat "$2" als Auswahlwert
+    gegeben, welcher eine natürliche Zahl sein muss, d. h. nur Ziffern und kein
+    Vorzeichen umfassen kann.
 
 Error arg def option note:
   en: >
-    Error: The argument with the identifier "$1" has "$2" given as note, but
-    only "deprecated" is supported.
+    Error: The option with the identifier "$1" has "$2" given as note, but only
+    "deprecated" is supported.
   de: >
-    Fehler: Das Argument mit dem Identifikator "$1" hat "$2" als
-    Anmerkung gegeben, aber nur "deprecated" ("veraltet") wird unterstützt.
+    Fehler: Die Option mit dem Identifikator "$1" hat "$2" als Anmerkung
+    gegeben, aber nur "deprecated" ("veraltet") wird unterstützt.
 ...
 
 # 3.7.  Define the translations for parsing the arguments.
