@@ -2,7 +2,7 @@
 
 The following table shall give a brief overview over the expected data types and the default values for the Argparser's environment variables.
 
-Four variables (*viz.* [`ARGPARSER_ARGPARSER_VERSION`](environment_variables.md#8413-argparser_argparser_version), [`ARGPARSER_ARGS`](environment_variables.md#8414-argparser_args), [`ARGPARSER_DICTIONARY`](environment_variables.md#8419-argparser_dictionary), and [`ARGPARSER_SCRIPT_ARGS`](environment_variables.md#8437-argparser_script_args)) are for internal usage only and thus locally declared. They are not part of the Argparser's command line, but listed her for reference, like when you erroneously have them set. Their default value is seen as implementation detail and thus shown as *"None"* here.
+Four variables (*viz.* [`ARGPARSER_ARGPARSER_VERSION`](environment_variables.md#8413-argparser_argparser_version), [`ARGPARSER_ARGS`](environment_variables.md#8414-argparser_args), [`ARGPARSER_DICTIONARY`](environment_variables.md#8419-argparser_dictionary), and [`ARGPARSER_SCRIPT_ARGS`](environment_variables.md#8437-argparser_script_args)) are for internal usage only and thus locally declared. They are not part of the Argparser's command line, but listed her for reference, like when you erroneously have them set in a configuration file. Their default value is seen as implementation detail and thus shown as *"None"* here.
 
 <!-- <table caption="Overview over the Argparser environment variables"> -->
 *Tab. 7: Overview over the Argparser environment variables.*

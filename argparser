@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-07-22
+# Last Modification: 2025-07-23
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -926,66 +926,6 @@ function argparser_colorize() {
 
 # Define the Argparser functions for reading the configuration and
 # setting and checking the environment variables.
-function argparser_check_internal_vars() {
-    # Check that no "environment" variable for internal usage by the
-    # Argparser is set.
-    #
-    # Environment:
-    # ARGPARSER_ARGPARSER_VERSION
-    # ARGPARSER_ARGS
-    # ARGPARSER_CHECK_ENV_VARS (read-only)
-    # ARGPARSER_DICTIONARY
-    # ARGPARSER_ERROR_EXIT_CODE
-    # ARGPARSER_ERROR_STYLE
-    # ARGPARSER_SCRIPT_ARGS
-    # ARGPARSER_USE_STYLES_IN_FILES
-
-    # Define the local variables.
-    local error_message
-    local -a error_messages
-    local var
-    local -a vars
-
-    # Check that ${ARGPARSER_ARGPARSER_VERSION}, ${ARGPARSER_ARGS},
-    # ${ARGPARSER_DICTIONARY}, and ${ARGPARSER_SCRIPT_ARGS} are unset.
-    error_messages=( )
-    if [[ -v "ARGPARSER_ARGPARSER_VERSION" ]]; then
-        error_message="Error: ARGPARSER_ARGPARSER_VERSION is an internal "
-        error_message+="variable and must not be set.  Did you mean "
-        error_message+="\"ARGPARSER_VERSION\"?"
-        error_messages+=("${error_message}")
-    fi
-
-    vars=(
-        ARGPARSER_ARGS
-        ARGPARSER_DICTIONARY
-        ARGPARSER_SCRIPT_ARGS
-    )
-    for var in "${vars[@]}"; do
-        if [[ -v "${var}" ]]; then
-            error_message="Error: ${var} is an internal variable and must not "
-            error_message+="be set."
-            error_messages+=("${error_message}")
-        fi
-    done
-
-    # Output an error message for those internal environment variables
-    # that have been previously set, then exit.
-    if (( "${#error_messages[@]}" > 0 )); then
-        if [[ ! -v "ARGPARSER_CHECK_ENV_VARS" \
-            || "${ARGPARSER_CHECK_ENV_VARS}" != false ]]
-        then
-            ARGPARSER_ARG_DELIMITER_2=","
-            ARGPARSER_ERROR_EXIT_CODE=1
-            ARGPARSER_ERROR_STYLE="red,bold,reverse"
-            ARGPARSER_USE_STYLES_IN_FILES=false
-        fi
-
-        argparser_print_error_or_warning_message "error" false true \
-            "${error_messages[@]}"
-    fi
-}
-
 function argparser_read_configuration() {
     # Read the configuration from the configuration file into the
     # environment variables.
@@ -7422,13 +7362,16 @@ function argparser_main() {
     # variables, to read, parse, and set the script's arguments.
     #
     # Environment:
-    # - ARGPARSER_HELP_ARG_GROUP
-    # - ARGPARSER_HELP_DESCRIPTION
+    # - ARGPARSER_ARGPARSER_VERSION="0.1.0"
+    # - ARGPARSER_ARGS
     # - ARGPARSER_CHECK_ENV_VARS (read-only)
     # - ARGPARSER_CONFIG_FILE (read-only)
+    # - ARGPARSER_DICTIONARY
+    # - ARGPARSER_HELP_ARG_GROUP
+    # - ARGPARSER_HELP_DESCRIPTION
     # - ARGPARSER_POSITIONAL_ARG_GROUP
     # - ARGPARSER_READ_ARGS (read-only)
-    # - ARGPARSER_SCRIPT_ARGS (read-only)
+    # - ARGPARSER_SCRIPT_ARGS
     # - ARGPARSER_SET_ARGS (read-only)
     # - ARGPARSER_TRANSLATION_FILE (read-only)
     # - ARGPARSER_UNSET_ARGS (read-only)
@@ -7475,14 +7418,13 @@ function argparser_main() {
     fi
 
     # If the Argparser hasn't sourced itself (i.e., the current
-    # recursion level is the outer one from the calling script), set or
-    # declare the internal "environment" variables after having checked
-    # that none is already (erroneously) set within the environment.
+    # recursion level is the outer one from the calling script), declare
+    # the internal "environment" variables.  Since ${ARGPARSER_ARGS}
+    # must be set in global scope within argparser_set_args, later, it's
+    # useless declaring it as local, here.
     if [[ "${source_level}" == 1 ]]; then
-        argparser_check_internal_vars
-
         local ARGPARSER_ARGPARSER_VERSION="0.1.0"
-        local -a ARGPARSER_ARGS
+        declare -a ARGPARSER_ARGS
         local -A ARGPARSER_DICTIONARY
         local -a ARGPARSER_SCRIPT_ARGS
     fi
@@ -7577,7 +7519,6 @@ function argparser_main() {
         unset -f argparser_check_color_or_style
         unset -f argparser_check_env_vars
         unset -f argparser_check_file
-        unset -f argparser_check_internal_vars
         unset -f argparser_check_shell
         unset -f argparser_colorize
         unset -f argparser_count
@@ -7636,13 +7577,11 @@ function argparser_main() {
         unset ARGPARSER_ARG_DEF_FILE
         unset ARGPARSER_ARG_DELIMITER_1
         unset ARGPARSER_ARG_DELIMITER_2
-        unset ARGPARSER_ARGPARSER_VERSION
         unset ARGPARSER_ARGS
         unset ARGPARSER_CHECK_ARG_DEF
         unset ARGPARSER_CHECK_ENV_VARS
         unset ARGPARSER_CONFIG_FILE
         unset ARGPARSER_COUNT_FLAGS
-        unset ARGPARSER_DICTIONARY
         unset ARGPARSER_ERROR_EXIT_CODE
         unset ARGPARSER_ERROR_STYLE
         unset ARGPARSER_HELP_ARG_GROUP
@@ -7660,7 +7599,6 @@ function argparser_main() {
         unset ARGPARSER_MAX_WIDTH
         unset ARGPARSER_POSITIONAL_ARG_GROUP
         unset ARGPARSER_READ_ARGS
-        unset ARGPARSER_SCRIPT_ARGS
         unset ARGPARSER_SCRIPT_NAME
         unset ARGPARSER_SET_ARGS
         unset ARGPARSER_SET_ARRAYS
