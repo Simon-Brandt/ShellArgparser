@@ -1050,41 +1050,11 @@ function argparser_read_configuration() {
         if [[ -z "${line}" || "${line}" == \#* ]]; then
             # Ignore the empty or commented line.
             continue
-        elif [[ "${line}" == *( )"argparser-version"*( )=* ]]; then
-            # Output an error message when the line sets
-            # ${ARGPARSER_ARGPARSER_VERSION}.
-            error_message="Error: In the configuration file \"\$1\", the line "
-            error_message+="\"\$2\" sets ARGPARSER_ARGPARSER_VERSION, which "
-            error_message+="is an internal variable and must not be set."
-
-            error_message="${error_message/"\$1"/"${ARGPARSER_CONFIG_FILE}"}"
-            error_message="${error_message/"\$2"/"${line}"}"
-            error_messages+=("${error_message}")
         elif [[ "${line}" == *( )"args"*( )=* ]]; then
             # Output an error message when the line sets
             # ${ARGPARSER_ARGS}.
             error_message="Error: In the configuration file \"\$1\", the line "
             error_message+="\"\$2\" sets ARGPARSER_ARGS, which is an "
-            error_message+="internal variable and must not be set."
-
-            error_message="${error_message/"\$1"/"${ARGPARSER_CONFIG_FILE}"}"
-            error_message="${error_message/"\$2"/"${line}"}"
-            error_messages+=("${error_message}")
-        elif [[ "${line}" == *( )"dictionary"*( )=* ]]; then
-            # Output an error message when the line sets
-            # ${ARGPARSER_DICTIONARY}.
-            error_message="Error: In the configuration file \"\$1\", the line "
-            error_message+="\"\$2\" sets ARGPARSER_DICTIONARY, which is an "
-            error_message+="internal variable and must not be set."
-
-            error_message="${error_message/"\$1"/"${ARGPARSER_CONFIG_FILE}"}"
-            error_message="${error_message/"\$2"/"${line}"}"
-            error_messages+=("${error_message}")
-        elif [[ "${line}" == *( )"script-args"*( )=* ]]; then
-            # Output an error message when the line sets
-            # ${ARGPARSER_SCRIPT_ARGS}.
-            error_message="Error: In the configuration file \"\$1\", the line "
-            error_message+="\"\$2\" sets ARGPARSER_SCRIPT_ARGS, which is an "
             error_message+="internal variable and must not be set."
 
             error_message="${error_message/"\$1"/"${ARGPARSER_CONFIG_FILE}"}"
@@ -1160,6 +1130,9 @@ function argparser_set_env_vars() {
     # Arguments:
     # - $@: the command line upon sourcing the Argparser
     #
+    # Nonlocals:
+    # - script_args: the script's command line
+    #
     # Environment:
     # ARGPARSER_ADD_HELP
     # ARGPARSER_ADD_USAGE
@@ -1172,7 +1145,6 @@ function argparser_set_env_vars() {
     # ARGPARSER_ARG_DEF_FILE
     # ARGPARSER_ARG_DELIMITER_1
     # ARGPARSER_ARG_DELIMITER_2
-    # ARGPARSER_ARGPARSER_VERSION (read-only)
     # ARGPARSER_ARGS
     # ARGPARSER_CHECK_ARG_DEF
     # ARGPARSER_CHECK_ENV_VARS
@@ -1195,7 +1167,6 @@ function argparser_set_env_vars() {
     # ARGPARSER_MAX_WIDTH
     # ARGPARSER_POSITIONAL_ARG_GROUP
     # ARGPARSER_READ_ARGS
-    # ARGPARSER_SCRIPT_ARGS
     # ARGPARSER_SCRIPT_NAME
     # ARGPARSER_SET_ARGS
     # ARGPARSER_SET_ARRAYS
@@ -1232,19 +1203,19 @@ function argparser_set_env_vars() {
     # As the Argparser can be sourced with command-line arguments,
     # separate them from the script's command line.  Any argument until
     # the first "--" is seen as argument to the Argparser.  Lastly,
-    # shift also the "--" and set ${ARGPARSER_SCRIPT_ARGS} to the
-    # remainder of the command line.
+    # shift also the "--" and set ${script_args} to the remainder of the
+    # command line.
     # In order to show the need for the script's command line in the
-    # Argparser's help and usage message, ${ARGPARSER_SCRIPT_ARGS} is
-    # added to the Argparser's arguments definition as mandatory
-    # positional argument.  Since using its actual value would mean that
-    # upon parsing, a "++" in the script's arguments would be
-    # interpreted as sign to re-evaluate the arguments as keyword
-    # arguments for the Argparser (and not for the script), set the
-    # string "argparser" as dummy value for the positional argument.  As
-    # only keyword arguments are set as environment variables, below,
-    # the actual value of ${ARGPARSER_SCRIPT_ARGS} won't be overridden
-    # and kept as the script's command line.
+    # Argparser's help and usage message, ${script_args} is added to the
+    # Argparser's arguments definition as mandatory positional argument.
+    # Since using its actual value would mean that upon parsing, a "++"
+    # in the script's arguments would be interpreted as sign to
+    # re-evaluate the arguments as keyword arguments for the Argparser
+    # (and not for the script), set the string "argparser" as dummy
+    # value for the positional argument.  As only keyword arguments are
+    # set as environment variables, below, the actual value of
+    # ${script_args} won't be overridden and kept as the script's
+    # command line.
     args=( )
 
     # shellcheck disable=SC2190  # Indexed, not associative array.
@@ -1255,7 +1226,7 @@ function argparser_set_env_vars() {
     if (( "$#" > 0 )) && [[ -n "$1" && "$1" == "--" ]]; then
         shift
     fi
-    ARGPARSER_SCRIPT_ARGS=("$@")
+    script_args=("$@")
     # shellcheck disable=SC2190  # Indexed, not associative array.
     args+=("--" "argparser")
 
@@ -1297,7 +1268,6 @@ function argparser_set_env_vars() {
         "ARGPARSER_MAX_WIDTH                 :            : max-width                 : INT          : 79                   :            : uint : 1      : Options   :       : the maximum width of the help message                                                                   "
         "ARGPARSER_POSITIONAL_ARG_GROUP      :            : positional-arg-group      : NAME         : Positional arguments :            : str  : 1      : Options   :       : the name of the argument group holding all positional arguments                                         "
         "ARGPARSER_READ_ARGS                 :            : read-args                 :              : true                 :            : bool : 0      : Options   :       : read the arguments and parse them to ARGPARSER_ARG_ARRAY_NAME                                           "
-        "ARGPARSER_SCRIPT_ARGS               :            :                           : command_line :                      :            : str  : +      : Options   :       : the indexed array in which the Argparser stores the script's command line upon parsing its own arguments"
         "ARGPARSER_SCRIPT_NAME               :            : script-name               : NAME         : ''                   :            : str  : 1      : Options   :       : the script's name for the help, usage, version, error, and warning messages                             "
         "ARGPARSER_SET_ARGS                  :            : set-args                  :              : true                 :            : bool : 0      : Options   :       : set the arguments from ARGPARSER_ARG_ARRAY_NAME as variables in the script's scope                      "
         "ARGPARSER_SET_ARRAYS                :            : set-arrays                :              : true                 :            : bool : 0      : Options   :       : set arguments intended to have multiple values as indexed array                                         "
@@ -1324,6 +1294,7 @@ function argparser_set_env_vars() {
         "ARGPARSER_VERSION_STYLE             :            : version-style             : STYLE        : bold                 :            : str  : +      : Options   :       : the color and style specification for version messages                                                  "
         "ARGPARSER_WARNING_STYLE             :            : warning-style             : STYLE        : red,bold             :            : str  : +      : Options   :       : the color and style specification for warning messages                                                  "
         "ARGPARSER_WRITE_ARGS                :            : write-args                :              : false                :            : bool : 0      : Options   :       : write the arguments from ARGPARSER_ARG_ARRAY_NAME to STDOUT                                             "
+        "script_args                         :            :                           : command_line :                      :            : str  : +      : Options   :       : the indexed array in which the Argparser stores the script's command line upon parsing its own arguments"
     )
 
     # # shellcheck source=argparser
@@ -1374,12 +1345,12 @@ function argparser_set_env_vars() {
         ARGPARSER_USAGE_FILE_KEEP_COMMENTS=false \
         ARGPARSER_USAGE_MESSAGE_OPTION_TYPE="long" \
         ARGPARSER_USAGE_MESSAGE_ORIENTATION="column" \
-        ARGPARSER_USAGE_OPTIONS=u \
+        ARGPARSER_USAGE_OPTIONS="u" \
         ARGPARSER_USAGE_STYLE="italic" \
         ARGPARSER_USE_LONG_OPTIONS=true \
         ARGPARSER_USE_SHORT_OPTIONS=false \
         ARGPARSER_USE_STYLES_IN_FILES=false \
-        ARGPARSER_VERSION="${ARGPARSER_ARGPARSER_VERSION}" \
+        ARGPARSER_VERSION="${argparser_version}" \
         ARGPARSER_VERSION_EXIT_CODE=0 \
         ARGPARSER_VERSION_OPTIONS="V" \
         ARGPARSER_VERSION_STYLE="bold" \
@@ -1395,13 +1366,13 @@ function argparser_set_env_vars() {
     # been given before, check if it was also given on the command line,
     # then override the previous value, else, keep the previous value.
     # By this, the command-line parameters have a higher importance than
-    # environment variables. For those environment variables whose
+    # environment variables.  For those environment variables whose
     # default is given as "''" (two single quotes), set the value to the
     # empty string.  For ${ARGPARSER_SCRIPT_NAME}, set the value to the
     # basename of the script's $0, if an empty string is given.  Skip
-    # ${ARGPARSER_SCRIPT_ARGS}, i.e., the command line.
+    # ${script_args}, i.e., the command line.
     for arg_key in "${!ARGPARSER_ARGS[@]}"; do
-        if [[ "${arg_key}" == "ARGPARSER_SCRIPT_ARGS" ]]; then
+        if [[ "${arg_key}" == "script_args" ]]; then
             continue
         elif [[ -v "${arg_key}" ]]; then
             # The environment variable has already been set.  Override
@@ -1458,14 +1429,11 @@ function argparser_check_env_vars() {
     # to set the variables himself.
     #
     # The following environment variables are unchecked:
-    # - ARGPARSER_ARGPARSER_VERSION (auto-set)
     # - ARGPARSER_ARGS (auto-set)
-    # - ARGPARSER_DICTIONARY (checked earlier / auto-set)
     # - ARGPARSER_HELP_ARG_GROUP (arbitrary value)
     # - ARGPARSER_HELP_DESCRIPTION (arbitrary value)
     # - ARGPARSER_LANGUAGE (arbitrary value)
     # - ARGPARSER_POSITIONAL_ARG_GROUP (arbitrary value)
-    # - ARGPARSER_SCRIPT_ARGS (auto-set)
     # - ARGPARSER_SCRIPT_NAME (arbitrary value)
     # - ARGPARSER_VERSION (arbitrary value)
     #
@@ -1990,10 +1958,12 @@ function argparser_read_translation() {
     # Read the translation of the auto-generated text for help and usage
     # messages from the YAML file into an associative array.
     #
+    # Nonlocals:
+    # - dictionary: the associative array containing the translations
+    #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2
     # - ARGPARSER_CHECK_ENV_VARS
-    # - ARGPARSER_DICTIONARY
     # - ARGPARSER_ERROR_EXIT_CODE
     # - ARGPARSER_ERROR_STYLE
     # - ARGPARSER_LANGUAGE (read-only)
@@ -2114,7 +2084,7 @@ function argparser_read_translation() {
             # previous translation under the previous group name, then
             # extract the new one.
             if [[ -n "${group}" ]]; then
-                ARGPARSER_DICTIONARY[${group}]="${translation}"
+                dictionary[${group}]="${translation}"
             fi
             group="${line%:}"
             translation="?"
@@ -2136,7 +2106,7 @@ function argparser_read_translation() {
 
     # Add the last group to the dictionary.
     if [[ -n "${group}" ]]; then
-        ARGPARSER_DICTIONARY[${group}]="${translation}"
+        dictionary[${group}]="${translation}"
     fi
 
     # Sort, filter, colorize, translate, and print all error messages.
@@ -2169,10 +2139,10 @@ function argparser_translate() {
     #       specifiers in the string
     #
     # Nonlocals:
+    # - dictionary: the associative array containing the translations
     # - translation: the translated string
     #
     # Environment:
-    # - ARGPARSER_DICTIONARY (read-only)
     # - ARGPARSER_TRANSLATION_FILE (read-only)
 
     # Define the local variables.
@@ -2190,15 +2160,15 @@ function argparser_translate() {
 
     # If an ${ARGPARSER_TRANSLATION_FILE} was given (and thus the
     # translation was requested), translate the string by fetching its
-    # translation from the associative array ${ARGPARSER_DICTIONARY}.
-    # Else, output the untranslated string.  If the key or string does
-    # not exist in ${ARGPARSER_DICTIONARY}, output a warning message and
-    # the untranslated string.  Translate the warning message only if
-    # the key is not the one required for translation, else, an infinite
+    # translation from the associative array ${dictionary}.  Else,
+    # output the untranslated string.  If the key or string does not
+    # exist in ${dictionary}, output a warning message and the
+    # untranslated string.  Translate the warning message only if the
+    # key is not the one required for translation, else, an infinite
     # loop would arise by trying to fetch the inexistent translation
     # over and over.
     if [[ -n "${ARGPARSER_TRANSLATION_FILE}" ]]; then
-        if ! argparser_in_array "${key}" "${!ARGPARSER_DICTIONARY[@]}"; then
+        if ! argparser_in_array "${key}" "${!dictionary[@]}"; then
             warning_message="Warning: In the translation file \"\$1\", the "
             warning_message+="identifier \"\$2\" is missing.  For "
             warning_message+="convenience, the untranslated string is used, "
@@ -2222,7 +2192,7 @@ function argparser_translate() {
 
             argparser_print_error_or_warning_message "warning" false false \
                 "${warning_message}"
-        elif [[ "${ARGPARSER_DICTIONARY[${key}]}" == "?" ]]; then
+        elif [[ "${dictionary[${key}]}" == "?" ]]; then
             warning_message="Warning: In the translation file \"\$1\", the "
             warning_message+="translation to \"\$2\" for the identifier "
             warning_message+="\"\$3\" is missing.  For convenience, the "
@@ -2248,7 +2218,7 @@ function argparser_translate() {
             argparser_print_error_or_warning_message "warning" false false \
                 "${warning_message}"
         else
-            string="${ARGPARSER_DICTIONARY[${key}]}"
+            string="${dictionary[${key}]}"
         fi
     fi
 
@@ -7362,16 +7332,13 @@ function argparser_main() {
     # variables, to read, parse, and set the script's arguments.
     #
     # Environment:
-    # - ARGPARSER_ARGPARSER_VERSION="0.1.0"
     # - ARGPARSER_ARGS
     # - ARGPARSER_CHECK_ENV_VARS (read-only)
     # - ARGPARSER_CONFIG_FILE (read-only)
-    # - ARGPARSER_DICTIONARY
     # - ARGPARSER_HELP_ARG_GROUP
     # - ARGPARSER_HELP_DESCRIPTION
     # - ARGPARSER_POSITIONAL_ARG_GROUP
     # - ARGPARSER_READ_ARGS (read-only)
-    # - ARGPARSER_SCRIPT_ARGS
     # - ARGPARSER_SET_ARGS (read-only)
     # - ARGPARSER_TRANSLATION_FILE (read-only)
     # - ARGPARSER_UNSET_ARGS (read-only)
@@ -7419,14 +7386,14 @@ function argparser_main() {
 
     # If the Argparser hasn't sourced itself (i.e., the current
     # recursion level is the outer one from the calling script), declare
-    # the internal "environment" variables.  Since ${ARGPARSER_ARGS}
-    # must be set in global scope within argparser_set_args, later, it's
-    # useless declaring it as local, here.
+    # the internal variables.  Since ${ARGPARSER_ARGS} must be set in
+    # global scope within argparser_set_args, later, it's useless
+    # declaring it as local, here.
     if [[ "${source_level}" == 1 ]]; then
-        local ARGPARSER_ARGPARSER_VERSION="0.1.0"
         declare -a ARGPARSER_ARGS
-        local -A ARGPARSER_DICTIONARY
-        local -a ARGPARSER_SCRIPT_ARGS
+        local argparser_version="0.1.0"
+        local -A dictionary
+        local -a script_args
     fi
 
     # If ${ARGPARSER_CONFIG_FILE} is defined and not set to the empty
@@ -7444,7 +7411,7 @@ function argparser_main() {
     # current command line.
     if [[ "${source_level}" == 1 ]]; then
         argparser_set_env_vars "$@"
-        set -- "${ARGPARSER_SCRIPT_ARGS[@]}"
+        set -- "${script_args[@]}"
     fi
 
     # If ${ARGPARSER_TRANSLATION_FILE} isn't set to the empty string,
