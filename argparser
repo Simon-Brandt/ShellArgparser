@@ -2,7 +2,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-07-23
+# Last Modification: 2025-07-24
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -4663,7 +4663,9 @@ function argparser_check_arg_values() {
             # As it is set (present), set the value to true for a "-"
             # prefix and to false for a "+" prefix.  Thereby, the last
             # given prefix determines the value, implicitly overriding
-            # any prefix given before.
+            # any prefix given before.  Alternatively, count the number
+            # of "-" and "+" prefixes, then take their difference as
+            # actual count.
             if [[ "${ARGPARSER_COUNT_FLAGS}" == true ]]; then
                 argparser_count "-" "${prefixes[@]}"
                 count_hyphen="${count}"
