@@ -2426,7 +2426,7 @@ function argparser_parse_args_definition() {
     # If the column with the argument identifiers isn't given, output an
     # error message.
     error_messages=( )
-    if [[ -z "${column_index}" ]]; then
+    if [[ -z "${column_indices[id]}" ]]; then
         if [[ "${definition_type}" == "script" ]]; then
             error_message="Error: In the arguments definition in \"\$1\", "
             error_message+="the column \"id\" is missing."
