@@ -1,10 +1,10 @@
-#### 5.2.4. docopts
+#### 6.2.4. docopts
 
 <details open>
 
 <summary>Contents of <code>docopts_wrapper.sh</code></summary>
 
-<!-- <include command="sed '3,8d;/shellcheck/d' ../comparison/docopts_wrapper.sh" lang="bash"> -->
+<!-- <include command="sed '3,26d;/shellcheck/d' ../comparison/docopts_wrapper.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -169,5 +169,5 @@ Notes:
 - Due to the rather complicated grammar, the usage string is likely incorrect, as the arguments to short options are interpreted as positional arguments. This requires some boilerplate code to get the actual values. Moreover, when using short options, they must be given in the order defined in the usage string as their values are normal positional arguments and as such parsed from left to right, irrespective of the preceding short option "flag" (as the parser interprets the definition). Thus, in the example calls, the long options are used, when necessary.
 - The question mark `?` for the help message is not supported, but emulated as `--help` by a separate call.
 
-[&#129092;&nbsp;5.2.3. shFlags](shflags.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.2.5. Argparser&nbsp;&#129094;](argparser.md)
+[&#129092;&nbsp;6.2.3. shFlags](shflags.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[6.2.5. Argparser&nbsp;&#129094;](argparser.md)

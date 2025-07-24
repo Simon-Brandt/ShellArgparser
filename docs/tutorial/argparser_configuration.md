@@ -1,12 +1,12 @@
-### 4.3. Argparser configuration
+### 5.3. Argparser configuration
 
-The Argparser accepts over 50 options for configuring the argument parsing, checking their values and the consistency of the arguments definition, creating the various message types (see below), and accessing the required companion files. These options are available as [environment variables](../reference/environment_variables/introduction.md#84-environment-variables). By this, you can set them directly in your script, and even [`export`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-export "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; export") them to child processes. Thus, you can set these variables once and use them throughout your script suite.
+The Argparser accepts over 50 options for configuring the argument parsing, checking their values and the consistency of the arguments definition, creating the various message types (see below), and accessing the required companion files. These options are available as [environment variables](../reference/environment_variables/introduction.md#94-environment-variables). By this, you can set them directly in your script, and even [`export`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-export "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; export") them to child processes. Thus, you can set these variables once and use them throughout your script suite.
 
 Still, it is likely that, after some time or for a specific project, you'll settle with a certain set of options that you'll want to reuse for all or many scripts. Then, setting the environment variables in any script becomes a tedious task, wasting space in each script. Additionally, should you want to change a value, you'd need to change it in any file.
 
-For this reason, the Argparser also supports configuration by a config file (see the example [`options.cfg`](../../resources/options.cfg)), given by the [`ARGPARSER_CONFIG_FILE`](../reference/environment_variables/environment_variables.md#8416-argparser_config_file) environment variable, or by command-line options.
+For this reason, the Argparser also supports configuration by a config file (see the example [`options.cfg`](../../resources/options.cfg)), given by the [`ARGPARSER_CONFIG_FILE`](../reference/environment_variables/environment_variables.md#9416-argparser_config_file) environment variable, or by command-line options.
 
-#### 4.3.1. Configuration file
+#### 5.3.1. Configuration file
 
 The Argparser configuration file contains the options in a key&ndash;value syntax and can be shared by multiple scripts, which only need to point to the same configuration file. The options have the same name as the environment variables, with a stripped leading `"ARGPARSER_"` and being written in lowercase, and with underscores replaced by hyphens. *I.e.*, the "screaming snake case" is replaced by the "kebab case".
 
@@ -38,7 +38,7 @@ For demonstration, we take a stripped-down version of our [`try_argparser.sh`](.
 
 <summary>Contents of <code>try_config_file.sh</code></summary>
 
-<!-- <include command="sed '3,11d;/shellcheck/d' ../tutorial/try_config_file.sh" lang="bash"> -->
+<!-- <include command="sed '3,29d;/shellcheck/d' ../tutorial/try_config_file.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -98,7 +98,7 @@ The positional argument "pos_2" on index 2 is set to "1,2".
 ```
 <!-- </include> -->
 
-#### 4.3.2. Command-line options
+#### 5.3.2. Command-line options
 
 Further, all environment variables can also be given as command-line parameters upon sourcing the Argparser. Thereby, the options have the same name as in the configuration file ("kebab case"), and are only valid for the given Argparser call.
 
@@ -114,13 +114,13 @@ source argparser [--option...] -- "$@"
 
 with `option` being any environment variable's transformed name.
 
-#### 4.3.3. Option inheritance
+#### 5.3.3. Option inheritance
 
-Since the Argparser parses its options like it does for your script's ones (by non-recursively sourcing itself), the same special syntax regarding flags is used. That means, if you set `++set-args` as option, then the Argparser will only read the command-line arguments, parsing them into an associative array you can access afterwards, denoted by the name the environment variable [`ARGPARSER_ARG_ARRAY_NAME`](../reference/environment_variables/environment_variables.md#849-argparser_arg_array_name) refers to (per default, `"args"`)&mdash;but it won't set them as variables to your script.  The opposite holds for the option `++read-args`, which deactivates the reading. Finally, if `--read-args` and `--set-args` are set, the arguments will both be read and set (in this order). Since the default value for both options is `true`, these actions are also carried out when only one option or none is given.
+Since the Argparser parses its options like it does for your script's ones (by non-recursively sourcing itself), the same special syntax regarding flags is used. That means, if you set `++set-args` as option, then the Argparser will only read the command-line arguments, parsing them into an associative array you can access afterwards, denoted by the name the environment variable [`ARGPARSER_ARG_ARRAY_NAME`](../reference/environment_variables/environment_variables.md#949-argparser_arg_array_name) refers to (per default, `"args"`)&mdash;but it won't set them as variables to your script.  The opposite holds for the option `++read-args`, which deactivates the reading. Finally, if `--read-args` and `--set-args` are set, the arguments will both be read and set (in this order). Since the default value for both options is `true`, these actions are also carried out when only one option or none is given.
 
 Not surprisingly, you need to read the arguments before you set them, but you can perform arbitrary steps in-between. This could come handy when you want to use the variable names the Argparser sets for some task or want to manipulate the associative array prior having the values set.
 
-If you [`export`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-export "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; export") (or [`declare -x`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-declare "gnu.org &rightarrow; Bash Builtins &rightarrow; declare")) environment variables like [`ARGPARSER_READ_ARGS`](../reference/environment_variables/environment_variables.md#8434-argparser_read_args) and [`ARGPARSER_SET_ARGS`](../reference/environment_variables/environment_variables.md#8436-argparser_set_args) to child processes (like scripts called from your master script), they will inherit these variables. If, in your child script, you use a bare `source argparser -- "$@"`, *i.e.*, without specifying an option to the Argparser, the settings from the inherited environment variables will be used. However, you can always override them by specifying an Argparser option. By this, you may set the environment variables in your master script and use the settings in some child scripts, with the others setting their own options. Thus, to rule out any possible influence of the environment on reading and setting, using the two respective option flags might be recommendable for certain use cases.
+If you [`export`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-export "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; export") (or [`declare -x`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-declare "gnu.org &rightarrow; Bash Builtins &rightarrow; declare")) environment variables like [`ARGPARSER_READ_ARGS`](../reference/environment_variables/environment_variables.md#9434-argparser_read_args) and [`ARGPARSER_SET_ARGS`](../reference/environment_variables/environment_variables.md#9436-argparser_set_args) to child processes (like scripts called from your master script), they will inherit these variables. If, in your child script, you use a bare `source argparser -- "$@"`, *i.e.*, without specifying an option to the Argparser, the settings from the inherited environment variables will be used. However, you can always override them by specifying an Argparser option. By this, you may set the environment variables in your master script and use the settings in some child scripts, with the others setting their own options. Thus, to rule out any possible influence of the environment on reading and setting, using the two respective option flags might be recommendable for certain use cases.
 
-[&#129092;&nbsp;4.2. Argparser invokation](argparser_invokation.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.4. Arguments definition files&nbsp;&#129094;](arguments_definition_files.md)
+[&#129092;&nbsp;5.2. Argparser invokation](argparser_invokation.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.4. Arguments definition files&nbsp;&#129094;](arguments_definition_files.md)

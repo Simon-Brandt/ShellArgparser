@@ -1,10 +1,10 @@
-#### 5.2.2. `getopt`
+#### 6.2.2. `getopt`
 
 <details open>
 
 <summary>Contents of <code>getopt_wrapper.sh</code></summary>
 
-<!-- <include command="sed '3,10d;/shellcheck/d' ../comparison/getopt_wrapper.sh" lang="bash"> -->
+<!-- <include command="sed '3,28d;/shellcheck/d' ../comparison/getopt_wrapper.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -198,5 +198,5 @@ Notes:
 
 - Using whitespace between options with optional arguments (*i.e.*, an argument number of zero or higher) and their values is disallowed.
 
-[&#129092;&nbsp;5.2.1. `getopts`](getopts.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.2.3. shFlags&nbsp;&#129094;](shflags.md)
+[&#129092;&nbsp;6.2.1. `getopts`](getopts.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[6.2.3. shFlags&nbsp;&#129094;](shflags.md)

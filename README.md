@@ -11,7 +11,8 @@ Applying the Argparser should lead to shorter and more concise code than the tra
 1. [Quick start](#2-quick-start)
 1. [Documentation](#3-documentation)
 1. [Dependencies](#4-dependencies)
-1. [Contributions](#5-contributions)
+1. [License](#5-license)
+1. [Contributions](#6-contributions)
 <!-- </toc> -->
 
 ## 1. Features
@@ -47,7 +48,7 @@ A very simple quick-start script may look like this:
 
 <summary>Contents of <code>try_argparser.sh</code></summary>
 
-<!-- <include command="sed '3,10d;/shellcheck/d' tutorial/try_argparser.sh" lang="bash"> -->
+<!-- <include command="sed '3,28d;/shellcheck/d' tutorial/try_argparser.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -145,7 +146,13 @@ When contributing to the repository, you may need to install additional dependen
 
 Several further non-standard dependencies are needed for comparing the Argparser to other command-line parsers. However, you shouldn't need them at all, unless you'd like to contribute an entirely new feature to the Argparser, which changes its behavior.
 
-## 5. Contributions
+## 5. License
+
+The Argparser is licensed under the terms and conditions of the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0 "apache.org &rightarrow; Licenses &rightarrow; Apache License, Version 2.0"). This applies to all source code files (all shell scripts and [Julia](https://julialang.org/ "julialang.org") files) and the documentation (all Markdown files), but not to the HTML, SVG, and CSV files in the [comparison](comparison) directory, any file in the [resources](resources) directory, as well as the [.shellcheckrc](.shellcheckrc), which are all placed in the Public Domain.
+
+The Apache License v2.0 allows running, modifying, and distributing the Argparser, even in commercial settings, provided that the license is distributed along the source code or compiled objects. *(This is not legal advice. Read the [license](LICENSE) for the exact terms.)*
+
+## 6. Contributions
 
 Please open an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues") if you:
 

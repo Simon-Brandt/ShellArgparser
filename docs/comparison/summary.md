@@ -1,4 +1,4 @@
-### 5.4. Summary
+### 6.4. Summary
 
 When comparing the different approaches to command-line parsing, it is apparent that&mdash;as expected&mdash;the more recent parsers have a larger set of features. While the Bash-builtin [`getopts`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-getopts "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; getopts") parser comprises only minimal functionality (not even long options), it is the only one that solely implements the POSIX standard. A slightly greater number of features comes with GNU [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)"), like long options and the ability to abbreviate them.
 
@@ -14,5 +14,5 @@ Regarding the runtimes, the compiled tools are faster by one to two orders of ma
 
 Finally, the Argparser is extensively documented, unlike the other tools relying on a brief readme or man page. This hopefully makes the transition to the Argparser&mdash;if deemed useful at all&mdash;easier.
 
-[&#129092;&nbsp;5.3. Runtime comparison](runtime_comparison.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[6. Roadmap&nbsp;&#129094;](../roadmap.md)
+[&#129092;&nbsp;6.3. Runtime comparison](runtime_comparison.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[7. Roadmap&nbsp;&#129094;](../roadmap.md)

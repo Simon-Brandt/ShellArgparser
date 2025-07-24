@@ -1,10 +1,10 @@
-#### 5.2.1. `getopts`
+#### 6.2.1. `getopts`
 
 <details open>
 
 <summary>Contents of <code>getopts_wrapper.sh</code></summary>
 
-<!-- <include command="sed '3,10d;/shellcheck/d' ../comparison/getopts_wrapper.sh" lang="bash"> -->
+<!-- <include command="sed '3,28d;/shellcheck/d' ../comparison/getopts_wrapper.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -161,5 +161,5 @@ Notes:
 - Long options aren't supported, so no attempt is made to still parse them.
 - The question mark `?` is used as sign for an invalid option name on the command line, thus preventing its use for invoking the help message.
 
-[&#129092;&nbsp;5.2. Example scripts](introduction.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.2.2. `getopt`&nbsp;&#129094;](getopt.md)
+[&#129092;&nbsp;6.2. Example scripts](introduction.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[6.2.2. `getopt`&nbsp;&#129094;](getopt.md)

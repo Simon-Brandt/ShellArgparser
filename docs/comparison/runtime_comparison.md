@@ -1,4 +1,4 @@
-### 5.3. Runtime comparison
+### 6.3. Runtime comparison
 
 Using the [Julia](https://julialang.org/ "julialang.org") script [`analyse_runtime.jl`](../../comparison/analyse_runtime.jl), we can compare the different runtimes of the command-line parsers (with the `--exit` flag to exit prior running [`process_html_template.sh`](../../comparison/process_html_template.sh)). The violin plots of 1000 iterations each are shown in the following figure:
 
@@ -26,5 +26,5 @@ As you can see, and unsurprisingly, the runtimes of the compiled programs (`doco
 For usual scripts, the runtime overhead of the command-line parsing should be negligible, compared to the actual script's runtime, such that the various tools can be chosen by their set of features, and not their runtime.
 
 
-[&#129092;&nbsp;5.2.5. Argparser](example_scripts/argparser.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.4. Summary&nbsp;&#129094;](summary.md)
+[&#129092;&nbsp;6.2.5. Argparser](example_scripts/argparser.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[6.4. Summary&nbsp;&#129094;](summary.md)

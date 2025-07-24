@@ -1,6 +1,6 @@
-### 4.4. Arguments definition files
+### 5.4. Arguments definition files
 
-In the previous sections, we always provided the arguments definition directly in the script, right before we sourced the Argparser. However, it is possible to "outsource" the definition (or part of it) in a bespoke file that is referred to by the [`ARGPARSER_ARG_DEF_FILE`](../reference/environment_variables/environment_variables.md#8410-argparser_arg_def_file) environment variable.
+In the previous sections, we always provided the arguments definition directly in the script, right before we sourced the Argparser. However, it is possible to "outsource" the definition (or part of it) in a bespoke file that is referred to by the [`ARGPARSER_ARG_DEF_FILE`](../reference/environment_variables/environment_variables.md#9410-argparser_arg_def_file) environment variable.
 
 Using a separate arguments definition file allows you to share the definition across multiple scripts that use partially or entirely identical arguments, a common case in program suites or when wrapper scripts are used. Should some scripts require an argument to have the same name, but different definitions, they can be given in their respective scripts, in addition to the remainder from the file. Moreover, this attempt allows a separation of concerns, as we can move the arguments definition (static) away from their manipulation (dynamic). This shrinks our trial file once more, yielding [`try_arg_def_file.sh`](../../tutorial/try_arg_def_file.sh).
 
@@ -8,7 +8,7 @@ Using a separate arguments definition file allows you to share the definition ac
 
 <summary>Contents of <code>try_arg_def_file.sh</code></summary>
 
-<!-- <include command="sed '3,11d;/shellcheck/d' ../tutorial/try_arg_def_file.sh" lang="bash"> -->
+<!-- <include command="sed '3,29d;/shellcheck/d' ../tutorial/try_arg_def_file.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -88,7 +88,7 @@ The positional argument "pos_2" on index 2 is set to "1,2".
 ```
 <!-- </include> -->
 
-Likewise, the [usage (and help) message](help_and_usage_messages.md#45-help-and-usage-messages) is completely unaffected:
+Likewise, the [usage (and help) message](help_and_usage_messages.md#55-help-and-usage-messages) is completely unaffected:
 
 <!-- <include command="bash ../tutorial/try_arg_def_file.sh -u" lang="console"> -->
 ```console
@@ -97,5 +97,5 @@ Usage: try_arg_def_file.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL
 ```
 <!-- </include> -->
 
-[&#129092;&nbsp;4.3. Argparser configuration](argparser_configuration.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4.5. Help and usage messages&nbsp;&#129094;](help_and_usage_messages.md)
+[&#129092;&nbsp;5.3. Argparser configuration](argparser_configuration.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.5. Help and usage messages&nbsp;&#129094;](help_and_usage_messages.md)

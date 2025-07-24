@@ -1,10 +1,10 @@
-#### 5.2.3. shFlags
+#### 6.2.3. shFlags
 
 <details open>
 
 <summary>Contents of <code>shflags_wrapper.sh</code></summary>
 
-<!-- <include command="sed '3,10d;/shellcheck/d' ../comparison/shflags_wrapper.sh" lang="bash"> -->
+<!-- <include command="sed '3,28d;/shellcheck/d' ../comparison/shflags_wrapper.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -163,5 +163,5 @@ Notes:
 - The help message is partly auto-generated. In order to comply with the style decisions in shFlags, the manually set header is adapted to them.
 - The question mark `?` for the help message is not supported.
 
-[&#129092;&nbsp;5.2.2. `getopt`](getopt.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.2.4. docopts&nbsp;&#129094;](docopts.md)
+[&#129092;&nbsp;6.2.2. `getopt`](getopt.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[6.2.4. docopts&nbsp;&#129094;](docopts.md)

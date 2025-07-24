@@ -1,6 +1,6 @@
 ## 3. Dependencies
 
-By design, the Argparser only requires Bash to run. However, for testing the Argparser, for creating the documentation and for [comparing](comparison/introduction.md#5-comparison-of-command-line-parsers) the different command-line parsers, several other tools are required, which you might need to install, should you want to contribute. Most of which (especially all programs for testing) should be pre-installed in any Unix-like environment. Note, however, that the scripts use long options, which may not be supported by your specific software version.
+By design, the Argparser only requires Bash to run. However, for testing the Argparser, for creating the documentation and for [comparing](comparison/introduction.md#6-comparison-of-command-line-parsers) the different command-line parsers, several other tools are required, which you might need to install, should you want to contribute. Most of which (especially all programs for testing) should be pre-installed in any Unix-like environment. Note, however, that the scripts use long options, which may not be supported by your specific software version.
 
 In the following table, "&#10004;" marks the tools necessary for the respective task, "&#10008;" those that aren't required. When no version number is given, any recent version is expected to work.
 
@@ -44,4 +44,4 @@ For Julia, the following external packages are needed:
 - [`Tables.jl`](https://tables.juliadata.org/stable/ "tables.juliadata.org") &geq; 1.12.1
 
 [&#129092;&nbsp;2. Installation](installation.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4. Tutorial&nbsp;&#129094;](tutorial/introduction.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4. License&nbsp;&#129094;](license_note.md)

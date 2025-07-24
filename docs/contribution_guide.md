@@ -1,5 +1,5 @@
 <!-- <include command="sed 's/^#/##/;s/<toc>/<toc title="Table of contents (Contribution guide)">/' ../CONTRIBUTING.md"> -->
-## 7. Contribution guide
+## 8. Contribution guide
 
 You're very welcome to contribute to the Argparser! Be it fixing spelling mistakes or small bugs, adding or clarifying the [documentation](docs), or even adding new functionality to the Argparser itself, any improvement is highly appreciated.
 
@@ -8,38 +8,38 @@ In order to facilitate the seemless integration of your commits with the Argpars
 <!-- <toc title="Table of contents (Contribution guide)"> -->
 ### Table of contents (Contribution guide)
 
-1. [General advice](#71-general-advice)
-   1. [Language](#711-language)
-   1. [Commit messages](#712-commit-messages)
-1. [Code](#72-code)
-   1. [Adding functionality](#721-adding-functionality)
-   1. [Coding style](#722-coding-style)
-   1. [ShellCheck](#723-shellcheck)
-1. [Documentation](#73-documentation)
-   1. [Files](#731-files)
-   1. [Documentation style](#732-documentation-style)
-1. [Translations](#74-translations)
+1. [General advice](#81-general-advice)
+   1. [Language](#811-language)
+   1. [Commit messages](#812-commit-messages)
+1. [Code](#82-code)
+   1. [Adding functionality](#821-adding-functionality)
+   1. [Coding style](#822-coding-style)
+   1. [ShellCheck](#823-shellcheck)
+1. [Documentation](#83-documentation)
+   1. [Files](#831-files)
+   1. [Documentation style](#832-documentation-style)
+1. [Translations](#84-translations)
 <!-- </toc> -->
 
-### 7.1. General advice
+### 8.1. General advice
 
-#### 7.1.1. Language
+#### 8.1.1. Language
 
 Whatever you may change, the edits must be written in English, preferably American English. This also applies to the text in [issues](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues"), but especially to the documentation and code itself. Exception: If you want to start the endeavor of translating the docs to another language, feel free to do so!
 
-#### 7.1.2. Commit messages
+#### 8.1.2. Commit messages
 
 Keep the commit messages brief. Rather explain the reasons in the issue or pull request comment. Write the commit message in the active form, in the simple past, like "Added comma", or "Fixed off-by-one error". By this, the message could be directly used for the release notes of a new Argparser version.
 
-### 7.2. Code
+### 8.2. Code
 
-#### 7.2.1. Adding functionality
+#### 8.2.1. Adding functionality
 
 If you want to add features to the Argparser, write the respective function(s) directly into the main script. By design decision, the Argparser consists of exactly one file, [`argparser`](argparser). This overcomes the general impossibility to find accompanying files (like libraries) from within the script, when its location is arbitrary. Even more importantly, the Argparser can be sourced or executed, leading to different call trees that make it impossible to decide for sure where the components reside.
 
 Novel features require dedicated [tests](tests), [error message translations](docs/reference/translations/translations.md), and/or [tutorial](docs/tutorial/introduction.md) and [reference](docs/reference/introduction.md) sections. You aren't required to write them, but asked to at least provide enough information for others to document the features.
 
-#### 7.2.2. Coding style
+#### 8.2.2. Coding style
 
 The coding style for the Argparser can be seen as a mixture of [Python's PEP 8](https://peps.python.org/pep-0008/ "peps.python.org &rightarrow; PEP 8") and [Google's shell style guide](https://google.github.io/styleguide/shellguide.html "google.github.io &rightarrow; Styleguide &rightarrow; Shellguide") with some project-specific modifications. When in doubt, look at what you find in the existing codebase, or ask in an issue comment. Briefly, the following style is recommended (and in part enforced):
 
@@ -96,27 +96,27 @@ The coding style for the Argparser can be seen as a mixture of [Python's PEP 8](
   - Use [`printf`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-printf "gnu.org &rightarrow; Bash Builtins &rightarrow; printf"), not [`echo`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-echo "gnu.org &rightarrow; Bash Builtins &rightarrow; echo"), which allows more string interpolation options.
   - The Argparser doesn't use the shell option [`errexit`](https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html#index-set "gnu.org &rightarrow; The Set Builtin &rightarrow; set"), which would interfere with *e.g.* assignments in arithmetic constructs.
 
-#### 7.2.3. ShellCheck
+#### 8.2.3. ShellCheck
 
 Bash comes with a lot of quirks one needs to be aware of. [ShellCheck](https://github.com/koalaman/shellcheck "github.com &rightarrow; koalaman &rightarrow; shellcheck") is a very powerful linter which flags many common mistakes, and you are highly encouraged to use it, as well. Please use the provided [`.shellcheckrc`](.shellcheckrc) and edit the absolute filepaths to your directory structure.
 
 Only use directives to ignore ShellCheck warnings when the linter is wrong (which happens *e.g.* with indexed *vs.* associative arrays), not because you disagree with a certain coding style. Add a comment after the directive to explain why you disabled the check.
 
-### 7.3. Documentation
+### 8.3. Documentation
 
-#### 7.3.1. Files
+#### 8.3.1. Files
 
 For convenience upon writing, the documentation consists of one file, [`.src.md`](docs/.src.md), besides a brief summary in the [`README.md`](README.md). Changes should only happen there, as the [Markdown Tools](https://github.com/Simon-Brandt/MarkdownTools "github.com &rightarrow; Simon-Brandt &rightarrow; MarkdownTools") handle the creation of the tables of contents, the inclusion of files and command outputs, as well as the splitting of `.src.md` into separate files per section.
 
 For very small changes (like fixing spelling mistakes), you can manually change the respective target file in the documentation, without needing to have the Markdown Tools installed.
 
-#### 7.3.2. Documentation style
+#### 8.3.2. Documentation style
 
 The documentation is written in Markdown ([GitHub Flavored Markdown (GFM)](https://github.github.com/gfm/ "github.github.com &rightarrow; GFM") flavor). However, since the specification allows several different tokens for some features (like code blocks), and is rather lenient against whitespace, a few additional, project-specific stylistic guides are needed. If you're using [Visual Studio Code](https://code.visualstudio.com/ "Visual Studio Code"), the [Markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint "Visual Studio Code &rightarrow; Marketplace &rightarrow; Markdownlint Extension") extension may help you accord to them.
 
 - ***Line length:*** There is no limit to the line length for non-code blocks. To avoid the need for re-ordering the words whenever a word on a previous line is deleted, don't wrap the lines by hand. Instead, use the automatic line wrapping ability of your text editor of choice.
 - ***Paragraphs:*** Paragraphs should be separated by one blank line from each other.
-- ***Sentences:*** Separate sentences with one space, not two. This goes against the recommendation for [code](#722-coding-style).
+- ***Sentences:*** Separate sentences with one space, not two. This goes against the recommendation for [code](#822-coding-style).
 - ***Headings:***
   - Headings use the ATX style with hashmarks (`#`), starting with one hashmark for the top-level heading and appending one hashmark per heading level. Don't use the setext style of underlining with equals signs (`=`) and hyphens (`-`), since this only allows two heading levels.
   - Headings must be surrounded by one blank line each.
@@ -135,7 +135,7 @@ The documentation is written in Markdown ([GitHub Flavored Markdown (GFM)](https
 - ***Miscellaneous:***
   - Don't edit tables of contents or heading numbers, the [Markdown Tools](https://github.com/Simon-Brandt/MarkdownTools "github.com &rightarrow; Simon-Brandt &rightarrow; MarkdownTools") will do it for you. This makes mistakes less likely, especially regarding hyperlinks.
 
-### 7.4. Translations
+### 8.4. Translations
 
 The Argparser emits a lot of error and warning messages for faulty arguments. Both them and the help and usage messages are internationalized. It would strongly help the Argparser's adoption if it could be localized to more languages&mdash;currently, there are only English and German available. So, if you want to provide translations for the message parts, feel free to add them into the [`translations.yaml`](resources/translations.yaml).
 
@@ -144,5 +144,5 @@ Within the [YAML](https://en.wikipedia.org/wiki/YAML "wikipedia.org &rightarrow;
 Try to use the tone and wording commonly found in command-line tool descriptions in your language. Don't just use machine translations, without having checked their validity. By this, the Argparser's output seemlessly integrates into the command-line workflows even in languages other than English.
 <!-- </include> -->
 
-[&#129092;&nbsp;6. Roadmap](roadmap.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[8. Reference&nbsp;&#129094;](reference/introduction.md)
+[&#129092;&nbsp;7. Roadmap](roadmap.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[9. Reference&nbsp;&#129094;](reference/introduction.md)

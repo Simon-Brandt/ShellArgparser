@@ -1,10 +1,10 @@
-#### 5.2.5. Argparser
+#### 6.2.5. Argparser
 
 <details open>
 
 <summary>Contents of <code>argparser_wrapper.sh</code></summary>
 
-<!-- <include command="sed '3,10d;/shellcheck/d' ../comparison/argparser_wrapper.sh" lang="bash"> -->
+<!-- <include command="sed '3,28d;/shellcheck/d' ../comparison/argparser_wrapper.sh" lang="bash"> -->
 ```bash
 #!/bin/bash
 
@@ -67,5 +67,5 @@ Notes:
 - Trailing positional arguments must be delimited with `--` since the Argparser aggregates all values after option names to them, as design decision.
 - Intermixing positional and keyword arguments can be emulated by using the positional arguments delimiter `++`. True intermixing is yet disabled as design decision.
 
-[&#129092;&nbsp;5.2.4. docopts](docopts.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.3. Runtime comparison&nbsp;&#129094;](../runtime_comparison.md)
+[&#129092;&nbsp;6.2.4. docopts](docopts.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[6.3. Runtime comparison&nbsp;&#129094;](../runtime_comparison.md)

@@ -1,4 +1,4 @@
-### 5.1. Feature comparison
+### 6.1. Feature comparison
 
 The following command-line parsers are compared in the given versions:
 
@@ -71,4 +71,4 @@ In the following table, "&#10008;" marks the absence of a feature, "&#10004;" it
 [^13]: Opt-in feature *via* environment variable (`POSIXLY_CORRECT`).
 
 [&#129092;&nbsp;Table of contents (Feature comparison)](toc.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.2. Example scripts&nbsp;&#129094;](example_scripts/introduction.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[6.2. Example scripts&nbsp;&#129094;](example_scripts/introduction.md)
