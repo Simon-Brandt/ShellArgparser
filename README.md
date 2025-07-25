@@ -125,14 +125,14 @@ The Argparser is a plain Bash script that does not invoke external commands (onl
 
 **For running:**
 
-- Bash &geq; 4.0
+- Bash &ge;&#8239;4.0
 
-For simply running the Argparser, only Bash is required. Bash &geq; 4.0 is known to be mandatory, but testing occurred solely on Bash 5.2. Thus, please file an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues") if you encounter errors for versions earlier than 5.2, such that the minimum version can be updated, here.
+For simply running the Argparser, only Bash is required. Bash &ge;&#8239;4.0 is known to be mandatory, but testing occurred solely on Bash 5.2. Thus, please file an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues") if you encounter errors for versions earlier than 5.2, such that the minimum version can be updated, here.
 
 **For contributing:**
 
 - Tests:
-  - Bash &geq; 4.0
+  - Bash &ge;&#8239;4.0
   - [`dash`](https://man7.org/linux/man-pages/man1/dash.1.html "man7.org &rightarrow; man pages &rightarrow; dash(1)")
   - [`diff`](https://man7.org/linux/man-pages/man1/diff.1.html "man7.org &rightarrow; man pages &rightarrow; diff(1)")
   - [`dirname`](https://man7.org/linux/man-pages/man1/dirname.1.html "man7.org &rightarrow; man pages &rightarrow; dirname(1)")
@@ -142,25 +142,25 @@ For simply running the Argparser, only Bash is required. Bash &geq; 4.0 is known
   - [`tee`](https://man7.org/linux/man-pages/man1/tee.1.html "man7.org &rightarrow; man pages &rightarrow; tee(1)")
   - [`tr`](https://man7.org/linux/man-pages/man1/tr.1.html "man7.org &rightarrow; man pages &rightarrow; tr(1)")
 - Documentation:
-  - Bash &geq; 4.0
+  - Bash &ge;&#8239;4.0
   - [Markdown Tools](https://github.com/Simon-Brandt/MarkdownTools "github.com &rightarrow; Simon-Brandt &rightarrow; MarkdownTools")
   - [`cat`](https://man7.org/linux/man-pages/man1/cat.1.html "man7.org &rightarrow; man pages &rightarrow; cat(1)")
   - [`head`](https://man7.org/linux/man-pages/man1/head.1.html "man7.org &rightarrow; man pages &rightarrow; head(1)")
   - [`ls`](https://man7.org/linux/man-pages/man1/ls.1.html "man7.org &rightarrow; man pages &rightarrow; ls(1)")
   - [`sed`](https://man7.org/linux/man-pages/man1/sed.1.html "man7.org &rightarrow; man pages &rightarrow; sed(1)")
 - Comparison:
-  - Bash &geq; 4.0
+  - Bash &ge;&#8239;4.0
   - [`cat`](https://man7.org/linux/man-pages/man1/cat.1.html "man7.org &rightarrow; man pages &rightarrow; cat(1)")
   - [`cp`](https://man7.org/linux/man-pages/man1/cp.1.html "man7.org &rightarrow; man pages &rightarrow; cp(1)")
   - [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)")
   - [`sed`](https://man7.org/linux/man-pages/man1/sed.1.html "man7.org &rightarrow; man pages &rightarrow; sed(1)")
   - [shFlags](https://github.com/kward/shflags "github.com &rightarrow; kward &rightarrow; shFlags") 1.3.0
   - [docopts](https://github.com/docopt/docopts "github.com &rightarrow; docopt &rightarrow; docopts") 0.6.4
-  - [Julia](https://julialang.org/ "julialang.org") &geq; 1.11
-    - [`CSV.jl`](https://csv.juliadata.org/stable/ "csv.juliadata.org") &geq; 0.10.15
-    - [`Statistics.jl`](https://docs.julialang.org/en/v1/stdlib/Statistics/ "docs.julialang.org &rightarrow; Statistics.jl") &geq; 1.11.1
-    - [`StatsPlots.jl`](https://docs.juliaplots.org/stable/generated/statsplots/ "docs.juliaplots.org &rightarrow; StatsPlots.jl") &geq; 0.15.7
-    - [`Tables.jl`](https://tables.juliadata.org/stable/ "tables.juliadata.org") &geq; 1.12.1
+  - [Julia](https://julialang.org/ "julialang.org") &ge;&#8239;1.11
+    - [`CSV.jl`](https://csv.juliadata.org/stable/ "csv.juliadata.org") &ge;&#8239;0.10.15
+    - [`Statistics.jl`](https://docs.julialang.org/en/v1/stdlib/Statistics/ "docs.julialang.org &rightarrow; Statistics.jl") &ge;&#8239;1.11.1
+    - [`StatsPlots.jl`](https://docs.juliaplots.org/stable/generated/statsplots/ "docs.juliaplots.org &rightarrow; StatsPlots.jl") &ge;&#8239;0.15.7
+    - [`Tables.jl`](https://tables.juliadata.org/stable/ "tables.juliadata.org") &ge;&#8239;1.12.1
 
 When contributing to the repository, you may need to install additional dependencies, among which the [Markdown Tools](https://github.com/Simon-Brandt/MarkdownTools "github.com &rightarrow; Simon-Brandt &rightarrow; MarkdownTools") to create the documentation. The other tools are usually pre-installed in any Unix-like OS distribution.
 
