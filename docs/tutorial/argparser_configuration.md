@@ -1,3 +1,23 @@
+<!--
+###############################################################################
+#                                                                             #
+# Copyright 2025 Simon Brandt                                                 #
+#                                                                             #
+# Licensed under the Apache License, Version 2.0 (the "License");             #
+# you may not use this file except in compliance with the License.            #
+# You may obtain a copy of the License at                                     #
+#                                                                             #
+#     http://www.apache.org/licenses/LICENSE-2.0                              #
+#                                                                             #
+# Unless required by applicable law or agreed to in writing, software         #
+# distributed under the License is distributed on an "AS IS" BASIS,           #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.    #
+# See the License for the specific language governing permissions and         #
+# limitations under the License.                                              #
+#                                                                             #
+###############################################################################
+-->
+
 ### 5.3. Argparser configuration
 
 The Argparser accepts over 50 options for configuring the argument parsing, checking their values and the consistency of the arguments definition, creating the various message types (see below), and accessing the required companion files. These options are available as [environment variables](../reference/environment_variables/introduction.md#94-environment-variables). By this, you can set them directly in your script, and even [`export`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-export "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; export") them to child processes. Thus, you can set these variables once and use them throughout your script suite.

@@ -1,3 +1,23 @@
+<!--
+###############################################################################
+#                                                                             #
+# Copyright 2025 Simon Brandt                                                 #
+#                                                                             #
+# Licensed under the Apache License, Version 2.0 (the "License");             #
+# you may not use this file except in compliance with the License.            #
+# You may obtain a copy of the License at                                     #
+#                                                                             #
+#     http://www.apache.org/licenses/LICENSE-2.0                              #
+#                                                                             #
+# Unless required by applicable law or agreed to in writing, software         #
+# distributed under the License is distributed on an "AS IS" BASIS,           #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.    #
+# See the License for the specific language governing permissions and         #
+# limitations under the License.                                              #
+#                                                                             #
+###############################################################################
+-->
+
 ## 6. Comparison of command-line parsers
 
 Several other shell command-line parsers predate the Argparser and were in part influential in its design choices. The [table](feature_comparison.md#61-feature-comparison) below aims at comparing their features or lack thereof, intended to be as comprehensive as possible. If you're missing a function, please open an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues"), such that the function can be added&mdash;to the table and maybe even to the Argparser.

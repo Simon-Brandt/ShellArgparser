@@ -1,3 +1,23 @@
+<!--
+###############################################################################
+#                                                                             #
+# Copyright 2025 Simon Brandt                                                 #
+#                                                                             #
+# Licensed under the Apache License, Version 2.0 (the "License");             #
+# you may not use this file except in compliance with the License.            #
+# You may obtain a copy of the License at                                     #
+#                                                                             #
+#     http://www.apache.org/licenses/LICENSE-2.0                              #
+#                                                                             #
+# Unless required by applicable law or agreed to in writing, software         #
+# distributed under the License is distributed on an "AS IS" BASIS,           #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.    #
+# See the License for the specific language governing permissions and         #
+# limitations under the License.                                              #
+#                                                                             #
+###############################################################################
+-->
+
 ### 9.1. Arguments definition
 
 The arguments definition that the Argparser uses to parse the arguments and to create the help and usage messages shows a tabular structure with eleven columns. These columns are delimited by an [`ARGPARSER_ARG_DELIMITER_1`](environment_variables/environment_variables.md#9411-argparser_arg_delimiter_1) character each, by default a pipe (`"|"`). Since fields can be surrounded by an arbitrary number of spaces, visual alignment as true table is possible.

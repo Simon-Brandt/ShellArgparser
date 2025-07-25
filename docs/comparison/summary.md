@@ -1,3 +1,23 @@
+<!--
+###############################################################################
+#                                                                             #
+# Copyright 2025 Simon Brandt                                                 #
+#                                                                             #
+# Licensed under the Apache License, Version 2.0 (the "License");             #
+# you may not use this file except in compliance with the License.            #
+# You may obtain a copy of the License at                                     #
+#                                                                             #
+#     http://www.apache.org/licenses/LICENSE-2.0                              #
+#                                                                             #
+# Unless required by applicable law or agreed to in writing, software         #
+# distributed under the License is distributed on an "AS IS" BASIS,           #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.    #
+# See the License for the specific language governing permissions and         #
+# limitations under the License.                                              #
+#                                                                             #
+###############################################################################
+-->
+
 ### 6.4. Summary
 
 When comparing the different approaches to command-line parsing, it is apparent that&mdash;as expected&mdash;the more recent parsers have a larger set of features. While the Bash-builtin [`getopts`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-getopts "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; getopts") parser comprises only minimal functionality (not even long options), it is the only one that solely implements the POSIX standard. A slightly greater number of features comes with GNU [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)"), like long options and the ability to abbreviate them.

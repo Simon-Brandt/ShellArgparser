@@ -1,3 +1,23 @@
+<!--
+###############################################################################
+#                                                                             #
+# Copyright 2025 Simon Brandt                                                 #
+#                                                                             #
+# Licensed under the Apache License, Version 2.0 (the "License");             #
+# you may not use this file except in compliance with the License.            #
+# You may obtain a copy of the License at                                     #
+#                                                                             #
+#     http://www.apache.org/licenses/LICENSE-2.0                              #
+#                                                                             #
+# Unless required by applicable law or agreed to in writing, software         #
+# distributed under the License is distributed on an "AS IS" BASIS,           #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.    #
+# See the License for the specific language governing permissions and         #
+# limitations under the License.                                              #
+#                                                                             #
+###############################################################################
+-->
+
 ### 5.11. Standalone usage
 
 Although the usual way to run the Argparser is [sourcing](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash Builtins &rightarrow; source"), you can also invoke it directly. This allows you to query the Argparser's options, but, perhaps more importantly, to run it from shells other than Bash.

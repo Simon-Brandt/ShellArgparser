@@ -1,3 +1,23 @@
+<!--
+###############################################################################
+#                                                                             #
+# Copyright 2025 Simon Brandt                                                 #
+#                                                                             #
+# Licensed under the Apache License, Version 2.0 (the "License");             #
+# you may not use this file except in compliance with the License.            #
+# You may obtain a copy of the License at                                     #
+#                                                                             #
+#     http://www.apache.org/licenses/LICENSE-2.0                              #
+#                                                                             #
+# Unless required by applicable law or agreed to in writing, software         #
+# distributed under the License is distributed on an "AS IS" BASIS,           #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.    #
+# See the License for the specific language governing permissions and         #
+# limitations under the License.                                              #
+#                                                                             #
+###############################################################################
+-->
+
 ## 4. License
 
 The Argparser is licensed under the terms and conditions of the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0 "apache.org &rightarrow; Licenses &rightarrow; Apache License, Version 2.0"). This applies to all source code files (all shell scripts and [Julia](https://julialang.org/ "julialang.org") files) and the documentation (all Markdown files), but not to the HTML, SVG, and CSV files in the [comparison](../comparison) directory, any file in the [resources](../resources) directory, as well as the [.shellcheckrc](../.shellcheckrc), which are all placed in the Public Domain.

@@ -1,3 +1,23 @@
+<!--
+###############################################################################
+#                                                                             #
+# Copyright 2025 Simon Brandt                                                 #
+#                                                                             #
+# Licensed under the Apache License, Version 2.0 (the "License");             #
+# you may not use this file except in compliance with the License.            #
+# You may obtain a copy of the License at                                     #
+#                                                                             #
+#     http://www.apache.org/licenses/LICENSE-2.0                              #
+#                                                                             #
+# Unless required by applicable law or agreed to in writing, software         #
+# distributed under the License is distributed on an "AS IS" BASIS,           #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.    #
+# See the License for the specific language governing permissions and         #
+# limitations under the License.                                              #
+#                                                                             #
+###############################################################################
+-->
+
 ### 5.5. Help and usage messages
 
 No matter how many keyword arguments are defined, as long as [`ARGPARSER_ADD_HELP`](../reference/environment_variables/environment_variables.md#942-argparser_add_help) and [`ARGPARSER_ADD_USAGE`](../reference/environment_variables/environment_variables.md#943-argparser_add_usage) are set to `true` (the default), the Argparser interprets the flags from the [`ARGPARSER_HELP_OPTIONS`](../reference/environment_variables/environment_variables.md#9426-argparser_help_options) (default: `-h` and `-?`) and `--help` as call for a verbose help message and the flags from the [`ARGPARSER_USAGE_OPTIONS`](../reference/environment_variables/environment_variables.md#9450-argparser_usage_options) (default: `-u`) and `--usage` as call for a brief usage message. Then, these options are automatically added to the script's arguments definition and override any same-named argument name (yielding an error message if [`ARGPARSER_CHECK_ARG_DEF`](../reference/environment_variables/environment_variables.md#9414-argparser_check_arg_def) is set to `true`). This is to ensure that the novice user of your script can do exactly what we did, above: trying the most common variants to get some help over how to use a program or script by typing

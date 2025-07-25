@@ -1,3 +1,23 @@
+<!--
+###############################################################################
+#                                                                             #
+# Copyright 2025 Simon Brandt                                                 #
+#                                                                             #
+# Licensed under the Apache License, Version 2.0 (the "License");             #
+# you may not use this file except in compliance with the License.            #
+# You may obtain a copy of the License at                                     #
+#                                                                             #
+#     http://www.apache.org/licenses/LICENSE-2.0                              #
+#                                                                             #
+# Unless required by applicable law or agreed to in writing, software         #
+# distributed under the License is distributed on an "AS IS" BASIS,           #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.    #
+# See the License for the specific language governing permissions and         #
+# limitations under the License.                                              #
+#                                                                             #
+###############################################################################
+-->
+
 ### 5.9. Error and warning messages
 
 The Argparser outputs about a hundred different error and warning messages to give both you and your script's user as detailled feedback as possible about what went wrong with the argument parsing, value checking, *etc.* Each message starts with your script's canonical name (the [`ARGPARSER_SCRIPT_NAME`](../reference/environment_variables/environment_variables.md#9435-argparser_script_name)), followed by either `"Error:"` or `"Warning:"` and the respective message. Using the same simplified [YAML](https://en.wikipedia.org/wiki/YAML "wikipedia.org &rightarrow; YAML") file as for the help and usage messages (the [`ARGPARSER_TRANSLATION_FILE`](../reference/environment_variables/environment_variables.md#9440-argparser_translation_file)), also the error and warning messages can be fully localized.

@@ -1,3 +1,23 @@
+<!--
+###############################################################################
+#                                                                             #
+# Copyright 2025 Simon Brandt                                                 #
+#                                                                             #
+# Licensed under the Apache License, Version 2.0 (the "License");             #
+# you may not use this file except in compliance with the License.            #
+# You may obtain a copy of the License at                                     #
+#                                                                             #
+#     http://www.apache.org/licenses/LICENSE-2.0                              #
+#                                                                             #
+# Unless required by applicable law or agreed to in writing, software         #
+# distributed under the License is distributed on an "AS IS" BASIS,           #
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.    #
+# See the License for the specific language governing permissions and         #
+# limitations under the License.                                              #
+#                                                                             #
+###############################################################################
+-->
+
 ### 9.2. Colors and styles
 
 The Argparser employs [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters") to set the appearance of help, usage, version, error, and warning messages. To this end, five environment variable are defined, *viz.* [`ARGPARSER_HELP_STYLE`](environment_variables/environment_variables.md#9427-argparser_help_style), [`ARGPARSER_USAGE_STYLE`](environment_variables/environment_variables.md#9451-argparser_usage_style), [`ARGPARSER_VERSION_STYLE`](environment_variables/environment_variables.md#9458-argparser_version_style), [`ARGPARSER_ERROR_STYLE`](environment_variables/environment_variables.md#9419-argparser_error_style), and [`ARGPARSER_WARNING_STYLE`](environment_variables/environment_variables.md#9459-argparser_warning_style). Since the escape codes are nonprintable, not all terminals or text editors may support them. Many terminals do, while *e.g.* [`less`](https://man7.org/linux/man-pages/man1/less.1.html "man7.org &rightarrow; man pages &rightarrow; less(1)") has a dedicated flag, `--raw-control-chars`.
