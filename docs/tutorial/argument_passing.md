@@ -20,7 +20,7 @@
 
 ### 5.1. Argument passing
 
-First, let's see how we can use the Argparser to parse the arguments given to your script, here saved as [`try_argparser.sh`](../../../tutorial/try_argparser.sh) in the [tutorial](../tutorial) directory. You can uncover the script if you want to test and try it, but we'll come back to it in the next section. For now, only the output is relevant, when we call the script from the command line.
+First, let's see how we can use the Argparser to parse the arguments given to your script, here saved as [`try_argparser.sh`](../../tutorial/try_argparser.sh) in the [tutorial](../../tutorial) directory. You can uncover the script if you want to test and try it, but we'll come back to it in the next section. For now, only the output is relevant, when we call the script from the command line.
 
 <details>
 

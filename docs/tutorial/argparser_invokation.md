@@ -135,7 +135,7 @@ Arguments can have multiple short and/or long option names, optional default val
 
 As you saw above, the Argparser will aggregate all arguments (values) given after a word starting with a hyphen (*i.e.*, an option name) to this option. If the number doesn't match the number of required values, an error is thrown instead of cutting the values. If an argument gets a wrong number of values, but has a default value, only a warning is thrown and the default value is taken.
 
-Thereby, [errors](error_and_warning_messages.mderror_and_warning_messages.md#59-error-and-warning-messages) abort the script, while [warnings](#59-error-and-warning-messages) just write a message to `STDERR`. Even after parsing or value checking errors occurred, the parsing or value checking continues and the Argparser aggregates the error messages until the end, when all are printed, to simplify the correction of multiple mistakes.
+Thereby, [errors](error_and_warning_messages.md#59-error-and-warning-messages) abort the script, while [warnings](error_and_warning_messages.md#59-error-and-warning-messages) just write a message to `STDERR`. Even after parsing or value checking errors occurred, the parsing or value checking continues and the Argparser aggregates the error messages until the end, when all are printed, to simplify the correction of multiple mistakes.
 
 [&#129092;&nbsp;5.1. Argument passing](argument_passing.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.3. Argparser configuration&nbsp;&#129094;](argparser_configuration.md)
