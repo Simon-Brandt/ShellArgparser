@@ -92,9 +92,9 @@ var_7 | g          | var-7     | VAL_7     | true     |         | bool | 0      
 
 The same is necessary for the printable part of the help file (here [`help_message_de.txt`](../../resources/help_message_de.txt)):
 
-<!-- <include command="sed '1,14d' ../resources/help_message_de.txt" lang="console"> -->
+<!-- <include command="sed '1,15d' ../resources/help_message_de.txt" lang="console"> -->
 ```console
-$ sed '1,14d' ../resources/help_message_de.txt
+$ sed '1,15d' ../resources/help_message_de.txt
 # Print the header.
 Eine kurze Kopfzeile fasst zusammen, wie die Hilfe-Meldung zu interpretieren
 ist.
@@ -124,7 +124,7 @@ Finally, we need a translation file (here [`translations.yaml`](../../resources/
 
 <summary>Beginning of <code>translations.yaml</code></summary>
 
-<!-- <include command="sed '1,4d;83q' ../resources/translations.yaml" lang="yaml"> -->
+<!-- <include command="sed '1,5d;84q' ../resources/translations.yaml" lang="yaml"> -->
 ```yaml
 # 1.    Define the general translations.
 ---

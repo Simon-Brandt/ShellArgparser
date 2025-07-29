@@ -1,6 +1,7 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-02-12
+# Last Modification: 2025-07-29
+# License: Public Domain
 
 # Purpose: Print a help message for test_localization.sh, invoked by
 # test_localization.sh --help.  Compared to the auto-generated help

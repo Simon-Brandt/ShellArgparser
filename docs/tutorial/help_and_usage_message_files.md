@@ -56,9 +56,9 @@ source argparser -- "$@"
 
 Additionally, we need a separate file, which we'll call [`help_message.txt`](../../resources/help_message.txt) and have passed as value to [`ARGPARSER_HELP_FILE`](../reference/environment_variables/environment_variables.md#9423-argparser_help_file). This plain-text file stores the help message's structure and can contain arbitrary additional content.
 
-<!-- <include command="sed '1,14d' ../resources/help_message.txt" lang="console"> -->
+<!-- <include command="sed '1,15d' ../resources/help_message.txt" lang="console"> -->
 ```console
-$ sed '1,14d' ../resources/help_message.txt
+$ sed '1,15d' ../resources/help_message.txt
 # Print the header.
 A brief header summarizes the way how to interpret the help message.
 @Header
