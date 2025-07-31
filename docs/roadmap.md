@@ -26,9 +26,11 @@ Future Argparser versions will add several new features and address known issues
 
 The Argparser uses [semantic versioning (SemVer)](https://semver.org/ "semver.org") for the releases, *i.e.*, version numbers given by major version, minor version, and patch, separated by dots. There is only one supported version at a time to reduce developer burden, with new versions being released in strictly monotonic succession, regarding their version numbers.
 
-Bugfixes (increment of patch level) should be released immediately once it is confirmed that they actually fix the bug, while new features are added on a longer timescale (increment of minor level). Breaking changes (increment of major level) are kept unreleased for the longest time, trying to accumulate several changes to release them altogether. However, if a pending change severely hinders the Argparser's further development, the breaking change will be released sooner.
+Bugfixes (increment of patch version) should be released immediately once it is confirmed that they actually fix the bug, while new features are added on a longer timescale (increment of minor version). Breaking changes (increment of major version) are kept unreleased for the longest time, trying to accumulate several changes to release them altogether. However, if a pending change severely hinders the Argparser's further development, the breaking change will be released sooner.
 
-Breaking changes in the sense of SemVer *only* apply to modifications to the code that are expected or proven to change the Argparser's behavior in a way that can be seen by your script when normally running the Argparser. That is, a breaking change may be the modification of an environment variable's default value or an alteration of the output generated when [`ARGPARSER_WRITE_ARGS`](reference/environment_variables/environment_variables.md#9460-argparser_write_args) is set to `true`. In contrast, at least for now, the Argparser's internal state is completely hidden from a normal Argparser call. While it is possible to use the functions for your own purpose (by setting [`ARGPARSER_UNSET_FUNCTIONS`](reference/environment_variables/environment_variables.md#9443-argparser_unset_functions) to `false`), any change is considered an implementation detail, as long as the Argparser's output remains unchanged. Likewise, changes to the tests, comparison scripts, and documentation are *not* considered for assessing changes as breaking and may occur at any point. In other words, SemVer only applies to the [Argparser exectutable](../argparser), while all other files are just distributed with it under the same version number.
+Breaking changes in the sense of SemVer *only* apply to modifications to the code that are expected or proven to change the Argparser's behavior in a way that can be seen by your script when normally running the Argparser. That is, a breaking change may be the modification of an environment variable's default value or an alteration of the output generated when [`ARGPARSER_WRITE_ARGS`](reference/environment_variables/environment_variables.md#9460-argparser_write_args) is set to `true`. In contrast, at least for now, the Argparser's internal state is completely hidden from a normal Argparser call. While it is possible to use the functions for your own purpose (by setting [`ARGPARSER_UNSET_FUNCTIONS`](reference/environment_variables/environment_variables.md#9443-argparser_unset_functions) to `false`), any change is considered an implementation detail, as long as the Argparser's output remains unchanged. The help, usage, version, error, and warning messages are intended for human view, and not to be parsed by scripts. Consequently, their structure and contents may change at any time.
+
+Likewise, changes to the tests, comparison scripts, and documentation are *not* considered for assessing changes as breaking and may occur at any point. In other words, SemVer only applies to the [Argparser exectutable](../argparser), while all other files are just distributed with it under the same version number.
 
 You can obtain the version number of your Argparser copy by querying `argparser --version`:
 
@@ -83,12 +85,17 @@ The following features are considered for addition in a future version. If you m
 Moreover, it could be even deemed useful to add a `-l,--license` flag to the default options, which would output an `ARGPARSER_LICENSE_FILE`'s contents, showing the exact license&mdash;or just its name?
 - ***Implementation likelihood:*** Medium.
 
-#### 7.2.8. POSIX compliance
+#### 7.2.8. Programmable argument completion
+
+- ***Description:*** When typing long option names on the command line, without wanting or being allowed to abbreviate the names, hitting `TAB` could auto-complete the option name using programmable completion. However, the complexity and benefits of such a feature still need to be figured out.
+- ***Implementation likelihood:*** Medium/Low.
+
+#### 7.2.9. POSIX compliance
 
 - ***Description:*** POSIX allows very few constructs for argument parsing, like no long options. Since there are perfectly suitable alternatives for this simple parsing, and the Argparser aims at a way more sophisticated command-line interface, opt-in POSIX compliance seems unnecessary for now.
 - ***Implementation likelihood:*** Low.
 
-#### 7.2.9. Alternative option prefixes (`+`/`/`)
+#### 7.2.10. Alternative option prefixes (`+`/`/`)
 
 - ***Description:*** On certain platforms, options are given with other prefixes, like `/` on DOS-like systems. The Argparser targets Unix-like platforms, and allowing other characters would require a massive change to the codebase. Further, plus signs are used as tokens for flag negation, so for using them as regular prefixes, the hyphen would take their role. More importantly, there is no such equivalent for the forward slash&mdash;a backslash would feel most natural, but would collide with the path separator on DOS-like platforms. Considering the massive efforts needed to implement this, it is unlikely to ever be done.
 - ***Implementation likelihood:*** Almost zero.
