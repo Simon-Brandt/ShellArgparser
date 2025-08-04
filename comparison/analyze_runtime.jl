@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-07-24
+# Last Modification: 2025-08-04
 
 using CSV: CSV
 using Dates: Dates
@@ -132,8 +132,8 @@ function write_runtime_stats(
     csv_file::String,
     stats::Dict{String, Dict{String, Number}},
 )::Nothing
-    # Save the the mean, standard deviation, and median for the runtimes
-    # as CSV file.
+    # Save the mean, standard deviation, and median for the runtimes as
+    # CSV file.
     header = ("Script", "Mean", "Std dev", "Median")
     lines = nothing
     for script_name in sort(collect(keys(stats)))
@@ -154,6 +154,36 @@ function write_runtime_stats(
     return nothing
 end
 
+function write_runtimes(
+    csv_file::String,
+    runtimes::Dict{String, Dict{String, Integer}},
+)::Nothing
+    # Save the actual runtimes as CSV file.
+    script_names = sort(collect(keys(runtimes)))
+    header = ("Run ID", script_names...)
+    cols = sort(
+        collect(keys(runtimes[script_names[begin]])),
+        lt=NaturalSort.natural,
+    )
+
+    for script_name in script_names
+        col = []
+        for runtime_id in sort(collect(keys(runtimes[script_name])))
+            push!(col, runtimes[script_name][runtime_id])
+        end
+
+        if isempty(cols)
+            cols = col
+        else
+            cols = hcat(cols, col)
+        end
+    end
+
+    CSV.write(csv_file, Tables.table(cols; header))
+
+    return nothing
+end
+
 function main()::Nothing
     # Compute the runtimes for the scripts for comparison.
     runtimes = Dict{String, Dict{String, Integer}}()
@@ -166,16 +196,20 @@ function main()::Nothing
     end
 
     # Plot the runtimes and save the plot as SVG file.  Additionally,
-    # create a CSV file with the runtime stats.
-    csv_file = "stats.csv"
+    # create a CSV file with the runtimes and runtime stats.
+    csv_file = "runtimes.csv"
+    stats_file = "stats.csv"
     plot_file = "stats.svg"
     if basename(pwd()) != "comparison"
         csv_file = "comparison/$csv_file"
+        stats_file = "comparison/$stats_file"
         plot_file = "comparison/$plot_file"
     end
 
     plot_runtime_stats(plot_file, runtimes)
-    write_runtime_stats(csv_file, stats)
+
+    write_runtimes(csv_file, runtimes)
+    write_runtime_stats(stats_file, stats)
 
     return nothing
 end
