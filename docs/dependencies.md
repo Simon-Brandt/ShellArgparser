@@ -59,6 +59,7 @@ Finally, [Julia](https://julialang.org/ "julialang.org") and its libraries are u
 For Julia, the following external packages are needed:
 
 - [`CSV.jl`](https://csv.juliadata.org/stable/ "csv.juliadata.org") &ge;&#8239;0.10.15
+- [`NaturalSort.jl`](https://github.com/JuliaStrings/NaturalSort.jl "github.com &rightarrow; JuliaStrings &rightarrow; NaturalSort") &ge;&#8239;1.0.0
 - [`Statistics.jl`](https://docs.julialang.org/en/v1/stdlib/Statistics/ "docs.julialang.org &rightarrow; Statistics.jl") &ge;&#8239;1.11.1
 - [`StatsPlots.jl`](https://docs.juliaplots.org/stable/generated/statsplots/ "docs.juliaplots.org &rightarrow; StatsPlots.jl") &ge;&#8239;0.15.7
 - [`Tables.jl`](https://tables.juliadata.org/stable/ "tables.juliadata.org") &ge;&#8239;1.12.1
