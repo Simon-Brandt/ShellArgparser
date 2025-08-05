@@ -20,10 +20,11 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-04
+# Last Modification: 2025-08-05
 
 using CSV: CSV
 using Dates: Dates
+using NaturalSort: NaturalSort
 using Statistics: Statistics
 using StatsPlots: StatsPlots
 using Tables: Tables
@@ -96,9 +97,11 @@ end
 function plot_runtime_stats(
     plot_file::String,
     runtimes::Dict{String, Dict{String, Integer}},
+    backend::Function,
 )::Nothing
     # Create an empty violin plot to fill it later with the data series.
-    plot = StatsPlots.violin(
+    backend()
+    plot_attrs=(
         size=(1600, 900),
         legend=false,
         xlabel="Command-line parser",
@@ -106,7 +109,20 @@ function plot_runtime_stats(
         labelfontsize=18,
         tickfontsize=18,
         margin=(36, :px),
+        draw_arrow=true,
     )
+    if backend == StatsPlots.pgfplotsx
+        plot_attrs = (
+            ;
+            plot_attrs...,
+            labelfont=StatsPlots.font(family="Times Roman", pointsize=24),
+            guidefont=StatsPlots.font(family="Times Roman", pointsize=24),
+            tickfont=StatsPlots.font(family="Times Roman", pointsize=24),
+            tex_output_standalone = true,
+        )
+    end
+
+    plot = StatsPlots.violin(; plot_attrs...)
 
     # For each script, extract the runtimes from the dictionary and plot
     # them together as violin plot.  Use an equally distributed set of
@@ -195,8 +211,9 @@ function main()::Nothing
         stats[script_name] = compute_runtime_stats(runtimes[script_name])
     end
 
-    # Plot the runtimes and save the plot as SVG file.  Additionally,
-    # create a CSV file with the runtimes and runtime stats.
+    # Plot the runtimes and save the plot as SVG and LaTeX file.
+    # Additionally, create a CSV file with the runtimes and runtime
+    # stats.
     csv_file = "runtimes.csv"
     stats_file = "stats.csv"
     plot_file = "stats.svg"
@@ -206,7 +223,10 @@ function main()::Nothing
         plot_file = "comparison/$plot_file"
     end
 
-    plot_runtime_stats(plot_file, runtimes)
+    plot_runtime_stats(plot_file, runtimes, StatsPlots.gr)
+
+    plot_file = replace(plot_file, ".svg" => ".tex")
+    plot_runtime_stats(plot_file, runtimes, StatsPlots.pgfplotsx)
 
     write_runtimes(csv_file, runtimes)
     write_runtime_stats(stats_file, stats)
