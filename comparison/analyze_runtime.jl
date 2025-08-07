@@ -20,23 +20,24 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-05
+# Last Modification: 2025-08-07
 
 using CSV: CSV
+using DataStructures: OrderedDict
 using Dates: Dates
 using NaturalSort: NaturalSort
 using Statistics: Statistics
 using StatsPlots: StatsPlots
 using Tables: Tables
 
-function get_commands()::Dict{String, Cmd}
+function get_commands()::OrderedDict{String, Cmd}
     # Set the scripts and their common command-line arguments.
-    scripts = (
-        "argparser_wrapper.sh",
-        "docopts_wrapper.sh",
-        "getopt_wrapper.sh",
-        "getopts_wrapper.sh",
-        "shflags_wrapper.sh",
+    scripts = OrderedDict{String, String}(
+        "getopts" => "getopts_wrapper.sh",
+        "getopt" => "getopt_wrapper.sh",
+        "shFlags" => "shflags_wrapper.sh",
+        "docopts" => "docopts_wrapper.sh",
+        "Shell Argparser" => "argparser_wrapper.sh",
     )
     args=(
         "-v",
@@ -55,22 +56,21 @@ function get_commands()::Dict{String, Cmd}
     # If not called from the "comparison" directory, but the base
     # directory, prepend the "comparison" directory to the script name.
     # Set the command as `Cmd` object.
-    commands = Dict()
-    for script in scripts
-        script_name = script
+    commands = OrderedDict()
+    for (script_name, script) in scripts
         if basename(pwd()) != "comparison"
-            script = "comparison/$script"
+            scripts[script_name] = "comparison/$script"
         end
 
-        commands[script_name] = `bash $script $args`
+        commands[script_name] = `bash $(scripts[script_name]) $args`
     end
 
     return commands
 end
 
-function get_runtimes(command::Cmd)::Dict{String, Integer}
+function get_runtimes(command::Cmd)::OrderedDict{String, Integer}
     # Run the command 1000 times and return the runtimes.
-    runtimes = Dict()
+    runtimes = OrderedDict()
     for i in 1:1000
         start_time = Dates.datetime2epochms(Dates.now())
         run(pipeline(command, stdout=devnull))
@@ -82,10 +82,10 @@ function get_runtimes(command::Cmd)::Dict{String, Integer}
 end
 
 function compute_runtime_stats(
-    runtimes::Dict{String, Integer}
-)::Dict{String, Number}
+    runtimes::OrderedDict{String, Integer}
+)::OrderedDict{String, Number}
     # Compute the mean, standard deviation, and median for the runtimes.
-    stats = Dict(
+    stats = OrderedDict(
         "Mean" => Statistics.mean(values(runtimes)),
         "Std dev" => Statistics.std(values(runtimes)),
         "Median" => Statistics.median(values(runtimes)),
@@ -96,7 +96,7 @@ end
 
 function plot_runtime_stats(
     plot_file::String,
-    runtimes::Dict{String, Dict{String, Integer}},
+    runtimes::OrderedDict{String, OrderedDict{String, Integer}},
     backend::Function,
 )::Nothing
     # Create an empty violin plot to fill it later with the data series.
@@ -127,13 +127,12 @@ function plot_runtime_stats(
     # For each script, extract the runtimes from the dictionary and plot
     # them together as violin plot.  Use an equally distributed set of
     # colors from the `:viridis` palette.
-    script_names = sort(collect(keys(runtimes)))
+    script_names = keys(runtimes)
     palette = StatsPlots.palette(:viridis, length(script_names))
     for (i, script_name) in enumerate(script_names)
-        label = chopsuffix(script_name, "_wrapper.sh")
         StatsPlots.violin!(
             plot,
-            repeat([label], length(runtimes[script_name])),
+            repeat([script_name], length(runtimes[script_name])),
             collect(values(runtimes[script_name])),
             color=palette[i],
         )
@@ -146,19 +145,19 @@ end
 
 function write_runtime_stats(
     csv_file::String,
-    stats::Dict{String, Dict{String, Number}},
+    stats::OrderedDict{String, OrderedDict{String, Number}},
 )::Nothing
     # Save the mean, standard deviation, and median for the runtimes as
     # CSV file.
     header = ("Script", "Mean", "Std dev", "Median")
-    lines = nothing
-    for script_name in sort(collect(keys(stats)))
+    lines = []
+    for script_name in keys(stats)
         line = Union{String, Number}[script_name]
         for stat in ("Mean", "Std dev", "Median")
             push!(line, round(stats[script_name][stat], digits=1))
         end
 
-        if isnothing(lines)
+        if isempty(lines)
             lines = permutedims(line)
         else
             lines = vcat(lines, permutedims(line))
@@ -172,27 +171,20 @@ end
 
 function write_runtimes(
     csv_file::String,
-    runtimes::Dict{String, Dict{String, Integer}},
+    runtimes::OrderedDict{String, OrderedDict{String, Integer}},
 )::Nothing
     # Save the actual runtimes as CSV file.
-    script_names = sort(collect(keys(runtimes)))
+    script_names = keys(runtimes)
     header = ("Run ID", script_names...)
-    cols = sort(
-        collect(keys(runtimes[script_names[begin]])),
-        lt=NaturalSort.natural,
-    )
+    cols = collect(keys(runtimes["Shell Argparser"]))
 
     for script_name in script_names
         col = []
-        for runtime_id in sort(collect(keys(runtimes[script_name])))
+        for runtime_id in keys(runtimes[script_name])
             push!(col, runtimes[script_name][runtime_id])
         end
 
-        if isempty(cols)
-            cols = col
-        else
-            cols = hcat(cols, col)
-        end
+        cols = hcat(cols, col)
     end
 
     CSV.write(csv_file, Tables.table(cols; header))
@@ -202,8 +194,8 @@ end
 
 function main()::Nothing
     # Compute the runtimes for the scripts for comparison.
-    runtimes = Dict{String, Dict{String, Integer}}()
-    stats = Dict{String, Dict{String, Number}}()
+    runtimes = OrderedDict{String, OrderedDict{String, Integer}}()
+    stats = OrderedDict{String, OrderedDict{String, Number}}()
 
     commands = get_commands()
     for (script_name, command) in pairs(commands)

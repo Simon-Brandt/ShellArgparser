@@ -23,30 +23,25 @@
 # Last Modification: 2025-08-07
 
 using CSV: CSV
-using Dates: Dates
-using NaturalSort: NaturalSort
-using Statistics: Statistics
+using DataStructures: OrderedDict
 using StatsPlots: StatsPlots
 using Tables: Tables
 
-function get_scripts()::Dict{String, String}
+function get_scripts()::OrderedDict{String, String}
     # Set the script names.
-    script_names = (
-        "argparser_wrapper.sh",
-        "docopts_wrapper.sh",
-        "getopt_wrapper.sh",
-        "getopts_wrapper.sh",
-        "shflags_wrapper.sh",
+    scripts = OrderedDict{String, String}(
+        "getopts" => "getopts_wrapper.sh",
+        "getopt" => "getopt_wrapper.sh",
+        "shFlags" => "shflags_wrapper.sh",
+        "docopts" => "docopts_wrapper.sh",
+        "Shell Argparser" => "argparser_wrapper.sh",
     )
-    scripts = Dict{String, String}()
 
     # If not called from the "comparison" directory, but the base
     # directory, prepend the "comparison" directory to the script name.
-    for script_name in script_names
+    for (script_name, script) in scripts
         if basename(pwd()) != "comparison"
-            scripts[script_name] = "comparison/$script_name"
-        else
-            scripts[script_name] = script_name
+            scripts[script_name] = "comparison/$script"
         end
     end
 
@@ -60,7 +55,7 @@ function get_code_length(script::String, script_name::String)::Integer
     count_commented_lines = false
     count_empty_lines = false
     for line in lines
-        if script_name == "docopts_wrapper.sh"
+        if script_name == "docopts"
             # Set commented lines for counting within the help block,
             # which is necessary syntax for docopts.  The help block
             # starts with "# Usage:" and ends at the first uncommented
@@ -102,7 +97,7 @@ end
 
 function plot_code_lengths(
     plot_file::String,
-    code_lengths::Dict{String, Integer},
+    code_lengths::OrderedDict{String, Integer},
     backend::Function,
 )::Nothing
     # Create an empty bar plot to fill it later with the data series.
@@ -132,12 +127,12 @@ function plot_code_lengths(
 
     # For each script, plot the code length in the bar plot.  Use an
     # equally distributed set of colors from the `:viridis` palette.
-    script_names = sort(collect(keys(code_lengths)))
+    script_names = keys(code_lengths)
     palette = StatsPlots.palette(:viridis, length(script_names))
     for (i, script_name) in enumerate(script_names)
         StatsPlots.bar!(
             plot,
-            [chopsuffix(script_name, "_wrapper.sh")],
+            [script_name],
             [code_lengths[script_name]],
             color=palette[i],
         )
@@ -150,15 +145,15 @@ end
 
 function write_code_lengths(
     csv_file::String,
-    code_lengths::Dict{String, Integer},
+    code_lengths::OrderedDict{String, Integer},
 )::Nothing
     # Save the code lengths as CSV file.
     header = ("Script", "Code length")
-    lines = nothing
-    for script_name in sort(collect(keys(code_lengths)))
-        line = [script_name code_lengths[script_name]]
+    lines = []
+    for (script_name, code_length) in code_lengths
+        line = [script_name code_length]
 
-        if isnothing(lines)
+        if isempty(lines)
             lines = line
         else
             lines = vcat(lines, line)
@@ -172,7 +167,7 @@ end
 
 function main()::Nothing
     # Compute the code lengths for the scripts for comparison.
-    code_lengths = Dict{String, Integer}()
+    code_lengths = OrderedDict{String, Integer}()
 
     scripts = get_scripts()
     for script_name in keys(scripts)
