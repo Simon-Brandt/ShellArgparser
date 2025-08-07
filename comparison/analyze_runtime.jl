@@ -152,15 +152,17 @@ function write_runtime_stats(
     header = ("Script", "Mean", "Std dev", "Median")
     lines = []
     for script_name in keys(stats)
-        line = Union{String, Number}[script_name]
-        for stat in ("Mean", "Std dev", "Median")
-            push!(line, round(stats[script_name][stat], digits=1))
-        end
+        line = hcat(
+            script_name,
+            round(stats[script_name]["Mean"], digits=1),
+            round(stats[script_name]["Std dev"], digits=1),
+            round(stats[script_name]["Median"], digits=1),
+        )
 
         if isempty(lines)
-            lines = permutedims(line)
+            lines = line
         else
-            lines = vcat(lines, permutedims(line))
+            lines = vcat(lines, line)
         end
     end
 
@@ -179,11 +181,7 @@ function write_runtimes(
     cols = collect(keys(runtimes["Shell Argparser"]))
 
     for script_name in script_names
-        col = []
-        for runtime_id in keys(runtimes[script_name])
-            push!(col, runtimes[script_name][runtime_id])
-        end
-
+        col = collect(values(runtimes[script_name]))
         cols = hcat(cols, col)
     end
 
