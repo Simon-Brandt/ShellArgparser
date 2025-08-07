@@ -1,0 +1,6 @@
+Script,Code length
+argparser_wrapper.sh,16
+docopts_wrapper.sh,94
+getopt_wrapper.sh,131
+getopts_wrapper.sh,102
+shflags_wrapper.sh,87
