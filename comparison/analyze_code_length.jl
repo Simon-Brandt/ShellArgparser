@@ -106,20 +106,24 @@ function plot_code_lengths(
         size=(1600, 900),
         legend=false,
         xlabel="Command-line parser",
-        ylabel="Code length (# of lines)",
-        labelfontsize=18,
-        tickfontsize=18,
+        ylabel="Code length (absolute)",
         margin=(36, :px),
-        draw_arrow=true,
+        ydraw_arrow=true,
     )
     if backend == StatsPlots.pgfplotsx
         plot_attrs = (
             ;
             plot_attrs...,
-            labelfont=StatsPlots.font(family="Times Roman", pointsize=24),
             guidefont=StatsPlots.font(family="Times Roman", pointsize=24),
             tickfont=StatsPlots.font(family="Times Roman", pointsize=24),
             tex_output_standalone = true,
+        )
+    else
+        plot_attrs = (
+            ;
+            plot_attrs...,
+            guidefontsize=18,
+            tickfontsize=18,
         )
     end
 
@@ -158,6 +162,21 @@ function plot_code_lengths(
     )
 
     StatsPlots.savefig(plot, plot_file)
+
+    if backend == StatsPlots.pgfplotsx
+        # Replace "axis y line" by its starred version and add the
+        # "-stealth" option to "y axis line style" to fix the Plots.jl
+        # bug #5166, https://github.com/JuliaPlots/Plots.jl/issues/5166.
+        lines = readlines(plot_file, keep=true)
+        for i in eachindex(lines)
+            lines[i] = replace(
+                lines[i],
+                "axis y line" => "axis y line*",
+                r"y axis line style=(?:\{)+" => s"\0-stealth, ",
+            )
+        end
+        write(plot_file, join(lines))
+    end
 
     return nothing
 end

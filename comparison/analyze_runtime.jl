@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-07
+# Last Modification: 2025-08-08
 
 using CSV: CSV
 using DataStructures: OrderedDict
@@ -106,19 +106,23 @@ function plot_runtime_stats(
         legend=false,
         xlabel="Command-line parser",
         ylabel="Runtime [ms]",
-        labelfontsize=18,
-        tickfontsize=18,
         margin=(36, :px),
-        draw_arrow=true,
+        ydraw_arrow=true,
     )
     if backend == StatsPlots.pgfplotsx
         plot_attrs = (
             ;
             plot_attrs...,
-            labelfont=StatsPlots.font(family="Times Roman", pointsize=24),
             guidefont=StatsPlots.font(family="Times Roman", pointsize=24),
             tickfont=StatsPlots.font(family="Times Roman", pointsize=24),
             tex_output_standalone = true,
+        )
+    else
+        plot_attrs = (
+            ;
+            plot_attrs...,
+            guidefontsize=18,
+            tickfontsize=18,
         )
     end
 
