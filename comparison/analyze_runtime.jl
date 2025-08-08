@@ -25,7 +25,6 @@
 using CSV: CSV
 using DataStructures: OrderedDict
 using Dates: Dates
-using NaturalSort: NaturalSort
 using Statistics: Statistics
 using StatsPlots: StatsPlots
 using Tables: Tables
