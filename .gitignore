@@ -1,2 +1,7 @@
 *.code-workspace
+comparison/*.aux
+comparison/*.fls
+comparison/*.log
+comparison/*.fdb_latexmk
+comparison/*.synctex.gz
 !.github
