@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-07
+# Last Modification: 2025-08-08
 
 using CSV: CSV
 using DataStructures: OrderedDict
@@ -28,7 +28,7 @@ using StatsPlots: StatsPlots
 using Tables: Tables
 
 function get_scripts()::OrderedDict{String, String}
-    # Set the script names.
+    # Get the script names.
     scripts = OrderedDict{String, String}(
         "getopts" => "getopts_wrapper.sh",
         "getopt" => "getopt_wrapper.sh",
@@ -125,8 +125,9 @@ function plot_code_lengths(
 
     plot = StatsPlots.bar(; plot_attrs...)
 
-    # For each script, plot the code length in the bar plot.  Use an
-    # equally distributed set of colors from the `:viridis` palette.
+    # For each script, plot the absolute code length in the bar plot.
+    # Use an equally distributed set of colors from the `:viridis`
+    # palette.
     script_names = keys(code_lengths)
     palette = StatsPlots.palette(:viridis, length(script_names))
     for (i, script_name) in enumerate(script_names)
@@ -138,6 +139,24 @@ function plot_code_lengths(
         )
     end
 
+    # Overlay the y axis for the code lengths relative to the Shell
+    # Argparser's code length.  Since the bars would look identical
+    # (their values are divided by the same number), it is not necessary
+    # to plot them.  Instead, plot an invisible bar whose value is the
+    # maximum of all code lengths, guaranteeing that both y axes would
+    # show all bars with the same height (which is calculated based on
+    # the largest value).
+    StatsPlots.bar!(
+        StatsPlots.twinx(),
+        [0.5],
+        [maximum(values(code_lengths)) / code_lengths["Shell Argparser"]];
+        plot_attrs...,
+        xlabel="",
+        ylabel="Code length (relative)",
+        seriescolor=false,
+        linecolor=false,
+    )
+
     StatsPlots.savefig(plot, plot_file)
 
     return nothing
@@ -147,11 +166,15 @@ function write_code_lengths(
     csv_file::String,
     code_lengths::OrderedDict{String, Integer},
 )::Nothing
-    # Save the code lengths as CSV file.
-    header = ("Script", "Code length")
+    # Save the absolute and relative code lengths as CSV file.
+    header = ("Script", "Code length (absolute)", "Code length (relative)")
     lines = []
     for (script_name, code_length) in code_lengths
-        line = [script_name code_length]
+        line = hcat(
+            script_name,
+            code_length,
+            round(code_length / code_lengths["Shell Argparser"], digits=1),
+        )
 
         if isempty(lines)
             lines = line
