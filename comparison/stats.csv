@@ -1,6 +1,6 @@
-Script,Mean,Std dev,Median
-argparser_wrapper.sh,134.9,2.1,135.0
-docopts_wrapper.sh,12.7,3.6,12.0
-getopt_wrapper.sh,5.7,1.5,6.0
-getopts_wrapper.sh,1.8,0.7,2.0
-shflags_wrapper.sh,259.1,43.1,273.5
+Parser,Mean,Std dev,Median
+getopts,1.9,0.6,2.0
+getopt,5.6,1.4,6.0
+shFlags,250.6,42.2,262.0
+docopts,12.3,3.6,12.0
+Shell Argparser,135.1,1.6,135.0

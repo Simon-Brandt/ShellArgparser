@@ -186,7 +186,7 @@ function write_code_lengths(
     code_lengths::OrderedDict{String, Integer},
 )::Nothing
     # Save the absolute and relative code lengths as CSV file.
-    header = ("Script", "Code length (absolute)", "Code length (relative)")
+    header = ("Parser", "Code length (absolute)", "Code length (relative)")
     lines = []
     for (script_name, code_length) in code_lengths
         line = hcat(

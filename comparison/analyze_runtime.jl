@@ -152,7 +152,7 @@ function write_runtime_stats(
 )::Nothing
     # Save the mean, standard deviation, and median for the runtimes as
     # CSV file.
-    header = ("Script", "Mean", "Std dev", "Median")
+    header = ("Parser", "Mean", "Std dev", "Median")
     lines = []
     for script_name in keys(stats)
         line = hcat(

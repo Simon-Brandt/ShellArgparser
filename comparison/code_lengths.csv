@@ -1,6 +1,6 @@
-Script,Code length
-argparser_wrapper.sh,16
-docopts_wrapper.sh,94
-getopt_wrapper.sh,131
-getopts_wrapper.sh,102
-shflags_wrapper.sh,87
+Parser,Code length (absolute),Code length (relative)
+getopts,102,6.4
+getopt,131,8.2
+shFlags,87,5.4
+docopts,94,5.9
+Shell Argparser,16,1.0
