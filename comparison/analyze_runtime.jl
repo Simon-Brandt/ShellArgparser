@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-08
+# Last Modification: 2025-08-14
 
 using CSV: CSV
 using DataStructures: OrderedDict
@@ -101,7 +101,6 @@ function plot_runtime_stats(
     # Create an empty violin plot to fill it later with the data series.
     backend()
     plot_attrs=(
-        size=(1600, 900),
         legend=false,
         xlabel="Command-line parser",
         ylabel="Runtime [ms]",
@@ -112,14 +111,16 @@ function plot_runtime_stats(
         plot_attrs = (
             ;
             plot_attrs...,
-            guidefont=StatsPlots.font(family="Times Roman", pointsize=24),
-            tickfont=StatsPlots.font(family="Times Roman", pointsize=24),
+            size=(915, 704),  # Empirical size for US letter, 2.5 cm margins.
+            guidefont=StatsPlots.font(family="Times Roman", pointsize=20),
+            tickfont=StatsPlots.font(family="Times Roman", pointsize=20),
             tex_output_standalone = true,
         )
     else
         plot_attrs = (
             ;
             plot_attrs...,
+            size=(1600, 900),
             guidefontsize=18,
             tickfontsize=18,
         )
@@ -142,6 +143,21 @@ function plot_runtime_stats(
     end
 
     StatsPlots.savefig(plot, plot_file)
+
+    if backend == StatsPlots.pgfplotsx
+        # Add borders (margins) to the "\documentclass" and add the
+        # "times" package for the Times Roman font.
+        lines = readlines(plot_file, keep=true)
+        for i in eachindex(lines)
+            lines[i] = replace(
+                lines[i],
+                "\\documentclass[tikz]{standalone}"
+                    => """\\documentclass[tikz=true, border=2.5cm]{standalone}
+                        \\usepackage{times}""",
+            )
+        end
+        write(plot_file, join(lines))
+    end
 
     return nothing
 end
