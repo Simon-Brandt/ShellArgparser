@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-07-24
+# Last Modification: 2025-08-15
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -28,6 +28,9 @@
 
 # Purpose: Test the functionality of the Argparser by running all test
 # scripts and comparing their output and errors to expected values.
+
+# Set the locale.
+export LC_ALL=en_US.UTF-8
 
 # Define the functions for colorizing and printing the colored output.
 function colorize() {
