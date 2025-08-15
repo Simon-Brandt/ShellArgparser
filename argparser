@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-07-24
+# Last Modification: 2025-08-15
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -4919,6 +4919,23 @@ function argparser_parse_args() {
             while (( "${#args[@]}" > 0 )) && [[ -z "${args[0]}" ]]; do
                 args=("${args[@]:1}")
             done
+
+            if (( "${#args[@]}" == 0 )); then
+                error_message="Error: Calling (instead of sourcing) the "
+                error_message+="Argparser requires the arguments definition "
+                error_message+="to be provided through STDIN, separated by "
+                error_message+="newlines.  Either pipe to the Argparser or "
+                error_message+="use process substitution to give input.  "
+                error_message+="Alternatively, try \"\$1 --help\" to get a "
+                error_message+="help message with further information."
+
+                argparser_translate "Error arg array 1" "${error_message}" \
+                    "${ARGPARSER_SCRIPT_NAME}"
+                error_message="${translation}"
+
+                argparser_print_error_or_warning_message "error" false true \
+                    "${error_message}"
+            fi
         else
             error_message="Error: Calling (instead of sourcing) the Argparser "
             error_message+="requires the arguments definition to be provided "
