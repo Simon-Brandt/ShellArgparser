@@ -5986,7 +5986,7 @@ function argparser_create_help_message() {
 
     # Split the element of column 3.
     if (( ARGPARSER_MAX_COL_WIDTH_3 == 0 )); then
-        if (( col_width_1 > 0 & col_width_2 > 0 )); then
+        if (( col_width_1 > 0 && col_width_2 > 0 )); then
             (( max_col_width_3 = ARGPARSER_MAX_WIDTH - col_width_1 \
                 - col_width_2 - 2 ))
         elif (( col_width_1 > 0 )); then
