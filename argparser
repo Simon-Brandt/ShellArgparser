@@ -5223,8 +5223,10 @@ function argparser_parse_args() {
     # script.
     if (( "${#error_messages[@]}" > 0 )); then
         if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
-            printf '\n' >&2
-            argparser_print_help_or_usage_message "usage" false 2 >&2
+            {
+                printf '\n'
+                argparser_print_help_or_usage_message "usage" false 2 
+            } >&2
         fi
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
     fi
@@ -5280,8 +5282,10 @@ function argparser_parse_args() {
     # and abort the script.
     if (( "${#error_messages[@]}" > 0 )); then
         if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
-            printf '\n' >&2
-            argparser_print_help_or_usage_message "usage" false 2 >&2
+            {
+                printf '\n'
+                argparser_print_help_or_usage_message "usage" false 2
+            } >&2
         fi
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
     fi
