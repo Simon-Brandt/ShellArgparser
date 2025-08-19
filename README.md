@@ -125,14 +125,14 @@ The Argparser is a plain Bash script that does not invoke external commands (onl
 
 **For running:**
 
-- Bash &ge;&#8239;4.0
+- Bash &ge;&#8239;4.4
 
-For simply running the Argparser, only Bash is required. Bash &ge;&#8239;4.0 is known to be mandatory, but testing occurred solely on Bash 5.2. Thus, please file an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues") if you encounter errors for versions earlier than 5.2, such that the minimum version can be updated, here.
+For simply running the Argparser, only Bash is required. Bash &ge;&#8239;4.4 is known to be mandatory, but testing occurred mainly on Bash 5.2. Thus, please file an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues") if you encounter errors for versions earlier than 5.2, such that the minimum version can be updated, here.
 
 **For contributing:**
 
 - Tests:
-  - Bash &ge;&#8239;4.0
+  - Bash &ge;&#8239;4.4
   - [`dash`](https://man7.org/linux/man-pages/man1/dash.1.html "man7.org &rightarrow; man pages &rightarrow; dash(1)")
   - [`diff`](https://man7.org/linux/man-pages/man1/diff.1.html "man7.org &rightarrow; man pages &rightarrow; diff(1)")
   - [`dirname`](https://man7.org/linux/man-pages/man1/dirname.1.html "man7.org &rightarrow; man pages &rightarrow; dirname(1)")
@@ -142,14 +142,14 @@ For simply running the Argparser, only Bash is required. Bash &ge;&#8239;4.0 is 
   - [`tee`](https://man7.org/linux/man-pages/man1/tee.1.html "man7.org &rightarrow; man pages &rightarrow; tee(1)")
   - [`tr`](https://man7.org/linux/man-pages/man1/tr.1.html "man7.org &rightarrow; man pages &rightarrow; tr(1)")
 - Documentation:
-  - Bash &ge;&#8239;4.0
+  - Bash &ge;&#8239;5.1 (by Markdown Tools dependency)
   - [Markdown Tools](https://github.com/Simon-Brandt/MarkdownTools "github.com &rightarrow; Simon-Brandt &rightarrow; MarkdownTools")
   - [`cat`](https://man7.org/linux/man-pages/man1/cat.1.html "man7.org &rightarrow; man pages &rightarrow; cat(1)")
   - [`head`](https://man7.org/linux/man-pages/man1/head.1.html "man7.org &rightarrow; man pages &rightarrow; head(1)")
   - [`ls`](https://man7.org/linux/man-pages/man1/ls.1.html "man7.org &rightarrow; man pages &rightarrow; ls(1)")
   - [`sed`](https://man7.org/linux/man-pages/man1/sed.1.html "man7.org &rightarrow; man pages &rightarrow; sed(1)")
 - Comparison:
-  - Bash &ge;&#8239;4.0
+  - Bash &ge;&#8239;4.4
   - [`cat`](https://man7.org/linux/man-pages/man1/cat.1.html "man7.org &rightarrow; man pages &rightarrow; cat(1)")
   - [`cp`](https://man7.org/linux/man-pages/man1/cp.1.html "man7.org &rightarrow; man pages &rightarrow; cp(1)")
   - [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)")

@@ -20,21 +20,17 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-15
+# Last Modification: 2025-08-19
 
 # Usage: Run this script with "bash run_docker.sh".
 
 # Purpose: Test the functionality of the Argparser by running the test
-# suite (run_tests.sh) from within Docker containers of Bash 4.0 through
+# suite (run_tests.sh) from within Docker containers of Bash 4.4 through
 # 5.3.
 
 # For each Bash version, build a Docker image to run the test suite
 # under a given Bash version.
 versions=(
-    4.0
-    4.1
-    4.2
-    4.3
     4.4
     5.0
     5.1
@@ -70,7 +66,7 @@ for version in "${versions[@]}"; do
 
     if (( error_count > 0 )); then
         printf '    Investigate the failed test(s) by running:\n'
-        printf '        docker run --interactive --tty %s\n' "${tag}"
+        printf '        docker run --interactive --tty --rm %s\n' "${tag}"
         printf '    followed by\n'
         printf '        bash run_tests.sh\n'
         printf '    in the created Docker container.\n'

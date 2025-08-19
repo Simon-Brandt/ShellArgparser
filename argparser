@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-15
+# Last Modification: 2025-08-19
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -38,7 +38,7 @@
 ########################################################################
 
 # Define the Argparser functions to check that the Argparser is run by
-# Bash 4.0 or higher, and execute the former immediately, such that the
+# Bash 4.4 or higher, and execute the former immediately, such that the
 # rest of the script doesn't get parsed (which would create errors since
 # it's written in Bash, not POSIX compliantly).
 argparser_check_shell() {
@@ -58,7 +58,7 @@ argparser_check_shell() {
 argparser_check_shell
 
 function argparser_check_bash_version() {
-    # Check that version of the current Bash instance is at least 4.0.
+    # Check that version of the current Bash instance is at least 4.4.
     # Else, print an error message.
     #
     # Environment:
@@ -71,8 +71,10 @@ function argparser_check_bash_version() {
     local error_message
 
     # Check Bash's version.
-    if (( "${BASH_VERSINFO[0]}" < 4 )); then
-        error_message="Error: For argument parsing, Bash 4.0 or higher is "
+    if (( "${BASH_VERSINFO[0]}" < 4 \
+        || ("${BASH_VERSINFO[0]}" == 4 && "${BASH_VERSINFO[1]}" < 4) ))
+    then
+        error_message="Error: For argument parsing, Bash 4.4 or higher is "
         error_message+="mandatory."
 
         if [[ ! -v "ARGPARSER_CHECK_ENV_VARS" \

@@ -29,7 +29,7 @@ In the following table, "&#10004;" marks the tools necessary for the respective 
 
 | Tool                                                                                                                              | Version         | Execution | Tests    | Documentation | Comparison |
 | --------------------------------------------------------------------------------------------------------------------------------- | --------------- | --------- | -------- | ------------- | ---------- |
-| Bash                                                                                                                              | &ge;&#8239;4.0  | &#10004;  | &#10004; | &#10004;      | &#10004;   |
+| Bash                                                                                                                              | &ge;&#8239;4.4  | &#10004;  | &#10004; | &#10004;      | &#10004;   |
 | [`cat`](https://man7.org/linux/man-pages/man1/cat.1.html "man7.org &rightarrow; man pages &rightarrow; cat(1)")                   |                 | &#10008;  | &#10008; | &#10004;      | &#10004;   |
 | [`cp`](https://man7.org/linux/man-pages/man1/cp.1.html "man7.org &rightarrow; man pages &rightarrow; cp(1)")                      |                 | &#10008;  | &#10008; | &#10008;      | &#10004;   |
 | [`dash`](https://man7.org/linux/man-pages/man1/dash.1.html "man7.org &rightarrow; man pages &rightarrow; dash(1)")                |                 | &#10008;  | &#10004; | &#10008;      | &#10008;   |
