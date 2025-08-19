@@ -51,8 +51,13 @@ argparser_check_shell() {
 
     # shellcheck disable=SC2292  # Intentional POSIX conformance.
     if [ -z "${BASH}" ]; then
-        printf '%s: ' "$0"
-        printf 'Error: The argument parsing requires Bash as active shell.\n'
+        if [ -t 2 ]; then
+            printf '\e[31;1;7m%s: %s\e[m\n' "$0" \
+                "Error: The Argparser requires Bash as executing shell."
+        else
+            printf '%s: %s\n' "$0" \
+                "Error: The Argparser requires Bash as executing shell."
+        fi >&2
         exit 1
     fi
 }
@@ -61,35 +66,21 @@ argparser_check_shell
 function argparser_check_bash_version() {
     # Check that version of the current Bash instance is at least 4.4.
     # Else, print an error message.
-    #
-    # Environment:
-    # ARGPARSER_CHECK_ENV_VARS (read-only)
-    # ARGPARSER_ERROR_EXIT_CODE
-    # ARGPARSER_ERROR_STYLE
-    # ARGPARSER_USE_STYLES_IN_FILES
 
-    # Define the local variable.
-    local error_message
-
-    # Check Bash's version.
     if (( BASH_VERSINFO[0] < 4 \
         || (BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] < 4) ))
     then
-        error_message="Error: For argument parsing, Bash 4.4 or higher is "
-        error_message+="mandatory."
-
-        if [[ ! -v "ARGPARSER_CHECK_ENV_VARS" \
-            || "${ARGPARSER_CHECK_ENV_VARS}" != false ]]
-        then
-            ARGPARSER_ARG_DELIMITER_2=","
-            ARGPARSER_ERROR_EXIT_CODE=1
-            ARGPARSER_ERROR_STYLE="red,bold,reverse"
-            ARGPARSER_USE_STYLES_IN_FILES=false
-        fi
-        argparser_print_error_or_warning_message "error" false true \
-            "${error_message}"
+        if [[ -t 2 ]]; then
+            printf '\e[31;1;7m%s: %s\e[m\n' "$0" \
+                "Error: The Argparser requires Bash 4.4 or higher."
+        else
+            printf '%s: %s\n' "$0" \
+                "Error: The Argparser requires Bash 4.4 or higher."
+        fi >&2
+        exit 1
     fi
 }
+argparser_check_bash_version
 
 # Define the Argparser functions used for general tests.
 function argparser_in_array() {
@@ -396,7 +387,7 @@ function argparser_check_file() {
     fi
 }
 
-# Define the general Argparser util functions.
+# Define the general Argparser utility functions.
 function argparser_trim() {
     # Trim leading an trailing space characters from a string.
     #
@@ -940,7 +931,7 @@ function argparser_colorize() {
         if [[ "${ARGPARSER_USE_STYLES_IN_FILES}" == true \
             || -t "${file_descriptor}" ]]
         then
-            printf '\e[0m'
+            printf '\e[m'
         fi
     fi
 }
@@ -7166,9 +7157,8 @@ function argparser_print_error_or_warning_message() {
             # shellcheck disable=SC2059  # Escape sequence in variable.
             printf "${style}"
             printf '%s\n' "${messages[@]}"
-            if [[ "${ARGPARSER_USE_STYLES_IN_FILES}" == true || -t 2 ]]
-            then
-                printf '\e[0m'
+            if [[ "${ARGPARSER_USE_STYLES_IN_FILES}" == true || -t 2 ]]; then
+                printf '\e[m'
             fi
         } >&2
 
@@ -7639,9 +7629,6 @@ function argparser_main() {
 
     (( source_level-- ))
 }
-
-# Check the version of the current Bash instance.
-argparser_check_bash_version
 
 # Run the Argparser.
 argparser_main "$@"
