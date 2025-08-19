@@ -40,7 +40,8 @@
 # Define the Argparser functions to check that the Argparser is run by
 # Bash 4.4 or higher, and execute the former immediately, such that the
 # rest of the script doesn't get parsed (which would create errors since
-# it's written in Bash, not POSIX compliantly).
+# it's written in Bash, not POSIX compliantly, and using Bash syntax not
+# available prior Bash 4.4).
 argparser_check_shell() {
     # Check that the current shell is a Bash instance.  Else, print an
     # error message.
@@ -71,8 +72,8 @@ function argparser_check_bash_version() {
     local error_message
 
     # Check Bash's version.
-    if (( "${BASH_VERSINFO[0]}" < 4 \
-        || ("${BASH_VERSINFO[0]}" == 4 && "${BASH_VERSINFO[1]}" < 4) ))
+    if (( BASH_VERSINFO[0] < 4 \
+        || (BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] < 4) ))
     then
         error_message="Error: For argument parsing, Bash 4.4 or higher is "
         error_message+="mandatory."
