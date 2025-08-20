@@ -140,7 +140,6 @@ For simply running the Argparser, only Bash is required. Bash &ge;&#8239;4.4 is 
   - [`sed`](https://man7.org/linux/man-pages/man1/sed.1.html "man7.org &rightarrow; man pages &rightarrow; sed(1)")
   - [`sort`](https://man7.org/linux/man-pages/man1/sort.1.html "man7.org &rightarrow; man pages &rightarrow; sort(1)")
   - [`tee`](https://man7.org/linux/man-pages/man1/tee.1.html "man7.org &rightarrow; man pages &rightarrow; tee(1)")
-  - [`tr`](https://man7.org/linux/man-pages/man1/tr.1.html "man7.org &rightarrow; man pages &rightarrow; tr(1)")
 - Documentation:
   - Bash &ge;&#8239;5.1 (by Markdown Tools dependency)
   - [Markdown Tools](https://github.com/Simon-Brandt/MarkdownTools "github.com &rightarrow; Simon-Brandt &rightarrow; MarkdownTools")

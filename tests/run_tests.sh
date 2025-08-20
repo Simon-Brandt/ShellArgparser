@@ -95,21 +95,27 @@ function colorize() {
     printf "${style}"
     printf '%s' "${string}"
     if [[ "${reset}" == true ]]; then
-        printf '\e[0m'
+        printf '\e[m'
     fi
 }
 
 function print_single_separator() {
     # Print a line of 120 hyphens acting as visual separator, colored in
     # white.
-    colorize "white" "$(printf '%120s' "" | tr ' ' "-")" true
+    local separator
+    printf -v separator '%120s' ""
+    separator="${separator// /-}"
+    colorize "white" "${separator}" true
     printf '\n'
 }
 
 function print_double_separator() {
     # Print a line of 120 equals signs acting as visual separator,
     # colored in blue.
-    colorize "cyan" "$(printf '%120s' "" | tr ' ' "=")" true
+    local separator
+    printf -v separator '%120s' ""
+    separator="${separator// /=}"
+    colorize "cyan" "${separator}" true
     printf '\n'
 }
 
