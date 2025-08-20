@@ -104,7 +104,15 @@ function print_double_separator() {
 
 # For each Bash version, build a Docker image to run the test suite
 # under a given Bash version.
-declare -A versions=(
+versions=(
+    4.3
+    4.4
+    5.0
+    5.1
+    5.2
+    5.3
+)
+declare -A sha1_hashes=(
     [4.3]=30a978b  # v4.3.46 (final release)
     [4.4]=b0776d8  # v4.4.19 (final release)
     [5.0]=36f2c40  # v5.0.18 (final release)
@@ -119,9 +127,9 @@ printf '%*s' 95 ""
 colorize "" $'\n' true
 print_double_separator
 
-for version in "${!versions[@]}"; do
+for version in "${versions[@]}"; do
     tag="argparser-bash${version/./}:latest"
-    sha1="${versions[${version}]}"
+    sha1_hash="${sha1_hashes[${version}]}"
 
     printf 'Building Docker image for '
     colorize "bold" "Bash v${version}" true
@@ -129,7 +137,7 @@ for version in "${!versions[@]}"; do
 
     docker build \
         --build-arg="VERSION=${version}" \
-        --build-arg="GIT_SHA1=${sha1}" \
+        --build-arg="GIT_SHA1=${sha1_hash}" \
         --build-context="parent=${PWD}/.." \
         --file=argparser.dockerfile \
         --quiet \
@@ -147,7 +155,7 @@ printf '%*s' 98 ""
 colorize "" $'\n' true
 print_double_separator
 
-for version in "${!versions[@]}"; do
+for version in "${versions[@]}"; do
     tag="argparser-bash${version/./}:latest"
 
     printf 'Running test suite for '
