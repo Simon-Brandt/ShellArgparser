@@ -34,28 +34,33 @@ export LC_ALL=en_US.UTF-8
 
 # Define the functions for colorizing and printing the colored output.
 function colorize() {
-    # Colorize and format the string using ANSI escape sequences.
+    # Colorize and format the string(s) using ANSI escape sequences.
+    # If the last string ends in $'\n', right-pad the merged string to
+    # 120 characters using spaces.  If using reverse video ("reverse"
+    # style), this means that also the spaces (and thus the entire line)
+    # are colored.
     #
     # Arguments:
     # - $1: the colors and/or styles to use as comma-separated list
-    # - $2: the string to colorize
-    # - $3: whether to reset the color and/or style after the string
+    # - $@: the string(s) to colorize
     #
     # Output:
     # - the colorized string
 
     # Define the local variables.
+    local IFS
     local request
     local requests
-    local reset
     local string
     local style
     local -A styles
 
     # Read the arguments.
     requests="$1"
-    string="$2"
-    reset="$3"
+    shift
+    IFS=" "
+    string="$*"
+    unset IFS
 
     # Define the associative array with colors and styles, and their
     # corresponding Select Graphic Rendition (SGR) ANSI escape sequence
@@ -89,12 +94,16 @@ function colorize() {
         style+="\e[${styles[${request}]}m"
     done
 
-    # Print the colorized string and possibly reset the color/style.
+    # Print the colorized string.  Possibly, right-pad the string.
+    # Finally, reset the color/style.
 
     # shellcheck disable=SC2059  # Escape sequence in variable.
     printf "${style}"
-    printf '%s' "${string}"
-    if [[ "${reset}" == true ]]; then
+    printf '%s' "${string%$'\n'}"
+    if [[ "${string: -1}" == $'\n' ]]; then
+        printf '%*s' $(( 120 - "${#string}" + 1 )) ""
+        printf '\e[m\n'
+    else
         printf '\e[m'
     fi
 }
@@ -105,8 +114,7 @@ function print_single_separator() {
     local separator
     printf -v separator '%120s' ""
     separator="${separator// /-}"
-    colorize "white" "${separator}" true
-    printf '\n'
+    colorize "white" "${separator}" $'\n'
 }
 
 function print_double_separator() {
@@ -115,8 +123,7 @@ function print_double_separator() {
     local separator
     printf -v separator '%120s' ""
     separator="${separator// /=}"
-    colorize "cyan" "${separator}" true
-    printf '\n'
+    colorize "cyan" "${separator}" $'\n'
 }
 
 # Define the function for printing the section names.
@@ -125,9 +132,7 @@ function print_section() {
     #
     # Arguments:
     # - $1: the section name to print
-    colorize "yellow,bold,reverse" "Running tests for $1..." false
-    printf '%*s' $(( 99 - ${#1} )) ""
-    colorize "" $'\n' true
+    colorize "yellow,bold,reverse" "Running tests for $1..." $'\n'
     print_double_separator
 }
 
@@ -151,7 +156,7 @@ function print_diff() {
     error="$3"
 
     printf 'Running test %s: ' "${test_number}"
-    colorize "bold" "\"${cmd}\"" true
+    colorize "bold" "\"${cmd}\""
     printf '...\n'
 
     diff --side-by-side --suppress-common-lines --color=always --width=120 \
@@ -169,16 +174,12 @@ function print_diff() {
 
     if (( exit_code == 0 )); then
         colorize "green,bold,reverse" \
-            "Test ${test_number} succeeded with correct output." false
-        printf '%*s' $(( 84 - ${#test_number} )) ""
-        colorize "" $'\n' true
+            "Test ${test_number} succeeded with correct output." $'\n'
         (( succeeded_cmd_count++ ))
     elif (( exit_code == 1 )); then
         print_single_separator
         colorize "red,bold,reverse" \
-            "Test ${test_number} failed with diverging output." false
-        printf '%*s' $(( 85 - ${#test_number} )) ""
-        colorize "" $'\n' true
+            "Test ${test_number} failed with diverging output." $'\n'
 
         failure_reasons+=("${test_type}")
         failed_cmds+=("${cmd}")
@@ -223,15 +224,11 @@ function print_fd_diff() {
 
     if (( exit_code == 0 )); then
         colorize "green,bold,reverse" \
-            "Test ${test_number} succeeded with identical environment." false
-        printf '%*s' $(( 77 - ${#test_number} )) ""
-        colorize "" $'\n' true
+            "Test ${test_number} succeeded with identical environment." $'\n'
     elif (( exit_code == 1 )); then
         print_single_separator
         colorize "red,bold,reverse" \
-            "Test ${test_number} failed with diverging environment." false
-        printf '%*s' $(( 80 - ${#test_number} )) ""
-        colorize "" $'\n' true
+            "Test ${test_number} failed with diverging environment." $'\n'
 
         failure_reasons+=("${test_type}")
         failed_cmds+=("${cmd}")
@@ -245,27 +242,17 @@ function print_summary() {
     # Print a summary giving statistics over the run commands.
     local line
 
-    colorize "yellow,bold,reverse" "Summary:" false
-    printf '%112s' ""
-    printf '\n'
+    colorize "yellow,bold,reverse" $'Summary:\n'
 
     line="$(printf ' - %2s tests were run.' \
         $(( succeeded_cmd_count + failed_cmd_count )))"
-    printf '%s' "${line}"
-    printf '%*s' $(( 120 - ${#line} )) ""
-    printf '\n'
+    colorize "yellow,bold,reverse" "${line}" $'\n'
 
     line="$(printf ' - %2s tests succeeded.' "${succeeded_cmd_count}")"
-    printf '%s' "${line}"
-    printf '%*s' $(( 120 - ${#line} )) ""
-    printf '\n'
+    colorize "yellow,bold,reverse" "${line}" $'\n'
 
     line="$(printf ' - %2s tests failed.' "${failed_cmd_count}")"
-    printf '%s' "${line}"
-    printf '%*s' $(( 120 - ${#line} )) ""
-    printf '\n'
-
-    colorize "" "" true
+    colorize "yellow,bold,reverse" "${line}" $'\n'
 }
 
 function print_failure_reasons() {
@@ -273,19 +260,13 @@ function print_failure_reasons() {
     if (( "${#failure_reasons}" == 0 )); then
         return
     fi
-    colorize "yellow,bold,reverse" "Reasons for failure:" false
-    printf '%100s' ""
-    printf '\n'
+    colorize "yellow,bold,reverse" $'Reasons for failure:\n'
 
     mapfile -t failure_reasons \
         < <(printf '%s\n' "${failure_reasons[@]}" | sort --unique)
     for reason in "${failure_reasons[@]}"; do
-        printf ' - %s' "${reason}"
-        printf '%*s' $(( 117 - ${#reason} )) ""
-        printf '\n'
+        colorize "yellow,bold,reverse" " - ${reason}" $'\n'
     done
-
-    colorize "" "" true
 }
 
 function print_failed_commands() {
@@ -293,19 +274,13 @@ function print_failed_commands() {
     if (( "${#failure_reasons}" == 0 )); then
         return
     fi
-    colorize "yellow,bold,reverse" "Failed commands:" false
-    printf '%104s' ""
-    printf '\n'
+    colorize "yellow,bold,reverse" $'Failed commands:\n'
 
     mapfile -t failed_cmds \
         < <(printf '%s\n' "${failed_cmds[@]}" | sort --unique)
     for reason in "${failed_cmds[@]}"; do
-        printf ' - %s' "${reason}"
-        printf '%*s' $(( 117 - ${#reason} )) ""
-        printf '\n'
+        colorize "yellow,bold,reverse" " - ${reason}" $'\n'
     done
-
-    colorize "" "" true
 }
 
 # Run the tests.
@@ -1785,13 +1760,9 @@ print_diff "${cmd}" "${output}" "${error}"
 print_summary
 
 if (( failed_cmd_count > 0 )); then
-    colorize "yellow,bold,reverse" "" false
-    printf '%120s' ""
-    colorize "" $'\n' true
+    colorize "yellow,bold,reverse" $'\n'
     print_failure_reasons
-    colorize "yellow,bold,reverse" "" false
-    printf '%120s' ""
-    colorize "" $'\n' true
+    colorize "yellow,bold,reverse" $'\n'
     print_failed_commands
 fi
 

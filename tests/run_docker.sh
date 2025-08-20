@@ -30,28 +30,33 @@
 
 # Define the function for colorizing.
 function colorize() {
-    # Colorize and format the string using ANSI escape sequences.
+    # Colorize and format the string(s) using ANSI escape sequences.
+    # If the last string ends in $'\n', right-pad the merged string to
+    # 120 characters using spaces.  If using reverse video ("reverse"
+    # style), this means that also the spaces (and thus the entire line)
+    # are colored.
     #
     # Arguments:
     # - $1: the colors and/or styles to use as comma-separated list
-    # - $2: the string to colorize
-    # - $3: whether to reset the color and/or style after the string
+    # - $@: the string(s) to colorize
     #
     # Output:
     # - the colorized string
 
     # Define the local variables.
+    local IFS
     local request
     local requests
-    local reset
     local string
     local style
     local -A styles
 
     # Read the arguments.
     requests="$1"
-    string="$2"
-    reset="$3"
+    shift
+    IFS=" "
+    string="$*"
+    unset IFS
 
     # Define the associative array with colors and styles, and their
     # corresponding Select Graphic Rendition (SGR) ANSI escape sequence
@@ -85,12 +90,16 @@ function colorize() {
         style+="\e[${styles[${request}]}m"
     done
 
-    # Print the colorized string and possibly reset the color/style.
+    # Print the colorized string.  Possibly, right-pad the string.
+    # Finally, reset the color/style.
 
     # shellcheck disable=SC2059  # Escape sequence in variable.
     printf "${style}"
-    printf '%s' "${string}"
-    if [[ "${reset}" == true ]]; then
+    printf '%s' "${string%$'\n'}"
+    if [[ "${string: -1}" == $'\n' ]]; then
+        printf '%*s' $(( 120 - "${#string}" + 1 )) ""
+        printf '\e[m\n'
+    else
         printf '\e[m'
     fi
 }
@@ -101,8 +110,7 @@ function print_double_separator() {
     local separator
     printf -v separator '%120s' ""
     separator="${separator// /=}"
-    colorize "cyan" "${separator}" true
-    printf '\n'
+    colorize "cyan" "${separator}" $'\n'
 }
 
 # For each Bash version, build a Docker image to run the test suite
@@ -125,9 +133,7 @@ declare -A sha1_hashes=(
 )
 
 # Build the Docker images for the given Bash versions.
-colorize "yellow,bold,reverse" "Building Docker images..." false
-printf '%*s' 95 ""
-colorize "" $'\n' true
+colorize "yellow,bold,reverse" $'Building Docker images...\n'
 print_double_separator
 
 for version in "${versions[@]}"; do
@@ -135,7 +141,7 @@ for version in "${versions[@]}"; do
     sha1_hash="${sha1_hashes[${version}]}"
 
     printf 'Building Docker image for '
-    colorize "bold" "Bash v${version}" true
+    colorize "bold" "Bash v${version}"
     printf '...\n'
 
     docker build \
@@ -153,51 +159,35 @@ done
 
 # Run the test suite in all images' containers and report whether errors
 # occurred.
-colorize "yellow,bold,reverse" "Running test suites..." false
-printf '%*s' 98 ""
-colorize "" $'\n' true
+colorize "yellow,bold,reverse" $'Running test suites...\n'
 print_double_separator
 
 for version in "${versions[@]}"; do
     tag="argparser-bash${version/./}:latest"
 
     printf 'Running test suite for '
-    colorize "bold" "Bash v${version}" true
+    colorize "bold" "Bash v${version}"
     printf '...\n'
 
     docker run --rm "${tag}" /opt/argparser/tests/run_tests.sh &> /dev/null
     error_count="$?"
     if (( error_count == 0 )); then
         colorize "green,bold,reverse" \
-            "Finished runs for Bash v${version} with no errors." false
-        printf '%*s' 77 ""
-        colorize "" $'\n' true
+            "Finished runs for Bash v${version} with no errors." $'\n'
     elif (( error_count == 1 )); then
         colorize "red,bold,reverse" \
-            "Finished runs for Bash v${version} with 1 error." false
-        printf '%*s' 79 ""
-        colorize "" $'\n' true
+            "Finished runs for Bash v${version} with 1 error." $'\n'
     else
         colorize "red,bold,reverse" \
             "Finished runs for Bash v${version} with ${error_count} errors." \
-            false
-        printf '%*s' $(( 79 - "${#error_count}" )) ""
-        colorize "" $'\n' true
+            $'\n'
     fi
 
     if (( error_count > 0 )); then
         printf 'Investigate the failed test(s) by running:\n'
-
-        colorize "blue" "    docker run --interactive --tty --rm ${tag}" false
-        printf '%*s' 78 ""
-        colorize "" $'\n' true
-
+        colorize "blue" "    docker run --interactive --tty --rm ${tag}" $'\n'
         printf 'followed by\n'
-
-        colorize "blue" "    bash run_tests.sh" false
-        printf '%*s' 103 ""
-        colorize "" $'\n' true
-
+        colorize "blue" $'    bash run_tests.sh\n'
         printf 'in the created Docker container.\n'
     fi
 
