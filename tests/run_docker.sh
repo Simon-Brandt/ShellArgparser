@@ -105,6 +105,7 @@ function print_double_separator() {
 # For each Bash version, build a Docker image to run the test suite
 # under a given Bash version.
 declare -A versions=(
+    [4.3]=30a978b  # v4.3.46 (final release)
     [4.4]=b0776d8  # v4.4.19 (final release)
     [5.0]=36f2c40  # v5.0.18 (final release)
     [5.1]=9439ce0  # v5.1.16 (final release)

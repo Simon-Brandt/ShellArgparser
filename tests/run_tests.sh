@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-15
+# Last Modification: 2025-08-20
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -120,7 +120,7 @@ function print_section() {
     # Arguments:
     # - $1: the section name to print
     colorize "yellow,bold,reverse" "Running tests for $1..." false
-    printf '%*s' $(( 99 - "${#1}" )) ""
+    printf '%*s' $(( 99 - ${#1} )) ""
     colorize "" $'\n' true
     print_double_separator
 }
@@ -164,14 +164,14 @@ function print_diff() {
     if (( exit_code == 0 )); then
         colorize "green,bold,reverse" \
             "Test ${test_number} succeeded with correct output." false
-        printf '%*s' $(( 84 - "${#test_number}" )) ""
+        printf '%*s' $(( 84 - ${#test_number} )) ""
         colorize "" $'\n' true
         (( succeeded_cmd_count++ ))
     elif (( exit_code == 1 )); then
         print_single_separator
         colorize "red,bold,reverse" \
             "Test ${test_number} failed with diverging output." false
-        printf '%*s' $(( 85 - "${#test_number}" )) ""
+        printf '%*s' $(( 85 - ${#test_number} )) ""
         colorize "" $'\n' true
 
         failure_reasons+=("${test_type}")
@@ -218,13 +218,13 @@ function print_fd_diff() {
     if (( exit_code == 0 )); then
         colorize "green,bold,reverse" \
             "Test ${test_number} succeeded with identical environment." false
-        printf '%*s' $(( 77 - "${#test_number}" )) ""
+        printf '%*s' $(( 77 - ${#test_number} )) ""
         colorize "" $'\n' true
     elif (( exit_code == 1 )); then
         print_single_separator
         colorize "red,bold,reverse" \
             "Test ${test_number} failed with diverging environment." false
-        printf '%*s' $(( 80 - "${#test_number}" )) ""
+        printf '%*s' $(( 80 - ${#test_number} )) ""
         colorize "" $'\n' true
 
         failure_reasons+=("${test_type}")
@@ -246,17 +246,17 @@ function print_summary() {
     line="$(printf ' - %2s tests were run.' \
         $(( succeeded_cmd_count + failed_cmd_count )))"
     printf '%s' "${line}"
-    printf '%*s' $(( 120 - "${#line}" )) ""
+    printf '%*s' $(( 120 - ${#line} )) ""
     printf '\n'
 
     line="$(printf ' - %2s tests succeeded.' "${succeeded_cmd_count}")"
     printf '%s' "${line}"
-    printf '%*s' $(( 120 - "${#line}" )) ""
+    printf '%*s' $(( 120 - ${#line} )) ""
     printf '\n'
 
     line="$(printf ' - %2s tests failed.' "${failed_cmd_count}")"
     printf '%s' "${line}"
-    printf '%*s' $(( 120 - "${#line}" )) ""
+    printf '%*s' $(( 120 - ${#line} )) ""
     printf '\n'
 
     colorize "" "" true
@@ -275,7 +275,7 @@ function print_failure_reasons() {
         < <(printf '%s\n' "${failure_reasons[@]}" | sort --unique)
     for reason in "${failure_reasons[@]}"; do
         printf ' - %s' "${reason}"
-        printf '%*s' $(( 117 - "${#reason}" )) ""
+        printf '%*s' $(( 117 - ${#reason} )) ""
         printf '\n'
     done
 
@@ -295,7 +295,7 @@ function print_failed_commands() {
         < <(printf '%s\n' "${failed_cmds[@]}" | sort --unique)
     for reason in "${failed_cmds[@]}"; do
         printf ' - %s' "${reason}"
-        printf '%*s' $(( 117 - "${#reason}" )) ""
+        printf '%*s' $(( 117 - ${#reason} )) ""
         printf '\n'
     done
 
