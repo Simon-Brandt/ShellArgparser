@@ -19,18 +19,19 @@ RUN apt-get update \
 # Set the Bash version, which can be overridden by the "--build-arg"
 # option to "docker build".
 ARG VERSION=5.3
-ARG GIT_SHA1=""
+ARG GIT_SHA1="b8c60bc"
 
-# Download and install Bash in the given version.
+# Download and install Bash in the given version and Git commit hash.
+# Remove the unneeded .git directory to keep the layer slim.
 WORKDIR /opt
-RUN git clone --branch=bash-${VERSION} git://git.git.savannah.gnu.org/bash.git
-
-WORKDIR /opt/bash
-RUN git reset --hard ${GIT_SHA1} \
+RUN git clone --branch=bash-${VERSION} git://git.git.savannah.gnu.org/bash.git \
+    && cd /opt/bash \
+    && git reset --hard ${GIT_SHA1} \
     && ./configure \
     && make \
     && make tests \
-    && make install
+    && make install \
+    && rm --force --recursive -- .git
 
 # Copy the Argparser, all test scripts, and their dependencies (the
 # resources) into the image.
