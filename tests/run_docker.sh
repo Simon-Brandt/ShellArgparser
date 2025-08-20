@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-19
+# Last Modification: 2025-08-20
 
 # Usage: Run this script with "bash run_docker.sh".
 
@@ -104,12 +104,12 @@ function print_double_separator() {
 
 # For each Bash version, build a Docker image to run the test suite
 # under a given Bash version.
-versions=(
-    4.4
-    5.0
-    5.1
-    5.2
-    5.3
+declare -A versions=(
+    [4.4]=b0776d8  # v4.4.19 (final release)
+    [5.0]=36f2c40  # v5.0.18 (final release)
+    [5.1]=9439ce0  # v5.1.16 (final release)
+    [5.2]=c5c97b3  # v5.2.37 (final release)
+    [5.3]=a8a1c2f  # v5.3.3  (current release)
 )
 
 # Build the Docker images for the given Bash versions.
@@ -118,8 +118,9 @@ printf '%*s' 95 ""
 colorize "" $'\n' true
 print_double_separator
 
-for version in "${versions[@]}"; do
+for version in "${!versions[@]}"; do
     tag="argparser-bash${version/./}:latest"
+    sha1="${versions[${version}]}"
 
     printf 'Building Docker image for '
     colorize "bold" "Bash v${version}" true
@@ -127,6 +128,7 @@ for version in "${versions[@]}"; do
 
     docker build \
         --build-arg="VERSION=${version}" \
+        --build-arg="GIT_SHA1=${sha1}" \
         --build-context="parent=${PWD}/.." \
         --file=argparser.dockerfile \
         --quiet \
@@ -144,7 +146,7 @@ printf '%*s' 98 ""
 colorize "" $'\n' true
 print_double_separator
 
-for version in "${versions[@]}"; do
+for version in "${!versions[@]}"; do
     tag="argparser-bash${version/./}:latest"
 
     printf 'Running test suite for '

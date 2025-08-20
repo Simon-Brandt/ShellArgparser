@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-15
+# Last Modification: 2025-08-20
 # License: Public Domain
 
 FROM ubuntu:24.04
@@ -19,16 +19,15 @@ RUN apt-get update \
 # Set the Bash version, which can be overridden by the "--build-arg"
 # option to "docker build".
 ARG VERSION=5.3
+ARG GIT_SHA1=""
 
 # Download and install Bash in the given version.
 WORKDIR /opt
-RUN git clone \
-    --branch=bash-${VERSION} \
-    --depth=1 \
-    git://git.git.savannah.gnu.org/bash.git
+RUN git clone --branch=bash-${VERSION} git://git.git.savannah.gnu.org/bash.git
 
 WORKDIR /opt/bash
-RUN ./configure \
+RUN git reset --hard ${GIT_SHA1} \
+    && ./configure \
     && make \
     && make tests \
     && make install
