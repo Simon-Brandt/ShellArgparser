@@ -21,7 +21,7 @@
 <!-- <include command="sed '1,20d;s/^#/##/;s/<toc>/<toc title="Table of contents (Contribution guide)">/' ../CONTRIBUTING.md" md-file="../CONTRIBUTING.md"> -->
 ## 8. Contribution guide
 
-You're very welcome to contribute to the Argparser! Be it fixing spelling mistakes or small bugs, adding or clarifying the [documentation](../docs), or even adding new functionality to the Argparser itself, any improvement is highly appreciated.
+You're very welcome to contribute to the Argparser! Be it by fixing spelling mistakes or small bugs, adding or clarifying the [documentation](../docs), or even adding new functionality to the Argparser itself, any improvement is highly appreciated.
 
 In order to facilitate the seemless integration of your commits with the Argparser codebase, please try to comply with the following guidelines. Most of them are rather irrelevant for small fixes, so you probably would follow them, anyways. If you have reasons *not* to comply, it would likely not mean that your commit can't be merged, but you should explain *why* the guideline does not apply. After all, it's a *guideline*, not a *law*. And its always possible to adjust things at a later stage.
 
@@ -57,7 +57,13 @@ Keep the commit messages brief. Rather explain the reasons in the issue or pull 
 
 If you want to add features to the Argparser, write the respective function(s) directly into the main script. By design decision, the Argparser consists of exactly one file, [`argparser`](../argparser). This overcomes the general impossibility to find accompanying files (like libraries) from within the script, when its location is arbitrary. Even more importantly, the Argparser can be sourced or executed, leading to different call trees that make it impossible to decide for sure where the components reside.
 
-Novel features require dedicated [tests](../tests), [error message translations](../docs/reference/translations/translations.md), and/or [tutorial](../docs/tutorial/introduction.md) and [reference](../docs/reference/introduction.md) sections. You aren't required to write them, but asked to at least provide enough information for others to document the features.
+Novel features require dedicated [tests](../tests), [error message translations](../docs/reference/translations/translations.md), and/or [tutorial](../docs/tutorial/introduction.md) and [reference](../docs/reference/introduction.md) sections. You aren't required to write them, but you're asked to at least provide enough information for others to document the features.
+
+If you want to write the tests, take the existing ones in the [tests](../tests) directory as reference. Write the tests as self-contained scripts, which can then be executed from the command line. The actual test, *i.e.*, the comparison to the expected output and/or errors, shall happen in [`run_tests.sh`](../tests/run_tests.sh). This allows for running the entire test suite by just typing `bash run_tests.sh` on the command line, giving nicely colored output for succeeded and failed tests.
+
+Since we want to support multiple recent versions of Bash, starting from Bash&nbsp;4.4, we need a way to run the tests with all Bash versions. This is accomplished using [Docker](https://www.docker.com/ "docker.com"), a containerization software. To this end, [`run_docker.sh`](../tests/run_docker.sh) executes the [Dockerfile](../tests/argparser.dockerfile) for each Bash version from 4.3 through 5.3 (taking the latest patch version of each), creating a Docker image for each version. Then, it copies the Argparser's test suite into the image, starts a Docker container, and executes the test suite, using the given Bash version.
+
+Again, this yields nicely colored summaries over the number of failed tests. If any failed, start the respective container and run the test suite by hand to see which test exactly fails. Importantly, the tests for Bash&nbsp;4.3 *must* fail, since the Argparser uses a lot of syntax elements introduced only in Bash&nbsp;4.4. Consequently, the note about failing tests is expected, there, and no failure of your code. If you can't see the reason for a failed test, feel free to ask in the pull request comments.
 
 #### 8.2.2. Coding style
 
