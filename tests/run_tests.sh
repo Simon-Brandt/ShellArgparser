@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-20
+# Last Modification: 2025-08-21
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -101,7 +101,7 @@ function colorize() {
     printf "${style}"
     printf '%s' "${string%$'\n'}"
     if [[ "${string: -1}" == $'\n' ]]; then
-        printf '%*s' $(( 120 - "${#string}" + 1 )) ""
+        printf '%*s' $(( 120 - ${#string} + 1 )) ""
         printf '\e[m\n'
     else
         printf '\e[m'
