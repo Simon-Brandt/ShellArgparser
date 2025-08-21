@@ -993,8 +993,8 @@ function argparser_read_configuration() {
     # ARGPARSER_USE_LONG_OPTIONS
     # ARGPARSER_USE_SHORT_OPTIONS
     # ARGPARSER_USE_STYLES_IN_FILES
-    # ARGPARSER_VERSION
     # ARGPARSER_VERSION_EXIT_CODE
+    # ARGPARSER_VERSION_NUMBER
     # ARGPARSER_VERSION_STYLE
     # ARGPARSER_WARNING_STYLE
 
@@ -1199,8 +1199,8 @@ function argparser_set_env_vars() {
     # ARGPARSER_USE_LONG_OPTIONS
     # ARGPARSER_USE_SHORT_OPTIONS
     # ARGPARSER_USE_STYLES_IN_FILES
-    # ARGPARSER_VERSION
     # ARGPARSER_VERSION_EXIT_CODE
+    # ARGPARSER_VERSION_NUMBER
     # ARGPARSER_VERSION_OPTIONS
     # ARGPARSER_VERSION_STYLE
     # ARGPARSER_WARNING_STYLE
@@ -1300,8 +1300,8 @@ function argparser_set_env_vars() {
         "ARGPARSER_USE_LONG_OPTIONS          : use-long-options          :              : true                 :            : bool : 0      : Options   : use the long option names for parsing                                                                   "
         "ARGPARSER_USE_SHORT_OPTIONS         : use-short-options         :              : true                 :            : bool : 0      : Options   : use the short option names for parsing                                                                  "
         "ARGPARSER_USE_STYLES_IN_FILES       : use-styles-in-files       :              : false                :            : bool : 0      : Options   : use the colors and styles when STDOUT/STDERR is not a terminal                                          "
-        "ARGPARSER_VERSION                   : version-number            : VERSION      : 1.0.0                :            : str  : 1      : Options   : the script's version number for the version message                                                     "
         "ARGPARSER_VERSION_EXIT_CODE         : version-exit-code         : INT          : 0                    :            : int  : 1      : Options   : the exit code for version messages                                                                      "
+        "ARGPARSER_VERSION_NUMBER            : version-number            : VERSION      : 1.0.0                :            : str  : 1      : Options   : the script's version number for the version message                                                     "
         "ARGPARSER_VERSION_OPTIONS           : version-options           : CHAR         : V                    :            : char : +      : Options   : the short (single-character) option names to invoke the version message                                 "
         "ARGPARSER_VERSION_STYLE             : version-style             : STYLE        : bold                 :            : str  : +      : Options   : the color and style specification for version messages                                                  "
         "ARGPARSER_WARNING_STYLE             : warning-style             : STYLE        : red,bold             :            : str  : +      : Options   : the color and style specification for warning messages                                                  "
@@ -1362,8 +1362,8 @@ function argparser_set_env_vars() {
         ARGPARSER_USE_LONG_OPTIONS=true \
         ARGPARSER_USE_SHORT_OPTIONS=false \
         ARGPARSER_USE_STYLES_IN_FILES=false \
-        ARGPARSER_VERSION="${argparser_version}" \
         ARGPARSER_VERSION_EXIT_CODE=0 \
+        ARGPARSER_VERSION_NUMBER="${argparser_version}" \
         ARGPARSER_VERSION_OPTIONS="V" \
         ARGPARSER_VERSION_STYLE="bold" \
         ARGPARSER_WARNING_STYLE="red,bold" \
@@ -1447,7 +1447,7 @@ function argparser_check_env_vars() {
     # - ARGPARSER_LANGUAGE (arbitrary value)
     # - ARGPARSER_POSITIONAL_ARG_GROUP (arbitrary value)
     # - ARGPARSER_SCRIPT_NAME (arbitrary value)
-    # - ARGPARSER_VERSION (arbitrary value)
+    # - ARGPARSER_VERSION_NUMBER (arbitrary value)
     #
     # The following environment variables are only checked for mutual
     # exclusivity with other environment variables:
@@ -7050,8 +7050,8 @@ function argparser_print_version_message() {
     #
     # Environment:
     # - ARGPARSER_SCRIPT_NAME (read-only)
-    # - ARGPARSER_VERSION (read-only)
     # - ARGPARSER_VERSION_EXIT_CODE (read-only)
+    # - ARGPARSER_VERSION_NUMBER (read-only)
     # - ARGPARSER_VERSION_STYLE (read-only)
 
     # Define the local variables.
@@ -7063,7 +7063,7 @@ function argparser_print_version_message() {
     exit="$1"
 
     # Colorize and print the version message, then exit, if requested.
-    message="${ARGPARSER_SCRIPT_NAME} v${ARGPARSER_VERSION}"
+    message="${ARGPARSER_SCRIPT_NAME} v${ARGPARSER_VERSION_NUMBER}"
     argparser_colorize "${ARGPARSER_VERSION_STYLE}" "${message}" 1 true
     printf '\n'
 
@@ -7617,8 +7617,8 @@ function argparser_main() {
         unset ARGPARSER_USE_LONG_OPTIONS
         unset ARGPARSER_USE_SHORT_OPTIONS
         unset ARGPARSER_USE_STYLES_IN_FILES
-        unset ARGPARSER_VERSION
         unset ARGPARSER_VERSION_EXIT_CODE
+        unset ARGPARSER_VERSION_NUMBER
         unset ARGPARSER_VERSION_OPTIONS
         unset ARGPARSER_VERSION_STYLE
         unset ARGPARSER_WARNING_STYLE

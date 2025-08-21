@@ -398,19 +398,19 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 - ***Default value:*** `false`
 - ***Description:*** Whether to use the colors and styles from [`ARGPARSER_HELP_STYLE`](#9427-argparser_help_style), [`ARGPARSER_USAGE_STYLE`](#9451-argparser_usage_style), [`ARGPARSER_VERSION_STYLE`](#9458-argparser_version_style), [`ARGPARSER_ERROR_STYLE`](#9419-argparser_error_style), and [`ARGPARSER_WARNING_STYLE`](#9459-argparser_warning_style) when `STDOUT`/`STDERR` is not a terminal (and thus perhaps a file). This is useful to get plain 7-bit ASCII text output for files, while in interactive sessions, the escape sequences offer more user-friendly formatting and possibilities for highlighting. By this, you can parse your files afterwards more easily. Still, using *e.g.* [`less --raw-control-chars <filename>`](https://man7.org/linux/man-pages/man1/less.1.html "man7.org &rightarrow; man pages &rightarrow; less(1)"), these escape sequences can be displayed from files, when included.
 
-#### 9.4.55. `ARGPARSER_VERSION`
-
-- ***Type:*** *str* (String)
-- ***Allowed values:*** Any string
-- ***Default value:*** `"1.0.0"`
-- ***Description:*** The version number of your script to be used in the version message. Consider using [semantic versioning](https://semver.org/ "semver.org") or [calendar versioning](https://calver.org/ "calver.org"), *i.e.*, give version numbers by major version, minor version, and patch, separated by dots, or by year, month, and/or day of release, again separated by dots.
-
-#### 9.4.56. `ARGPARSER_VERSION_EXIT_CODE`
+#### 9.4.55. `ARGPARSER_VERSION_EXIT_CODE`
 
 - ***Type:*** *int* (Integer)
 - ***Allowed values:*** Any integer, usually zero
 - ***Default value:*** `0`
 - ***Description:*** The exit code when a version message was requested using the [`ARGPARSER_VERSION_OPTIONS`](#9457-argparser_version_options) or the `--version` flag.
+
+#### 9.4.56. `ARGPARSER_VERSION_NUMBER`
+
+- ***Type:*** *str* (String)
+- ***Allowed values:*** Any string
+- ***Default value:*** `"1.0.0"`
+- ***Description:*** The version number of your script to be used in the version message. Consider using [semantic versioning](https://semver.org/ "semver.org") or [calendar versioning](https://calver.org/ "calver.org"), *i.e.*, give version numbers by major version, minor version, and patch, separated by dots, or by year, month, and/or day of release, again separated by dots.
 
 #### 9.4.57. `ARGPARSER_VERSION_OPTIONS`
 

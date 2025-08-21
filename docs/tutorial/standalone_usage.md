@@ -158,10 +158,10 @@ Options:
                                  (default: true)
 [--use-styles-in-files]          use the colors and styles when STDOUT/STDERR
                                  is not a terminal (default: false)
-[--version=VERSION]              the script's version number for the version
-                                 message (default: "1.0.0")
 [--version-exit-code=INT]        the exit code for version messages (default:
                                  0)
+[--version-number=VERSION]       the script's version number for the version
+                                 message (default: "1.0.0")
 [--version-options=CHAR]         the short (single-character) option names to
                                  invoke the version message (default: "V")
 [--version-style=STYLE]          the color and style specification for version

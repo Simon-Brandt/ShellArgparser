@@ -81,8 +81,8 @@ Note that [`ARGPARSER_ARGS`](environment_variables.md#9413-argparser_args) is fo
 | [`ARGPARSER_USE_LONG_OPTIONS`](environment_variables.md#9452-argparser_use_long_options)                   | *bool*     | `true`                   |
 | [`ARGPARSER_USE_SHORT_OPTIONS`](environment_variables.md#9453-argparser_use_short_options)                 | *bool*     | `true`                   |
 | [`ARGPARSER_USE_STYLES_IN_FILES`](environment_variables.md#9454-argparser_use_styles_in_files)             | *bool*     | `false`                  |
-| [`ARGPARSER_VERSION`](environment_variables.md#9455-argparser_version)                                     | *str*      | `"1.0.0"`                |
-| [`ARGPARSER_VERSION_EXIT_CODE`](environment_variables.md#9456-argparser_version_exit_code)                 | *int*      | `0`                      |
+| [`ARGPARSER_VERSION_EXIT_CODE`](environment_variables.md#9455-argparser_version_exit_code)                 | *int*      | `0`                      |
+| [`ARGPARSER_VERSION_NUMBER`](environment_variables.md#9456-argparser_version_number)                       | *str*      | `"1.0.0"`                |
 | [`ARGPARSER_VERSION_OPTIONS`](environment_variables.md#9457-argparser_version_options)                     | *char*     | `"V"`                    |
 | [`ARGPARSER_VERSION_STYLE`](environment_variables.md#9458-argparser_version_style)                         | *str*      | `"bold"`                 |
 | [`ARGPARSER_WARNING_STYLE`](environment_variables.md#9459-argparser_warning_style)                         | *str*      | `"red,bold"`             |
