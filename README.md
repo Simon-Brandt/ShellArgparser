@@ -123,7 +123,7 @@ If you want to read the documentation end-to-end, start with the [introduction](
 
 The Argparser is a plain Bash script that does not invoke external commands (only Bash builtins) by design decision. This allows running your script on multiple platforms, as long as Bash is installed, without adding further dependencies to your script. When [contributing](#6-contributions), you may need several other software tools listed and explained in the [documentation](docs/dependencies.md).
 
-For simply running the Argparser, only Bash is required. **Bash &ge;&#8239;4.4** is known to be mandatory, but testing occurred mainly on Bash 5.2. Thus, please file an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues") if you encounter errors for versions earlier than 5.2, such that the minimum version can be updated, here (or the bug can be fixed).
+For simply running the Argparser, only Bash is required. **Bash&nbsp;&ge;&#8239;4.4** is known to be mandatory, but testing occurred mainly on Bash&nbsp;5.2. Thus, please file an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues") if you encounter errors for versions earlier than 5.2, such that the minimum version can be updated, here (or the bug can be fixed).
 
 ## 5. License
 
