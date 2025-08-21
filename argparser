@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-19
+# Last Modification: 2025-08-21
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -1300,7 +1300,7 @@ function argparser_set_env_vars() {
         "ARGPARSER_USE_LONG_OPTIONS          : use-long-options          :              : true                 :            : bool : 0      : Options   : use the long option names for parsing                                                                   "
         "ARGPARSER_USE_SHORT_OPTIONS         : use-short-options         :              : true                 :            : bool : 0      : Options   : use the short option names for parsing                                                                  "
         "ARGPARSER_USE_STYLES_IN_FILES       : use-styles-in-files       :              : false                :            : bool : 0      : Options   : use the colors and styles when STDOUT/STDERR is not a terminal                                          "
-        "ARGPARSER_VERSION                   : version                   : VERSION      : 1.0.0                :            : str  : 1      : Options   : the script's version number for the version message                                                     "
+        "ARGPARSER_VERSION                   : version-number            : VERSION      : 1.0.0                :            : str  : 1      : Options   : the script's version number for the version message                                                     "
         "ARGPARSER_VERSION_EXIT_CODE         : version-exit-code         : INT          : 0                    :            : int  : 1      : Options   : the exit code for version messages                                                                      "
         "ARGPARSER_VERSION_OPTIONS           : version-options           : CHAR         : V                    :            : char : +      : Options   : the short (single-character) option names to invoke the version message                                 "
         "ARGPARSER_VERSION_STYLE             : version-style             : STYLE        : bold                 :            : str  : +      : Options   : the color and style specification for version messages                                                  "
@@ -7398,9 +7398,7 @@ function argparser_main() {
     # script.  Is it is sourced, discern whether it has sourced itself.
     if [[ ! -v is_sourced ]]; then
         local source_level
-        local is_sourced
-
-        is_sourced=true
+        local is_sourced=true
     fi
 
     if (( "${#FUNCNAME[@]}" >= 5 )) && [[ "${FUNCNAME[4]}" == "source" ]]; then
