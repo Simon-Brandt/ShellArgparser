@@ -20,14 +20,15 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-07-24
+# Last Modification: 2025-08-22
 
 # Usage: Run this script with "bash test_short_options.sh".
 
 # Purpose: Test the functionality of the Argparser.
 
 # Source the Argparser.  As the arguments have multiple short options,
-# override the default column width for the help message.
+# override the default column width for the help message.  Set the
+# environment variable that there are no long options.
 ARGPARSER_MAX_COL_WIDTH_1=18
 ARGPARSER_USE_LONG_OPTIONS=false
 

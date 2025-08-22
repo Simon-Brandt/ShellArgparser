@@ -55,7 +55,7 @@ Note that [`ARGPARSER_ARGS`](environment_variables.md#9413-argparser_args) is fo
 | [`ARGPARSER_HELP_OPTIONS`](environment_variables.md#9426-argparser_help_options)                           | *char*     | `"h,?"`                  |
 | [`ARGPARSER_HELP_STYLE`](environment_variables.md#9427-argparser_help_style)                               | *str*      | `"italic"`               |
 | [`ARGPARSER_LANGUAGE`](environment_variables.md#9428-argparser_language)                                   | *str*      | `"en"`                   |
-| [`ARGPARSER_MAX_COL_WIDTH_1`](environment_variables.md#9429-argparser_max_col_width_1)                     | *uint*     | `5`[^19]                 |
+| [`ARGPARSER_MAX_COL_WIDTH_1`](environment_variables.md#9429-argparser_max_col_width_1)                     | *uint*     | `9`[^19]                 |
 | [`ARGPARSER_MAX_COL_WIDTH_2`](environment_variables.md#9430-argparser_max_col_width_2)                     | *uint*     | `33`[^19]                |
 | [`ARGPARSER_MAX_COL_WIDTH_3`](environment_variables.md#9431-argparser_max_col_width_3)                     | *uint*     | `0`[^19]                 |
 | [`ARGPARSER_MAX_WIDTH`](environment_variables.md#9432-argparser_max_width)                                 | *uint*     | `79`                     |

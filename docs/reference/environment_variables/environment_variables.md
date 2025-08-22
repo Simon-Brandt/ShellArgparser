@@ -214,7 +214,7 @@
 
 - ***Type:*** *uint* (Unsigned integer)
 - ***Allowed values:*** Any positive integer
-- ***Default value:*** `5`
+- ***Default value:*** `9`
 - ***Description:*** The maximum column width of the first column in the generated help message. This column holds the short options of the arguments, hence, it usually can be rather narrow. The column's content gets wrapped by line breaks if its width exceeds the `ARGPARSER_MAX_COL_WIDTH_1`. If it is less wide, the column is shrunk accordingly. For details, refer to [`ARGPARSER_MAX_WIDTH`](#9432-argparser_max_width).
 
 #### 9.4.30. `ARGPARSER_MAX_COL_WIDTH_2`

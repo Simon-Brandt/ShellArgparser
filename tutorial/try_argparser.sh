@@ -20,16 +20,11 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-07-24
+# Last Modification: 2025-08-22
 
 # Usage: Run this script with "bash try_argparser.sh".
 
 # Purpose: Demonstrate the basic functionality of the Argparser.
-
-# Source the Argparser.  As the arguments have multiple short and long
-# options, override the default column widths for the help message.
-ARGPARSER_MAX_COL_WIDTH_1=9
-ARGPARSER_MAX_COL_WIDTH_2=33
 
 # Define the arguments.
 # shellcheck disable=SC2190  # Indexed, not associative array.

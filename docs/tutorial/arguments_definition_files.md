@@ -32,7 +32,7 @@ Using a separate arguments definition file allows you to share the definition ac
 ```bash
 #!/bin/bash
 
-# Set the Argparser, reading the arguments definition from a file.
+# Source the Argparser, reading the arguments definition from a file.
 dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
 dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
 ARGPARSER_ARG_DEF_FILE="${dir}/arguments.csv"

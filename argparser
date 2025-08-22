@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-21
+# Last Modification: 2025-08-22
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -1274,7 +1274,7 @@ function argparser_set_env_vars() {
         "ARGPARSER_HELP_OPTIONS              : help-options              : CHAR         : h,?                  :            : char : +      : Options   : the short (single-character) option names to invoke the help message                                    "
         "ARGPARSER_HELP_STYLE                : help-style                : STYLE        : italic               :            : str  : +      : Options   : the color and style specification for help messages                                                     "
         "ARGPARSER_LANGUAGE                  : language                  : LANG         : en                   :            : str  : 1      : Options   : the language in which to localize the help and usage messages                                           "
-        "ARGPARSER_MAX_COL_WIDTH_1           : max-col-width-1           : INT          : 5                    :            : uint : 1      : Options   : the maximum column width of the first column in the help message                                        "
+        "ARGPARSER_MAX_COL_WIDTH_1           : max-col-width-1           : INT          : 9                    :            : uint : 1      : Options   : the maximum column width of the first column in the help message                                        "
         "ARGPARSER_MAX_COL_WIDTH_2           : max-col-width-2           : INT          : 33                   :            : uint : 1      : Options   : the maximum column width of the second column in the help message                                       "
         "ARGPARSER_MAX_COL_WIDTH_3           : max-col-width-3           : INT          : 0                    :            : uint : 1      : Options   : the maximum column width of the third column in the help message                                        "
         "ARGPARSER_MAX_WIDTH                 : max-width                 : INT          : 79                   :            : uint : 1      : Options   : the maximum width of the help message                                                                   "

@@ -30,11 +30,6 @@ First, let's see how we can use the Argparser to parse the arguments given to yo
 ```bash
 #!/bin/bash
 
-# Source the Argparser.  As the arguments have multiple short and long
-# options, override the default column widths for the help message.
-ARGPARSER_MAX_COL_WIDTH_1=9
-ARGPARSER_MAX_COL_WIDTH_2=33
-
 # Define the arguments.
 args=(
     "id    | short_opts | long_opts   | val_names | defaults | choices | type | arg_no | arg_group            | notes      | help                                              "

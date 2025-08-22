@@ -100,7 +100,7 @@ Options:
 [--language=LANG]                the language in which to localize the help and
                                  usage messages (default: "en")
 [--max-col-width-1=INT]          the maximum column width of the first column
-                                 in the help message (default: 5)
+                                 in the help message (default: 9)
 [--max-col-width-2=INT]          the maximum column width of the second column
                                  in the help message (default: 33)
 [--max-col-width-3=INT]          the maximum column width of the third column
