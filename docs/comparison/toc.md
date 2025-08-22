@@ -29,7 +29,8 @@
    1. [docopts](example_scripts/docopts.md#624-docopts)
    1. [Argparser](example_scripts/argparser.md#625-argparser)
 1. [Runtime comparison](runtime_comparison.md#63-runtime-comparison)
-1. [Summary](summary.md#64-summary)
+1. [Code length comparison](code_length_comparison.md#64-code-length-comparison)
+1. [Summary](summary.md#65-summary)
 <!-- </toc> -->
 
 [&#129092;&nbsp;6. Comparison of command-line parsers](introduction.md)

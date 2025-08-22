@@ -24,7 +24,7 @@ Several other shell command-line parsers predate the Argparser and were in part 
 
 Manual argument parsing, the most basic&mdash;and most tedious&mdash;method, is excluded here since in theory anything could be done, therein&mdash;it would just require a proportionate amount of complex work. After all, one could re-invent the Argparser or any other command-line parser, thus having every feature this parser supports, but without using it.
 
-The [feature comparison](feature_comparison.md#61-feature-comparison) compares the various features for argument parsing, while some [example scripts](example_scripts/introduction.md#62-example-scripts) later demonstrate the usage for the different parsers in an exemplary use case.
+The [feature comparison](feature_comparison.md#61-feature-comparison) compares the various features for argument parsing, while some [example scripts](example_scripts/introduction.md#62-example-scripts) later demonstrate the usage for the different parsers in an exemplary use case. Finally, we will have a look at the [runtime](runtime_comparison.md#63-runtime-comparison) and [code length](code_length_comparison.md#64-code-length-comparison) for each example script.
 
 [&#129092;&nbsp;5.11. Standalone usage](../tutorial/standalone_usage.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Table of contents (Feature comparison)&nbsp;&#129094;](toc.md)

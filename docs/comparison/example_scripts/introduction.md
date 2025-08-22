@@ -32,7 +32,7 @@ This gives us nine arguments our script shall handle. As the number of expected 
 
 Thus, the command-line parser we choose needs to support both positional and keyword arguments, optional and mandatory arguments, flags (for the verbosity), data types (for the age), and choice values (for the role). We can now decide to implement the parsing steps by hand, or use an existing program or library for the task. Still, parsing steps that the program doesn't support need to be implemented by us.
 
-The following scripts perform this parsing, and shall give you an overview about the complexity of command-line parsing with the existing tools compared to the Argparser. Keep an eye on the code's length and readability.
+The following scripts perform this parsing, and shall give you an overview about the complexity of command-line parsing with the existing tools compared to the Argparser. Keep an eye on the code's [length](../code_length_comparison.md#64-code-length-comparison) and readability.
 
 The actual HTML template processing is done in [`process_html_template.sh`](../../../comparison/process_html_template.sh), which is [sourced](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash Builtins &rightarrow; source") by each script to guarantee identity among all scripts. In a real-world scenario, both parts (the command-line parsing and template processing) would likely be in the same file.
 

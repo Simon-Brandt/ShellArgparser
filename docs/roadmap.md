@@ -104,5 +104,5 @@ Moreover, it could be even deemed useful to add a `-l,--license` flag to the def
 
 - If the column width in the help message is extremely narrow (like 2 characters), the content may be broken on wrong positions, leading to an omission of arguments.
 
-[&#129092;&nbsp;6.4. Summary](comparison/summary.md)
+[&#129092;&nbsp;6.5. Summary](comparison/summary.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[8. Contribution guide&nbsp;&#129094;](contribution_guide.md)
