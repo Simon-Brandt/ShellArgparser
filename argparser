@@ -6553,16 +6553,28 @@ function argparser_create_usage_message() {
         # with the existence of each changing the look of the line.
         if [[ "${arg_number}" == 0 ]]; then  # Flag.
             lines+=("[${short_options}]")
-        elif [[ -n "${choice_values}" ]]; then  # Choice and default.
-            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+        elif [[ "${arg_number}" == "+" ]]; then  # [1, inf) values.
+            if [[ -n "${choice_values}" ]]; then  # Choice and default.
                 lines+=("[${short_options}={${choice_values}}...]")
-            else
-                lines+=("[${short_options}={${choice_values}}]")
-            fi
-        else  # Default only.
-            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+            else  # Default only.
                 lines+=("[${short_options}=${value_names}...]")
-            else
+            fi
+        elif [[ "${arg_number}" == "*" ]]; then  # [0, inf) values.
+            if [[ -n "${choice_values}" ]]; then  # Choice and default.
+                lines+=("[${short_options}[={${choice_values}}...]]")
+            else  # Default only.
+                lines+=("[${short_options}[=${value_names}...]]")
+            fi
+        elif [[ "${arg_number}" == "?" ]]; then  # [0, 1] values.
+            if [[ -n "${choice_values}" ]]; then  # Choice and default.
+                lines+=("[${short_options}[={${choice_values}}]]")
+            else  # Default only.
+                lines+=("[${short_options}[=${value_names}]]")
+            fi
+        else  # Integer-count values.
+            if [[ -n "${choice_values}" ]]; then  # Choice and default.
+                lines+=("[${short_options}={${choice_values}}]")
+            else  # Default only.
                 lines+=("[${short_options}=${value_names}]")
             fi
         fi
@@ -6604,16 +6616,28 @@ function argparser_create_usage_message() {
         # with the existence of each changing the look of the line.
         if [[ "${arg_number}" == 0 ]]; then  # Flag.
             lines+=("[${long_options}]")
-        elif [[ -n "${choice_values}" ]]; then  # Choice and default.
-            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+        elif [[ "${arg_number}" == "+" ]]; then  # [1, inf) values.
+            if [[ -n "${choice_values}" ]]; then  # Choice and default.
                 lines+=("[${long_options}={${choice_values}}...]")
-            else
-                lines+=("[${long_options}={${choice_values}}]")
-            fi
-        else  # Default only.
-            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+            else  # Default only.
                 lines+=("[${long_options}=${value_names}...]")
-            else
+            fi
+        elif [[ "${arg_number}" == "*" ]]; then  # [0, inf) values.
+            if [[ -n "${choice_values}" ]]; then  # Choice and default.
+                lines+=("[${long_options}[={${choice_values}}...]]")
+            else  # Default only.
+                lines+=("[${long_options}[=${value_names}...]]")
+            fi
+        elif [[ "${arg_number}" == "?" ]]; then  # [0, 1] values.
+            if [[ -n "${choice_values}" ]]; then  # Choice and default.
+                lines+=("[${long_options}[={${choice_values}}]]")
+            else  # Default only.
+                lines+=("[${long_options}[=${value_names}]]")
+            fi
+        else  # Integer-count values.
+            if [[ -n "${choice_values}" ]]; then  # Choice and default.
+                lines+=("[${long_options}={${choice_values}}]")
+            else  # Default only.
                 lines+=("[${long_options}=${value_names}]")
             fi
         fi
@@ -6653,16 +6677,28 @@ function argparser_create_usage_message() {
         # some short options and no default values and may have some
         # choice values, with the existence of each changing the look of
         # the line.
-        if [[ -n "${choice_values}" ]]; then  # Choice only.
-            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+        if [[ "${arg_number}" == "+" ]]; then  # [1, inf) values.
+            if [[ -n "${choice_values}" ]]; then  # Choice only.
                 lines+=("${short_options}={${choice_values}}...")
-            else
-                lines+=("${short_options}={${choice_values}}")
-            fi
-        else  # No choice nor default.
-            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+            else  # No choice nor default.
                 lines+=("${short_options}=${value_names}...")
-            else
+            fi
+        elif [[ "${arg_number}" == "*" ]]; then  # [0, inf) values.
+            if [[ -n "${choice_values}" ]]; then  # Choice only.
+                lines+=("${short_options}[={${choice_values}}...]")
+            else  # No choice nor default.
+                lines+=("${short_options}[=${value_names}...]")
+            fi
+        elif [[ "${arg_number}" == "?" ]]; then  # [0, 1] values.
+            if [[ -n "${choice_values}" ]]; then  # Choice only.
+                lines+=("${short_options}[={${choice_values}}]")
+            else  # No choice nor default.
+                lines+=("${short_options}[=${value_names}]")
+            fi
+        else  # Integer-count values.
+            if [[ -n "${choice_values}" ]]; then  # Choice only.
+                lines+=("${short_options}={${choice_values}}")
+            else  # No choice nor default.
                 lines+=("${short_options}=${value_names}")
             fi
         fi
@@ -6702,16 +6738,28 @@ function argparser_create_usage_message() {
         # some long options and no default values and may have some
         # choice values, with the existence of each changing the look of
         # the line.
-        if [[ -n "${choice_values}" ]]; then  # Choice only.
-            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+        if [[ "${arg_number}" == "+" ]]; then  # [1, inf) values.
+            if [[ -n "${choice_values}" ]]; then  # Choice only.
                 lines+=("${long_options}={${choice_values}}...")
-            else
-                lines+=("${long_options}={${choice_values}}")
-            fi
-        else  # No choice nor default.
-            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+            else  # No choice nor default.
                 lines+=("${long_options}=${value_names}...")
-            else
+            fi
+        elif [[ "${arg_number}" == "*" ]]; then  # [0, inf) values.
+            if [[ -n "${choice_values}" ]]; then  # Choice only.
+                lines+=("${long_options}[={${choice_values}}...]")
+            else  # No choice nor default.
+                lines+=("${long_options}[=${value_names}...]")
+            fi
+        elif [[ "${arg_number}" == "?" ]]; then  # [0, 1] values.
+            if [[ -n "${choice_values}" ]]; then  # Choice only.
+                lines+=("${long_options}[={${choice_values}}]")
+            else  # No choice nor default.
+                lines+=("${long_options}[=${value_names}]")
+            fi
+        else  # Integer-count values.
+            if [[ -n "${choice_values}" ]]; then  # Choice only.
+                lines+=("${long_options}={${choice_values}}")
+            else  # No choice nor default.
                 lines+=("${long_options}=${value_names}")
             fi
         fi
@@ -6737,16 +6785,17 @@ function argparser_create_usage_message() {
         # Define the line for the current argument.  The argument has
         # some default values and may have some choice values, with the
         # existence of each changing the look of the line.
-        if [[ -n "${choice_values}" ]]; then  # Choice and default.
-            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+        if [[ "${arg_number}" == "+" || "${arg_number}" == "*" ]]
+        then  # [1, inf) or [0, inf) values.
+            if [[ -n "${choice_values}" ]]; then  # Choice and default.
                 lines+=("[{${choice_values}}...]")
-            else
-                lines+=("[{${choice_values}}]")
-            fi
-        else  # Default only.
-            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+            else  # Default only.
                 lines+=("[${value_names}...]")
-            else
+            fi
+        else  # Integer-count or [0, 1] values.
+            if [[ -n "${choice_values}" ]]; then  # Choice and default.
+                lines+=("[{${choice_values}}]")
+            else  # Default only.
                 lines+=("[${value_names}]")
             fi
         fi
@@ -6769,16 +6818,17 @@ function argparser_create_usage_message() {
         # Define the line for the current argument.  The argument has no
         # default values and may have some choice values, with the
         # existence of each changing the look of the line.
-        if [[ -n "${choice_values}" ]]; then  # Choice only.
-            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+        if [[ "${arg_number}" == "+" || "${arg_number}" == "*" ]]
+        then  # [1, inf) or [0, inf) values.
+            if [[ -n "${choice_values}" ]]; then  # Choice only.
                 lines+=("{${choice_values}}...")
-            else
-                lines+=("{${choice_values}}")
-            fi
-        else  # No choice nor default.
-            if [[ "${arg_number}" == "+" ]]; then  # Multiple values.
+            else  # No choice nor default.
                 lines+=("${value_names}...")
-            else
+            fi
+        else  # Integer-count or [0, 1] values.
+            if [[ -n "${choice_values}" ]]; then  # Choice only.
+                lines+=("{${choice_values}}")
+            else  # No choice nor default.
                 lines+=("${value_names}")
             fi
         fi
