@@ -4340,10 +4340,13 @@ function argparser_parse_positional_args() {
         default_values="${all_default_values[${arg_key}]}"
         arg_number="${all_arg_numbers[${arg_key}]}"
 
-        # For the counting, consider an infinite number of values as 1,
-        # i.e., the minimum number that can be given.
+        # For the counting, consider the number of values for "+" as 1
+        # and for "*" or "?" as 0, i.e., the minimum number that can be
+        # given in each case.
         if [[ "${arg_number}" == "+" ]]; then
             arg_number=1
+        elif [[ "${arg_number}" == "*" ||  "${arg_number}" == "?" ]]; then
+            arg_number=0
         fi
 
         # Increment the respective count.
@@ -4356,12 +4359,12 @@ function argparser_parse_positional_args() {
 
     # Based on the number of given, default, and required positional
     # arguments, judge whether values for arguments with default values
-    # are given.  Since there cannot be arguments with an infinite
+    # are given.  Since there cannot be arguments with an arbitrary
     # number of values defined when there are arguments with default
     # values defined, a higher number of given values than required
     # means that either some values for arguments with default values
     # are given (then, their count exceeds zero), or that an argument
-    # accepting an infinite number of values is given as last once
+    # accepting an arbitrary number of values is given as last once
     # (then, the count of default arguments is zero).  This allows to
     # distinguish these two cases.
     args_count="${#values[@]}"
@@ -4394,22 +4397,28 @@ function argparser_parse_positional_args() {
             arg_number="${all_arg_numbers[${arg_key}]}"
 
             # Skip the defined arguments having default values, but
-            # aren't given.
+            # which aren't given.
             if [[ -n "${default_values[0]}" ]]; then
                 continue
             fi
 
-            # If the positional argument accepts an infinite number of
-            # values, output all remaining given arguments, else, only
-            # as many as requested.
+            # If the positional argument accepts an arbitrary number of
+            # values, output all remaining given arguments.  For "?",
+            # output one argument, if existing, or else zero.  Else,
+            # output only as many arguments as requested.
             messages+=("Argument: ${arg_key}")
-            if [[ "${arg_number}" == "+" ]]; then
+            if [[ "${arg_number}" == "+" || "${arg_number}" == "*" ]]; then
                 for (( i = index; i < args_count; i++ )); do
                     messages+=("Value: ${values[i]}")
                 done
                 index="${args_count}"
 
                 break
+            elif [[ "${arg_number}" == "?" ]]; then
+                if (( index < args_count)); then
+                    messages+=("Value: ${values[index]}")
+                    (( index++ ))
+                fi
             else
                 for (( i = index; i < arg_number + index && i < args_count; \
                     i++ ))
