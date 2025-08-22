@@ -20,15 +20,15 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-07-24
+# Last Modification: 2025-08-22
 
 # Usage: Run this script with "bash try_localization.sh".
 
 # Purpose: Demonstrate the functionality of the Argparser regarding the
 # localization.
 
-# Set the Argparser, reading the arguments definition, help message, and
-# translation from a file.
+# Source the Argparser, reading the arguments definition, help message,
+# and translation from a file.
 dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
 dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
 ARGPARSER_ARG_DEF_FILE="${dir}/arguments_${LANG::2}.csv"
