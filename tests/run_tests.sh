@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-22
+# Last Modification: 2025-08-25
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -131,8 +131,9 @@ function print_section() {
     # Print the section name.
     #
     # Arguments:
-    # - $1: the section name to print
-    colorize "yellow,bold,reverse" "Running tests for $1..." $'\n'
+    # - $1: the section's index
+    # - $2: the section name to print
+    colorize "yellow,bold,reverse" "$1: Running tests for $2" $'\n'
     print_double_separator
 }
 
@@ -284,16 +285,18 @@ function print_failed_commands() {
 }
 
 # Run the tests.
+test_section=0
 failed_cmd_count=0
 succeeded_cmd_count=0
 failed_cmds=( )
 failure_reasons=( )
 
 # 1.    Test the general functionality using test_basic.sh.
-print_section "general functionality"
+(( test_section++ ))
+print_section "${test_section}" "general functionality"
 
 # 1.1.  Test the normal output for short option names, using spaces.
-test_number="1.1"
+test_number="${test_section}.1"
 test_type="output"
 cmd="bash test_basic.sh 1 2 -a 1 -b 2 -c A"
 output="$(cat << EOF
@@ -312,7 +315,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 1.2.  Test the normal output for long option names, using spaces.
-test_number="1.2"
+test_number="${test_section}.2"
 test_type="output"
 cmd="bash test_basic.sh 1 2 --var-1 1 --var-2 2 --var-3 A"
 output="$(cat << EOF
@@ -332,7 +335,7 @@ print_diff "${cmd}" "${output}" "${error}"
 
 # 1.3.  Test the normal output for short option names, using equals
 #       signs.
-test_number="1.3"
+test_number="${test_section}.3"
 test_type="output"
 cmd="bash test_basic.sh 1 2 -a=1 -b=2 -c=A"
 output="$(cat << EOF
@@ -352,7 +355,7 @@ print_diff "${cmd}" "${output}" "${error}"
 
 # 1.4.  Test the normal output for long option names, using equals
 #       signs.
-test_number="1.4"
+test_number="${test_section}.4"
 test_type="output"
 cmd="bash test_basic.sh 1 2 --var-1=1 --var-2=2 --var-3=A"
 output="$(cat << EOF
@@ -372,7 +375,7 @@ print_diff "${cmd}" "${output}" "${error}"
 
 # 1.5.  Test the normal output with the double hyphen as positional
 #       arguments delimiter.
-test_number="1.5"
+test_number="${test_section}.5"
 test_type="output"
 cmd="bash test_basic.sh --var-1=1 --var-2=2 --var-3=A -- 1 2"
 output="$(cat << EOF
@@ -392,7 +395,7 @@ print_diff "${cmd}" "${output}" "${error}"
 
 # 1.6.  Test the normal output with the doubled plus sign as positional
 #       arguments delimiter.
-test_number="1.6"
+test_number="${test_section}.6"
 test_type="output"
 cmd="bash test_basic.sh --var-1=1 --var-2=2 -- 1 2 ++ --var-3=A"
 output="$(cat << EOF
@@ -412,7 +415,7 @@ print_diff "${cmd}" "${output}" "${error}"
 
 # 1.7.  Test the normal output with the positional argument with default
 #       value being given.
-test_number="1.7"
+test_number="${test_section}.7"
 test_type="output"
 cmd="bash test_basic.sh --var-1=1 --var-2=2 --var-3=A -- 1 2 3"
 output="$(cat << EOF
@@ -431,7 +434,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 1.8.  Test the normal output with flags, including the deprecated one.
-test_number="1.8"
+test_number="${test_section}.8"
 test_type="output"
 cmd="bash test_basic.sh 1 2 --var-1=1 --var-2=2 --var-3=A --var-6 ++var-7"
 output="$(cat << EOF
@@ -450,7 +453,7 @@ error="test_basic.sh: Warning: The argument \"-g,-G,--var-7,--var-g\" is depreca
 print_diff "${cmd}" "${output}" "${error}"
 
 # 1.9.  Test the version message using the short option name.
-test_number="1.9"
+test_number="${test_section}.9"
 test_type="version"
 cmd="bash test_basic.sh -V"
 output="$(cat << EOF
@@ -461,7 +464,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 1.10. Test the version message using the long option name.
-test_number="1.10"
+test_number="${test_section}.10"
 test_type="version"
 cmd="bash test_basic.sh --version"
 output="$(cat << EOF
@@ -472,7 +475,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 1.11. Test the usage using the short option name.
-test_number="1.11"
+test_number="${test_section}.11"
 test_type="usage"
 cmd="bash test_basic.sh -u"
 output="$(cat << EOF
@@ -483,7 +486,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 1.12. Test the usage message using the long option name.
-test_number="1.12"
+test_number="${test_section}.12"
 test_type="usage"
 cmd="bash test_basic.sh --usage"
 output="$(cat << EOF
@@ -494,7 +497,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 1.13. Test the usage message in "row" orientation.
-test_number="1.13"
+test_number="${test_section}.13"
 test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=row bash test_basic.sh --usage"
 output="$(cat << EOF
@@ -505,7 +508,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 1.14. Test the usage message in "column" orientation.
-test_number="1.14"
+test_number="${test_section}.14"
 test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash test_basic.sh --usage"
 output="$(cat << EOF
@@ -525,7 +528,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 1.15. Test the usage message with preferred short option names.
-test_number="1.15"
+test_number="${test_section}.15"
 test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_OPTION_TYPE=short bash test_basic.sh --usage"
 output="$(cat << EOF
@@ -536,7 +539,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 1.16. Test the usage message with preferred long option names.
-test_number="1.16"
+test_number="${test_section}.16"
 test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_OPTION_TYPE=long bash test_basic.sh --usage"
 output="$(cat << EOF
@@ -547,7 +550,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 1.17. Test the help message using the short option name.
-test_number="1.17"
+test_number="${test_section}.17"
 test_type="help"
 cmd="bash test_basic.sh -h"
 output="$(cat << EOF
@@ -589,7 +592,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 1.18. Test the help message using the long option name.
-test_number="1.18"
+test_number="${test_section}.18"
 test_type="help"
 cmd="bash test_basic.sh --help"
 output="$(cat << EOF
@@ -631,10 +634,11 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 2.    Test the functionality regarding short options.
-print_section "short options"
+(( test_section++ ))
+print_section "${test_section}" "short options"
 
 # 2.1.  Test the normal output.
-test_number="2.1"
+test_number="${test_section}.1"
 test_type="output"
 cmd="bash test_short_options.sh 1 2 -a 1 -b 2 -c A"
 output="$(cat << EOF
@@ -653,7 +657,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 2.2.  Test the version message using the short option name.
-test_number="2.2"
+test_number="${test_section}.2"
 test_type="version"
 cmd="bash test_short_options.sh -V"
 output="$(cat << EOF
@@ -664,7 +668,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 2.3.  Test the version message using the long option name.
-test_number="2.3"
+test_number="${test_section}.3"
 test_type="version"
 cmd="bash test_short_options.sh --version"
 output=""
@@ -677,7 +681,7 @@ EOF
 print_diff "${cmd}" "${output}" "${error}"
 
 # 2.4.  Test the usage message using the short option name.
-test_number="2.4"
+test_number="${test_section}.4"
 test_type="usage"
 cmd="bash test_short_options.sh -u"
 output="$(cat << EOF
@@ -688,7 +692,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 2.5.  Test the usage message using the long option name.
-test_number="2.5"
+test_number="${test_section}.5"
 test_type="usage"
 cmd="bash test_short_options.sh --usage"
 output=""
@@ -701,7 +705,7 @@ EOF
 print_diff "${cmd}" "${output}" "${error}"
 
 # 2.6.  Test the help message using the short option name.
-test_number="2.6"
+test_number="${test_section}.6"
 test_type="help"
 cmd="bash test_short_options.sh -h"
 output="$(cat << EOF
@@ -734,7 +738,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 2.7.  Test the help message using the long option name.
-test_number="2.7"
+test_number="${test_section}.7"
 test_type="help"
 cmd="bash test_short_options.sh --help"
 output=""
@@ -747,10 +751,11 @@ EOF
 print_diff "${cmd}" "${output}" "${error}"
 
 # 3.    Test the functionality regarding long options.
-print_section "long options"
+(( test_section++ ))
+print_section "${test_section}" "long options"
 
 # 3.1.  Test the normal output.
-test_number="3.1"
+test_number="${test_section}.1"
 test_type="output"
 cmd="bash test_long_options.sh 1 2 --var-1 1 --var-2 2 --var-3 A"
 output="$(cat << EOF
@@ -769,7 +774,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 3.2.  Test the version message using the short option name.
-test_number="3.2"
+test_number="${test_section}.2"
 test_type="version"
 cmd="bash test_long_options.sh -V"
 output=""
@@ -782,7 +787,7 @@ EOF
 print_diff "${cmd}" "${output}" "${error}"
 
 # 3.3.  Test the version message using the long option name.
-test_number="3.3"
+test_number="${test_section}.3"
 test_type="version"
 cmd="bash test_long_options.sh --version"
 output="$(cat << EOF
@@ -793,7 +798,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 3.4.  Test the usage message using the short option name.
-test_number="3.4"
+test_number="${test_section}.4"
 test_type="usage"
 cmd="bash test_long_options.sh -u"
 output=""
@@ -806,7 +811,7 @@ EOF
 print_diff "${cmd}" "${output}" "${error}"
 
 # 3.5.  Test the usage message using the long option name.
-test_number="3.5"
+test_number="${test_section}.5"
 test_type="usage"
 cmd="bash test_long_options.sh --usage"
 output="$(cat << EOF
@@ -817,7 +822,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 3.6.  Test the help message using the short option name.
-test_number="3.6"
+test_number="${test_section}.6"
 test_type="help"
 cmd="bash test_long_options.sh -h"
 output=""
@@ -830,7 +835,7 @@ EOF
 print_diff "${cmd}" "${output}" "${error}"
 
 # 3.7.  Test the help message using the long option name.
-test_number="3.7"
+test_number="${test_section}.7"
 test_type="help"
 cmd="bash test_long_options.sh --help"
 output="$(cat << EOF
@@ -866,10 +871,11 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 4.    Test the functionality regarding keyword arguments.
-print_section "keyword arguments"
+(( test_section++ ))
+print_section "${test_section}" "keyword arguments"
 
 # 4.1.  Test the normal output.
-test_number="4.1"
+test_number="${test_section}.1"
 test_type="output"
 cmd="bash test_keyword_arguments.sh --var-1 1 --var-2 2 --var-3 A"
 output="$(cat << EOF
@@ -886,7 +892,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 4.2.  Test the version message.
-test_number="4.2"
+test_number="${test_section}.2"
 test_type="version"
 cmd="bash test_keyword_arguments.sh --version"
 output="$(cat << EOF
@@ -897,7 +903,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 4.3.  Test the usage message.
-test_number="4.3"
+test_number="${test_section}.3"
 test_type="usage"
 cmd="bash test_keyword_arguments.sh --usage"
 output="$(cat << EOF
@@ -908,7 +914,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 4.4.  Test the help message.
-test_number="4.4"
+test_number="${test_section}.4"
 test_type="help"
 cmd="bash test_keyword_arguments.sh --help"
 output="$(cat << EOF
@@ -937,10 +943,11 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 5.    Test the functionality regarding positional arguments.
-print_section "positional arguments"
+(( test_section++ ))
+print_section "${test_section}" "positional arguments"
 
 # 5.1.  Test the normal output.
-test_number="5.1"
+test_number="${test_section}.1"
 test_type="output"
 cmd="bash test_positional_arguments.sh 1 2"
 output="$(cat << EOF
@@ -952,7 +959,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 5.2.  Test the version message.
-test_number="5.2"
+test_number="${test_section}.2"
 test_type="version"
 cmd="bash test_positional_arguments.sh --version"
 output="$(cat << EOF
@@ -963,7 +970,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 5.3.  Test the usage message.
-test_number="5.3"
+test_number="${test_section}.3"
 test_type="usage"
 cmd="bash test_positional_arguments.sh --usage"
 output="$(cat << EOF
@@ -974,7 +981,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 5.4.  Test the help message.
-test_number="5.4"
+test_number="${test_section}.4"
 test_type="help"
 cmd="bash test_positional_arguments.sh --help"
 output="$(cat << EOF
@@ -994,11 +1001,12 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 6.    Test the functionality regarding the environment.
-print_section "environment"
+(( test_section++ ))
+print_section "${test_section}" "environment"
 exec 3>&1 4>&2
 
 # 6.1.  Test the normal output.
-test_number="6.1"
+test_number="${test_section}.1"
 test_type="output"
 cmd="bash test_environment.sh 1 2 --var-1 1 --var-2 2 --var-3 A"
 output="$(cat << EOF
@@ -1017,17 +1025,18 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 6.2.  Test the environment.
-test_number="6.2"
+test_number="${test_section}.2"
 test_type="environment"
 print_fd_diff
 
 exec 3>&- 4>&-
 
 # 7.    Test the functionality regarding configuration files.
-print_section "configuration files"
+(( test_section++ ))
+print_section "${test_section}" "configuration files"
 
 # 7.1.  Test the normal output.
-test_number="7.1"
+test_number="${test_section}.1"
 test_type="output"
 cmd="bash test_config_file.sh 1 2 --var-1 1 --var-2 2 --var-3 A"
 output="$(cat << EOF
@@ -1046,7 +1055,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 7.2.  Test the version message.
-test_number="7.2"
+test_number="${test_section}.2"
 test_type="version"
 cmd="bash test_config_file.sh --version"
 output="$(cat << EOF
@@ -1057,7 +1066,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 7.3.  Test the usage message.
-test_number="7.3"
+test_number="${test_section}.3"
 test_type="usage"
 cmd="bash test_config_file.sh --usage"
 output="$(cat << EOF
@@ -1068,7 +1077,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 7.4.  Test the help message.
-test_number="7.4"
+test_number="${test_section}.4"
 test_type="help"
 cmd="bash test_config_file.sh --help"
 output="$(cat << EOF
@@ -1102,10 +1111,11 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 8.    Test the functionality regarding arguments definition files.
-print_section "arguments definition files"
+(( test_section++ ))
+print_section "${test_section}" "arguments definition files"
 
 # 8.1.  Test the normal output.
-test_number="8.1"
+test_number="${test_section}.1"
 test_type="output"
 cmd="bash test_arg_def_file.sh 1 2 --var-1 1 --var-2 2 --var-3 A"
 output="$(cat << EOF
@@ -1124,7 +1134,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 8.2.  Test the version message.
-test_number="8.2"
+test_number="${test_section}.2"
 test_type="version"
 cmd="bash test_arg_def_file.sh --version"
 output="$(cat << EOF
@@ -1135,7 +1145,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 8.3.  Test the usage message.
-test_number="8.3"
+test_number="${test_section}.3"
 test_type="usage"
 cmd="bash test_arg_def_file.sh --usage"
 output="$(cat << EOF
@@ -1146,7 +1156,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 8.4.  Test the help message.
-test_number="8.4"
+test_number="${test_section}.4"
 test_type="help"
 cmd="bash test_arg_def_file.sh --help"
 output="$(cat << EOF
@@ -1180,10 +1190,11 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 9.    Test the functionality regarding help files.
-print_section "help files"
+(( test_section++ ))
+print_section "${test_section}" "help files"
 
 # 9.1.  Test the normal output.
-test_number="9.1"
+test_number="${test_section}.1"
 test_type="output"
 cmd="bash test_help_file.sh 1 2 --var-1 1 --var-2 2 --var-3 A"
 output="$(cat << EOF
@@ -1202,7 +1213,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 9.2.  Test the version message.
-test_number="9.2"
+test_number="${test_section}.2"
 test_type="version"
 cmd="bash test_help_file.sh --version"
 output="$(cat << EOF
@@ -1213,7 +1224,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 9.3.  Test the usage message.
-test_number="9.3"
+test_number="${test_section}.3"
 test_type="usage"
 cmd="bash test_help_file.sh --usage"
 output="$(cat << EOF
@@ -1224,7 +1235,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 9.4.  Test the help message.
-test_number="9.4"
+test_number="${test_section}.4"
 test_type="help"
 cmd="bash test_help_file.sh --help"
 output="$(cat << EOF
@@ -1263,10 +1274,11 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 10.   Test the functionality regarding the localization.
-print_section "localization"
+(( test_section++ ))
+print_section "${test_section}" "localization"
 
 # 10.1. Test the normal output for the American locale.
-test_number="10.1"
+test_number="${test_section}.1"
 test_type="output"
 cmd="LANG=en_US.UTF-8 bash test_localization.sh 1 2 --var-1 1 --var-2 2 --var-3 A"
 output="$(cat << EOF
@@ -1285,7 +1297,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 10.2. Test the normal output for the German locale.
-test_number="10.2"
+test_number="${test_section}.2"
 test_type="output"
 cmd="LANG=de_DE.UTF-8 bash test_localization.sh 1 2 --var-1 1 --var-2 2 --var-3 A"
 output="$(cat << EOF
@@ -1304,7 +1316,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 10.3. Test the version message.
-test_number="10.3"
+test_number="${test_section}.3"
 test_type="version"
 cmd="bash test_localization.sh --version"
 output="$(cat << EOF
@@ -1315,7 +1327,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 10.4. Test the usage message for the American locale.
-test_number="10.4"
+test_number="${test_section}.4"
 test_type="usage"
 cmd="LANG=en_US.UTF-8 bash test_localization.sh --usage"
 output="$(cat << EOF
@@ -1326,7 +1338,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 10.5. Test the usage message for the German locale.
-test_number="10.5"
+test_number="${test_section}.5"
 test_type="usage"
 cmd="LANG=de_DE.UTF-8 bash test_localization.sh --usage"
 output="$(cat << EOF
@@ -1337,7 +1349,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 10.6. Test the help message for the American locale.
-test_number="10.6"
+test_number="${test_section}.6"
 test_type="help"
 cmd="LANG=en_US.UTF-8 bash test_localization.sh --help"
 output="$(cat << EOF
@@ -1376,7 +1388,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 10.7. Test the help message for the German locale.
-test_number="10.7"
+test_number="${test_section}.7"
 test_type="help"
 cmd="LANG=de_DE.UTF-8 bash test_localization.sh --help"
 output="$(cat << EOF
@@ -1417,10 +1429,11 @@ print_diff "${cmd}" "${output}" "${error}"
 
 # 11.   Test the functionality regarding the standalone mode in a
 #       pipeline.
-print_section "pipeline"
+(( test_section++ ))
+print_section "${test_section}" "pipeline"
 
 # 11.1. Test the normal output.
-test_number="11.1"
+test_number="${test_section}.1"
 test_type="output"
 cmd="dash test_pipeline.sh 1 2 --var-1 1 --var-2 2 --var-3 A"
 output="$(cat << EOF
@@ -1450,7 +1463,7 @@ EOF
 print_diff "${cmd}" "${output}" "${error}"
 
 # 11.2. Test the version message.
-test_number="11.2"
+test_number="${test_section}.2"
 test_type="version"
 cmd="dash test_pipeline.sh --version"
 output="$(cat << EOF
@@ -1461,7 +1474,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 11.3. Test the usage message.
-test_number="11.3"
+test_number="${test_section}.3"
 test_type="usage"
 cmd="dash test_pipeline.sh --usage"
 output="$(cat << EOF
@@ -1472,7 +1485,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 11.4. Test the help message.
-test_number="11.4"
+test_number="${test_section}.4"
 test_type="help"
 cmd="dash test_pipeline.sh --help"
 output="$(cat << EOF
@@ -1506,10 +1519,11 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 12.   Test the functionality regarding the standalone usage.
-print_section "standalone usage"
+(( test_section++ ))
+print_section "${test_section}" "standalone usage"
 
 # 12.1. Test the normal output.
-test_number="12.1"
+test_number="${test_section}.1"
 test_type="output"
 cmd="bash ../argparser"
 output=""
@@ -1520,7 +1534,7 @@ EOF
 print_diff "${cmd}" "${output}" "${error}"
 
 # 12.2. Test the version message.
-test_number="12.2"
+test_number="${test_section}.2"
 test_type="version"
 cmd="bash ../argparser --version"
 output="$(cat << EOF
@@ -1531,7 +1545,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 12.3. Test the usage message.
-test_number="12.3"
+test_number="${test_section}.3"
 test_type="usage"
 cmd="bash ../argparser --usage"
 output="$(cat << EOF
@@ -1601,7 +1615,7 @@ error=""
 print_diff "${cmd}" "${output}" "${error}"
 
 # 12.4. Test the help message.
-test_number="12.4"
+test_number="${test_section}.4"
 test_type="help"
 cmd="bash ../argparser --help"
 output="$(cat << EOF
