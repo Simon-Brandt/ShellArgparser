@@ -34,7 +34,7 @@ Usage: argparser [OPTIONS] [--] command_line
 Mandatory arguments to long options are mandatory for short options too.
 
 Positional arguments:
-command_line                     the indexed array in which the Argparser
+command_line...                  the indexed array in which the Argparser
                                  stores the script's command line upon parsing
                                  its own arguments
 
@@ -78,7 +78,7 @@ Options:
                                  command line (default: false)
 [--error-exit-code=INT]          the exit code when errors occurred upon
                                  parsing (default: 1)
-[--error-style=STYLE]            the color and style specification for error
+[--error-style=STYLE...]         the color and style specification for error
                                  messages (default: "red,bold,reverse")
 [--help-arg-group=NAME]          the name of the argument group holding all
                                  help options, i.e., --help, --usage, and
@@ -93,9 +93,9 @@ Options:
                                  "@")
 [--help-file-keep-comments]      keep commented lines in the help file
                                  (default: false)
-[--help-options=CHAR]            the short (single-character) option names to
+[--help-options=CHAR...]         the short (single-character) option names to
                                  invoke the help message (default: "h,?")
-[--help-style=STYLE]             the color and style specification for help
+[--help-style=STYLE...]          the color and style specification for help
                                  messages (default: "italic")
 [--language=LANG]                the language in which to localize the help and
                                  usage messages (default: "en")
@@ -148,9 +148,9 @@ Options:
                                  output the positional and keyword arguments in
                                  usage messages in a row or in a column
                                  (default: "row")
-[--usage-options=CHAR]           the short (single-character) option names to
+[--usage-options=CHAR...]        the short (single-character) option names to
                                  invoke the usage message (default: "u")
-[--usage-style=STYLE]            the color and style specification for usage
+[--usage-style=STYLE...]         the color and style specification for usage
                                  messages (default: "italic")
 [--use-long-options]             use the long option names for parsing
                                  (default: true)
@@ -162,11 +162,11 @@ Options:
                                  0)
 [--version-number=VERSION]       the script's version number for the version
                                  message (default: "1.0.0")
-[--version-options=CHAR]         the short (single-character) option names to
+[--version-options=CHAR...]      the short (single-character) option names to
                                  invoke the version message (default: "V")
-[--version-style=STYLE]          the color and style specification for version
+[--version-style=STYLE...]       the color and style specification for version
                                  messages (default: "bold")
-[--warning-style=STYLE]          the color and style specification for warning
+[--warning-style=STYLE...]       the color and style specification for warning
                                  messages (default: "red,bold")
 [--write-args]                   write the arguments from
                                  ARGPARSER_ARG_ARRAY_NAME to STDOUT (default:

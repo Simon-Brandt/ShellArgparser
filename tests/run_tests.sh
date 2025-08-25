@@ -566,9 +566,10 @@ pos_2                                      two positional arguments without
 
 Mandatory options:
 -a, -A,   --var-1=VAL_1, --var-a=VAR_A     one value without default or choice
--b, -B,   --var-2=VAL_2, --var-b=VAR_B     at least one value without default
-                                           or choice
--c, -C,   --var-3={A,B}, --var-c={A,B}     at least one value with choice
+-b, -B,   --var-2=VAL_2...,                at least one value without default
+          --var-b=VAR_B...                 or choice
+-c, -C,   --var-3={A,B}...,                at least one value with choice
+          --var-c={A,B}...
 
 Optional options:
 [-d, -D], [--var-4={A,B,C}],               one value with default and choice
@@ -608,9 +609,10 @@ pos_2                                      two positional arguments without
 
 Mandatory options:
 -a, -A,   --var-1=VAL_1, --var-a=VAR_A     one value without default or choice
--b, -B,   --var-2=VAL_2, --var-b=VAR_B     at least one value without default
-                                           or choice
--c, -C,   --var-3={A,B}, --var-c={A,B}     at least one value with choice
+-b, -B,   --var-2=VAL_2...,                at least one value without default
+          --var-b=VAR_B...                 or choice
+-c, -C,   --var-3={A,B}...,                at least one value with choice
+          --var-c={A,B}...
 
 Optional options:
 [-d, -D], [--var-4={A,B,C}],               one value with default and choice
@@ -719,8 +721,10 @@ pos_2              two positional arguments without default or choice
 
 Mandatory options:
 -a=VAL_1, -A=A     one value without default or choice
--b=VAL_2, -B=B     at least one value without default or choice
--c={A,B}, -C={A,B} at least one value with choice
+-b=VAL_2...,       at least one value without default or choice
+-B=B...
+-c={A,B}...,       at least one value with choice
+-C={A,B}...
 
 Optional options:
 [-d={A,B,C}],      one value with default and choice (default: "A")
@@ -851,8 +855,10 @@ pos_2                            two positional arguments without default or
 
 Mandatory options:
 --var-1=VAL_1, --var-a=VAR_A     one value without default or choice
---var-2=VAL_2, --var-b=VAR_B     at least one value without default or choice
---var-3={A,B}, --var-c={A,B}     at least one value with choice
+--var-2=VAL_2...,                at least one value without default or choice
+--var-b=VAR_B...
+--var-3={A,B}...,                at least one value with choice
+--var-c={A,B}...
 
 Optional options:
 [--var-4={A,B,C}],               one value with default and choice (default:
@@ -923,20 +929,20 @@ Usage: test_keyword_arguments.sh [OPTIONS] ARGUMENTS
 Mandatory arguments to long options are mandatory for short options too.
 
 Mandatory options:
--a,       --var-1=VAL_1   one value without default or choice
--b,       --var-2=VAL_2   at least one value without default or choice
--c,       --var-3={A,B}   at least one value with choice
+-a,       --var-1=VAL_1    one value without default or choice
+-b,       --var-2=VAL_2... at least one value without default or choice
+-c,       --var-3={A,B}... at least one value with choice
 
 Optional options:
-[-d={A,B,C}]              one value with default and choice (default: "A")
-          [--var-5=VAL_5] one value with default (default: "E")
-[-f],     [--var-6]       no value (flag) with default (default: false)
-[-g],     [--var-7]       (DEPRECATED) no value (flag) with default (default:
-                          true)
+[-d={A,B,C}]               one value with default and choice (default: "A")
+          [--var-5=VAL_5]  one value with default (default: "E")
+[-f],     [--var-6]        no value (flag) with default (default: false)
+[-g],     [--var-7]        (DEPRECATED) no value (flag) with default (default:
+                           true)
 
-[-h, -?], [--help]        display this help and exit (default: false)
-[-u],     [--usage]       display the usage and exit (default: false)
-[-V],     [--version]     display the version and exit (default: false)
+[-h, -?], [--help]         display this help and exit (default: false)
+[-u],     [--usage]        display the usage and exit (default: false)
+[-V],     [--version]      display the version and exit (default: false)
 EOF
 )"
 error=""
@@ -1086,25 +1092,25 @@ Usage: test_config_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 Mandatory arguments to long options are mandatory for short options too.
 
 Positional arguments:
-[pos_1={1,2}]             one positional argument with default and choice
-                          (default: 2)
-pos_2                     two positional arguments without default or choice
+[pos_1={1,2}]              one positional argument with default and choice
+                           (default: 2)
+pos_2                      two positional arguments without default or choice
 
 Mandatory options:
--a,       --var-1=VAL_1   one value without default or choice
--b,       --var-2=VAL_2   at least one value without default or choice
--c,       --var-3={A,B}   at least one value with choice
+-a,       --var-1=VAL_1    one value without default or choice
+-b,       --var-2=VAL_2... at least one value without default or choice
+-c,       --var-3={A,B}... at least one value with choice
 
 Optional options:
-[-d={A,B,C}]              one value with default and choice (default: "A")
-          [--var-5=VAL_5] one value with default (default: "E")
-[-f],     [--var-6]       no value (flag) with default (default: false)
-[-g],     [--var-7]       (DEPRECATED) no value (flag) with default (default:
-                          true)
+[-d={A,B,C}]               one value with default and choice (default: "A")
+          [--var-5=VAL_5]  one value with default (default: "E")
+[-f],     [--var-6]        no value (flag) with default (default: false)
+[-g],     [--var-7]        (DEPRECATED) no value (flag) with default (default:
+                           true)
 
-[-h, -?], [--help]        display this help and exit (default: false)
-[-u],     [--usage]       display the usage and exit (default: false)
-[-V],     [--version]     display the version and exit (default: false)
+[-h, -?], [--help]         display this help and exit (default: false)
+[-u],     [--usage]        display the usage and exit (default: false)
+[-V],     [--version]      display the version and exit (default: false)
 EOF
 )"
 error=""
@@ -1165,25 +1171,25 @@ Usage: test_arg_def_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 Mandatory arguments to long options are mandatory for short options too.
 
 Positional arguments:
-[pos_1={1,2}]             one positional argument with default and choice
-                          (default: 2)
-pos_2                     two positional arguments without default or choice
+[pos_1={1,2}]              one positional argument with default and choice
+                           (default: 2)
+pos_2                      two positional arguments without default or choice
 
 Mandatory options:
--a,       --var-1=VAL_1   one value without default or choice
--b,       --var-2=VAL_2   at least one value without default or choice
--c,       --var-3={A,B}   at least one value with choice
+-a,       --var-1=VAL_1    one value without default or choice
+-b,       --var-2=VAL_2... at least one value without default or choice
+-c,       --var-3={A,B}... at least one value with choice
 
 Optional options:
-[-d={A,B,C}]              one value with default and choice (default: "A")
-          [--var-5=VAL_5] one value with default (default: "E")
-[-f],     [--var-6]       no value (flag) with default (default: false)
-[-g],     [--var-7]       (DEPRECATED) no value (flag) with default (default:
-                          true)
+[-d={A,B,C}]               one value with default and choice (default: "A")
+          [--var-5=VAL_5]  one value with default (default: "E")
+[-f],     [--var-6]        no value (flag) with default (default: false)
+[-g],     [--var-7]        (DEPRECATED) no value (flag) with default (default:
+                           true)
 
-[-h, -?], [--help]        display this help and exit (default: false)
-[-u],     [--usage]       display the usage and exit (default: false)
-[-V],     [--version]     display the version and exit (default: false)
+[-h, -?], [--help]         display this help and exit (default: false)
+[-u],     [--usage]        display the usage and exit (default: false)
+[-V],     [--version]      display the version and exit (default: false)
 EOF
 )"
 error=""
@@ -1246,28 +1252,28 @@ Mandatory arguments to long options are mandatory for short options too.
 
 The following arguments are positional.
 Positional arguments:
-[pos_1={1,2}]             one positional argument with default and choice
-                          (default: 2)
-pos_2                     two positional arguments without default or choice
+[pos_1={1,2}]              one positional argument with default and choice
+                           (default: 2)
+pos_2                      two positional arguments without default or choice
 
 The following options have no default value.
 Mandatory options:
--a,       --var-1=VAL_1   one value without default or choice
--b,       --var-2=VAL_2   at least one value without default or choice
--c,       --var-3={A,B}   at least one value with choice
+-a,       --var-1=VAL_1    one value without default or choice
+-b,       --var-2=VAL_2... at least one value without default or choice
+-c,       --var-3={A,B}... at least one value with choice
 
 The following options have a default value.
 Optional options:
-[-d={A,B,C}]              one value with default and choice (default: "A")
-          [--var-5=VAL_5] one value with default (default: "E")
-[-f],     [--var-6]       no value (flag) with default (default: false)
-[-g],     [--var-7]       (DEPRECATED) no value (flag) with default (default:
-                          true)
+[-d={A,B,C}]               one value with default and choice (default: "A")
+          [--var-5=VAL_5]  one value with default (default: "E")
+[-f],     [--var-6]        no value (flag) with default (default: false)
+[-g],     [--var-7]        (DEPRECATED) no value (flag) with default (default:
+                           true)
 
 There are always three options for the help messages.
-[-h, -?], [--help]        display this help and exit (default: false)
-[-u],     [--usage]       display the usage and exit (default: false)
-[-V],     [--version]     display the version and exit (default: false)
+[-h, -?], [--help]         display this help and exit (default: false)
+[-u],     [--usage]        display the usage and exit (default: false)
+[-V],     [--version]      display the version and exit (default: false)
 EOF
 )"
 error=""
@@ -1360,28 +1366,28 @@ Mandatory arguments to long options are mandatory for short options too.
 
 The following arguments are positional.
 Positional arguments:
-[pos_1={1,2}]             one positional argument with default and choice
-                          (default: 2)
-pos_2                     two positional arguments without default or choice
+[pos_1={1,2}]              one positional argument with default and choice
+                           (default: 2)
+pos_2                      two positional arguments without default or choice
 
 The following options have no default value.
 Mandatory options:
--a,       --var-1=VAL_1   one value without default or choice
--b,       --var-2=VAL_2   at least one value without default or choice
--c,       --var-3={A,B}   at least one value with choice
+-a,       --var-1=VAL_1    one value without default or choice
+-b,       --var-2=VAL_2... at least one value without default or choice
+-c,       --var-3={A,B}... at least one value with choice
 
 The following options have a default value.
 Optional options:
-[-d={A,B,C}]              one value with default and choice (default: "A")
-          [--var-5=VAL_5] one value with default (default: "E")
-[-f],     [--var-6]       no value (flag) with default (default: false)
-[-g],     [--var-7]       (DEPRECATED) no value (flag) with default (default:
-                          true)
+[-d={A,B,C}]               one value with default and choice (default: "A")
+          [--var-5=VAL_5]  one value with default (default: "E")
+[-f],     [--var-6]        no value (flag) with default (default: false)
+[-g],     [--var-7]        (DEPRECATED) no value (flag) with default (default:
+                           true)
 
 There are always three options for the help messages.
-[-h, -?], [--help]        display this help and exit (default: false)
-[-u],     [--usage]       display the usage and exit (default: false)
-[-V],     [--version]     display the version and exit (default: false)
+[-h, -?], [--help]         display this help and exit (default: false)
+[-u],     [--usage]        display the usage and exit (default: false)
+[-V],     [--version]      display the version and exit (default: false)
 EOF
 )"
 error=""
@@ -1400,28 +1406,28 @@ Erforderliche Argumente für lange Optionen sind auch für kurze erforderlich.
 
 Die folgenden Argumente sind positional.
 Positionale Argumente:
-[pos_1={1,2}]             ein positionales Argument mit Vorgabe und Auswahl
-                          (Vorgabe: 2)
-pos_2                     zwei positionale Argumente ohne Vorgabe oder Auswahl
+[pos_1={1,2}]              ein positionales Argument mit Vorgabe und Auswahl
+                           (Vorgabe: 2)
+pos_2                      zwei positionale Argumente ohne Vorgabe oder Auswahl
 
 Die folgenden Optionen haben keinen Vorgabewert.
 Erforderliche Optionen:
--a,       --var-1=VAL_1   ein Wert ohne Vorgabe oder Auswahl
--b,       --var-2=VAL_2   mindestens ein Wert ohne Vorgabe oder Auswahl
--c,       --var-3={A,B}   mindestens ein Wert mit Auswahl
+-a,       --var-1=VAL_1    ein Wert ohne Vorgabe oder Auswahl
+-b,       --var-2=VAL_2... mindestens ein Wert ohne Vorgabe oder Auswahl
+-c,       --var-3={A,B}... mindestens ein Wert mit Auswahl
 
 Die folgenden Optionen haben einen Vorgabewert.
 Optionale Optionen:
-[-d={A,B,C}]              ein Wert mit Vorgabe und Auswahl (Vorgabe: "A")
-          [--var-5=VAL_5] ein Wert mit Vorgabe (Vorgabe: "E")
-[-f],     [--var-6]       kein Wert (Flag) mit Vorgabe (Vorgabe: falsch)
-[-g],     [--var-7]       (VERALTET) kein Wert (Flag) mit Vorgabe (Vorgabe:
-                          wahr)
+[-d={A,B,C}]               ein Wert mit Vorgabe und Auswahl (Vorgabe: "A")
+          [--var-5=VAL_5]  ein Wert mit Vorgabe (Vorgabe: "E")
+[-f],     [--var-6]        kein Wert (Flag) mit Vorgabe (Vorgabe: falsch)
+[-g],     [--var-7]        (VERALTET) kein Wert (Flag) mit Vorgabe (Vorgabe:
+                           wahr)
 
 Es gibt grundsätzlich drei Optionen für die Hilfe-Meldungen.
-[-h, -?], [--help]        diese Hilfe anzeigen und beenden (Vorgabe: falsch)
-[-u],     [--usage]       den Aufruf anzeigen und beenden (Vorgabe: falsch)
-[-V],     [--version]     die Version anzeigen und beenden (Vorgabe: falsch)
+[-h, -?], [--help]         diese Hilfe anzeigen und beenden (Vorgabe: falsch)
+[-u],     [--usage]        den Aufruf anzeigen und beenden (Vorgabe: falsch)
+[-V],     [--version]      die Version anzeigen und beenden (Vorgabe: falsch)
 EOF
 )"
 error=""
@@ -1494,25 +1500,25 @@ Usage: test_pipeline.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 Mandatory arguments to long options are mandatory for short options too.
 
 Positional arguments:
-[pos_1={1,2}]             one positional argument with default and choice
-                          (default: 2)
-pos_2                     two positional arguments without default or choice
+[pos_1={1,2}]              one positional argument with default and choice
+                           (default: 2)
+pos_2                      two positional arguments without default or choice
 
 Mandatory options:
--a,       --var-1=VAL_1   one value without default or choice
--b,       --var-2=VAL_2   at least one value without default or choice
--c,       --var-3={A,B}   at least one value with choice
+-a,       --var-1=VAL_1    one value without default or choice
+-b,       --var-2=VAL_2... at least one value without default or choice
+-c,       --var-3={A,B}... at least one value with choice
 
 Optional options:
-[-d={A,B,C}]              one value with default and choice (default: "A")
-          [--var-5=VAL_5] one value with default (default: "E")
-[-f],     [--var-6]       no value (flag) with default (default: false)
-[-g],     [--var-7]       (DEPRECATED) no value (flag) with default (default:
-                          true)
+[-d={A,B,C}]               one value with default and choice (default: "A")
+          [--var-5=VAL_5]  one value with default (default: "E")
+[-f],     [--var-6]        no value (flag) with default (default: false)
+[-g],     [--var-7]        (DEPRECATED) no value (flag) with default (default:
+                           true)
 
-[-h, -?], [--help]        display this help and exit (default: false)
-[-u],     [--usage]       display the usage and exit (default: false)
-[-V],     [--version]     display the version and exit (default: false)
+[-h, -?], [--help]         display this help and exit (default: false)
+[-u],     [--usage]        display the usage and exit (default: false)
+[-V],     [--version]      display the version and exit (default: false)
 EOF
 )"
 error=""
@@ -1624,7 +1630,7 @@ Usage: argparser [OPTIONS] [--] command_line
 Mandatory arguments to long options are mandatory for short options too.
 
 Positional arguments:
-command_line                     the indexed array in which the Argparser
+command_line...                  the indexed array in which the Argparser
                                  stores the script's command line upon parsing
                                  its own arguments
 
@@ -1668,7 +1674,7 @@ Options:
                                  command line (default: false)
 [--error-exit-code=INT]          the exit code when errors occurred upon
                                  parsing (default: 1)
-[--error-style=STYLE]            the color and style specification for error
+[--error-style=STYLE...]         the color and style specification for error
                                  messages (default: "red,bold,reverse")
 [--help-arg-group=NAME]          the name of the argument group holding all
                                  help options, i.e., --help, --usage, and
@@ -1683,9 +1689,9 @@ Options:
                                  "@")
 [--help-file-keep-comments]      keep commented lines in the help file
                                  (default: false)
-[--help-options=CHAR]            the short (single-character) option names to
+[--help-options=CHAR...]         the short (single-character) option names to
                                  invoke the help message (default: "h,?")
-[--help-style=STYLE]             the color and style specification for help
+[--help-style=STYLE...]          the color and style specification for help
                                  messages (default: "italic")
 [--language=LANG]                the language in which to localize the help and
                                  usage messages (default: "en")
@@ -1738,9 +1744,9 @@ Options:
                                  output the positional and keyword arguments in
                                  usage messages in a row or in a column
                                  (default: "row")
-[--usage-options=CHAR]           the short (single-character) option names to
+[--usage-options=CHAR...]        the short (single-character) option names to
                                  invoke the usage message (default: "u")
-[--usage-style=STYLE]            the color and style specification for usage
+[--usage-style=STYLE...]         the color and style specification for usage
                                  messages (default: "italic")
 [--use-long-options]             use the long option names for parsing
                                  (default: true)
@@ -1752,11 +1758,11 @@ Options:
                                  0)
 [--version-number=VERSION]       the script's version number for the version
                                  message (default: "1.0.0")
-[--version-options=CHAR]         the short (single-character) option names to
+[--version-options=CHAR...]      the short (single-character) option names to
                                  invoke the version message (default: "V")
-[--version-style=STYLE]          the color and style specification for version
+[--version-style=STYLE...]       the color and style specification for version
                                  messages (default: "bold")
-[--warning-style=STYLE]          the color and style specification for warning
+[--warning-style=STYLE...]       the color and style specification for warning
                                  messages (default: "red,bold")
 [--write-args]                   write the arguments from
                                  ARGPARSER_ARG_ARRAY_NAME to STDOUT (default:

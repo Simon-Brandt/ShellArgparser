@@ -93,28 +93,28 @@ Mandatory arguments to long options are mandatory for short options too.
 
 The following arguments are positional.
 Positional arguments:
-[pos_1={1,2}]             one positional argument with default and choice
-                          (default: 2)
-pos_2                     two positional arguments without default or choice
+[pos_1={1,2}]              one positional argument with default and choice
+                           (default: 2)
+pos_2                      two positional arguments without default or choice
 
 The following options have no default value.
 Mandatory options:
--a,       --var-1=VAL_1   one value without default or choice
--b,       --var-2=VAL_2   at least one value without default or choice
--c,       --var-3={A,B}   at least one value with choice
+-a,       --var-1=VAL_1    one value without default or choice
+-b,       --var-2=VAL_2... at least one value without default or choice
+-c,       --var-3={A,B}... at least one value with choice
 
 The following options have a default value.
 Optional options:
-[-d={A,B,C}]              one value with default and choice (default: "A")
-          [--var-5=VAL_5] one value with default (default: "E")
-[-f],     [--var-6]       no value (flag) with default (default: false)
-[-g],     [--var-7]       (DEPRECATED) no value (flag) with default (default:
-                          true)
+[-d={A,B,C}]               one value with default and choice (default: "A")
+          [--var-5=VAL_5]  one value with default (default: "E")
+[-f],     [--var-6]        no value (flag) with default (default: false)
+[-g],     [--var-7]        (DEPRECATED) no value (flag) with default (default:
+                           true)
 
 There are always three options for the help messages.
-[-h, -?], [--help]        display this help and exit (default: false)
-[-u],     [--usage]       display the usage and exit (default: false)
-[-V],     [--version]     display the version and exit (default: false)
+[-h, -?], [--help]         display this help and exit (default: false)
+[-u],     [--usage]        display the usage and exit (default: false)
+[-V],     [--version]      display the version and exit (default: false)
 ```
 <!-- </include> -->
 

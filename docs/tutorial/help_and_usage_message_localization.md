@@ -240,28 +240,28 @@ Erforderliche Argumente für lange Optionen sind auch für kurze erforderlich.
 
 Die folgenden Argumente sind positional.
 Positionale Argumente:
-[pos_1={1,2}]             ein positionales Argument mit Vorgabe und Auswahl
-                          (Vorgabe: 2)
-pos_2                     zwei positionale Argumente ohne Vorgabe oder Auswahl
+[pos_1={1,2}]              ein positionales Argument mit Vorgabe und Auswahl
+                           (Vorgabe: 2)
+pos_2                      zwei positionale Argumente ohne Vorgabe oder Auswahl
 
 Die folgenden Optionen haben keinen Vorgabewert.
 Erforderliche Optionen:
--a,       --var-1=VAL_1   ein Wert ohne Vorgabe oder Auswahl
--b,       --var-2=VAL_2   mindestens ein Wert ohne Vorgabe oder Auswahl
--c,       --var-3={A,B}   mindestens ein Wert mit Auswahl
+-a,       --var-1=VAL_1    ein Wert ohne Vorgabe oder Auswahl
+-b,       --var-2=VAL_2... mindestens ein Wert ohne Vorgabe oder Auswahl
+-c,       --var-3={A,B}... mindestens ein Wert mit Auswahl
 
 Die folgenden Optionen haben einen Vorgabewert.
 Optionale Optionen:
-[-d={A,B,C}]              ein Wert mit Vorgabe und Auswahl (Vorgabe: "A")
-          [--var-5=VAL_5] ein Wert mit Vorgabe (Vorgabe: "E")
-[-f],     [--var-6]       kein Wert (Flag) mit Vorgabe (Vorgabe: falsch)
-[-g],     [--var-7]       (VERALTET) kein Wert (Flag) mit Vorgabe (Vorgabe:
-                          wahr)
+[-d={A,B,C}]               ein Wert mit Vorgabe und Auswahl (Vorgabe: "A")
+          [--var-5=VAL_5]  ein Wert mit Vorgabe (Vorgabe: "E")
+[-f],     [--var-6]        kein Wert (Flag) mit Vorgabe (Vorgabe: falsch)
+[-g],     [--var-7]        (VERALTET) kein Wert (Flag) mit Vorgabe (Vorgabe:
+                           wahr)
 
 Es gibt grundsätzlich drei Optionen für die Hilfe-Meldungen.
-[-h, -?], [--help]        diese Hilfe anzeigen und beenden (Vorgabe: falsch)
-[-u],     [--usage]       den Aufruf anzeigen und beenden (Vorgabe: falsch)
-[-V],     [--version]     die Version anzeigen und beenden (Vorgabe: falsch)
+[-h, -?], [--help]         diese Hilfe anzeigen und beenden (Vorgabe: falsch)
+[-u],     [--usage]        den Aufruf anzeigen und beenden (Vorgabe: falsch)
+[-V],     [--version]      die Version anzeigen und beenden (Vorgabe: falsch)
 ```
 <!-- </include> -->
 

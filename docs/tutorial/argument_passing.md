@@ -76,16 +76,19 @@ Usage: try_argparser.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 Mandatory arguments to long options are mandatory for short options too.
 
 Positional arguments:
-[pos_1={1,2}]                              one positional argument with default
-                                           and choice (default: 2)
+[pos_1={1,2}]                              one positional argument with
+                                           default and choice (default: 2)
 pos_2                                      two positional arguments without
                                            default or choice
 
 Mandatory options:
--a, -A,   --var-1=VAL_1, --var-a=VAR_A     one value without default or choice
--b, -B,   --var-2=VAL_2, --var-b=VAR_B     at least one value without default
+-a, -A,   --var-1=VAL_1, --var-a=VAR_A     one value without default or
+                                           choice
+-b, -B,   --var-2=VAL_2..., --var-b=VAR_B...
+                                           at least one value without default
                                            or choice
--c, -C,   --var-3={A,B}, --var-c={A,B}     at least one value with choice
+-c, -C,   --var-3={A,B}..., --var-c={A,B}...
+                                           at least one value with choice
 
 Optional options:
 [-d, -D], [--var-4={A,B,C}],               one value with default and choice
@@ -97,10 +100,10 @@ Optional options:
 [-g, -G], [--var-7, --var-g]               (DEPRECATED) no value (flag) with
                                            default (default: true)
 
-[-h, -?], [--help]                         display this help and exit (default:
-                                           false)
-[-u],     [--usage]                        display the usage and exit (default:
-                                           false)
+[-h, -?], [--help]                         display this help and exit
+                                           (default: false)
+[-u],     [--usage]                        display the usage and exit
+                                           (default: false)
 [-V],     [--version]                      display the version and exit
                                            (default: false)
 ```
