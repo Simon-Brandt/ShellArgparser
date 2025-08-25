@@ -444,14 +444,16 @@ function argparser_fold() {
     joined_words=""
     col_width=0
     IFS=" " read -r -a words <<< "${line}"
+    word_count="${#words[@]}"
 
     for i in "${!words[@]}"; do
         word="${words[i]}"
         len_word="${#word}"
         len_joined_words="${#joined_words}"
+
         if (( len_word > max_col_width \
             && len_joined_words == 0 \
-            && i < "${#words[@]}" - 1 ));
+            && i < word_count - 1 ))
         then
             # As the word, which is not the last in the line, is too
             # long, print the word and introduce a line break.  Then,
@@ -463,20 +465,10 @@ function argparser_fold() {
             # As the word, which is the last in the line, is too long,
             # only print the word.
             joined_words+="${word}"
-        elif (( col_width + len_word + 1 > max_col_width \
-            && (i < "${#words[@]}" - 1 || col_index == 3) ))
-        then
-            # As the line with the appended word, which is not the last
-            # in the line or the last of the third column, would be too
-            # long, introduce a line break and print the word.  Then,
-            # set the column width.
-            joined_words+=$'\n'
-            joined_words+="${word}"
-            col_width="${len_word}"
-        elif (( col_width + len_word > max_col_width )); then
-            # As the line with the appended word, which is the last in
-            # the line, would be too long, introduce a line break and
-            # print the word.  Then, set the column width.
+        elif (( col_width + len_word + 1 > max_col_width )); then
+            # As the line with the appended word, which is not the only
+            # word in the line, would be too long, introduce a line
+            # break and print the word.  Then, set the column width.
             joined_words+=$'\n'
             joined_words+="${word}"
             col_width="${len_word}"
