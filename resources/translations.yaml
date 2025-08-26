@@ -669,7 +669,15 @@ Error arg def pos note:
 # 3.6.  Define the translations for checking the values of the keyword
 #       arguments in the arguments definition.
 ---
-Error arg def option flag:
+Error arg def option flag 1:
+  en: >
+    Error: The option with the identifier "$1" must be true or false, but has
+    no default given.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" muss wahr (true) oder falsch
+    (false) sein, hat aber keine Vorgabe gegeben.
+
+Error arg def option flag 2:
   en: >
     Error: The option with the identifier "$1" must be true or false, but has
     {$2} given as default.
@@ -693,7 +701,15 @@ Error arg def option default 2:
     Fehler: Die Option mit dem Identifikator "$1" erfordert $2 Werte, hat aber
     $3 als Vorgabe gegeben.
 
-Error arg def option choice flag:
+Error arg def option choice flag 1:
+  en: >
+    Error: The option with the identifier "$1" has {$2} given as choice values,
+    while true and false cannot be any.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" hat {$2} als Auswahlwerte
+    gegeben, während wahr (true) und falsch (false) keine sein können.
+
+Error arg def option choice flag 2:
   en: >
     Error: The option with the identifier "$1" accepts no choice values, but
     has {$2} given.

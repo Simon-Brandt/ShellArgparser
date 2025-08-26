@@ -3027,8 +3027,8 @@ function argparser_check_args_definition_positional_values() {
 
         # Check if the number of default values equals the number of
         # required values.  Else, output an error message.
-        if [[ "${arg_number}" != "+" \
-            && -n "${default_values[0]}" \
+        if ! argparser_in_array "${arg_number}" "+" "*" "?" \
+            && [[ -n "${default_values[0]}" \
             && "${#default_values[@]}" != "${arg_number}" ]]
         then
             if [[ "${arg_number}" == 1 ]]; then
@@ -3135,7 +3135,7 @@ function argparser_check_args_definition_positional_values() {
                 "${arg_key}"
             error_message="${translation}"
             error_messages+=("${error_message}")
-        elif [[ "${arg_number}" == "+" ]]; then
+        elif [[ "${arg_number}" == "+" || "${arg_number}" == "*" ]]; then
             # Check that no two positional arguments accept an infinite
             # number of values, which would be impossible to parse.
             if [[ -n "${infinite_arg_number_arg}" ]]; then
@@ -3346,34 +3346,43 @@ function argparser_check_args_definition_option_values() {
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
             <<< "${all_notes[${arg_key}]}"
 
-        # Check if the default value for flags is either true or false.
-        if [[ "${arg_number}" == 0 \
-            && "${default_values[0]}" != true \
-            && "${default_values[0]}" != false ]]
-        then
-            default_value="${default_values[0]}"
-            for (( i = 1; i < "${#default_values[@]}"; i++ )); do
-                default_value+="${ARGPARSER_ARG_DELIMITER_2}"
-                default_value+="${default_values[i]}"
-            done
+        # Check if the default value for flags (or arguments that can be
+        # used as such) is either true or false.
+        if argparser_in_array "${arg_number}" "*" "?" 0; then
+            if [[ "${#default_values[@]}" == 0 ]]; then
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="must be true or false, but has no default "
+                error_message+="given."
 
-            error_message="Error: The option with the identifier \"\$1\" must "
-            error_message+="be true or false, but has {\$2} given as default."
+                argparser_translate "Error arg def option flag 1" \
+                    "${error_message}" "${arg_key}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            elif ! argparser_in_array "${default_values[0]}" true false; then
+                default_value="${default_values[0]}"
+                for (( i = 1; i < "${#default_values[@]}"; i++ )); do
+                    default_value+="${ARGPARSER_ARG_DELIMITER_2}"
+                    default_value+="${default_values[i]}"
+                done
 
-            argparser_translate "Error arg def option flag" \
-                "${error_message}" "${arg_key}" "${default_value}"
-            error_message="${translation}"
-            error_messages+=("${error_message}")
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="must be true or false, but has {\$2} given as "
+                error_message+="default."
+
+                argparser_translate "Error arg def option flag 2" \
+                    "${error_message}" "${arg_key}" "${default_value}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            fi
         fi
 
         # Check if the number of default values equals the number of
         # required values.  Else, output an error message.  Ignore flags
         # as long as they have the only default value of true or false,
         # but a number of required values of 0.
-        if [[ "${arg_number}" != "+" \
-            && "${arg_number}" != 0 \
-            && -n "${default_values[0]}" \
-            && "${#default_values[@]}" != "${arg_number}" ]]
+        if ! argparser_in_array "${arg_number}" "+" "*" "?" 0 \
+            && [[ -n "${default_values[0]}" \
+                && "${#default_values[@]}" != "${arg_number}" ]]
         then
             if [[ "${arg_number}" == 1 ]]; then
                 error_message="Error: The option with the identifier \"\$1\" "
@@ -3401,8 +3410,26 @@ function argparser_check_args_definition_option_values() {
         # if each default value lies within the array of choice values.
         # Else, output an error message.
         if [[ -n "${choice_values[0]}" ]]; then
-            # Check that flags have no choice values.
-            if [[ "${arg_number}" == 0 ]]; then
+            # Check that arguments that can be used as flags don't have
+            # true or false as choice values, and actual flags none.
+            if argparser_in_array "${arg_number}" "*" "?" \
+                && argparser_in_array "${choice_values[@]}" true false
+            then
+                choice_value="${choice_values[0]}"
+                for (( i = 1; i < "${#choice_values[@]}"; i++ )); do
+                    choice_value+="${ARGPARSER_ARG_DELIMITER_2}"
+                    choice_value+="${choice_values[i]}"
+                done
+
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="has {\$2} given as choice values, while true "
+                error_message+="and false cannot be any."
+
+                argparser_translate "Error arg def option choice flag 1" \
+                    "${error_message}" "${arg_key}" "${choice_value}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            elif [[ "${arg_number}" == 0 ]]; then
                 choice_value="${choice_values[0]}"
                 for (( i = 1; i < "${#choice_values[@]}"; i++ )); do
                     choice_value+="${ARGPARSER_ARG_DELIMITER_2}"
@@ -3412,7 +3439,7 @@ function argparser_check_args_definition_option_values() {
                 error_message="Error: The option with the identifier \"\$1\" "
                 error_message+="accepts no choice values, but has {\$2} given."
 
-                argparser_translate "Error arg def option choice flag" \
+                argparser_translate "Error arg def option choice flag 2" \
                     "${error_message}" "${arg_key}" "${choice_value}"
                 error_message="${translation}"
                 error_messages+=("${error_message}")
