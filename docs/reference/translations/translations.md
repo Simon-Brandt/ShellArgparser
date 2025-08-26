@@ -890,15 +890,6 @@
 
 #### 9.5.107. `Error wrong arg number 1`
 
-- ***Message:*** `Error: The argument "$1" requires 1 value, but has $2 given.`
-- ***Description:*** The error that on the command line, an argument has a wrong number of values given, while requiring one.
-- ***Reasons for error:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values, which is one.
-- ***Interpolated variables:***
-  - `$1`: The argument's option or value names.
-  - `$2`: The number of given values.
-
-#### 9.5.108. `Error wrong arg number 2`
-
 - ***Message:*** `Error: The argument "$1" requires at least 1 value, but has $2 given.`
 - ***Description:*** The error that on the command line, an argument has a wrong number of values given, while requiring at least one.
 - ***Reasons for error:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values, which is at least one.
@@ -906,7 +897,25 @@
   - `$1`: The argument's option or value names.
   - `$2`: The number of given values.
 
+#### 9.5.108. `Error wrong arg number 2`
+
+- ***Message:*** `Error: The argument "$1" requires 0 or 1 value, but has $2 given.`
+- ***Description:*** The error that on the command line, an argument has a wrong number of values given, while requiring zero or one.
+- ***Reasons for error:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values, which is zero or one.
+- ***Interpolated variables:***
+  - `$1`: The argument's option or value names.
+  - `$2`: The number of given values.
+
 #### 9.5.109. `Error wrong arg number 3`
+
+- ***Message:*** `Error: The argument "$1" requires 1 value, but has $2 given.`
+- ***Description:*** The error that on the command line, an argument has a wrong number of values given, while requiring one.
+- ***Reasons for error:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values, which is one.
+- ***Interpolated variables:***
+  - `$1`: The argument's option or value names.
+  - `$2`: The number of given values.
+
+#### 9.5.110. `Error wrong arg number 4`
 
 - ***Message:*** `Error: The argument "$1" requires $2 values, but has $3 given.`
 - ***Description:*** The error that on the command line, an argument has a wrong number of values given.
@@ -916,7 +925,7 @@
   - `$2`: The number of required values.
   - `$3`: The number of given values.
 
-#### 9.5.110. `Error arg choice`
+#### 9.5.111. `Error arg choice`
 
 - ***Message:*** `Error: The argument "$1" must be in {$2}, but is {$3}.`
 - ***Description:*** The error that a given arguments' values aren't a subset of the choice values.
@@ -926,7 +935,7 @@
   - `$2`: The choice values.
   - `$3`: The given values.
 
-#### 9.5.111. `Error arg bool`
+#### 9.5.112. `Error arg bool`
 
 - ***Message:*** `Error: The argument "$1" is set to "$2", but must be a Boolean, i.e., true or false.`
 - ***Description:*** The error that a given argument's value's data type is not a Boolean.
@@ -935,7 +944,7 @@
   - `$1`: The argument's option or value names.
   - `$2`: The given value.
 
-#### 9.5.112. `Error arg char`
+#### 9.5.113. `Error arg char`
 
 - ***Message:*** `Error: The argument "$1" is set to "$2", but must be a character, i.e., a string comprising one printable ASCII character.`
 - ***Description:*** The error that a given argument's value's data type is not a character.
@@ -944,7 +953,7 @@
   - `$1`: The argument's option or value names.
   - `$2`: The given value.
 
-#### 9.5.113. `Error arg float`
+#### 9.5.114. `Error arg float`
 
 - ***Message:*** `Error: The argument "$1" is set to "$2", but must be a floating-point number, i.e., comprise only digits, a dot, and possibly a leading sign.`
 - ***Description:*** The error that a given argument's value's data type is not a floating-point number.
@@ -953,7 +962,7 @@
   - `$1`: The argument's option or value names.
   - `$2`: The given value.
 
-#### 9.5.114. `Error arg int`
+#### 9.5.115. `Error arg int`
 
 - ***Message:*** `Error: The argument "$1" is set to "$2", but must be an integer, i.e., comprise only digits and possibly a leading sign.`
 - ***Description:*** The error that a given argument's value's data type is not an integer.
@@ -962,7 +971,7 @@
   - `$1`: The argument's option or value names.
   - `$2`: The given value.
 
-#### 9.5.115. `Error arg uint`
+#### 9.5.116. `Error arg uint`
 
 - ***Message:*** `Error: The argument "$1" is set to "$2", but must be an unsigned integer, i.e., comprise only digits and no sign.`
 - ***Description:*** The error that a given argument's value's data type is not an unsigned integer.
@@ -971,7 +980,7 @@
   - `$1`: The argument's option or value names.
   - `$2`: The given value.
 
-#### 9.5.116. `Error YAML`
+#### 9.5.117. `Error YAML`
 
 - ***Message:*** `Error: The YAML line "$1" could not be recognized.`
 - ***Description:*** The error that a translation file's [YAML](https://en.wikipedia.org/wiki/YAML "wikipedia.org &rightarrow; YAML") line cannot be parsed.
@@ -979,7 +988,7 @@
 - ***Interpolated variables:***
   - `$1`: The YAML line.
 
-#### 9.5.117. `Error include directive`
+#### 9.5.118. `Error include directive`
 
 - ***Message:*** `Error: The include directive "$1" could not be recognized.`
 - ***Description:*** The error that an include directive cannot be parsed.
@@ -987,7 +996,27 @@
 - ***Interpolated variables:***
   - `$1`: The include directive.
 
-#### 9.5.118. `Warning wrong arg number 1`
+#### 9.5.119. `Warning wrong arg number 1`
+
+- ***Message:*** `Warning: The argument "$1" requires at least 1 value, but has $2 given.  For convenience, the default ($3) is used.`
+- ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring at least one.
+- ***Reasons for warning:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values, which is at least one. Thus, it falls back to the default values.
+- ***Interpolated variables:***
+  - `$1`: The argument's option or value names.
+  - `$2`: The number of given values.
+  - `$3`: The default values.
+
+#### 9.5.120. `Warning wrong arg number 2`
+
+- ***Message:*** `Warning: The argument "$1" requires at 0 or 1 value, but has $2 given.  For convenience, the default ($3) is used.`
+- ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring zero or one.
+- ***Reasons for warning:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values, which is zero or one. Thus, it falls back to the default values.
+- ***Interpolated variables:***
+  - `$1`: The argument's option or value names.
+  - `$2`: The number of given values.
+  - `$3`: The default values.
+
+#### 9.5.121. `Warning wrong arg number 3`
 
 - ***Message:*** `Warning: The argument "$1" requires 1 value, but has $2 given.  For convenience, the default ($3) is used.`
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring one.
@@ -997,17 +1026,7 @@
   - `$2`: The number of given values.
   - `$3`: The default values.
 
-#### 9.5.119. `Warning wrong arg number 2`
-
-- ***Message:*** `Warning: The argument "$1" requires at least 1 value, but has $2 given. For convenience, the default ($3) is used.`
-- ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring at least one.
-- ***Reasons for warning:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values, which is at least one. Thus, it falls back to the default values.
-- ***Interpolated variables:***
-  - `$1`: The argument's option or value names.
-  - `$2`: The number of given values.
-  - `$3`: The default values.
-
-#### 9.5.120. `Warning wrong arg number 3`
+#### 9.5.122. `Warning wrong arg number 4`
 
 - ***Message:*** `Warning: The argument "$1" requires $2 values, but has $3 given.  For convenience, the default ($4) is used.`
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given.
@@ -1018,7 +1037,7 @@
   - `$3`: The number of given values.
   - `$4`: The default values.
 
-#### 9.5.121. `Warning deprecation`
+#### 9.5.123. `Warning deprecation`
 
 - ***Message:*** `Warning: The argument "$1" is deprecated and will be removed in the future.`
 - ***Description:*** The warning that on the command line, a deprecated argument is given.
@@ -1026,7 +1045,7 @@
 - ***Interpolated variables:***
   - `$1`: The argument's option or value names.
 
-#### 9.5.122. `Warning no identifier`
+#### 9.5.124. `Warning no identifier`
 
 - ***Message:*** `Warning: In the translation file "$1", the identifier "$2" is missing.  For convenience, the untranslated string is used, instead.`
 - ***Description:*** The warning that in a translation file, an identifier is missing.
@@ -1035,7 +1054,7 @@
   - `$1`: The [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9440-argparser_translation_file).
   - `$2`: The missing identifier.
 
-#### 9.5.123. `Warning no translation`
+#### 9.5.125. `Warning no translation`
 
 - ***Message:*** `Warning: In the translation file "$1", the translation to "$2" for the identifier "$3" is missing.  For convenience, the untranslated string is used, instead.`
 - ***Description:*** The warning that in a translation file, an identifier's translation is missing.

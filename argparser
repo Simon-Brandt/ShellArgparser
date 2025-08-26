@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-25
+# Last Modification: 2025-08-26
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -4535,10 +4535,12 @@ function argparser_check_arg_values() {
     # and warning messages.
     argparser_get_option_names "${arg_key}" "short-long"
 
-    # If a "+" prefix is given and the argument is no flag, output an
-    # error message.
+    # If a "+" (or equivalent "no-") prefix is given and the argument is
+    # no flag (or can be used as such) output an error message.
     for prefix in "${prefixes[@]}"; do
-        if [[ "${prefix}" == "+" && "${arg_number}" != 0 ]]; then
+        if [[ "${prefix}" == "+" ]] \
+            && ! argparser_in_array "${arg_number}" 0 "*" "?"
+        then
             error_message="Error: The option \"\$1\" is no flag and thus "
             error_message+="cannot be given with a \"+\" or \"no-\" prefix."
 
@@ -4567,13 +4569,15 @@ function argparser_check_arg_values() {
             error_message="${translation}"
             messages+=("${error_message}")
             return
-        elif [[ "${ARGPARSER_COUNT_FLAGS}" == true && "${arg_number}" == 0 ]]
+        elif [[ "${ARGPARSER_COUNT_FLAGS}" == true ]] \
+            && argparser_in_array "${arg_number}" 0 "*" "?"
         then
-            # The argument is not given, but a flag with a default value
-            # of "true" or "false".  Since the flags shall be counted,
-            # set the value to 1 for "true" and to -1 for "false", which
-            # are the same values as would be when the flags would be
-            # given with a hyphen ("-", true) or plus sign ("+", false).
+            # The argument is not given, but is a flag (or may be used
+            # as such) with a default value of "true" or "false".  Since
+            # the flags shall be counted, set the value to 1 for "true"
+            # and to -1 for "false", which are the same values as would
+            # be when the flags would be given with a hyphen ("-", true)
+            # or plus sign ("+", false).
             if [[ "${default_values[0]}" == true ]]; then
                 values=(1)
             else
@@ -4585,115 +4589,155 @@ function argparser_check_arg_values() {
             # arguments, which don't need to be set.
             values=("${default_values[@]}")
         fi
-    else
-        if [[ "${arg_number}" != "+" && "${#values[@]}" != "${arg_number}" ]] \
-            || [[ "${arg_number}" == "+" && "${#values[@]}" == 0 ]]
-        then
-            # If the number of values doesn't equal the number of
-            # required values, check if some default values are given.
-            if [[ -z "${default_values[0]}" ]]; then
-                # If no default value is given, output an error message
-                # indicating the number of required and given arguments.
-                if [[ "${arg_number}" == 1 ]]; then
-                    error_message="Error: The argument \"\$1\" requires 1 "
-                    error_message+="value, but has \$2 given."
+    elif [[ "${arg_number}" == "+" && "${#values[@]}" == 0 ]]; then
+        # The number of values doesn't equal the number of required
+        # values, so check if some default values are given.
+        if [[ -z "${default_values[0]}" ]]; then
+            # No default value is given, so output an error message
+            # indicating the number of required and given arguments.
+            error_message="Error: The argument \"\$1\" requires at least 1 "
+            error_message+="value, but has \$2 given."
 
-                    argparser_translate "Error wrong arg number 1" \
-                        "${error_message}" "${option_names}" "${#values[@]}"
-                    error_message="${translation}"
-                elif [[ "${arg_number}" == "+" ]]; then
-                    error_message="Error: The argument \"\$1\" requires at "
-                    error_message+="least 1 value, but has \$2 given."
+            argparser_translate "Error wrong arg number 1" "${error_message}" \
+                "${option_names}" "${#values[@]}"
+            error_message="${translation}"
+            messages+=("${error_message}")
+        else
+            # As some default values are given, print a similar warning
+            # message as for the absence case, but set the values to the
+            # default values and continue.
+            warning_message="Warning: The argument \"\$1\" requires at least "
+            warning_message+="1 value, but has \$2 given.  For convenience, "
+            warning_message+="the default (\$3) is used."
 
-                    argparser_translate "Error wrong arg number 2" \
-                        "${error_message}" "${option_names}" "${#values[@]}"
-                    error_message="${translation}"
-                else
-                    error_message="Error: The argument \"\$1\" requires \$2 "
-                    error_message+="values, but has \$3 given."
+            argparser_translate "Warning wrong arg number 1" \
+                "${warning_message}" "${option_names}" "${#values[@]}" \
+                "${default_value}"
+            warning_message="${translation}"
+            messages+=("${warning_message}")
+        fi
+    elif [[ "${arg_number}" == "?" ]] && (( "${#values[@]}" > 1 )); then
+        # The number of values doesn't equal the number of required
+        # values, so check if some default values are given.
+        if [[ -z "${default_values[0]}" ]]; then
+            # No default value is given, so output an error message
+            # indicating the number of required and given arguments.
+            error_message="Error: The argument \"\$1\" requires 0 or 1 value, "
+            error_message+="but has \$2 given."
 
-                    argparser_translate "Error wrong arg number 3" \
-                        "${error_message}" "${option_names}" "${arg_number}" \
-                        "${#values[@]}"
-                    error_message="${translation}"
-                fi
-                messages+=("${error_message}")
-                return
-            else
-                # As some default values are given, print a similar
-                # warning message as for the absence case, but set the
-                # values to the default values and continue.
-                if [[ "${arg_key}" != "ARGPARSER_ARG_DELIMITER_2" ]]; then
-                    default_value="${default_values[0]}"
-                    for (( i = 1; i < "${#default_values[@]}"; i++ )); do
-                        default_value+="${ARGPARSER_ARG_DELIMITER_2}"
-                        default_value+="${default_values[i]}"
-                    done
-                fi
+            argparser_translate "Error wrong arg number 2" \
+                "${error_message}" "${option_names}" "${#values[@]}"
+            error_message="${translation}"
+            messages+=("${error_message}")
+        else
+            # As some default values are given, print a similar warning
+            # message as for the absence case, but set the values to the
+            # default values and continue.
+            warning_message="Warning: The argument \"\$1\" requires 0 or 1 "
+            warning_message+="value, but has \$2 given.  For convenience, the "
+            warning_message+="default (\$3) is used."
 
-                if [[ "${arg_number}" == 1 ]]; then
-                    warning_message="Warning: The argument \"\$1\" requires 1 "
-                    warning_message+="value, but has \$2 given.  For "
-                    warning_message+="convenience, the default (\$3) is used."
+            argparser_translate "Warning wrong arg number 2" \
+                "${warning_message}" "${option_names}" "${#values[@]}" \
+                "${default_value}"
+            warning_message="${translation}"
+            messages+=("${warning_message}")
+        fi
+    elif [[ "${arg_number}" == 1 && "${#values[@]}" != 1 ]]; then
+        # The number of values doesn't equal the number of required
+        # values, so check if some default values are given.
+        if [[ -z "${default_values[0]}" ]]; then
+            # No default value is given, so output an error message
+            # indicating the number of required and given arguments.
+            error_message="Error: The argument \"\$1\" requires 1 value, but "
+            error_message+="has \$2 given."
 
-                    argparser_translate "Warning wrong arg number 1" \
-                        "${warning_message}" "${option_names}" \
-                        "${#values[@]}" "${default_value}"
-                    warning_message="${translation}"
-                elif [[ "${arg_number}" == "+" ]]; then
-                    warning_message="Warning: The argument \"\$1\" requires "
-                    warning_message+="at least 1 value, but has \$2 given.  "
-                    warning_message+="For convenience, the default (\$3) is "
-                    warning_message+="used."
-
-                    argparser_translate "Warning wrong arg number 2" \
-                        "${warning_message}" "${option_names}" \
-                        "${#values[@]}" "${default_value}"
-                    warning_message="${translation}"
-                else
-                    warning_message="Warning: The argument \"\$1\" requires "
-                    warning_message+="\$2 values, but has \$3 given.  For "
-                    warning_message+="convenience, the default (\$4) is used."
-
-                    argparser_translate "Warning wrong arg number 3" \
-                        "${warning_message}" "${option_names}" \
-                        "${arg_number}" "${#values[@]}" "${default_value}"
-                    warning_message="${translation}"
-                fi
-                messages+=("${warning_message}")
-
-                if [[ "${arg_key}" == "ARGPARSER_ARG_DELIMITER_2" ]]; then
-                    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a \
-                        default_values \
-                            <<< "${all_default_values[${arg_key}]}"
-                fi
-                values=("${default_values[@]}")
+            argparser_translate "Error wrong arg number 3" \
+                "${error_message}" "${option_names}" "${#values[@]}"
+            error_message="${translation}"
+            messages+=("${error_message}")
+        else
+            # As some default values are given, print a similar warning
+            # message as for the absence case, but set the values to the
+            # default values and continue.
+            if [[ "${arg_key}" != "ARGPARSER_ARG_DELIMITER_2" ]]; then
+                default_value="${default_values[0]}"
+                for (( i = 1; i < "${#default_values[@]}"; i++ )); do
+                    default_value+="${ARGPARSER_ARG_DELIMITER_2}"
+                    default_value+="${default_values[i]}"
+                done
             fi
-        elif [[ "${arg_number}" == 0 && (! -v values || -z "${values[0]}") ]]
-        then
-            # If no value is required nor given, the argument is a flag.
-            # As it is set (present), set the value to true for a "-"
-            # prefix and to false for a "+" prefix.  Thereby, the last
-            # given prefix determines the value, implicitly overriding
-            # any prefix given before.  Alternatively, count the number
-            # of "-" and "+" prefixes, then take their difference as
-            # actual count.
-            if [[ "${ARGPARSER_COUNT_FLAGS}" == true ]]; then
-                argparser_count "-" "${prefixes[@]}"
-                count_hyphen="${count}"
 
-                argparser_count "+" "${prefixes[@]}"
-                count_plus="${count}"
+            warning_message="Warning: The argument \"\$1\" requires 1 value, "
+            warning_message+="but has \$2 given.  For convenience, the "
+            warning_message+="default (\$3) is used."
 
-                (( count = count_hyphen - count_plus ))
-                values=("${count}")
-            else
-                if [[ "${prefixes[-1]}" == "-" ]]; then
-                    values=(true)
-                else
-                    values=(false)
-                fi
+            argparser_translate "Warning wrong arg number 3" \
+                "${warning_message}" "${option_names}" "${#values[@]}" \
+                "${default_value}"
+            warning_message="${translation}"
+            messages+=("${warning_message}")
+
+            if [[ "${arg_key}" == "ARGPARSER_ARG_DELIMITER_2" ]]; then
+                IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a default_values \
+                    <<< "${all_default_values[${arg_key}]}"
             fi
+            values=("${default_values[@]}")
+        fi
+    elif argparser_in_array "${arg_number}" 0 "*" "?" \
+        && [[ ! -v values || -z "${values[0]}" ]]
+    then
+        # No value is required nor given, so the argument is a flag.  As
+        # it is set (present), set the value to true for a "-" prefix
+        # and to false for a "+" prefix.  Thereby, the last given prefix
+        # determines the value, implicitly overriding any prefix given
+        # before.  Alternatively, count the number of "-" and "+"
+        # prefixes, then take their difference as actual count.
+        if [[ "${ARGPARSER_COUNT_FLAGS}" == true ]]; then
+            argparser_count "-" "${prefixes[@]}"
+            count_hyphen="${count}"
+
+            argparser_count "+" "${prefixes[@]}"
+            count_plus="${count}"
+
+            (( count = count_hyphen - count_plus ))
+            values=("${count}")
+        else
+            if [[ "${prefixes[-1]}" == "-" ]]; then
+                values=(true)
+            else
+                values=(false)
+            fi
+        fi
+    elif argparser_is_int "${arg_number}" \
+        && [[ "${#values[@]}" != "${arg_number}" ]]
+    then
+        # The number of values doesn't equal the number of required
+        # values, so check if some default values are given.
+        if [[ -z "${default_values[0]}" ]]; then
+            # No default value is given, so output an error message
+            # indicating the number of required and given arguments.
+            error_message="Error: The argument \"\$1\" requires \$2 values, "
+            error_message+="but has \$3 given."
+
+            argparser_translate "Error wrong arg number 4" "${error_message}" \
+                "${option_names}" "${arg_number}" "${#values[@]}"
+            error_message="${translation}"
+            messages+=("${error_message}")
+            return
+        else
+            # As some default values are given, print a similar warning
+            # message as for the absence case, but set the values to the
+            # default values and continue.
+            warning_message="Warning: The argument \"\$1\" requires \$2 "
+            warning_message+="values, but has \$3 given.  For convenience, "
+            warning_message+="the default (\$4) is used."
+
+            argparser_translate "Warning wrong arg number 4" \
+                "${warning_message}" "${option_names}" "${arg_number}" \
+                "${#values[@]}" "${default_value}"
+            warning_message="${translation}"
+            messages+=("${warning_message}")
         fi
     fi
 

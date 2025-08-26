@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-07-29
+# Last Modification: 2025-08-26
 # License: Public Domain
 
 # 1.    Define the general translations.
@@ -866,17 +866,23 @@ Error mandatory arg:
 
 Error wrong arg number 1:
   en: >
-    Error: The argument "$1" requires 1 value, but has $2 given.
-  de: >
-    Fehler: Das Argument "$1" erfordert 1 Wert, hat aber $2 gegeben.
-
-Error wrong arg number 2:
-  en: >
     Error: The argument "$1" requires at least 1 value, but has $2 given.
   de: >
     Fehler: Das Argument "$1" erfordert mindestens 1 Wert, hat aber $2 gegeben.
 
+Error wrong arg number 2:
+  en: >
+    Error: The argument "$1" requires 0 or 1 value, but has $2 given.
+  de: >
+    Fehler: Das Argument "$1" erfordert 0 oder 1 Wert, hat aber $2 gegeben.
+
 Error wrong arg number 3:
+  en: >
+    Error: The argument "$1" requires 1 value, but has $2 given.
+  de: >
+    Fehler: Das Argument "$1" erfordert 1 Wert, hat aber $2 gegeben.
+
+Error wrong arg number 4:
   en: >
     Error: The argument "$1" requires $2 values, but has $3 given.
   de: >
@@ -955,21 +961,29 @@ Error include directive:
 ---
 Warning wrong arg number 1:
   en: >
+    Warning: The argument "$1" requires at least 1 value, but has $2 given. 
+    For convenience, the default ($3) is used.
+  de: >
+    Warnung: Das Argument "$1" erfordert mindestens 1 Wert, hat aber $2
+    gegeben.  Zwecks Einfachheit wird die Vorgabe ($3) genutzt.
+
+Warning wrong arg number 2:
+  en: >
+    Warning: The argument "$1" requires at 0 or 1 value, but has $2 given.  For
+    convenience, the default ($3) is used.
+  de: >
+    Warnung: Das Argument "$1" erfordert 0 oder 1 Wert, hat aber $2 gegeben. 
+    Zwecks Einfachheit wird die Vorgabe ($3) genutzt.
+
+Warning wrong arg number 3:
+  en: >
     Warning: The argument "$1" requires 1 value, but has $2 given.  For
     convenience, the default ($3) is used.
   de: >
     Warnung: Das Argument "$1" erfordert 1 Wert, hat aber $2 gegeben.  Zwecks
     Einfachheit wird die Vorgabe ($3) genutzt.
 
-Warning wrong arg number 2:
-  en: >
-    Warning: The argument "$1" requires at least 1 value, but has $2 given.
-    For convenience, the default ($3) is used.
-  de: >
-    Warnung: Das Argument "$1" erfordert mindestens 1 Wert, hat aber $2
-    gegeben.  Zwecks Einfachheit wird die Vorgabe ($3) genutzt.
-
-Warning wrong arg number 3:
+Warning wrong arg number 4:
   en: >
     Warning: The argument "$1" requires $2 values, but has $3 given.  For
     convenience, the default ($4) is used.
@@ -992,7 +1006,7 @@ Warning no identifier:
     Warning: In the translation file "$1", the identifier "$2" is missing.  For
     convenience, the untranslated string is used, instead.
   de: >
-    Warnung: In der Übersetzungsdatei "$1" fehlt der Identifikator "$2".
+    Warnung: In der Übersetzungsdatei "$1" fehlt der Identifikator "$2". 
     Zwecks Einfachheit wird stattdessen die nicht übersetzte Zeichenkette
     genutzt.
 
