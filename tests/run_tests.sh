@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-25
+# Last Modification: 2025-08-26
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -245,14 +245,14 @@ function print_summary() {
 
     colorize "yellow,bold,reverse" $'Summary:\n'
 
-    line="$(printf ' - %2s tests were run.' \
-        $(( succeeded_cmd_count + failed_cmd_count )))"
+    printf -v line ' - %2s tests were run.' \
+        $(( succeeded_cmd_count + failed_cmd_count ))
     colorize "yellow,bold,reverse" "${line}" $'\n'
 
-    line="$(printf ' - %2s tests succeeded.' "${succeeded_cmd_count}")"
+    printf -v line ' - %2s tests succeeded.' "${succeeded_cmd_count}"
     colorize "yellow,bold,reverse" "${line}" $'\n'
 
-    line="$(printf ' - %2s tests failed.' "${failed_cmd_count}")"
+    printf -v line ' - %2s tests failed.' "${failed_cmd_count}"
     colorize "yellow,bold,reverse" "${line}" $'\n'
 }
 
