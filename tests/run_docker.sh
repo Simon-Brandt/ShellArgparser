@@ -20,9 +20,9 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-21
+# Last Modification: 2025-08-27
 
-# Usage: Run this script with "bash run_docker.sh".
+# Usage: Run this script with "bash run_docker.sh [--purge]".
 
 # Purpose: Test the functionality of the Argparser by running the test
 # suite (run_tests.sh) from within Docker containers of Bash 4.4 through
@@ -112,6 +112,11 @@ function print_double_separator() {
     separator="${separator// /=}"
     colorize "cyan" "${separator}" $'\n'
 }
+
+# Possibly, remove all existing Docker images.
+if [[ "$1" == "--purge" ]]; then
+    docker system prune --all
+fi
 
 # For each Bash version, build a Docker image to run the test suite
 # under a given Bash version.
