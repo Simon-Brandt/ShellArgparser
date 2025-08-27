@@ -1022,7 +1022,15 @@
 - ***Interpolated variables:***
   - `$1`: The include directive.
 
-#### 9.5.122. `Warning wrong arg number 1`
+#### 9.5.122. `Warning deprecation`
+
+- ***Message:*** `Warning: The argument "$1" is deprecated and will be removed in the future.`
+- ***Description:*** The warning that on the command line, a deprecated argument is given.
+- ***Reasons for warning:*** When parsing the command line, the Argparser found an argument which is defined as deprecated. Thus, it warns your script's user to adapt the workflow.
+- ***Interpolated variables:***
+  - `$1`: The argument's option or value names.
+
+#### 9.5.123. `Warning wrong arg number 1`
 
 - ***Message:*** `Warning: The argument "$1" requires at least 1 value, but has $2 given.  For convenience, the default ($3) is used.`
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring at least one.
@@ -1032,7 +1040,7 @@
   - `$2`: The number of given values.
   - `$3`: The default values.
 
-#### 9.5.123. `Warning wrong arg number 2`
+#### 9.5.124. `Warning wrong arg number 2`
 
 - ***Message:*** `Warning: The argument "$1" requires at 0 or 1 value, but has $2 given.  For convenience, the default ($3) is used.`
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring zero or one.
@@ -1042,7 +1050,7 @@
   - `$2`: The number of given values.
   - `$3`: The default values.
 
-#### 9.5.124. `Warning wrong arg number 3`
+#### 9.5.125. `Warning wrong arg number 3`
 
 - ***Message:*** `Warning: The argument "$1" requires 1 value, but has $2 given.  For convenience, the default ($3) is used.`
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring one.
@@ -1052,7 +1060,7 @@
   - `$2`: The number of given values.
   - `$3`: The default values.
 
-#### 9.5.125. `Warning wrong arg number 4`
+#### 9.5.126. `Warning wrong arg number 4`
 
 - ***Message:*** `Warning: The argument "$1" requires $2 values, but has $3 given.  For convenience, the default ($4) is used.`
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given.
@@ -1062,14 +1070,6 @@
   - `$2`: The number of required values.
   - `$3`: The number of given values.
   - `$4`: The default values.
-
-#### 9.5.126. `Warning deprecation`
-
-- ***Message:*** `Warning: The argument "$1" is deprecated and will be removed in the future.`
-- ***Description:*** The warning that on the command line, a deprecated argument is given.
-- ***Reasons for warning:*** When parsing the command line, the Argparser found an argument which is defined as deprecated. Thus, it warns your script's user to adapt the workflow.
-- ***Interpolated variables:***
-  - `$1`: The argument's option or value names.
 
 #### 9.5.127. `Warning no identifier`
 

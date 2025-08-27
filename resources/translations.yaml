@@ -984,6 +984,12 @@ Error include directive:
 # 4.1.  Define the translations for checking the values of the
 #       arguments.
 ---
+Warning deprecation:
+  en: >
+    Warning: The argument "$1" is deprecated and will be removed in the future.
+  de: >
+    Warnung: Das Argument "$1" ist veraltet und wird in Zukunft entfernt.
+
 Warning wrong arg number 1:
   en: >
     Warning: The argument "$1" requires at least 1 value, but has $2 given. 
@@ -1015,12 +1021,6 @@ Warning wrong arg number 4:
   de: >
     Warnung: Das Argument "$1" erfordert $2 Werte, hat aber $3 gegeben.  Zwecks
     Einfachheit wird die Vorgabe ($4) genutzt.
-
-Warning deprecation:
-  en: >
-    Warning: The argument "$1" is deprecated and will be removed in the future.
-  de: >
-    Warnung: Das Argument "$1" ist veraltet und wird in Zukunft entfernt.
 ...
 
 # 4.2.  Define the translations for translating from the translation

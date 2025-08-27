@@ -4638,11 +4638,27 @@ function argparser_check_arg_values() {
     # and warning messages.
     argparser_get_option_names "${arg_key}" "short-long"
 
+    # Check the notes.
+    for note in "${notes[@]}"; do
+        if [[ "${note}" == "deprecated" && "${#prefixes[@]}" != 0 ]]; then
+            # Only output a deprecation warning if the argument had been
+            # given (and thus the prefix is non-empty), not when its
+            # default value will be used.
+            warning_message="Warning: The argument \"\$1\" is deprecated and "
+            warning_message+="will be removed in the future."
+
+            argparser_translate "Warning deprecation" "${warning_message}" \
+                "${option_names}"
+            warning_message="${translation}"
+            messages+=("${warning_message}")
+        fi
+    done
+
     # If a "+" (or equivalent "no-") prefix is given and the argument is
     # no flag (or can be used as such) output an error message.
     for prefix in "${prefixes[@]}"; do
         if [[ "${prefix}" == "+" ]] \
-            && ! argparser_in_array "${arg_number}" 0 "*" "?"
+            && ! argparser_in_array "${arg_number}" "*" "?" 0
         then
             error_message="Error: The option \"\$1\" is no flag and thus "
             error_message+="cannot be given with a \"+\" or \"no-\" prefix."
@@ -4673,7 +4689,7 @@ function argparser_check_arg_values() {
             messages+=("${error_message}")
             return
         elif [[ "${ARGPARSER_COUNT_FLAGS}" == true ]] \
-            && argparser_in_array "${arg_number}" 0 "*" "?"
+            && argparser_in_array "${arg_number}" "*" "?" 0
         then
             # The argument is not given, but is a flag (or may be used
             # as such) with a default value of "true" or "false".  Since
@@ -4819,7 +4835,7 @@ function argparser_check_arg_values() {
             messages+=("Value: ${joined_array}")
             return
         fi
-    elif argparser_in_array "${arg_number}" 0 "*" "?" \
+    elif argparser_in_array "${arg_number}" "*" "?" 0 \
         && [[ ! -v values || -z "${values[0]}" ]]
     then
         # No value is required nor given, so the argument is a flag.  As
@@ -4971,22 +4987,6 @@ function argparser_check_arg_values() {
             error_message="${translation}"
             messages+=("${error_message}")
             return
-        fi
-    done
-
-    # Check the notes.
-    for note in "${notes[@]}"; do
-        if [[ "${note}" == "deprecated" && "${#prefixes[@]}" != 0 ]]; then
-            # Only output a deprecation warning if the argument had been
-            # given (and thus the prefix is non-empty), not when its
-            # default value has been used.
-            warning_message="Warning: The argument \"\$1\" is deprecated and "
-            warning_message+="will be removed in the future."
-
-            argparser_translate "Warning deprecation" "${warning_message}" \
-                "${option_names}"
-            warning_message="${translation}"
-            messages+=("${warning_message}")
         fi
     done
 
