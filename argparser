@@ -24,9 +24,9 @@
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
-# is set to true (the default), the arguments will be parsed upon
-# sourcing.  If ${ARGPARSER_SET_ARGS} is set to true (the default), the
-# arguments will also be set to variables upon sourcing, else, the
+# is set to "true" (the default), the arguments will be parsed upon
+# sourcing.  If ${ARGPARSER_SET_ARGS} is set to "true" (the default),
+# the arguments will also be set to variables upon sourcing, else, the
 # associative array which ${ARGPARSER_ARG_ARRAY_NAME} points to needs to
 # be accessed.  Refer to the documentation for details.
 
@@ -350,10 +350,10 @@ function argparser_check_file() {
     # - $1: the file to check
     #
     # Nonlocals:
-    # - file_attributes: a bit mask with four bits set to 0 (true) if
+    # - file_attributes: a bit mask with four bits set to 0 ("true") if
     #   the file exists (first bit), is a regular file (second bit), is
     #   readable (third bit), and/or has a size greater than 0 bytes
-    #   (fourth bit), else set to 1 (false)
+    #   (fourth bit), else set to 1 ("false")
 
     # Define the local variable.
     local file
@@ -866,14 +866,14 @@ function argparser_colorize() {
     #
     # Nonlocals:
     # - style: the color and/or style to colorize the string (if $4 is
-    #   false)
+    #   "false")
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_USE_STYLES_IN_FILES (read-only)
     #
     # Output:
-    # - the colorized string (if $4 is true)
+    # - the colorized string (if $4 is "true")
 
     # Define the local variables.
     local file_descriptor
@@ -1029,7 +1029,7 @@ function argparser_read_configuration() {
     # output an error message and exit.  Since at this point of
     # invokation, the environment variables aren't checked, yet, set the
     # needed ones to default values, if ${ARGPARSER_CHECK_ENV_VARS}
-    # isn't set to false (and by this, the checking hasn't been
+    # isn't set to "false" (and by this, the checking hasn't been
     # explicitly disabled).
     argparser_check_file "${ARGPARSER_CONFIG_FILE}"
     if [[ "${file_attributes}" != "0000" ]]; then
@@ -1257,66 +1257,66 @@ function argparser_set_env_vars() {
     # the Argparser itself with default values for all environment
     # variables (which are yet to be set).
     ARGPARSER_ARGS=(
-        "id                                  : long_opts                 : val_names    : defaults             : choices    : type : arg_no : arg_group : help                                                                                                    "
-        "ARGPARSER_ADD_HELP                  : add-help                  :              : true                 :            : bool : 0      : Options   : add ARGPARSER_HELP_OPTIONS and --help as flags to call the help message                                 "
-        "ARGPARSER_ADD_USAGE                 : add-usage                 :              : true                 :            : bool : 0      : Options   : add ARGPARSER_USAGE_OPTIONS and --usage as flags to call the usage message                              "
-        "ARGPARSER_ADD_VERSION               : add-version               :              : true                 :            : bool : 0      : Options   : add ARGPARSER_VERSION_OPTIONS and --version as flags to call the version message                        "
-        "ARGPARSER_ALLOW_FLAG_INVERSION      : allow-flag-inversion      :              : true                 :            : bool : 0      : Options   : allow the user to invert flags by prefixing them with \"+\" (short options) or \"++\" (long options)    "
-        "ARGPARSER_ALLOW_FLAG_NEGATION       : allow-flag-negation       :              : true                 :            : bool : 0      : Options   : allow the user to negate long-option flags by prefixing them with \"no-\"                               "
-        "ARGPARSER_ALLOW_OPTION_ABBREVIATION : allow-option-abbreviation :              : false                :            : bool : 0      : Options   : allow the user to give long option names in abbreviated form                                            "
-        "ARGPARSER_ALLOW_OPTION_MERGING      : allow-option-merging      :              : false                :            : bool : 0      : Options   : allow the user to give short option names in merged (concatenated) form                                 "
-        "ARGPARSER_ARG_ARRAY_NAME            : arg-array-name            : NAME         : args                 :            : str  : 1      : Options   : the indexed array for the raw arguments and the associative array for the parsed arguments              "
-        "ARGPARSER_ARG_DEF_FILE              : arg-def-file              : FILE         : ''                   :            : file : 1      : Options   : the path to a file holding the definition of the arguments                                              "
-        "ARGPARSER_ARG_DELIMITER_1           : arg-delimiter-1           : CHAR         : |                    :            : char : 1      : Options   : the primary delimiter that separates the fields in the arguments definition                             "
-        "ARGPARSER_ARG_DELIMITER_2           : arg-delimiter-2           : CHAR         : ,                    :            : char : 1      : Options   : the secondary delimiter that separates the elements of sequences in the arguments definition            "
-        "ARGPARSER_CHECK_ARG_DEF             : check-arg-def             :              : false                :            : bool : 0      : Options   : check if the arguments definition is consistent                                                         "
-        "ARGPARSER_CHECK_ENV_VARS            : check-env-vars            :              : false                :            : bool : 0      : Options   : check if the Argparser environment variables accord to their definition                                 "
-        "ARGPARSER_CONFIG_FILE               : config-file               : FILE         : ''                   :            : file : 1      : Options   : the path to a file holding the Argparser configuration                                                  "
-        "ARGPARSER_COUNT_FLAGS               : count-flags               :              : false                :            : bool : 0      : Options   : count flags instead of setting them to true or false based on the last prefix used on the command line  "
-        "ARGPARSER_ERROR_EXIT_CODE           : error-exit-code           : INT          : 1                    :            : int  : 1      : Options   : the exit code when errors occurred upon parsing                                                         "
-        "ARGPARSER_ERROR_STYLE               : error-style               : STYLE        : red,bold,reverse     :            : str  : +      : Options   : the color and style specification for error messages                                                    "
-        "ARGPARSER_HELP_ARG_GROUP            : help-arg-group            : NAME         : Help options         :            : str  : 1      : Options   : the name of the argument group holding all help options, i.e., --help, --usage, and --version           "
-        "ARGPARSER_HELP_DESCRIPTION          : help-description          : TEXT         : ''                   :            : str  : 1      : Options   : the script's description (purpose) to show in help message                                              "
-        "ARGPARSER_HELP_EXIT_CODE            : help-exit-code            : INT          : 0                    :            : int  : 1      : Options   : the exit code for help messages                                                                         "
-        "ARGPARSER_HELP_FILE                 : help-file                 : FILE         : ''                   :            : file : 1      : Options   : the path to a file holding the extended help message                                                    "
-        "ARGPARSER_HELP_FILE_INCLUDE_CHAR    : help-file-include-char    : CHAR         : @                    :            : char : 1      : Options   : the character that introduces an include directive in an ARGPARSER_HELP_FILE                            "
-        "ARGPARSER_HELP_FILE_KEEP_COMMENTS   : help-file-keep-comments   :              : false                :            : bool : 0      : Options   : keep commented lines in the help file                                                                   "
-        "ARGPARSER_HELP_OPTIONS              : help-options              : CHAR         : h,?                  :            : char : +      : Options   : the short (single-character) option names to invoke the help message                                    "
-        "ARGPARSER_HELP_STYLE                : help-style                : STYLE        : italic               :            : str  : +      : Options   : the color and style specification for help messages                                                     "
-        "ARGPARSER_LANGUAGE                  : language                  : LANG         : en                   :            : str  : 1      : Options   : the language in which to localize the help and usage messages                                           "
-        "ARGPARSER_MAX_COL_WIDTH_1           : max-col-width-1           : INT          : 9                    :            : uint : 1      : Options   : the maximum column width of the first column in the help message                                        "
-        "ARGPARSER_MAX_COL_WIDTH_2           : max-col-width-2           : INT          : 33                   :            : uint : 1      : Options   : the maximum column width of the second column in the help message                                       "
-        "ARGPARSER_MAX_COL_WIDTH_3           : max-col-width-3           : INT          : 0                    :            : uint : 1      : Options   : the maximum column width of the third column in the help message                                        "
-        "ARGPARSER_MAX_WIDTH                 : max-width                 : INT          : 79                   :            : uint : 1      : Options   : the maximum width of the help message                                                                   "
-        "ARGPARSER_POSITIONAL_ARG_GROUP      : positional-arg-group      : NAME         : Positional arguments :            : str  : 1      : Options   : the name of the argument group holding all positional arguments                                         "
-        "ARGPARSER_READ_ARGS                 : read-args                 :              : true                 :            : bool : 0      : Options   : read the arguments and parse them to ARGPARSER_ARG_ARRAY_NAME                                           "
-        "ARGPARSER_SCRIPT_NAME               : script-name               : NAME         : ''                   :            : str  : 1      : Options   : the script's name for the help, usage, version, error, and warning messages                             "
-        "ARGPARSER_SET_ARGS                  : set-args                  :              : true                 :            : bool : 0      : Options   : set the arguments from ARGPARSER_ARG_ARRAY_NAME as variables in the script's scope                      "
-        "ARGPARSER_SET_ARRAYS                : set-arrays                :              : true                 :            : bool : 0      : Options   : set arguments intended to have multiple values as indexed array                                         "
-        "ARGPARSER_SILENCE_ERRORS            : silence-errors            :              : false                :            : bool : 0      : Options   : silence the emission (output) of error messages                                                         "
-        "ARGPARSER_SILENCE_WARNINGS          : silence-warnings          :              : false                :            : bool : 0      : Options   : silence the emission (output) of warning messages                                                       "
-        "ARGPARSER_TRANSLATION_FILE          : translation-file          : FILE         : ''                   :            : file : 1      : Options   : the path to a simplified YAML file holding the translation to ARGPARSER_LANGUAGE                        "
-        "ARGPARSER_UNSET_ARGS                : unset-args                :              : true                 :            : bool : 0      : Options   : unset (remove) all command-line arguments given to the script                                           "
-        "ARGPARSER_UNSET_ENV_VARS            : unset-env-vars            :              : true                 :            : bool : 0      : Options   : unset (remove) the Argparser environment variables from the environment                                 "
-        "ARGPARSER_UNSET_FUNCTIONS           : unset-functions           :              : true                 :            : bool : 0      : Options   : unset (remove) the Argparser functions from the environment                                             "
-        "ARGPARSER_USAGE_EXIT_CODE           : usage-exit-code           : INT          : 0                    :            : int  : 1      : Options   : the exit code for usage messages                                                                        "
-        "ARGPARSER_USAGE_FILE                : usage-file                : FILE         : ''                   :            : file : 1      : Options   : the path to a file holding the extended usage message                                                   "
-        "ARGPARSER_USAGE_FILE_INCLUDE_CHAR   : usage-file-include-char   : CHAR         : @                    :            : char : 1      : Options   : the character that introduces an include directive in an ARGPARSER_USAGE_FILE                           "
-        "ARGPARSER_USAGE_FILE_KEEP_COMMENTS  : usage-file-keep-comments  :              : false                :            : bool : 0      : Options   : keep commented lines in the usage file                                                                  "
-        "ARGPARSER_USAGE_MESSAGE_OPTION_TYPE : usage-message-option-type :              : short                : long,short : str  : 1      : Options   : use short or long option names in usage messages                                                        "
-        "ARGPARSER_USAGE_MESSAGE_ORIENTATION : usage-message-orientation :              : row                  : row,column : str  : 1      : Options   : output the positional and keyword arguments in usage messages in a row or in a column                   "
-        "ARGPARSER_USAGE_OPTIONS             : usage-options             : CHAR         : u                    :            : char : +      : Options   : the short (single-character) option names to invoke the usage message                                   "
-        "ARGPARSER_USAGE_STYLE               : usage-style               : STYLE        : italic               :            : str  : +      : Options   : the color and style specification for usage messages                                                    "
-        "ARGPARSER_USE_LONG_OPTIONS          : use-long-options          :              : true                 :            : bool : 0      : Options   : use the long option names for parsing                                                                   "
-        "ARGPARSER_USE_SHORT_OPTIONS         : use-short-options         :              : true                 :            : bool : 0      : Options   : use the short option names for parsing                                                                  "
-        "ARGPARSER_USE_STYLES_IN_FILES       : use-styles-in-files       :              : false                :            : bool : 0      : Options   : use the colors and styles when STDOUT/STDERR is not a terminal                                          "
-        "ARGPARSER_VERSION_EXIT_CODE         : version-exit-code         : INT          : 0                    :            : int  : 1      : Options   : the exit code for version messages                                                                      "
-        "ARGPARSER_VERSION_NUMBER            : version-number            : VERSION      : 1.0.0                :            : str  : 1      : Options   : the script's version number for the version message                                                     "
-        "ARGPARSER_VERSION_OPTIONS           : version-options           : CHAR         : V                    :            : char : +      : Options   : the short (single-character) option names to invoke the version message                                 "
-        "ARGPARSER_VERSION_STYLE             : version-style             : STYLE        : bold                 :            : str  : +      : Options   : the color and style specification for version messages                                                  "
-        "ARGPARSER_WARNING_STYLE             : warning-style             : STYLE        : red,bold             :            : str  : +      : Options   : the color and style specification for warning messages                                                  "
-        "ARGPARSER_WRITE_ARGS                : write-args                :              : false                :            : bool : 0      : Options   : write the arguments from ARGPARSER_ARG_ARRAY_NAME to STDOUT                                             "
-        "script_args                         :                           : command_line :                      :            : str  : +      : Options   : the indexed array in which the Argparser stores the script's command line upon parsing its own arguments"
+        "id                                  : long_opts                 : val_names    : defaults             : choices    : type : arg_no : arg_group : help                                                                                                          "
+        "ARGPARSER_ADD_HELP                  : add-help                  :              : true                 :            : bool : 0      : Options   : add ARGPARSER_HELP_OPTIONS and --help as flags to call the help message                                       "
+        "ARGPARSER_ADD_USAGE                 : add-usage                 :              : true                 :            : bool : 0      : Options   : add ARGPARSER_USAGE_OPTIONS and --usage as flags to call the usage message                                    "
+        "ARGPARSER_ADD_VERSION               : add-version               :              : true                 :            : bool : 0      : Options   : add ARGPARSER_VERSION_OPTIONS and --version as flags to call the version message                              "
+        "ARGPARSER_ALLOW_FLAG_INVERSION      : allow-flag-inversion      :              : true                 :            : bool : 0      : Options   : allow the user to invert flags by prefixing them with \"+\" (short options) or \"++\" (long options)          "
+        "ARGPARSER_ALLOW_FLAG_NEGATION       : allow-flag-negation       :              : true                 :            : bool : 0      : Options   : allow the user to negate long-option flags by prefixing them with \"no-\"                                     "
+        "ARGPARSER_ALLOW_OPTION_ABBREVIATION : allow-option-abbreviation :              : false                :            : bool : 0      : Options   : allow the user to give long option names in abbreviated form                                                  "
+        "ARGPARSER_ALLOW_OPTION_MERGING      : allow-option-merging      :              : false                :            : bool : 0      : Options   : allow the user to give short option names in merged (concatenated) form                                       "
+        "ARGPARSER_ARG_ARRAY_NAME            : arg-array-name            : NAME         : args                 :            : str  : 1      : Options   : the indexed array for the raw arguments and the associative array for the parsed arguments                    "
+        "ARGPARSER_ARG_DEF_FILE              : arg-def-file              : FILE         : ''                   :            : file : 1      : Options   : the path to a file holding the definition of the arguments                                                    "
+        "ARGPARSER_ARG_DELIMITER_1           : arg-delimiter-1           : CHAR         : |                    :            : char : 1      : Options   : the primary delimiter that separates the fields in the arguments definition                                   "
+        "ARGPARSER_ARG_DELIMITER_2           : arg-delimiter-2           : CHAR         : ,                    :            : char : 1      : Options   : the secondary delimiter that separates the elements of sequences in the arguments definition                  "
+        "ARGPARSER_CHECK_ARG_DEF             : check-arg-def             :              : false                :            : bool : 0      : Options   : check if the arguments definition is consistent                                                               "
+        "ARGPARSER_CHECK_ENV_VARS            : check-env-vars            :              : false                :            : bool : 0      : Options   : check if the Argparser environment variables accord to their definition                                       "
+        "ARGPARSER_CONFIG_FILE               : config-file               : FILE         : ''                   :            : file : 1      : Options   : the path to a file holding the Argparser configuration                                                        "
+        "ARGPARSER_COUNT_FLAGS               : count-flags               :              : false                :            : bool : 0      : Options   : count flags instead of setting them to \"true\" or \"false\" based on the last prefix used on the command line"
+        "ARGPARSER_ERROR_EXIT_CODE           : error-exit-code           : INT          : 1                    :            : int  : 1      : Options   : the exit code when errors occurred upon parsing                                                               "
+        "ARGPARSER_ERROR_STYLE               : error-style               : STYLE        : red,bold,reverse     :            : str  : +      : Options   : the color and style specification for error messages                                                          "
+        "ARGPARSER_HELP_ARG_GROUP            : help-arg-group            : NAME         : Help options         :            : str  : 1      : Options   : the name of the argument group holding all help options, i.e., --help, --usage, and --version                 "
+        "ARGPARSER_HELP_DESCRIPTION          : help-description          : TEXT         : ''                   :            : str  : 1      : Options   : the script's description (purpose) to show in help message                                                    "
+        "ARGPARSER_HELP_EXIT_CODE            : help-exit-code            : INT          : 0                    :            : int  : 1      : Options   : the exit code for help messages                                                                               "
+        "ARGPARSER_HELP_FILE                 : help-file                 : FILE         : ''                   :            : file : 1      : Options   : the path to a file holding the extended help message                                                          "
+        "ARGPARSER_HELP_FILE_INCLUDE_CHAR    : help-file-include-char    : CHAR         : @                    :            : char : 1      : Options   : the character that introduces an include directive in an ARGPARSER_HELP_FILE                                  "
+        "ARGPARSER_HELP_FILE_KEEP_COMMENTS   : help-file-keep-comments   :              : false                :            : bool : 0      : Options   : keep commented lines in the help file                                                                         "
+        "ARGPARSER_HELP_OPTIONS              : help-options              : CHAR         : h,?                  :            : char : +      : Options   : the short (single-character) option names to invoke the help message                                          "
+        "ARGPARSER_HELP_STYLE                : help-style                : STYLE        : italic               :            : str  : +      : Options   : the color and style specification for help messages                                                           "
+        "ARGPARSER_LANGUAGE                  : language                  : LANG         : en                   :            : str  : 1      : Options   : the language in which to localize the help and usage messages                                                 "
+        "ARGPARSER_MAX_COL_WIDTH_1           : max-col-width-1           : INT          : 9                    :            : uint : 1      : Options   : the maximum column width of the first column in the help message                                              "
+        "ARGPARSER_MAX_COL_WIDTH_2           : max-col-width-2           : INT          : 33                   :            : uint : 1      : Options   : the maximum column width of the second column in the help message                                             "
+        "ARGPARSER_MAX_COL_WIDTH_3           : max-col-width-3           : INT          : 0                    :            : uint : 1      : Options   : the maximum column width of the third column in the help message                                              "
+        "ARGPARSER_MAX_WIDTH                 : max-width                 : INT          : 79                   :            : uint : 1      : Options   : the maximum width of the help message                                                                         "
+        "ARGPARSER_POSITIONAL_ARG_GROUP      : positional-arg-group      : NAME         : Positional arguments :            : str  : 1      : Options   : the name of the argument group holding all positional arguments                                               "
+        "ARGPARSER_READ_ARGS                 : read-args                 :              : true                 :            : bool : 0      : Options   : read the arguments and parse them to ARGPARSER_ARG_ARRAY_NAME                                                 "
+        "ARGPARSER_SCRIPT_NAME               : script-name               : NAME         : ''                   :            : str  : 1      : Options   : the script's name for the help, usage, version, error, and warning messages                                   "
+        "ARGPARSER_SET_ARGS                  : set-args                  :              : true                 :            : bool : 0      : Options   : set the arguments from ARGPARSER_ARG_ARRAY_NAME as variables in the script's scope                            "
+        "ARGPARSER_SET_ARRAYS                : set-arrays                :              : true                 :            : bool : 0      : Options   : set arguments intended to have multiple values as indexed array                                               "
+        "ARGPARSER_SILENCE_ERRORS            : silence-errors            :              : false                :            : bool : 0      : Options   : silence the emission (output) of error messages                                                               "
+        "ARGPARSER_SILENCE_WARNINGS          : silence-warnings          :              : false                :            : bool : 0      : Options   : silence the emission (output) of warning messages                                                             "
+        "ARGPARSER_TRANSLATION_FILE          : translation-file          : FILE         : ''                   :            : file : 1      : Options   : the path to a simplified YAML file holding the translation to ARGPARSER_LANGUAGE                              "
+        "ARGPARSER_UNSET_ARGS                : unset-args                :              : true                 :            : bool : 0      : Options   : unset (remove) all command-line arguments given to the script                                                 "
+        "ARGPARSER_UNSET_ENV_VARS            : unset-env-vars            :              : true                 :            : bool : 0      : Options   : unset (remove) the Argparser environment variables from the environment                                       "
+        "ARGPARSER_UNSET_FUNCTIONS           : unset-functions           :              : true                 :            : bool : 0      : Options   : unset (remove) the Argparser functions from the environment                                                   "
+        "ARGPARSER_USAGE_EXIT_CODE           : usage-exit-code           : INT          : 0                    :            : int  : 1      : Options   : the exit code for usage messages                                                                              "
+        "ARGPARSER_USAGE_FILE                : usage-file                : FILE         : ''                   :            : file : 1      : Options   : the path to a file holding the extended usage message                                                         "
+        "ARGPARSER_USAGE_FILE_INCLUDE_CHAR   : usage-file-include-char   : CHAR         : @                    :            : char : 1      : Options   : the character that introduces an include directive in an ARGPARSER_USAGE_FILE                                 "
+        "ARGPARSER_USAGE_FILE_KEEP_COMMENTS  : usage-file-keep-comments  :              : false                :            : bool : 0      : Options   : keep commented lines in the usage file                                                                        "
+        "ARGPARSER_USAGE_MESSAGE_OPTION_TYPE : usage-message-option-type :              : short                : long,short : str  : 1      : Options   : use short or long option names in usage messages                                                              "
+        "ARGPARSER_USAGE_MESSAGE_ORIENTATION : usage-message-orientation :              : row                  : row,column : str  : 1      : Options   : output the positional and keyword arguments in usage messages in a row or in a column                         "
+        "ARGPARSER_USAGE_OPTIONS             : usage-options             : CHAR         : u                    :            : char : +      : Options   : the short (single-character) option names to invoke the usage message                                         "
+        "ARGPARSER_USAGE_STYLE               : usage-style               : STYLE        : italic               :            : str  : +      : Options   : the color and style specification for usage messages                                                          "
+        "ARGPARSER_USE_LONG_OPTIONS          : use-long-options          :              : true                 :            : bool : 0      : Options   : use the long option names for parsing                                                                         "
+        "ARGPARSER_USE_SHORT_OPTIONS         : use-short-options         :              : true                 :            : bool : 0      : Options   : use the short option names for parsing                                                                        "
+        "ARGPARSER_USE_STYLES_IN_FILES       : use-styles-in-files       :              : false                :            : bool : 0      : Options   : use the colors and styles when STDOUT/STDERR is not a terminal                                                "
+        "ARGPARSER_VERSION_EXIT_CODE         : version-exit-code         : INT          : 0                    :            : int  : 1      : Options   : the exit code for version messages                                                                            "
+        "ARGPARSER_VERSION_NUMBER            : version-number            : VERSION      : 1.0.0                :            : str  : 1      : Options   : the script's version number for the version message                                                           "
+        "ARGPARSER_VERSION_OPTIONS           : version-options           : CHAR         : V                    :            : char : +      : Options   : the short (single-character) option names to invoke the version message                                       "
+        "ARGPARSER_VERSION_STYLE             : version-style             : STYLE        : bold                 :            : str  : +      : Options   : the color and style specification for version messages                                                        "
+        "ARGPARSER_WARNING_STYLE             : warning-style             : STYLE        : red,bold             :            : str  : +      : Options   : the color and style specification for warning messages                                                        "
+        "ARGPARSER_WRITE_ARGS                : write-args                :              : false                :            : bool : 0      : Options   : write the arguments from ARGPARSER_ARG_ARRAY_NAME to STDOUT                                                   "
+        "script_args                         :                           : command_line :                      :            : str  : +      : Options   : the indexed array in which the Argparser stores the script's command line upon parsing its own arguments      "
     )
 
     # # shellcheck source=argparser
@@ -1535,7 +1535,7 @@ function argparser_check_env_vars() {
     local -a vars
 
     # Check if all environment variables expected to be Booleans are
-    # true or false.  Else, output an error message.
+    # "true" or "false".  Else, output an error message.
     error_messages=( )
     vars=(
         ARGPARSER_ADD_HELP
@@ -1568,8 +1568,8 @@ function argparser_check_env_vars() {
         for value in "${values[@]}"; do
             if ! argparser_is_bool "${value}"; then
                 error_message="Error: The environment variable \"\$1\" is set "
-                error_message+="to \"\$2\", but must be a Boolean, i.e., true "
-                error_message+="or false."
+                error_message+="to \"\$2\", but must be a Boolean, i.e., "
+                error_message+="\"true\" or \"false\"."
 
                 argparser_translate "Error env var bool" "${error_message}" \
                     "${var}" "${!var}"
@@ -2007,7 +2007,7 @@ function argparser_read_translation() {
     # output an error message and exit.  Since at this point of
     # invokation, the environment variables aren't checked, yet, set the
     # needed ones to default values, if ${ARGPARSER_CHECK_ENV_VARS}
-    # isn't set to false (and by this, the checking hasn't been
+    # isn't set to "false" (and by this, the checking hasn't been
     # explicitly disabled).
     argparser_check_file "${ARGPARSER_TRANSLATION_FILE}"
     if [[ "${file_attributes}" != "0000" ]]; then
@@ -3082,13 +3082,14 @@ function argparser_check_args_definition_positional_values() {
         # Else, output an error message.
         if [[ -n "${choice_values_str}" ]]; then
             # Check that arguments that can take zero values don't have
-            # true or false as choice values.
+            # "true" or "false" as choice values.
             if argparser_in_array "${arg_number}" "*" "?" \
                 && argparser_in_array "${choice_values_arr[@]}" true false
             then
                 error_message="Error: The positional argument with the "
                 error_message+="identifier \"\$1\" has {\$2} given as choice "
-                error_message+="values, while true and false cannot be any."
+                error_message+="values, while \"true\" and \"false\" cannot "
+                error_message+="be any."
 
                 argparser_translate "Error arg def pos choice flag" \
                     "${error_message}" "${arg_key}" "${choice_values_str}"
@@ -3266,7 +3267,7 @@ function argparser_check_args_definition_positional_values() {
                 error_message="Error: The positional argument with the "
                 error_message+="identifier \"\$1\" has \"\$2\" given as "
                 error_message+="choice value, which must be a Boolean, i.e., "
-                error_message+="true or false."
+                error_message+="\"true\" or \"false\"."
 
                 argparser_translate "Error arg def pos bool" \
                     "${error_message}" "${arg_key}" "${choice_value}"
@@ -3402,12 +3403,12 @@ function argparser_check_args_definition_option_values() {
             <<< "${all_notes[${arg_key}]}"
 
         # Check if the default value for flags (or arguments that can be
-        # used as such) is either true or false.
+        # used as such) is either "true" or "false".
         if argparser_in_array "${arg_number}" "*" "?" 0; then
             if [[ "${#default_values_arr[@]}" == 0 ]]; then
                 error_message="Error: The option with the identifier \"\$1\" "
-                error_message+="must be true or false, but has no default "
-                error_message+="given."
+                error_message+="must be \"true\" or \"false\", but has no "
+                error_message+="default given."
 
                 argparser_translate "Error arg def option flag 1" \
                     "${error_message}" "${arg_key}"
@@ -3415,8 +3416,8 @@ function argparser_check_args_definition_option_values() {
                 error_messages+=("${error_message}")
             elif ! argparser_in_array "${default_values_str}" true false; then
                 error_message="Error: The option with the identifier \"\$1\" "
-                error_message+="must be true or false, but has {\$2} given as "
-                error_message+="default."
+                error_message+="must be \"true\" or \"false\", but has {\$2} "
+                error_message+="given as default."
 
                 argparser_translate "Error arg def option flag 2" \
                     "${error_message}" "${arg_key}" "${default_values_str}"
@@ -3427,8 +3428,8 @@ function argparser_check_args_definition_option_values() {
 
         # Check if the number of default values equals the number of
         # required values.  Else, output an error message.  Ignore flags
-        # as long as they have the only default value of true or false,
-        # but a number of required values of 0.
+        # as long as they have the only default value of "true" or
+        # "false", but a number of required values of 0.
         if ! argparser_in_array "${arg_number}" "+" "*" "?" 0 \
             && [[ -n "${default_values_str}" \
                 && "${#default_values_arr[@]}" != "${arg_number}" ]]
@@ -3460,13 +3461,13 @@ function argparser_check_args_definition_option_values() {
         # Else, output an error message.
         if [[ -n "${choice_values_str}" ]]; then
             # Check that arguments that can take zero values don't have
-            # true or false as choice values, and actual flags none.
+            # "true" or "false" as choice values, and actual flags none.
             if argparser_in_array "${arg_number}" "*" "?" \
                 && argparser_in_array "${choice_values_arr[@]}" true false
             then
                 error_message="Error: The option with the identifier \"\$1\" "
-                error_message+="has {\$2} given as choice values, while true "
-                error_message+="and false cannot be any."
+                error_message+="has {\$2} given as choice values, while "
+                error_message+="\"true\" and \"false\" cannot be any."
 
                 argparser_translate "Error arg def option choice flag 1" \
                     "${error_message}" "${arg_key}" "${choice_values_str}"
@@ -3553,7 +3554,7 @@ function argparser_check_args_definition_option_values() {
                 # Check if the choice value is a Boolean.
                 error_message="Error: The option with the identifier \"\$1\" "
                 error_message+="has \"\$2\" given as choice value, which must "
-                error_message+="be a Boolean, i.e., true or false."
+                error_message+="be a Boolean, i.e., \"true\" or \"false\"."
 
                 argparser_translate "Error arg def option bool" \
                     "${error_message}" "${arg_key}" "${choice_value}"
@@ -4679,9 +4680,10 @@ function argparser_check_arg_values() {
             # as such) with a default value of "true" or "false".  Since
             # the flags shall be counted, set the value to 1 for "true"
             # and to -1 for "false", which are the same values as would
-            # be when the flags would be given with a hyphen ("-", true)
-            # or plus sign ("+", false).  Output the values.  Since the
-            # default values are used, further checking isn't necessary.
+            # be when the flags would be given with a hyphen ("-",
+            # "true") or plus sign ("+", "false").  Output the values.
+            # Since the default values are used, further checking isn't
+            # necessary.
             if [[ "${default_values_str}" == true ]]; then
                 messages+=("Value: 1")
             else
@@ -4793,10 +4795,10 @@ function argparser_check_arg_values() {
         && [[ ! -v values_arr || -z "${values_arr[0]}" ]]
     then
         # No value is required nor given, so the argument is a flag.  As
-        # it is set (present), set the value to true for a "-" prefix
-        # and to false for a "+" prefix.  Thereby, the last given prefix
-        # determines the value, implicitly overriding any prefix given
-        # before.  Alternatively, count the number of "-" and "+"
+        # it is set (present), set the value to "true" for a "-" prefix
+        # and to "false" for a "+" prefix.  Thereby, the last given
+        # prefix determines the value, implicitly overriding any prefix
+        # given before.  Alternatively, count the number of "-" and "+"
         # prefixes, then take their difference as actual count.
         # Finally, output the values.  Since the default values are
         # used, further checking isn't necessary.
@@ -4876,7 +4878,7 @@ function argparser_check_arg_values() {
         if [[ "${type}" == "bool" ]] && ! argparser_is_bool "${value}"; then
             # Check if the value is a Boolean.
             error_message="Error: The argument \"\$1\" is set to \"\$2\", but "
-            error_message+="must be a Boolean, i.e., true or false."
+            error_message+="must be a Boolean, i.e., \"true\" or \"false\"."
 
             argparser_translate "Error arg bool" "${error_message}" \
                 "${option_names}" "${value}"
@@ -5169,7 +5171,7 @@ function argparser_parse_args() {
         argparser_parse_args_definition "script" "${args_definition_script[@]}"
     fi
 
-    # If ${ARGPARSER_CHECK_ARG_DEF} is set to true, check the
+    # If ${ARGPARSER_CHECK_ARG_DEF} is set to "true", check the
     # consistency of the arguments definition.
     error_messages=( )
     if [[ "${ARGPARSER_CHECK_ARG_DEF}" == true ]]; then
@@ -7561,7 +7563,7 @@ function argparser_print_help_or_usage_message() {
     for line in "${lines[@]}"; do
         # Set ${line_type} to "include directive" if the line contains
         # an include directive, to "comment" if the line is commented
-        # and ${keep_comments} is false, and to "text" if it is not
+        # and ${keep_comments} is "false", and to "text" if it is not
         # empty (but not commented).  Thus, empty lines following
         # comments still have ${line_type} set to "comment".  For
         # include directives, add the requested groups from the help or
@@ -8094,7 +8096,7 @@ function argparser_main() {
         ARGPARSER_HELP_DESCRIPTION="${translation}"
     fi
 
-    # If ${ARGPARSER_CHECK_ENV_VARS} isn't set to false, check if the
+    # If ${ARGPARSER_CHECK_ENV_VARS} isn't set to "false", check if the
     # environment variables accord to their definition.  Since
     # ${ARGPARSER_CHECK_ENV_VARS} is, as any other environment variable,
     # yet unchecked, its value may be different from the expected "true"
@@ -8107,32 +8109,32 @@ function argparser_main() {
         argparser_check_env_vars
     fi
 
-    # If ${ARGPARSER_READ_ARGS} is set to true, read and parse the
+    # If ${ARGPARSER_READ_ARGS} is set to "true", read and parse the
     # arguments.
     if [[ "${ARGPARSER_READ_ARGS}" == true ]]; then
         argparser_parse_args "$@"
     fi
 
-    # If ${ARGPARSER_UNSET_ARGS} is set to true, disable all arguments
+    # If ${ARGPARSER_UNSET_ARGS} is set to "true", disable all arguments
     # given to the calling script, effectively unsetting the command
     # line.
     if [[ "${ARGPARSER_UNSET_ARGS}" == true ]]; then
         set --
     fi
 
-    # If ${ARGPARSER_SET_ARGS} is set to true, set the arguments as
+    # If ${ARGPARSER_SET_ARGS} is set to "true", set the arguments as
     # variables to the current environment.
     if [[ "${ARGPARSER_SET_ARGS}" == true ]]; then
         argparser_set_args
     fi
 
-    # If ${ARGPARSER_WRITE_ARGS} is set to true, write the arguments to
-    # STDOUT.
+    # If ${ARGPARSER_WRITE_ARGS} is set to "true", write the arguments
+    # to STDOUT.
     if [[ "${ARGPARSER_WRITE_ARGS}" == true ]]; then
         argparser_write_args
     fi
 
-    # If ${ARGPARSER_UNSET_FUNCTIONS} is set to true, unset all
+    # If ${ARGPARSER_UNSET_FUNCTIONS} is set to "true", unset all
     # Argparser functions.  The names are used instead of a glob to
     # limit side effects with potentially same-named functions (i.e.,
     # those starting with "argparser_") from the calling script that
@@ -8189,11 +8191,11 @@ function argparser_main() {
         unset -f argparser_write_args
     fi
 
-    # If ${ARGPARSER_UNSET_ENV_VARS} is set to true, unset all Argparser
-    # environment variables.  Again, the names are used instead of a
-    # glob to limit side effects with potentially same-named variables
-    # (i.e., those starting with "ARGPARSER_") from the calling script
-    # that stand in no relation to the Argparser.
+    # If ${ARGPARSER_UNSET_ENV_VARS} is set to "true", unset all
+    # Argparser environment variables.  Again, the names are used
+    # instead of a glob to limit side effects with potentially
+    # same-named variables (i.e., those starting with "ARGPARSER_") from
+    # the calling script that stand in no relation to the Argparser.
     if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
         unset ARGPARSER_ADD_HELP
         unset ARGPARSER_ADD_USAGE

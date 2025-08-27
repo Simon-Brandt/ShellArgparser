@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-26
+# Last Modification: 2025-08-27
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -1669,9 +1669,9 @@ Options:
                                  accord to their definition (default: false)
 [--config-file=FILE]             the path to a file holding the Argparser
                                  configuration (default: "''")
-[--count-flags]                  count flags instead of setting them to true or
-                                 false based on the last prefix used on the
-                                 command line (default: false)
+[--count-flags]                  count flags instead of setting them to "true"
+                                 or "false" based on the last prefix used on
+                                 the command line (default: false)
 [--error-exit-code=INT]          the exit code when errors occurred upon
                                  parsing (default: 1)
 [--error-style=STYLE...]         the color and style specification for error

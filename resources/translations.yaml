@@ -89,10 +89,11 @@ true:
 Error env var bool:
   en: >
     Error: The environment variable "$1" is set to "$2", but must be a Boolean,
-    i.e., true or false.
+    i.e., "true" or "false".
   de: >
     Fehler: Die Umgebungsvariable "$1" ist auf "$2" gesetzt, muss aber ein
-    boolscher Wert (Boolean) sein, d. h. wahr (true) oder falsch (false).
+    boolscher Wert (Boolean) sein, d. h. "wahr" ("true") oder "falsch"
+    ("false").
 
 Error env var char:
   en: >
@@ -538,14 +539,14 @@ Error arg def pos default 2:
     Fehler: Das positionale Argument mit dem Identifikator "$1" erfordert $2
     Werte, hat aber $3 als Vorgabe gegeben.
 
-Error arg def pos choice flag 1:
+Error arg def pos choice flag:
   en: >
     Error: The positional argument with the identifier "$1" has {$2} given as
-    choice values, while true and false cannot be any.
+    choice values, while "true" and "false" cannot be any.
   de: >
     Fehler: Das positionale Argument mit dem Identifikator "$1" hat {$2} als
-    Auswahlwerte gegeben, während wahr (true) und falsch (false) keine sein
-    können.
+    Auswahlwerte gegeben, während "wahr" ("true") und "falsch" ("false") keine
+    sein können.
 
 Error arg def pos choice:
   en: >
@@ -620,11 +621,11 @@ Error arg def pos type:
 Error arg def pos bool:
   en: >
     Error: The positional argument with the identifier "$1" has "$2" given as
-    choice value, which must be a Boolean, i.e., true or false.
+    choice value, which must be a Boolean, i.e., "true" or "false".
   de: >
     Fehler: Das positionale Argument mit dem Identifikator "$1" hat "$2" als
     Auswahlwert gegeben, welcher ein boolscher Wert (Boolean) sein muss, d. h.
-    wahr (true) oder falsch (false).
+    "wahr" ("true") oder "falsch" ("false").
 
 Error arg def pos char:
   en: >
@@ -680,19 +681,19 @@ Error arg def pos note:
 ---
 Error arg def option flag 1:
   en: >
-    Error: The option with the identifier "$1" must be true or false, but has
-    no default given.
+    Error: The option with the identifier "$1" must be "true" or "false", but
+    has no default given.
   de: >
-    Fehler: Die Option mit dem Identifikator "$1" muss wahr (true) oder falsch
-    (false) sein, hat aber keine Vorgabe gegeben.
+    Fehler: Die Option mit dem Identifikator "$1" muss "wahr" ("true") oder
+    "falsch" ("false") sein, hat aber keine Vorgabe gegeben.
 
 Error arg def option flag 2:
   en: >
-    Error: The option with the identifier "$1" must be true or false, but has
-    {$2} given as default.
+    Error: The option with the identifier "$1" must be "true" or "false", but
+    has {$2} given as default.
   de: >
-    Fehler: Die Option mit dem Identifikator "$1" muss wahr (true) oder falsch
-    (false) sein, hat aber "$2" als Vorgabe gegeben.
+    Fehler: Die Option mit dem Identifikator "$1" muss "wahr" ("true") oder
+    "falsch" ("false") sein, hat aber "$2" als Vorgabe gegeben.
 
 Error arg def option default 1:
   en: >
@@ -713,10 +714,10 @@ Error arg def option default 2:
 Error arg def option choice flag 1:
   en: >
     Error: The option with the identifier "$1" has {$2} given as choice values,
-    while true and false cannot be any.
+    while "true" and "false" cannot be any.
   de: >
     Fehler: Die Option mit dem Identifikator "$1" hat {$2} als Auswahlwerte
-    gegeben, während wahr (true) und falsch (false) keine sein können.
+    gegeben, während "wahr" ("true") und "falsch" ("false") keine sein können.
 
 Error arg def option choice flag 2:
   en: >
@@ -747,11 +748,11 @@ Error arg def option type:
 Error arg def option bool:
   en: >
     Error: The option with the identifier "$1" has "$2" given as choice value,
-    which must be a Boolean, i.e., true or false.
+    which must be a Boolean, i.e., "true" or "false".
   de: >
     Fehler: Die Option mit dem Identifikator "$1" hat "$2" als Auswahlwert
-    gegeben, welcher ein boolscher Wert (Boolean) sein muss, d. h. wahr (true)
-    oder falsch (false).
+    gegeben, welcher ein boolscher Wert (Boolean) sein muss, d. h. "wahr"
+    ("true") oder "falsch" ("false").
 
 Error arg def option char:
   en: >
@@ -921,11 +922,11 @@ Error arg choice:
 
 Error arg bool:
   en: >
-    Error: The argument "$1" is set to "$2", but must be a Boolean, i.e., true
-    or false.
+    Error: The argument "$1" is set to "$2", but must be a Boolean, i.e.,
+    "true" or "false".
   de: >
     Fehler: Das Argument "$1" ist auf "$2" gesetzt, muss aber ein boolscher
-    Wert (Boolean) sein, d. h. wahr (true) oder falsch (false).
+    Wert (Boolean) sein, d. h. "wahr" ("true") oder "falsch" ("false").
 
 Error arg char:
   en: >

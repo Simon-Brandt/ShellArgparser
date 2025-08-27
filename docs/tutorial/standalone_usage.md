@@ -73,9 +73,9 @@ Options:
                                  accord to their definition (default: false)
 [--config-file=FILE]             the path to a file holding the Argparser
                                  configuration (default: "''")
-[--count-flags]                  count flags instead of setting them to true or
-                                 false based on the last prefix used on the
-                                 command line (default: false)
+[--count-flags]                  count flags instead of setting them to "true"
+                                 or "false" based on the last prefix used on
+                                 the command line (default: false)
 [--error-exit-code=INT]          the exit code when errors occurred upon
                                  parsing (default: 1)
 [--error-style=STYLE...]         the color and style specification for error

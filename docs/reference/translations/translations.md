@@ -100,7 +100,7 @@
 
 #### 9.5.17. `Error env var bool`
 
-- ***Message:*** `Error: The environment variable "$1" is set to "$2", but must be a Boolean, i.e., true or false.`
+- ***Message:*** `Error: The environment variable "$1" is set to "$2", but must be a Boolean, i.e., "true" or "false".`
 - ***Description:*** The error that an environment variable is not a Boolean.
 - ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value not according to the data type `bool`. These Boolean values must be either `true` or `false`.
 - ***Interpolated variables:***
@@ -554,7 +554,7 @@
 
 #### 9.5.68. `Error arg def pos choice flag`
 
-- ***Message:*** `Error: The positional argument with the identifier "$1" has {$2} given as choice values, while true and false cannot be any.`
+- ***Message:*** `Error: The positional argument with the identifier "$1" has {$2} given as choice values, while "true" and "false" cannot be any.`
 - ***Description:*** The error that in the arguments definition, a positional argument that can take zero values has choice values.
 - ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined as taking zero or more arguments, but with choice values including `true` and/or `false`. These are included by definition, and still specifying them as choice values is redundant.
 - ***Interpolated variables:***
@@ -634,7 +634,7 @@
 
 #### 9.5.77. `Error arg def pos bool`
 
-- ***Message:*** `Error: The positional argument with the identifier "$1" has "$2" given as choice value, which must be a Boolean, i.e., true or false.`
+- ***Message:*** `Error: The positional argument with the identifier "$1" has "$2" given as choice value, which must be a Boolean, i.e., "true" or "false".`
 - ***Description:*** The error that in the arguments definition of a positional argument, a choice value's data type is not a Boolean.
 - ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined with a choice value whose data type doesn't accord to the argument's data type, `bool`. These Boolean values must be either `true` or `false`.
 - ***Interpolated variables:***
@@ -688,7 +688,7 @@
 
 #### 9.5.83. `Error arg def option flag 1`
 
-- ***Message:*** `Error: The option with the identifier "$1" must be true or false, but has no default given.`
+- ***Message:*** `Error: The option with the identifier "$1" must be "true" or "false", but has no default given.`
 - ***Description:*** The error that in the arguments definition, a flag has no default value.
 - ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined as accepting no value, *i.e.*, as a flag. Thus, the default value must be either `true` or `false`.
 - ***Interpolated variables:***
@@ -696,7 +696,7 @@
 
 #### 9.5.84. `Error arg def option flag 2`
 
-- ***Message:*** `Error: The option with the identifier "$1" must be true or false, but has {$2} given as default.`
+- ***Message:*** `Error: The option with the identifier "$1" must be "true" or "false", but has {$2} given as default.`
 - ***Description:*** The error that in the arguments definition, a flag has a non-Boolean default value.
 - ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined as accepting no value, *i.e.*, as a flag. Thus, the default value must be either `true` or `false`.
 - ***Interpolated variables:***
@@ -724,7 +724,7 @@
 
 #### 9.5.87. `Error arg def option choice flag 1`
 
-- ***Message:*** `Error: The option with the identifier "$1" has {$2} given as choice values, while true and false cannot be any.`
+- ***Message:*** `Error: The option with the identifier "$1" has {$2} given as choice values, while "true" and "false" cannot be any.`
 - ***Description:*** The error that in the arguments definition, a keyword argument that can take zero values has choice values.
 - ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined as taking zero or more arguments, but with choice values including `true` and/or `false`. These are included by definition, and still specifying them as choice values is redundant.
 - ***Interpolated variables:***
@@ -761,7 +761,7 @@
 
 #### 9.5.91. `Error arg def option bool`
 
-- ***Message:*** `Error: The option with the identifier "$1" has "$2" given as choice value, which must be a Boolean, i.e., true or false.`
+- ***Message:*** `Error: The option with the identifier "$1" has "$2" given as choice value, which must be a Boolean, i.e., "true" or "false".`
 - ***Description:*** The error that in the arguments definition of a keyword argument, a choice value's data type is not a Boolean.
 - ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined with a choice value whose data type doesn't accord to the argument's data type, `bool`. These Boolean values must be either `true` or `false`.
 - ***Interpolated variables:***
@@ -963,7 +963,7 @@
 
 #### 9.5.115. `Error arg bool`
 
-- ***Message:*** `Error: The argument "$1" is set to "$2", but must be a Boolean, i.e., true or false.`
+- ***Message:*** `Error: The argument "$1" is set to "$2", but must be a Boolean, i.e., "true" or "false".`
 - ***Description:*** The error that a given argument's value's data type is not a Boolean.
 - ***Reasons for error:*** When parsing the command line, the Argparser found a given value whose data type doesn't accord to the argument's data type, `bool`. These Boolean values must be either `true` or `false`.
 - ***Interpolated variables:***
