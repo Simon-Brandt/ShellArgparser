@@ -278,7 +278,6 @@ Since there were some additional options given in the help message, let's have a
 <!-- <include command="bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A -f +g" lang="console"> -->
 ```console
 $ bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A -f +g
-try_argparser.sh: Warning: The argument "-g,-G,--var-7,--var-g" is deprecated and will be removed in the future.
 The keyword argument "var_1" is set to "1".
 The keyword argument "var_2" is set to "2".
 The keyword argument "var_3" is set to "A".
@@ -306,7 +305,6 @@ Taking one final set of example invokations, we can see how the option merging w
 <!-- <include command="ARGPARSER_ALLOW_OPTION_MERGING=true bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A +fg" lang="console"> -->
 ```console
 $ ARGPARSER_ALLOW_OPTION_MERGING=true bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A +fg
-try_argparser.sh: Warning: The argument "-g,-G,--var-7,--var-g" is deprecated and will be removed in the future.
 The keyword argument "var_1" is set to "1".
 The keyword argument "var_2" is set to "2".
 The keyword argument "var_3" is set to "A".
@@ -324,7 +322,6 @@ We merged `var_6` and `var_7` in one call, `+fg`, thus setting them both to `fal
 <!-- <include command="ARGPARSER_ALLOW_OPTION_MERGING=true bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -fgcA" lang="console"> -->
 ```console
 $ ARGPARSER_ALLOW_OPTION_MERGING=true bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -fgcA
-try_argparser.sh: Warning: The argument "-g,-G,--var-7,--var-g" is deprecated and will be removed in the future.
 The keyword argument "var_1" is set to "1".
 The keyword argument "var_2" is set to "2".
 The keyword argument "var_3" is set to "A".
@@ -343,7 +340,6 @@ Now, we gave them together with `var_3` and its value, and we see that the flags
 ```console
 $ ARGPARSER_ALLOW_OPTION_MERGING=true bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 +fgcA
 try_argparser.sh: Error: The option "-c,-C,--var-3,--var-c" is no flag and thus cannot be given with a "+" or "no-" prefix.
-try_argparser.sh: Warning: The argument "-g,-G,--var-7,--var-g" is deprecated and will be removed in the future.
 
 Usage: try_argparser.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
 ```
@@ -358,7 +354,6 @@ Let's investigate this with an example:
 <!-- <include command="ARGPARSER_COUNT_FLAGS=true bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A +f -g --var-7" lang="console"> -->
 ```console
 $ ARGPARSER_COUNT_FLAGS=true bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A +f -g --var-7
-try_argparser.sh: Warning: The argument "-g,-G,--var-7,--var-g" is deprecated and will be removed in the future.
 The keyword argument "var_1" is set to "1".
 The keyword argument "var_2" is set to "2".
 The keyword argument "var_3" is set to "A".

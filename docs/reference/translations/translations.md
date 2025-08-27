@@ -552,7 +552,16 @@
   - `$2`: The number of required values.
   - `$3`: The number of default values.
 
-#### 9.5.68. `Error arg def pos choice`
+#### 9.5.68. `Error arg def pos choice flag`
+
+- ***Message:*** `Error: The positional argument with the identifier "$1" has {$2} given as choice values, while true and false cannot be any.`
+- ***Description:*** The error that in the arguments definition, a positional argument that can take zero values has choice values.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined as taking zero or more arguments, but with choice values including `true` and/or `false`. These are included by definition, and still specifying them as choice values is redundant.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The choice values.
+
+#### 9.5.69. `Error arg def pos choice`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" accepts only the choice values {$2}, but has {$3} given as default.`
 - ***Description:*** The error that in the arguments definition of a positional argument, the default values aren't a subset of the choice values.
@@ -562,7 +571,7 @@
   - `$2`: The choice values.
   - `$3`: The default values.
 
-#### 9.5.69. `Error arg def pos optionals`
+#### 9.5.70. `Error arg def pos optionals`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" is optional, as is "$2", which renders parsing impossible.`
 - ***Description:*** The error that in the arguments definition, at least two positional arguments are optional.
@@ -571,7 +580,7 @@
   - `$1`: The argument identifier.
   - `$2`: The previously parsed argument's identifier.
 
-#### 9.5.70. `Error arg def pos optional infinite`
+#### 9.5.71. `Error arg def pos optional infinite`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" is optional, while "$2" accepts an infinite number of values, which renders parsing impossible.`
 - ***Description:*** The error that in the arguments definition, at least one positional argument is optional, with another one accepting an infinite number of values.
@@ -580,7 +589,7 @@
   - `$1`: The argument identifier.
   - `$2`: The previously parsed argument's identifier.
 
-#### 9.5.71. `Error arg def pos flag`
+#### 9.5.72. `Error arg def pos flag`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" accepts 0 arguments and thus can never be given on the command line.`
 - ***Description:*** The error that in the arguments definition of a positional argument, the number of required arguments is zero.
@@ -588,7 +597,7 @@
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
 
-#### 9.5.72. `Error arg def pos infinites`
+#### 9.5.73. `Error arg def pos infinites`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" accepts an infinite number of values, as does "$2", which renders parsing impossible.`
 - ***Description:*** The error that in the arguments definition, at least two positional arguments accept an infinite number of values.
@@ -597,7 +606,7 @@
   - `$1`: The argument identifier.
   - `$2`: The previously parsed argument's identifier.
 
-#### 9.5.73. `Error arg def pos infinite optional 1`
+#### 9.5.74. `Error arg def pos infinite optional 1`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" accepts an infinite number of values, while being optional, which is not supported.`
 - ***Description:*** The error that in the arguments definition, a positional argument is both optional and accepts an infinite number of values.
@@ -605,7 +614,7 @@
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
 
-#### 9.5.74. `Error arg def pos infinite optional 2`
+#### 9.5.75. `Error arg def pos infinite optional 2`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" accepts an infinite number of values, while "$2" is optional, which renders parsing impossible.`
 - ***Description:*** The error that in the arguments definition, at least one positional argument accepts an infinite number of values, with another one being optional.
@@ -614,7 +623,7 @@
   - `$1`: The argument identifier.
   - `$2`: The previously parsed argument's identifier.
 
-#### 9.5.75. `Error arg def pos type`
+#### 9.5.76. `Error arg def pos type`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" has "$2" given as data type, but only "bool", "char", "float", "file", "int", "str", and "uint" are supported.`
 - ***Description:*** The error that in the arguments definition, a positional argument has an unsupported data type.
@@ -623,7 +632,7 @@
   - `$1`: The argument identifier.
   - `$2`: The data type.
 
-#### 9.5.76. `Error arg def pos bool`
+#### 9.5.77. `Error arg def pos bool`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" has "$2" given as choice value, which must be a Boolean, i.e., true or false.`
 - ***Description:*** The error that in the arguments definition of a positional argument, a choice value's data type is not a Boolean.
@@ -632,7 +641,7 @@
   - `$1`: The argument identifier.
   - `$2`: The choice value.
 
-#### 9.5.77. `Error arg def pos char`
+#### 9.5.78. `Error arg def pos char`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" has "$2" given as choice value, which must be a character, i.e., a string comprising one printable ASCII character.`
 - ***Description:*** The error that in the arguments definition of a positional argument, a choice value's data type is not a character.
@@ -641,7 +650,7 @@
   - `$1`: The argument identifier.
   - `$2`: The choice value.
 
-#### 9.5.78. `Error arg def pos float`
+#### 9.5.79. `Error arg def pos float`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" has "$2" given as choice value, which must be a floating-point number, i.e., comprise only digits, a dot, and possibly a leading sign.`
 - ***Description:*** The error that in the arguments definition of a positional argument, a choice value's data type is not a floating-point number.
@@ -650,7 +659,7 @@
   - `$1`: The argument identifier.
   - `$2`: The choice value.
 
-#### 9.5.79. `Error arg def pos int`
+#### 9.5.80. `Error arg def pos int`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" has "$2" given as choice value, which must be an integer, i.e., comprise only digits and possibly a leading sign.`
 - ***Description:*** The error that in the arguments definition of a positional argument, a choice value's data type is not an integer.
@@ -659,7 +668,7 @@
   - `$1`: The argument identifier.
   - `$2`: The choice value.
 
-#### 9.5.80. `Error arg def pos uint`
+#### 9.5.81. `Error arg def pos uint`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" has "$2" given as choice value, which must be an unsigned integer, i.e., comprise only digits and no sign.`
 - ***Description:*** The error that in the arguments definition of a positional argument, a choice value's data type is not an unsigned integer.
@@ -668,7 +677,7 @@
   - `$1`: The argument identifier.
   - `$2`: The choice value.
 
-#### 9.5.81. `Error arg def pos note`
+#### 9.5.82. `Error arg def pos note`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" has "$2" given as note, but only "deprecated" is supported.`
 - ***Description:*** The error that in the arguments definition of a positional argument, an unsupported note is given.
@@ -677,7 +686,7 @@
   - `$1`: The argument identifier.
   - `$2`: The note.
 
-#### 9.5.82. `Error arg def option flag 1`
+#### 9.5.83. `Error arg def option flag 1`
 
 - ***Message:*** `Error: The option with the identifier "$1" must be true or false, but has no default given.`
 - ***Description:*** The error that in the arguments definition, a flag has no default value.
@@ -685,7 +694,7 @@
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
 
-#### 9.5.83. `Error arg def option flag 2`
+#### 9.5.84. `Error arg def option flag 2`
 
 - ***Message:*** `Error: The option with the identifier "$1" must be true or false, but has {$2} given as default.`
 - ***Description:*** The error that in the arguments definition, a flag has a non-Boolean default value.
@@ -694,7 +703,7 @@
   - `$1`: The argument identifier.
   - `$2`: The default value.
 
-#### 9.5.84. `Error arg def option default 1`
+#### 9.5.85. `Error arg def option default 1`
 
 - ***Message:*** `Error: The option with the identifier "$1" requires 1 value, but has $2 given as default.`
 - ***Description:*** The error that in the arguments definition of a keyword argument, the number of default values doesn't match the number of required values, which is one.
@@ -703,7 +712,7 @@
   - `$1`: The argument identifier.
   - `$2`: The number of default values.
 
-#### 9.5.85. `Error arg def option default 2`
+#### 9.5.86. `Error arg def option default 2`
 
 - ***Message:*** `Error: The option with the identifier "$1" requires $2 values, but has $3 given as default.`
 - ***Description:*** The error that in the arguments definition of a keyword argument, the number of default values doesn't match the number of required values.
@@ -713,16 +722,16 @@
   - `$2`: The number of required values.
   - `$3`: The number of default values.
 
-#### 9.5.86. `Error arg def option choice flag 1`
+#### 9.5.87. `Error arg def option choice flag 1`
 
 - ***Message:*** `Error: The option with the identifier "$1" has {$2} given as choice values, while true and false cannot be any.`
-- ***Description:*** The error that in the arguments definition, a flag-like argument has choice values.
+- ***Description:*** The error that in the arguments definition, a keyword argument that can take zero values has choice values.
 - ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined as taking zero or more arguments, but with choice values including `true` and/or `false`. These are included by definition, and still specifying them as choice values is redundant.
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
   - `$2`: The choice values.
 
-#### 9.5.87. `Error arg def option choice flag 2`
+#### 9.5.88. `Error arg def option choice flag 2`
 
 - ***Message:*** `Error: The option with the identifier "$1" accepts no choice values, but has {$2} given.`
 - ***Description:*** The error that in the arguments definition, a flag has choice values.
@@ -731,7 +740,7 @@
   - `$1`: The argument identifier.
   - `$2`: The choice values.
 
-#### 9.5.88. `Error arg def option choice`
+#### 9.5.89. `Error arg def option choice`
 
 - ***Message:*** `Error: The option with the identifier "$1" accepts only the choice values {$2}, but has {$3} given as default.`
 - ***Description:*** The error that in the arguments definition of a keyword argument, the default values aren't a subset of the choice values.
@@ -741,7 +750,7 @@
   - `$2`: The choice values.
   - `$3`: The default values.
 
-#### 9.5.89. `Error arg def option type`
+#### 9.5.90. `Error arg def option type`
 
 - ***Message:*** `Error: The option with the identifier "$1" has "$2" given as data type, but only "bool", "char", "float", "file", "int", "str", and "uint" are supported.`
 - ***Description:*** The error that in the arguments definition, a keyword argument has an unsupported data type.
@@ -750,7 +759,7 @@
   - `$1`: The argument identifier.
   - `$2`: The data type.
 
-#### 9.5.90. `Error arg def option bool`
+#### 9.5.91. `Error arg def option bool`
 
 - ***Message:*** `Error: The option with the identifier "$1" has "$2" given as choice value, which must be a Boolean, i.e., true or false.`
 - ***Description:*** The error that in the arguments definition of a keyword argument, a choice value's data type is not a Boolean.
@@ -759,7 +768,7 @@
   - `$1`: The argument identifier.
   - `$2`: The choice value.
 
-#### 9.5.91. `Error arg def option char`
+#### 9.5.92. `Error arg def option char`
 
 - ***Message:*** `Error: The option with the identifier "$1" has "$2" given as choice value, which must be a character, i.e., a string comprising one printable ASCII character.`
 - ***Description:*** The error that in the arguments definition of a keyword argument, a choice value's data type is not a character.
@@ -768,7 +777,7 @@
   - `$1`: The argument identifier.
   - `$2`: The choice value.
 
-#### 9.5.92. `Error arg def option float`
+#### 9.5.93. `Error arg def option float`
 
 - ***Message:*** `Error: The option with the identifier "$1" has "$2" given as choice value, which must be a floating-point number, i.e., comprise only digits, a dot, and possibly a leading sign.`
 - ***Description:*** The error that in the arguments definition of a keyword argument, a choice value's data type is not a floating-point number.
@@ -777,7 +786,7 @@
   - `$1`: The argument identifier.
   - `$2`: The choice value.
 
-#### 9.5.93. `Error arg def option int`
+#### 9.5.94. `Error arg def option int`
 
 - ***Message:*** `Error: The option with the identifier "$1" has "$2" given as choice value, which must be an integer, i.e., comprise only digits and possibly a leading sign.`
 - ***Description:*** The error that in the arguments definition of a keyword argument, a choice value's data type is not an integer.
@@ -786,7 +795,7 @@
   - `$1`: The argument identifier.
   - `$2`: The choice value.
 
-#### 9.5.94. `Error arg def option uint`
+#### 9.5.95. `Error arg def option uint`
 
 - ***Message:*** `Error: The option with the identifier "$1" has "$2" given as choice value, which must be an unsigned integer, i.e., comprise only digits and no sign.`
 - ***Description:*** The error that in the arguments definition of a keyword argument, a choice value's data type is not an unsigned integer.
@@ -795,7 +804,7 @@
   - `$1`: The argument identifier.
   - `$2`: The choice value.
 
-#### 9.5.95. `Error arg def option note`
+#### 9.5.96. `Error arg def option note`
 
 - ***Message:*** `Error: The option with the identifier "$1" has "$2" given as note, but only "deprecated" is supported.`
 - ***Description:*** The error that in the arguments definition of a keyword argument, an unsupported note is given.
@@ -804,25 +813,25 @@
   - `$1`: The argument identifier.
   - `$2`: The note.
 
-#### 9.5.96. `Error arg double hyphen`
+#### 9.5.97. `Error arg double hyphen`
 
 - ***Message:*** `Error: The special option "--" takes no value.`
 - ***Description:*** The error that on the command line, the option `--` has a value given.
 - ***Reasons for error:*** When parsing the command line, the Argparser found a double hyphen with an equals sign (`=`), possibly followed by a value. Since `--` acts as positional arguments delimiter, specifying a value would have no meaning.
 
-#### 9.5.97. `Error arg double plus`
+#### 9.5.98. `Error arg double plus`
 
 - ***Message:*** `Error: The special option "++" takes no value.`
 - ***Description:*** The error that on the command line, the option `++` has a value given.
 - ***Reasons for error:*** When parsing the command line, the Argparser found a doubled plus sign with an equals sign (`=`), possibly followed by a value. Since `++` acts as positional arguments delimiter, specifying a value would have no meaning.
 
-#### 9.5.98. `Error arg inversion`
+#### 9.5.99. `Error arg inversion`
 
 - ***Message:*** `Error: Inverting flags with a "+" prefix is deactivated.`
 - ***Description:*** The error that on the command line, an option starts with a `+` or `++`, when flag inversion is deactivated.
 - ***Reasons for error:*** When parsing the command line, the Argparser found an option that starts with a plus sign, meaning the intention to invert the flag, but [`ARGPARSER_ALLOW_FLAG_INVERSION`](../environment_variables/environment_variables.md#945-argparser_allow_flag_inversion) is set to `false`. This removes the ability to use the `+` prefix.
 
-#### 9.5.99. `Error arg unknown`
+#### 9.5.100. `Error arg unknown`
 
 - ***Message:*** `Error: The argument "$1" is unknown.`
 - ***Description:*** The error that on the command line, an undefined argument is given.
@@ -830,7 +839,7 @@
 - ***Interpolated variables:***
   - `$1`: The unknown argument.
 
-#### 9.5.100. `Error long option match`
+#### 9.5.101. `Error long option match`
 
 - ***Message:*** `Error: The long option "$1" matches multiple long options.`
 - ***Description:*** The error that on the command line, an abbreviated long option matches multiple option names.
@@ -838,7 +847,7 @@
 - ***Interpolated variables:***
   - `$1`: The ambiguous long option.
 
-#### 9.5.101. `Error long option negation`
+#### 9.5.102. `Error long option negation`
 
 - ***Message:*** `Error: The long option "$1" is negated, but its affirmative version "$2" is unknown.`
 - ***Description:*** The error that on the command line, an undefined negated long option is given.
@@ -847,7 +856,7 @@
   - `$1`: The negated long option.
   - `$2`: The affirmative long option.
 
-#### 9.5.102. `Error long option unknown`
+#### 9.5.103. `Error long option unknown`
 
 - ***Message:*** `Error: The long option "$1" is unknown.`
 - ***Description:*** The error that on the command line, an unknown long option is given.
@@ -855,7 +864,7 @@
 - ***Interpolated variables:***
   - `$1`: The unknown long option.
 
-#### 9.5.103. `Error short option merge`
+#### 9.5.104. `Error short option merge`
 
 - ***Message:*** `Error: The short option "$1$2" is unknown.`
 - ***Description:*** The error that on the command line, an unknown short option is given in merged form.
@@ -864,7 +873,7 @@
   - `$1`: The merged short options' common prefix.
   - `$2`: The unknown short option.
 
-#### 9.5.104. `Error short option unknown`
+#### 9.5.105. `Error short option unknown`
 
 - ***Message:*** `Error: The short option "$1" is unknown.`
 - ***Description:*** The error that on the command line, an unknown short option is given.
@@ -872,7 +881,7 @@
 - ***Interpolated variables:***
   - `$1`: The unknown short option.
 
-#### 9.5.105. `Error pos arg count 1`
+#### 9.5.106. `Error pos arg count 1`
 
 - ***Message:*** `Error: 1 positional argument is required, but $1 are given.`
 - ***Description:*** The error that on the command line, the number of given positional arguments doesn't match the number of required positional arguments, which is one.
@@ -880,7 +889,7 @@
 - ***Interpolated variables:***
   - `$1`: The number of given positional arguments.
 
-#### 9.5.106. `Error pos arg count 2`
+#### 9.5.107. `Error pos arg count 2`
 
 - ***Message:*** `Error: $1 positional arguments are required, but $2 are given.`
 - ***Description:*** The error that on the command line, the number of given positional arguments doesn't match the number of required positional arguments.
@@ -889,7 +898,7 @@
   - `$1`: The number of required positional arguments.
   - `$2`: The number of given positional arguments.
 
-#### 9.5.107. `Error arg no flag`
+#### 9.5.108. `Error arg no flag`
 
 - ***Message:*** `Error: The option "$1" is no flag and thus cannot be given with a "+" or "no-" prefix.`
 - ***Description:*** The error that on the command line, a non-flag is inverted or negated.
@@ -897,7 +906,7 @@
 - ***Interpolated variables:***
   - `$1`: The argument's option or value names.
 
-#### 9.5.108. `Error mandatory arg`
+#### 9.5.109. `Error mandatory arg`
 
 - ***Message:*** `Error: The argument "$1" is mandatory, but not given.`
 - ***Description:*** The error that on the command line, a mandatory argument is not given.
@@ -905,7 +914,7 @@
 - ***Interpolated variables:***
   - `$1`: The argument's option or value names.
 
-#### 9.5.109. `Error wrong arg number 1`
+#### 9.5.110. `Error wrong arg number 1`
 
 - ***Message:*** `Error: The argument "$1" requires at least 1 value, but has $2 given.`
 - ***Description:*** The error that on the command line, an argument has a wrong number of values given, while requiring at least one.
@@ -914,7 +923,7 @@
   - `$1`: The argument's option or value names.
   - `$2`: The number of given values.
 
-#### 9.5.110. `Error wrong arg number 2`
+#### 9.5.111. `Error wrong arg number 2`
 
 - ***Message:*** `Error: The argument "$1" requires 0 or 1 value, but has $2 given.`
 - ***Description:*** The error that on the command line, an argument has a wrong number of values given, while requiring zero or one.
@@ -923,7 +932,7 @@
   - `$1`: The argument's option or value names.
   - `$2`: The number of given values.
 
-#### 9.5.111. `Error wrong arg number 3`
+#### 9.5.112. `Error wrong arg number 3`
 
 - ***Message:*** `Error: The argument "$1" requires 1 value, but has $2 given.`
 - ***Description:*** The error that on the command line, an argument has a wrong number of values given, while requiring one.
@@ -932,7 +941,7 @@
   - `$1`: The argument's option or value names.
   - `$2`: The number of given values.
 
-#### 9.5.112. `Error wrong arg number 4`
+#### 9.5.113. `Error wrong arg number 4`
 
 - ***Message:*** `Error: The argument "$1" requires $2 values, but has $3 given.`
 - ***Description:*** The error that on the command line, an argument has a wrong number of values given.
@@ -942,7 +951,7 @@
   - `$2`: The number of required values.
   - `$3`: The number of given values.
 
-#### 9.5.113. `Error arg choice`
+#### 9.5.114. `Error arg choice`
 
 - ***Message:*** `Error: The argument "$1" must be in {$2}, but is {$3}.`
 - ***Description:*** The error that a given arguments' values aren't a subset of the choice values.
@@ -952,7 +961,7 @@
   - `$2`: The choice values.
   - `$3`: The given values.
 
-#### 9.5.114. `Error arg bool`
+#### 9.5.115. `Error arg bool`
 
 - ***Message:*** `Error: The argument "$1" is set to "$2", but must be a Boolean, i.e., true or false.`
 - ***Description:*** The error that a given argument's value's data type is not a Boolean.
@@ -961,7 +970,7 @@
   - `$1`: The argument's option or value names.
   - `$2`: The given value.
 
-#### 9.5.115. `Error arg char`
+#### 9.5.116. `Error arg char`
 
 - ***Message:*** `Error: The argument "$1" is set to "$2", but must be a character, i.e., a string comprising one printable ASCII character.`
 - ***Description:*** The error that a given argument's value's data type is not a character.
@@ -970,7 +979,7 @@
   - `$1`: The argument's option or value names.
   - `$2`: The given value.
 
-#### 9.5.116. `Error arg float`
+#### 9.5.117. `Error arg float`
 
 - ***Message:*** `Error: The argument "$1" is set to "$2", but must be a floating-point number, i.e., comprise only digits, a dot, and possibly a leading sign.`
 - ***Description:*** The error that a given argument's value's data type is not a floating-point number.
@@ -979,7 +988,7 @@
   - `$1`: The argument's option or value names.
   - `$2`: The given value.
 
-#### 9.5.117. `Error arg int`
+#### 9.5.118. `Error arg int`
 
 - ***Message:*** `Error: The argument "$1" is set to "$2", but must be an integer, i.e., comprise only digits and possibly a leading sign.`
 - ***Description:*** The error that a given argument's value's data type is not an integer.
@@ -988,7 +997,7 @@
   - `$1`: The argument's option or value names.
   - `$2`: The given value.
 
-#### 9.5.118. `Error arg uint`
+#### 9.5.119. `Error arg uint`
 
 - ***Message:*** `Error: The argument "$1" is set to "$2", but must be an unsigned integer, i.e., comprise only digits and no sign.`
 - ***Description:*** The error that a given argument's value's data type is not an unsigned integer.
@@ -997,7 +1006,7 @@
   - `$1`: The argument's option or value names.
   - `$2`: The given value.
 
-#### 9.5.119. `Error YAML`
+#### 9.5.120. `Error YAML`
 
 - ***Message:*** `Error: The YAML line "$1" could not be recognized.`
 - ***Description:*** The error that a translation file's [YAML](https://en.wikipedia.org/wiki/YAML "wikipedia.org &rightarrow; YAML") line cannot be parsed.
@@ -1005,7 +1014,7 @@
 - ***Interpolated variables:***
   - `$1`: The YAML line.
 
-#### 9.5.120. `Error include directive`
+#### 9.5.121. `Error include directive`
 
 - ***Message:*** `Error: The include directive "$1" could not be recognized.`
 - ***Description:*** The error that an include directive cannot be parsed.
@@ -1013,7 +1022,7 @@
 - ***Interpolated variables:***
   - `$1`: The include directive.
 
-#### 9.5.121. `Warning wrong arg number 1`
+#### 9.5.122. `Warning wrong arg number 1`
 
 - ***Message:*** `Warning: The argument "$1" requires at least 1 value, but has $2 given.  For convenience, the default ($3) is used.`
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring at least one.
@@ -1023,7 +1032,7 @@
   - `$2`: The number of given values.
   - `$3`: The default values.
 
-#### 9.5.122. `Warning wrong arg number 2`
+#### 9.5.123. `Warning wrong arg number 2`
 
 - ***Message:*** `Warning: The argument "$1" requires at 0 or 1 value, but has $2 given.  For convenience, the default ($3) is used.`
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring zero or one.
@@ -1033,7 +1042,7 @@
   - `$2`: The number of given values.
   - `$3`: The default values.
 
-#### 9.5.123. `Warning wrong arg number 3`
+#### 9.5.124. `Warning wrong arg number 3`
 
 - ***Message:*** `Warning: The argument "$1" requires 1 value, but has $2 given.  For convenience, the default ($3) is used.`
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring one.
@@ -1043,7 +1052,7 @@
   - `$2`: The number of given values.
   - `$3`: The default values.
 
-#### 9.5.124. `Warning wrong arg number 4`
+#### 9.5.125. `Warning wrong arg number 4`
 
 - ***Message:*** `Warning: The argument "$1" requires $2 values, but has $3 given.  For convenience, the default ($4) is used.`
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given.
@@ -1054,7 +1063,7 @@
   - `$3`: The number of given values.
   - `$4`: The default values.
 
-#### 9.5.125. `Warning deprecation`
+#### 9.5.126. `Warning deprecation`
 
 - ***Message:*** `Warning: The argument "$1" is deprecated and will be removed in the future.`
 - ***Description:*** The warning that on the command line, a deprecated argument is given.
@@ -1062,7 +1071,7 @@
 - ***Interpolated variables:***
   - `$1`: The argument's option or value names.
 
-#### 9.5.126. `Warning no identifier`
+#### 9.5.127. `Warning no identifier`
 
 - ***Message:*** `Warning: In the translation file "$1", the identifier "$2" is missing.  For convenience, the untranslated string is used, instead.`
 - ***Description:*** The warning that in a translation file, an identifier is missing.
@@ -1071,7 +1080,7 @@
   - `$1`: The [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9440-argparser_translation_file).
   - `$2`: The missing identifier.
 
-#### 9.5.127. `Warning no translation`
+#### 9.5.128. `Warning no translation`
 
 - ***Message:*** `Warning: In the translation file "$1", the translation to "$2" for the identifier "$3" is missing.  For convenience, the untranslated string is used, instead.`
 - ***Description:*** The warning that in a translation file, an identifier's translation is missing.
