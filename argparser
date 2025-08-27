@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-26
+# Last Modification: 2025-08-27
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -2363,6 +2363,7 @@ function argparser_parse_args_definition() {
     local arg_number
     local -a args_definition
     local choice_value
+    local -a choice_values
     local -a choice_values_arr
     local choice_values_range
     local choice_values_str
@@ -2553,14 +2554,15 @@ function argparser_parse_args_definition() {
         fi
         all_default_values[${arg_key}]="${default_values}"
 
-        # Get the choice values.
+        # Get the choice values.  Resolve ranges in the individual
+        # elements.
         if [[ -n "${column_indices["choices"]}" ]]; then
             argparser_trim "${fields[${column_indices["choices"]}]}"
-            choice_values_arr="${trimmed_string}"
+            choice_values_str="${trimmed_string}"
 
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values_arr \
-                <<< "${choice_values_arr}"
-            choice_values_str=""
+                <<< "${choice_values_str}"
+            choice_values=( )
             for choice_values_range in "${choice_values_arr[@]}"; do
                 if [[ "${choice_values_range}" == *-*-*-* ]]; then
                     error_message="Error: The argument with the identifier "
@@ -2580,8 +2582,7 @@ function argparser_parse_args_definition() {
                         "${range_stop}" "${range_step}"
 
                     for choice_value in "${sequence[@]}"; do
-                        choice_values_str+="${choice_value}"
-                        choice_values_str+="${ARGPARSER_ARG_DELIMITER_2}"
+                        choice_values+=("${choice_value}")
                     done
                 elif [[ "${choice_values_range}" == *-* ]]; then
                     range_start="${choice_values_range%%-*}"
@@ -2590,18 +2591,22 @@ function argparser_parse_args_definition() {
                     argparser_seq "${arg_key}" "${range_start}" "${range_stop}"
 
                     for choice_value in "${sequence[@]}"; do
-                        choice_values_str+="${choice_value}"
-                        choice_values_str+="${ARGPARSER_ARG_DELIMITER_2}"
+                        choice_values+=("${choice_value}")
                     done
                 else
-                    choice_values_str+="${choice_values_range}"
-                    choice_values_str+="${ARGPARSER_ARG_DELIMITER_2}"
+                    choice_values+=("${choice_values_range}")
                 fi
             done
-            choice_values_str="${choice_values_str%"${ARGPARSER_ARG_DELIMITER_2}"}"
         else
-            choice_values_str=""
+            choice_values=( )
         fi
+
+        choice_values_str=""
+        for choice_value in "${choice_values[@]}"; do
+            choice_values_str+="${choice_value}"
+            choice_values_str+="${ARGPARSER_ARG_DELIMITER_2}"
+        done
+        choice_values_str="${choice_values_str%"${ARGPARSER_ARG_DELIMITER_2}"}"
         all_choice_values[${arg_key}]="${choice_values_str}"
 
         # Get the data type.
@@ -4581,7 +4586,7 @@ function argparser_check_arg_values() {
 
     # Check if the correct number of values is given.  If an argument
     # hadn't been given, both its value and prefix are empty, but if it
-    # was given without value the prefix is non-empty, allowing to
+    # was given without value, the prefix is non-empty, allowing to
     # distinguish both cases.
     if (( "${#values[@]}" == 0 && "${#prefixes[@]}" == 0 )); then
         if [[ -z "${default_values[0]}" ]]; then
