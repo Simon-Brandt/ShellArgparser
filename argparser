@@ -496,6 +496,24 @@ function argparser_fold() {
     done
 }
 
+function argparser_join() {
+    # Join an array by ${ARGPARSER_ARG_DELIMITER_2} characters.
+    #
+    # Arguments:
+    # - $@: the array to join
+    #
+    # Nonlocals:
+    # - joined_array: the joined array
+    #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+
+    # Join the array.
+    local IFS
+    IFS="${ARGPARSER_ARG_DELIMITER_2}"
+    joined_array="$*"
+}
+
 function argparser_seq() {
     # Create a sequence of integer or string values, ranging from the
     # start to the stop (inclusive), with a given step size.
@@ -1811,7 +1829,7 @@ function argparser_check_env_vars() {
         # for missing short options.  Then, check if any short option
         # name is longer than one character, and if it is given multiple
         # times in the current environment variable's value or across
-        # all yet investigated envirnoment variables' values.  If only
+        # all yet investigated environment variables' values.  If only
         # one short option name is given, the empty string is a legit
         # value, so don't check this.
         if (( "${#short_options[@]}" > 1 )) \
@@ -2378,6 +2396,7 @@ function argparser_parse_args_definition() {
     local -a header
     local help_text
     local i
+    local joined_array
     local -a line
     local long_options
     local notes
@@ -2601,13 +2620,8 @@ function argparser_parse_args_definition() {
             choice_values=( )
         fi
 
-        choice_values_str=""
-        for choice_value in "${choice_values[@]}"; do
-            choice_values_str+="${choice_value}"
-            choice_values_str+="${ARGPARSER_ARG_DELIMITER_2}"
-        done
-        choice_values_str="${choice_values_str%"${ARGPARSER_ARG_DELIMITER_2}"}"
-        all_choice_values[${arg_key}]="${choice_values_str}"
+        argparser_join "${choice_values[@]}"
+        all_choice_values[${arg_key}]="${joined_array}"
 
         # Get the data type.
         if [[ -n "${column_indices["type"]}" ]]; then
@@ -3010,6 +3024,7 @@ function argparser_check_args_definition_positional_values() {
     local -a default_values
     local error_message
     local infinite_arg_number_arg
+    local joined_array
     local note
     local -a notes
     local optional_arg
@@ -3067,11 +3082,8 @@ function argparser_check_args_definition_positional_values() {
             if argparser_in_array "${arg_number}" "*" "?" \
                 && argparser_in_array "${choice_values[@]}" true false
             then
-                choice_value="${choice_values[0]}"
-                for (( i = 1; i < "${#choice_values[@]}"; i++ )); do
-                    choice_value+="${ARGPARSER_ARG_DELIMITER_2}"
-                    choice_value+="${choice_values[i]}"
-                done
+                argparser_join "${choice_values[@]}"
+                choice_value="${joined_array}"
 
                 error_message="Error: The positional argument with the "
                 error_message+="identifier \"\$1\" has {\$2} given as choice "
@@ -3094,17 +3106,11 @@ function argparser_check_args_definition_positional_values() {
                     if ! argparser_in_array "${default_value}" \
                         "${choice_values[@]}" true false
                     then
-                        choice_value="${choice_values[0]}"
-                        for (( i = 1; i < "${#choice_values[@]}"; i++ )); do
-                            choice_value+="${ARGPARSER_ARG_DELIMITER_2}"
-                            choice_value+="${choice_values[i]}"
-                        done
+                        argparser_join "${choice_values[@]}"
+                        choice_value="${joined_array}"
 
-                        default_value="${default_values[0]}"
-                        for (( i = 1; i < "${#default_values[@]}"; i++ )); do
-                            default_value+="${ARGPARSER_ARG_DELIMITER_2}"
-                            default_value+="${default_values[i]}"
-                        done
+                        argparser_join "${default_values[@]}"
+                        default_value="${joined_array}"
 
                         error_message="Error: The positional argument with "
                         error_message+="the identifier \"\$1\" accepts only "
@@ -3122,17 +3128,11 @@ function argparser_check_args_definition_positional_values() {
                     if ! argparser_in_array "${default_value}" \
                         "${choice_values[@]}"
                     then
-                        choice_value="${choice_values[0]}"
-                        for (( i = 1; i < "${#choice_values[@]}"; i++ )); do
-                            choice_value+="${ARGPARSER_ARG_DELIMITER_2}"
-                            choice_value+="${choice_values[i]}"
-                        done
+                        argparser_join "${choice_values[@]}"
+                        choice_value="${joined_array}"
 
-                        default_value="${default_values[0]}"
-                        for (( i = 1; i < "${#default_values[@]}"; i++ )); do
-                            default_value+="${ARGPARSER_ARG_DELIMITER_2}"
-                            default_value+="${default_values[i]}"
-                        done
+                        argparser_join "${default_values[@]}"
+                        default_value="${joined_array}"
 
                         error_message="Error: The positional argument with "
                         error_message+="the identifier \"\$1\" accepts only "
@@ -3390,6 +3390,7 @@ function argparser_check_args_definition_option_values() {
     local default_value
     local -a default_values
     local error_message
+    local joined_array
     local note
     local -a notes
     local translation
@@ -3420,11 +3421,8 @@ function argparser_check_args_definition_option_values() {
                 error_message="${translation}"
                 error_messages+=("${error_message}")
             elif ! argparser_in_array "${default_values[0]}" true false; then
-                default_value="${default_values[0]}"
-                for (( i = 1; i < "${#default_values[@]}"; i++ )); do
-                    default_value+="${ARGPARSER_ARG_DELIMITER_2}"
-                    default_value+="${default_values[i]}"
-                done
+                argparser_join "${default_values[@]}"
+                default_value="${joined_array}"
 
                 error_message="Error: The option with the identifier \"\$1\" "
                 error_message+="must be true or false, but has {\$2} given as "
@@ -3476,11 +3474,8 @@ function argparser_check_args_definition_option_values() {
             if argparser_in_array "${arg_number}" "*" "?" \
                 && argparser_in_array "${choice_values[@]}" true false
             then
-                choice_value="${choice_values[0]}"
-                for (( i = 1; i < "${#choice_values[@]}"; i++ )); do
-                    choice_value+="${ARGPARSER_ARG_DELIMITER_2}"
-                    choice_value+="${choice_values[i]}"
-                done
+                argparser_join "${choice_values[@]}"
+                choice_value="${joined_array}"
 
                 error_message="Error: The option with the identifier \"\$1\" "
                 error_message+="has {\$2} given as choice values, while true "
@@ -3491,11 +3486,8 @@ function argparser_check_args_definition_option_values() {
                 error_message="${translation}"
                 error_messages+=("${error_message}")
             elif [[ "${arg_number}" == 0 ]]; then
-                choice_value="${choice_values[0]}"
-                for (( i = 1; i < "${#choice_values[@]}"; i++ )); do
-                    choice_value+="${ARGPARSER_ARG_DELIMITER_2}"
-                    choice_value+="${choice_values[i]}"
-                done
+                argparser_join "${choice_values[@]}"
+                choice_value="${joined_array}"
 
                 error_message="Error: The option with the identifier \"\$1\" "
                 error_message+="accepts no choice values, but has {\$2} given."
@@ -3517,17 +3509,11 @@ function argparser_check_args_definition_option_values() {
                     if ! argparser_in_array "${default_value}" \
                         "${choice_values[@]}" true false
                     then
-                        choice_value="${choice_values[0]}"
-                        for (( i = 1; i < "${#choice_values[@]}"; i++ )); do
-                            choice_value+="${ARGPARSER_ARG_DELIMITER_2}"
-                            choice_value+="${choice_values[i]}"
-                        done
+                        argparser_join "${choice_values[@]}"
+                        choice_value="${joined_array}"
 
-                        default_value="${default_values[0]}"
-                        for (( i = 1; i < "${#default_values[@]}"; i++ )); do
-                            default_value+="${ARGPARSER_ARG_DELIMITER_2}"
-                            default_value+="${default_values[i]}"
-                        done
+                        argparser_join "${default_values[@]}"
+                        default_value="${joined_array}"
 
                         error_message="Error: The option with the identifier "
                         error_message+="\"\$1\" accepts only the choice "
@@ -3545,17 +3531,11 @@ function argparser_check_args_definition_option_values() {
                     if ! argparser_in_array "${default_value}" \
                         "${choice_values[@]}"
                     then
-                        choice_value="${choice_values[0]}"
-                        for (( i = 1; i < "${#choice_values[@]}"; i++ )); do
-                            choice_value+="${ARGPARSER_ARG_DELIMITER_2}"
-                            choice_value+="${choice_values[i]}"
-                        done
+                        argparser_join "${choice_values[@]}"
+                        choice_value="${joined_array}"
 
-                        default_value="${default_values[0]}"
-                        for (( i = 1; i < "${#default_values[@]}"; i++ )); do
-                            default_value+="${ARGPARSER_ARG_DELIMITER_2}"
-                            default_value+="${default_values[i]}"
-                        done
+                        argparser_join "${default_values[@]}"
+                        default_value="${joined_array}"
 
                         error_message="Error: The option with the identifier "
                         error_message+="\"\$1\" accepts only the choice "
@@ -3888,6 +3868,7 @@ function argparser_get_option_names() {
 
     # Define the local variables.
     local arg_key
+    local joined_array
     local long_option_names
     local long_option
     local -a long_options
@@ -3917,24 +3898,23 @@ function argparser_get_option_names() {
         value_names="${all_value_names[${arg_key}]}"
     fi
 
-    # Concatenate the names of all short and long options.
-    short_option_names=""
-    for short_option in "${short_options[@]}"; do
-        short_option_names+="-${short_option}${ARGPARSER_ARG_DELIMITER_2}"
-    done
+    # Concatenate the names of all short and long options, including the
+    # leading hyphen(s).
+    argparser_join "${short_options[@]/#/-}"
+    short_option_names="${joined_array}"
 
-    long_option_names=""
-    for long_option in "${long_options[@]}"; do
-        long_option_names+="--${long_option}${ARGPARSER_ARG_DELIMITER_2}"
-    done
+    argparser_join "${long_options[@]/#/--}"
+    long_option_names="${joined_array}"
 
     # Merge the names of all short and long options, if any is given, or
     # use the value names as fallback.
     if [[ -n "${short_options[0]}" && -n "${long_options[0]}" ]]; then
         if [[ "${order}" == "short-long" ]]; then
-            option_names="${short_option_names}${long_option_names}"
+            option_names="${short_option_names}${ARGPARSER_ARG_DELIMITER_2}"
+            option_names+="${long_option_names}"
         elif [[ "${order}" == "long-short" ]]; then
-            option_names="${long_option_names}${short_option_names}"
+            option_names="${long_option_names}${ARGPARSER_ARG_DELIMITER_2}"
+            option_names+="${short_option_names}"
         elif [[ "${order}" == "short" ]]; then
             option_names="${short_option_names}"
         elif [[ "${order}" == "long" ]]; then
@@ -3947,7 +3927,6 @@ function argparser_get_option_names() {
     else
         option_names="${value_names}"
     fi
-    option_names="${option_names%"${ARGPARSER_ARG_DELIMITER_2}"}"
 }
 
 function argparser_parse_arg() {
@@ -4606,6 +4585,7 @@ function argparser_check_arg_values() {
     local -a default_values
     local error_message
     local i
+    local joined_array
     local note
     local -a notes
     local option_names
@@ -4709,11 +4689,8 @@ function argparser_check_arg_values() {
 
             # Output the values.  Since the default values are used,
             # further checking isn't necessary.
-            value="${values[0]}"
-            for (( i = 1; i < "${#values[@]}"; i++ )); do
-                value+="${ARGPARSER_ARG_DELIMITER_2}${values[i]}"
-            done
-            messages+=("Value: ${value}")
+            argparser_join "${values[@]}"
+            messages+=("Value: ${joined_array}")
             return
         else
             # The argument is not given, but it has default values.
@@ -4723,11 +4700,8 @@ function argparser_check_arg_values() {
 
             # Output the values.  Since the default values are used,
             # further checking isn't necessary.
-            value="${values[0]}"
-            for (( i = 1; i < "${#values[@]}"; i++ )); do
-                value+="${ARGPARSER_ARG_DELIMITER_2}${values[i]}"
-            done
-            messages+=("Value: ${value}")
+            argparser_join "${values[@]}"
+            messages+=("Value: ${joined_array}")
             return
         fi
     elif [[ "${arg_number}" == "+" && "${#values[@]}" == 0 ]]; then
@@ -4761,11 +4735,8 @@ function argparser_check_arg_values() {
 
             # Output the values.  Since the default values are used,
             # further checking isn't necessary.
-            value="${values[0]}"
-            for (( i = 1; i < "${#values[@]}"; i++ )); do
-                value+="${ARGPARSER_ARG_DELIMITER_2}${values[i]}"
-            done
-            messages+=("Value: ${value}")
+            argparser_join "${values[@]}"
+            messages+=("Value: ${joined_array}")
             return
         fi
     elif [[ "${arg_number}" == "?" ]] && (( "${#values[@]}" > 1 )); then
@@ -4799,11 +4770,8 @@ function argparser_check_arg_values() {
 
             # Output the values.  Since the default values are used,
             # further checking isn't necessary.
-            value="${values[0]}"
-            for (( i = 1; i < "${#values[@]}"; i++ )); do
-                value+="${ARGPARSER_ARG_DELIMITER_2}${values[i]}"
-            done
-            messages+=("Value: ${value}")
+            argparser_join "${values[@]}"
+            messages+=("Value: ${joined_array}")
             return
         fi
     elif [[ "${arg_number}" == 1 && "${#values[@]}" != 1 ]]; then
@@ -4824,11 +4792,8 @@ function argparser_check_arg_values() {
             # message as for the absence case, but set the values to the
             # default values.
             if [[ "${arg_key}" != "ARGPARSER_ARG_DELIMITER_2" ]]; then
-                default_value="${default_values[0]}"
-                for (( i = 1; i < "${#default_values[@]}"; i++ )); do
-                    default_value+="${ARGPARSER_ARG_DELIMITER_2}"
-                    default_value+="${default_values[i]}"
-                done
+                argparser_join "${default_values[@]}"
+                default_value="${joined_array}"
             fi
 
             warning_message="Warning: The argument \"\$1\" requires 1 value, "
@@ -4850,11 +4815,8 @@ function argparser_check_arg_values() {
 
             # Output the values.  Since the default values are used,
             # further checking isn't necessary.
-            value="${values[0]}"
-            for (( i = 1; i < "${#values[@]}"; i++ )); do
-                value+="${ARGPARSER_ARG_DELIMITER_2}${values[i]}"
-            done
-            messages+=("Value: ${value}")
+            argparser_join "${values[@]}"
+            messages+=("Value: ${joined_array}")
             return
         fi
     elif argparser_in_array "${arg_number}" 0 "*" "?" \
@@ -4885,11 +4847,8 @@ function argparser_check_arg_values() {
 
         # Output the values.  Since the default values are used, further
         # checking isn't necessary.
-        value="${values[0]}"
-        for (( i = 1; i < "${#values[@]}"; i++ )); do
-            value+="${ARGPARSER_ARG_DELIMITER_2}${values[i]}"
-        done
-        messages+=("Value: ${value}")
+        argparser_join "${values[@]}"
+        messages+=("Value: ${joined_array}")
         return
     elif argparser_is_int "${arg_number}" \
         && [[ "${#values[@]}" != "${arg_number}" ]]
@@ -4925,11 +4884,8 @@ function argparser_check_arg_values() {
 
             # Output the values.  Since the default values are used,
             # further checking isn't necessary.
-            value="${values[0]}"
-            for (( i = 1; i < "${#values[@]}"; i++ )); do
-                value+="${ARGPARSER_ARG_DELIMITER_2}${values[i]}"
-            done
-            messages+=("Value: ${value}")
+            argparser_join "${values[@]}"
+            messages+=("Value: ${joined_array}")
             return
         fi
     fi
@@ -4940,16 +4896,11 @@ function argparser_check_arg_values() {
     if [[ -n "${choice_values[0]}" ]]; then
         for value in "${values[@]}"; do
             if ! argparser_in_array "${value}" "${choice_values[@]}"; then
-                choice_value="${choice_values[0]}"
-                for (( i = 1; i < "${#choice_values[@]}"; i++ )); do
-                    choice_value+="${ARGPARSER_ARG_DELIMITER_2}"
-                    choice_value+="${choice_values[i]}"
-                done
+                argparser_join "${choice_values[@]}"
+                choice_value="${joined_array}"
 
-                value="${values[0]}"
-                for (( i = 1; i < "${#values[@]}"; i++ )); do
-                    value+="${ARGPARSER_ARG_DELIMITER_2}${values[i]}"
-                done
+                argparser_join "${values[@]}"
+                value="${joined_array}"
 
                 error_message="Error: The argument \"\$1\" must be in {\$2}, "
                 error_message+="but is {\$3}."
@@ -5040,11 +4991,8 @@ function argparser_check_arg_values() {
     done
 
     # Output the checked values.
-    value="${values[0]}"
-    for (( i = 1; i < "${#values[@]}"; i++ )); do
-        value+="${ARGPARSER_ARG_DELIMITER_2}${values[i]}"
-    done
-    messages+=("Value: ${value}")
+    argparser_join "${values[@]}"
+    messages+=("Value: ${joined_array}")
 }
 
 function argparser_parse_args() {
@@ -8274,6 +8222,7 @@ function argparser_main() {
         unset -f argparser_is_identifier
         unset -f argparser_is_int
         unset -f argparser_is_uint
+        unset -f argparser_join
         unset -f argparser_main
         unset -f argparser_parse_arg
         unset -f argparser_parse_args
