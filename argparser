@@ -3059,37 +3059,72 @@ function argparser_check_args_definition_positional_values() {
         fi
 
         # Check if the default values accord to the choice values, i.e.,
-        # if each default value lies within the array of choice values.
-        # Else, output an error message.
+        # if each default value lies within the array of choice values,
+        # separately for flag-like and "normal" arguments.  Else, output
+        # an error message.
         if [[ -n "${choice_values[0]}" ]]; then
             for default_value in "${default_values[@]}"; do
-                if [[ -n "${default_value}" ]] \
-                    && ! argparser_in_array "${default_value}" \
-                        "${choice_values[@]}"
-                then
-                    choice_value="${choice_values[0]}"
-                    for (( i = 1; i < "${#choice_values[@]}"; i++ )); do
-                        choice_value+="${ARGPARSER_ARG_DELIMITER_2}"
-                        choice_value+="${choice_values[i]}"
-                    done
+                if [[ -z "${default_value}" ]]; then
+                    continue
+                fi
 
-                    default_value="${default_values[0]}"
-                    for (( i = 1; i < "${#default_values[@]}"; i++ )); do
-                        default_value+="${ARGPARSER_ARG_DELIMITER_2}"
-                        default_value+="${default_values[i]}"
-                    done
+                if argparser_in_array "${arg_number}" "*" "?"; then
+                    if ! argparser_in_array "${default_value}" \
+                        "${choice_values[@]}" true false
+                    then
+                        choice_value="${choice_values[0]}"
+                        for (( i = 1; i < "${#choice_values[@]}"; i++ )); do
+                            choice_value+="${ARGPARSER_ARG_DELIMITER_2}"
+                            choice_value+="${choice_values[i]}"
+                        done
 
-                    error_message="Error: The positional argument with the "
-                    error_message+="identifier \"\$1\" accepts only the "
-                    error_message+="choice values {\$2}, but has {\$3} given "
-                    error_message+="as default."
+                        default_value="${default_values[0]}"
+                        for (( i = 1; i < "${#default_values[@]}"; i++ )); do
+                            default_value+="${ARGPARSER_ARG_DELIMITER_2}"
+                            default_value+="${default_values[i]}"
+                        done
 
-                    argparser_translate "Error arg def pos choice" \
-                        "${error_message}" "${arg_key}" "${choice_value}" \
-                        "${default_value}"
-                    error_message="${translation}"
-                    error_messages+=("${error_message}")
-                    break
+                        error_message="Error: The positional argument with "
+                        error_message+="the identifier \"\$1\" accepts only "
+                        error_message+="the choice values {\$2}, but has "
+                        error_message+="{\$3} given as default."
+
+                        argparser_translate "Error arg def pos choice" \
+                            "${error_message}" "${arg_key}" "${choice_value}" \
+                            "${default_value}"
+                        error_message="${translation}"
+                        error_messages+=("${error_message}")
+                        break
+                    fi
+                else
+                    if [[ -n "${default_value}" ]] \
+                        && ! argparser_in_array "${default_value}" \
+                            "${choice_values[@]}"
+                    then
+                        choice_value="${choice_values[0]}"
+                        for (( i = 1; i < "${#choice_values[@]}"; i++ )); do
+                            choice_value+="${ARGPARSER_ARG_DELIMITER_2}"
+                            choice_value+="${choice_values[i]}"
+                        done
+
+                        default_value="${default_values[0]}"
+                        for (( i = 1; i < "${#default_values[@]}"; i++ )); do
+                            default_value+="${ARGPARSER_ARG_DELIMITER_2}"
+                            default_value+="${default_values[i]}"
+                        done
+
+                        error_message="Error: The positional argument with "
+                        error_message+="the identifier \"\$1\" accepts only "
+                        error_message+="the choice values {\$2}, but has "
+                        error_message+="{\$3} given as default."
+
+                        argparser_translate "Error arg def pos choice" \
+                            "${error_message}" "${arg_key}" "${choice_value}" \
+                            "${default_value}"
+                        error_message="${translation}"
+                        error_messages+=("${error_message}")
+                        break
+                    fi
                 fi
             done
         fi
@@ -3450,34 +3485,69 @@ function argparser_check_args_definition_option_values() {
                 error_messages+=("${error_message}")
             fi
 
-            # Check the default values.
+            # Check the default values, separately for flag-like and
+            # "normal" arguments.
             for default_value in "${default_values[@]}"; do
-                if [[ -n "${default_value}" ]] \
-                    && ! argparser_in_array "${default_value}" \
+                if [[ -z "${default_value}" ]]; then
+                    continue
+                fi
+
+                if argparser_in_array "${arg_number}" "*" "?"; then
+                    if ! argparser_in_array "${default_value}" \
+                        "${choice_values[@]}" true false
+                    then
+                        choice_value="${choice_values[0]}"
+                        for (( i = 1; i < "${#choice_values[@]}"; i++ )); do
+                            choice_value+="${ARGPARSER_ARG_DELIMITER_2}"
+                            choice_value+="${choice_values[i]}"
+                        done
+
+                        default_value="${default_values[0]}"
+                        for (( i = 1; i < "${#default_values[@]}"; i++ )); do
+                            default_value+="${ARGPARSER_ARG_DELIMITER_2}"
+                            default_value+="${default_values[i]}"
+                        done
+
+                        error_message="Error: The option with the identifier "
+                        error_message+="\"\$1\" accepts only the choice "
+                        error_message+="values {\$2}, but has {\$3} given as "
+                        error_message+="default."
+
+                        argparser_translate "Error arg def option choice" \
+                            "${error_message}" "${arg_key}" "${choice_value}" \
+                            "${default_value}"
+                        error_message="${translation}"
+                        error_messages+=("${error_message}")
+                        break
+                    fi
+                else
+                    if ! argparser_in_array "${default_value}" \
                         "${choice_values[@]}"
-                then
-                    choice_value="${choice_values[0]}"
-                    for (( i = 1; i < "${#choice_values[@]}"; i++ )); do
-                        choice_value+="${ARGPARSER_ARG_DELIMITER_2}"
-                        choice_value+="${choice_values[i]}"
-                    done
+                    then
+                        choice_value="${choice_values[0]}"
+                        for (( i = 1; i < "${#choice_values[@]}"; i++ )); do
+                            choice_value+="${ARGPARSER_ARG_DELIMITER_2}"
+                            choice_value+="${choice_values[i]}"
+                        done
 
-                    default_value="${default_values[0]}"
-                    for (( i = 1; i < "${#default_values[@]}"; i++ )); do
-                        default_value+="${ARGPARSER_ARG_DELIMITER_2}"
-                        default_value+="${default_values[i]}"
-                    done
+                        default_value="${default_values[0]}"
+                        for (( i = 1; i < "${#default_values[@]}"; i++ )); do
+                            default_value+="${ARGPARSER_ARG_DELIMITER_2}"
+                            default_value+="${default_values[i]}"
+                        done
 
-                    error_message="Error: The option with the identifier "
-                    error_message+="\"\$1\" accepts only the choice values "
-                    error_message+="{\$2}, but has {\$3} given as default."
+                        error_message="Error: The option with the identifier "
+                        error_message+="\"\$1\" accepts only the choice "
+                        error_message+="values {\$2}, but has {\$3} given as "
+                        error_message+="default."
 
-                    argparser_translate "Error arg def option choice" \
-                        "${error_message}" "${arg_key}" "${choice_value}" \
-                        "${default_value}"
-                    error_message="${translation}"
-                    error_messages+=("${error_message}")
-                    break
+                        argparser_translate "Error arg def option choice" \
+                            "${error_message}" "${arg_key}" "${choice_value}" \
+                            "${default_value}"
+                        error_message="${translation}"
+                        error_messages+=("${error_message}")
+                        break
+                    fi
                 fi
             done
         fi
