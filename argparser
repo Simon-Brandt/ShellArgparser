@@ -4685,11 +4685,29 @@ function argparser_check_arg_values() {
             else
                 values=(-1)
             fi
+
+            # Output the values.  Since the default values are used,
+            # further checking isn't necessary.
+            value="${values[0]}"
+            for (( i = 1; i < "${#values[@]}"; i++ )); do
+                value+="${ARGPARSER_ARG_DELIMITER_2}${values[i]}"
+            done
+            messages+=("Value: ${value}")
+            return
         else
             # The argument is not given, but it has default values.
             # Hence, read them.  This is required for optional
             # arguments, which don't need to be set.
             values=("${default_values[@]}")
+
+            # Output the values.  Since the default values are used,
+            # further checking isn't necessary.
+            value="${values[0]}"
+            for (( i = 1; i < "${#values[@]}"; i++ )); do
+                value+="${ARGPARSER_ARG_DELIMITER_2}${values[i]}"
+            done
+            messages+=("Value: ${value}")
+            return
         fi
     elif [[ "${arg_number}" == "+" && "${#values[@]}" == 0 ]]; then
         # The number of values doesn't equal the number of required
@@ -4707,7 +4725,7 @@ function argparser_check_arg_values() {
         else
             # As some default values are given, print a similar warning
             # message as for the absence case, but set the values to the
-            # default values and continue.
+            # default values.
             warning_message="Warning: The argument \"\$1\" requires at least "
             warning_message+="1 value, but has \$2 given.  For convenience, "
             warning_message+="the default (\$3) is used."
@@ -4717,6 +4735,17 @@ function argparser_check_arg_values() {
                 "${default_value}"
             warning_message="${translation}"
             messages+=("${warning_message}")
+
+            values=("${default_values[@]}")
+
+            # Output the values.  Since the default values are used,
+            # further checking isn't necessary.
+            value="${values[0]}"
+            for (( i = 1; i < "${#values[@]}"; i++ )); do
+                value+="${ARGPARSER_ARG_DELIMITER_2}${values[i]}"
+            done
+            messages+=("Value: ${value}")
+            return
         fi
     elif [[ "${arg_number}" == "?" ]] && (( "${#values[@]}" > 1 )); then
         # The number of values doesn't equal the number of required
@@ -4734,7 +4763,7 @@ function argparser_check_arg_values() {
         else
             # As some default values are given, print a similar warning
             # message as for the absence case, but set the values to the
-            # default values and continue.
+            # default values.
             warning_message="Warning: The argument \"\$1\" requires 0 or 1 "
             warning_message+="value, but has \$2 given.  For convenience, the "
             warning_message+="default (\$3) is used."
@@ -4744,6 +4773,17 @@ function argparser_check_arg_values() {
                 "${default_value}"
             warning_message="${translation}"
             messages+=("${warning_message}")
+
+            values=("${default_values[@]}")
+
+            # Output the values.  Since the default values are used,
+            # further checking isn't necessary.
+            value="${values[0]}"
+            for (( i = 1; i < "${#values[@]}"; i++ )); do
+                value+="${ARGPARSER_ARG_DELIMITER_2}${values[i]}"
+            done
+            messages+=("Value: ${value}")
+            return
         fi
     elif [[ "${arg_number}" == 1 && "${#values[@]}" != 1 ]]; then
         # The number of values doesn't equal the number of required
@@ -4761,7 +4801,7 @@ function argparser_check_arg_values() {
         else
             # As some default values are given, print a similar warning
             # message as for the absence case, but set the values to the
-            # default values and continue.
+            # default values.
             if [[ "${arg_key}" != "ARGPARSER_ARG_DELIMITER_2" ]]; then
                 default_value="${default_values[0]}"
                 for (( i = 1; i < "${#default_values[@]}"; i++ )); do
@@ -4784,7 +4824,17 @@ function argparser_check_arg_values() {
                 IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a default_values \
                     <<< "${all_default_values[${arg_key}]}"
             fi
+
             values=("${default_values[@]}")
+
+            # Output the values.  Since the default values are used,
+            # further checking isn't necessary.
+            value="${values[0]}"
+            for (( i = 1; i < "${#values[@]}"; i++ )); do
+                value+="${ARGPARSER_ARG_DELIMITER_2}${values[i]}"
+            done
+            messages+=("Value: ${value}")
+            return
         fi
     elif argparser_in_array "${arg_number}" 0 "*" "?" \
         && [[ ! -v values || -z "${values[0]}" ]]
@@ -4811,6 +4861,15 @@ function argparser_check_arg_values() {
                 values=(false)
             fi
         fi
+
+        # Output the values.  Since the default values are used, further
+        # checking isn't necessary.
+        value="${values[0]}"
+        for (( i = 1; i < "${#values[@]}"; i++ )); do
+            value+="${ARGPARSER_ARG_DELIMITER_2}${values[i]}"
+        done
+        messages+=("Value: ${value}")
+        return
     elif argparser_is_int "${arg_number}" \
         && [[ "${#values[@]}" != "${arg_number}" ]]
     then
@@ -4830,7 +4889,7 @@ function argparser_check_arg_values() {
         else
             # As some default values are given, print a similar warning
             # message as for the absence case, but set the values to the
-            # default values and continue.
+            # default values.
             warning_message="Warning: The argument \"\$1\" requires \$2 "
             warning_message+="values, but has \$3 given.  For convenience, "
             warning_message+="the default (\$4) is used."
@@ -4840,6 +4899,17 @@ function argparser_check_arg_values() {
                 "${#values[@]}" "${default_value}"
             warning_message="${translation}"
             messages+=("${warning_message}")
+
+            values=("${default_values[@]}")
+
+            # Output the values.  Since the default values are used,
+            # further checking isn't necessary.
+            value="${values[0]}"
+            for (( i = 1; i < "${#values[@]}"; i++ )); do
+                value+="${ARGPARSER_ARG_DELIMITER_2}${values[i]}"
+            done
+            messages+=("Value: ${value}")
+            return
         fi
     fi
 
@@ -4874,14 +4944,8 @@ function argparser_check_arg_values() {
 
     # Check if the given values accord to the type.
     for value in "${values[@]}"; do
-        if [[ "${type}" == "bool" && "${arg_number}" != 0 ]] \
-            && ! argparser_is_bool "${value}"
-        then
-            # Check if the value is a Boolean.  If the argument is a
-            # flag, then the values are set by the Argparser to
-            # Booleans, or, if ${ARGPARSER_COUNT_FLAGS} is set to true,
-            # to unsigned integers.  Since both automatically have the
-            # correct type, don't check them.
+        if [[ "${type}" == "bool" ]] && ! argparser_is_bool "${value}"; then
+            # Check if the value is a Boolean.
             error_message="Error: The argument \"\$1\" is set to \"\$2\", but "
             error_message+="must be a Boolean, i.e., true or false."
 
