@@ -284,12 +284,16 @@ function print_failed_commands() {
     done
 }
 
-# Run the tests.
+###############################################################################
+
+# Set the variables for the tests.
 test_section=0
 failed_cmd_count=0
 succeeded_cmd_count=0
 failed_cmds=( )
 failure_reasons=( )
+
+###############################################################################
 
 # 1.    Test the general functionality using test_basic.sh.
 (( test_section++ ))
@@ -635,6 +639,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
+###############################################################################
+
 # 2.    Test the functionality regarding short options.
 (( test_section++ ))
 print_section "${test_section}" "short options"
@@ -753,6 +759,8 @@ Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
+
+###############################################################################
 
 # 3.    Test the functionality regarding long options.
 (( test_section++ ))
@@ -876,6 +884,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
+###############################################################################
+
 # 4.    Test the functionality regarding keyword arguments.
 (( test_section++ ))
 print_section "${test_section}" "keyword arguments"
@@ -948,6 +958,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
+###############################################################################
+
 # 5.    Test the functionality regarding positional arguments.
 (( test_section++ ))
 print_section "${test_section}" "positional arguments"
@@ -1006,6 +1018,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
+###############################################################################
+
 # 6.    Test the functionality regarding the environment.
 (( test_section++ ))
 print_section "${test_section}" "environment"
@@ -1036,6 +1050,8 @@ test_type="environment"
 print_fd_diff
 
 exec 3>&- 4>&-
+
+###############################################################################
 
 # 7.    Test the functionality regarding the variable argument number.
 (( test_section++ ))
@@ -1125,6 +1141,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
+###############################################################################
+
 # 8.    Test the functionality regarding configuration files.
 (( test_section++ ))
 print_section "${test_section}" "configuration files"
@@ -1204,6 +1222,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
+###############################################################################
+
 # 9.    Test the functionality regarding arguments definition files.
 (( test_section++ ))
 print_section "${test_section}" "arguments definition files"
@@ -1282,6 +1302,8 @@ EOF
 )"
 error=""
 print_diff "${cmd}" "${output}" "${error}"
+
+###############################################################################
 
 # 10.   Test the functionality regarding help files.
 (( test_section++ ))
@@ -1366,6 +1388,8 @@ EOF
 )"
 error=""
 print_diff "${cmd}" "${output}" "${error}"
+
+###############################################################################
 
 # 11.   Test the functionality regarding the localization.
 (( test_section++ ))
@@ -1521,6 +1545,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
+###############################################################################
+
 # 12.   Test the functionality regarding the standalone mode in a
 #       pipeline.
 (( test_section++ ))
@@ -1611,6 +1637,8 @@ EOF
 )"
 error=""
 print_diff "${cmd}" "${output}" "${error}"
+
+###############################################################################
 
 # 13.   Test the functionality regarding the standalone usage.
 (( test_section++ ))
@@ -1863,6 +1891,8 @@ EOF
 )"
 error=""
 print_diff "${cmd}" "${output}" "${error}"
+
+###############################################################################
 
 # Print the summary and the reasons for the failures.
 print_summary
