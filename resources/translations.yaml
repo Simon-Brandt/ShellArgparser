@@ -523,6 +523,14 @@ Error arg def long name duplication 2:
 # 3.5.  Define the translations for checking the values of the
 #       positional arguments in the arguments definition.
 ---
+Error arg def option default flag:
+  en: >
+    Error: The positional argument with the identifier "$1" must be "true" or
+    "false", but has {$2} given as default.
+  de: >
+    Fehler: Das positionale Argument mit dem Identifikator "$1" muss "wahr"
+    ("true") oder "falsch" ("false") sein, hat aber "$2" als Vorgabe gegeben.
+
 Error arg def pos default 1:
   en: >
     Error: The positional argument with the identifier "$1" requires 1 value,
@@ -679,15 +687,7 @@ Error arg def pos note:
 # 3.6.  Define the translations for checking the values of the keyword
 #       arguments in the arguments definition.
 ---
-Error arg def option flag 1:
-  en: >
-    Error: The option with the identifier "$1" must be "true" or "false", but
-    has no default given.
-  de: >
-    Fehler: Die Option mit dem Identifikator "$1" muss "wahr" ("true") oder
-    "falsch" ("false") sein, hat aber keine Vorgabe gegeben.
-
-Error arg def option flag 2:
+Error arg def option default flag:
   en: >
     Error: The option with the identifier "$1" must be "true" or "false", but
     has {$2} given as default.

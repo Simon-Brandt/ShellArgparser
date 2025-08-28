@@ -533,7 +533,16 @@
   - `$2`: The long option name.
   - `$3`: The previously parsed argument's identifier.
 
-#### 9.5.66. `Error arg def pos default 1`
+#### 9.5.66. `Error arg def pos default flag`
+
+- ***Message:*** `Error: The positional argument with the identifier "$1" must be "true" or "false", but has {$2} given as default.`
+- ***Description:*** The error that in the arguments definition, a flag-like argument has a non-Boolean default value.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined as accepting no value, *i.e.*, as a flag-like argument. Thus, the default value, if given, must be either `true` or `false`.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The default value.
+
+#### 9.5.67. `Error arg def pos default 1`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" requires 1 value, but has $2 given as default.`
 - ***Description:*** The error that in the arguments definition of a positional argument, the number of default values doesn't match the number of required values, which is one.
@@ -542,7 +551,7 @@
   - `$1`: The argument identifier.
   - `$2`: The number of default values.
 
-#### 9.5.67. `Error arg def pos default 2`
+#### 9.5.68. `Error arg def pos default 2`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" requires $2 values, but has $3 given as default.`
 - ***Description:*** The error that in the arguments definition of a positional argument, the number of default values doesn't match the number of required values.
@@ -552,7 +561,7 @@
   - `$2`: The number of required values.
   - `$3`: The number of default values.
 
-#### 9.5.68. `Error arg def pos choice flag`
+#### 9.5.69. `Error arg def pos choice flag`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" has {$2} given as choice values, while "true" and "false" cannot be any.`
 - ***Description:*** The error that in the arguments definition, a positional argument that can take zero values has choice values.
@@ -561,7 +570,7 @@
   - `$1`: The argument identifier.
   - `$2`: The choice values.
 
-#### 9.5.69. `Error arg def pos choice`
+#### 9.5.70. `Error arg def pos choice`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" accepts only the choice values {$2}, but has {$3} given as default.`
 - ***Description:*** The error that in the arguments definition of a positional argument, the default values aren't a subset of the choice values.
@@ -571,7 +580,7 @@
   - `$2`: The choice values.
   - `$3`: The default values.
 
-#### 9.5.70. `Error arg def pos optionals`
+#### 9.5.71. `Error arg def pos optionals`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" is optional, as is "$2", which renders parsing impossible.`
 - ***Description:*** The error that in the arguments definition, at least two positional arguments are optional.
@@ -580,7 +589,7 @@
   - `$1`: The argument identifier.
   - `$2`: The previously parsed argument's identifier.
 
-#### 9.5.71. `Error arg def pos optional infinite`
+#### 9.5.72. `Error arg def pos optional infinite`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" is optional, while "$2" accepts an infinite number of values, which renders parsing impossible.`
 - ***Description:*** The error that in the arguments definition, at least one positional argument is optional, with another one accepting an infinite number of values.
@@ -589,7 +598,7 @@
   - `$1`: The argument identifier.
   - `$2`: The previously parsed argument's identifier.
 
-#### 9.5.72. `Error arg def pos flag`
+#### 9.5.73. `Error arg def pos flag`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" accepts 0 arguments and thus can never be given on the command line.`
 - ***Description:*** The error that in the arguments definition of a positional argument, the number of required arguments is zero.
@@ -597,7 +606,7 @@
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
 
-#### 9.5.73. `Error arg def pos infinites`
+#### 9.5.74. `Error arg def pos infinites`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" accepts an infinite number of values, as does "$2", which renders parsing impossible.`
 - ***Description:*** The error that in the arguments definition, at least two positional arguments accept an infinite number of values.
@@ -606,7 +615,7 @@
   - `$1`: The argument identifier.
   - `$2`: The previously parsed argument's identifier.
 
-#### 9.5.74. `Error arg def pos infinite optional 1`
+#### 9.5.75. `Error arg def pos infinite optional 1`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" accepts an infinite number of values, while being optional, which is not supported.`
 - ***Description:*** The error that in the arguments definition, a positional argument is both optional and accepts an infinite number of values.
@@ -614,7 +623,7 @@
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
 
-#### 9.5.75. `Error arg def pos infinite optional 2`
+#### 9.5.76. `Error arg def pos infinite optional 2`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" accepts an infinite number of values, while "$2" is optional, which renders parsing impossible.`
 - ***Description:*** The error that in the arguments definition, at least one positional argument accepts an infinite number of values, with another one being optional.
@@ -623,7 +632,7 @@
   - `$1`: The argument identifier.
   - `$2`: The previously parsed argument's identifier.
 
-#### 9.5.76. `Error arg def pos type`
+#### 9.5.77. `Error arg def pos type`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" has "$2" given as data type, but only "bool", "char", "float", "file", "int", "str", and "uint" are supported.`
 - ***Description:*** The error that in the arguments definition, a positional argument has an unsupported data type.
@@ -632,7 +641,7 @@
   - `$1`: The argument identifier.
   - `$2`: The data type.
 
-#### 9.5.77. `Error arg def pos bool`
+#### 9.5.78. `Error arg def pos bool`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" has "$2" given as choice value, which must be a Boolean, i.e., "true" or "false".`
 - ***Description:*** The error that in the arguments definition of a positional argument, a choice value's data type is not a Boolean.
@@ -641,7 +650,7 @@
   - `$1`: The argument identifier.
   - `$2`: The choice value.
 
-#### 9.5.78. `Error arg def pos char`
+#### 9.5.79. `Error arg def pos char`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" has "$2" given as choice value, which must be a character, i.e., a string comprising one printable ASCII character.`
 - ***Description:*** The error that in the arguments definition of a positional argument, a choice value's data type is not a character.
@@ -650,7 +659,7 @@
   - `$1`: The argument identifier.
   - `$2`: The choice value.
 
-#### 9.5.79. `Error arg def pos float`
+#### 9.5.80. `Error arg def pos float`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" has "$2" given as choice value, which must be a floating-point number, i.e., comprise only digits, a dot, and possibly a leading sign.`
 - ***Description:*** The error that in the arguments definition of a positional argument, a choice value's data type is not a floating-point number.
@@ -659,7 +668,7 @@
   - `$1`: The argument identifier.
   - `$2`: The choice value.
 
-#### 9.5.80. `Error arg def pos int`
+#### 9.5.81. `Error arg def pos int`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" has "$2" given as choice value, which must be an integer, i.e., comprise only digits and possibly a leading sign.`
 - ***Description:*** The error that in the arguments definition of a positional argument, a choice value's data type is not an integer.
@@ -668,7 +677,7 @@
   - `$1`: The argument identifier.
   - `$2`: The choice value.
 
-#### 9.5.81. `Error arg def pos uint`
+#### 9.5.82. `Error arg def pos uint`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" has "$2" given as choice value, which must be an unsigned integer, i.e., comprise only digits and no sign.`
 - ***Description:*** The error that in the arguments definition of a positional argument, a choice value's data type is not an unsigned integer.
@@ -677,7 +686,7 @@
   - `$1`: The argument identifier.
   - `$2`: The choice value.
 
-#### 9.5.82. `Error arg def pos note`
+#### 9.5.83. `Error arg def pos note`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" has "$2" given as note, but only "deprecated" is supported.`
 - ***Description:*** The error that in the arguments definition of a positional argument, an unsupported note is given.
@@ -686,19 +695,11 @@
   - `$1`: The argument identifier.
   - `$2`: The note.
 
-#### 9.5.83. `Error arg def option flag 1`
-
-- ***Message:*** `Error: The option with the identifier "$1" must be "true" or "false", but has no default given.`
-- ***Description:*** The error that in the arguments definition, a flag has no default value.
-- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined as accepting no value, *i.e.*, as a flag. Thus, the default value must be either `true` or `false`.
-- ***Interpolated variables:***
-  - `$1`: The argument identifier.
-
-#### 9.5.84. `Error arg def option flag 2`
+#### 9.5.84. `Error arg def option default flag`
 
 - ***Message:*** `Error: The option with the identifier "$1" must be "true" or "false", but has {$2} given as default.`
 - ***Description:*** The error that in the arguments definition, a flag has a non-Boolean default value.
-- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined as accepting no value, *i.e.*, as a flag. Thus, the default value must be either `true` or `false`.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined as accepting no value, *i.e.*, as a flag or flag-like argument. Thus, the default value, if given, must be either `true` or `false`.
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
   - `$2`: The default value.

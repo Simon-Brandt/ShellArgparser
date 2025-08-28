@@ -3049,6 +3049,22 @@ function argparser_check_args_definition_positional_values() {
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
             <<< "${all_notes[${arg_key}]}"
 
+        # Check if the default value for arguments that can be used as
+        # flags, if given, is either "true" or "false".
+        if argparser_in_array "${arg_number}" "*" "?" \
+            && [[ -n "${default_values_str}" ]] \
+            && ! argparser_in_array "${default_values_str}" true false
+        then
+            error_message="Error: The positional argument with the identifier "
+            error_message+="\"\$1\" must be \"true\" or \"false\", but has "
+            error_message+="{\$2} given as default."
+
+            argparser_translate "Error arg def pos default flag" \
+                "${error_message}" "${arg_key}" "${default_values_str}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        fi
+
         # Check if the number of default values equals the number of
         # required values.  Else, output an error message.
         if ! argparser_in_array "${arg_number}" "+" "*" "?" \
@@ -3403,33 +3419,23 @@ function argparser_check_args_definition_option_values() {
             <<< "${all_notes[${arg_key}]}"
 
         # Check if the default value for flags (or arguments that can be
-        # used as such) is either "true" or "false".
-        if argparser_in_array "${arg_number}" "*" "?" 0; then
-            if [[ "${#default_values_arr[@]}" == 0 ]]; then
-                error_message="Error: The option with the identifier \"\$1\" "
-                error_message+="must be \"true\" or \"false\", but has no "
-                error_message+="default given."
+        # used as such), if given, is either "true" or "false".
+        if argparser_in_array "${arg_number}" "*" "?" 0 \
+            && [[ -n "${default_values_str}" ]] \
+            && ! argparser_in_array "${default_values_str}" true false
+        then
+            error_message="Error: The option with the identifier \"\$1\" must "
+            error_message+="be \"true\" or \"false\", but has {\$2} given as "
+            error_message+="default."
 
-                argparser_translate "Error arg def option flag 1" \
-                    "${error_message}" "${arg_key}"
-                error_message="${translation}"
-                error_messages+=("${error_message}")
-            elif ! argparser_in_array "${default_values_str}" true false; then
-                error_message="Error: The option with the identifier \"\$1\" "
-                error_message+="must be \"true\" or \"false\", but has {\$2} "
-                error_message+="given as default."
-
-                argparser_translate "Error arg def option flag 2" \
-                    "${error_message}" "${arg_key}" "${default_values_str}"
-                error_message="${translation}"
-                error_messages+=("${error_message}")
-            fi
+            argparser_translate "Error arg def option default flag" \
+                "${error_message}" "${arg_key}" "${default_values_str}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
         fi
 
         # Check if the number of default values equals the number of
-        # required values.  Else, output an error message.  Ignore flags
-        # as long as they have the only default value of "true" or
-        # "false", but a number of required values of 0.
+        # required values.  Else, output an error message.
         if ! argparser_in_array "${arg_number}" "+" "*" "?" 0 \
             && [[ -n "${default_values_str}" \
                 && "${#default_values_arr[@]}" != "${arg_number}" ]]
@@ -5918,12 +5924,22 @@ function argparser_create_help_message() {
                 # No long option.
                 if [[ "${arg_number}" == 0 ]]; then
                     # Flag.
-                    new_col_1_value="["
-                    for short_option in "${short_options[@]}"; do
-                        new_col_1_value+="-${short_option}, "
-                    done
-                    new_col_1_value="${new_col_1_value%, }"
-                    new_col_1_value+="]"
+                    if [[ -n "${default_values_str}" ]]; then
+                        # Default.
+                        new_col_1_value="["
+                        for short_option in "${short_options[@]}"; do
+                            new_col_1_value+="-${short_option}, "
+                        done
+                        new_col_1_value="${new_col_1_value%, }"
+                        new_col_1_value+="]"
+                    else
+                        # No default.
+                        new_col_1_value=""
+                        for short_option in "${short_options[@]}"; do
+                            new_col_1_value+="-${short_option}, "
+                        done
+                        new_col_1_value="${new_col_1_value%, }"
+                    fi
                 elif [[ "${arg_number}" == "+" ]]; then
                     # [1, inf) values.
                     if [[ -n "${choice_values}" \
@@ -6145,8 +6161,8 @@ function argparser_create_help_message() {
                         new_col_1_value="${new_col_1_value%, }"
                     fi
                 fi
-            elif [[ "${arg_number}" == 0 || -n "${default_values_str}" ]]; then
-                # Long option, flag or default.
+            elif [[ -n "${default_values_str}" ]]; then
+                # Long option, default.
                 new_col_1_value="["
                 for short_option in "${short_options[@]}"; do
                     new_col_1_value+="-${short_option}, "
@@ -6154,7 +6170,7 @@ function argparser_create_help_message() {
                 new_col_1_value="${new_col_1_value%, }"
                 new_col_1_value+="],"
             else
-                # Long option, non-flag.
+                # Long option, no default.
                 new_col_1_value=""
                 for short_option in "${short_options[@]}"; do
                     new_col_1_value+="-${short_option}, "
@@ -6168,12 +6184,22 @@ function argparser_create_help_message() {
                 new_col_2_value=""
             elif [[ "${arg_number}" == 0 ]]; then
                 # Flag.
-                new_col_2_value="["
-                for long_option in "${long_options[@]}"; do
-                    new_col_2_value+="--${long_option}, "
-                done
-                new_col_2_value="${new_col_2_value%, }"
-                new_col_2_value+="]"
+                if [[ -n "${default_values_str}" ]]; then
+                    # Default.
+                    new_col_2_value="["
+                    for long_option in "${long_options[@]}"; do
+                        new_col_2_value+="--${long_option}, "
+                    done
+                    new_col_2_value="${new_col_2_value%, }"
+                    new_col_2_value+="]"
+                else
+                    # No default.
+                    new_col_2_value=""
+                    for long_option in "${long_options[@]}"; do
+                        new_col_2_value+="--${long_option}, "
+                    done
+                    new_col_2_value="${new_col_2_value%, }"
+                fi
             elif [[ "${arg_number}" == "+" ]]; then
                 # [1, inf) values.
                 if [[ -n "${choice_values}" && -n "${default_values_str}" ]]
@@ -7075,9 +7101,9 @@ function argparser_create_usage_message() {
         short_options="${option_names}"
 
         # Define the line for the current argument.  The argument has
-        # some short options and some default values and may have some
-        # choice values or an argument number of 0 (i.e., it is a flag),
-        # with the existence of each changing the look of the line.
+        # some short options, default values, and possibly choice
+        # values, and a variable argument number, with each property
+        # changing the look of the line.
         if [[ "${arg_number}" == 0 ]]; then
             # Flag.
             lines+=("[${short_options}]")
@@ -7151,9 +7177,9 @@ function argparser_create_usage_message() {
         long_options="${option_names}"
 
         # Define the line for the current argument.  The argument has
-        # some long options and some default values and may have some
-        # choice values or an argument number of 0 (i.e., it is a flag),
-        # with the existence of each changing the look of the line.
+        # some long options, default values, and possibly choice
+        # values, and a variable argument number, with each property
+        # changing the look of the line.
         if [[ "${arg_number}" == 0 ]]; then
             # Flag.
             lines+=("[${long_options}]")
@@ -7227,10 +7253,13 @@ function argparser_create_usage_message() {
         short_options="${option_names}"
 
         # Define the line for the current argument.  The argument has
-        # some short options and no default values and may have some
-        # choice values, with the existence of each changing the look of
-        # the line.
-        if [[ "${arg_number}" == "+" ]]; then
+        # some short options, no default values, and possibly some
+        # choice values, and a variable argument number, with each
+        # property changing the look of the line.
+        if [[ "${arg_number}" == 0 ]]; then
+            # Flag.
+            lines+=("${short_options}")
+        elif [[ "${arg_number}" == "+" ]]; then
             # [1, inf) values.
             if [[ -n "${choice_values}" ]]; then
                 # Choice only.
@@ -7300,10 +7329,13 @@ function argparser_create_usage_message() {
         long_options="${option_names}"
 
         # Define the line for the current argument.  The argument has
-        # some long options and no default values and may have some
-        # choice values, with the existence of each changing the look of
-        # the line.
-        if [[ "${arg_number}" == "+" ]]; then
+        # some long options, no default values, and possibly some choice
+        # values, and a variable argument number, with each property
+        # changing the look of the line.
+        if [[ "${arg_number}" == 0 ]]; then
+            # Flag.
+            lines+=("${long_options}")
+        elif [[ "${arg_number}" == "+" ]]; then
             # [1, inf) values.
             if [[ -n "${choice_values}" ]]; then
                 # Choice only.
