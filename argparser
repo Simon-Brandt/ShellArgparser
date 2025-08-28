@@ -4640,15 +4640,29 @@ function argparser_check_arg_values() {
     done
 
     # If a "+" (or equivalent "no-") prefix is given and the argument is
-    # no flag (or can be used as such) output an error message.
+    # no flag (or not used as such) output an error message.
     for prefix in "${prefixes[@]}"; do
-        if [[ "${prefix}" == "+" ]] \
-            && ! argparser_in_array "${arg_number}" "*" "?" 0
+        if [[ "${prefix}" == "-" || "${arg_number}" == 0 ]]; then
+            continue
+        fi
+
+        if [[ "${arg_number}" == "*" || "${arg_number}" == "?" ]] \
+            && (( "${#values_arr[@]}" > 0 ))
         then
+            error_message="Error: The option \"\$1\" is not used as a flag "
+            error_message+="(it has a value given) and thus cannot be given "
+            error_message+="with a \"+\" or \"no-\" prefix."
+
+            argparser_translate "Error arg no flag 1" "${error_message}" \
+                "${option_names}"
+            error_message="${translation}"
+            messages+=("${error_message}")
+            return
+        elif ! argparser_in_array "${arg_number}" "*" "?" 0; then
             error_message="Error: The option \"\$1\" is no flag and thus "
             error_message+="cannot be given with a \"+\" or \"no-\" prefix."
 
-            argparser_translate "Error arg no flag" "${error_message}" \
+            argparser_translate "Error arg no flag 2" "${error_message}" \
                 "${option_names}"
             error_message="${translation}"
             messages+=("${error_message}")
