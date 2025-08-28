@@ -80,9 +80,7 @@ The Argparser defines several data types an argument may have. Using the regular
 
 #### 9.1.8. Argument count (`arg_no`)
 
-The argument count defines the number of values a keyword or positional argument may accept. Independent of this count, the Argparser will aggregate any non-hyphenated value to the previous keyword argument, or, if none is given yet, add it to the positional arguments. The argument count may be given as natural number (*i.e.*, as unsigned integer), including `0` as sign for flags, or as plus sign (`+`). The latter means to accept as many values as given, at least one.
-
-The Python [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module") module further defines `*` to accept any argument count, and `?` to accept exactly zero or one argument. Both features aren't yet supported by the Argparser, but the characters are reserved for future usage as such, invalidating them as values for [`ARGPARSER_ARG_DELIMITER_1`](environment_variables/environment_variables.md#9411-argparser_arg_delimiter_1) and [`ARGPARSER_ARG_DELIMITER_2`](environment_variables/environment_variables.md#9412-argparser_arg_delimiter_2).
+The argument count defines the number of values a keyword or positional argument may accept. Independent of this count, the Argparser will aggregate any non-hyphenated value to the previous keyword argument, or, if none is given yet, add it to the positional arguments. The argument count may be given as natural number (*i.e.*, as unsigned integer), including `0` as sign for flags, or as plus sign (`+`), asterisk (`*`), or question mark (`?`). The latter mean to accept as many values as given, at least one, or at least zero, or zero to one, respectively.  These mirror a feature in the Python [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module") module, which reflects their meaning in Perl-compatible regular expressions (PCRE).
 
 #### 9.1.9. Argument group (`arg_group`)
 

@@ -117,7 +117,7 @@ This Argparser-specific tabular format consists of eleven columns, each separate
 - `defaults`: the default values (like `"A"` for `var_4`, default: `""`)
 - `choices`: the choice values for options with a limited set of values to choose from (like `"A-C"`, *i.e.*, `"A"`, `"B"`, and `"C"` for `var_4`, default: `""`)
 - `type`: the data type the argument shall have and will be tested on (like `"char"` for `var_4`, default: `"str"`)
-- `arg_no`: the number of required values (either numerical from `0` to infinity or `"+"`, meaning to accept as many values as given, at least one, like `1` for `var_4`, default: `1`)
+- `arg_no`: the number of required values (any positive integer, `0`, or either of `"+"`, `"*"`, or `"?"`, meaning to accept a variable number of arguments (1 to infinity, 0 to infinity, or 0 to 1), like `1` for `var_4`, default: `1`)
 - `arg_group`: the argument group for grouping of keyword arguments in the help text (like `"Optional options"` for `var_4`, default: [`ARGPARSER_POSITIONAL_ARG_GROUP`](../reference/environment_variables/environment_variables.md#9433-argparser_positional_arg_group))
 - `notes`: additional notes to the Argparser, currently only `"deprecated"` is supported (like for `var_7`, default: `""`)
 - `help`: the help text for the `--help` flag (like `"one value with default and choice"` for `var_4`, default: `""`)
