@@ -50,7 +50,7 @@ In the following table, "&#10008;" marks the absence of a feature, "&#10004;" it
 | Alternative option prefixes (`+`/`/`)       | &#10008;      | &#10008;      | &#10008;     | &#10008;     | &#10004;      | &#10008;[^3] |
 | Default values                              | &#10008;      | &#10008;      | &#10004;     | &#10004;     | &#10004;      | &#10004;     |
 | Choice values                               | &#10008;      | &#10008;      | &#10008;     | &#10008;     | &#10004;      | &#10004;     |
-| Any argument number (multi-value arguments) | &#10008;      | &#10008;      | &#10008;     | &#10004;     | &#10004;      | &#10033;[^2] |
+| Any argument number (multi-value arguments) | &#10008;      | &#10008;      | &#10008;     | &#10004;     | &#10004;      | &#10004;     |
 | Metavariables (value names)                 | &#10008;      | &#10008;      | &#10008;     | &#10008;     | &#10004;      | &#10004;     |
 | Data type checking                          | &#10008;      | &#10008;      | &#10004;     | &#10008;     | &#10004;      | &#10004;     |
 | Deprecation note                            | &#10008;      | &#10008;      | &#10008;     | &#10008;     | &#10004;      | &#10004;     |
@@ -77,7 +77,7 @@ In the following table, "&#10008;" marks the absence of a feature, "&#10004;" it
 | POSIX compliance                            | &#10004;      | &#10033;[^13] | &#10008;     | &#10008;     | &#10008;      | &#10008;[^3] |
 
 [^1]: Not rejected, but not parsed and only usable by manual parsing.
-[^2]: Not (entirely) supported, but to be implemented in a future version.
+[^2]: Not supported, but to be implemented in a future version.
 [^3]: By design decision, might still be implemented in a future version.
 [^4]: Not applicable for lack of long options.
 [^5]: By using repeatable flags.

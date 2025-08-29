@@ -299,7 +299,7 @@ Precisely, giving `-g` or `--var-7` sets `var_7` to `true`, and giving `+g` or `
 
 Further, when [`ARGPARSER_ALLOW_FLAG_NEGATION`](../reference/environment_variables/environment_variables.md#946-argparser_allow_flag_negation) is set to `true` (the default), flags can also be given by prepending their long option name by `no-`, *i.e.*, `--var-7` would become `--no-var-7`. This negates the flag's value as well, doubling its effect for `++no-var-7`&mdash;which would be a very obfuscated of saying `--var-7`.
 
-Another interesting fact is that the Argparser output a warning that `-g,-G,--var-7,--var-g` would be deprecated. This shows us that we can define arguments, and years later, when we want to change the command-line interface, we can set the obsolete arguments as deprecated, allowing the user to gradually adapt to the changes in his workflows employing your script. A common application would be the renaming of an option or the entire removal of its function.
+Another interesting fact, unrelated to flags, is that the Argparser output a warning that `-g,-G,--var-7,--var-g` would be deprecated. This shows us that we can define arguments, and years later, when we want to change the command-line interface, we can set the obsolete arguments as deprecated, allowing the user to gradually adapt to the changes in his workflows employing your script. A common application would be the renaming of an option or the entire removal of its function.
 
 Taking one final set of example invokations, we can see how the option merging works for flags:
 

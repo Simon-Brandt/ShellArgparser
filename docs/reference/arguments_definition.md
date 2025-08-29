@@ -60,17 +60,17 @@ The value names are used as substitute for the uppercased option names in help a
 
 #### 9.1.5. Default values (`defaults`)
 
-Positional and keyword arguments may have default values, which are assigned to the variables if the arguments aren't given on the command line. For flags, the default value must be either `true` or `false`.
+Positional and keyword arguments may have default values, which are assigned to the variables if the arguments aren't given on the command line. For flags and flag-like arguments (with an argument count of `0`, `*` or `?`), the default value must be either `true` or `false`.
 
 #### 9.1.6. Choice values (`choices`)
 
-It is possible to restrict the range of acceptable values for an argument to a set indicated by the choice values. If [default values](#915-default-values-defaults) are given, they must lie within the choice values. The choice values are delimited by [`ARGPARSER_ARG_DELIMITER_2`](environment_variables/environment_variables.md#9412-argparser_arg_delimiter_2) characters, while each item may be given as range in the form `1-9` or `A-Z-2`. The first hyphen-delimited value is the start character, the second the stop character (both inclusive), and the optional third value the step size, defaulting to `1`. The start and stop characters must be either integers, floats, or alphabetical characters (from the `[:alpha:]` POSIX character class), the step an integer or float (an integer for character sequences).
+It is possible to restrict the range of acceptable values for an argument to a set indicated by the choice values. If [default values](#915-default-values-defaults) are given, they must lie within the choice values. The choice values are delimited by [`ARGPARSER_ARG_DELIMITER_2`](environment_variables/environment_variables.md#9412-argparser_arg_delimiter_2) characters, while each item may be given as range in the form `1-9` or `A-Z-2`. The first hyphen-delimited value is the start character, the second the stop character (both inclusive), and the optional third value the step size, defaulting to `1`. The start and stop characters must be either integers, floats, or alphabetical characters (from the `[:alpha:]` POSIX character class), the step an integer or float (an integer for character sequences). `true` and `false` may not be given as choice values.
 
 #### 9.1.7. Data type (`type`)
 
 The Argparser defines several data types an argument may have. Using the regular expressions denoted below, the argument's value is compared to the data type. Still, Bash is weakly typed, and by this, the existence of a data type does not change the behavior of the variable. Nonetheless, you can use the type-checked value for certain computations, later on. It is mandatory that all default and choice values accord to the data type. The following data types are distinguished by the Argparser:
 
-- *bool* (Boolean): either `true` or `false`, to be used for flags
+- *bool* (Boolean): either `true` or `false`, to be used for flags (not flag-like arguments)
 - *char* (character): a string with length one (extglob regex: `[[:print:]]`)
 - *float* (floating-point number): digits, possibly with a period in-between, optionally with a leading plus sign or a leading hyphen as minus sign (extglob regex: `?([+-])+([[:digit:]]).*([[:digit:]]` or `?([+-])*([[:digit:]]).+([[:digit:]])`)
 - *file* (filepath): a filepath, currently unchecked

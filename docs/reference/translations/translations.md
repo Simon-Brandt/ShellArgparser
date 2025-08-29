@@ -565,7 +565,7 @@
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" has {$2} given as choice values, while "true" and "false" cannot be any.`
 - ***Description:*** The error that in the arguments definition, a positional argument that can take zero values has choice values.
-- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined as taking zero or more arguments, but with choice values including `true` and/or `false`. These are included by definition, and still specifying them as choice values is redundant.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument with choice values including `true` and/or `false`. These are included for flag-like arguments by definition, and disallowed for all other argument counts.
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
   - `$2`: The choice values.
@@ -602,7 +602,7 @@
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" accepts 0 arguments and thus can never be given on the command line.`
 - ***Description:*** The error that in the arguments definition of a positional argument, the number of required arguments is zero.
-- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined as accepting no value, just as a flag. However, the presence of a flag is indicated by the presence of the respective keyword argument (option name), which does not exist for positional arguments. Thus, positional flags aren't possible.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined as accepting no value, just like a flag. However, the presence of a flag is indicated by the presence of the respective keyword argument (option name), which does not exist for positional arguments. Thus, positional flags aren't possible.
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
 
@@ -736,7 +736,7 @@
 
 - ***Message:*** `Error: The option with the identifier "$1" has {$2} given as choice values, while "true" and "false" cannot be any.`
 - ***Description:*** The error that in the arguments definition, a keyword argument that can take zero values has choice values.
-- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined as taking zero or more arguments, but with choice values including `true` and/or `false`. These are included by definition, and still specifying them as choice values is redundant.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument with choice values including `true` and/or `false`. These are included for flags and flag-like arguments by definition, and disallowed for all other argument counts.
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
   - `$2`: The choice values.
