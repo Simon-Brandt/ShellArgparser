@@ -1,0 +1,70 @@
+name: Bug report
+description: File a bug report.
+assignees:
+  - Simon-Brandt
+labels: ["bug"]
+title: "[BUG]: "
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Please fill in the following fields to complete your bug report,
+        thanks!
+  - type: textarea
+    id: shell-script
+    attributes:
+      label: Shell script
+      description: >
+        Please copy and paste the error-causing part of your script. Reduce the
+        number of arguments as far as possible, and please provide a complete
+        minimal reproducible example, with shebang line. The text block will be
+        automatically formatted into code, so you don't need enclosing
+        backticks.
+      placeholder: Enter the shell script!
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Bug description
+      description: >
+        Based on your script, which argument-parsing behavior did you expect,
+        and which did you see? Have you found the reason for the bug or do you
+        even know a solution?
+      placeholder: Report the buggy behavior!
+    validations:
+      required: true
+  - type: dropdown
+    id: argparser-version
+    attributes:
+      label: Argparser version
+      description: >
+        Which version of the Shell Argparser are you running? *(See `argparser
+        --version`.)*
+      options:
+        - 1.0.0
+        - main branch
+      default: 1.0.0
+    validations:
+      required: true
+  - type: input
+    id: shell-version
+    attributes:
+      label: Shell version
+      description: >
+        Which shell and version are you running? *(For Bash, see `bash
+        --version`.)*
+      placeholder: Enter your shell's name and version!
+      value: GNU bash, Version 5.2.21(1)-release
+    validations:
+      required: true
+  - type: checkboxes
+    id: first-report
+    attributes:
+      label: First report of this bug
+      description: Please make sure you're bug hasn't been reported, so far.
+      options:
+        - label: Apparently, this bug hasn't been reported, so far.
+    validations:
+      required: true
