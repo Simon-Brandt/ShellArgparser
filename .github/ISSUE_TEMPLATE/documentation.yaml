@@ -1,5 +1,5 @@
 name: Documentation
-description: Report errors in the docs or suggest changes
+description: Report errors in the docs or suggest changes/improvements.
 assignees:
   - Simon-Brandt
 labels: ["documentation"]
