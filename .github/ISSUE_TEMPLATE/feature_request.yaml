@@ -1,0 +1,30 @@
+name: Feature request
+description: Propose a new feature.
+assignees:
+  - Simon-Brandt
+labels: ["enhancement"]
+title: "[FEATURE]: "
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Please fill in the following fields to complete your feature request,
+        thanks!
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Feature description
+      description: >
+        Which argument-parsing behavior would you like the Shell Argparser to have? Do you have suggestions how to implement it or want to contribute it yourself?
+      placeholder: Describe the feature!
+    validations:
+      required: true
+  - type: checkboxes
+    id: first-report
+    attributes:
+      label: First report of this feature request
+      description: Please make sure you're feature hasn't been proposed, so far.
+      options:
+        - label: Apparently, this feature hasn't been proposed, so far.
+    validations:
+      required: true
