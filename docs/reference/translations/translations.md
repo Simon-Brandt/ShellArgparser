@@ -561,7 +561,7 @@
   - `$2`: The number of required values.
   - `$3`: The number of default values.
 
-#### 9.5.69. `Error arg def pos choice flag`
+#### 9.5.69. `Error arg def pos choice true`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" has {$2} given as choice values, while "true" and "false" cannot be any.`
 - ***Description:*** The error that in the arguments definition, a positional argument that can take zero values has choice values.
@@ -570,7 +570,7 @@
   - `$1`: The argument identifier.
   - `$2`: The choice values.
 
-#### 9.5.70. `Error arg def pos choice`
+#### 9.5.70. `Error arg def pos choice default`
 
 - ***Message:*** `Error: The positional argument with the identifier "$1" accepts only the choice values {$2}, but has {$3} given as default.`
 - ***Description:*** The error that in the arguments definition of a positional argument, the default values aren't a subset of the choice values.
@@ -723,16 +723,7 @@
   - `$2`: The number of required values.
   - `$3`: The number of default values.
 
-#### 9.5.87. `Error arg def option choice flag 1`
-
-- ***Message:*** `Error: The option with the identifier "$1" has {$2} given as choice values, while "true" and "false" cannot be any.`
-- ***Description:*** The error that in the arguments definition, a keyword argument that can take zero values has choice values.
-- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined as taking zero or more arguments, but with choice values including `true` and/or `false`. These are included by definition, and still specifying them as choice values is redundant.
-- ***Interpolated variables:***
-  - `$1`: The argument identifier.
-  - `$2`: The choice values.
-
-#### 9.5.88. `Error arg def option choice flag 2`
+#### 9.5.87. `Error arg def option choice flag`
 
 - ***Message:*** `Error: The option with the identifier "$1" accepts no choice values, but has {$2} given.`
 - ***Description:*** The error that in the arguments definition, a flag has choice values.
@@ -741,7 +732,16 @@
   - `$1`: The argument identifier.
   - `$2`: The choice values.
 
-#### 9.5.89. `Error arg def option choice`
+#### 9.5.88. `Error arg def option choice true`
+
+- ***Message:*** `Error: The option with the identifier "$1" has {$2} given as choice values, while "true" and "false" cannot be any.`
+- ***Description:*** The error that in the arguments definition, a keyword argument that can take zero values has choice values.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined as taking zero or more arguments, but with choice values including `true` and/or `false`. These are included by definition, and still specifying them as choice values is redundant.
+- ***Interpolated variables:***
+  - `$1`: The argument identifier.
+  - `$2`: The choice values.
+
+#### 9.5.89. `Error arg def option choice default`
 
 - ***Message:*** `Error: The option with the identifier "$1" accepts only the choice values {$2}, but has {$3} given as default.`
 - ***Description:*** The error that in the arguments definition of a keyword argument, the default values aren't a subset of the choice values.

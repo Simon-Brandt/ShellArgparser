@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-28
+# Last Modification: 2025-08-29
 # License: Public Domain
 
 # 1.    Define the general translations.
@@ -547,7 +547,7 @@ Error arg def pos default 2:
     Fehler: Das positionale Argument mit dem Identifikator "$1" erfordert $2
     Werte, hat aber $3 als Vorgabe gegeben.
 
-Error arg def pos choice flag:
+Error arg def pos choice true:
   en: >
     Error: The positional argument with the identifier "$1" has {$2} given as
     choice values, while "true" and "false" cannot be any.
@@ -556,7 +556,7 @@ Error arg def pos choice flag:
     Auswahlwerte gegeben, während "wahr" ("true") und "falsch" ("false") keine
     sein können.
 
-Error arg def pos choice:
+Error arg def pos choice default:
   en: >
     Error: The positional argument with the identifier "$1" accepts only the
     choice values {$2}, but has {$3} given as default.
@@ -711,15 +711,7 @@ Error arg def option default 2:
     Fehler: Die Option mit dem Identifikator "$1" erfordert $2 Werte, hat aber
     $3 als Vorgabe gegeben.
 
-Error arg def option choice flag 1:
-  en: >
-    Error: The option with the identifier "$1" has {$2} given as choice values,
-    while "true" and "false" cannot be any.
-  de: >
-    Fehler: Die Option mit dem Identifikator "$1" hat {$2} als Auswahlwerte
-    gegeben, während "wahr" ("true") und "falsch" ("false") keine sein können.
-
-Error arg def option choice flag 2:
+Error arg def option choice flag:
   en: >
     Error: The option with the identifier "$1" accepts no choice values, but
     has {$2} given.
@@ -727,7 +719,15 @@ Error arg def option choice flag 2:
     Fehler: Die Option mit dem Identifikator "$1" nimmt keine Auswahlwerte, hat
     aber {$2} gegeben.
 
-Error arg def option choice:
+Error arg def option choice true:
+  en: >
+    Error: The option with the identifier "$1" has {$2} given as choice values,
+    while "true" and "false" cannot be any.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" hat {$2} als Auswahlwerte
+    gegeben, während "wahr" ("true") und "falsch" ("false") keine sein können.
+
+Error arg def option choice default:
   en: >
     Error: The option with the identifier "$1" accepts only the choice values
     {$2}, but has {$3} given as default.
