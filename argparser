@@ -1319,7 +1319,7 @@ function argparser_set_env_vars() {
         "script_args                         :                           : command_line :                      :            : str  : +      : Options   : the indexed array in which the Argparser stores the script's command line upon parsing its own arguments      "
     )
 
-    # # shellcheck source=argparser
+    # shellcheck source=argparser
     ARGPARSER_ADD_HELP=true \
         ARGPARSER_ADD_USAGE=true \
         ARGPARSER_ADD_VERSION=true \
@@ -8115,7 +8115,7 @@ function argparser_main() {
     # declaring it as local, here.
     if [[ "${source_level}" == 1 ]]; then
         declare -a ARGPARSER_ARGS
-        local argparser_version="0.1.0"
+        local argparser_version="1.0.0"
         local -A dictionary
         local -a script_args
     fi

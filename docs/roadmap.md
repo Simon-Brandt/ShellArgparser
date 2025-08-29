@@ -37,7 +37,7 @@ You can obtain the version number of your Argparser copy by querying `argparser 
 <!-- <include command="argparser --version" lang="console"> -->
 ```console
 $ argparser --version
-argparser v0.1.0
+argparser v1.0.0
 ```
 <!-- </include> -->
 
