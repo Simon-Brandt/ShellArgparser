@@ -3354,7 +3354,7 @@ function argparser_check_args_definition_positional_values() {
 
         # Check the notes.
         for note in "${notes[@]}"; do
-            if ! argparser_in_array "${note}" "" "deprecated"; then
+            if [[ -n "${note}" && "${note}" != "deprecated" ]]; then
                 error_message="Error: The positional argument with the "
                 error_message+="identifier \"\$1\" has \"\$2\" given as note, "
                 error_message+="but only \"deprecated\" is supported."
@@ -3639,7 +3639,7 @@ function argparser_check_args_definition_option_values() {
 
         # Check the notes.
         for note in "${notes[@]}"; do
-            if ! argparser_in_array "${note}" "" "deprecated"; then
+            if [[ -n "${note}" && "${note}" != "deprecated" ]]; then
                 error_message="Error: The option with the identifier \"\$1\" "
                 error_message+="has \"\$2\" given as note, but only "
                 error_message+="\"deprecated\" is supported."
