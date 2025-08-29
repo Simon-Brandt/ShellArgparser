@@ -1,0 +1,22 @@
+name: Documentation
+description: Report errors in the docs or suggest changes
+assignees:
+  - Simon-Brandt
+labels: ["documentation"]
+title: "[DOCS]: "
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Please fill in the following fields to complete your request to change
+        the documentation, thanks!
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: >
+        Which part of the docs is wrong or could be clarified? Would you like
+        to add a chapter (or see it added)?
+      placeholder: Describe the documentation changes!
+    validations:
+      required: true
