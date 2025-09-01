@@ -43,7 +43,7 @@ body:
         Which version of the Shell Argparser are you running? *(See `argparser
         --version`.)*
       options:
-        - 1.0.0
+        - v1.0.0 "Acomys airensis"
         - main branch
       default: 0
     validations:

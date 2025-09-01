@@ -1660,7 +1660,7 @@ test_number="${test_section}.2"
 test_type="version"
 cmd="bash ../argparser --version"
 output="$(cat << EOF
-argparser v1.0.0
+argparser v1.0.0 "Acomys airensis"
 EOF
 )"
 error=""
