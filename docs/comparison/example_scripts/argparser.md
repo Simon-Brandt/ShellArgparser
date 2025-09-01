@@ -26,7 +26,7 @@
 
 <!-- <include command="sed '3,28d;/shellcheck/d' ../comparison/argparser_wrapper.sh" lang="bash"> -->
 ```bash
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Parse the arguments.
 args=(

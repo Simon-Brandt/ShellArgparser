@@ -28,7 +28,7 @@ First, let's see how we can use the Argparser to parse the arguments given to yo
 
 <!-- <include command="sed '3,28d;/shellcheck/d' ../tutorial/try_argparser.sh" lang="bash"> -->
 ```bash
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Define the arguments.
 args=(

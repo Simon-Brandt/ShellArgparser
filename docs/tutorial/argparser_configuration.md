@@ -60,7 +60,7 @@ For demonstration, we take a stripped-down version of our [`try_argparser.sh`](.
 
 <!-- <include command="sed '3,29d;/shellcheck/d' ../tutorial/try_config_file.sh" lang="bash"> -->
 ```bash
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Source the Argparser, reading the configuration from a file.
 dir="$(dirname "$(readlink --canonicalize-existing "$0")")"

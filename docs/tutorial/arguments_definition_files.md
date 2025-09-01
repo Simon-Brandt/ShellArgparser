@@ -30,7 +30,7 @@ Using a separate arguments definition file allows you to share the definition ac
 
 <!-- <include command="sed '3,29d;/shellcheck/d' ../tutorial/try_arg_def_file.sh" lang="bash"> -->
 ```bash
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Source the Argparser, reading the arguments definition from a file.
 dir="$(dirname "$(readlink --canonicalize-existing "$0")")"

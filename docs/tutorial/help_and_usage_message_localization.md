@@ -42,7 +42,7 @@ then, in your script, you can set the `ARGPARSER_ARG_DEF_FILE` and `ARGPARSER_HE
 
 <!-- <include command="sed '3,29d;/shellcheck/d' ../tutorial/try_localization.sh" lang="bash"> -->
 ```bash
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Source the Argparser, reading the arguments definition, help message,
 # and translation from a file.

@@ -26,7 +26,7 @@
 
 <!-- <include command="sed '3,28d;/shellcheck/d' ../comparison/shflags_wrapper.sh" lang="bash"> -->
 ```bash
-#!/bin/bash
+#!/usr/bin/env bash
 
 function usage() {
     # Define the usage message.

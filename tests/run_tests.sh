@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ###############################################################################
 #                                                                             #
@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-29
+# Last Modification: 2025-09-01
 
 # TODO: Add tests for errors in the the general arguments parsing.
 

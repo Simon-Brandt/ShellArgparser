@@ -70,12 +70,7 @@ A very simple quick-start script may look like this:
 
 <!-- <include command="sed '3,28d;/shellcheck/d' tutorial/try_argparser.sh" lang="bash"> -->
 ```bash
-#!/bin/bash
-
-# Source the Argparser.  As the arguments have multiple short and long
-# options, override the default column widths for the help message.
-ARGPARSER_MAX_COL_WIDTH_1=9
-ARGPARSER_MAX_COL_WIDTH_2=33
+#!/usr/bin/env bash
 
 # Define the arguments.
 args=(

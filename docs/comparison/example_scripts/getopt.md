@@ -26,7 +26,7 @@
 
 <!-- <include command="sed '3,28d;/shellcheck/d' ../comparison/getopt_wrapper.sh" lang="bash"> -->
 ```bash
-#!/bin/bash
+#!/usr/bin/env bash
 
 function help() {
     # Define the help message.

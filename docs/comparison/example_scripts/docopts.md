@@ -26,7 +26,7 @@
 
 <!-- <include command="sed '3,26d;/shellcheck/d' ../comparison/docopts_wrapper.sh" lang="bash"> -->
 ```bash
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Usage:
 #   docopts_wrapper.sh [-v | --verbose] [-e | --exit] (-a AGE | --age=AGE) (-n NAME | --name=NAME) (-r ROLE | --role=ROLE) [--] <source> <destination>

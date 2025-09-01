@@ -28,7 +28,7 @@ Now that you have seen how the Argparser serves in parsing and interpreting the 
 
 <!-- <include command="sed '3,28d;/shellcheck/d' ../tutorial/try_argparser.sh" lang="bash"> -->
 ```bash
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Define the arguments.
 args=(
@@ -64,9 +64,9 @@ done
 
 </details>
 
-As you can see, there are three sections in the code that are specific to the Argparser. The accession at the end only serves us to gain insights into the values of the arguments and are not necessary to include&mdash;you would replace this by the actual workings of your script.
+As you can see, there are two to three sections in the code that are specific to the Argparser. The accession at the end only serves us to gain insights into the values of the arguments and are not necessary to include&mdash;you would replace this by the actual workings of your script.
 
-The first section sets Argparser-specific [environment variables](../reference/environment_variables/introduction.md#94-environment-variables) to optimize the visual output, which we'll investigate later. Then, the arguments are defined, and finally, the Argparser is called.
+The first section (here omitted as not necessary) sets Argparser-specific [environment variables](../reference/environment_variables/introduction.md#94-environment-variables) to optimize the visual output, which we'll investigate later. Then, the arguments are defined, and finally, the Argparser is called.
 
 #### 5.2.1. Argparser sourcing
 

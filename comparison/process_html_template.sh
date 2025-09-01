@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ###############################################################################
 #                                                                             #
@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-07-24
+# Last Modification: 2025-09-01
 
 # Usage: Source this script with "source process_html_template.sh".
 

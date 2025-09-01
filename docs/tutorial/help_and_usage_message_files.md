@@ -28,7 +28,7 @@ The Argparser is not only able to compile a help message, but can also be guided
 
 <!-- <include command="sed '3,29d;/shellcheck/d' ../tutorial/try_help_file.sh" lang="bash"> -->
 ```bash
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Source the Argparser, reading the help message from a file.
 dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
