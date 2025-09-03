@@ -21,7 +21,6 @@ jobs:
 
       # Run the script.
       - name: run_tests
+        shell: bash {0}
         working-directory: tests/
-        run: >
-          pwd
-          tests/run_tests.sh
+        run: run_tests.sh
