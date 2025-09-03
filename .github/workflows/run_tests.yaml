@@ -22,4 +22,4 @@ jobs:
       # Run the script.
       - name: run_tests
         working-directory: tests/
-        run: run_tests.sh
+        run: tests/run_tests.sh
