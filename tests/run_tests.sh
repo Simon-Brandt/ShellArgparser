@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-01
+# Last Modification: 2025-09-03
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -1433,10 +1433,10 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 11.3. Test the version message.
+# 11.3. Test the version message for the American locale.
 test_number="${test_section}.3"
 test_type="version"
-cmd="bash test_localization.sh --version"
+cmd="LANG=en_US.UTF-8 bash test_localization.sh --version"
 output="$(cat << EOF
 test_localization.sh v1.0.0
 EOF
@@ -1444,8 +1444,19 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 11.4. Test the usage message for the American locale.
+# 11.4. Test the version message for the German locale.
 test_number="${test_section}.4"
+test_type="version"
+cmd="LANG=de_DE.UTF-8 bash test_localization.sh --version"
+output="$(cat << EOF
+test_localization.sh v1.0.0
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 11.5. Test the usage message for the American locale.
+test_number="${test_section}.5"
 test_type="usage"
 cmd="LANG=en_US.UTF-8 bash test_localization.sh --usage"
 output="$(cat << EOF
@@ -1455,8 +1466,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 11.5. Test the usage message for the German locale.
-test_number="${test_section}.5"
+# 11.6. Test the usage message for the German locale.
+test_number="${test_section}.6"
 test_type="usage"
 cmd="LANG=de_DE.UTF-8 bash test_localization.sh --usage"
 output="$(cat << EOF
@@ -1466,8 +1477,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 11.6. Test the help message for the American locale.
-test_number="${test_section}.6"
+# 11.7. Test the help message for the American locale.
+test_number="${test_section}.7"
 test_type="help"
 cmd="LANG=en_US.UTF-8 bash test_localization.sh --help"
 output="$(cat << EOF
@@ -1505,8 +1516,8 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 11.7. Test the help message for the German locale.
-test_number="${test_section}.7"
+# 11.8. Test the help message for the German locale.
+test_number="${test_section}.8"
 test_type="help"
 cmd="LANG=de_DE.UTF-8 bash test_localization.sh --help"
 output="$(cat << EOF
