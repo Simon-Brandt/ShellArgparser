@@ -23,4 +23,4 @@ jobs:
       - name: run_tests
         shell: bash {0}
         working-directory: tests/
-        run: run_tests.sh
+        run: ./run_tests.sh
