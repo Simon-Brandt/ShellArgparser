@@ -19,6 +19,10 @@ jobs:
       # access it.
       - uses: actions/checkout@v4
 
+      # Add the Shell Argparser to $PATH.
+      - name: set_path
+        run: pwd >> "$GITHUB_PATH"
+
       # Run the script.
       - name: run_tests
         shell: bash {0}
