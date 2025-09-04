@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-01
+# Last Modification: 2025-09-04
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -415,9 +415,8 @@ function argparser_fold() {
     #
     # Arguments:
     # - $1: the line in the column in which to insert line breaks
-    # - $2: the column index
-    # - $3: the maximum width a column may have
-    # - $4: the maximum width a column has yet
+    # - $2: the maximum width a column may have
+    # - $3: the maximum width a column has yet
     #
     # Nonlocals:
     # - joined_words: the line with introduced line breaks
@@ -426,7 +425,6 @@ function argparser_fold() {
     # Define the local variables.
     local col_width
     local i
-    local len_joined_words
     local len_word
     local line
     local max_col_width
@@ -435,62 +433,48 @@ function argparser_fold() {
 
     # Read the arguments.
     line="$1"
-    col_index="$2"
-    max_col_width="$3"
-    largest_col_width="$4"
+    max_col_width="$2"
+    largest_col_width="$3"
 
     # Split the column element word by word (on whitespace), such that
     # line breaks aren't inserted into entire words.
     joined_words=""
     col_width=0
     IFS=" " read -r -a words <<< "${line}"
-    word_count="${#words[@]}"
 
     for i in "${!words[@]}"; do
         word="${words[i]}"
         len_word="${#word}"
-        len_joined_words="${#joined_words}"
 
-        if (( len_word > max_col_width \
-            && len_joined_words == 0 \
-            && i < word_count - 1 ))
-        then
-            # As the word, which is not the last in the line, is too
-            # long, print the word and introduce a line break.  Then,
-            # reset the column width.
+        if (( col_width == 0 )); then
+            # For the first word in the line, add the word only and set
+            # the column width.  Since the word *must* be given on some
+            # line, don't test whether it is too long for the line,
+            # i.e., if it exceeds ${max_col_width}
             joined_words+="${word}"
-            joined_words+=$'\n'
-            col_width=0
-        elif (( len_word > max_col_width && len_joined_words == 0 )); then
-            # As the word, which is the last in the line, is too long,
-            # only print the word.
-            joined_words+="${word}"
+            col_width="${len_word}"
         elif (( col_width + len_word + 1 > max_col_width )); then
-            # As the line with the appended word, which is not the only
-            # word in the line, would be too long, introduce a line
-            # break and print the word.  Then, set the column width.
+            # As the line with the appended word (and the preceding
+            # space) would be too long, introduce a line break, print
+            # the word, and set the column width.
             joined_words+=$'\n'
             joined_words+="${word}"
             col_width="${len_word}"
-        elif (( len_joined_words == 0 )); then
-            # For the first word, add the word only.  Increase the
-            # column width by the word's length.
-            joined_words="${word}"
-            (( col_width += len_word ))
         else
             # For any other word, add the word and a leading space
-            # character, else, the words would be concatenated without
-            # separation (the splitting removed any whitespace).
+            # (otherwise, the words would be concatenated without
+            # separation since the splitting removed any whitespace).
             # Increase the column width appropriately.
             joined_words+=" ${word}"
             (( col_width += len_word + 1 ))
         fi
 
-        # If the current line is wider than the previous ones, set the
-        # largest_col_width correspondingly.  Later, this value is used
-        # to determine the amount of whitespace between the columns'
-        # elements.
-        if (( col_width > largest_col_width )); then
+        # If the current line is wider than the previous ones and less
+        # wide than the maximum column width, set ${largest_col_width}
+        # correspondingly.  Later, this value is used to determine the
+        # amount of whitespace between the columns' elements.
+        if (( col_width > largest_col_width && col_width <= max_col_width ))
+        then
             largest_col_width="${col_width}"
         fi
     done
@@ -6539,7 +6523,7 @@ function argparser_create_help_message() {
     # Split the element of column 1.
     col_width_1=0
     for i in "${!col_1[@]}"; do
-        argparser_fold "${col_1[i]}" 1 "${ARGPARSER_MAX_COL_WIDTH_1}" \
+        argparser_fold "${col_1[i]}" "${ARGPARSER_MAX_COL_WIDTH_1}" \
             "${col_width_1}"
         col_1[i]="${joined_words}"
         col_width_1="${largest_col_width}"
@@ -6548,7 +6532,7 @@ function argparser_create_help_message() {
     # Split the element of column 2.
     col_width_2=0
     for i in "${!col_2[@]}"; do
-        argparser_fold "${col_2[i]}" 2 "${ARGPARSER_MAX_COL_WIDTH_2}" \
+        argparser_fold "${col_2[i]}" "${ARGPARSER_MAX_COL_WIDTH_2}" \
             "${col_width_2}"
         col_2[i]="${joined_words}"
         col_width_2="${largest_col_width}"
@@ -6572,7 +6556,7 @@ function argparser_create_help_message() {
 
     col_width_3=0
     for i in "${!col_3[@]}"; do
-        argparser_fold "${col_3[i]}" 3 "${max_col_width_3}" "${col_width_3}"
+        argparser_fold "${col_3[i]}" "${max_col_width_3}" "${col_width_3}"
         col_3[i]="${joined_words}"
         col_width_3="${largest_col_width}"
     done
@@ -6807,7 +6791,7 @@ function argparser_create_help_message() {
     # Set the description.
     if [[ -n "${ARGPARSER_HELP_DESCRIPTION}" ]]; then
         description="${ARGPARSER_HELP_DESCRIPTION}"
-        argparser_fold "${description}" 3 "${ARGPARSER_MAX_WIDTH}" 0
+        argparser_fold "${description}" "${ARGPARSER_MAX_WIDTH}" 0
         description="${joined_words}"
         description+=$'\n'
     else
