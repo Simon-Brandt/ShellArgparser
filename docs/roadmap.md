@@ -26,24 +26,34 @@ Future Argparser versions will add several new features and address known issues
 
 The Argparser uses [semantic versioning (SemVer)](https://semver.org/ "semver.org") for the releases, *i.e.*, version numbers given by major version, minor version, and patch, separated by dots. There is only one supported minor version at a time (for bugfixes) to reduce developer burden, with new versions being released in strictly monotonic succession, regarding their version numbers.
 
-Besides the SemVer version numbers, each version is assigned a codename (because why not?). Since the Argparser evolved from a very early command-line argument parser used in an analysis pipeline for Placentalia (an infraclass of mammals), the codenames are placental mammals' species names. The major versions determine the taxonomic order, the minor version is given by the genus, and the patch version by the species name, in alphabetic order (as far as possible, *i.e.*, as long as there are species names beginning with the respective letter). For the first major series of releases, we use rodent names. So the first Argparser release, v1.0.0, is codenamed *"[Acomys airensis](https://en.wikipedia.org/wiki/Western_Saharan_spiny_mouse "wikipedia.org &rightarrow; Western Saharan spiny mouse")"*.
+Besides the SemVer version numbers, each version is assigned a codename (because why not?). Since the Argparser evolved from a very early command-line argument parser used in an analysis pipeline for Placentalia (an infraclass of mammals, precisely, the extant Eutheria), the codenames are placental mammals' species names. The major versions determine the taxonomic order, the minor version is given by the genus, and the patch version by the species name, in alphabetic order (as far as possible, *i.e.*, as long as there are species names beginning with the respective letter). For the first major series of releases, we use rodent names. So the first Argparser release, v1.0.0, is codenamed *"[Acomys airensis](https://en.wikipedia.org/wiki/Western_Saharan_spiny_mouse "wikipedia.org &rightarrow; Western Saharan spiny mouse")"*.
 
-Bugfixes (increment of patch version) should be released immediately once it is confirmed that they actually fix the bug, while new features are added on a longer timescale (increment of minor version). Breaking changes (increment of major version) are kept unreleased for the longest time, trying to accumulate several changes to release them altogether. However, if a pending change severely hinders the Argparser's further development, the breaking change will be released sooner.
+The following table lists all versions released so far:
 
-Breaking changes in the sense of SemVer *only* apply to modifications to the code that are expected or proven to change the Argparser's behavior in a way that can be seen by your script when normally running the Argparser. That is, a breaking change may be the modification of an environment variable's default value or an alteration of the output generated when [`ARGPARSER_WRITE_ARGS`](reference/environment_variables/environment_variables.md#9460-argparser_write_args) is set to `true`. In contrast, at least for now, the Argparser's internal state is completely hidden from a normal Argparser call. While it is possible to use the functions for your own purpose (by setting [`ARGPARSER_UNSET_FUNCTIONS`](reference/environment_variables/environment_variables.md#9443-argparser_unset_functions) to `false`), any change is considered an implementation detail, as long as the Argparser's output remains unchanged. The help, usage, version, error, and warning messages are intended for human view, and not to be parsed by scripts. Consequently, their structure and contents may change at any time.
+<!-- <table caption="List of Argparser releases"> -->
+*Tab. 6: List of Argparser releases.*
 
-Likewise, changes to the tests, comparison scripts, and documentation are *not* considered for assessing changes as breaking and may occur at any point. In other words, SemVer only applies to the [Argparser exectutable](../argparser), while all other files are just distributed with it under the same version number.
+| Version number | Codename           |
+| -------------- | ------------------ |
+| v1.0.1         | *Acomys cahirinus* |
+| v1.0.0         | *Acomys airensis*  |
 
 You can obtain the version number of your Argparser copy by querying `argparser --version`:
 
 <!-- <include command="argparser --version" lang="console"> -->
 ```console
 $ argparser --version
-argparser v1.0.0 "Acomys airensis"
+argparser v1.0.1 "Acomys cahirinus"
 ```
 <!-- </include> -->
 
 In the spirit of SemVer, you can then gauge the need to update to a newer Argparser version by comparing the version numbers of your copy and the latest [release](https://github.com/Simon-Brandt/ShellArgparser/releases "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Releases").
+
+Bugfixes (increment of patch version) should be released immediately once it is confirmed that they actually fix the bug, while new features are added on a longer timescale (increment of minor version). Breaking changes (increment of major version) are kept unreleased for the longest time, trying to accumulate several changes to release them altogether. However, if a pending change severely hinders the Argparser's further development, the breaking change will be released sooner.
+
+Breaking changes in the sense of SemVer *only* apply to modifications to the code that are expected or proven to change the Argparser's behavior in a way that can be seen by your script when normally running the Argparser. That is, a breaking change may be the modification of an environment variable's default value or an alteration of the output generated when [`ARGPARSER_WRITE_ARGS`](reference/environment_variables/environment_variables.md#9460-argparser_write_args) is set to `true`. In contrast, at least for now, the Argparser's internal state is completely hidden from a normal Argparser call. While it is possible to use the functions for your own purpose (by setting [`ARGPARSER_UNSET_FUNCTIONS`](reference/environment_variables/environment_variables.md#9443-argparser_unset_functions) to `false`), any change is considered an implementation detail, as long as the Argparser's output remains unchanged. The help, usage, version, error, and warning messages are intended for human view, and not to be parsed by scripts. Consequently, their structure and contents may change at any time.
+
+Likewise, changes to the tests, comparison scripts, and documentation are *not* considered for assessing changes as breaking and may occur at any point. In other words, SemVer only applies to the [Argparser exectutable](../argparser), while all other files are just distributed with it under the same version number.
 
 To simplify the transition to newer Argparser versions, it is expected to have scripts in the repository that try to flag changed behavior for your script, whenever breaking changes are made. Whether it may be possible to automatically upgrade your code to comply with the new features, strongly depends on the changes' complexity and can't be judged, here.
 

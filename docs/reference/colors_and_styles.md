@@ -27,7 +27,7 @@ When [`ARGPARSER_USE_STYLES_IN_FILES`](environment_variables/environment_variabl
 A number of colors and styles is available. You don't need to remember the SGR codes, they're only internally used and given here for reference of what to expect from the keywords for the colors and styles. Further note that the actual RGB/Hex color values will depend on the output device.
 
 <!-- <table caption="Available colors and their SGR codes"> -->
-*Tab. 6: Available colors and their SGR codes.*
+*Tab. 7: Available colors and their SGR codes.*
 
 | Color                                   | SGR code |
 | --------------------------------------- | -------- |
@@ -41,7 +41,7 @@ A number of colors and styles is available. You don't need to remember the SGR c
 | $\small\textsf{\color{lightgray}white}$ | `37`     |
 
 <!-- <table caption="Available styles and their SGR codes"> -->
-*Tab. 7: Available styles and their SGR codes.*
+*Tab. 8: Available styles and their SGR codes.*
 
 | Style         | SGR code |
 | ------------- | -------- |

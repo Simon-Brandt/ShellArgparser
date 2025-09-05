@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-04
+# Last Modification: 2025-09-05
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -8099,7 +8099,7 @@ function argparser_main() {
     # declaring it as local, here.
     if [[ "${source_level}" == 1 ]]; then
         declare -a ARGPARSER_ARGS
-        local argparser_version="1.0.0 \"Acomys airensis\""
+        local argparser_version="1.0.1 \"Acomys cahirinus\""
         local -A dictionary
         local -a script_args
     fi
