@@ -20,7 +20,7 @@
 
 # Shell Argparser
 
-[![DOI](https://zenodo.org/badge/874059620.svg)](https://doi.org/10.5281/zenodo.17037185)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17037185.svg)](https://doi.org/10.5281/zenodo.17037185)
 
 The Argparser is designed to be an easy-to-use, yet powerful command-line argument parser for your shell scripts. It is mainly targeting Bash, but other shells are supported, as well.
 
