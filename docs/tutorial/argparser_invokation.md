@@ -96,7 +96,7 @@ or:
 ./argparser
 ```
 
-since you don't want the arguments to be set in a subprocess created after forking, as these will be gone when the Argparser (and with it, the subprocess) exits. Still, this is the required way for other shells, which make use of the Argparser's ability to write the arguments to `STDOUT`, if [`ARGPARSER_WRITE_ARGS`](../reference/environment_variables/environment_variables.md#9460-argparser_write_args) is set to `true`.
+since you don't want the arguments to be set in a subprocess created after forking, as these will be gone when the Argparser (and with it, the subprocess) exits. Still, this is the required way for other shells, which make use of the Argparser's ability to write the arguments to `STDOUT`, if [`ARGPARSER_WRITE_ARGS`](../reference/environment_variables/environment_variables.md#9461-argparser_write_args) is set to `true`.
 
 #### 5.2.2. Arguments definition and retrieval
 
@@ -118,7 +118,7 @@ This Argparser-specific tabular format consists of eleven columns, each separate
 - `choices`: the choice values for options with a limited set of values to choose from (like `"A-C"`, *i.e.*, `"A"`, `"B"`, and `"C"` for `var_4`, default: `""`)
 - `type`: the data type the argument shall have and will be tested on (like `"char"` for `var_4`, default: `"str"`)
 - `arg_no`: the number of required values (any positive integer, `0`, or either of `"+"`, `"*"`, or `"?"`, meaning to accept a variable number of arguments (1 to infinity, 0 to infinity, or 0 to 1), like `1` for `var_4`, default: `1`)
-- `arg_group`: the argument group for grouping of keyword arguments in the help text (like `"Optional options"` for `var_4`, default: [`ARGPARSER_POSITIONAL_ARG_GROUP`](../reference/environment_variables/environment_variables.md#9433-argparser_positional_arg_group))
+- `arg_group`: the argument group for grouping of keyword arguments in the help text (like `"Optional options"` for `var_4`, default: [`ARGPARSER_POSITIONAL_ARG_GROUP`](../reference/environment_variables/environment_variables.md#9434-argparser_positional_arg_group))
 - `notes`: additional notes to the Argparser, currently only `"deprecated"` is supported (like for `var_7`, default: `""`)
 - `help`: the help text for the `--help` flag (like `"one value with default and choice"` for `var_4`, default: `""`)
 
