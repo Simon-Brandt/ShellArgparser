@@ -34,47 +34,47 @@ In the following table, "&#10008;" marks the absence of a feature, "&#10004;" it
 <!-- <table caption="Present or absent features of various command-line parsers"> -->
 *Tab. 3: Present or absent features of various command-line parsers.*
 
-| Function                                    | `getopts`     | `getopt`      | shFlags      | docopts      | `argparse`    | Argparser    |
-| ------------------------------------------- | ------------- | ------------- | ------------ | ------------ | ------------- | ------------ |
-| Short options                               | &#10004;      | &#10004;      | &#10004;     | &#10004;     | &#10004;      | &#10004;     |
-| Long options                                | &#10008;      | &#10004;      | &#10004;     | &#10004;     | &#10004;      | &#10004;     |
-| Positional arguments                        | &#10033;[^1]  | &#10033;[^1]  | &#10033;[^1] | &#10004;     | &#10004;      | &#10004;     |
-| Mandatory options                           | &#10008;      | &#10008;      | &#10008;     | &#10004;     | &#10004;      | &#10004;     |
-| Flags (Boolean options)                     | &#10004;      | &#10004;      | &#10004;     | &#10004;     | &#10004;      | &#10004;     |
-| Mutually exclusive arguments                | &#10008;      | &#10008;      | &#10008;     | &#10004;     | &#10004;      | &#10008;[^2] |
-| Intermixed positional and keyword arguments | &#10008;      | &#10004;      | &#10008;     | &#10004;     | &#10004;      | &#10008;[^3] |
-| Argument groups                             | &#10008;      | &#10008;      | &#10008;     | &#10008;     | &#10004;      | &#10004;     |
-| Positional arguments delimiter `--`         | &#10004;      | &#10004;      | &#10004;     | &#10004;     | &#10004;      | &#10004;     |
-| Positional arguments delimiter `++`         | &#10008;      | &#10008;      | &#10008;     | &#10008;     | &#10008;      | &#10004;     |
-| Single-hyphen long options                  | &#10008;[^4]  | &#10004;      | &#10008;     | &#10008;     | &#10004;      | &#10008;[^3] |
-| Alternative option prefixes (`+`/`/`)       | &#10008;      | &#10008;      | &#10008;     | &#10008;     | &#10004;      | &#10008;[^3] |
-| Default values                              | &#10008;      | &#10008;      | &#10004;     | &#10004;     | &#10004;      | &#10004;     |
-| Choice values                               | &#10008;      | &#10008;      | &#10008;     | &#10008;     | &#10004;      | &#10004;     |
-| Any argument number (multi-value arguments) | &#10008;      | &#10008;      | &#10008;     | &#10004;     | &#10004;      | &#10004;     |
-| Metavariables (value names)                 | &#10008;      | &#10008;      | &#10008;     | &#10008;     | &#10004;      | &#10004;     |
-| Data type checking                          | &#10008;      | &#10008;      | &#10004;     | &#10008;     | &#10004;      | &#10004;     |
-| Deprecation note                            | &#10008;      | &#10008;      | &#10008;     | &#10008;     | &#10004;      | &#10004;     |
-| Option merging                              | &#10004;      | &#10004;      | &#10004;     | &#10004;     | &#10004;      | &#10004;     |
-| Option abbreviation                         | &#10008;[^4]  | &#10004;      | &#10004;     | &#10004;     | &#10004;      | &#10004;     |
-| Flag counting                               | &#10008;      | &#10008;      | &#10008;     | &#10033;[^5] | &#10004;      | &#10004;     |
-| Flag negation (`--no-var`)                  | &#10008;[^4]  | &#10008;      | &#10004;     | &#10008;     | &#10008;      | &#10004;     |
-| Flag inversion (`+a`)                       | &#10008;      | &#10008;      | &#10008;     | &#10008;     | &#10008;      | &#10004;     |
-| Inheritable arguments definition            | &#10033;[^6]  | &#10033;[^6]  | &#10033;[^6] | &#10033;[^6] | &#10004;      | &#10004;     |
-| Arguments definition files                  | &#10033;[^6]  | &#10033;[^6]  | &#10033;[^6] | &#10033;[^6] | &#10004;      | &#10004;     |
-| Arguments auto-set to variables             | &#10008;      | &#10008;      | &#10004;     | &#10004;     | &#10008;      | &#10004;     |
-| Error/warning silencing                     | &#10004;      | &#10004;      | &#10008;     | &#10008;     | &#10008;      | &#10004;     |
-| Help message                                | &#10008;      | &#10008;      | &#10004;     | &#10004;     | &#10004;      | &#10004;     |
-| Usage message                               | &#10008;      | &#10008;      | &#10008;     | &#10008;     | &#10004;      | &#10004;     |
-| Version message                             | &#10008;      | &#10008;      | &#10008;     | &#10004;     | &#10004;      | &#10004;     |
-| Stylized messages                           | &#10008;      | &#10008;      | &#10008;     | &#10008;     | &#10008;      | &#10004;     |
-| Customizable message text                   | &#10033;[^7]  | &#10033;[^7]  | &#10004;     | &#10008;     | &#10004;      | &#10004;     |
-| Customizable help options                   | &#10033;[^8]  | &#10004;      | &#10008;     | &#10033;[^9] | &#10004;      | &#10004;     |
-| Customizable exit codes                     | &#10008;      | &#10008;      | &#10008;     | &#10008;     | &#10033;[^10] | &#10004;     |
-| Configurable parsing                        | &#10008;      | &#10004;      | &#10008;     | &#10008;     | &#10004;      | &#10004;     |
-| Internationalization / localization         | &#10004;      | &#10004;      | &#10008;     | &#10008;     | &#10004;      | &#10004;     |
-| Debug mode                                  | &#10008;      | &#10008;      | &#10008;     | &#10008;     | &#10008;      | &#10004;     |
-| Shell independence (Bash, Dash, ksh93...)   | &#10033;[^11] | &#10004;      | &#10004;     | &#10004;     | &#10008;[^12] | &#10004;     |
-| POSIX compliance                            | &#10004;      | &#10033;[^13] | &#10008;     | &#10008;     | &#10008;      | &#10008;[^3] |
+| Function                                    | Argparser    | `argparse`    | `getopts`     | `getopt`      | shFlags      | docopts      |
+| ------------------------------------------- | ------------ | ------------- | ------------- | ------------- | ------------ | ------------ |
+| Short options                               | &#10004;     | &#10004;      | &#10004;      | &#10004;      | &#10004;     | &#10004;     |
+| Long options                                | &#10004;     | &#10004;      | &#10008;      | &#10004;      | &#10004;     | &#10004;     |
+| Positional arguments                        | &#10004;     | &#10004;      | &#10033;[^1]  | &#10033;[^1]  | &#10033;[^1] | &#10004;     |
+| Mandatory options                           | &#10004;     | &#10004;      | &#10008;      | &#10008;      | &#10008;     | &#10004;     |
+| Flags (Boolean options)                     | &#10004;     | &#10004;      | &#10004;      | &#10004;      | &#10004;     | &#10004;     |
+| Mutually exclusive arguments                | &#10008;[^2] | &#10004;      | &#10008;      | &#10008;      | &#10008;     | &#10004;     |
+| Intermixed positional and keyword arguments | &#10008;[^3] | &#10004;      | &#10008;      | &#10004;      | &#10008;     | &#10004;     |
+| Argument groups                             | &#10004;     | &#10004;      | &#10008;      | &#10008;      | &#10008;     | &#10008;     |
+| Positional arguments delimiter `--`         | &#10004;     | &#10004;      | &#10004;      | &#10004;      | &#10004;     | &#10004;     |
+| Positional arguments delimiter `++`         | &#10004;     | &#10008;      | &#10008;      | &#10008;      | &#10008;     | &#10008;     |
+| Single-hyphen long options                  | &#10008;[^3] | &#10004;      | &#10008;[^4]  | &#10004;      | &#10008;     | &#10008;     |
+| Alternative option prefixes (`+`/`/`)       | &#10008;[^3] | &#10004;      | &#10008;      | &#10008;      | &#10008;     | &#10008;     |
+| Default values                              | &#10004;     | &#10004;      | &#10008;      | &#10008;      | &#10004;     | &#10004;     |
+| Choice values                               | &#10004;     | &#10004;      | &#10008;      | &#10008;      | &#10008;     | &#10008;     |
+| Any argument number (multi-value arguments) | &#10004;     | &#10004;      | &#10008;      | &#10008;      | &#10008;     | &#10004;     |
+| Metavariables (value names)                 | &#10004;     | &#10004;      | &#10008;      | &#10008;      | &#10008;     | &#10008;     |
+| Data type checking                          | &#10004;     | &#10004;      | &#10008;      | &#10008;      | &#10004;     | &#10008;     |
+| Deprecation note                            | &#10004;     | &#10004;      | &#10008;      | &#10008;      | &#10008;     | &#10008;     |
+| Option merging                              | &#10004;     | &#10004;      | &#10004;      | &#10004;      | &#10004;     | &#10004;     |
+| Option abbreviation                         | &#10004;     | &#10004;      | &#10008;[^4]  | &#10004;      | &#10004;     | &#10004;     |
+| Flag counting                               | &#10004;     | &#10004;      | &#10008;      | &#10008;      | &#10008;     | &#10033;[^5] |
+| Flag negation (`--no-var`)                  | &#10004;     | &#10008;      | &#10008;[^4]  | &#10008;      | &#10004;     | &#10008;     |
+| Flag inversion (`+a`)                       | &#10004;     | &#10008;      | &#10008;      | &#10008;      | &#10008;     | &#10008;     |
+| Inheritable arguments definition            | &#10004;     | &#10004;      | &#10033;[^6]  | &#10033;[^6]  | &#10033;[^6] | &#10033;[^6] |
+| Arguments definition files                  | &#10004;     | &#10004;      | &#10033;[^6]  | &#10033;[^6]  | &#10033;[^6] | &#10033;[^6] |
+| Arguments auto-set to variables             | &#10004;     | &#10008;      | &#10008;      | &#10008;      | &#10004;     | &#10004;     |
+| Error/warning silencing                     | &#10004;     | &#10008;      | &#10004;      | &#10004;      | &#10008;     | &#10008;     |
+| Help message                                | &#10004;     | &#10004;      | &#10008;      | &#10008;      | &#10004;     | &#10004;     |
+| Usage message                               | &#10004;     | &#10004;      | &#10008;      | &#10008;      | &#10008;     | &#10008;     |
+| Version message                             | &#10004;     | &#10004;      | &#10008;      | &#10008;      | &#10008;     | &#10004;     |
+| Stylized messages                           | &#10004;     | &#10008;      | &#10008;      | &#10008;      | &#10008;     | &#10008;     |
+| Customizable message text                   | &#10004;     | &#10004;      | &#10033;[^7]  | &#10033;[^7]  | &#10004;     | &#10008;     |
+| Customizable help options                   | &#10004;     | &#10004;      | &#10033;[^8]  | &#10004;      | &#10008;     | &#10033;[^9] |
+| Customizable exit codes                     | &#10004;     | &#10033;[^10] | &#10008;      | &#10008;      | &#10008;     | &#10008;     |
+| Configurable parsing                        | &#10004;     | &#10004;      | &#10008;      | &#10004;      | &#10008;     | &#10008;     |
+| Internationalization / localization         | &#10004;     | &#10004;      | &#10004;      | &#10004;      | &#10008;     | &#10008;     |
+| Debug mode                                  | &#10004;     | &#10008;      | &#10008;      | &#10008;      | &#10008;     | &#10008;     |
+| Shell independence (Bash, Dash, ksh93...)   | &#10004;     | &#10008;[^11] | &#10033;[^12] | &#10004;      | &#10004;     | &#10004;     |
+| POSIX compliance                            | &#10008;[^3] | &#10008;      | &#10004;      | &#10033;[^13] | &#10008;     | &#10008;     |
 
 [^1]: Not rejected, but not parsed and only usable by manual parsing.
 [^2]: Not supported, but to be implemented in a future version.
@@ -86,8 +86,8 @@ In the following table, "&#10008;" marks the absence of a feature, "&#10004;" it
 [^8]: Except the common `?`.
 [^9]: By overriding the default `-h,--help`
 [^10]: Not upon errors, with an exit code of `2`.
-[^11]: Regarding its application in scripts, would need equivalent builtins in other shells.
-[^12]: Not applicable as not designed for usage from within shells.
+[^11]: Not applicable as not designed for usage from within shells.
+[^12]: Regarding its application in scripts, would need equivalent builtins in other shells.
 [^13]: Opt-in feature *via* environment variable (`POSIXLY_CORRECT`).
 
 [&#129092;&nbsp;Table of contents (Feature comparison)](toc.md)
