@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-08
+# Last Modification: 2025-09-09
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -417,8 +417,39 @@ function argparser_check_file() {
 }
 
 # Define the general Argparser utility functions.
+function argparser_pad() {
+    # Right-pad all elements of an array to have the same length.
+    #
+    # Arguments:
+    # - $@: the array whose elements to pad
+    #
+    # Nonlocals:
+    # - padded_array: the array with padded elements.
+
+    # Set the local variables.
+    local arg_key
+    local i
+    local whitespace
+    local width
+
+    padded_array=("$@")
+
+    # Pad the array's elements in-place.
+    width=0
+    for arg_key in "${padded_array[@]}"; do
+        if (( "${#arg_key}" > width )); then
+            width="${#arg_key}"
+        fi
+    done
+
+    for i in "${!padded_array[@]}"; do
+        printf -v whitespace '%*s' $(( width - "${#padded_array[i]}" )) ""
+        padded_array[i]="${padded_array[i]}${whitespace}"
+    done
+}
+
 function argparser_trim() {
-    # Trim leading an trailing space characters from a string.
+    # Trim leading and trailing space characters from a string.
     #
     # Arguments:
     # - $1: the string to trim
@@ -8245,6 +8276,7 @@ function argparser_main() {
         unset -f argparser_is_uint
         unset -f argparser_join
         unset -f argparser_main
+        unset -f argparser_pad
         unset -f argparser_parse_arg
         unset -f argparser_parse_args
         unset -f argparser_parse_args_definition
