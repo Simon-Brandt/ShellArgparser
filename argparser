@@ -2302,6 +2302,346 @@ function argparser_translate() {
 
 # Define the Argparser functions for reading, parsing, and checking the
 # arguments definition.
+function argparser_create_args_definition() {
+    # Create the arguments definition from user input and write it to a
+    # file.
+
+    # Define the local variables.
+    local arg_group
+    local arg_key
+    local arg_number
+    local -a args
+    local -a args_definition
+    local choice_values
+    local -a col_arg_groups
+    local -a col_arg_keys
+    local -a col_arg_numbers
+    local -a col_choice_values
+    local -a col_default_values
+    local -a col_help_texts
+    local -a col_long_options
+    local -a col_notes
+    local -a col_short_options
+    local -a col_types
+    local -a col_value_names
+    local default_values
+    local delimiter
+    local drop_arg_group
+    local drop_arg_number
+    local drop_choice_values
+    local drop_default_values
+    local drop_help_text
+    local drop_long_options
+    local drop_note
+    local drop_short_options
+    local drop_type
+    local drop_value_names
+    local file
+    local help_text
+    local i
+    local line
+    local long_options
+    local message
+    local note
+    local -a padded_array
+    local separator
+    local shell
+    local short_options
+    local type
+    local value_names
+
+    # Set the horizontal separator.
+    printf -v separator "%${COLUMNS:-79}s" ""
+    separator="${separator// /-}"
+
+    # Get the target shell from user input.
+    message="Does your script use Bash (y) or only a POSIX-compliant shell "
+    message+="(n)?"
+    printf '%s\n\n' "${message}"
+
+    while read -r -p "Bash usage (y/n):  " shell; do
+        if [[ "${shell}" == "y" ]]; then
+            shell="Bash"
+            break
+        elif [[ "${shell}" == "n" ]]; then
+            shell="POSIX"
+            break
+        fi
+        printf 'Please answer with "y" or "n".\n'
+    done
+
+    printf '%s\n' "${separator}"
+
+    # Get the target file from user input.
+    message="Which file shall the arguments definition be written to?"
+    printf '%s\n\n' "${message}"
+
+    read -r -p "Target file:  " file
+    printf '%s\n' "${separator}"
+
+    # Get the arguments definition delimiters from user input.
+    message="Which character do you want to use as primary arguments "
+    message+="definition delimiter?"
+    printf '%s\n\n' "${message}"
+
+    read -r -p "Primary delimiter:  " delimiter
+    printf '%s\n' "${separator}"
+
+    # Get the arguments definition fields from user input.
+    col_arg_keys=("id")
+    col_short_options=("short_opts")
+    col_long_options=("long_opts")
+    col_value_names=("val_names")
+    col_default_values=("defaults")
+    col_choice_values=("choices")
+    col_types=("type")
+    col_arg_numbers=("arg_no")
+    col_arg_groups=("arg_group")
+    col_notes=("notes")
+    col_help_texts=("help")
+
+    message="Enter the fields for each argument.  Submit an empty argument "
+    message+="identifier to end the input."
+    printf '%s\n\n' "${message}"
+
+    while :; do
+        read -r -p "Argument identifier:  " arg_key
+        if [[ -z "${arg_key}" ]]; then
+            break
+        fi
+
+        read -r -p "Short option names:   " short_options
+        read -r -p "Long option names:    " long_options
+        read -r -p "Value names:          " value_names
+        read -r -p "Default values:       " default_values
+        read -r -p "Choice values:        " choice_values
+        read -r -p "Data type:            " type
+        read -r -p "Argument number:      " arg_number
+        read -r -p "Argument group:       " arg_group
+        read -r -p "Notes:                " note
+        read -r -p "Help text:            " help_text
+
+        col_arg_keys+=("${arg_key}")
+        col_short_options+=("${short_options}")
+        col_long_options+=("${long_options}")
+        col_value_names+=("${value_names}")
+        col_default_values+=("${default_values}")
+        col_choice_values+=("${choice_values}")
+        col_types+=("${type}")
+        col_arg_numbers+=("${arg_number}")
+        col_arg_groups+=("${arg_group}")
+        col_notes+=("${note}")
+        col_help_texts+=("${help_text}")
+
+        printf '%s\n' "${separator}"
+    done
+
+    # Set each field in a column to the same width by right-padding with
+    # spaces.
+    argparser_pad "${col_arg_keys[@]}"
+    col_arg_keys=("${padded_array[@]}")
+
+    argparser_pad "${col_short_options[@]}"
+    col_short_options=("${padded_array[@]}")
+
+    argparser_pad "${col_long_options[@]}"
+    col_long_options=("${padded_array[@]}")
+
+    argparser_pad "${col_value_names[@]}"
+    col_value_names=("${padded_array[@]}")
+
+    argparser_pad "${col_default_values[@]}"
+    col_default_values=("${padded_array[@]}")
+
+    argparser_pad "${col_choice_values[@]}"
+    col_choice_values=("${padded_array[@]}")
+
+    argparser_pad "${col_types[@]}"
+    col_types=("${padded_array[@]}")
+
+    argparser_pad "${col_arg_numbers[@]}"
+    col_arg_numbers=("${padded_array[@]}")
+
+    argparser_pad "${col_arg_groups[@]}"
+    col_arg_groups=("${padded_array[@]}")
+
+    argparser_pad "${col_notes[@]}"
+    col_notes=("${padded_array[@]}")
+
+    argparser_pad "${col_help_texts[@]}"
+    col_help_texts=("${padded_array[@]}")
+
+    # Set flags for empty columns to be dropped.  Thereby, any column
+    # but the argument identifier may be empty, i.e., all elements but
+    # the header only consist of spaces, there.
+    for short_options in in "${col_short_options[@]:1}"; do
+        if [[ ! "${short_options}" =~ ^" "+$ ]]; then
+            drop_short_options=false
+            break
+        fi
+        drop_short_options=true
+    done
+
+    for long_options in in "${col_long_options[@]:1}"; do
+        if [[ ! "${long_options}" =~ ^" "+$ ]]; then
+            drop_long_options=false
+            break
+        fi
+        drop_long_options=true
+    done
+
+    for value_names in in "${col_value_names[@]:1}"; do
+        if [[ ! "${value_names}" =~ ^" "+$ ]]; then
+            drop_value_names=false
+            break
+        fi
+        drop_value_names=true
+    done
+
+    for default_values in in "${col_default_values[@]:1}"; do
+        if [[ ! "${default_values}" =~ ^" "+$ ]]; then
+            drop_default_values=false
+            break
+        fi
+        drop_default_values=true
+    done
+
+    for choice_values in in "${col_choice_values[@]:1}"; do
+        if [[ ! "${choice_values}" =~ ^" "+$ ]]; then
+            drop_choice_values=false
+            break
+        fi
+        drop_choice_values=true
+    done
+
+    for type in in "${col_types[@]:1}"; do
+        if [[ ! "${type}" =~ ^" "+$ ]]; then
+            drop_type=false
+            break
+        fi
+        drop_type=true
+    done
+
+    for arg_number in in "${col_arg_numbers[@]:1}"; do
+        if [[ ! "${arg_number}" =~ ^" "+$ ]]; then
+            drop_arg_number=false
+            break
+        fi
+        drop_arg_number=true
+    done
+
+    for arg_group in in "${col_arg_groups[@]:1}"; do
+        if [[ ! "${arg_group}" =~ ^" "+$ ]]; then
+            drop_arg_group=false
+            break
+        fi
+        drop_arg_group=true
+    done
+
+    for note in in "${col_notes[@]:1}"; do
+        if [[ ! "${note}" =~ ^" "+$ ]]; then
+            drop_note=false
+            break
+        fi
+        drop_note=true
+    done
+
+    for help_text in in "${col_help_texts[@]:1}"; do
+        if [[ ! "${help_text}" =~ ^" "+$ ]]; then
+            drop_help_text=false
+            break
+        fi
+        drop_help_text=true
+    done
+
+    # Join the individual columns to the arguments definition table,
+    # dropping the fields of empty columns.
+    args=()
+    for i in "${!col_arg_keys[@]}"; do
+        args+=("${col_arg_keys[i]}")
+
+        if [[ "${drop_short_options}" == false ]]; then
+            args[-1]+=" ${delimiter} ${col_short_options[i]}"
+        fi
+
+        if [[ "${drop_long_options}" == false ]]; then
+            args[-1]+=" ${delimiter} ${col_long_options[i]}"
+        fi
+
+        if [[ "${drop_value_names}" == false ]]; then
+            args[-1]+=" ${delimiter} ${col_value_names[i]}"
+        fi
+
+        if [[ "${drop_default_values}" == false ]]; then
+            args[-1]+=" ${delimiter} ${col_default_values[i]}"
+        fi
+
+        if [[ "${drop_choice_values}" == false ]]; then
+            args[-1]+=" ${delimiter} ${col_choice_values[i]}"
+        fi
+
+        if [[ "${drop_type}" == false ]]; then
+            args[-1]+=" ${delimiter} ${col_types[i]}"
+        fi
+
+        if [[ "${drop_arg_number}" == false ]]; then
+            args[-1]+=" ${delimiter} ${col_arg_numbers[i]}"
+        fi
+
+        if [[ "${drop_arg_group}" == false ]]; then
+            args[-1]+=" ${delimiter} ${col_arg_groups[i]}"
+        fi
+
+        if [[ "${drop_note}" == false ]]; then
+            args[-1]+=" ${delimiter} ${col_notes[i]}"
+        fi
+
+        if [[ "${drop_help_text}" == false ]]; then
+            args[-1]+=" ${delimiter} ${col_help_texts[i]}"
+        fi
+    done
+
+    # Output the arguments definition table either as Bash array or
+    # POSIX multi-line string with subsequent help/usage/version flag
+    # checking.
+    args_definition=( )
+    if [[ "${shell}" == "Bash" ]]; then
+        args_definition+=('args=(')
+
+        for line in "${args[@]}"; do
+            args_definition+=("    \"${line}\"")
+        done
+
+        args_definition+=(
+            ')'
+            'source argparser -- "$@"'
+        )
+    else
+        args_definition+=('args='\')
+
+        for line in "${args[@]}"; do
+            args_definition+=("    ${line}")
+        done
+
+        # shellcheck disable=SC1003  # Literal backslash before single quotes.
+        # shellcheck disable=SC2016  # Intentional single-quoted expressions.
+        args_definition+=(
+            \'
+            ''
+            'if [ "$1" = "-h" ] || [ "$1" = "--help" ] \'
+            '    || [ "$1" = "-u" ] || [ "$1" = "--usage" ] \'
+            '    || [ "$1" = "-V" ] || [ "$1" = "--version" ]'
+            'then'
+            '    printf '\''%s'\'' "${args}" | argparser -- "$@"'
+            'else'
+            '    eval "$(printf '\''%s'\'' "${args}" | argparser -- "$@" | tee /dev/stderr)"'
+            'fi'
+        )
+    fi
+
+    printf '%s\n' "${args_definition[@]}" > "${file}"
+}
+
 function argparser_read_args_definition() {
     # Read the arguments definition from the script and arguments
     # definition file, if provided.
@@ -8261,6 +8601,7 @@ function argparser_main() {
         unset -f argparser_check_shell
         unset -f argparser_colorize
         unset -f argparser_count
+        unset -f argparser_create_args_definition
         unset -f argparser_create_help_message
         unset -f argparser_create_usage_message
         unset -f argparser_fold
