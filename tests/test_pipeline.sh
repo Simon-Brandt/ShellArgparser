@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-07-24
+# Last Modification: 2025-09-09
 
 # Usage: Run this script with "sh test_pipeline.sh".
 
@@ -46,12 +46,9 @@ args='
     var_7 | g          | var-7     | VAL_7     | true     |         | bool | 0      | Optional options     | deprecated | no value (flag) with default
 '
 
-if [ "$1" = "--help" ] \
-    || [ "$1" = "-h" ] \
-    || [ "$1" = "--usage" ] \
-    || [ "$1" = "-u" ] \
-    || [ "$1" = "--version" ] \
-    || [ "$1" = "-V" ]
+if [ "$1" = "-h" ] || [ "$1" = "--help" ] \
+    || [ "$1" = "-u" ] || [ "$1" = "--usage" ] \
+    || [ "$1" = "-V" ] || [ "$1" = "--version" ]
 then
     printf '%s' "${args}" | argparser -- "$@"
 else
