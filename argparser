@@ -2350,7 +2350,7 @@ function argparser_create_args_definition() {
     message+="(n)?"
     printf '%s\n\n' "${message}"
 
-    while read -r -p "Bash usage (y/n):  " shell; do
+    while read -r -p "Bash usage (y/n):  " shell 2>&1; do
         if [[ "${shell}" == "y" ]]; then
             shell="Bash"
             break
@@ -2367,7 +2367,7 @@ function argparser_create_args_definition() {
     message="Which file shall the arguments definition be written to?"
     printf '%s\n\n' "${message}"
 
-    read -r -p "Target file:  " file
+    read -r -p "Target file:  " file 2>&1
     printf '%s\n' "${separator}"
 
     # Get the arguments definition delimiters from user input.
@@ -2375,7 +2375,7 @@ function argparser_create_args_definition() {
     message+="definition delimiter?"
     printf '%s\n\n' "${message}"
 
-    read -r -p "Primary delimiter:  " delimiter
+    read -r -p "Primary delimiter:  " delimiter 2>&1
     printf '%s\n' "${separator}"
 
     # Get the arguments definition fields from user input.
@@ -2396,21 +2396,23 @@ function argparser_create_args_definition() {
     printf '%s\n\n' "${message}"
 
     while :; do
-        read -r -p "Argument identifier:  " arg_key
+        read -r -p "Argument identifier:  " arg_key 2>&1
         if [[ -z "${arg_key}" ]]; then
             break
         fi
 
-        read -r -p "Short option names:   " short_options
-        read -r -p "Long option names:    " long_options
-        read -r -p "Value names:          " value_names
-        read -r -p "Default values:       " default_values
-        read -r -p "Choice values:        " choice_values
-        read -r -p "Data type:            " type
-        read -r -p "Argument number:      " arg_number
-        read -r -p "Argument group:       " arg_group
-        read -r -p "Notes:                " note
-        read -r -p "Help text:            " help_text
+        {
+            read -r -p "Short option names:   " short_options
+            read -r -p "Long option names:    " long_options
+            read -r -p "Value names:          " value_names
+            read -r -p "Default values:       " default_values
+            read -r -p "Choice values:        " choice_values
+            read -r -p "Data type:            " type
+            read -r -p "Argument number:      " arg_number
+            read -r -p "Argument group:       " arg_group
+            read -r -p "Notes:                " note
+            read -r -p "Help text:            " help_text
+        } 2>&1
 
         col_arg_keys+=("${arg_key}")
         col_short_options+=("${short_options}")
