@@ -1056,18 +1056,10 @@ function argparser_read_configuration() {
     local error_message
     local -a error_messages
     local file_attributes
-    local is_extglob_set
     local line
     local -a lines
     local value
     local var
-
-    # Locally disable errexit and enable extglob.
-    local -
-    set +o errexit
-    shopt -q extglob
-    is_extglob_set="$?"
-    shopt -s extglob
 
     # Check if the configuration file exists and is readable.  Else,
     # output an error message and exit.  Since at this point of
@@ -1170,11 +1162,6 @@ function argparser_read_configuration() {
             error_messages+=("${error_message}")
         fi
     done
-
-    # Possibly disable extglob, if it was previously unset.
-    if (( is_extglob_set == 1 )); then
-        shopt -u extglob
-    fi
 
     # Sort, filter, colorize, and print all error messages, then exit,
     # as the environment variables should be correctly read.
@@ -5402,7 +5389,6 @@ function argparser_parse_args() {
     local -a given_positional_args
     local -A help_message_groups
     local i
-    local is_extglob_set
     local is_help
     local is_logo
     local is_positional
@@ -5426,15 +5412,6 @@ function argparser_parse_args() {
 
     # Read the arguments.
     given_args=("$@")
-
-    # Locally disable errexit and enable extglob.  Since all functions
-    # relying on the latter being set are called from argparser_main,
-    # they inherit the option.
-    local -
-    set +o errexit
-    shopt -q extglob
-    is_extglob_set="$?"
-    shopt -s extglob
 
     # If the Argparser is run as standalone script and not sourced, read
     # the arguments definition from STDIN into ${args} and remove
@@ -5848,11 +5825,6 @@ function argparser_parse_args() {
 
     if [[ "${ARGPARSER_ARG_ARRAY_NAME}" != "args" ]]; then
         unset args
-    fi
-
-    # Possibly disable extglob, if it was previously unset.
-    if (( is_extglob_set == 1 )); then
-        shopt -u extglob
     fi
 }
 
@@ -8474,6 +8446,7 @@ function argparser_main() {
     local -A all_types
     local -A all_value_names
     local -A dictionary
+    local is_extglob_set
     local is_self_parsing
     local is_sourced
     local -a script_args
@@ -8494,9 +8467,18 @@ function argparser_main() {
         is_sourced=false
     fi
 
-    # If ${ARGPARSER_CONFIG_FILE} is defined and not set to the empty
-    # string, read the configuration file.
-    if [[ -v ARGPARSER_CONFIG_FILE && -n "${ARGPARSER_CONFIG_FILE}" ]]; then
+    # Locally disable errexit, nounset, and pipefail, and enable
+    # extglob.  Since all functions are called from argparser_main, they
+    # inherit the options.
+    local -
+    set +o errexit +o nounset +o pipefail
+    shopt -q extglob
+    is_extglob_set="$?"
+    shopt -s extglob
+
+    # If ${ARGPARSER_CONFIG_FILE} isn't set to the empty string, read
+    # the configuration file.
+    if [[ -n "${ARGPARSER_CONFIG_FILE}" ]]; then
         argparser_read_configuration
     fi
 
@@ -8718,6 +8700,11 @@ function argparser_main() {
         unset ARGPARSER_VERSION_STYLE
         unset ARGPARSER_WARNING_STYLE
         unset ARGPARSER_WRITE_ARGS
+    fi
+
+    # Possibly disable extglob, if it was previously unset.
+    if (( is_extglob_set == 1 )); then
+        shopt -u extglob
     fi
 }
 
