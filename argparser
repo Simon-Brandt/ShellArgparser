@@ -1203,6 +1203,7 @@ function argparser_set_env_vars() {
     # ARGPARSER_CHECK_ENV_VARS
     # ARGPARSER_CONFIG_FILE
     # ARGPARSER_COUNT_FLAGS
+    # ARGPARSER_CREATE_ARG_DEF
     # ARGPARSER_DEBUG
     # ARGPARSER_ERROR_EXIT_CODE
     # ARGPARSER_ERROR_STYLE
@@ -1305,6 +1306,7 @@ function argparser_set_env_vars() {
         "ARGPARSER_CHECK_ENV_VARS            : check-env-vars            :              : false                :            : bool : 0      : Options   : check if the Argparser environment variables accord to their definition                                       "
         "ARGPARSER_CONFIG_FILE               : config-file               : FILE         : ''                   :            : file : 1      : Options   : the path to a file holding the Argparser configuration                                                        "
         "ARGPARSER_COUNT_FLAGS               : count-flags               :              : false                :            : bool : 0      : Options   : count flags instead of setting them to \"true\" or \"false\" based on the last prefix used on the command line"
+        "ARGPARSER_CREATE_ARG_DEF            : create-arg-def            :              : false                :            : bool : 0      : Options   : create the arguments definition for a script                                                                  "
         "ARGPARSER_DEBUG                     : debug                     :              : false                :            : bool : 0      : Options   : (EXPERT OPTION) run the Argparser in debug mode, writing the stack trace for each command to STDERR           "
         "ARGPARSER_ERROR_EXIT_CODE           : error-exit-code           : INT          : 1                    :            : int  : 1      : Options   : the exit code when errors occurred upon parsing                                                               "
         "ARGPARSER_ERROR_STYLE               : error-style               : STYLE        : red,bold,reverse     :            : str  : +      : Options   : the color and style specification for error messages                                                          "
@@ -1367,6 +1369,7 @@ function argparser_set_env_vars() {
         ARGPARSER_CHECK_ENV_VARS=false \
         ARGPARSER_CONFIG_FILE="" \
         ARGPARSER_COUNT_FLAGS=false \
+        ARGPARSER_CREATE_ARG_DEF=false \
         ARGPARSER_ERROR_EXIT_CODE=1 \
         ARGPARSER_ERROR_STYLE="red,bold,reverse" \
         ARGPARSER_HELP_ARG_GROUP="Help options" \
@@ -1512,6 +1515,7 @@ function argparser_check_env_vars() {
     # - ARGPARSER_CHECK_ENV_VARS (read-only)
     # - ARGPARSER_CONFIG_FILE (read-only)
     # - ARGPARSER_COUNT_FLAGS (read-only)
+    # - ARGPARSER_CREATE_ARG_DEF (read-only)
     # - ARGPARSER_DEBUG (read-only)
     # - ARGPARSER_ERROR_EXIT_CODE
     # - ARGPARSER_ERROR_STYLE
@@ -1581,6 +1585,7 @@ function argparser_check_env_vars() {
         ARGPARSER_CHECK_ARG_DEF
         ARGPARSER_CHECK_ENV_VARS
         ARGPARSER_COUNT_FLAGS
+        ARGPARSER_CREATE_ARG_DEF
         ARGPARSER_DEBUG
         ARGPARSER_HELP_FILE_KEEP_COMMENTS
         ARGPARSER_READ_ARGS
@@ -8421,6 +8426,7 @@ function argparser_main() {
     # - ARGPARSER_ARGS
     # - ARGPARSER_CHECK_ENV_VARS (read-only)
     # - ARGPARSER_CONFIG_FILE (read-only)
+    # - ARGPARSER_CREATE_ARG_DEF (read-only)
     # - ARGPARSER_HELP_ARG_GROUP
     # - ARGPARSER_HELP_DESCRIPTION
     # - ARGPARSER_POSITIONAL_ARG_GROUP
@@ -8556,6 +8562,14 @@ function argparser_main() {
         argparser_check_env_vars
     fi
 
+    # If ${ARGPARSER_CREATE_ARG_DEF} is set to "true", create the
+    # arguments definition, then exit, since the creation should not
+    # happen alongside the argument parsing.
+    if [[ "${ARGPARSER_CREATE_ARG_DEF}" == true ]]; then
+        argparser_create_args_definition
+        exit
+    fi
+
     # If ${ARGPARSER_READ_ARGS} is set to "true", read and parse the
     # arguments.
     if [[ "${ARGPARSER_READ_ARGS}" == true ]]; then
@@ -8668,6 +8682,7 @@ function argparser_main() {
         unset ARGPARSER_CHECK_ENV_VARS
         unset ARGPARSER_CONFIG_FILE
         unset ARGPARSER_COUNT_FLAGS
+        unset ARGPARSER_CREATE_ARG_DEF
         unset ARGPARSER_DEBUG
         unset ARGPARSER_ERROR_EXIT_CODE
         unset ARGPARSER_ERROR_STYLE
