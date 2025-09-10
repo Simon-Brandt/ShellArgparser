@@ -8433,6 +8433,13 @@ function argparser_main() {
     # - ARGPARSER_WRITE_ARGS (read-only)
     # - ARGPARSER_WRITE_ARGS (read-only)
 
+    # Possibly, enable the debug mode.
+    if [[ "$1" == "--debug" \
+        || (-v ARGPARSER_DEBUG && "${ARGPARSER_DEBUG}" == true) ]]
+    then
+        argparser_toggle_debugger start
+    fi
+
     # Define the local variables.
     local -A all_arg_groups
     local -A all_arg_numbers
@@ -8574,6 +8581,11 @@ function argparser_main() {
         argparser_write_args
     fi
 
+    # Possibly, disable the debug mode.
+    if [[ "$1" == "--debug" || "${ARGPARSER_DEBUG}" == true ]]; then
+        argparser_toggle_debugger stop
+    fi
+
     # If ${ARGPARSER_UNSET_FUNCTIONS} is set to "true", unset all
     # Argparser functions.  The names are used instead of a glob to
     # limit side effects with potentially same-named functions (i.e.,
@@ -8708,15 +8720,5 @@ function argparser_main() {
     fi
 }
 
-# Possibly, enable the debug mode.
-if [[ "$1" == "--debug" || "${ARGPARSER_DEBUG}" == true ]]; then
-    argparser_toggle_debugger start
-fi
-
 # Run the Argparser.
 argparser_main "$@"
-
-# Possibly, disable the debug mode.
-if [[ "$1" == "--debug" || "${ARGPARSER_DEBUG}" == true ]]; then
-    argparser_toggle_debugger stop
-fi
