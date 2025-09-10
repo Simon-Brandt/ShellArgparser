@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-09
+# Last Modification: 2025-09-10
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -1365,7 +1365,6 @@ function argparser_set_env_vars() {
         "script_args                         :                           : command_line :                      :            : str  : +      : Options   : the indexed array in which the Argparser stores the script's command line upon parsing its own arguments      "
     )
 
-    # shellcheck source=argparser
     ARGPARSER_ADD_HELP=true \
         ARGPARSER_ADD_USAGE=true \
         ARGPARSER_ADD_VERSION=true \
@@ -1424,7 +1423,7 @@ function argparser_set_env_vars() {
         ARGPARSER_VERSION_STYLE="bold" \
         ARGPARSER_WARNING_STYLE="red,bold" \
         ARGPARSER_WRITE_ARGS=false \
-        source "${BASH_SOURCE[0]}" "${args[@]}"
+        argparser_parse_args "${args[@]}"
 
     # Set the environment variables that aren't set yet as global
     # variables.  For all environment variables that weren't given by
@@ -4321,13 +4320,12 @@ function argparser_parse_arg() {
     # - is_positional_only: whether the positional arguments delimiter
     #   "--" has already been set and has not been unset by "++"
     #   (read-only)
-    # - is_sourced: whether the Argparser has been sourced (read-only)
+    # - is_self_parsing: whether the Argparser currently parses its own
+    #   arguments (read-only)
     # - messages: the parsed argument as message or an error message,
     #   starting with "Help", "Usage", "Version", "Logo",
     #   "Positional_Start", "Positional_End", "Error: " (translated),
     #   "Argument: ", "Prefix: ", or "Value: ", as indexed array
-    # - source_level: the depth of recursion upon sourcing the Argparser
-    #   (read-only)
     #
     # Environment:
     # - ARGPARSER_ADD_HELP (read-only)
@@ -4381,9 +4379,7 @@ function argparser_parse_arg() {
         error_message="${translation}"
         messages+=("${error_message}")
         messages+=("Argument: ${given_arg}")
-    elif [[ "${given_arg}" == "--argparser" \
-        && "${is_sourced}" == false \
-        && "${source_level}" == 2 ]]
+    elif [[ "${given_arg}" == "--argparser" && "${is_self_parsing}" == true ]]
     then
         # The argument is the magic string for the Argparser, which was
         # directly called and not run from another script.  Since the
@@ -5377,9 +5373,9 @@ function argparser_parse_args() {
     #   argument names
     # - all_short_options: the associative array holding the short
     #   option names
+    # - is_self_parsing: whether the Argparser currently parses its own
+    #   arguments (read-only)
     # - is_sourced: whether the Argparser has been sourced (read-only)
-    # - source_level: the depth of recursion upon sourcing the Argparser
-    #   (read-only)
     #
     # Globals:
     # - ${ARGPARSER_ARG_ARRAY_NAME}: the parsed and checked arguments
@@ -5448,7 +5444,7 @@ function argparser_parse_args() {
     # how it may be called by searching the set variables for a variable
     # name starting with "arg" to give a clearer error message.  If no
     # such variable name is found, skip that part of the message.
-    if [[ "${is_sourced}" == false && "${source_level}" == 1 ]]; then
+    if [[ "${is_sourced}" == false && "${is_self_parsing}" == false ]]; then
         ARGPARSER_ARG_ARRAY_NAME="args"
         local -a args
         if read -t 0 -u 0; then
@@ -5849,6 +5845,10 @@ function argparser_parse_args() {
     # shellcheck disable=SC2178  # Intentional string, not array.
     args="$(declare -p args)"
     declare -g -A "${ARGPARSER_ARG_ARRAY_NAME}"="${args#*=}"
+
+    if [[ "${ARGPARSER_ARG_ARRAY_NAME}" != "args" ]]; then
+        unset args
+    fi
 
     # Possibly disable extglob, if it was previously unset.
     if (( is_extglob_set == 1 )); then
@@ -8473,39 +8473,25 @@ function argparser_main() {
     local -A all_short_options
     local -A all_types
     local -A all_value_names
+    local -A dictionary
+    local is_self_parsing
+    local is_sourced
+    local -a script_args
     local translation
 
-    # Detect whether the Argparser is sourced or run as standalone
-    # script.  Is it is sourced, discern whether it has sourced itself.
-    if [[ ! -v is_sourced ]]; then
-        local source_level
-        local is_sourced=true
-    fi
+    # Declare the remaining internal variables.  Since ${ARGPARSER_ARGS}
+    # must be set in global scope within argparser_set_args, later, it's
+    # useless declaring it as local, here.
+    declare -a ARGPARSER_ARGS
+    local argparser_version="1.0.1 \"Acomys cahirinus\""
 
-    if (( "${#FUNCNAME[@]}" >= 5 )) && [[ "${FUNCNAME[4]}" == "source" ]]; then
-        source_level=2
-    elif (( "${#FUNCNAME[@]}" >= 2 )) && [[ "${FUNCNAME[1]}" == "source" ]]
-    then
-        if [[ "${is_sourced}" == true ]]; then
-            source_level=1
-        else
-            source_level=2
-        fi
+    # Detect whether the Argparser is sourced or run as standalone
+    # script.  In the former case, the second element of ${FUNCNAME[@]}
+    # is "source".
+    if (( "${#FUNCNAME[@]}" >= 2 )) && [[ "${FUNCNAME[1]}" == "source" ]]; then
+        is_sourced=true
     else
         is_sourced=false
-        source_level=1
-    fi
-
-    # If the Argparser hasn't sourced itself (i.e., the current
-    # recursion level is the outer one from the calling script), declare
-    # the internal variables.  Since ${ARGPARSER_ARGS} must be set in
-    # global scope within argparser_set_args, later, it's useless
-    # declaring it as local, here.
-    if [[ "${source_level}" == 1 ]]; then
-        declare -a ARGPARSER_ARGS
-        local argparser_version="1.0.1 \"Acomys cahirinus\""
-        local -A dictionary
-        local -a script_args
     fi
 
     # If ${ARGPARSER_CONFIG_FILE} is defined and not set to the empty
@@ -8514,17 +8500,40 @@ function argparser_main() {
         argparser_read_configuration
     fi
 
-    # If the Argparser hasn't sourced itself (i.e., the current
-    # recursion level is the outer one from the calling script), set the
-    # environment variables that aren't already set by the calling
-    # script or environment or read from the configuration file to
-    # prevent overriding them.  Then, set the script's command-line
+    # Set the environment variables that aren't already set by the
+    # calling script or environment or read from the configuration file
+    # to prevent overriding them.  Then, set the script's command-line
     # arguments (with the Argparser arguments being removed) as the
-    # current command line.
-    if [[ "${source_level}" == 1 ]]; then
-        argparser_set_env_vars "$@"
-        set -- "${script_args[@]}"
-    fi
+    # current command line.  Finally, reset the arrays holding the
+    # arguments definition data.
+    is_self_parsing=true
+    argparser_set_env_vars "$@"
+    set -- "${script_args[@]}"
+    is_self_parsing=false
+
+    unset all_arg_groups
+    unset all_arg_numbers
+    unset all_choice_values
+    unset all_default_values
+    unset all_help_texts
+    unset all_long_options
+    unset all_notes
+    unset all_positional_args
+    unset all_short_options
+    unset all_types
+    unset all_value_names
+
+    local -A all_arg_groups
+    local -A all_arg_numbers
+    local -A all_choice_values
+    local -A all_default_values
+    local -A all_help_texts
+    local -A all_long_options
+    local -A all_notes
+    local -a all_positional_args
+    local -A all_short_options
+    local -A all_types
+    local -A all_value_names
 
     # If ${ARGPARSER_TRANSLATION_FILE} isn't set to the empty string,
     # read the translation file.  To be able to use the localized names
@@ -8710,8 +8719,6 @@ function argparser_main() {
         unset ARGPARSER_WARNING_STYLE
         unset ARGPARSER_WRITE_ARGS
     fi
-
-    (( source_level-- ))
 }
 
 # Possibly, enable the debug mode.
