@@ -2291,8 +2291,8 @@ function argparser_translate() {
     translation="${string}"
 }
 
-# Define the Argparser functions for reading, parsing, and checking the
-# arguments definition.
+# Define the Argparser functions for creating, reading, parsing, and
+# checking the arguments definition.
 function argparser_create_args_definition() {
     # Create the arguments definition from user input and write it to a
     # file.
@@ -2596,9 +2596,14 @@ function argparser_create_args_definition() {
 
     # Output the arguments definition table either as Bash array or
     # POSIX multi-line string with subsequent help/usage/version flag
-    # checking.
+    # checking.  Possibly, precede the table with the needed environment
+    # variables.
     args_definition=( )
     if [[ "${shell}" == "Bash" ]]; then
+        if [[ "${delimiter}" != "${ARGPARSER_ARG_DELIMITER_1}" ]]; then
+            args_definition+=("ARGPARSER_ARG_DELIMITER_1=\"${delimiter}\"")
+        fi
+
         args_definition+=('args=(')
 
         for line in "${args[@]}"; do
@@ -2610,6 +2615,16 @@ function argparser_create_args_definition() {
             'source argparser -- "$@"'
         )
     else
+        # shellcheck disable=SC2016  # Intentional single-quoted expressions.
+        args_definition+=(
+            'export ARGPARSER_SCRIPT_NAME="${0##*/}"'
+            'export ARGPARSER_WRITE_ARGS=true'
+        )
+
+        if [[ "${delimiter}" != "${ARGPARSER_ARG_DELIMITER_1}" ]]; then
+            args_definition+=("export ARGPARSER_ARG_DELIMITER_1=\"${delimiter}\"")
+        fi
+
         args_definition+=('args='\')
 
         for line in "${args[@]}"; do
