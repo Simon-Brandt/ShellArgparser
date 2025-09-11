@@ -33,17 +33,18 @@ The following table lists all versions released so far:
 <!-- <table caption="List of Argparser releases"> -->
 *Tab. 6: List of Argparser releases.*
 
-| Version number | Codename           |
-| -------------- | ------------------ |
-| v1.0.1         | *Acomys cahirinus* |
-| v1.0.0         | *Acomys airensis*  |
+| Version number | Codename                  |
+| -------------- | ------------------------- |
+| v1.1.0         | *Biswamoyopterus biswasi* |
+| v1.0.1         | *Acomys cahirinus*        |
+| v1.0.0         | *Acomys airensis*         |
 
 You can obtain the version number of your Argparser copy by querying `argparser --version`:
 
 <!-- <include command="argparser --version" lang="console"> -->
 ```console
 $ argparser --version
-argparser v1.0.1 "Acomys cahirinus"
+argparser v1.1.0 "Biswamoyopterus biswasi"
 ```
 <!-- </include> -->
 
