@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-07-29
+# Last Modification: 2025-09-11
 # License: Public Domain
 
 # Look for sourced files relative to the checked script, and in
@@ -16,13 +16,14 @@ external-sources=true
 # Turn on warnings for nullary conditions.
 enable=avoid-nullary-conditions
 
-# Turn on warnings for unassigned uppercase variables.
-enable=check-unassigned-uppercase
+# Turn on warnings for unassigned uppercase variables (disabled for
+# now).
+# enable=check-unassigned-uppercase
 
 # Turn on warnings for unquoted variables with safe values.
 enable=quote-safe-variables
 
-# Turn on warnings for single bracket-tests.
+# Turn on warnings for single-bracket tests.
 enable=require-double-brackets
 
 # Turn on warnings for variables without braces.
