@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-10
+# Last Modification: 2025-09-11
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -1839,6 +1839,7 @@ function argparser_check_env_vars() {
     # Check the environment variables with mutually exclusive values.
     # First, check that the argument definition delimiters are
     # different.
+    # shellcheck disable=SC2153  # No misspelling for variable names.
     if [[ "${ARGPARSER_ARG_DELIMITER_1}" == "${ARGPARSER_ARG_DELIMITER_2}" ]]
     then
         error_message="Error: The environment variables "
@@ -2330,6 +2331,8 @@ function argparser_create_args_definition() {
     local file
     local help_text
     local i
+    local joined_words
+    local largest_col_width
     local line
     local long_options
     local message
@@ -2342,13 +2345,15 @@ function argparser_create_args_definition() {
     local value_names
 
     # Set the horizontal separator.
-    printf -v separator "%${COLUMNS:-79}s" ""
+    printf -v separator "%${ARGPARSER_MAX_WIDTH}s" ""
     separator="${separator// /-}"
 
     # Get the target shell from user input.
     message="Does your script use Bash (y) or only a POSIX-compliant shell "
     message+="(n)?"
-    printf '%s\n\n' "${message}"
+    argparser_fold "${message}" "${ARGPARSER_MAX_WIDTH}" 0
+    argparser_colorize "blue,bold" "${joined_words}" 1 true
+    printf '\n\n'
 
     while read -r -p "Bash usage (y/n):  " shell 2>&1; do
         if [[ "${shell}" == "y" ]]; then
@@ -2361,22 +2366,31 @@ function argparser_create_args_definition() {
         printf 'Please answer with "y" or "n".\n'
     done
 
-    printf '%s\n' "${separator}"
+    argparser_colorize "green,bold" "${separator}" 1 true
+    printf '\n'
 
     # Get the target file from user input.
     message="Which file shall the arguments definition be written to?"
-    printf '%s\n\n' "${message}"
+    argparser_fold "${message}" "${ARGPARSER_MAX_WIDTH}" 0
+    argparser_colorize "blue,bold" "${joined_words}" 1 true
+    printf '\n\n'
 
     read -r -p "Target file:  " file 2>&1
-    printf '%s\n' "${separator}"
+
+    argparser_colorize "green,bold" "${separator}" 1 true
+    printf '\n'
 
     # Get the arguments definition delimiters from user input.
     message="Which character do you want to use as primary arguments "
     message+="definition delimiter?"
-    printf '%s\n\n' "${message}"
+    argparser_fold "${message}" "${ARGPARSER_MAX_WIDTH}" 0
+    argparser_colorize "blue,bold" "${joined_words}" 1 true
+    printf '\n\n'
 
     read -r -p "Primary delimiter:  " delimiter 2>&1
-    printf '%s\n' "${separator}"
+
+    argparser_colorize "green,bold" "${separator}" 1 true
+    printf '\n'
 
     # Get the arguments definition fields from user input.
     col_arg_keys=("id")
@@ -2393,7 +2407,9 @@ function argparser_create_args_definition() {
 
     message="Enter the fields for each argument.  Submit an empty argument "
     message+="identifier to end the input."
-    printf '%s\n\n' "${message}"
+    argparser_fold "${message}" "${ARGPARSER_MAX_WIDTH}" 0
+    argparser_colorize "blue,bold" "${joined_words}" 1 true
+    printf '\n\n'
 
     while :; do
         read -r -p "Argument identifier:  " arg_key 2>&1
@@ -2426,7 +2442,8 @@ function argparser_create_args_definition() {
         col_notes+=("${note}")
         col_help_texts+=("${help_text}")
 
-        printf '%s\n' "${separator}"
+        argparser_colorize "green,bold" "${separator}" 1 true
+        printf '\n'
     done
 
     # Set each field in a column to the same width by right-padding with
@@ -2551,6 +2568,7 @@ function argparser_create_args_definition() {
     # dropping the fields of empty columns.
     args=()
     for i in "${!col_arg_keys[@]}"; do
+        # shellcheck disable=SC2190  # Indexed, not associative array.
         args+=("${col_arg_keys[i]}")
 
         if [[ "${drop_short_options}" == false ]]; then
@@ -8456,7 +8474,9 @@ function argparser_main() {
     # - ARGPARSER_WRITE_ARGS (read-only)
     # - ARGPARSER_WRITE_ARGS (read-only)
 
-    # Possibly, enable the debug mode.
+    # Possibly, enable the debug mode.  Since at this point, the shell
+    # option "nounset" may still be activated (from the parent script),
+    # the test for the variable's existence is necessary.
     if [[ "$1" == "--debug" \
         || (-v ARGPARSER_DEBUG && "${ARGPARSER_DEBUG}" == true) ]]
     then
