@@ -250,6 +250,10 @@ From the report for the `-b` option, an alias of `--var-2` for the option `var_2
 
 As you can see from the `-c` option, you can also use commas (again actually [`ARGPARSER_ARG_DELIMITER_2`](../reference/environment_variables/environment_variables.md#9412-argparser_arg_delimiter_2) characters) to pass multiple values at the same time. These have the same meaning as whitespace-delimited arguments, again with the exception of not interpreting hyphens as option names. As a stylistic advice, for scripts, use long options, the equals sign, and commas, as they tend to look clearer; whereas for simple command-line usage, take advantage of the short options and the ability to use spaces as delimiter, as both are faster to type.
 
+Generally, the Argparser will aggregate all arguments (values) given after a word starting with a hyphen (*i.e.*, an option name) to this option. If the number doesn't match the number of required values, an error is thrown instead of cutting the values. If an argument gets a wrong number of values, but has a default value, only a warning is thrown and the default value is taken.
+
+Thereby, [errors](error_and_warning_messages.md#59-error-and-warning-messages) abort the script, while [warnings](error_and_warning_messages.md#59-error-and-warning-messages) just write a message to `STDERR`. Even after parsing or value checking errors occurred, the parsing or value checking continues and the Argparser aggregates the error messages until the end, when all are printed, to simplify the correction of multiple mistakes.
+
 Regarding the positional arguments, we'll try the following:
 
 <!-- <include command="bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A -- 3" lang="console"> -->
