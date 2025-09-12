@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-11
+# Last Modification: 2025-09-12
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -7936,6 +7936,8 @@ function argparser_print_help_or_usage_message() {
     local -a lines
     local line_type
     local message
+    local -a resolved_lines
+    local skip_blank_line
     local -a sorted_array
     local style
     local translation
@@ -8016,12 +8018,60 @@ function argparser_print_help_or_usage_message() {
         lines=("${include_char}All")
     fi
 
-    # For each line, print the text and replace the include directives
-    # by the respective part from the help or usage message.  Possibly,
-    # skip comments.
+    # Resolve the summarizing include directives by replacing them with
+    # the individual include directives and separating blank lines.
+    resolved_lines=( )
+    for line in "${lines[@]}"; do
+        if [[ "${line::1}" != "${include_char}" ]]; then
+            resolved_lines+=("${line}")
+            continue
+        fi
+
+        include_directive="${line:1}"
+        if [[ "${help_type}" == "help" ]]; then
+            if [[ "${include_directive}" == "All" ]]; then
+                resolved_lines+=(
+                    "${include_char}Usage"
+                    ""
+                    "${include_char}Description"
+                    ""
+                    "${include_char}Remark"
+                    ""
+                )
+
+                for i in "${!arg_groups[@]}"; do
+                    resolved_lines+=("${include_char}${arg_groups[i]}")
+                    if (( i < "${#arg_groups[@]}" - 1 )); then
+                        resolved_lines+=("")
+                    fi
+                done
+            elif [[ "${include_directive}" == "Header" ]]; then
+                resolved_lines+=(
+                    "${include_char}Usage"
+                    ""
+                    "${include_char}Description"
+                    ""
+                    "${include_char}Remark"
+                )
+            else
+                resolved_lines+=("${line}")
+            fi
+        else
+            if [[ "${include_directive}" == "All" ]]; then
+                resolved_lines+=("${include_char}Usage")
+            else
+                resolved_lines+=("${line}")
+            fi
+        fi
+    done
+
+    # For each resolved line, print the text and replace the include
+    # directives by the respective part from the help or usage message.
+    # Possibly, skip comments.
     line_type="text"
     message=""
-    for line in "${lines[@]}"; do
+    skip_blank_line=false
+    for line in "${resolved_lines[@]}"; do
         # Set ${line_type} to "include directive" if the line contains
         # an include directive, to "comment" if the line is commented
         # and ${keep_comments} is "false", and to "text" if it is not
@@ -8034,47 +8084,19 @@ function argparser_print_help_or_usage_message() {
             line_type="include directive"
             include_directive="${line:1}"
             if [[ "${help_type}" == "help" ]]; then
-                if [[ "${include_directive}" == "All" ]]; then
-                    message+="${help_message_groups["Usage"]}"
-                    message+=$'\n'
-
+                if [[ "${include_directive}" == "Description" ]]; then
                     if [[ -n "${help_message_groups["Description"]}" ]]; then
                         message+="${help_message_groups["Description"]}"
-                        message+=$'\n'
-                    fi
-
-                    if (( keyword_args_count > 0 )); then
-                        message+="${help_message_groups["Remark"]}"
-                        message+=$'\n'
-                    fi
-
-                    for i in "${!arg_groups[@]}"; do
-                        message+="${help_message_groups[${arg_groups[i]}]}"
-                        if (( i < "${#arg_groups[@]}" - 1 )); then
-                            message+=$'\n'
-                        fi
-                    done
-                elif [[ "${include_directive}" == "Description" ]]; then
-                    if [[ -n "${help_message_groups["Description"]}" ]]; then
-                        message+="${help_message_groups["Description"]}"
-                    fi
-                elif [[ "${include_directive}" == "Header" ]]; then
-                    message+="${help_message_groups["Usage"]}"
-
-                    if [[ -n "${help_message_groups["Description"]}" ]]; then
-                        message+=$'\n'
-                        message+="${help_message_groups["Description"]}"
-                    fi
-
-                    if (( keyword_args_count > 0 )); then
-                        message+=$'\n'
-                        message+="${help_message_groups["Remark"]}"
+                    else
+                        skip_blank_line=true
                     fi
                 elif [[ "${include_directive}" == "Help" ]]; then
                     message+="${help_message_groups["${ARGPARSER_HELP_ARG_GROUP}"]}"
                 elif [[ "${include_directive}" == "Remark" ]]; then
                     if (( keyword_args_count > 0 )); then
                         message+="${help_message_groups["Remark"]}"
+                    else
+                        skip_blank_line=true
                     fi
                 elif [[ "${include_directive}" == "Usage" ]]; then
                     message+="${help_message_groups["Usage"]}"
@@ -8092,7 +8114,7 @@ function argparser_print_help_or_usage_message() {
                     error_messages+=("${error_message}")
                 fi
             else
-                if [[ "${include_directive}" == "All" ]]; then
+                if [[ "${include_directive}" == "Usage" ]]; then
                     message+="${usage_message_groups["Usage"]}"
                 else
                     error_message="Error: The include directive \"\$1\" could "
@@ -8110,11 +8132,16 @@ function argparser_print_help_or_usage_message() {
             line_type="text"
         fi
 
-        # If ${line_type} has been set to "text", print the current
-        # line.  If it is set to "include_directive", reset it to "text"
-        # to (possibly) print the next line, and only not the current
-        # "<ArgumentGroup>" line.
-        if [[ "${line_type}" == "text" ]]; then
+        # If ${skip_blank_line} is set to "true", skip the current line,
+        # which is empty by definition (it follows an include directive
+        # for an empty group).  Else, if ${line_type} has been set to
+        # "text", print the current line.  If it is set to
+        # "include_directive", reset it to "text" to (possibly) print
+        # the next line, and only not the current "<ArgumentGroup>"
+        # line.
+        if [[ "${skip_blank_line}" == true ]]; then
+            skip_blank_line=false
+        elif [[ "${line_type}" == "text" ]]; then
             message+="${line}"
             message+=$'\n'
         elif [[ "${line_type}" == "include directive" ]]; then
