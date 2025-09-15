@@ -7242,17 +7242,10 @@ function argparser_create_help_message() {
     # For each argument group, print its arguments.
     index=0
     for arg_group in "${arg_groups[@]}"; do
-        # Set the argument group's name for output.
-        if [[ "${arg_group}" == "${ARGPARSER_HELP_ARG_GROUP}" ]]; then
-            help_message=""
-        else
-            help_message="${arg_group}:"
-            help_message+=$'\n'
-        fi
-
         # For any argument line, output the three columns and their
         # delimiting whitespace.  If all three columns are empty, the
         # end of the current argument group has been reached.
+        help_message=""
         for (( i = index; i < "${#col_1[@]}"; i++ )); do
             if [[ -z "${col_1[i]}" && -z "${col_2[i]}" && -z "${col_3[i]}" ]]
             then
@@ -7919,6 +7912,7 @@ function argparser_print_help_or_usage_message() {
     # - ARGPARSER_USAGE_STYLE (read-only)
 
     # Define the local variables.
+    local add_heading
     local arg_group
     local -a arg_groups
     local count
@@ -8027,7 +8021,16 @@ function argparser_print_help_or_usage_message() {
             continue
         fi
 
-        include_directive="${line:1}"
+        # Extract the include directive, where the include character may
+        # be doubled.
+        if [[ "${line:1:1}" == "${include_char}" ]]; then
+            add_heading=false
+            include_directive="${line:2}"
+        else
+            add_heading=true
+            include_directive="${line:1}"
+        fi
+
         if [[ "${help_type}" == "help" ]]; then
             if [[ "${include_directive}" == "All" ]]; then
                 # Add the usage, description, and remark include
@@ -8042,11 +8045,25 @@ function argparser_print_help_or_usage_message() {
                 )
 
                 # Add the include directives for each arguments group.
-                # Terminate all but the last by a blank line.
+                # Terminate all but the last by a blank line.  If the
+                # last group is the help options group, double the
+                # include character to indicate that the heading shall
+                # be suppressed.
                 for i in "${!arg_groups[@]}"; do
-                    resolved_lines+=("${include_char}${arg_groups[i]}")
                     if (( i < "${#arg_groups[@]}" - 1 )); then
-                        resolved_lines+=("")
+                        resolved_lines+=(
+                            "${include_char}${arg_groups[i]}"
+                            ""
+                        )
+                    elif [[ "${ARGPARSER_ADD_HELP}" == true \
+                        || "${ARGPARSER_ADD_USAGE}" == true \
+                        || "${ARGPARSER_ADD_VERSION}" == true ]]
+                    then
+                        resolved_lines+=(
+                            "${include_char}${include_char}${arg_groups[i]}"
+                        )
+                    else
+                        resolved_lines+=("${include_char}${arg_groups[i]}")
                     fi
                 done
             elif [[ "${include_directive}" == "Header" ]]; then
@@ -8091,7 +8108,17 @@ function argparser_print_help_or_usage_message() {
         # given.
         if [[ "${line::1}" == "${include_char}" ]]; then
             line_type="include directive"
-            include_directive="${line:1}"
+
+            # Set the heading to be suppressed when the include
+            # character is doubled.
+            if [[ "${line:1:1}" == "${include_char}" ]]; then
+                add_heading=false
+                include_directive="${line:2}"
+            else
+                add_heading=true
+                include_directive="${line:1}"
+            fi
+
             if [[ "${help_type}" == "help" ]]; then
                 if [[ "${include_directive}" == "Description" ]]; then
                     # Add the description.
@@ -8101,7 +8128,11 @@ function argparser_print_help_or_usage_message() {
                         skip_blank_line=true
                     fi
                 elif [[ "${include_directive}" == "Help" ]]; then
-                    # Add the help options group.
+                    # Add the help options group, possibly with heading.
+                    if [[ "${add_heading}" == true ]]; then
+                        message+="${ARGPARSER_HELP_ARG_GROUP}:"
+                        message+=$'\n'
+                    fi
                     message+="${help_message_groups["${ARGPARSER_HELP_ARG_GROUP}"]}"
                 elif [[ "${include_directive}" == "Remark" ]]; then
                     # Add the remark.
@@ -8116,7 +8147,11 @@ function argparser_print_help_or_usage_message() {
                 elif argparser_in_array "${include_directive}" \
                     "${arg_groups[@]}"
                 then
-                    # Add the arguments group.
+                    # Add the arguments group, possibly with heading.
+                    if [[ "${add_heading}" == true ]]; then
+                        message+="${include_directive}:"
+                        message+=$'\n'
+                    fi
                     message+="${help_message_groups["${include_directive}"]}"
                 else
                     # Output an error message for the unrecognized and
