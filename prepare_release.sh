@@ -65,11 +65,13 @@ sed --in-place --regexp-extended \
     --expression="s/${pattern_version}/${replacement_version}/" \
     tests/run_tests.sh
 
-# Replace the version info in the issue template for bugs.
-pattern_version='- v[1-9][0-9]*\.[0-9]+\.[0-9]+ "[[:alpha:]]+ [[:alpha:]]+"'
-replacement_version='- v'"${version_number}"' "'"${codename}"'"'
+# Add the version info to the list of Argparser releases in the issue
+# template for bugs.
+pattern_version='        - v[1-9][0-9]*\.[0-9]+\.[0-9]+ "[[:alpha:]]+ '
+pattern_version+='[[:alpha:]]+"'
+replacement_version='        - v'"${version_number}"' "'"${codename}"'"'
 sed --in-place --regexp-extended \
-    --expression="s/${pattern_version}/${replacement_version}/" \
+    --expression="0,/${pattern_version}/s//${replacement_version}\n&/" \
     .github/ISSUE_TEMPLATE/bug.yaml
 
 # Add the version info to the list of Argparser releases in the
