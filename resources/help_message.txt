@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-07-29
+# Last Modification: 2025-09-15
 # License: Public Domain
 
 # Purpose: Print a help message for test_help_message.sh, invoked by
@@ -18,17 +18,17 @@ A brief header summarizes the way how to interpret the help message.
 @Header
 
 # Print the positional arguments.
-The following arguments are positional.
-@Positional arguments
+The following arguments are positional:
+@@Positional arguments
 
 # Print the options from the "Mandatory options" group.
-The following options have no default value.
-@Mandatory options
+The following options have no default value:
+@@Mandatory options
 
 # Print the options from the "Optional options" group.
-The following options have a default value.
-@Optional options
+The following options have a default value:
+@@Optional options
 
 # Print the three help options.
-There are always three options for the help messages.
-@Help
+There are always three options for the help messages:
+@@Help

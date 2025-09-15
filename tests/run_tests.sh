@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-11
+# Last Modification: 2025-09-15
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -1361,19 +1361,16 @@ Usage: test_help_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 Mandatory arguments to long options are mandatory for short options too.
 
 The following arguments are positional.
-Positional arguments:
 [pos_1={1,2}]              one positional argument with default and choice
                            (default: 2)
 pos_2                      two positional arguments without default or choice
 
 The following options have no default value.
-Mandatory options:
 -a,       --var-1=VAL_1    one value without default or choice
 -b,       --var-2=VAL_2... at least one value without default or choice
 -c,       --var-3={A,B}... at least one value with choice
 
 The following options have a default value.
-Optional options:
 [-d={A,B,C}]               one value with default and choice (default: "A")
           [--var-5=VAL_5]  one value with default (default: "E")
 [-f],     [--var-6]        no value (flag) with default (default: false)
@@ -1488,19 +1485,16 @@ Usage: test_localization.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 Mandatory arguments to long options are mandatory for short options too.
 
 The following arguments are positional.
-Positional arguments:
 [pos_1={1,2}]              one positional argument with default and choice
                            (default: 2)
 pos_2                      two positional arguments without default or choice
 
 The following options have no default value.
-Mandatory options:
 -a,       --var-1=VAL_1    one value without default or choice
 -b,       --var-2=VAL_2... at least one value without default or choice
 -c,       --var-3={A,B}... at least one value with choice
 
 The following options have a default value.
-Optional options:
 [-d={A,B,C}]               one value with default and choice (default: "A")
           [--var-5=VAL_5]  one value with default (default: "E")
 [-f],     [--var-6]        no value (flag) with default (default: false)
@@ -1528,19 +1522,16 @@ Aufruf: test_localization.sh [OPTIONEN] ARGUMENTE -- [pos_1] pos_2
 Erforderliche Argumente für lange Optionen sind auch für kurze erforderlich.
 
 Die folgenden Argumente sind positional.
-Positionale Argumente:
 [pos_1={1,2}]              ein positionales Argument mit Vorgabe und Auswahl
                            (Vorgabe: 2)
 pos_2                      zwei positionale Argumente ohne Vorgabe oder Auswahl
 
 Die folgenden Optionen haben keinen Vorgabewert.
-Erforderliche Optionen:
 -a,       --var-1=VAL_1    ein Wert ohne Vorgabe oder Auswahl
 -b,       --var-2=VAL_2... mindestens ein Wert ohne Vorgabe oder Auswahl
 -c,       --var-3={A,B}... mindestens ein Wert mit Auswahl
 
 Die folgenden Optionen haben einen Vorgabewert.
-Optionale Optionen:
 [-d={A,B,C}]               ein Wert mit Vorgabe und Auswahl (Vorgabe: "A")
           [--var-5=VAL_5]  ein Wert mit Vorgabe (Vorgabe: "E")
 [-f],     [--var-6]        kein Wert (Flag) mit Vorgabe (Vorgabe: falsch)
