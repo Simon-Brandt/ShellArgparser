@@ -20,11 +20,11 @@
 
 ### 9.1. Arguments definition
 
-The arguments definition that the Argparser uses to parse the arguments and to create the help and usage messages shows a tabular structure with eleven columns. These columns are delimited by an [`ARGPARSER_ARG_DELIMITER_1`](environment_variables/environment_variables.md#9411-argparser_arg_delimiter_1) character each, by default a pipe (`"|"`). Since fields can be surrounded by an arbitrary number of spaces, visual alignment as true table is possible.
+The arguments definition that the Argparser uses to parse the arguments and to create the help and usage messages shows a tabular structure with eleven columns. These columns are delimited by an [`ARGPARSER_ARG_DELIMITER_1`](environment_variables/environment_variables.md#9412-argparser_arg_delimiter_1) character each, by default a pipe (`"|"`). Since fields can be surrounded by an arbitrary number of spaces, visual alignment as true table is possible.
 
 Additionally, a header must be given, using the identifiers shown below. By this, the order of the columns is arbitrary, but there should be little reason to deviate from the default order. Still, it is possible to omit columns, whose fields are then populated by default values.
 
-The values in multi-value fields are delimited by an [`ARGPARSER_ARG_DELIMITER_2`](environment_variables/environment_variables.md#9412-argparser_arg_delimiter_2) character, by default a comma (`","`). The absence of a value is indicated by the empty string, resulting after trimming spaces. That is, a field consisting of only spaces means absence.
+The values in multi-value fields are delimited by an [`ARGPARSER_ARG_DELIMITER_2`](environment_variables/environment_variables.md#9413-argparser_arg_delimiter_2) character, by default a comma (`","`). The absence of a value is indicated by the empty string, resulting after trimming spaces. That is, a field consisting of only spaces means absence.
 
 <!-- <toc title="Table of contents (Arguments definition)"> -->
 #### Table of contents (Arguments definition)
@@ -44,15 +44,15 @@ The values in multi-value fields are delimited by an [`ARGPARSER_ARG_DELIMITER_2
 
 #### 9.1.1. Argument ID (`id`)
 
-The argument identifier must be a valid variable identifier in Bash syntax (at least when [`ARGPARSER_SET_ARGS`](environment_variables/environment_variables.md#9438-argparser_set_args) is set to `true`, else, the ID is only used as key in associative arrays). These are defined as a word beginning with an alphabetic character or an underscore, followed by an arbitrary number of alphanumeric characters or underscores. In Bash's extglob syntax, the regular expression for verification may look like `[[:alpha:]_]*([[:word:]])`, assuming C locale.
+The argument identifier must be a valid variable identifier in Bash syntax (at least when [`ARGPARSER_SET_ARGS`](environment_variables/environment_variables.md#9439-argparser_set_args) is set to `true`, else, the ID is only used as key in associative arrays). These are defined as a word beginning with an alphabetic character or an underscore, followed by an arbitrary number of alphanumeric characters or underscores. In Bash's extglob syntax, the regular expression for verification may look like `[[:alpha:]_]*([[:word:]])`, assuming C locale.
 
 #### 9.1.2. Short option names (`short_opts`)
 
-The short option names must comprise exactly one character, thereby, no leading hyphen may be given. Multiple short option names that shall be treated as aliases for the same option must be separated by an [`ARGPARSER_ARG_DELIMITER_2`](environment_variables/environment_variables.md#9412-argparser_arg_delimiter_2) character. Bash is case-sensitive, so is the checking for option names. Thus, you would need to provide both `a` and `A` as short option names if you want both to be recognized. This distinction effectively allows doubling the number of available short option names defined as letters (`a-z` and `A-Z`).
+The short option names must comprise exactly one character, thereby, no leading hyphen may be given. Multiple short option names that shall be treated as aliases for the same option must be separated by an [`ARGPARSER_ARG_DELIMITER_2`](environment_variables/environment_variables.md#9413-argparser_arg_delimiter_2) character. Bash is case-sensitive, so is the checking for option names. Thus, you would need to provide both `a` and `A` as short option names if you want both to be recognized. This distinction effectively allows doubling the number of available short option names defined as letters (`a-z` and `A-Z`).
 
 #### 9.1.3. Long option names (`long_opts`)
 
-The long option names must comprise more than one character, thereby, no leading hyphen may be given. Multiple long option names that shall be treated as aliases for the same option must be separated by an [`ARGPARSER_ARG_DELIMITER_2`](environment_variables/environment_variables.md#9412-argparser_arg_delimiter_2) character.
+The long option names must comprise more than one character, thereby, no leading hyphen may be given. Multiple long option names that shall be treated as aliases for the same option must be separated by an [`ARGPARSER_ARG_DELIMITER_2`](environment_variables/environment_variables.md#9413-argparser_arg_delimiter_2) character.
 
 #### 9.1.4. Value names (`val_names`)
 
@@ -64,7 +64,7 @@ Positional and keyword arguments may have default values, which are assigned to 
 
 #### 9.1.6. Choice values (`choices`)
 
-It is possible to restrict the range of acceptable values for an argument to a set indicated by the choice values. If [default values](#915-default-values-defaults) are given, they must lie within the choice values. The choice values are delimited by [`ARGPARSER_ARG_DELIMITER_2`](environment_variables/environment_variables.md#9412-argparser_arg_delimiter_2) characters, while each item may be given as range in the form `1-9` or `A-Z-2`. The first hyphen-delimited value is the start character, the second the stop character (both inclusive), and the optional third value the step size, defaulting to `1`. The start and stop characters must be either integers, floats, or alphabetical characters (from the `[:alpha:]` POSIX character class), the step an integer or float (an integer for character sequences). `true` and `false` may not be given as choice values.
+It is possible to restrict the range of acceptable values for an argument to a set indicated by the choice values. If [default values](#915-default-values-defaults) are given, they must lie within the choice values. The choice values are delimited by [`ARGPARSER_ARG_DELIMITER_2`](environment_variables/environment_variables.md#9413-argparser_arg_delimiter_2) characters, while each item may be given as range in the form `1-9` or `A-Z-2`. The first hyphen-delimited value is the start character, the second the stop character (both inclusive), and the optional third value the step size, defaulting to `1`. The start and stop characters must be either integers, floats, or alphabetical characters (from the `[:alpha:]` POSIX character class), the step an integer or float (an integer for character sequences). `true` and `false` may not be given as choice values.
 
 #### 9.1.7. Data type (`type`)
 
@@ -80,11 +80,11 @@ The Argparser defines several data types an argument may have. Using the regular
 
 #### 9.1.8. Argument count (`arg_no`)
 
-The argument count defines the number of values a keyword or positional argument may accept. Independent of this count, the Argparser will aggregate any non-hyphenated value to the previous keyword argument, or, if none is given yet, add it to the positional arguments. The argument count may be given as natural number (*i.e.*, as unsigned integer), including `0` as sign for flags, or as plus sign (`+`), asterisk (`*`), or question mark (`?`). The latter mean to accept as many values as given, at least one, or at least zero, or zero to one, respectively.  These mirror a feature in the Python [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module") module, which reflects their meaning in Perl-compatible regular expressions (PCRE).
+The argument count defines the number of values a keyword or positional argument may accept. Independent of this count, if [`ARGPARSER_ALLOW_ARG_INTERMIXING`](environment_variables/environment_variables.md#945-argparser_allow_arg_intermixing) is set to `false`, the Argparser will aggregate any non-hyphenated value to the previous keyword argument, or, if none is given yet, add it to the positional arguments. The argument count may be given as natural number (*i.e.*, as unsigned integer), including `0` as sign for flags, or as plus sign (`+`), asterisk (`*`), or question mark (`?`). The latter mean to accept as many values as given, at least one, or at least zero, or zero to one, respectively.  These mirror a feature in the Python [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module") module, which reflects their meaning in Perl-compatible regular expressions (PCRE).
 
 #### 9.1.9. Argument group (`arg_group`)
 
-The argument groups serve to group some arguments in the help message. One group shall comprise all positional arguments (if any is defined) and is named by [`ARGPARSER_POSITIONAL_ARG_GROUP`](environment_variables/environment_variables.md#9435-argparser_positional_arg_group). Any other argument group shall only contain keyword arguments (options), and is sorted alphabetically in the help message. In the future, argument groups might be expanded to allow actual grouping of arguments upon parsing, such that options may only be given together or mutually exclusively.
+The argument groups serve to group some arguments in the help message. One group shall comprise all positional arguments (if any is defined) and is named by [`ARGPARSER_POSITIONAL_ARG_GROUP`](environment_variables/environment_variables.md#9436-argparser_positional_arg_group). Any other argument group shall only contain keyword arguments (options), and is sorted alphabetically in the help message. In the future, argument groups might be expanded to allow actual grouping of arguments upon parsing, such that options may only be given together or mutually exclusively.
 
 #### 9.1.10. Notes (`notes`)
 
@@ -92,7 +92,7 @@ The notes are intended to give additional information about arguments that don't
 
 #### 9.1.11. Help text (`help`)
 
-The help text should consist of a terse summary of the argument's function, like turning a feature on or off (which may be accomplished by flags), what a file is used for (like for input or output), or how your script's output may be modified. A help text can take any form, but be wary of it being wrapped to fit the width of the third column in the help message (if [`ARGPARSER_MAX_COL_WIDTH_3`](environment_variables/environment_variables.md#9433-argparser_max_col_width_3) is non-zero) or the total line length ([`ARGPARSER_MAX_WIDTH`](environment_variables/environment_variables.md#9434-argparser_max_width)). Help messages are no replacement for the manual, so the help text shouldn't be overly verbose.
+The help text should consist of a terse summary of the argument's function, like turning a feature on or off (which may be accomplished by flags), what a file is used for (like for input or output), or how your script's output may be modified. A help text can take any form, but be wary of it being wrapped to fit the width of the third column in the help message (if [`ARGPARSER_MAX_COL_WIDTH_3`](environment_variables/environment_variables.md#9434-argparser_max_col_width_3) is non-zero) or the total line length ([`ARGPARSER_MAX_WIDTH`](environment_variables/environment_variables.md#9435-argparser_max_width)). Help messages are no replacement for the manual, so the help text shouldn't be overly verbose.
 
 [&#129092;&nbsp;Table of contents (Reference)](toc.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[9.2. Colors and styles&nbsp;&#129094;](colors_and_styles.md)

@@ -168,11 +168,11 @@ bash docopts_wrapper.sh -v -a 2 -n "A. R. G. Parser" -r b template.html argparse
 # Merged short options.
 bash docopts_wrapper.sh -va 2 -n "A. R. G. Parser" -r b template.html argparser.html
 
-# Positional arguments delimiter "--".
-bash docopts_wrapper.sh --verbose --name="A. R. G. Parser" --age=2 --role=b -- template.html argparser.html
-
 # Leading positional arguments.
 bash docopts_wrapper.sh template.html argparser.html --verbose --name="A. R. G. Parser" --age=2 --role=b
+
+# Positional arguments delimiter "--".
+bash docopts_wrapper.sh --verbose --name="A. R. G. Parser" --age=2 --role=b -- template.html argparser.html
 
 # Intermixed positional arguments.
 bash docopts_wrapper.sh --verbose --name="A. R. G. Parser" template.html --age=2 argparser.html --role=b

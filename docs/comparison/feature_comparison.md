@@ -42,7 +42,7 @@ In the following table, "&#10008;" marks the absence of a feature, "&#10004;" it
 | Mandatory options                           | &#10004;     | &#10004;      | &#10008;      | &#10008;      | &#10008;     | &#10004;     |
 | Flags (Boolean options)                     | &#10004;     | &#10004;      | &#10004;      | &#10004;      | &#10004;     | &#10004;     |
 | Mutually exclusive arguments                | &#10008;[^2] | &#10004;      | &#10008;      | &#10008;      | &#10008;     | &#10004;     |
-| Intermixed positional and keyword arguments | &#10008;[^3] | &#10004;      | &#10008;      | &#10004;      | &#10008;     | &#10004;     |
+| Intermixed positional and keyword arguments | &#10004;     | &#10004;      | &#10008;      | &#10004;      | &#10008;     | &#10004;     |
 | Argument groups                             | &#10004;     | &#10004;      | &#10008;      | &#10008;      | &#10008;     | &#10008;     |
 | Positional arguments delimiter `--`         | &#10004;     | &#10004;      | &#10004;      | &#10004;      | &#10004;     | &#10004;     |
 | Positional arguments delimiter `++`         | &#10004;     | &#10008;      | &#10008;      | &#10008;      | &#10008;     | &#10008;     |

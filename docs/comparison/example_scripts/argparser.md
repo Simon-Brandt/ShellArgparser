@@ -65,27 +65,28 @@ Example calls:
 
 ```bash
 # Long options.
-bash argparser_wrapper.sh --verbose --name="A. R. G. Parser" --age=2 --role=b -- template.html argparser.html
+bash argparser_wrapper.sh --verbose --name="A. R. G. Parser" --age=2 --role=b template.html argparser.html
 
 # Short options.
-bash argparser_wrapper.sh -v -n "A. R. G. Parser" -a 2 -r b -- template.html argparser.html
+bash argparser_wrapper.sh -v -n "A. R. G. Parser" -a 2 -r b template.html argparser.html
 
 # Leading positional arguments.
 bash argparser_wrapper.sh template.html argparser.html -v -n "A. R. G. Parser" -a 2 -r b
 
+# Positional arguments delimiter "--".
+bash argparser_wrapper.sh --verbose --name="A. R. G. Parser" --age=2 --role=b -- template.html argparser.html
+
 # Positional arguments delimiter "++".
 bash argparser_wrapper.sh -v -n "A. R. G. Parser" -- template.html argparser.html ++ -a 2 -r b
+
+# Intermixed positional arguments.
+bash argparser_wrapper.sh --verbose --name="A. R. G. Parser" template.html --age=2 argparser.html --role=b
 
 # Help, usage, and version messages.
 bash argparser_wrapper.sh --help
 bash argparser_wrapper.sh --usage
 bash argparser_wrapper.sh --version
 ```
-
-Notes:
-
-- Trailing positional arguments must be delimited with `--` since the Argparser aggregates all values after option names to them, as design decision.
-- Intermixing positional and keyword arguments can be emulated by using the positional arguments delimiter `++`. True intermixing is yet disabled as design decision.
 
 [&#129092;&nbsp;6.2.4. docopts](docopts.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[6.3. Runtime comparison&nbsp;&#129094;](../runtime_comparison.md)

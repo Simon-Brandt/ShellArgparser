@@ -21,17 +21,17 @@
 #### 9.5.1. `Positional arguments`
 
 - ***Message:*** `Positional arguments`
-- ***Description:*** The name of the positional arguments' argument group in the arguments definition, to be shown in the help message, *i.e.*, the translated [`ARGPARSER_POSITIONAL_ARG_GROUP`](../environment_variables/environment_variables.md#9435-argparser_positional_arg_group).
+- ***Description:*** The name of the positional arguments' argument group in the arguments definition, to be shown in the help message, *i.e.*, the translated [`ARGPARSER_POSITIONAL_ARG_GROUP`](../environment_variables/environment_variables.md#9436-argparser_positional_arg_group).
 
 #### 9.5.2. `Help options`
 
 - ***Message:*** `Help options`
-- ***Description:*** The name of the help options' argument group in the arguments definition, to be shown in the help message, *i.e.*, the translated [`ARGPARSER_HELP_ARG_GROUP`](../environment_variables/environment_variables.md#9422-argparser_help_arg_group).
+- ***Description:*** The name of the help options' argument group in the arguments definition, to be shown in the help message, *i.e.*, the translated [`ARGPARSER_HELP_ARG_GROUP`](../environment_variables/environment_variables.md#9423-argparser_help_arg_group).
 
 #### 9.5.3. `Help description`
 
 - ***Message:*** `""`
-- ***Description:*** The script's description, indicating its purpose in the help message, *i.e.*, the translated [`ARGPARSER_HELP_DESCRIPTION`](../environment_variables/environment_variables.md#9423-argparser_help_description). The value is empty by default, and hence also the translations.
+- ***Description:*** The script's description, indicating its purpose in the help message, *i.e.*, the translated [`ARGPARSER_HELP_DESCRIPTION`](../environment_variables/environment_variables.md#9424-argparser_help_description). The value is empty by default, and hence also the translations.
 
 #### 9.5.4. `Error`
 
@@ -76,17 +76,17 @@
 #### 9.5.12. `--help`
 
 - ***Message:*** `display this help and exit`
-- ***Description:*** the help text for the help options, *i.e.*, the [`ARGPARSER_HELP_OPTIONS`](../environment_variables/environment_variables.md#9428-argparser_help_options) and `--help`, if [`ARGPARSER_ADD_HELP`](../environment_variables/environment_variables.md#942-argparser_add_help) is set to `true`.
+- ***Description:*** the help text for the help options, *i.e.*, the [`ARGPARSER_HELP_OPTIONS`](../environment_variables/environment_variables.md#9429-argparser_help_options) and `--help`, if [`ARGPARSER_ADD_HELP`](../environment_variables/environment_variables.md#942-argparser_add_help) is set to `true`.
 
 #### 9.5.13. `--usage`
 
 - ***Message:*** `display the usage and exit`
-- ***Description:*** the help text for the usage options, *i.e.*, the [`ARGPARSER_USAGE_OPTIONS`](../environment_variables/environment_variables.md#9452-argparser_usage_options) and `--usage`, if [`ARGPARSER_ADD_USAGE`](../environment_variables/environment_variables.md#943-argparser_add_usage) is set to `true`.
+- ***Description:*** the help text for the usage options, *i.e.*, the [`ARGPARSER_USAGE_OPTIONS`](../environment_variables/environment_variables.md#9453-argparser_usage_options) and `--usage`, if [`ARGPARSER_ADD_USAGE`](../environment_variables/environment_variables.md#943-argparser_add_usage) is set to `true`.
 
 #### 9.5.14. `--version`
 
 - ***Message:*** `display the version and exit`
-- ***Description:*** the help text for the version options, *i.e.*, the [`ARGPARSER_VERSION_OPTIONS`](../environment_variables/environment_variables.md#9459-argparser_version_options) and `--version`, if [`ARGPARSER_ADD_VERSION`](../environment_variables/environment_variables.md#944-argparser_add_version) is set to `true`.
+- ***Description:*** the help text for the version options, *i.e.*, the [`ARGPARSER_VERSION_OPTIONS`](../environment_variables/environment_variables.md#9460-argparser_version_options) and `--version`, if [`ARGPARSER_ADD_VERSION`](../environment_variables/environment_variables.md#944-argparser_add_version) is set to `true`.
 
 #### 9.5.15. `false`
 
@@ -102,7 +102,7 @@
 
 - ***Message:*** `Error: The environment variable "$1" is set to "$2", but must be a Boolean, i.e., "true" or "false".`
 - ***Description:*** The error that an environment variable is not a Boolean.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value not according to the data type `bool`. These Boolean values must be either `true` or `false`.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value not according to the data type `bool`. These Boolean values must be either `true` or `false`.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -111,7 +111,7 @@
 
 - ***Message:*** `Error: The environment variable "$1" is set to "$2", but must be a character, i.e., a string comprising one printable ASCII character.`
 - ***Description:*** The error that an environment variable is not a character.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value not according to the data type `char`. These characters must be strings comprising one printable ASCII character.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value not according to the data type `char`. These characters must be strings comprising one printable ASCII character.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -120,7 +120,7 @@
 
 - ***Message:*** `Error: The environment variable "$1" is set to "$2", but designed to be used as Bash variable identifier, i.e., its value must start with a letter or underscore and contain only letters, digits, and underscores.`
 - ***Description:*** The error that an environment variable is not usable as a Bash variable identifier.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value not matched by the regular expression `[[:alpha:]_]*([[:word:]])` in Bash's extglob syntax.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value not matched by the regular expression `[[:alpha:]_]*([[:word:]])` in Bash's extglob syntax.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -129,7 +129,7 @@
 
 - ***Message:*** `Error: The environment variable "$1" is set to "$2", but must be an integer, i.e., comprise only digits and possibly a leading sign.`
 - ***Description:*** The error that an environment variable is not an integer.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value not according to the data type `int`. These integers must comprise only digits and possibly a leading sign.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value not according to the data type `int`. These integers must comprise only digits and possibly a leading sign.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -138,7 +138,7 @@
 
 - ***Message:*** `Error: The environment variable "$1" is set to "$2", but must be an unsigned integer, i.e., comprise only digits and no sign.`
 - ***Description:*** The error that an environment variable is not an unsigned integer.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value not according to the data type `uint`. These unsigned integers must comprise only digits and no sign.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value not according to the data type `uint`. These unsigned integers must comprise only digits and no sign.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -147,7 +147,7 @@
 
 - ***Message:*** `Error: The environment variable "$1" is set to "$2", but the referenced file is empty.`
 - ***Description:*** The error that an environment variable refers to an empty file.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found empty.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found empty.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -156,7 +156,7 @@
 
 - ***Message:*** `Error: The environment variable "$1" is set to "$2", but the referenced file is not readable.`
 - ***Description:*** The error that an environment variable refers to a file which is not readable.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found not to be readable.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found not to be readable.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -165,7 +165,7 @@
 
 - ***Message:*** `Error: The environment variable "$1" is set to "$2", but the referenced file is not readable and empty.`
 - ***Description:*** The error that an environment variable refers to an empty file which is also not readable.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found empty and not to be readable.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found empty and not to be readable.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -174,7 +174,7 @@
 
 - ***Message:*** `Error: The environment variable "$1" is set to "$2", but the referenced file is not a regular file.`
 - ***Description:*** The error that an environment variable refers to a file which is not a regular file.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found not to be a regular file, like a directory, pipe, or socket.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found not to be a regular file, like a directory, pipe, or socket.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -183,7 +183,7 @@
 
 - ***Message:*** `Error: The environment variable "$1" is set to "$2", but the referenced file is not a regular file and empty.`
 - ***Description:*** The error that an environment variable refers to an empty file which is also not a regular file.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found empty and not to be a regular file, like a directory, pipe, or socket.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found empty and not to be a regular file, like a directory, pipe, or socket.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -192,7 +192,7 @@
 
 - ***Message:*** `Error: The environment variable "$1" is set to "$2", but the referenced file is not a regular file and not readable.`
 - ***Description:*** The error that an environment variable refers to a file which is not a regular file and also not readable.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found not to be a regular file, like a directory, pipe, or socket, and also not readable.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found not to be a regular file, like a directory, pipe, or socket, and also not readable.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -201,7 +201,7 @@
 
 - ***Message:*** `Error: The environment variable "$1" is set to "$2", but the referenced file is not a regular file, not readable, and empty.`
 - ***Description:*** The error that an environment variable refers to an empty file which is also not a regular file and not readable.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found empty and not to be a regular file, like a directory, pipe, or socket, and also not readable.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file has been found empty and not to be a regular file, like a directory, pipe, or socket, and also not readable.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -210,7 +210,7 @@
 
 - ***Message:*** `Error: The environment variable "$1" is set to "$2", but the referenced file does not exist.`
 - ***Description:*** The error that an environment variable refers to a nonexistent file.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file does not exist.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to point to a file, but this file does not exist.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -219,7 +219,7 @@
 
 - ***Message:*** `Error: The environment variable "$1" is set to "$2", but hyphens, plus signs, asterisks, and question marks are reserved characters.`
 - ***Description:*** The error that an environment variable uses a reserved character as arguments definition delimiter.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variable [`ARGPARSER_ARG_DELIMITER_1`](../environment_variables/environment_variables.md#9411-argparser_arg_delimiter_1) or [`ARGPARSER_ARG_DELIMITER_2`](../environment_variables/environment_variables.md#9412-argparser_arg_delimiter_2), provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value used as argument delimiter, but the respective character is reserved. Hyphens may be used to indicate `STDIN`, while plus signs are used to denote arguments accepting an infinite number of arguments (at least one). Asterisks and question marks are reserved for the same reason, as they will be used to indicate other argument counts in a later Argparser version. Additionally, hyphens and plus signs are used as option prefixes on the command line (not in the arguments definition), so may be confused with prefixes when given in the arguments definition.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variable [`ARGPARSER_ARG_DELIMITER_1`](../environment_variables/environment_variables.md#9412-argparser_arg_delimiter_1) or [`ARGPARSER_ARG_DELIMITER_2`](../environment_variables/environment_variables.md#9413-argparser_arg_delimiter_2), provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value used as argument delimiter, but the respective character is reserved. Hyphens may be used to indicate `STDIN`, while plus signs are used to denote arguments accepting an infinite number of arguments (at least one). Asterisks and question marks are reserved for the same reason, as they will be used to indicate other argument counts in a later Argparser version. Additionally, hyphens and plus signs are used as option prefixes on the command line (not in the arguments definition), so may be confused with prefixes when given in the arguments definition.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -228,7 +228,7 @@
 
 - ***Message:*** `Error: The environment variable "$1" is set to "$2", but the values must lie in {black, red, green, yellow, blue, magenta, cyan, white} for colors and in {normal, bold, faint, italic, underline, double, overline, crossed-out, blink, reverse} for styles.`
 - ***Description:*** The error that an environment variable refers to an undefined [color or style](../colors_and_styles.md#92-colors-and-styles).
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to set a message color or style which does not exist.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value intended to set a message color or style which does not exist.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -236,24 +236,24 @@
 #### 9.5.32. `Error env var option type`
 
 - ***Message:*** `Error: The environment variable "ARGPARSER_USAGE_MESSAGE_OPTION_TYPE" must be either set to "long" or "short", but is "$1".`
-- ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](../environment_variables/environment_variables.md#9450-argparser_usage_message_option_type) is not set to `long` or `short`.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variable `ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value other than `long` and `short`. Since there are only short and long option names possible, other values are refused.
+- ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](../environment_variables/environment_variables.md#9451-argparser_usage_message_option_type) is not set to `long` or `short`.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variable `ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value other than `long` and `short`. Since there are only short and long option names possible, other values are refused.
 - ***Interpolated variables:***
   - `$1`: The environment variable's value.
 
 #### 9.5.33. `Error env var orientation`
 
 - ***Message:*** `Error: The environment variable "ARGPARSER_USAGE_MESSAGE_ORIENTATION" must be either set to "row" or "column", but is "$1".`
-- ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_ORIENTATION`](../environment_variables/environment_variables.md#9451-argparser_usage_message_orientation) is not set to `row` or `column`.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variable `ARGPARSER_USAGE_MESSAGE_ORIENTATION`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value other than `row` and `column`. Since only a row-like or column-like structure is possible, other values are refused.
+- ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_ORIENTATION`](../environment_variables/environment_variables.md#9452-argparser_usage_message_orientation) is not set to `row` or `column`.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variable `ARGPARSER_USAGE_MESSAGE_ORIENTATION`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value other than `row` and `column`. Since only a row-like or column-like structure is possible, other values are refused.
 - ***Interpolated variables:***
   - `$1`: The environment variable's value.
 
 #### 9.5.34. `Error env var delimiters identical`
 
 - ***Message:*** `Error: The environment variables "ARGPARSER_ARG_DELIMITER_1" and "ARGPARSER_ARG_DELIMITER_2" must have different values, but are both "$1".`
-- ***Description:*** The error that the environment variables [`ARGPARSER_ARG_DELIMITER_1`](../environment_variables/environment_variables.md#9411-argparser_arg_delimiter_1) and [`ARGPARSER_ARG_DELIMITER_2`](../environment_variables/environment_variables.md#9412-argparser_arg_delimiter_2) have an identical value.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variables `ARGPARSER_ARG_DELIMITER_1` and `ARGPARSER_ARG_DELIMITER_2`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, have the same value. This renders parsing of the arguments definition impossible, as multi-value fields cannot be told apart from column delimiters.
+- ***Description:*** The error that the environment variables [`ARGPARSER_ARG_DELIMITER_1`](../environment_variables/environment_variables.md#9412-argparser_arg_delimiter_1) and [`ARGPARSER_ARG_DELIMITER_2`](../environment_variables/environment_variables.md#9413-argparser_arg_delimiter_2) have an identical value.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variables `ARGPARSER_ARG_DELIMITER_1` and `ARGPARSER_ARG_DELIMITER_2`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, have the same value. This renders parsing of the arguments definition impossible, as multi-value fields cannot be told apart from column delimiters.
 - ***Interpolated variables:***
   - `$1`: The environment variables' common value.
 
@@ -261,7 +261,7 @@
 
 - ***Message:*** `Error: The environment variable "$1" has an empty string given as one of the $2 short option names, instead of a legit name.`
 - ***Description:*** The error that an environment variable uses the empty string (`""`) as short option name.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a short option defined, where at least one name of which is empty. This option name could never be given on the command line.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a short option defined, where at least one name of which is empty. This option name could never be given on the command line.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The number of short option names.
@@ -270,7 +270,7 @@
 
 - ***Message:*** `Error: The environment variable "$1" has the short option "-$2" defined with more than 1 character length.`
 - ***Description:*** The error that an environment variable has a short option name with more than one character length given.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a short option defined, where a name is longer than one character. This contradicts the definition of short options, and would interfere with merging short options on the command line.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a short option defined, where a name is longer than one character. This contradicts the definition of short options, and would interfere with merging short options on the command line.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The short option name.
@@ -279,7 +279,7 @@
 
 - ***Message:*** `Error: The environment variable "$1" has the short option "-$2" given $3 times.`
 - ***Description:*** The error that an environment variable has a short option name given multiple times.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a short option defined, where a name is given more than once. This is likely a typo when wanting to specify similar name aliases. Although this would mean no harm for the end user, as giving that name would still refer to the correct option, the error is not just a warning for consistency with more serious errors.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a short option defined, where a name is given more than once. This is likely a typo when wanting to specify similar name aliases. Although this would mean no harm for the end user, as giving that name would still refer to the correct option, the error is not just a warning for consistency with more serious errors.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The short option name.
@@ -289,7 +289,7 @@
 
 - ***Message:*** `Error: The environment variable "$1" has the short option "-$2" given, but that is already in use by "$3".`
 - ***Description:*** The error that at least two environment variables have the same short option name given.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a short option defined, which is already in use by a previously parsed environment variable. When given on the command line, it would be unclear which environment variable would be referred to.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a short option defined, which is already in use by a previously parsed environment variable. When given on the command line, it would be unclear which environment variable would be referred to.
 - ***Interpolated variables:***
   - `$1`: The current environment variable's name.
   - `$2`: The short option name.
@@ -298,20 +298,20 @@
 #### 9.5.39. `Error env var short options`
 
 - ***Message:*** `Error: The environment variable "ARGPARSER_USAGE_MESSAGE_OPTION_TYPE" requests the usage of short option names, but "ARGPARSER_USE_SHORT_OPTIONS" turns them off.`
-- ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](#9532-error-env-var-option-type) requests short option names, while [`ARGPARSER_USE_SHORT_OPTIONS`](../environment_variables/environment_variables.md#9455-argparser_use_short_options) prohibits this.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variable `ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, is set to `short`, while `ARGPARSER_USE_SHORT_OPTIONS` is set to `false`. Consequently, the usage message could not be created, since no short option name is available.
+- ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](#9532-error-env-var-option-type) requests short option names, while [`ARGPARSER_USE_SHORT_OPTIONS`](../environment_variables/environment_variables.md#9456-argparser_use_short_options) prohibits this.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variable `ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, is set to `short`, while `ARGPARSER_USE_SHORT_OPTIONS` is set to `false`. Consequently, the usage message could not be created, since no short option name is available.
 
 #### 9.5.40. `Error env var long options`
 
 - ***Message:*** `Error: The environment variable "ARGPARSER_USAGE_MESSAGE_OPTION_TYPE" requests the usage of long option names, but "ARGPARSER_USE_LONG_OPTIONS" turns them off.`
-- ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](#9532-error-env-var-option-type) requests long option names, while [`ARGPARSER_USE_LONG_OPTIONS`](../environment_variables/environment_variables.md#9454-argparser_use_long_options) prohibits this.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variable `ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, is set to `long`, while `ARGPARSER_USE_LONG_OPTIONS` is set to `false`. Consequently, the usage message could not be created, since no long option name is available.
+- ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](#9532-error-env-var-option-type) requests long option names, while [`ARGPARSER_USE_LONG_OPTIONS`](../environment_variables/environment_variables.md#9455-argparser_use_long_options) prohibits this.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variable `ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, is set to `long`, while `ARGPARSER_USE_LONG_OPTIONS` is set to `false`. Consequently, the usage message could not be created, since no long option name is available.
 
 #### 9.5.41. `Error env var files`
 
 - ***Message:*** `Error: The environment variables "$1" and "$2" point to the same file.`
 - ***Description:*** The error that two environment variables refer to the same file.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9415-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9416-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value pointing to the same file as an earlier parsed environment variable. Since the files referred to by these environment variables have different meanings (like the Argparser configuration and translation), it is impossible that both information is given in the same file.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value pointing to the same file as an earlier parsed environment variable. Since the files referred to by these environment variables have different meanings (like the Argparser configuration and translation), it is impossible that both information is given in the same file.
 - ***Interpolated variables:***
   - `$1`: The first environment variable's name.
   - `$2`: The second environment variable's name.
@@ -322,12 +322,12 @@
 - ***Description:*** The error that no arguments definition has been provided upon calling the Argparser.
 - ***Reasons for error:*** When calling (and not sourcing) the Argparser, the arguments definition must be provided through `STDIN`, either by piping or by process substitution. However, `STDIN` (file descriptor `0`) has been deemed empty.
 - ***Interpolated variables:***
-  - `$1`: The path to the Argparser, as [`ARGPARSER_SCRIPT_NAME`](../environment_variables/environment_variables.md#9437-argparser_script_name).
+  - `$1`: The path to the Argparser, as [`ARGPARSER_SCRIPT_NAME`](../environment_variables/environment_variables.md#9438-argparser_script_name).
 
 #### 9.5.43. `Error arg array 2`
 
 - ***Message:*** `Error: The variable ARGPARSER_ARG_ARRAY_NAME refers to "$1", but this variable is not defined.  Either you have given your arguments array another name (maybe "$2" -- then change ARGPARSER_ARG_ARRAY_NAME accordingly) or you forgot defining the array at all (then define it).`
-- ***Description:*** The error that [`ARGPARSER_ARG_ARRAY_NAME`](../environment_variables/environment_variables.md#949-argparser_arg_array_name) refers to a variable that's not defined.
+- ***Description:*** The error that [`ARGPARSER_ARG_ARRAY_NAME`](../environment_variables/environment_variables.md#9410-argparser_arg_array_name) refers to a variable that's not defined.
 - ***Reasons for error:*** The arguments definition must be provided as an array variable whose name is stored in `ARGPARSER_ARG_ARRAY_NAME`. If this variable is not defined, the Argparser tries to guess how it might have been called by looking for all variable names starting with `"arg"` and reports the first match.
 - ***Interpolated variables:***
   - `$1`: The variable `ARGPARSER_ARG_ARRAY_NAME` refers to.
@@ -336,7 +336,7 @@
 #### 9.5.44. `Error arg array 3`
 
 - ***Message:*** `Error: The variable ARGPARSER_ARG_ARRAY_NAME refers to "$1", but this variable is not defined.  Either you have given your arguments array another name (then change ARGPARSER_ARG_ARRAY_NAME accordingly) or you forgot defining the array at all (then define it).`
-- ***Description:*** The error that [`ARGPARSER_ARG_ARRAY_NAME`](../environment_variables/environment_variables.md#949-argparser_arg_array_name) refers to a variable that's not defined.
+- ***Description:*** The error that [`ARGPARSER_ARG_ARRAY_NAME`](../environment_variables/environment_variables.md#9410-argparser_arg_array_name) refers to a variable that's not defined.
 - ***Reasons for error:*** The arguments definition must be provided as an array variable whose name is stored in `ARGPARSER_ARG_ARRAY_NAME`. If this variable is not defined, the Argparser tries to guess how it might have been called by looking for all variable names starting with `"arg"`, but didn't find any match.
 - ***Interpolated variables:***
   - `$1`: The variable `ARGPARSER_ARG_ARRAY_NAME` refers to.
@@ -345,7 +345,7 @@
 
 - ***Message:*** `Error: No argument definition for "$1".`
 - ***Description:*** The error that an argument is lacking a definition.
-- ***Reasons for error:*** When reading the arguments definition, the Argparser found a definition line giving only an argument name, but no definition corresponding to this argument in the accompanying [`ARGPARSER_ARG_DEF_FILE`](../environment_variables/environment_variables.md#9410-argparser_arg_def_file).
+- ***Reasons for error:*** When reading the arguments definition, the Argparser found a definition line giving only an argument name, but no definition corresponding to this argument in the accompanying [`ARGPARSER_ARG_DEF_FILE`](../environment_variables/environment_variables.md#9411-argparser_arg_def_file).
 - ***Interpolated variables:***
   - `$1`: The problematic arguments definition line with the argument.
 
@@ -355,15 +355,15 @@
 - ***Description:*** The error that the arguments definition in the script lacks the `id` column.
 - ***Reasons for error:*** When parsing the arguments definition from the script, the Argparser found the definition lacking the token `id` in the header.
 - ***Interpolated variables:***
-  - `$1`: The [`ARGPARSER_SCRIPT_NAME`](../environment_variables/environment_variables.md#9437-argparser_script_name) with the problematic definition.
+  - `$1`: The [`ARGPARSER_SCRIPT_NAME`](../environment_variables/environment_variables.md#9438-argparser_script_name) with the problematic definition.
 
 #### 9.5.47. `Error arg def file id`
 
 - ***Message:*** `Error: In the arguments definition file "$1", the column "id" is missing.`
-- ***Description:*** The error that the arguments definition in the [`ARGPARSER_ARG_DEF_FILE`](../environment_variables/environment_variables.md#9410-argparser_arg_def_file) lacks a column, instead giving an unused one.
+- ***Description:*** The error that the arguments definition in the [`ARGPARSER_ARG_DEF_FILE`](../environment_variables/environment_variables.md#9411-argparser_arg_def_file) lacks a column, instead giving an unused one.
 - ***Reasons for error:*** When parsing the arguments definition from the `ARGPARSER_ARG_DEF_FILE`, the Argparser found the definition lacking the token `id` in the header.
 - ***Interpolated variables:***
-  - `$1`: The [`ARGPARSER_ARG_DEF_FILE`](../environment_variables/environment_variables.md#9410-argparser_arg_def_file) with the problematic definition.
+  - `$1`: The [`ARGPARSER_ARG_DEF_FILE`](../environment_variables/environment_variables.md#9411-argparser_arg_def_file) with the problematic definition.
 
 #### 9.5.48. `Error arg def field count`
 
@@ -371,7 +371,7 @@
 - ***Description:*** The error that in the arguments definition in the script, the lines have differing field counts.
 - ***Reasons for error:*** When parsing the arguments definition from the script, the Argparser found a line in the definition having a different number of fields (columns) than the header. Thus, the header fields cannot be mapped to the line's fields.
 - ***Interpolated variables:***
-  - `$1`: The [`ARGPARSER_SCRIPT_NAME`](../environment_variables/environment_variables.md#9437-argparser_script_name) with the problematic definition.
+  - `$1`: The [`ARGPARSER_SCRIPT_NAME`](../environment_variables/environment_variables.md#9438-argparser_script_name) with the problematic definition.
   - `$2`: The current line.
   - `$3`: The current line's number of fields.
   - `$4`: The header's number of fields.
@@ -379,10 +379,10 @@
 #### 9.5.49. `Error arg def file field count`
 
 - ***Message:*** `Error: In the arguments definition file "$1", the field count of the line "$2" ($3) doesn't match the header's field count ($4).`
-- ***Description:*** The error that in the arguments definition in the [`ARGPARSER_ARG_DEF_FILE`](../environment_variables/environment_variables.md#9410-argparser_arg_def_file), the lines have differing field counts.
+- ***Description:*** The error that in the arguments definition in the [`ARGPARSER_ARG_DEF_FILE`](../environment_variables/environment_variables.md#9411-argparser_arg_def_file), the lines have differing field counts.
 - ***Reasons for error:*** When parsing the arguments definition from the `ARGPARSER_ARG_DEF_FILE`, the Argparser found a line in the definition having a different number of fields (columns) than the header. Thus, the header fields cannot be mapped to the line's fields.
 - ***Interpolated variables:***
-  - `$1`: The [`ARGPARSER_ARG_DEF_FILE`](../environment_variables/environment_variables.md#9410-argparser_arg_def_file) with the problematic definition.
+  - `$1`: The [`ARGPARSER_ARG_DEF_FILE`](../environment_variables/environment_variables.md#9411-argparser_arg_def_file) with the problematic definition.
   - `$2`: The current line.
   - `$3`: The current line's number of fields.
   - `$4`: The header's number of fields.
@@ -830,7 +830,7 @@
 
 - ***Message:*** `Error: Inverting flags with a "+" prefix is deactivated.`
 - ***Description:*** The error that on the command line, an option starts with a `+` or `++`, when flag inversion is deactivated.
-- ***Reasons for error:*** When parsing the command line, the Argparser found an option that starts with a plus sign, meaning the intention to invert the flag, but [`ARGPARSER_ALLOW_FLAG_INVERSION`](../environment_variables/environment_variables.md#945-argparser_allow_flag_inversion) is set to `false`. This removes the ability to use the `+` prefix.
+- ***Reasons for error:*** When parsing the command line, the Argparser found an option that starts with a plus sign, meaning the intention to invert the flag, but [`ARGPARSER_ALLOW_FLAG_INVERSION`](../environment_variables/environment_variables.md#946-argparser_allow_flag_inversion) is set to `false`. This removes the ability to use the `+` prefix.
 
 #### 9.5.100. `Error arg unknown`
 
@@ -844,7 +844,7 @@
 
 - ***Message:*** `Error: The long option "$1" matches multiple long options.`
 - ***Description:*** The error that on the command line, an abbreviated long option matches multiple option names.
-- ***Reasons for error:*** When parsing the command line and [`ARGPARSER_ALLOW_OPTION_ABBREVIATION`](../environment_variables/environment_variables.md#947-argparser_allow_option_abbreviation) is set to `true`, the Argparser found a long option being abbreviated, but matching more than one defined long option in the arguments definition.
+- ***Reasons for error:*** When parsing the command line and [`ARGPARSER_ALLOW_OPTION_ABBREVIATION`](../environment_variables/environment_variables.md#948-argparser_allow_option_abbreviation) is set to `true`, the Argparser found a long option being abbreviated, but matching more than one defined long option in the arguments definition.
 - ***Interpolated variables:***
   - `$1`: The ambiguous long option.
 
@@ -852,7 +852,7 @@
 
 - ***Message:*** `Error: The long option "$1" is negated, but its affirmative version "$2" is unknown.`
 - ***Description:*** The error that on the command line, an undefined negated long option is given.
-- ***Reasons for error:*** When parsing the command line and [`ARGPARSER_ALLOW_FLAG_NEGATION`](../environment_variables/environment_variables.md#946-argparser_allow_flag_negation) is set to `true`, the Argparser found a long option starting with `--no-`, but the remaining (affirmative) version has not been defined in the arguments definition.
+- ***Reasons for error:*** When parsing the command line and [`ARGPARSER_ALLOW_FLAG_NEGATION`](../environment_variables/environment_variables.md#947-argparser_allow_flag_negation) is set to `true`, the Argparser found a long option starting with `--no-`, but the remaining (affirmative) version has not been defined in the arguments definition.
 - ***Interpolated variables:***
   - `$1`: The negated long option.
   - `$2`: The affirmative long option.
@@ -869,7 +869,7 @@
 
 - ***Message:*** `Error: The short option "$1$2" is unknown.`
 - ***Description:*** The error that on the command line, an unknown short option is given in merged form.
-- ***Reasons for error:*** When parsing the command line and [`ARGPARSER_ALLOW_OPTION_MERGING`](../environment_variables/environment_variables.md#948-argparser_allow_option_merging) is set to `true`, the Argparser found a short option, merged with others, that has not been defined in the arguments definition.
+- ***Reasons for error:*** When parsing the command line and [`ARGPARSER_ALLOW_OPTION_MERGING`](../environment_variables/environment_variables.md#949-argparser_allow_option_merging) is set to `true`, the Argparser found a short option, merged with others, that has not been defined in the arguments definition.
 - ***Interpolated variables:***
   - `$1`: The merged short options' common prefix.
   - `$2`: The unknown short option.
@@ -903,7 +903,7 @@
 
 - ***Message:*** `Error: The option "$1" is not used as a flag (it has a value given) and thus cannot be given with a "+" or "no-" prefix.`
 - ***Description:*** The error that on the command line, a flag-like argument with value is inverted or negated.
-- ***Reasons for error:*** When parsing the command line and either [`ARGPARSER_ALLOW_FLAG_INVERSION`](../environment_variables/environment_variables.md#945-argparser_allow_flag_inversion) or [`ARGPARSER_ALLOW_FLAG_NEGATION`](../environment_variables/environment_variables.md#946-argparser_allow_flag_negation) is set to `true`, the Argparser found an option, defined as usable as a flag (*i.e.*, having an arguments count of `"*"` or `"?"`) and given with a `+` or `no-` prefix, but which is followed by a value, *i.e.*, not used as a flag.
+- ***Reasons for error:*** When parsing the command line and either [`ARGPARSER_ALLOW_FLAG_INVERSION`](../environment_variables/environment_variables.md#946-argparser_allow_flag_inversion) or [`ARGPARSER_ALLOW_FLAG_NEGATION`](../environment_variables/environment_variables.md#947-argparser_allow_flag_negation) is set to `true`, the Argparser found an option, defined as usable as a flag (*i.e.*, having an arguments count of `"*"` or `"?"`) and given with a `+` or `no-` prefix, but which is followed by a value, *i.e.*, not used as a flag.
 - ***Interpolated variables:***
   - `$1`: The argument's option or value names.
 
@@ -911,7 +911,7 @@
 
 - ***Message:*** `Error: The option "$1" is no flag and thus cannot be given with a "+" or "no-" prefix.`
 - ***Description:*** The error that on the command line, a non-flag is inverted or negated.
-- ***Reasons for error:*** When parsing the command line and either [`ARGPARSER_ALLOW_FLAG_INVERSION`](../environment_variables/environment_variables.md#945-argparser_allow_flag_inversion) or [`ARGPARSER_ALLOW_FLAG_NEGATION`](../environment_variables/environment_variables.md#946-argparser_allow_flag_negation) is set to `true`, the Argparser found an option given with a `+` or `no-` prefix, but which has not been defined as flag in the arguments definition.
+- ***Reasons for error:*** When parsing the command line and either [`ARGPARSER_ALLOW_FLAG_INVERSION`](../environment_variables/environment_variables.md#946-argparser_allow_flag_inversion) or [`ARGPARSER_ALLOW_FLAG_NEGATION`](../environment_variables/environment_variables.md#947-argparser_allow_flag_negation) is set to `true`, the Argparser found an option given with a `+` or `no-` prefix, but which has not been defined as flag in the arguments definition.
 - ***Interpolated variables:***
   - `$1`: The argument's option or value names.
 
@@ -1019,7 +1019,7 @@
 
 - ***Message:*** `Error: The YAML line "$1" could not be recognized.`
 - ***Description:*** The error that a translation file's [YAML](https://en.wikipedia.org/wiki/YAML "wikipedia.org &rightarrow; YAML") line cannot be parsed.
-- ***Reasons for error:*** When parsing the [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9442-argparser_translation_file), the Argparser found a YAML line that it doesn't recognize. This is most likely due to a YAML feature that the Argparser doesn't support to keep the parser simple.
+- ***Reasons for error:*** When parsing the [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9443-argparser_translation_file), the Argparser found a YAML line that it doesn't recognize. This is most likely due to a YAML feature that the Argparser doesn't support to keep the parser simple.
 - ***Interpolated variables:***
   - `$1`: The YAML line.
 
@@ -1027,7 +1027,7 @@
 
 - ***Message:*** `Error: The include directive "$1" could not be recognized.`
 - ***Description:*** The error that an include directive cannot be parsed.
-- ***Reasons for error:*** When parsing the [`ARGPARSER_HELP_FILE`](../environment_variables/environment_variables.md#9425-argparser_help_file) or [`ARGPARSER_USAGE_FILE`](../environment_variables/environment_variables.md#9447-argparser_usage_file), the Argparser found an include directive that is not supported.
+- ***Reasons for error:*** When parsing the [`ARGPARSER_HELP_FILE`](../environment_variables/environment_variables.md#9426-argparser_help_file) or [`ARGPARSER_USAGE_FILE`](../environment_variables/environment_variables.md#9448-argparser_usage_file), the Argparser found an include directive that is not supported.
 - ***Interpolated variables:***
   - `$1`: The include directive.
 
@@ -1084,19 +1084,19 @@
 
 - ***Message:*** `Warning: In the translation file "$1", the identifier "$2" is missing.  For convenience, the untranslated string is used, instead.`
 - ***Description:*** The warning that in a translation file, an identifier is missing.
-- ***Reasons for warning:*** When trying to translate a string from the [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9442-argparser_translation_file), the Argparser found that the identifier is missing in the dictionary, and by this, also in the translation file. Thus, it uses the untranslated English string as fallback.
+- ***Reasons for warning:*** When trying to translate a string from the [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9443-argparser_translation_file), the Argparser found that the identifier is missing in the dictionary, and by this, also in the translation file. Thus, it uses the untranslated English string as fallback.
 - ***Interpolated variables:***
-  - `$1`: The [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9442-argparser_translation_file).
+  - `$1`: The [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9443-argparser_translation_file).
   - `$2`: The missing identifier.
 
 #### 9.5.129. `Warning no translation`
 
 - ***Message:*** `Warning: In the translation file "$1", the translation to "$2" for the identifier "$3" is missing.  For convenience, the untranslated string is used, instead.`
 - ***Description:*** The warning that in a translation file, an identifier's translation is missing.
-- ***Reasons for warning:*** When trying to translate a string from the [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9442-argparser_translation_file), the Argparser found that the translation to the [`ARGPARSER_LANGUAGE`](../environment_variables/environment_variables.md#9430-argparser_language) for the identifier is missing in the dictionary, and by this, also in the translation file. Thus, it uses the untranslated English string as fallback.
+- ***Reasons for warning:*** When trying to translate a string from the [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9443-argparser_translation_file), the Argparser found that the translation to the [`ARGPARSER_LANGUAGE`](../environment_variables/environment_variables.md#9431-argparser_language) for the identifier is missing in the dictionary, and by this, also in the translation file. Thus, it uses the untranslated English string as fallback.
 - ***Interpolated variables:***
-  - `$1`: The [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9442-argparser_translation_file).
-  - `$2`: The [`ARGPARSER_LANGUAGE`](../environment_variables/environment_variables.md#9430-argparser_language).
+  - `$1`: The [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9443-argparser_translation_file).
+  - `$2`: The [`ARGPARSER_LANGUAGE`](../environment_variables/environment_variables.md#9431-argparser_language).
   - `$3`: The identifier with missing translation.
 
 [&#129092;&nbsp;Table of contents (Translations)](toc.md)
