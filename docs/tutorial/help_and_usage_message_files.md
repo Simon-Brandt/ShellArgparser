@@ -64,20 +64,20 @@ A brief header summarizes the way how to interpret the help message.
 @Header
 
 # Print the positional arguments.
-The following arguments are positional.
-@Positional arguments
+The following arguments are positional:
+@@Positional arguments
 
 # Print the options from the "Mandatory options" group.
-The following options have no default value.
-@Mandatory options
+The following options have no default value:
+@@Mandatory options
 
 # Print the options from the "Optional options" group.
-The following options have a default value.
-@Optional options
+The following options have a default value:
+@@Optional options
 
 # Print the three help options.
-There are always three options for the help messages.
-@Help
+There are always three options for the help messages:
+@@Help
 ```
 <!-- </include> -->
 
@@ -91,27 +91,24 @@ Usage: try_help_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
-The following arguments are positional.
-Positional arguments:
+The following arguments are positional:
 [pos_1={1,2}]              one positional argument with default and choice
                            (default: 2)
 pos_2                      two positional arguments without default or choice
 
-The following options have no default value.
-Mandatory options:
+The following options have no default value:
 -a,       --var-1=VAL_1    one value without default or choice
 -b,       --var-2=VAL_2... at least one value without default or choice
 -c,       --var-3={A,B}... at least one value with choice
 
-The following options have a default value.
-Optional options:
+The following options have a default value:
 [-d={A,B,C}]               one value with default and choice (default: "A")
           [--var-5=VAL_5]  one value with default (default: "E")
 [-f],     [--var-6]        no value (flag) with default (default: false)
 [-g],     [--var-7]        (DEPRECATED) no value (flag) with default (default:
                            true)
 
-There are always three options for the help messages.
+There are always three options for the help messages:
 [-h, -?], [--help]         display this help and exit (default: false)
 [-u],     [--usage]        display the usage and exit (default: false)
 [-V],     [--version]      display the version and exit (default: false)
@@ -131,6 +128,8 @@ The following section names (include directives) are supported, explained in gre
 - [`@Usage`](../reference/include_directives.md#937-usage-directive)
 
 Thereby, `<ArgumentGroup>` can be the name of any argument group given in the arguments definition, like `"Mandatory options"` for the include directive `@Mandatory options` or `"Optional options"` for the include directive `@Optional options`. `@Description` prints the [`ARGPARSER_HELP_DESCRIPTION`](../reference/environment_variables/environment_variables.md#9423-argparser_help_description), `@Help` prints the help, usage, and version options (depending on which of them are defined by [`ARGPARSER_ADD_HELP`](../reference/environment_variables/environment_variables.md#942-argparser_add_help), [`ARGPARSER_ADD_USAGE`](../reference/environment_variables/environment_variables.md#943-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](../reference/environment_variables/environment_variables.md#944-argparser_add_version)), `@Remark` prints the remark that mandatory arguments to long options are mandatory for short options too, and `@Usage` prints the usage line. Finally, the shorthand `@All` means to print the usage line, the description, the remark, all argument groups, and the help options, in this order, while `@Header` prints the usage line, the description, and the remark.
+
+If the include character is doubled, the section name (the respective arguments group) is suppressed, like in our example above. Since we wrote introductory sentences for the sections, there is no need to have them given, as well. Likewise, given that we had just one arguments group, we likely wouldn't need to list its name, since the sections serve structuring purposes which would be rather superfluous for a single group.
 
 Further, lines starting with a `"#"` character in the help file aren't printed if [`ARGPARSER_HELP_FILE_KEEP_COMMENTS`](../reference/environment_variables/environment_variables.md#9427-argparser_help_file_keep_comments) is set to `false` (the default). This allows you to comment your help file, perhaps to explain the structure&mdash;or just to write a header or footer with your name and debug email address inside.
 

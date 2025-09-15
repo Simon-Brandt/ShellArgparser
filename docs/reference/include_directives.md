@@ -36,7 +36,7 @@ Six section names (include directives) are supported in the help files, and one 
 
 #### 9.3.1. `@All` directive
 
-For help messages, the `@All` directive comprises all include directives in the following order: [`@Usage`](#937-usage-directive), [`@Description`](#933-description-directive), [`@Remark`](#936-remark-directive), [`@<ArgumentGroup>`](#932-argumentgroup-directive), and [`@Help`](#935-help-directive), separated from each other by a blank line.
+For help messages, the `@All` directive comprises all include directives in the following order: [`@Usage`](#937-usage-directive), [`@Description`](#933-description-directive), [`@Remark`](#936-remark-directive), [`@<ArgumentGroup>`](#932-argumentgroup-directive), and [`@@Help`](#935-help-directive), separated from each other by a blank line.
 
 Consequently, the help message generated from the [`ARGPARSER_HELP_FILE`](environment_variables/environment_variables.md#9425-argparser_help_file) with the following content:
 
@@ -44,7 +44,7 @@ Consequently, the help message generated from the [`ARGPARSER_HELP_FILE`](enviro
 @All
 ```
 
-is exactly identical to the one from the following content:
+is exactly identical to the one from the following content (note the blank lines):
 
 ```text
 @Usage
@@ -55,16 +55,20 @@ is exactly identical to the one from the following content:
 
 @<ArgumentGroup>
 
-@Help
+@@Help
 ```
 
-(note the blank lines), and indentical to the auto-generated help message.
+When not using help or usage files, the Argparser internally uses the `@All` include directive, and thus generates an identical help message.
 
 For usage messages, `@All` prints the usual usage message, which currently isn't subdivided into distinct include directives.
 
 #### 9.3.2. `@<ArgumentGroup>` directive
 
-The `@<ArgumentGroup>` directive prints the help message block for the respective `"<ArgumentGroup>"`, like `"Mandatory options"` for the include directive `@Mandatory options` or `"Optional options"` for the include directive `@Optional options`. Their order in the auto-generated help message would be alphabetical for the keyword arguments, preceded by the group for the positional arguments (the [`ARGPARSER_POSITIONAL_ARG_GROUP`](environment_variables/environment_variables.md#9435-argparser_positional_arg_group)). Thus, if you have reasons for another structure, you need an [`ARGPARSER_HELP_FILE`](environment_variables/environment_variables.md#9425-argparser_help_file), denoting all arguments groups in the order preferred by you.
+The `@<ArgumentGroup>` directive prints the help message block for the respective `"<ArgumentGroup>"`, like `"Mandatory options"` for the include directive `@Mandatory options` or `"Optional options"` for the include directive `@Optional options`.
+
+Their order in the auto-generated help message would be alphabetical for the keyword arguments, preceded by the group for the positional arguments (the [`ARGPARSER_POSITIONAL_ARG_GROUP`](environment_variables/environment_variables.md#9435-argparser_positional_arg_group)) and succeeded by the help options group (the [`ARGPARSER_HELP_ARG_GROUP`](environment_variables/environment_variables.md#9422-argparser_help_arg_group)). Thus, if you have reasons for another structure, you need an [`ARGPARSER_HELP_FILE`](environment_variables/environment_variables.md#9425-argparser_help_file), denoting all arguments groups in the order preferred by you.
+
+By using one [`ARGPARSER_HELP_FILE_INCLUDE_CHAR`](environment_variables/environment_variables.md#9426-argparser_help_file_include_char), the arguments group's arguments are preceded by the group's name as section heading. You can double the include character to suppress this addition.
 
 #### 9.3.3. `@Description` directive
 
@@ -76,7 +80,7 @@ The `@Header` directive comprises the [`@Usage`](#937-usage-directive), [`@Descr
 
 #### 9.3.5. `@Help` directive
 
-The `@Help` directive prints the help text for the `--help`, `--usage`, and `--version` flags (if added to the arguments definition by [`ARGPARSER_ADD_HELP`](environment_variables/environment_variables.md#942-argparser_add_help), [`ARGPARSER_ADD_USAGE`](environment_variables/environment_variables.md#943-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](environment_variables/environment_variables.md#944-argparser_add_version)). Usually, you want to give this at the very end of all options.
+The `@Help` directive prints the help text for the `--help`, `--usage`, and `--version` flags (if added to the arguments definition by [`ARGPARSER_ADD_HELP`](environment_variables/environment_variables.md#942-argparser_add_help), [`ARGPARSER_ADD_USAGE`](environment_variables/environment_variables.md#943-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](environment_variables/environment_variables.md#944-argparser_add_version)). Usually, you want to give this at the very end of all options.  Again, you can suppress the [`ARGPARSER_HELP_ARG_GROUP`](environment_variables/environment_variables.md#9422-argparser_help_arg_group) heading by doubling the [`ARGPARSER_HELP_FILE_INCLUDE_CHAR`](environment_variables/environment_variables.md#9426-argparser_help_file_include_char), which is also the default behaviour within the [`@All`](#931-all-directive) include directive (and thus the default when not using help files).
 
 #### 9.3.6. `@Remark` directive
 
