@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-12
+# Last Modification: 2025-09-15
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -3893,7 +3893,7 @@ function argparser_check_args_definition_option_values() {
                 argparser_translate "Error arg def option choice flag" \
                     "${error_message}" "${arg_key}" "${choice_values_str}"
                 error_message="${translation}"
-                error_messages+=("${error_message}")            
+                error_messages+=("${error_message}")
             else
                 for choice_value in "${choice_values_arr[@]}"; do
                     if [[ "${choice_value}" == true \
@@ -5777,7 +5777,7 @@ function argparser_parse_args() {
         if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
             {
                 printf '\n'
-                argparser_print_help_or_usage_message "usage" false 2 
+                argparser_print_help_or_usage_message "usage" false 2
             } >&2
         fi
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
@@ -8030,6 +8030,8 @@ function argparser_print_help_or_usage_message() {
         include_directive="${line:1}"
         if [[ "${help_type}" == "help" ]]; then
             if [[ "${include_directive}" == "All" ]]; then
+                # Add the usage, description, and remark include
+                # directives, terminated by blank lines.
                 resolved_lines+=(
                     "${include_char}Usage"
                     ""
@@ -8039,6 +8041,8 @@ function argparser_print_help_or_usage_message() {
                     ""
                 )
 
+                # Add the include directives for each arguments group.
+                # Terminate all but the last by a blank line.
                 for i in "${!arg_groups[@]}"; do
                     resolved_lines+=("${include_char}${arg_groups[i]}")
                     if (( i < "${#arg_groups[@]}" - 1 )); then
@@ -8046,6 +8050,8 @@ function argparser_print_help_or_usage_message() {
                     fi
                 done
             elif [[ "${include_directive}" == "Header" ]]; then
+                # Add the usage, description, and remark include
+                # directives, separated by blank lines.
                 resolved_lines+=(
                     "${include_char}Usage"
                     ""
@@ -8054,12 +8060,15 @@ function argparser_print_help_or_usage_message() {
                     "${include_char}Remark"
                 )
             else
+                # Add the unmodified line.
                 resolved_lines+=("${line}")
             fi
         else
             if [[ "${include_directive}" == "All" ]]; then
+                # Add the usage include directive.
                 resolved_lines+=("${include_char}Usage")
             else
+                # Add the unmodified line.
                 resolved_lines+=("${line}")
             fi
         fi
@@ -8085,26 +8094,33 @@ function argparser_print_help_or_usage_message() {
             include_directive="${line:1}"
             if [[ "${help_type}" == "help" ]]; then
                 if [[ "${include_directive}" == "Description" ]]; then
+                    # Add the description.
                     if [[ -n "${help_message_groups["Description"]}" ]]; then
                         message+="${help_message_groups["Description"]}"
                     else
                         skip_blank_line=true
                     fi
                 elif [[ "${include_directive}" == "Help" ]]; then
+                    # Add the help options group.
                     message+="${help_message_groups["${ARGPARSER_HELP_ARG_GROUP}"]}"
                 elif [[ "${include_directive}" == "Remark" ]]; then
+                    # Add the remark.
                     if (( keyword_args_count > 0 )); then
                         message+="${help_message_groups["Remark"]}"
                     else
                         skip_blank_line=true
                     fi
                 elif [[ "${include_directive}" == "Usage" ]]; then
+                    # Add the usage.
                     message+="${help_message_groups["Usage"]}"
                 elif argparser_in_array "${include_directive}" \
                     "${arg_groups[@]}"
                 then
+                    # Add the arguments group.
                     message+="${help_message_groups["${include_directive}"]}"
                 else
+                    # Output an error message for the unrecognized and
+                    # likely incorrect include directive.
                     error_message="Error: The include directive \"\$1\" could "
                     error_message+="not be recognized."
 
@@ -8115,8 +8131,11 @@ function argparser_print_help_or_usage_message() {
                 fi
             else
                 if [[ "${include_directive}" == "Usage" ]]; then
+                    # Add the usage.
                     message+="${usage_message_groups["Usage"]}"
                 else
+                    # Output an error message for the unrecognized and
+                    # likely incorrect include directive.
                     error_message="Error: The include directive \"\$1\" could "
                     error_message+="not be recognized."
 
