@@ -1000,6 +1000,7 @@ function argparser_read_configuration() {
     # ARGPARSER_ADD_HELP
     # ARGPARSER_ADD_USAGE
     # ARGPARSER_ADD_VERSION
+    # ARGPARSER_ALLOW_ARG_INTERMIXING
     # ARGPARSER_ALLOW_FLAG_INVERSION
     # ARGPARSER_ALLOW_FLAG_NEGATION
     # ARGPARSER_ALLOW_OPTION_ABBREVIATION
@@ -1190,6 +1191,7 @@ function argparser_set_env_vars() {
     # ARGPARSER_ADD_HELP
     # ARGPARSER_ADD_USAGE
     # ARGPARSER_ADD_VERSION
+    # ARGPARSER_ALLOW_ARG_INTERMIXING
     # ARGPARSER_ALLOW_FLAG_INVERSION
     # ARGPARSER_ALLOW_FLAG_NEGATION
     # ARGPARSER_ALLOW_OPTION_ABBREVIATION
@@ -1294,6 +1296,7 @@ function argparser_set_env_vars() {
         "ARGPARSER_ADD_HELP                  : add-help                  :              : true                 :            : bool : 0      : Options   : add ARGPARSER_HELP_OPTIONS and --help as flags to call the help message                                       "
         "ARGPARSER_ADD_USAGE                 : add-usage                 :              : true                 :            : bool : 0      : Options   : add ARGPARSER_USAGE_OPTIONS and --usage as flags to call the usage message                                    "
         "ARGPARSER_ADD_VERSION               : add-version               :              : true                 :            : bool : 0      : Options   : add ARGPARSER_VERSION_OPTIONS and --version as flags to call the version message                              "
+        "ARGPARSER_ALLOW_ARG_INTERMIXING     : allow-arg-intermixing     :              : true                 :            : bool : 0      : Options   : allow the user to intermix positional and keyword arguments                                                   "
         "ARGPARSER_ALLOW_FLAG_INVERSION      : allow-flag-inversion      :              : true                 :            : bool : 0      : Options   : allow the user to invert flags by prefixing them with \"+\" (short options) or \"++\" (long options)          "
         "ARGPARSER_ALLOW_FLAG_NEGATION       : allow-flag-negation       :              : true                 :            : bool : 0      : Options   : allow the user to negate long-option flags by prefixing them with \"no-\"                                     "
         "ARGPARSER_ALLOW_OPTION_ABBREVIATION : allow-option-abbreviation :              : false                :            : bool : 0      : Options   : allow the user to give long option names in abbreviated form                                                  "
@@ -1357,6 +1360,7 @@ function argparser_set_env_vars() {
     ARGPARSER_ADD_HELP=true \
         ARGPARSER_ADD_USAGE=true \
         ARGPARSER_ADD_VERSION=true \
+        ARGPARSER_ALLOW_ARG_INTERMIXING=false \
         ARGPARSER_ALLOW_FLAG_INVERSION=true \
         ARGPARSER_ALLOW_FLAG_NEGATION=true \
         ARGPARSER_ALLOW_OPTION_ABBREVIATION=false \
@@ -1503,6 +1507,7 @@ function argparser_check_env_vars() {
     # - ARGPARSER_ADD_HELP (read-only)
     # - ARGPARSER_ADD_USAGE (read-only)
     # - ARGPARSER_ADD_VERSION (read-only)
+    # - ARGPARSER_ALLOW_ARG_INTERMIXING (read-only)
     # - ARGPARSER_ALLOW_FLAG_INVERSION (read-only)
     # - ARGPARSER_ALLOW_FLAG_NEGATION (read-only)
     # - ARGPARSER_ALLOW_OPTION_ABBREVIATION (read-only)
@@ -1578,6 +1583,7 @@ function argparser_check_env_vars() {
         ARGPARSER_ADD_HELP
         ARGPARSER_ADD_USAGE
         ARGPARSER_ADD_VERSION
+        ARGPARSER_ALLOW_ARG_INTERMIXING
         ARGPARSER_ALLOW_FLAG_INVERSION
         ARGPARSER_ALLOW_FLAG_NEGATION
         ARGPARSER_ALLOW_OPTION_ABBREVIATION
@@ -5409,6 +5415,7 @@ function argparser_parse_args() {
     #   with key and value as associative array
     #
     # Environment:
+    # - ARGPARSER_ALLOW_ARG_INTERMIXING (read-only)
     # - ARGPARSER_ARG_ARRAY_NAME (read-only)
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_CHECK_ARG_DEF (read-only)
@@ -5545,6 +5552,8 @@ function argparser_parse_args() {
     # Define the remaining local variables that start with "arg".
     local arg
     local arg_key
+    local arg_number
+    local -A arg_numbers
     local -a args_definition_file
     local -a args_definition_script
 
@@ -5670,6 +5679,7 @@ function argparser_parse_args() {
                     # Set the current argument name.
                     is_positional=false
                     arg_key="${message#Argument: }"
+                    arg_numbers[${arg_key}]=0
                     ;;
                 Prefix*)
                     # Set the current argument's prefix ("-" or "+").
@@ -5686,12 +5696,53 @@ function argparser_parse_args() {
                     # Set the current argument's value.
                     value="${message#Value: }"
                     if [[ "${is_positional}" == true ]]; then
+                        # The value is given in a positional-only
+                        # location.
                         given_positional_args+=("${value}")
-                    elif ! argparser_in_array "${arg_key}" "${!args[@]}"; then
-                        args[${arg_key}]="${value}"
+                    elif [[ "${ARGPARSER_ALLOW_ARG_INTERMIXING}" == true ]]
+                    then
+                        # The value may be either a value to the
+                        # previous keyword argument or a positional
+                        # argument.  Treat it as positional argument
+                        # only if the previous keyword argument has
+                        # already taken as many values as required.  For
+                        # numerical argument counts, this is directly
+                        # this count, for [0, 1] values, this is true
+                        # when there is already 1 value, and for
+                        # [1, inf) and [0, inf) values, this is never
+                        # true since all values shall be taken.  Then,
+                        # and in all other cases, treat the value as
+                        # value for the previous keyword argument.
+                        arg_number="${all_arg_numbers[${arg_key}]}"
+                        if [[ "${arg_numbers[${arg_key}]}" == 1 \
+                            && "${arg_number}" == "?" ]]
+                        then
+                            given_positional_args+=("${value}")
+                        elif [[ "${arg_numbers[${arg_key}]}" == "${arg_number}" \
+                            && "${arg_number}" != "+" \
+                            && "${arg_number}" != "*" ]]
+                        then
+                            given_positional_args+=("${value}")
+                        elif ! argparser_in_array "${arg_key}" "${!args[@]}"
+                        then
+                            args[${arg_key}]="${value}"
+                            (( arg_numbers[${arg_key}]++ ))
+                        else
+                            args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                            args[${arg_key}]+="${value}"
+                            (( arg_numbers[${arg_key}]++ ))
+                        fi
                     else
-                        args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
-                        args[${arg_key}]+="${value}"
+                        # The value is a value to the previous keyword
+                        # argument.
+                        if ! argparser_in_array "${arg_key}" "${!args[@]}"
+                        then
+                            args[${arg_key}]="${value}"
+                        else
+                            args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                            args[${arg_key}]+="${value}"
+                        fi
+                        (( arg_numbers[${arg_key}]++ ))
                     fi
                     ;;
                 Logo) is_logo=true ;;
@@ -8787,6 +8838,7 @@ function argparser_main() {
         unset ARGPARSER_ADD_HELP
         unset ARGPARSER_ADD_USAGE
         unset ARGPARSER_ADD_VERSION
+        unset ARGPARSER_ALLOW_ARG_INTERMIXING
         unset ARGPARSER_ALLOW_FLAG_INVERSION
         unset ARGPARSER_ALLOW_FLAG_NEGATION
         unset ARGPARSER_ALLOW_OPTION_ABBREVIATION
