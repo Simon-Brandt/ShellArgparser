@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-05
+# Last Modification: 2025-09-15
 
 # Usage: Run this script with "bash prepare_release.sh".
 
@@ -36,6 +36,10 @@ args=(
     "codename       | codename       | str  | 1      | Positional arguments | the version's codename"
 )
 source argparser -- "$@"
+
+# Strip the leading "v" from the version number, if erroneously given
+# with it.
+version_number="${version_number#v}"
 
 # Define the pattern and replacement text for the modification date.
 # Both are always the same, unlike the patterns for the version info.
