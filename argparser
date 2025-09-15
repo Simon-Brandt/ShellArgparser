@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-11
+# Last Modification: 2025-09-15
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -5144,7 +5144,7 @@ function argparser_check_arg_values() {
             messages+=("Value: ${default_values_str}")
             return
         fi
-    elif [[ "${arg_number}" == "+" && "${#values[@]}" == 0 ]]; then
+    elif [[ "${arg_number}" == "+" && "${#values_arr[@]}" == 0 ]]; then
         # The number of values doesn't equal the number of required
         # values, so check if some default values are given.
         if [[ -z "${default_values_str}" ]]; then
@@ -5154,7 +5154,7 @@ function argparser_check_arg_values() {
             error_message+="value, but has \$2 given."
 
             argparser_translate "Error wrong arg number 1" "${error_message}" \
-                "${option_names}" "${#values[@]}"
+                "${option_names}" "${#values_arr[@]}"
             error_message="${translation}"
             messages+=("${error_message}")
         else
