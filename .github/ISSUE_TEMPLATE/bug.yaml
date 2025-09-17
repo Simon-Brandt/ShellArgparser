@@ -43,7 +43,10 @@ body:
         Which version of the Shell Argparser are you running? *(See `argparser
         --version`.)*
       options:
+        - v1.1.1 "Biswamoyopterus gaoligongensis"
         - v1.1.0 "Biswamoyopterus biswasi"
+        - v1.0.1 "Acomys cahirinus"
+        - v1.0.0 "Acomys airensis"
         - main branch
       default: 0
     validations:

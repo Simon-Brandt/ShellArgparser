@@ -8506,7 +8506,7 @@ function argparser_main() {
     # must be set in global scope within argparser_set_args, later, it's
     # useless declaring it as local, here.
     declare -a ARGPARSER_ARGS
-    local argparser_version="1.1.0 \"Biswamoyopterus biswasi\""
+    local argparser_version="1.1.1 \"Biswamoyopterus gaoligongensis\""
 
     # Detect whether the Argparser is sourced or run as standalone
     # script.  In the former case, the second element of ${FUNCNAME[@]}
