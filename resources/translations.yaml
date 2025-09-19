@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-29
+# Last Modification: 2025-09-19
 # License: Public Domain
 
 # 1.    Define the general translations.
@@ -878,6 +878,14 @@ Error pos arg count 2:
 ---
 Error arg no flag 1:
   en: >
+    Error: Error: The option "$1" is no flag and thus needs a value
+    after the option name.
+  de: >
+    Fehler: Die Option "$1" ist kein Flag und kann benötigt daher einen Wert
+    nach dem Optionsnamen.
+
+Error arg no flag 2:
+  en: >
     Error: The option "$1" is not used as a flag (it has a value given) and
     thus cannot be given with a "+" or "no-" prefix.
   de: >
@@ -885,7 +893,7 @@ Error arg no flag 1:
     gegeben) und kann daher nicht mit einem "+"- oder "no-"-Präfix gegeben
     werden.
 
-Error arg no flag 2:
+Error arg no flag 3:
   en: >
     Error: The option "$1" is no flag and thus cannot be given with a "+" or
     "no-" prefix.

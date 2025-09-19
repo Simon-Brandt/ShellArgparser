@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-15
+# Last Modification: 2025-09-19
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -5035,6 +5035,15 @@ function argparser_check_arg_values() {
         notes=("${all_notes[${arg_key}]}")
     else
         values_str="$3"
+        if [[ "${values_str}" == "${ARGPARSER_ARG_DELIMITER_2}" ]]; then
+            # If there is no actual value for the argument, i.e., just
+            # the ${ARGPARSER_ARG_DELIMITER_2} character introduced to
+            # discern non-flag arguments given multiple times and partly
+            # without value, remove it.  This allows non-flag-like
+            # arguments given without any value not to raise the error
+            # of being used as flag, but as missing a value, below.
+            values_str=""
+        fi
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values_arr \
             <<< "${values_str}"
 
@@ -5071,8 +5080,40 @@ function argparser_check_arg_values() {
         fi
     done
 
+    # If the argument is used as flag, but is none (nor can be used as
+    # such), output an error message.  In this case, there are empty
+    # strings among the values.
+    for value in "${values_arr[@]}"; do
+        if ! argparser_in_array "${arg_number}" "*" "?" 0 \
+            && [[ -z "${value}" ]]
+        then
+            error_message="Error: The option \"\$1\" is no flag and thus "
+            error_message+="needs a value after the option name."
+
+            argparser_translate "Error arg no flag 1" "${error_message}" \
+                "${option_names}"
+            error_message="${translation}"
+            messages+=("${error_message}")
+            messages+=("${error_message}")
+            return
+        fi
+    done
+
+    # Remove the empty fields.  This is necessary to allow true flags to
+    # be given multiple times without considering the empty field an
+    # (illegal) value.
+    for i in "${!values_arr[@]}"; do
+        if [[ -z "${values_arr[i]}" ]]; then
+            unset 'values_arr[i]'
+        fi
+    done
+
+    values_arr=("${values_arr[@]}")
+    argparser_join "${values_arr[@]}"
+    values_str="${joined_array}"
+
     # If a "+" (or equivalent "no-") prefix is given and the argument is
-    # no flag (or not used as such) output an error message.
+    # no flag (or not used as such), output an error message.
     for prefix in "${prefixes[@]}"; do
         if [[ "${prefix}" == "-" || "${arg_number}" == 0 ]]; then
             continue
@@ -5085,7 +5126,7 @@ function argparser_check_arg_values() {
             error_message+="(it has a value given) and thus cannot be given "
             error_message+="with a \"+\" or \"no-\" prefix."
 
-            argparser_translate "Error arg no flag 1" "${error_message}" \
+            argparser_translate "Error arg no flag 2" "${error_message}" \
                 "${option_names}"
             error_message="${translation}"
             messages+=("${error_message}")
@@ -5094,7 +5135,7 @@ function argparser_check_arg_values() {
             error_message="Error: The option \"\$1\" is no flag and thus "
             error_message+="cannot be given with a \"+\" or \"no-\" prefix."
 
-            argparser_translate "Error arg no flag 2" "${error_message}" \
+            argparser_translate "Error arg no flag 3" "${error_message}" \
                 "${option_names}"
             error_message="${translation}"
             messages+=("${error_message}")
@@ -5667,9 +5708,18 @@ function argparser_parse_args() {
                     is_positional_only=false
                     ;;
                 Argument*)
-                    # Set the current argument name.
+                    # Set the current argument name, and the first value
+                    # to the empty string (by ending it with an
+                    # ${ARGPARSER_ARG_DELIMITER_2} character).  This
+                    # allows for discerning non-flag arguments given
+                    # multiple times, but partly without value.
                     is_positional=false
                     arg_key="${message#Argument: }"
+                    if ! argparser_in_array "${arg_key}" "${!args[@]}"; then
+                        args[${arg_key}]="${ARGPARSER_ARG_DELIMITER_2}"
+                    else
+                        args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                    fi
                     ;;
                 Prefix*)
                     # Set the current argument's prefix ("-" or "+").
@@ -5683,15 +5733,38 @@ function argparser_parse_args() {
                     fi
                     ;;
                 Value*)
-                    # Set the current argument's value.
+                    # Set the current argument's value.  For values to
+                    # keyword arguments, merge the value with the
+                    # previous empty string value, iff the previous
+                    # value is indeed empty.
                     value="${message#Value: }"
                     if [[ "${is_positional}" == true ]]; then
+                        # The value is a positional argument.
                         given_positional_args+=("${value}")
-                    elif ! argparser_in_array "${arg_key}" "${!args[@]}"; then
+                    elif [[ "${args[${arg_key}]}" \
+                        == "${ARGPARSER_ARG_DELIMITER_2}" ]]
+                    then
+                        # The value is the first value to the current
+                        # keyword argument.
                         args[${arg_key}]="${value}"
-                    else
                         args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                    elif (( "${#args[${arg_key}]}" >= 2 )) \
+                        && [[ "${args[${arg_key}]: -2}" \
+                            == "${ARGPARSER_ARG_DELIMITER_2}${ARGPARSER_ARG_DELIMITER_2}" ]]
+                    then
+                        # The value is not the first one, but the
+                        # previous argument was one of the current
+                        # keyword argument's option names, which added
+                        # an empty string needing to be merged.
+                        args[${arg_key}]="${args[${arg_key}]::-1}"
                         args[${arg_key}]+="${value}"
+                        args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                    else
+                        # The value is at least on the second place
+                        # after one of the current keyword argument's
+                        # option names.
+                        args[${arg_key}]+="${value}"
+                        args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
                     fi
                     ;;
                 Logo) is_logo=true ;;
