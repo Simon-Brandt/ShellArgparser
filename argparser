@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-19
+# Last Modification: 2025-09-22
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -8579,7 +8579,7 @@ function argparser_main() {
     # must be set in global scope within argparser_set_args, later, it's
     # useless declaring it as local, here.
     declare -a ARGPARSER_ARGS
-    local argparser_version="1.1.1 \"Biswamoyopterus gaoligongensis\""
+    local argparser_version="1.1.2 \"Biswamoyopterus laoensis\""
 
     # Detect whether the Argparser is sourced or run as standalone
     # script.  In the former case, the second element of ${FUNCNAME[@]}

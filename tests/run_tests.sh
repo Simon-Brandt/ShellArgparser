@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-15
+# Last Modification: 2025-09-22
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -1671,7 +1671,7 @@ test_number="${test_section}.2"
 test_type="version"
 cmd="bash ../argparser --version"
 output="$(cat << EOF
-argparser v1.1.1 "Biswamoyopterus gaoligongensis"
+argparser v1.1.2 "Biswamoyopterus laoensis"
 EOF
 )"
 error=""

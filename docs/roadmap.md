@@ -35,6 +35,7 @@ The following table lists all versions released so far:
 
 | Version number | Codename                         |
 | -------------- | -------------------------------- |
+| v1.1.2         | *Biswamoyopterus laoensis*       |
 | v1.1.1         | *Biswamoyopterus gaoligongensis* |
 | v1.1.0         | *Biswamoyopterus biswasi*        |
 | v1.0.1         | *Acomys cahirinus*               |
@@ -45,7 +46,7 @@ You can obtain the version number of your Argparser copy by querying `argparser 
 <!-- <include command="argparser --version" lang="console"> -->
 ```console
 $ argparser --version
-argparser v1.1.1 "Biswamoyopterus gaoligongensis"
+argparser v1.1.2 "Biswamoyopterus laoensis"
 ```
 <!-- </include> -->
 
