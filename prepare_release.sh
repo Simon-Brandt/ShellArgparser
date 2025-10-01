@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-15
+# Last Modification: 2025-10-01
 
 # Usage: Run this script with "bash prepare_release.sh".
 
@@ -77,8 +77,8 @@ sed --in-place --regexp-extended \
 # Add the version info to the list of Argparser releases in the
 # documentation and replace the version info for the exemplary --version
 # call.
-pattern_version_1='\| v[1-9][0-9]*\.[0-9]+\.[0-9]+ *\| '
-pattern_version_1+='\*[[:alpha:]]+ [[:alpha:]]+\* \|'
+pattern_version_1='\| v[1-9][0-9]*\.[0-9]+\.[0-9]+ +\| '
+pattern_version_1+='\*[[:alpha:]]+ [[:alpha:]]+\* +\|'
 replacement_version_1='| v'"${version_number}"' | *'"${codename}"'* |'
 
 pattern_version_2='argparser v[1-9][0-9]*\.[0-9]+\.[0-9]+ '
