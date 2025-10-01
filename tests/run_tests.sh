@@ -1662,7 +1662,7 @@ test_number="${test_section}.2"
 test_type="version"
 cmd="bash ../argparser --version"
 output="$(cat << EOF
-argparser v1.1.2 "Biswamoyopterus laoensis"
+argparser v1.2.0 "Callospermophilus lateralis"
 EOF
 )"
 error=""

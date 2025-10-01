@@ -43,6 +43,7 @@ body:
         Which version of the Shell Argparser are you running? *(See `argparser
         --version`.)*
       options:
+        - v1.2.0 "Callospermophilus lateralis"
         - v1.1.2 "Biswamoyopterus laoensis"
         - v1.1.1 "Biswamoyopterus gaoligongensis"
         - v1.1.0 "Biswamoyopterus biswasi"
