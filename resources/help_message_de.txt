@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-07-29
+# Last Modification: 2025-09-15
 # License: Public Domain
 
 # Purpose: Print a help message for test_localization.sh, invoked by
@@ -19,17 +19,17 @@ ist.
 @Header
 
 # Print the positional arguments.
-Die folgenden Argumente sind positional.
-@Positionale Argumente
+Die folgenden Argumente sind positional:
+@@Positionale Argumente
 
 # Print the options from the "Erforderliche Optionen" group.
-Die folgenden Optionen haben keinen Vorgabewert.
-@Erforderliche Optionen
+Die folgenden Optionen haben keinen Vorgabewert:
+@@Erforderliche Optionen
 
 # Print the options from the "Optionale Optionen" group.
-Die folgenden Optionen haben einen Vorgabewert.
-@Optionale Optionen
+Die folgenden Optionen haben einen Vorgabewert:
+@@Optionale Optionen
 
 # Print the three help options.
-Es gibt grundsätzlich drei Optionen für die Hilfe-Meldungen.
-@Help
+Es gibt grundsätzlich drei Optionen für die Hilfe-Meldungen:
+@@Help

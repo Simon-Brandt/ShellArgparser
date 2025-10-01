@@ -25,7 +25,7 @@
    1. [Positional and keyword arguments](argument_passing.md#511-positional-and-keyword-arguments)
    1. [Special options](argument_passing.md#512-special-options)
    1. [Option name aliases and modifications](argument_passing.md#513-option-name-aliases-and-modifications)
-   1. [Argument value delimiters and aggregation](argument_passing.md#514-argument-value-delimiters-and-aggregation)
+   1. [Argument value delimiters and intermixing](argument_passing.md#514-argument-value-delimiters-and-intermixing)
    1. [Flags](argument_passing.md#515-flags)
 1. [Argparser invokation](argparser_invokation.md#52-argparser-invokation)
    1. [Argparser sourcing](argparser_invokation.md#521-argparser-sourcing)

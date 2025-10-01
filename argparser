@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-22
+# Last Modification: 2025-10-01
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -1000,6 +1000,7 @@ function argparser_read_configuration() {
     # ARGPARSER_ADD_HELP
     # ARGPARSER_ADD_USAGE
     # ARGPARSER_ADD_VERSION
+    # ARGPARSER_ALLOW_ARG_INTERMIXING
     # ARGPARSER_ALLOW_FLAG_INVERSION
     # ARGPARSER_ALLOW_FLAG_NEGATION
     # ARGPARSER_ALLOW_OPTION_ABBREVIATION
@@ -1190,6 +1191,7 @@ function argparser_set_env_vars() {
     # ARGPARSER_ADD_HELP
     # ARGPARSER_ADD_USAGE
     # ARGPARSER_ADD_VERSION
+    # ARGPARSER_ALLOW_ARG_INTERMIXING
     # ARGPARSER_ALLOW_FLAG_INVERSION
     # ARGPARSER_ALLOW_FLAG_NEGATION
     # ARGPARSER_ALLOW_OPTION_ABBREVIATION
@@ -1294,6 +1296,7 @@ function argparser_set_env_vars() {
         "ARGPARSER_ADD_HELP                  : add-help                  :              : true                 :            : bool : 0      : Options   : add ARGPARSER_HELP_OPTIONS and --help as flags to call the help message                                       "
         "ARGPARSER_ADD_USAGE                 : add-usage                 :              : true                 :            : bool : 0      : Options   : add ARGPARSER_USAGE_OPTIONS and --usage as flags to call the usage message                                    "
         "ARGPARSER_ADD_VERSION               : add-version               :              : true                 :            : bool : 0      : Options   : add ARGPARSER_VERSION_OPTIONS and --version as flags to call the version message                              "
+        "ARGPARSER_ALLOW_ARG_INTERMIXING     : allow-arg-intermixing     :              : true                 :            : bool : 0      : Options   : allow the user to intermix positional and keyword arguments                                                   "
         "ARGPARSER_ALLOW_FLAG_INVERSION      : allow-flag-inversion      :              : true                 :            : bool : 0      : Options   : allow the user to invert flags by prefixing them with \"+\" (short options) or \"++\" (long options)          "
         "ARGPARSER_ALLOW_FLAG_NEGATION       : allow-flag-negation       :              : true                 :            : bool : 0      : Options   : allow the user to negate long-option flags by prefixing them with \"no-\"                                     "
         "ARGPARSER_ALLOW_OPTION_ABBREVIATION : allow-option-abbreviation :              : false                :            : bool : 0      : Options   : allow the user to give long option names in abbreviated form                                                  "
@@ -1357,6 +1360,7 @@ function argparser_set_env_vars() {
     ARGPARSER_ADD_HELP=true \
         ARGPARSER_ADD_USAGE=true \
         ARGPARSER_ADD_VERSION=true \
+        ARGPARSER_ALLOW_ARG_INTERMIXING=false \
         ARGPARSER_ALLOW_FLAG_INVERSION=true \
         ARGPARSER_ALLOW_FLAG_NEGATION=true \
         ARGPARSER_ALLOW_OPTION_ABBREVIATION=false \
@@ -1503,6 +1507,7 @@ function argparser_check_env_vars() {
     # - ARGPARSER_ADD_HELP (read-only)
     # - ARGPARSER_ADD_USAGE (read-only)
     # - ARGPARSER_ADD_VERSION (read-only)
+    # - ARGPARSER_ALLOW_ARG_INTERMIXING (read-only)
     # - ARGPARSER_ALLOW_FLAG_INVERSION (read-only)
     # - ARGPARSER_ALLOW_FLAG_NEGATION (read-only)
     # - ARGPARSER_ALLOW_OPTION_ABBREVIATION (read-only)
@@ -1578,6 +1583,7 @@ function argparser_check_env_vars() {
         ARGPARSER_ADD_HELP
         ARGPARSER_ADD_USAGE
         ARGPARSER_ADD_VERSION
+        ARGPARSER_ALLOW_ARG_INTERMIXING
         ARGPARSER_ALLOW_FLAG_INVERSION
         ARGPARSER_ALLOW_FLAG_NEGATION
         ARGPARSER_ALLOW_OPTION_ABBREVIATION
@@ -3893,7 +3899,7 @@ function argparser_check_args_definition_option_values() {
                 argparser_translate "Error arg def option choice flag" \
                     "${error_message}" "${arg_key}" "${choice_values_str}"
                 error_message="${translation}"
-                error_messages+=("${error_message}")            
+                error_messages+=("${error_message}")
             else
                 for choice_value in "${choice_values_arr[@]}"; do
                     if [[ "${choice_value}" == true \
@@ -5450,6 +5456,7 @@ function argparser_parse_args() {
     #   with key and value as associative array
     #
     # Environment:
+    # - ARGPARSER_ALLOW_ARG_INTERMIXING (read-only)
     # - ARGPARSER_ARG_ARRAY_NAME (read-only)
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_CHECK_ARG_DEF (read-only)
@@ -5586,6 +5593,8 @@ function argparser_parse_args() {
     # Define the remaining local variables that start with "arg".
     local arg
     local arg_key
+    local arg_number
+    local -A arg_numbers
     local -a args_definition_file
     local -a args_definition_script
 
@@ -5720,6 +5729,7 @@ function argparser_parse_args() {
                     else
                         args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
                     fi
+                    arg_numbers[${arg_key}]=0
                     ;;
                 Prefix*)
                     # Set the current argument's prefix ("-" or "+").
@@ -5739,32 +5749,92 @@ function argparser_parse_args() {
                     # value is indeed empty.
                     value="${message#Value: }"
                     if [[ "${is_positional}" == true ]]; then
-                        # The value is a positional argument.
+                        # The value is given in a positional-only
+                        # location.
                         given_positional_args+=("${value}")
-                    elif [[ "${args[${arg_key}]}" \
-                        == "${ARGPARSER_ARG_DELIMITER_2}" ]]
+                    elif [[ "${ARGPARSER_ALLOW_ARG_INTERMIXING}" == true ]]
                     then
-                        # The value is the first value to the current
-                        # keyword argument.
-                        args[${arg_key}]="${value}"
-                        args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
-                    elif (( "${#args[${arg_key}]}" >= 2 )) \
-                        && [[ "${args[${arg_key}]: -2}" \
-                            == "${ARGPARSER_ARG_DELIMITER_2}${ARGPARSER_ARG_DELIMITER_2}" ]]
-                    then
-                        # The value is not the first one, but the
-                        # previous argument was one of the current
-                        # keyword argument's option names, which added
-                        # an empty string needing to be merged.
-                        args[${arg_key}]="${args[${arg_key}]::-1}"
-                        args[${arg_key}]+="${value}"
-                        args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                        # The value may be either a value to the
+                        # previous keyword argument or a positional
+                        # argument.  Treat it as positional argument
+                        # only if the previous keyword argument has
+                        # already taken as many values as required.  For
+                        # numerical argument counts, this is directly
+                        # this count, for [0, 1] values, this is true
+                        # when there is already 1 value, and for
+                        # [1, inf) and [0, inf) values, this is never
+                        # true since all values shall be taken.  Then,
+                        # and in all other cases, treat the value as
+                        # value for the previous keyword argument.
+                        arg_number="${all_arg_numbers[${arg_key}]}"
+                        if [[ "${arg_numbers[${arg_key}]}" == 1 \
+                            && "${arg_number}" == "?" ]]
+                        then
+                            # The value is a positional argument.
+                            given_positional_args+=("${value}")
+                        elif [[ "${arg_numbers[${arg_key}]}" == "${arg_number}" \
+                            && "${arg_number}" != "+" \
+                            && "${arg_number}" != "*" ]]
+                        then
+                            # The value is a positional argument.
+                            given_positional_args+=("${value}")
+                        elif [[ "${args[${arg_key}]}" \
+                            == "${ARGPARSER_ARG_DELIMITER_2}" ]]
+                        then
+                            # The value is the first value to the
+                            # current keyword argument.
+                            args[${arg_key}]="${value}"
+                            args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                            (( arg_numbers[${arg_key}]++ ))
+                        elif (( "${#args[${arg_key}]}" >= 2 )) \
+                            && [[ "${args[${arg_key}]: -2}" \
+                                == "${ARGPARSER_ARG_DELIMITER_2}${ARGPARSER_ARG_DELIMITER_2}" ]]
+                        then
+                            # The value is not the first one, but the
+                            # previous argument was one of the current
+                            # keyword argument's option names, which
+                            # added an empty string needing to be
+                            # merged.
+                            args[${arg_key}]="${args[${arg_key}]::-1}"
+                            args[${arg_key}]+="${value}"
+                            args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                            (( arg_numbers[${arg_key}]++ ))
+                        else
+                            # The value is at least on the second place
+                            # after one of the current keyword
+                            # argument's option names.
+                            args[${arg_key}]+="${value}"
+                            args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                            (( arg_numbers[${arg_key}]++ ))
+                        fi
                     else
-                        # The value is at least on the second place
-                        # after one of the current keyword argument's
-                        # option names.
-                        args[${arg_key}]+="${value}"
-                        args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                        if [[ "${args[${arg_key}]}" \
+                            == "${ARGPARSER_ARG_DELIMITER_2}" ]]
+                        then
+                            # The value is the first value to the
+                            # current keyword argument.
+                            args[${arg_key}]="${value}"
+                            args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                        elif (( "${#args[${arg_key}]}" >= 2 )) \
+                            && [[ "${args[${arg_key}]: -2}" \
+                                == "${ARGPARSER_ARG_DELIMITER_2}${ARGPARSER_ARG_DELIMITER_2}" ]]
+                        then
+                            # The value is not the first one, but the
+                            # previous argument was one of the current
+                            # keyword argument's option names, which
+                            # added an empty string needing to be
+                            # merged.
+                            args[${arg_key}]="${args[${arg_key}]::-1}"
+                            args[${arg_key}]+="${value}"
+                            args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                        else
+                            # The value is at least on the second place
+                            # after one of the current keyword
+                            # argument's option names.
+                            args[${arg_key}]+="${value}"
+                            args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                        fi
+                        (( arg_numbers[${arg_key}]++ ))
                     fi
                     ;;
                 Logo) is_logo=true ;;
@@ -5850,7 +5920,7 @@ function argparser_parse_args() {
         if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
             {
                 printf '\n'
-                argparser_print_help_or_usage_message "usage" false 2 
+                argparser_print_help_or_usage_message "usage" false 2
             } >&2
         fi
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
@@ -7315,17 +7385,10 @@ function argparser_create_help_message() {
     # For each argument group, print its arguments.
     index=0
     for arg_group in "${arg_groups[@]}"; do
-        # Set the argument group's name for output.
-        if [[ "${arg_group}" == "${ARGPARSER_HELP_ARG_GROUP}" ]]; then
-            help_message=""
-        else
-            help_message="${arg_group}:"
-            help_message+=$'\n'
-        fi
-
         # For any argument line, output the three columns and their
         # delimiting whitespace.  If all three columns are empty, the
         # end of the current argument group has been reached.
+        help_message=""
         for (( i = index; i < "${#col_1[@]}"; i++ )); do
             if [[ -z "${col_1[i]}" && -z "${col_2[i]}" && -z "${col_3[i]}" ]]
             then
@@ -7992,6 +8055,7 @@ function argparser_print_help_or_usage_message() {
     # - ARGPARSER_USAGE_STYLE (read-only)
 
     # Define the local variables.
+    local add_heading
     local arg_group
     local -a arg_groups
     local count
@@ -8009,6 +8073,8 @@ function argparser_print_help_or_usage_message() {
     local -a lines
     local line_type
     local message
+    local -a resolved_lines
+    local skip_blank_line
     local -a sorted_array
     local style
     local translation
@@ -8089,12 +8155,92 @@ function argparser_print_help_or_usage_message() {
         lines=("${include_char}All")
     fi
 
-    # For each line, print the text and replace the include directives
-    # by the respective part from the help or usage message.  Possibly,
-    # skip comments.
+    # Resolve the summarizing include directives by replacing them with
+    # the individual include directives and separating blank lines.
+    resolved_lines=( )
+    for line in "${lines[@]}"; do
+        if [[ "${line::1}" != "${include_char}" ]]; then
+            resolved_lines+=("${line}")
+            continue
+        fi
+
+        # Extract the include directive, where the include character may
+        # be doubled.
+        if [[ "${line:1:1}" == "${include_char}" ]]; then
+            add_heading=false
+            include_directive="${line:2}"
+        else
+            add_heading=true
+            include_directive="${line:1}"
+        fi
+
+        if [[ "${help_type}" == "help" ]]; then
+            if [[ "${include_directive}" == "All" ]]; then
+                # Add the usage, description, and remark include
+                # directives, terminated by blank lines.
+                resolved_lines+=(
+                    "${include_char}Usage"
+                    ""
+                    "${include_char}Description"
+                    ""
+                    "${include_char}Remark"
+                    ""
+                )
+
+                # Add the include directives for each arguments group.
+                # Terminate all but the last by a blank line.  If the
+                # last group is the help options group, double the
+                # include character to indicate that the heading shall
+                # be suppressed.
+                for i in "${!arg_groups[@]}"; do
+                    if (( i < "${#arg_groups[@]}" - 1 )); then
+                        resolved_lines+=(
+                            "${include_char}${arg_groups[i]}"
+                            ""
+                        )
+                    elif [[ "${ARGPARSER_ADD_HELP}" == true \
+                        || "${ARGPARSER_ADD_USAGE}" == true \
+                        || "${ARGPARSER_ADD_VERSION}" == true ]]
+                    then
+                        resolved_lines+=(
+                            "${include_char}${include_char}${arg_groups[i]}"
+                        )
+                    else
+                        resolved_lines+=("${include_char}${arg_groups[i]}")
+                    fi
+                done
+            elif [[ "${include_directive}" == "Header" ]]; then
+                # Add the usage, description, and remark include
+                # directives, separated by blank lines.
+                resolved_lines+=(
+                    "${include_char}Usage"
+                    ""
+                    "${include_char}Description"
+                    ""
+                    "${include_char}Remark"
+                )
+            else
+                # Add the unmodified line.
+                resolved_lines+=("${line}")
+            fi
+        else
+            if [[ "${include_directive}" == "All" ]]; then
+                # Add the usage include directive.
+                resolved_lines+=("${include_char}Usage")
+            else
+                # Add the unmodified line.
+                resolved_lines+=("${line}")
+            fi
+        fi
+    done
+
+    # For each resolved line, print the text and replace the include
+    # directives by the respective part from the help or usage message.
+    # Possibly, skip comments.
     line_type="text"
     message=""
-    for line in "${lines[@]}"; do
+    skip_blank_line=false
+    for line in "${resolved_lines[@]}"; do
         # Set ${line_type} to "include directive" if the line contains
         # an include directive, to "comment" if the line is commented
         # and ${keep_comments} is "false", and to "text" if it is not
@@ -8105,57 +8251,54 @@ function argparser_print_help_or_usage_message() {
         # given.
         if [[ "${line::1}" == "${include_char}" ]]; then
             line_type="include directive"
-            include_directive="${line:1}"
+
+            # Set the heading to be suppressed when the include
+            # character is doubled.
+            if [[ "${line:1:1}" == "${include_char}" ]]; then
+                add_heading=false
+                include_directive="${line:2}"
+            else
+                add_heading=true
+                include_directive="${line:1}"
+            fi
+
             if [[ "${help_type}" == "help" ]]; then
-                if [[ "${include_directive}" == "All" ]]; then
-                    message+="${help_message_groups["Usage"]}"
-                    message+=$'\n'
-
+                if [[ "${include_directive}" == "Description" ]]; then
+                    # Add the description.
                     if [[ -n "${help_message_groups["Description"]}" ]]; then
                         message+="${help_message_groups["Description"]}"
-                        message+=$'\n'
-                    fi
-
-                    if (( keyword_args_count > 0 )); then
-                        message+="${help_message_groups["Remark"]}"
-                        message+=$'\n'
-                    fi
-
-                    for i in "${!arg_groups[@]}"; do
-                        message+="${help_message_groups[${arg_groups[i]}]}"
-                        if (( i < "${#arg_groups[@]}" - 1 )); then
-                            message+=$'\n'
-                        fi
-                    done
-                elif [[ "${include_directive}" == "Description" ]]; then
-                    if [[ -n "${help_message_groups["Description"]}" ]]; then
-                        message+="${help_message_groups["Description"]}"
-                    fi
-                elif [[ "${include_directive}" == "Header" ]]; then
-                    message+="${help_message_groups["Usage"]}"
-
-                    if [[ -n "${help_message_groups["Description"]}" ]]; then
-                        message+=$'\n'
-                        message+="${help_message_groups["Description"]}"
-                    fi
-
-                    if (( keyword_args_count > 0 )); then
-                        message+=$'\n'
-                        message+="${help_message_groups["Remark"]}"
+                    else
+                        skip_blank_line=true
                     fi
                 elif [[ "${include_directive}" == "Help" ]]; then
+                    # Add the help options group, possibly with heading.
+                    if [[ "${add_heading}" == true ]]; then
+                        message+="${ARGPARSER_HELP_ARG_GROUP}:"
+                        message+=$'\n'
+                    fi
                     message+="${help_message_groups["${ARGPARSER_HELP_ARG_GROUP}"]}"
                 elif [[ "${include_directive}" == "Remark" ]]; then
+                    # Add the remark.
                     if (( keyword_args_count > 0 )); then
                         message+="${help_message_groups["Remark"]}"
+                    else
+                        skip_blank_line=true
                     fi
                 elif [[ "${include_directive}" == "Usage" ]]; then
+                    # Add the usage.
                     message+="${help_message_groups["Usage"]}"
                 elif argparser_in_array "${include_directive}" \
                     "${arg_groups[@]}"
                 then
+                    # Add the arguments group, possibly with heading.
+                    if [[ "${add_heading}" == true ]]; then
+                        message+="${include_directive}:"
+                        message+=$'\n'
+                    fi
                     message+="${help_message_groups["${include_directive}"]}"
                 else
+                    # Output an error message for the unrecognized and
+                    # likely incorrect include directive.
                     error_message="Error: The include directive \"\$1\" could "
                     error_message+="not be recognized."
 
@@ -8165,9 +8308,12 @@ function argparser_print_help_or_usage_message() {
                     error_messages+=("${error_message}")
                 fi
             else
-                if [[ "${include_directive}" == "All" ]]; then
+                if [[ "${include_directive}" == "Usage" ]]; then
+                    # Add the usage.
                     message+="${usage_message_groups["Usage"]}"
                 else
+                    # Output an error message for the unrecognized and
+                    # likely incorrect include directive.
                     error_message="Error: The include directive \"\$1\" could "
                     error_message+="not be recognized."
 
@@ -8183,11 +8329,16 @@ function argparser_print_help_or_usage_message() {
             line_type="text"
         fi
 
-        # If ${line_type} has been set to "text", print the current
-        # line.  If it is set to "include_directive", reset it to "text"
-        # to (possibly) print the next line, and only not the current
-        # "<ArgumentGroup>" line.
-        if [[ "${line_type}" == "text" ]]; then
+        # If ${skip_blank_line} is set to "true", skip the current line,
+        # which is empty by definition (it follows an include directive
+        # for an empty group).  Else, if ${line_type} has been set to
+        # "text", print the current line.  If it is set to
+        # "include_directive", reset it to "text" to (possibly) print
+        # the next line, and only not the current "<ArgumentGroup>"
+        # line.
+        if [[ "${skip_blank_line}" == true ]]; then
+            skip_blank_line=false
+        elif [[ "${line_type}" == "text" ]]; then
             message+="${line}"
             message+=$'\n'
         elif [[ "${line_type}" == "include directive" ]]; then
@@ -8779,6 +8930,7 @@ function argparser_main() {
         unset ARGPARSER_ADD_HELP
         unset ARGPARSER_ADD_USAGE
         unset ARGPARSER_ADD_VERSION
+        unset ARGPARSER_ALLOW_ARG_INTERMIXING
         unset ARGPARSER_ALLOW_FLAG_INVERSION
         unset ARGPARSER_ALLOW_FLAG_NEGATION
         unset ARGPARSER_ALLOW_OPTION_ABBREVIATION

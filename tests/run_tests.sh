@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-22
+# Last Modification: 2025-10-01
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -1360,27 +1360,24 @@ Usage: test_help_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
-The following arguments are positional.
-Positional arguments:
+The following arguments are positional:
 [pos_1={1,2}]              one positional argument with default and choice
                            (default: 2)
 pos_2                      two positional arguments without default or choice
 
-The following options have no default value.
-Mandatory options:
+The following options have no default value:
 -a,       --var-1=VAL_1    one value without default or choice
 -b,       --var-2=VAL_2... at least one value without default or choice
 -c,       --var-3={A,B}... at least one value with choice
 
-The following options have a default value.
-Optional options:
+The following options have a default value:
 [-d={A,B,C}]               one value with default and choice (default: "A")
           [--var-5=VAL_5]  one value with default (default: "E")
 [-f],     [--var-6]        no value (flag) with default (default: false)
 [-g],     [--var-7]        (DEPRECATED) no value (flag) with default (default:
                            true)
 
-There are always three options for the help messages.
+There are always three options for the help messages:
 [-h, -?], [--help]         display this help and exit (default: false)
 [-u],     [--usage]        display the usage and exit (default: false)
 [-V],     [--version]      display the version and exit (default: false)
@@ -1487,27 +1484,24 @@ Usage: test_localization.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
-The following arguments are positional.
-Positional arguments:
+The following arguments are positional:
 [pos_1={1,2}]              one positional argument with default and choice
                            (default: 2)
 pos_2                      two positional arguments without default or choice
 
-The following options have no default value.
-Mandatory options:
+The following options have no default value:
 -a,       --var-1=VAL_1    one value without default or choice
 -b,       --var-2=VAL_2... at least one value without default or choice
 -c,       --var-3={A,B}... at least one value with choice
 
-The following options have a default value.
-Optional options:
+The following options have a default value:
 [-d={A,B,C}]               one value with default and choice (default: "A")
           [--var-5=VAL_5]  one value with default (default: "E")
 [-f],     [--var-6]        no value (flag) with default (default: false)
 [-g],     [--var-7]        (DEPRECATED) no value (flag) with default (default:
                            true)
 
-There are always three options for the help messages.
+There are always three options for the help messages:
 [-h, -?], [--help]         display this help and exit (default: false)
 [-u],     [--usage]        display the usage and exit (default: false)
 [-V],     [--version]      display the version and exit (default: false)
@@ -1527,27 +1521,24 @@ Aufruf: test_localization.sh [OPTIONEN] ARGUMENTE -- [pos_1] pos_2
 
 Erforderliche Argumente für lange Optionen sind auch für kurze erforderlich.
 
-Die folgenden Argumente sind positional.
-Positionale Argumente:
+Die folgenden Argumente sind positional:
 [pos_1={1,2}]              ein positionales Argument mit Vorgabe und Auswahl
                            (Vorgabe: 2)
 pos_2                      zwei positionale Argumente ohne Vorgabe oder Auswahl
 
-Die folgenden Optionen haben keinen Vorgabewert.
-Erforderliche Optionen:
+Die folgenden Optionen haben keinen Vorgabewert:
 -a,       --var-1=VAL_1    ein Wert ohne Vorgabe oder Auswahl
 -b,       --var-2=VAL_2... mindestens ein Wert ohne Vorgabe oder Auswahl
 -c,       --var-3={A,B}... mindestens ein Wert mit Auswahl
 
-Die folgenden Optionen haben einen Vorgabewert.
-Optionale Optionen:
+Die folgenden Optionen haben einen Vorgabewert:
 [-d={A,B,C}]               ein Wert mit Vorgabe und Auswahl (Vorgabe: "A")
           [--var-5=VAL_5]  ein Wert mit Vorgabe (Vorgabe: "E")
 [-f],     [--var-6]        kein Wert (Flag) mit Vorgabe (Vorgabe: falsch)
 [-g],     [--var-7]        (VERALTET) kein Wert (Flag) mit Vorgabe (Vorgabe:
                            wahr)
 
-Es gibt grundsätzlich drei Optionen für die Hilfe-Meldungen.
+Es gibt grundsätzlich drei Optionen für die Hilfe-Meldungen:
 [-h, -?], [--help]         diese Hilfe anzeigen und beenden (Vorgabe: falsch)
 [-u],     [--usage]        den Aufruf anzeigen und beenden (Vorgabe: falsch)
 [-V],     [--version]      die Version anzeigen und beenden (Vorgabe: falsch)
@@ -1686,6 +1677,7 @@ Usage: argparser [--help | --usage | --version]
                  [--add-help]
                  [--add-usage]
                  [--add-version]
+                 [--allow-arg-intermixing]
                  [--allow-flag-inversion]
                  [--allow-flag-negation]
                  [--allow-option-abbreviation]
@@ -1772,6 +1764,8 @@ Options:
 [--add-version]                  add ARGPARSER_VERSION_OPTIONS and --version as
                                  flags to call the version message (default:
                                  true)
+[--allow-arg-intermixing]        allow the user to intermix positional and
+                                 keyword arguments (default: true)
 [--allow-flag-inversion]         allow the user to invert flags by prefixing
                                  them with "+" (short options) or "++" (long
                                  options) (default: true)

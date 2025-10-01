@@ -20,7 +20,7 @@
 
 ### 5.7. Help and usage message localization
 
-It is even possible to localize your script's help and usage message. For the usage message, all you need is an [`ARGPARSER_TRANSLATION_FILE`](../reference/environment_variables/environment_variables.md#9442-argparser_translation_file), a simplified [YAML](https://en.wikipedia.org/wiki/YAML "wikipedia.org &rightarrow; YAML") file giving the translation of the auto-generated parts in the messages. For each section, you give the language identifier for the language you want the message to be translated to, *i.e.*, the [`ARGPARSER_LANGUAGE`](../reference/environment_variables/environment_variables.md#9430-argparser_language). For the usage message, this suffices, but in the help message, also non-auto-generated parts are included, especially each argument's help text. For them to be translated, you need a dedicated [`ARGPARSER_ARG_DEF_FILE`](../reference/environment_variables/environment_variables.md#9410-argparser_arg_def_file) and possibly a localized [`ARGPARSER_HELP_FILE`](../reference/environment_variables/environment_variables.md#9425-argparser_help_file).
+It is even possible to localize your script's help and usage message. For the usage message, all you need is an [`ARGPARSER_TRANSLATION_FILE`](../reference/environment_variables/environment_variables.md#9443-argparser_translation_file), a simplified [YAML](https://en.wikipedia.org/wiki/YAML "wikipedia.org &rightarrow; YAML") file giving the translation of the auto-generated parts in the messages. For each section, you give the language identifier for the language you want the message to be translated to, *i.e.*, the [`ARGPARSER_LANGUAGE`](../reference/environment_variables/environment_variables.md#9431-argparser_language). For the usage message, this suffices, but in the help message, also non-auto-generated parts are included, especially each argument's help text. For them to be translated, you need a dedicated [`ARGPARSER_ARG_DEF_FILE`](../reference/environment_variables/environment_variables.md#9411-argparser_arg_def_file) and possibly a localized [`ARGPARSER_HELP_FILE`](../reference/environment_variables/environment_variables.md#9426-argparser_help_file).
 
 If you set these environment variables to files whose filename contains the language, like so:
 
@@ -101,20 +101,20 @@ ist.
 @Header
 
 # Print the positional arguments.
-Die folgenden Argumente sind positional.
-@Positionale Argumente
+Die folgenden Argumente sind positional:
+@@Positionale Argumente
 
 # Print the options from the "Erforderliche Optionen" group.
-Die folgenden Optionen haben keinen Vorgabewert.
-@Erforderliche Optionen
+Die folgenden Optionen haben keinen Vorgabewert:
+@@Erforderliche Optionen
 
 # Print the options from the "Optionale Optionen" group.
-Die folgenden Optionen haben einen Vorgabewert.
-@Optionale Optionen
+Die folgenden Optionen haben einen Vorgabewert:
+@@Optionale Optionen
 
 # Print the three help options.
-Es gibt grundsätzlich drei Optionen für die Hilfe-Meldungen.
-@Help
+Es gibt grundsätzlich drei Optionen für die Hilfe-Meldungen:
+@@Help
 ```
 <!-- </include> -->
 
@@ -238,27 +238,24 @@ Aufruf: try_localization.sh [OPTIONEN] ARGUMENTE -- [pos_1] pos_2
 
 Erforderliche Argumente für lange Optionen sind auch für kurze erforderlich.
 
-Die folgenden Argumente sind positional.
-Positionale Argumente:
+Die folgenden Argumente sind positional:
 [pos_1={1,2}]              ein positionales Argument mit Vorgabe und Auswahl
                            (Vorgabe: 2)
 pos_2                      zwei positionale Argumente ohne Vorgabe oder Auswahl
 
-Die folgenden Optionen haben keinen Vorgabewert.
-Erforderliche Optionen:
+Die folgenden Optionen haben keinen Vorgabewert:
 -a,       --var-1=VAL_1    ein Wert ohne Vorgabe oder Auswahl
 -b,       --var-2=VAL_2... mindestens ein Wert ohne Vorgabe oder Auswahl
 -c,       --var-3={A,B}... mindestens ein Wert mit Auswahl
 
-Die folgenden Optionen haben einen Vorgabewert.
-Optionale Optionen:
+Die folgenden Optionen haben einen Vorgabewert:
 [-d={A,B,C}]               ein Wert mit Vorgabe und Auswahl (Vorgabe: "A")
           [--var-5=VAL_5]  ein Wert mit Vorgabe (Vorgabe: "E")
 [-f],     [--var-6]        kein Wert (Flag) mit Vorgabe (Vorgabe: falsch)
 [-g],     [--var-7]        (VERALTET) kein Wert (Flag) mit Vorgabe (Vorgabe:
                            wahr)
 
-Es gibt grundsätzlich drei Optionen für die Hilfe-Meldungen.
+Es gibt grundsätzlich drei Optionen für die Hilfe-Meldungen:
 [-h, -?], [--help]         diese Hilfe anzeigen und beenden (Vorgabe: falsch)
 [-u],     [--usage]        den Aufruf anzeigen und beenden (Vorgabe: falsch)
 [-V],     [--version]      die Version anzeigen und beenden (Vorgabe: falsch)

@@ -159,11 +159,11 @@ bash shflags_wrapper.sh -v -n "A. R. G. Parser" -a 2 -r b template.html argparse
 # Merged short options.
 bash shflags_wrapper.sh -vn "A. R. G. Parser" -a2 -rb template.html argparser.html
 
-# Positional arguments delimiter "--".
-bash shflags_wrapper.sh -vn "A. R. G. Parser" -a2 -rb -- template.html argparser.html
-
 # Leading positional arguments.
 bash shflags_wrapper.sh template.html argparser.html -vn "A. R. G. Parser" -a2 -rb
+
+# Positional arguments delimiter "--".
+bash shflags_wrapper.sh -vn "A. R. G. Parser" -a2 -rb -- template.html argparser.html
 
 # Intermixed positional arguments.
 bash shflags_wrapper.sh -vn "A. R. G. Parser" template.html -a2 argparser.html -rb
