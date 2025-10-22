@@ -1038,6 +1038,7 @@ function argparser_read_configuration() {
     # ARGPARSER_SET_ARRAYS
     # ARGPARSER_SILENCE_ERRORS
     # ARGPARSER_SILENCE_WARNINGS
+    # ARGPARSER_STYLE_FILE
     # ARGPARSER_TRANSLATION_FILE
     # ARGPARSER_UNSET_ARGS
     # ARGPARSER_UNSET_ENV_VARS
@@ -1229,6 +1230,7 @@ function argparser_set_env_vars() {
     # ARGPARSER_SET_ARRAYS
     # ARGPARSER_SILENCE_ERRORS
     # ARGPARSER_SILENCE_WARNINGS
+    # ARGPARSER_STYLE_FILE
     # ARGPARSER_TRANSLATION_FILE
     # ARGPARSER_UNSET_ARGS
     # ARGPARSER_UNSET_ENV_VARS
@@ -1333,6 +1335,7 @@ function argparser_set_env_vars() {
         "ARGPARSER_SET_ARRAYS                : set-arrays                :              : true                 :            : bool : 0      : Options   : set arguments intended to have multiple values as indexed array                                               "
         "ARGPARSER_SILENCE_ERRORS            : silence-errors            :              : false                :            : bool : 0      : Options   : silence the emission (output) of error messages                                                               "
         "ARGPARSER_SILENCE_WARNINGS          : silence-warnings          :              : false                :            : bool : 0      : Options   : silence the emission (output) of warning messages                                                             "
+        "ARGPARSER_STYLE_FILE                : style-file                : FILE         : ''                   :            : file : 1      : Options   : the path to a file holding the style definitions for the messages                                             "
         "ARGPARSER_TRANSLATION_FILE          : translation-file          : FILE         : ''                   :            : file : 1      : Options   : the path to a simplified YAML file holding the translation to ARGPARSER_LANGUAGE                              "
         "ARGPARSER_UNSET_ARGS                : unset-args                :              : true                 :            : bool : 0      : Options   : unset (remove) all command-line arguments given to the script                                                 "
         "ARGPARSER_UNSET_ENV_VARS            : unset-env-vars            :              : true                 :            : bool : 0      : Options   : unset (remove) the Argparser environment variables from the environment                                       "
@@ -1396,6 +1399,7 @@ function argparser_set_env_vars() {
         ARGPARSER_SET_ARRAYS=false \
         ARGPARSER_SILENCE_ERRORS=false \
         ARGPARSER_SILENCE_WARNINGS=false \
+        ARGPARSER_STYLE_FILE="" \
         ARGPARSER_TRANSLATION_FILE="" \
         ARGPARSER_UNSET_ARGS=true \
         ARGPARSER_UNSET_ENV_VARS=false \
@@ -1735,6 +1739,7 @@ function argparser_check_env_vars() {
     vars=(
         ARGPARSER_ARG_DEF_FILE
         ARGPARSER_HELP_FILE
+        ARGPARSER_STYLE_FILE
         ARGPARSER_USAGE_FILE
     )
     for var in "${vars[@]}"; do
@@ -1975,12 +1980,13 @@ function argparser_check_env_vars() {
     fi
 
     # Then, check that the arguments definition file, the configuration
-    # file, the help file, the translation file, and the usage file are
-    # different from each other, if given.
+    # file, the help file, the style file, the translation file, and the
+    # usage file are different from each other, if given.
     vars=(
         ARGPARSER_ARG_DEF_FILE
         ARGPARSER_CONFIG_FILE
         ARGPARSER_HELP_FILE
+        ARGPARSER_STYLE_FILE
         ARGPARSER_TRANSLATION_FILE
         ARGPARSER_USAGE_FILE
     )
@@ -2287,6 +2293,134 @@ function argparser_translate() {
         string="${string/"\$$(( i + 1 ))"/"${vars[i]}"}"
     done
     translation="${string}"
+}
+
+# Define the Argparser function for reading the styles.
+function argparser_read_styles() {
+    # Read the styles for the messages from the YAML file into an
+    # associative array.
+    #
+    # Nonlocals:
+    # - styles: the associative array containing the styles
+    #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2
+    # - ARGPARSER_CHECK_ENV_VARS
+    # - ARGPARSER_ERROR_EXIT_CODE
+    # - ARGPARSER_ERROR_STYLE
+    # - ARGPARSER_STYLE_FILE (read-only)
+
+    # Define the local variables.
+    local error_message
+    local -a error_messages
+    local file_attributes
+    local line
+    local -a lines
+    local name
+    local style
+
+    # Check if the style file exists and is readable.  Else, output an
+    # error message and exit.  Since at this point of invokation, the
+    # environment variables aren't checked, yet, set the needed ones to
+    # default values, if ${ARGPARSER_CHECK_ENV_VARS} isn't set to
+    # "false" (and by this, the checking hasn't been explicitly
+    # disabled).
+    argparser_check_file "${ARGPARSER_STYLE_FILE}"
+    if [[ "${file_attributes}" != "0000" ]]; then
+        error_message="Error: The environment variable \"\$1\" is set to "
+        error_message+="\"\$2\", but the referenced file "
+        case "${file_attributes}" in
+            0001) error_message+="is empty." ;;
+            0010) error_message+="is not readable." ;;
+            0011) error_message+="is not readable and empty." ;;
+            0100) error_message+="is not a regular file." ;;
+            0101) error_message+="is not a regular file and empty." ;;
+            0110) error_message+="is not a regular file and not readable." ;;
+            0111)
+                error_message+="is not a regular file, not readable, and "
+                error_message+="empty."
+                ;;
+            1111) error_message+="does not exist." ;;
+        esac
+
+        argparser_translate "Error file" "${error_message}" \
+            "ARGPARSER_STYLE_FILE" "${ARGPARSER_STYLE_FILE}"
+        error_message="${translation}"
+
+        if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
+            ARGPARSER_ARG_DELIMITER_2=","
+            ARGPARSER_ERROR_EXIT_CODE=1
+            ARGPARSER_ERROR_STYLE="red,bold,reverse"
+        fi
+
+        argparser_print_error_message false true "${error_message}"
+    fi
+
+    # Read the style file.
+    mapfile -t lines < "${ARGPARSER_STYLE_FILE}"
+    error_messages=( )
+
+    for line in "${lines[@]}"; do
+        if [[ -z "${line}" || "${line}" == \#* ]]; then
+            # Ignore the empty or commented line.
+            continue
+        elif [[ "${line}" =~ = ]]; then
+            # Get the style name as shortest part before an equals sign
+            # ("="), and strip leading and trailing spaces.  Then,
+            # extract the style as longest part after the equals sign
+            # and strip leading and trailing spaces and a double quote
+            # each.
+            name="${line%%=*}"
+            argparser_trim "${name}"
+            name="${trimmed_string}"
+
+            style="${line#*=}"
+            argparser_trim "${style}"
+            style="${trimmed_string}"
+            style="${style#\"}"
+            style="${style%\"}"
+
+            styles[${name}]="${style}"
+        else
+            # Output an error message when the line doesn't contain an
+            # equals sign ("=").
+            error_message="Error: In the style file \"\$1\", the line \"\$2\" "
+            error_message+="doesn't contain an equals sign (\"=\"), nor is it "
+            error_message+="empty or commented."
+
+            argparser_translate "Error style file equals sign" \
+                "${error_message}" "${ARGPARSER_STYLE_FILE}" "${line}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        fi
+    done
+
+    # Check if styles only have values supported by argparser_colorize.
+    for name in "${!styles[@]}"; do
+        style="${styles[${name}]}"
+        if ! argparser_check_color_or_style "${style}"; then
+            error_message="Error: The style \"\$1\" is set to \"\$2\", but "
+            error_message+="the values must lie in {black, red, green, "
+            error_message+="yellow, blue, magenta, cyan, white} for colors "
+            error_message+="and in {normal, bold, faint, italic, underline, "
+            error_message+="double, overline, crossed-out, blink, reverse} "
+            error_message+="for styles."
+
+            argparser_translate "Error style file styles" "${error_message}" \
+                "${name}" "${style}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        fi
+    done
+
+    # Sort, filter, colorize, and print all error messages, then exit.
+    if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
+        ARGPARSER_ARG_DELIMITER_2=","
+        ARGPARSER_ERROR_EXIT_CODE=1
+        ARGPARSER_ERROR_STYLE="red,bold,reverse"
+    fi
+
+    argparser_print_error_message true true "${error_messages[@]}"
 }
 
 # Define the Argparser functions for creating, reading, parsing, and
@@ -8720,6 +8854,7 @@ function argparser_main() {
     # - ARGPARSER_POSITIONAL_ARG_GROUP
     # - ARGPARSER_READ_ARGS (read-only)
     # - ARGPARSER_SET_ARGS (read-only)
+    # - ARGPARSER_STYLE_FILE (read-only)
     # - ARGPARSER_TRANSLATION_FILE (read-only)
     # - ARGPARSER_UNSET_ARGS (read-only)
     # - ARGPARSER_UNSET_ENV_VARS (read-only)
@@ -8753,6 +8888,7 @@ function argparser_main() {
     local is_self_parsing
     local is_sourced
     local -a script_args
+    local -A styles
     local translation
 
     # Declare the remaining internal variables.  Since ${ARGPARSER_ARGS}
@@ -8837,6 +8973,12 @@ function argparser_main() {
 
         argparser_translate "Help description" "${ARGPARSER_HELP_DESCRIPTION}"
         ARGPARSER_HELP_DESCRIPTION="${translation}"
+    fi
+
+    # If ${ARGPARSER_STYLE_FILE} isn't set to the empty string, read the
+    # style file.
+    if [[ -n "${ARGPARSER_STYLE_FILE}" ]]; then
+        argparser_read_styles
     fi
 
     # If ${ARGPARSER_CHECK_ENV_VARS} isn't set to "false", check if the
@@ -8939,6 +9081,7 @@ function argparser_main() {
         unset -f argparser_quicksort
         unset -f argparser_read_args_definition
         unset -f argparser_read_configuration
+        unset -f argparser_read_styles
         unset -f argparser_read_translation
         unset -f argparser_seq
         unset -f argparser_set_args
@@ -8998,6 +9141,7 @@ function argparser_main() {
         unset ARGPARSER_SET_ARRAYS
         unset ARGPARSER_SILENCE_ERRORS
         unset ARGPARSER_SILENCE_WARNINGS
+        unset ARGPARSER_STYLE_FILE
         unset ARGPARSER_TRANSLATION_FILE
         unset ARGPARSER_UNSET_ARGS
         unset ARGPARSER_UNSET_ENV_VARS
