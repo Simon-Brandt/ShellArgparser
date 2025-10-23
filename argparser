@@ -8600,6 +8600,7 @@ function argparser_print_warning_message() {
     local filter
     local -a filtered_array
     local -a sorted_array
+    local warning_message
     local -a warning_messages
 
     # Read the arguments.
@@ -8615,13 +8616,6 @@ function argparser_print_warning_message() {
 
     # Sort, filter, colorize, and print all warning messages.
     if (( "${#warning_messages[@]}" > 0 )); then
-        # Prepend the script name, if given.
-        for i in "${!warning_messages[@]}"; do
-            if [[ -n "${ARGPARSER_SCRIPT_NAME}" ]]; then
-                warning_messages[i]="${ARGPARSER_SCRIPT_NAME}: ${warning_messages[i]}"
-            fi
-        done
-
         # Sort and filter the warning messages.
         argparser_sort false "${warning_messages[@]}"
         warning_messages=("${sorted_array[@]}")
@@ -8631,21 +8625,22 @@ function argparser_print_warning_message() {
             warning_messages=("${filtered_array[@]}")
         fi
 
-        # Colorize the warning messages, if writing to a terminal or the
-        # escape sequences shall be included in the file.  The test
-        # assumes that argparser_print_warning_message is never run
-        # through command substitution, else [[ -t 2 ]] would always be
-        # false, i.e., it would impossible to tell if the final STDERR
-        # goes to a terminal.
-        argparser_colorize "${ARGPARSER_WARNING_STYLE}" "" 2 false
-        {
-            # shellcheck disable=SC2059  # Escape sequence in variable.
-            printf "${ARGPARSER_WARNING_STYLE}"
-            printf '%s\n' "${warning_messages[@]}"
-            if [[ "${ARGPARSER_USE_STYLES_IN_FILES}" == true || -t 2 ]]; then
-                printf '\e[m'
+        # Colorize and print the warning messages.
+        for warning_message in "${warning_messages[@]}"; do
+            # Prepend the script name, if given.
+            if [[ -n "${ARGPARSER_SCRIPT_NAME}" ]]; then
+                argparser_colorize "${styles[script_name]}" \
+                    "${ARGPARSER_SCRIPT_NAME}:" 2 true
+                printf ' '
             fi
-        } >&2
+
+            # Print the actual warning message.
+            argparser_colorize "${styles[warning_caption]}" "Warning:" 2 true
+            printf ' '
+            argparser_colorize "${styles[warning_text]}" \
+                "${warning_message#Warning: }" 2 true
+            printf '\n'
+        done
     fi
 }
 
