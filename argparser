@@ -8526,6 +8526,7 @@ function argparser_print_error_message() {
 
     # Define the local variables.
     local exit
+    local error_message
     local -a error_messages
     local filter
     local -a filtered_array
@@ -8550,13 +8551,6 @@ function argparser_print_error_message() {
     # Sort, filter, colorize, and print all error messages, then exit,
     # if requested.
     if (( "${#error_messages[@]}" > 0 )); then
-        # Prepend the script name, if given.
-        for i in "${!error_messages[@]}"; do
-            if [[ -n "${ARGPARSER_SCRIPT_NAME}" ]]; then
-                error_messages[i]="${ARGPARSER_SCRIPT_NAME}: ${error_messages[i]}"
-            fi
-        done
-
         # Sort and filter the error messages.
         argparser_sort false "${error_messages[@]}"
         error_messages=("${sorted_array[@]}")
@@ -8566,21 +8560,22 @@ function argparser_print_error_message() {
             error_messages=("${filtered_array[@]}")
         fi
 
-        # Colorize the error messages, if writing to a terminal or the
-        # escape sequences shall be included in the file.  The test
-        # assumes that argparser_print_error_message is never run
-        # through command substitution, else [[ -t 2 ]] would always be
-        # false, i.e., it would impossible to tell if the final STDERR
-        # goes to a terminal.
-        argparser_colorize "${ARGPARSER_ERROR_STYLE}" "" 2 false
-        {
-            # shellcheck disable=SC2059  # Escape sequence in variable.
-            printf "${ARGPARSER_ERROR_STYLE}"
-            printf '%s\n' "${error_messages[@]}"
-            if [[ "${ARGPARSER_USE_STYLES_IN_FILES}" == true || -t 2 ]]; then
-                printf '\e[m'
+        # Colorize and print the error messages.
+        for error_message in "${error_messages[@]}"; do
+            # Prepend the script name, if given.
+            if [[ -n "${ARGPARSER_SCRIPT_NAME}" ]]; then
+                argparser_colorize "${styles[script_name]}" \
+                    "${ARGPARSER_SCRIPT_NAME}:" 2 true
+                printf ' '
             fi
-        } >&2
+
+            # Print the actual error message.
+            argparser_colorize "${styles[error_caption]}" "Error:" 2 true
+            printf ' '
+            argparser_colorize "${styles[error_text]}" \
+                "${error_messages#Error: }" 2 true
+            printf '\n'
+        done
 
         if [[ "${exit}" == true ]]; then
             exit "${ARGPARSER_ERROR_EXIT_CODE}"
