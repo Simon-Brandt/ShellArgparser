@@ -8479,6 +8479,9 @@ function argparser_print_version_message() {
     # Arguments:
     # - $1: whether to exit after printing
     #
+    # Nonlocals:
+    # - styles: the associative array containing the styles
+    #
     # Environment:
     # - ARGPARSER_SCRIPT_NAME (read-only)
     # - ARGPARSER_VERSION_EXIT_CODE (read-only)
@@ -8494,8 +8497,11 @@ function argparser_print_version_message() {
     exit="$1"
 
     # Colorize and print the version message, then exit, if requested.
-    message="${ARGPARSER_SCRIPT_NAME} v${ARGPARSER_VERSION_NUMBER}"
-    argparser_colorize "${ARGPARSER_VERSION_STYLE}" "${message}" 1 true
+    argparser_colorize "${styles[script_name]}" "${ARGPARSER_SCRIPT_NAME} " \
+        1 true
+    argparser_colorize "${styles[version_string]}" \
+        "v${ARGPARSER_VERSION_NUMBER}" 1 true
+
     printf '\n'
 
     if [[ "${exit}" == true ]]; then
