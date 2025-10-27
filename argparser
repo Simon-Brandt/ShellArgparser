@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-10-22
+# Last Modification: 2025-10-27
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -910,32 +910,36 @@ function argparser_colorize() {
     #       ${ARGPARSER_ARG_DELIMITER_2}-separated list
     # - $2: the string to colorize
     # - $3: the file descriptor to write to (1 or 2)
-    # - $4: whether to print the colorized string
+    # - $4: the variable to set the colorized string to, if not given,
+    #       the string is printed
     #
     # Nonlocals:
-    # - style: the color and/or style to colorize the string (if $4 is
-    #   "false")
+    # - $4: the stylized string (if $4 is given)
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_USE_STYLES_IN_FILES (read-only)
     #
     # Output:
-    # - the colorized string (if $4 is "true")
+    # - the colorized string (if $4 is not given)
 
     # Define the local variables.
     local file_descriptor
-    local print_string
     local request
     local requests
     local string
+    local style
     local -A styles
+    local var
 
     # Read the arguments.
     requests="$1"
     string="$2"
     file_descriptor="$3"
-    print_string="$4"
+
+    if (( "$#" == 4 )); then
+        var="$4"
+    fi
 
     # Define the associative array with colors and styles, and their
     # corresponding Select Graphic Rendition (SGR) ANSI escape sequence
@@ -969,28 +973,26 @@ function argparser_colorize() {
     # else [[ -t ${file_descriptor} ]] would always be false, i.e., it
     # would impossible to tell if the final STDOUT/STDERR goes to a
     # terminal.
-    style=""
     if [[ "${ARGPARSER_USE_STYLES_IN_FILES}" == true \
         || -t "${file_descriptor}" ]]
     then
+        style=""
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a requests \
             <<< "${requests}"
         for request in "${requests[@]}"; do
-            style+="\e[${styles[${request}]}m"
+            style+=$'\e['"${styles[${request}]}"'m'
         done
+        string="${style}${string}"$'\e[m'
     fi
 
-    # Possibly, print the colorized string and reset the color/style.
-    if [[ "${print_string}" == true ]]; then
-        # shellcheck disable=SC2059  # Escape sequence in variable.
-        printf "${style}"
+    # Print the colorized string and reset the color/style, or set it to
+    # the target variable, using a name reference to the variable name
+    # given as ${var} (i.e., as $4).
+    if (( "$#" == 3 )); then
         printf '%s' "${string}"
-
-        if [[ "${ARGPARSER_USE_STYLES_IN_FILES}" == true \
-            || -t "${file_descriptor}" ]]
-        then
-            printf '\e[m'
-        fi
+    else
+        declare -n var="${var}"
+        var="${string}"
     fi
 }
 
@@ -2483,7 +2485,7 @@ function argparser_create_args_definition() {
     message="Does your script use Bash (y) or only a POSIX-compliant shell "
     message+="(n)?"
     argparser_fold "${message}" "${ARGPARSER_MAX_WIDTH}" 0
-    argparser_colorize "blue,bold" "${joined_words}" 1 true
+    argparser_colorize "blue,bold" "${joined_words}" 1
     printf '\n\n'
 
     while read -r -p "Bash usage (y/n):  " shell 2>&1; do
@@ -2497,30 +2499,30 @@ function argparser_create_args_definition() {
         printf 'Please answer with "y" or "n".\n'
     done
 
-    argparser_colorize "green,bold" "${separator}" 1 true
+    argparser_colorize "green,bold" "${separator}" 1
     printf '\n'
 
     # Get the target file from user input.
     message="Which file shall the arguments definition be written to?"
     argparser_fold "${message}" "${ARGPARSER_MAX_WIDTH}" 0
-    argparser_colorize "blue,bold" "${joined_words}" 1 true
+    argparser_colorize "blue,bold" "${joined_words}" 1
     printf '\n\n'
 
     read -r -p "Target file:  " file 2>&1
 
-    argparser_colorize "green,bold" "${separator}" 1 true
+    argparser_colorize "green,bold" "${separator}" 1
     printf '\n'
 
     # Get the arguments definition delimiters from user input.
     message="Which character do you want to use as primary arguments "
     message+="definition delimiter?"
     argparser_fold "${message}" "${ARGPARSER_MAX_WIDTH}" 0
-    argparser_colorize "blue,bold" "${joined_words}" 1 true
+    argparser_colorize "blue,bold" "${joined_words}" 1
     printf '\n\n'
 
     read -r -p "Primary delimiter:  " delimiter 2>&1
 
-    argparser_colorize "green,bold" "${separator}" 1 true
+    argparser_colorize "green,bold" "${separator}" 1
     printf '\n'
 
     # Get the arguments definition fields from user input.
@@ -2539,7 +2541,7 @@ function argparser_create_args_definition() {
     message="Enter the fields for each argument.  Submit an empty argument "
     message+="identifier to end the input."
     argparser_fold "${message}" "${ARGPARSER_MAX_WIDTH}" 0
-    argparser_colorize "blue,bold" "${joined_words}" 1 true
+    argparser_colorize "blue,bold" "${joined_words}" 1
     printf '\n\n'
 
     while :; do
@@ -2573,7 +2575,7 @@ function argparser_create_args_definition() {
         col_notes+=("${note}")
         col_help_texts+=("${help_text}")
 
-        argparser_colorize "green,bold" "${separator}" 1 true
+        argparser_colorize "green,bold" "${separator}" 1
         printf '\n'
     done
 
@@ -8497,10 +8499,9 @@ function argparser_print_version_message() {
     exit="$1"
 
     # Colorize and print the version message, then exit, if requested.
-    argparser_colorize "${styles[script_name]}" "${ARGPARSER_SCRIPT_NAME} " \
-        1 true
+    argparser_colorize "${styles[script_name]}" "${ARGPARSER_SCRIPT_NAME} " 1
     argparser_colorize "${styles[version_string]}" \
-        "v${ARGPARSER_VERSION_NUMBER}" 1 true
+        "v${ARGPARSER_VERSION_NUMBER}" 1
 
     printf '\n'
 
@@ -8565,15 +8566,15 @@ function argparser_print_error_message() {
             # Prepend the script name, if given.
             if [[ -n "${ARGPARSER_SCRIPT_NAME}" ]]; then
                 argparser_colorize "${styles[script_name]}" \
-                    "${ARGPARSER_SCRIPT_NAME}:" 2 true
+                    "${ARGPARSER_SCRIPT_NAME}:" 2
                 printf ' '
             fi
 
             # Print the actual error message.
-            argparser_colorize "${styles[error_caption]}" "Error:" 2 true
+            argparser_colorize "${styles[error_caption]}" "Error:" 2
             printf ' '
             argparser_colorize "${styles[error_text]}" \
-                "${error_messages#Error: }" 2 true
+                "${error_messages#Error: }" 2
             printf '\n'
         done
 
@@ -8630,15 +8631,15 @@ function argparser_print_warning_message() {
             # Prepend the script name, if given.
             if [[ -n "${ARGPARSER_SCRIPT_NAME}" ]]; then
                 argparser_colorize "${styles[script_name]}" \
-                    "${ARGPARSER_SCRIPT_NAME}:" 2 true
+                    "${ARGPARSER_SCRIPT_NAME}:" 2
                 printf ' '
             fi
 
             # Print the actual warning message.
-            argparser_colorize "${styles[warning_caption]}" "Warning:" 2 true
+            argparser_colorize "${styles[warning_caption]}" "Warning:" 2
             printf ' '
             argparser_colorize "${styles[warning_text]}" \
-                "${warning_message#Warning: }" 2 true
+                "${warning_message#Warning: }" 2
             printf '\n'
         done
     fi
@@ -8674,164 +8675,164 @@ function argparser_print_logo() {
     font_9="blue,reverse"     # R
 
     # Output the first line, which is empty.
-    argparser_colorize "${space}" "000000000000000000000000000000" 1 true  # _
-    argparser_colorize "${space}" "000000000000000000000000000000" 1 true  # _
-    argparser_colorize "${space}" "00000000000000"                 1 true  # _
+    argparser_colorize "${space}" "000000000000000000000000000000" 1  # _
+    argparser_colorize "${space}" "000000000000000000000000000000" 1  # _
+    argparser_colorize "${space}" "00000000000000"                 1  # _
     printf '\n'
 
     # Output the second line, containing the first of five lines of the
     # letters.
-    argparser_colorize "${space}"  "001"     1 true  # _, A
-    argparser_colorize "${font_1}" "0000"    1 true  # A
-    argparser_colorize "${space}"  "0101"    1 true  # A, _, R
-    argparser_colorize "${font_2}" "0100"    1 true  # R
-    argparser_colorize "${space}"  "1001"    1 true  # R, _, G
-    argparser_colorize "${font_3}" "00011"   1 true  # G
-    argparser_colorize "${space}"  "101"     1 true  # _, P
-    argparser_colorize "${font_4}" "0100"    1 true  # P
-    argparser_colorize "${space}"  "0001"    1 true  # P, _, A
-    argparser_colorize "${font_5}" "0000"    1 true  # A
-    argparser_colorize "${space}"  "0101"    1 true  # A, _, R
-    argparser_colorize "${font_6}" "0100"    1 true  # R
-    argparser_colorize "${space}"  "1001"    1 true  # R, _, S
-    argparser_colorize "${font_7}" "01001"   1 true  # S
-    argparser_colorize "${space}"  "10"      1 true  # _
-    argparser_colorize "${font_8}" "100010"  1 true  # E
-    argparser_colorize "${space}"  "101"     1 true  # _, R
-    argparser_colorize "${font_9}" "0100"    1 true  # R
-    argparser_colorize "${space}"  "100"     1 true  # R, _
+    argparser_colorize "${space}"  "001"     1  # _, A
+    argparser_colorize "${font_1}" "0000"    1  # A
+    argparser_colorize "${space}"  "0101"    1  # A, _, R
+    argparser_colorize "${font_2}" "0100"    1  # R
+    argparser_colorize "${space}"  "1001"    1  # R, _, G
+    argparser_colorize "${font_3}" "00011"   1  # G
+    argparser_colorize "${space}"  "101"     1  # _, P
+    argparser_colorize "${font_4}" "0100"    1  # P
+    argparser_colorize "${space}"  "0001"    1  # P, _, A
+    argparser_colorize "${font_5}" "0000"    1  # A
+    argparser_colorize "${space}"  "0101"    1  # A, _, R
+    argparser_colorize "${font_6}" "0100"    1  # R
+    argparser_colorize "${space}"  "1001"    1  # R, _, S
+    argparser_colorize "${font_7}" "01001"   1  # S
+    argparser_colorize "${space}"  "10"      1  # _
+    argparser_colorize "${font_8}" "100010"  1  # E
+    argparser_colorize "${space}"  "101"     1  # _, R
+    argparser_colorize "${font_9}" "0100"    1  # R
+    argparser_colorize "${space}"  "100"     1  # R, _
     printf '\n'
 
     # Output the third line, containing the second of five lines of the
     # letters.
-    argparser_colorize "${space}"  "00"      1 true  # _
-    argparser_colorize "${font_1}" "10"      1 true  # A
-    argparser_colorize "${space}"  "00"      1 true  # A
-    argparser_colorize "${font_1}" "00"      1 true  # A
-    argparser_colorize "${space}"  "10"      1 true  # _
-    argparser_colorize "${font_2}" "10"      1 true  # R
-    argparser_colorize "${space}"  "10"      1 true  # R
-    argparser_colorize "${font_2}" "01"      1 true  # R
-    argparser_colorize "${space}"  "00"      1 true  # _
-    argparser_colorize "${font_3}" "10"      1 true  # G
-    argparser_colorize "${space}"  "001110"  1 true  # G, _
-    argparser_colorize "${font_4}" "10"      1 true  # P
-    argparser_colorize "${space}"  "10"      1 true  # P
-    argparser_colorize "${font_4}" "00"      1 true  # P
-    argparser_colorize "${space}"  "00"      1 true  # _
-    argparser_colorize "${font_5}" "10"      1 true  # A
-    argparser_colorize "${space}"  "00"      1 true  # A
-    argparser_colorize "${font_5}" "00"      1 true  # A
-    argparser_colorize "${space}"  "10"      1 true  # _
-    argparser_colorize "${font_6}" "10"      1 true  # R
-    argparser_colorize "${space}"  "10"      1 true  # R
-    argparser_colorize "${font_6}" "01"      1 true  # R
-    argparser_colorize "${space}"  "00"      1 true  # _
-    argparser_colorize "${font_7}" "10"      1 true  # S
-    argparser_colorize "${space}"  "100110"  1 true  # S, _
-    argparser_colorize "${font_8}" "10"      1 true  # E
-    argparser_colorize "${space}"  "001010"  1 true  # E, _
-    argparser_colorize "${font_9}" "10"      1 true  # R
-    argparser_colorize "${space}"  "10"      1 true  # R
-    argparser_colorize "${font_9}" "01"      1 true  # R
-    argparser_colorize "${space}"  "00"      1 true  # _
+    argparser_colorize "${space}"  "00"      1  # _
+    argparser_colorize "${font_1}" "10"      1  # A
+    argparser_colorize "${space}"  "00"      1  # A
+    argparser_colorize "${font_1}" "00"      1  # A
+    argparser_colorize "${space}"  "10"      1  # _
+    argparser_colorize "${font_2}" "10"      1  # R
+    argparser_colorize "${space}"  "10"      1  # R
+    argparser_colorize "${font_2}" "01"      1  # R
+    argparser_colorize "${space}"  "00"      1  # _
+    argparser_colorize "${font_3}" "10"      1  # G
+    argparser_colorize "${space}"  "001110"  1  # G, _
+    argparser_colorize "${font_4}" "10"      1  # P
+    argparser_colorize "${space}"  "10"      1  # P
+    argparser_colorize "${font_4}" "00"      1  # P
+    argparser_colorize "${space}"  "00"      1  # _
+    argparser_colorize "${font_5}" "10"      1  # A
+    argparser_colorize "${space}"  "00"      1  # A
+    argparser_colorize "${font_5}" "00"      1  # A
+    argparser_colorize "${space}"  "10"      1  # _
+    argparser_colorize "${font_6}" "10"      1  # R
+    argparser_colorize "${space}"  "10"      1  # R
+    argparser_colorize "${font_6}" "01"      1  # R
+    argparser_colorize "${space}"  "00"      1  # _
+    argparser_colorize "${font_7}" "10"      1  # S
+    argparser_colorize "${space}"  "100110"  1  # S, _
+    argparser_colorize "${font_8}" "10"      1  # E
+    argparser_colorize "${space}"  "001010"  1  # E, _
+    argparser_colorize "${font_9}" "10"      1  # R
+    argparser_colorize "${space}"  "10"      1  # R
+    argparser_colorize "${font_9}" "01"      1  # R
+    argparser_colorize "${space}"  "00"      1  # _
     printf '\n'
 
     # Output the fourth line, containing the third of five lines of the
     # letters.
-    argparser_colorize "${space}"  "00"      1 true  # _
-    argparser_colorize "${font_1}" "100000"  1 true  # A
-    argparser_colorize "${space}"  "10"      1 true  # _
-    argparser_colorize "${font_2}" "101001"  1 true  # R
-    argparser_colorize "${space}"  "00"      1 true  # _
-    argparser_colorize "${font_3}" "10001"   1 true  # G
-    argparser_colorize "${space}"  "110"     1 true  # G, _
-    argparser_colorize "${font_4}" "10100"   1 true  # P
-    argparser_colorize "${space}"  "000"     1 true  # P, _
-    argparser_colorize "${font_5}" "100000"  1 true  # A
-    argparser_colorize "${space}"  "10"      1 true  # _
-    argparser_colorize "${font_6}" "101001"  1 true  # R
-    argparser_colorize "${space}"  "001"     1 true  # _, S
-    argparser_colorize "${font_7}" "0100"    1 true  # S
-    argparser_colorize "${space}"  "110"     1 true  # S, _
-    argparser_colorize "${font_8}" "100010"  1 true  # E
-    argparser_colorize "${space}"  "10"      1 true  # _
-    argparser_colorize "${font_9}" "101001"  1 true  # R
-    argparser_colorize "${space}"  "00"      1 true  # _
+    argparser_colorize "${space}"  "00"      1  # _
+    argparser_colorize "${font_1}" "100000"  1  # A
+    argparser_colorize "${space}"  "10"      1  # _
+    argparser_colorize "${font_2}" "101001"  1  # R
+    argparser_colorize "${space}"  "00"      1  # _
+    argparser_colorize "${font_3}" "10001"   1  # G
+    argparser_colorize "${space}"  "110"     1  # G, _
+    argparser_colorize "${font_4}" "10100"   1  # P
+    argparser_colorize "${space}"  "000"     1  # P, _
+    argparser_colorize "${font_5}" "100000"  1  # A
+    argparser_colorize "${space}"  "10"      1  # _
+    argparser_colorize "${font_6}" "101001"  1  # R
+    argparser_colorize "${space}"  "001"     1  # _, S
+    argparser_colorize "${font_7}" "0100"    1  # S
+    argparser_colorize "${space}"  "110"     1  # S, _
+    argparser_colorize "${font_8}" "100010"  1  # E
+    argparser_colorize "${space}"  "10"      1  # _
+    argparser_colorize "${font_9}" "101001"  1  # R
+    argparser_colorize "${space}"  "00"      1  # _
     printf '\n'
 
     # Output the fifth line, containing the fourth of five lines of the
     # letters.
-    argparser_colorize "${space}"  "00"      1 true  # _
-    argparser_colorize "${font_1}" "10"      1 true  # A
-    argparser_colorize "${space}"  "00"      1 true  # A
-    argparser_colorize "${font_1}" "00"      1 true  # A
-    argparser_colorize "${space}"  "10"      1 true  # _
-    argparser_colorize "${font_2}" "10"      1 true  # R
-    argparser_colorize "${space}"  "1"       1 true  # R
-    argparser_colorize "${font_2}" "00"      1 true  # R
-    argparser_colorize "${space}"  "100"     1 true  # R, _
-    argparser_colorize "${font_3}" "10"      1 true  # G
-    argparser_colorize "${space}"  "00"      1 true  # G
-    argparser_colorize "${font_3}" "11"      1 true  # G
-    argparser_colorize "${space}"  "10"      1 true  # _
-    argparser_colorize "${font_4}" "10"      1 true  # P
-    argparser_colorize "${space}"  "100000"  1 true  # P, _
-    argparser_colorize "${font_5}" "10"      1 true  # A
-    argparser_colorize "${space}"  "00"      1 true  # A
-    argparser_colorize "${font_5}" "00"      1 true  # A
-    argparser_colorize "${space}"  "10"      1 true  # _
-    argparser_colorize "${font_6}" "10"      1 true  # R
-    argparser_colorize "${space}"  "1"       1 true  # R
-    argparser_colorize "${font_6}" "00"      1 true  # R
-    argparser_colorize "${space}"  "1001010" 1 true  # R, _, S
-    argparser_colorize "${font_7}" "01"      1 true  # S
-    argparser_colorize "${space}"  "10"      1 true  # _
-    argparser_colorize "${font_8}" "10"      1 true  # E
-    argparser_colorize "${space}"  "001010"  1 true  # E, _
-    argparser_colorize "${font_9}" "10"      1 true  # R
-    argparser_colorize "${space}"  "1"       1 true  # R
-    argparser_colorize "${font_9}" "00"      1 true  # R
-    argparser_colorize "${space}"  "100"     1 true  # R, _
+    argparser_colorize "${space}"  "00"      1  # _
+    argparser_colorize "${font_1}" "10"      1  # A
+    argparser_colorize "${space}"  "00"      1  # A
+    argparser_colorize "${font_1}" "00"      1  # A
+    argparser_colorize "${space}"  "10"      1  # _
+    argparser_colorize "${font_2}" "10"      1  # R
+    argparser_colorize "${space}"  "1"       1  # R
+    argparser_colorize "${font_2}" "00"      1  # R
+    argparser_colorize "${space}"  "100"     1  # R, _
+    argparser_colorize "${font_3}" "10"      1  # G
+    argparser_colorize "${space}"  "00"      1  # G
+    argparser_colorize "${font_3}" "11"      1  # G
+    argparser_colorize "${space}"  "10"      1  # _
+    argparser_colorize "${font_4}" "10"      1  # P
+    argparser_colorize "${space}"  "100000"  1  # P, _
+    argparser_colorize "${font_5}" "10"      1  # A
+    argparser_colorize "${space}"  "00"      1  # A
+    argparser_colorize "${font_5}" "00"      1  # A
+    argparser_colorize "${space}"  "10"      1  # _
+    argparser_colorize "${font_6}" "10"      1  # R
+    argparser_colorize "${space}"  "1"       1  # R
+    argparser_colorize "${font_6}" "00"      1  # R
+    argparser_colorize "${space}"  "1001010" 1  # R, _, S
+    argparser_colorize "${font_7}" "01"      1  # S
+    argparser_colorize "${space}"  "10"      1  # _
+    argparser_colorize "${font_8}" "10"      1  # E
+    argparser_colorize "${space}"  "001010"  1  # E, _
+    argparser_colorize "${font_9}" "10"      1  # R
+    argparser_colorize "${space}"  "1"       1  # R
+    argparser_colorize "${font_9}" "00"      1  # R
+    argparser_colorize "${space}"  "100"     1  # R, _
     printf '\n'
 
     # Output the sixth line, containing the fifth of five lines of the
     # letters.
-    argparser_colorize "${space}"  "00"      1 true  # _
-    argparser_colorize "${font_1}" "10"      1 true  # A
-    argparser_colorize "${space}"  "00"      1 true  # A
-    argparser_colorize "${font_1}" "00"      1 true  # A
-    argparser_colorize "${space}"  "10"      1 true  # _
-    argparser_colorize "${font_2}" "10"      1 true  # R
-    argparser_colorize "${space}"  "10"      1 true  # R
-    argparser_colorize "${font_2}" "01"      1 true  # R
-    argparser_colorize "${space}"  "001"     1 true  # _, G
-    argparser_colorize "${font_3}" "0001"    1 true  # G
-    argparser_colorize "${space}"  "110"     1 true  # G, _
-    argparser_colorize "${font_4}" "10"      1 true  # P
-    argparser_colorize "${space}"  "100000"  1 true  # P, _
-    argparser_colorize "${font_5}" "10"      1 true  # A
-    argparser_colorize "${space}"  "00"      1 true  # A
-    argparser_colorize "${font_5}" "00"      1 true  # A
-    argparser_colorize "${space}"  "10"      1 true  # _
-    argparser_colorize "${font_6}" "10"      1 true  # R
-    argparser_colorize "${space}"  "10"      1 true  # R
-    argparser_colorize "${font_6}" "01"      1 true  # R
-    argparser_colorize "${space}"  "00"      1 true  # _
-    argparser_colorize "${font_7}" "10100"   1 true  # S
-    argparser_colorize "${space}"  "110"     1 true  # S, _
-    argparser_colorize "${font_8}" "100010"  1 true  # E
-    argparser_colorize "${space}"  "10"      1 true  # _
-    argparser_colorize "${font_9}" "10"      1 true  # R
-    argparser_colorize "${space}"  "10"      1 true  # R
-    argparser_colorize "${font_9}" "01"      1 true  # R
-    argparser_colorize "${space}"  "00"      1 true  # _
+    argparser_colorize "${space}"  "00"      1  # _
+    argparser_colorize "${font_1}" "10"      1  # A
+    argparser_colorize "${space}"  "00"      1  # A
+    argparser_colorize "${font_1}" "00"      1  # A
+    argparser_colorize "${space}"  "10"      1  # _
+    argparser_colorize "${font_2}" "10"      1  # R
+    argparser_colorize "${space}"  "10"      1  # R
+    argparser_colorize "${font_2}" "01"      1  # R
+    argparser_colorize "${space}"  "001"     1  # _, G
+    argparser_colorize "${font_3}" "0001"    1  # G
+    argparser_colorize "${space}"  "110"     1  # G, _
+    argparser_colorize "${font_4}" "10"      1  # P
+    argparser_colorize "${space}"  "100000"  1  # P, _
+    argparser_colorize "${font_5}" "10"      1  # A
+    argparser_colorize "${space}"  "00"      1  # A
+    argparser_colorize "${font_5}" "00"      1  # A
+    argparser_colorize "${space}"  "10"      1  # _
+    argparser_colorize "${font_6}" "10"      1  # R
+    argparser_colorize "${space}"  "10"      1  # R
+    argparser_colorize "${font_6}" "01"      1  # R
+    argparser_colorize "${space}"  "00"      1  # _
+    argparser_colorize "${font_7}" "10100"   1  # S
+    argparser_colorize "${space}"  "110"     1  # S, _
+    argparser_colorize "${font_8}" "100010"  1  # E
+    argparser_colorize "${space}"  "10"      1  # _
+    argparser_colorize "${font_9}" "10"      1  # R
+    argparser_colorize "${space}"  "10"      1  # R
+    argparser_colorize "${font_9}" "01"      1  # R
+    argparser_colorize "${space}"  "00"      1  # _
     printf '\n'
 
     # Output the seventh line, which is empty again.
-    argparser_colorize "${space}" "000000000000000000000000000000" 1 true  # _
-    argparser_colorize "${space}" "000000000000000000000000000000" 1 true  # _
-    argparser_colorize "${space}" "00000000000000"                 1 true  # _
+    argparser_colorize "${space}" "000000000000000000000000000000" 1  # _
+    argparser_colorize "${space}" "000000000000000000000000000000" 1  # _
+    argparser_colorize "${space}" "00000000000000"                 1  # _
     printf '\n'
 }
 
