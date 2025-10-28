@@ -4429,6 +4429,7 @@ function argparser_get_option_names() {
     #   (read-only)
     # - option_names: the name of all short and long options as
     #   ${ARGPARSER_ARG_DELIMITER_2}-separated string
+    # - styles: the associative array containing the styles
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
@@ -4471,15 +4472,15 @@ function argparser_get_option_names() {
     # leading hyphen(s).  Possibly, colorize them, including the value
     # names.
     if [[ "${colorize}" == true ]]; then
-        argparser_join true "${styles[short_options]}" 1 \
+        argparser_join true "${styles["short_options"]}" 1 \
             "${short_options[@]/#/-}"
         short_option_names="${joined_array}"
 
-        argparser_join true "${styles[long_options]}" 1 \
+        argparser_join true "${styles["long_options"]}" 1 \
             "${long_options[@]/#/--}"
         long_option_names="${joined_array}"
 
-        argparser_colorize "${styles[value_names]}" "${value_names}" 1 \
+        argparser_colorize "${styles["value_names"]}" "${value_names}" 1 \
             value_names
     else
         argparser_join false "" "" "${short_options[@]/#/-}"
@@ -7594,6 +7595,7 @@ function argparser_create_usage_message() {
     #   option names (read-only)
     # - all_value_names: the associative array holding the value names
     #   (read-only)
+    # - styles: the associative array containing the styles
     # - usage_message_groups: the associative array holding the usage
     #   message's groups usable as include directive
     #
@@ -8544,8 +8546,8 @@ function argparser_print_version_message() {
     exit="$1"
 
     # Colorize and print the version message, then exit, if requested.
-    argparser_colorize "${styles[script_name]}" "${ARGPARSER_SCRIPT_NAME} " 1
-    argparser_colorize "${styles[version_string]}" \
+    argparser_colorize "${styles["script_name"]}" "${ARGPARSER_SCRIPT_NAME} " 1
+    argparser_colorize "${styles["version_string"]}" \
         "v${ARGPARSER_VERSION_NUMBER}" 1
 
     printf '\n'
@@ -8562,6 +8564,9 @@ function argparser_print_error_message() {
     # - $1: whether to filter the messages (by argparser_uniq)
     # - $2: whether to exit after printing
     # - $@: the error messages
+    #
+    # Nonlocals:
+    # - styles: the associative array containing the styles
     #
     # Environment:
     # - ARGPARSER_ERROR_EXIT_CODE (read-only)
@@ -8610,15 +8615,15 @@ function argparser_print_error_message() {
         for error_message in "${error_messages[@]}"; do
             # Prepend the script name, if given.
             if [[ -n "${ARGPARSER_SCRIPT_NAME}" ]]; then
-                argparser_colorize "${styles[script_name]}" \
+                argparser_colorize "${styles["script_name"]}" \
                     "${ARGPARSER_SCRIPT_NAME}:" 2
                 printf ' '
             fi
 
             # Print the actual error message.
-            argparser_colorize "${styles[error_caption]}" "Error:" 2
+            argparser_colorize "${styles["error_caption"]}" "Error:" 2
             printf ' '
-            argparser_colorize "${styles[error_text]}" \
+            argparser_colorize "${styles["error_text"]}" \
                 "${error_messages#Error: }" 2
             printf '\n'
         done
@@ -8635,6 +8640,9 @@ function argparser_print_warning_message() {
     # Arguments:
     # - $1: whether to filter the messages (by argparser_uniq)
     # - $@: the warning messages
+    #
+    # Nonlocals:
+    # - styles: the associative array containing the styles
     #
     # Environment:
     # - ARGPARSER_SCRIPT_NAME (read-only)
@@ -8675,15 +8683,15 @@ function argparser_print_warning_message() {
         for warning_message in "${warning_messages[@]}"; do
             # Prepend the script name, if given.
             if [[ -n "${ARGPARSER_SCRIPT_NAME}" ]]; then
-                argparser_colorize "${styles[script_name]}" \
+                argparser_colorize "${styles["script_name"]}" \
                     "${ARGPARSER_SCRIPT_NAME}:" 2
                 printf ' '
             fi
 
             # Print the actual warning message.
-            argparser_colorize "${styles[warning_caption]}" "Warning:" 2
+            argparser_colorize "${styles["warning_caption"]}" "Warning:" 2
             printf ' '
-            argparser_colorize "${styles[warning_text]}" \
+            argparser_colorize "${styles["warning_text"]}" \
                 "${warning_message#Warning: }" 2
             printf '\n'
         done
