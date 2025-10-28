@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-10-27
+# Last Modification: 2025-10-28
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -548,6 +548,10 @@ function argparser_join() {
     # Join an array by ${ARGPARSER_ARG_DELIMITER_2} characters.
     #
     # Arguments:
+    # - $1: whether to colorize the option names by argparser_colorize
+    # - $2: the colors and/or styles to use as
+    #       ${ARGPARSER_ARG_DELIMITER_2}-separated list
+    # - $3: the file descriptor to write to (1 or 2)
     # - $@: the array to join
     #
     # Nonlocals:
@@ -556,10 +560,33 @@ function argparser_join() {
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
 
-    # Join the array.
+    # Define the local variables.
+    local array
+    local colorize
+    local file_descriptor
     local IFS
+    local string
+    local style_requests
+
+    # Read the arguments.
+    colorize="$1"
+    style_requests="$2"
+    file_descriptor="$3"
+    shift 3
+    array=("$@")
+
+    # Possibly, colorize the array.
+    if [[ "${colorize}" == true ]]; then
+        for i in "${!array[@]}"; do
+            argparser_colorize "${style_requests}" "${array[i]}" \
+                "${file_descriptor}" string
+            array[i]="${string}"
+        done
+    fi
+
+    # Join the array.
     IFS="${ARGPARSER_ARG_DELIMITER_2}"
-    joined_array="$*"
+    joined_array="${array[*]}"
 }
 
 function argparser_seq() {
@@ -910,7 +937,7 @@ function argparser_colorize() {
     #       ${ARGPARSER_ARG_DELIMITER_2}-separated list
     # - $2: the string to colorize
     # - $3: the file descriptor to write to (1 or 2)
-    # - $4: the variable to set the colorized string to, if not given,
+    # - $4: the variable to set the colorized string to; if not given,
     #       the string is printed
     #
     # Nonlocals:
@@ -924,17 +951,17 @@ function argparser_colorize() {
     # - the colorized string (if $4 is not given)
 
     # Define the local variables.
+    local colorized_string
     local file_descriptor
-    local request
-    local requests
-    local string
     local style
+    local style_request
+    local style_requests
     local -A styles
     local var
 
     # Read the arguments.
-    requests="$1"
-    string="$2"
+    style_requests="$1"
+    colorized_string="$2"
     file_descriptor="$3"
 
     if (( "$#" == 4 )); then
@@ -977,22 +1004,22 @@ function argparser_colorize() {
         || -t "${file_descriptor}" ]]
     then
         style=""
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a requests \
-            <<< "${requests}"
-        for request in "${requests[@]}"; do
-            style+=$'\e['"${styles[${request}]}"'m'
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a style_requests \
+            <<< "${style_requests}"
+        for style_request in "${style_requests[@]}"; do
+            style+=$'\e['"${styles[${style_request}]}"'m'
         done
-        string="${style}${string}"$'\e[m'
+        colorized_string="${style}${colorized_string}"$'\e[m'
     fi
 
     # Print the colorized string and reset the color/style, or set it to
     # the target variable, using a name reference to the variable name
     # given as ${var} (i.e., as $4).
     if (( "$#" == 3 )); then
-        printf '%s' "${string}"
+        printf '%s' "${colorized_string}"
     else
         declare -n var="${var}"
-        var="${string}"
+        var="${colorized_string}"
     fi
 }
 
@@ -3166,7 +3193,7 @@ function argparser_parse_args_definition() {
             choice_values=( )
         fi
 
-        argparser_join "${choice_values[@]}"
+        argparser_join false "" "" "${choice_values[@]}"
         all_choice_values[${arg_key}]="${joined_array}"
 
         # Get the data type.
@@ -4391,6 +4418,7 @@ function argparser_get_option_names() {
     # - $1: the argument's name (key)
     # - $2: the order of the options ("short-long", "long-short",
     #       "short", or "long")
+    # - $3: whether to colorize the option names by argparser_colorize
     #
     # Nonlocals:
     # - all_long_options: the associative array holding the long option
@@ -4407,6 +4435,7 @@ function argparser_get_option_names() {
 
     # Define the local variables.
     local arg_key
+    local colorize
     local joined_array
     local long_option_names
     local long_option
@@ -4420,6 +4449,7 @@ function argparser_get_option_names() {
     # Read the arguments.
     arg_key="$1"
     order="$2"
+    colorize="$3"
 
     # Read the argument's definition.  As positional arguments aren't
     # included in ${all_short_options} and ${all_long_options}, assign
@@ -4434,16 +4464,31 @@ function argparser_get_option_names() {
     else
         short_options=("")
         long_options=("")
-        value_names="${all_value_names[${arg_key}]}"
     fi
+    value_names="${all_value_names[${arg_key}]}"
 
     # Concatenate the names of all short and long options, including the
-    # leading hyphen(s).
-    argparser_join "${short_options[@]/#/-}"
-    short_option_names="${joined_array}"
+    # leading hyphen(s).  Possibly, colorize them, including the value
+    # names.
+    if [[ "${colorize}" == true ]]; then
+        argparser_join true "${styles[short_options]}" 1 \
+            "${short_options[@]/#/-}"
+        short_option_names="${joined_array}"
 
-    argparser_join "${long_options[@]/#/--}"
-    long_option_names="${joined_array}"
+        argparser_join true "${styles[long_options]}" 1 \
+            "${long_options[@]/#/--}"
+        long_option_names="${joined_array}"
+
+        argparser_colorize "${styles[value_names]}" "${value_names}" 1 \
+            value_names
+    else
+        argparser_join false "" "" "${short_options[@]/#/-}"
+        short_option_names="${joined_array}"
+
+        argparser_join false "" "" "${long_options[@]/#/--}"
+        long_option_names="${joined_array}"
+    fi
+
 
     # Merge the names of all short and long options, if any is given, or
     # use the value names as fallback.
@@ -5193,7 +5238,7 @@ function argparser_check_arg_values() {
 
     # Concatenate the name of all short and long options for the error
     # and warning messages.
-    argparser_get_option_names "${arg_key}" "short-long"
+    argparser_get_option_names "${arg_key}" "short-long" false
 
     # Check the notes.
     for note in "${notes[@]}"; do
@@ -5240,7 +5285,7 @@ function argparser_check_arg_values() {
     done
 
     values_arr=("${values_arr[@]}")
-    argparser_join "${values_arr[@]}"
+    argparser_join false "" "" "${values_arr[@]}"
     values_str="${joined_array}"
 
     # If a "+" (or equivalent "no-") prefix is given and the argument is
@@ -5552,7 +5597,7 @@ function argparser_check_arg_values() {
     done
 
     # Output the checked values.
-    argparser_join "${values_arr[@]}"
+    argparser_join false "" "" "${values_arr[@]}"
     messages+=("Value: ${joined_array}")
 }
 
@@ -6563,7 +6608,7 @@ function argparser_create_help_message() {
 
             # Concatenate the name of all short and long options for the
             # sorting of all arguments, later.
-            argparser_get_option_names "${arg_key}" "long-short"
+            argparser_get_option_names "${arg_key}" "long-short" false
             all_option_names+=("${option_names}")
 
             # Set a flag whether the option has default values for
