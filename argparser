@@ -8650,18 +8650,19 @@ function argparser_print_version_message() {
 
     # Define the local variables.
     local exit
-    local message
-    local style
+    local script_name
+    local version_message
 
     # Read the argument.
     exit="$1"
 
     # Colorize and print the version message, then exit, if requested.
-    argparser_colorize "${styles["script_name"]}" "${ARGPARSER_SCRIPT_NAME} " 1
+    argparser_colorize "${styles["script_name"]}" "${ARGPARSER_SCRIPT_NAME}" \
+        1 script_name
     argparser_colorize "${styles["version_string"]}" \
-        "v${ARGPARSER_VERSION_NUMBER}" 1
+        "v${ARGPARSER_VERSION_NUMBER}" 1 version_message
 
-    printf '\n'
+    printf '%s %s\n' "${script_name}" "${version_message}"
 
     if [[ "${exit}" == true ]]; then
         exit "${ARGPARSER_VERSION_EXIT_CODE}"
@@ -8687,11 +8688,13 @@ function argparser_print_error_message() {
     # - ARGPARSER_SILENCE_WARNINGS (read-only)
 
     # Define the local variables.
+    local caption
     local exit
     local error_message
     local -a error_messages
     local filter
     local -a filtered_array
+    local script_name
     local -a sorted_array
 
     # Read the arguments.
@@ -8727,16 +8730,15 @@ function argparser_print_error_message() {
             # Prepend the script name, if given.
             if [[ -n "${ARGPARSER_SCRIPT_NAME}" ]]; then
                 argparser_colorize "${styles["script_name"]}" \
-                    "${ARGPARSER_SCRIPT_NAME}:" 2
-                printf ' '
+                    "${ARGPARSER_SCRIPT_NAME}:" 2 script_name
             fi
 
             # Print the actual error message.
-            argparser_colorize "${styles["error_caption"]}" "Error:" 2
-            printf ' '
+            argparser_colorize "${styles["error_caption"]}" "Error:" 2 caption
             argparser_colorize "${styles["error_text"]}" \
-                "${error_messages#Error: }" 2
-            printf '\n'
+                "${error_message#Error: }" 2 error_message
+            printf '%s %s %s\n' "${script_name}" "${caption}" \
+                "${error_message}"
         done
 
         if [[ "${exit}" == true ]]; then
@@ -8762,8 +8764,10 @@ function argparser_print_warning_message() {
     # - ARGPARSER_WARNING_STYLE (read-only)
 
     # Define the local variables.
+    local caption
     local filter
     local -a filtered_array
+    local script_name
     local -a sorted_array
     local warning_message
     local -a warning_messages
@@ -8795,16 +8799,16 @@ function argparser_print_warning_message() {
             # Prepend the script name, if given.
             if [[ -n "${ARGPARSER_SCRIPT_NAME}" ]]; then
                 argparser_colorize "${styles["script_name"]}" \
-                    "${ARGPARSER_SCRIPT_NAME}:" 2
-                printf ' '
+                    "${ARGPARSER_SCRIPT_NAME}:" script_name
             fi
 
             # Print the actual warning message.
-            argparser_colorize "${styles["warning_caption"]}" "Warning:" 2
-            printf ' '
+            argparser_colorize "${styles["warning_caption"]}" "Warning:" 2 \
+                caption
             argparser_colorize "${styles["warning_text"]}" \
-                "${warning_message#Warning: }" 2
-            printf '\n'
+                "${warning_message#Warning: }" 2 warning_message
+            printf '%s %s %s\n' "${script_name}" "${caption}" \
+                "${warning_message}"
         done
     fi
 }
