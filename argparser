@@ -1009,7 +1009,10 @@ function argparser_colorize() {
         for style_request in "${style_requests[@]}"; do
             style+=$'\e['"${styles[${style_request}]}"'m'
         done
-        colorized_string="${style}${colorized_string}"$'\e[m'
+
+        if [[ -n "${colorized_string}" ]]; then
+            colorized_string="${style}${colorized_string}"$'\e[m'
+        fi
     fi
 
     # Print the colorized string and reset the color/style, or set it to
