@@ -551,8 +551,10 @@ function argparser_join() {
     # - $1: the separator used upon joining as delimiter
     # - $2: whether to colorize the option names by argparser_colorize
     # - $3: the colors and/or styles to use as
-    #       ${ARGPARSER_ARG_DELIMITER_2}-separated list
-    # - $4: the file descriptor to write to (1 or 2)
+    #       ${ARGPARSER_ARG_DELIMITER_2}-separated list (only to be
+    #       given when $2 is "true")
+    # - $4: the file descriptor to write to (1 or 2) (only to be given
+    #       when $2 is "true")
     # - $@: the array to join
     #
     # Nonlocals:
@@ -569,9 +571,15 @@ function argparser_join() {
     # Read the arguments.
     delimiter="$1"
     colorize="$2"
-    style_requests="$3"
-    file_descriptor="$4"
-    shift 4
+
+    if [[ "${colorize}" == true ]]; then
+        style_requests="$3"
+        file_descriptor="$4"
+        shift 4
+    else
+        shift 2
+    fi
+
     array=("$@")
 
     # Possibly, colorize the array.
@@ -3195,7 +3203,7 @@ function argparser_parse_args_definition() {
             choice_values=( )
         fi
 
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" false "" "" \
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" false \
             "${choice_values[@]}"
         all_choice_values[${arg_key}]="${joined_array}"
 
@@ -4486,11 +4494,11 @@ function argparser_get_option_names() {
         argparser_colorize "${styles["value_names"]}" "${value_names}" 1 \
             value_names
     else
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" false "" "" \
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" false \
             "${short_options[@]/#/-}"
         short_option_names="${joined_array}"
 
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" false "" "" \
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" false \
             "${long_options[@]/#/--}"
         long_option_names="${joined_array}"
     fi
@@ -5291,8 +5299,7 @@ function argparser_check_arg_values() {
     done
 
     values_arr=("${values_arr[@]}")
-    argparser_join "${ARGPARSER_ARG_DELIMITER_2}" false "" "" \
-        "${values_arr[@]}"
+    argparser_join "${ARGPARSER_ARG_DELIMITER_2}" false "${values_arr[@]}"
     values_str="${joined_array}"
 
     # If a "+" (or equivalent "no-") prefix is given and the argument is
@@ -5604,8 +5611,7 @@ function argparser_check_arg_values() {
     done
 
     # Output the checked values.
-    argparser_join "${ARGPARSER_ARG_DELIMITER_2}" false "" "" \
-        "${values_arr[@]}"
+    argparser_join "${ARGPARSER_ARG_DELIMITER_2}" false "${values_arr[@]}"
     messages+=("Value: ${joined_array}")
 }
 
