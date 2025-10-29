@@ -549,12 +549,6 @@ function argparser_join() {
     #
     # Arguments:
     # - $1: the separator used upon joining as delimiter
-    # - $2: whether to colorize the option names by argparser_colorize
-    # - $3: the colors and/or styles to use as
-    #       ${ARGPARSER_ARG_DELIMITER_2}-separated list (only to be
-    #       given when $2 is "true")
-    # - $4: the file descriptor to write to (1 or 2) (only to be given
-    #       when $2 is "true")
     # - $@: the array to join
     #
     # Nonlocals:
@@ -562,32 +556,12 @@ function argparser_join() {
 
     # Define the local variables.
     local array
-    local colorize
-    local colorized_array
     local delimiter
-    local file_descriptor
-    local style_requests
 
     # Read the arguments.
     delimiter="$1"
-    colorize="$2"
-
-    if [[ "${colorize}" == true ]]; then
-        style_requests="$3"
-        file_descriptor="$4"
-        shift 4
-    else
-        shift 2
-    fi
-
+    shift
     array=("$@")
-
-    # Possibly, colorize the array.
-    if [[ "${colorize}" == true ]]; then
-        argparser_colorize "${style_requests}" "${file_descriptor}" "array" \
-            "${array[@]}"
-        array=("${colorized_array[@]}")
-    fi
 
     # Join the array.
     printf -v joined_array '%s' "${array[@]/#/"${delimiter}"}"
@@ -978,7 +952,7 @@ function argparser_colorize() {
         # since it's not used by the calling function (the colorized
         # array's first element shall be printed or set to a variable,
         # instead).
-        local colorized_array
+        local -a colorized_array
     fi
 
     shift 3
@@ -3213,8 +3187,7 @@ function argparser_parse_args_definition() {
             choice_values=( )
         fi
 
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" false \
-            "${choice_values[@]}"
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${choice_values[@]}"
         all_choice_values[${arg_key}]="${joined_array}"
 
         # Get the data type.
@@ -4458,6 +4431,7 @@ function argparser_get_option_names() {
     # Define the local variables.
     local arg_key
     local colorize
+    local -a colorized_array
     local joined_array
     local long_option_names
     local long_option
@@ -4493,23 +4467,23 @@ function argparser_get_option_names() {
     # leading hyphen(s).  Possibly, colorize them, including the value
     # names.
     if [[ "${colorize}" == true ]]; then
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" true \
-            "${styles["short_options"]}" 1 "${short_options[@]/#/-}"
+        argparser_colorize "${styles["short_options"]}" 1 "array" \
+            "${short_options[@]/#/-}"
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
         short_option_names="${joined_array}"
 
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" true \
-            "${styles["long_options"]}" 1 "${long_options[@]/#/--}"
+        argparser_colorize "${styles["long_options"]}" 1 "array" \
+            "${long_options[@]/#/--}"
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
         long_option_names="${joined_array}"
 
         argparser_colorize "${styles["value_names"]}" 1 value_names \
             "${value_names}"
     else
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" false \
-            "${short_options[@]/#/-}"
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${short_options[@]/#/-}"
         short_option_names="${joined_array}"
 
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" false \
-            "${long_options[@]/#/--}"
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${long_options[@]/#/--}"
         long_option_names="${joined_array}"
     fi
 
@@ -5308,7 +5282,7 @@ function argparser_check_arg_values() {
     done
 
     values_arr=("${values_arr[@]}")
-    argparser_join "${ARGPARSER_ARG_DELIMITER_2}" false "${values_arr[@]}"
+    argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${values_arr[@]}"
     values_str="${joined_array}"
 
     # If a "+" (or equivalent "no-") prefix is given and the argument is
@@ -5620,7 +5594,7 @@ function argparser_check_arg_values() {
     done
 
     # Output the checked values.
-    argparser_join "${ARGPARSER_ARG_DELIMITER_2}" false "${values_arr[@]}"
+    argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${values_arr[@]}"
     messages+=("Value: ${joined_array}")
 }
 
@@ -7642,6 +7616,7 @@ function argparser_create_usage_message() {
     local caption
     local -a choice_values_arr
     local choice_values_str
+    local -a colorized_array
     local default_values
     local header
     local header_width
@@ -7859,12 +7834,14 @@ function argparser_create_usage_message() {
         argparser_get_option_names "${arg_key}" "short" true
         short_options_str="${option_names}"
 
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" true \
-            "${styles["value_names"]}" 1 "${value_names_arr[@]}"
+        argparser_colorize "${styles["value_names"]}" 1 "array" \
+            "${value_names_arr[@]}"
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
         value_names_str="${joined_array}"
 
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" true \
-            "${styles["choice_values"]}" 1 "${choice_values_arr[@]}"
+        argparser_colorize "${styles["choice_values"]}" 1 "array" \
+            "${choice_values_arr[@]}"
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
         choice_values_str="${joined_array}"
 
         # Define the line for the current argument.  The argument has
@@ -7953,12 +7930,14 @@ function argparser_create_usage_message() {
         argparser_get_option_names "${arg_key}" "long" true
         long_options_str="${option_names}"
 
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" true \
-            "${styles["value_names"]}" 1 "${value_names_arr[@]}"
+        argparser_colorize "${styles["value_names"]}" 1 "array" \
+            "${value_names_arr[@]}"
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
         value_names_str="${joined_array}"
 
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" true \
-            "${styles["choice_values"]}" 1 "${choice_values_arr[@]}"
+        argparser_colorize "${styles["choice_values"]}" 1 "array" \
+            "${choice_values_arr[@]}"
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
         choice_values_str="${joined_array}"
 
         # Define the line for the current argument.  The argument has
@@ -8047,12 +8026,14 @@ function argparser_create_usage_message() {
         argparser_get_option_names "${arg_key}" "short" true
         short_options_str="${option_names}"
 
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" true \
-            "${styles["value_names"]}" 1 "${value_names_arr[@]}"
+        argparser_colorize "${styles["value_names"]}" 1 "array" \
+            "${value_names_arr[@]}"
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
         value_names_str="${joined_array}"
 
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" true \
-            "${styles["choice_values"]}" 1 "${choice_values_arr[@]}"
+        argparser_colorize "${styles["choice_values"]}" 1 "array" \
+            "${choice_values_arr[@]}"
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
         choice_values_str="${joined_array}"
 
         # Define the line for the current argument.  The argument has
@@ -8141,12 +8122,14 @@ function argparser_create_usage_message() {
         argparser_get_option_names "${arg_key}" "long" true
         long_options_str="${option_names}"
 
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" true \
-            "${styles["value_names"]}" 1 "${value_names_arr[@]}"
+        argparser_colorize "${styles["value_names"]}" 1 "array" \
+            "${value_names_arr[@]}"
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
         value_names_str="${joined_array}"
 
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" true \
-            "${styles["choice_values"]}" 1 "${choice_values_arr[@]}"
+        argparser_colorize "${styles["choice_values"]}" 1 "array" \
+            "${choice_values_arr[@]}"
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
         choice_values_str="${joined_array}"
 
         # Define the line for the current argument.  The argument has
@@ -8217,12 +8200,14 @@ function argparser_create_usage_message() {
         arg_number="${all_arg_numbers[${arg_key}]}"
 
         # Concatenate and colorize the value names and choice values.
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" true \
-            "${styles["value_names"]}" 1 "${value_names_arr[@]}"
+        argparser_colorize "${styles["value_names"]}" 1 "array" \
+            "${value_names_arr[@]}"
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
         value_names_str="${joined_array}"
 
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" true \
-            "${styles["choice_values"]}" 1 "${choice_values_arr[@]}"
+        argparser_colorize "${styles["choice_values"]}" 1 "array" \
+            "${choice_values_arr[@]}"
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
         choice_values_str="${joined_array}"
 
         # Define the line for the current argument.  The argument has
@@ -8268,12 +8253,14 @@ function argparser_create_usage_message() {
         arg_number="${all_arg_numbers[${arg_key}]}"
 
         # Concatenate and colorize the value names and choice values.
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" true \
-            "${styles["value_names"]}" 1 "${value_names_arr[@]}"
+        argparser_colorize "${styles["value_names"]}" 1 "array" \
+            "${value_names_arr[@]}"
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
         value_names_str="${joined_array}"
 
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" true \
-            "${styles["choice_values"]}" 1 "${choice_values_arr[@]}"
+        argparser_colorize "${styles["choice_values"]}" 1 "array" \
+            "${choice_values_arr[@]}"
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
         choice_values_str="${joined_array}"
 
         # Define the line for the current argument.  The argument has no
