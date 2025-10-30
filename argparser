@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-10-29
+# Last Modification: 2025-10-30
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -492,6 +492,7 @@ function argparser_fold() {
     local len_word
     local line
     local max_col_width
+    local -a uncolorized_array
     local word
     local words
 
@@ -500,15 +501,17 @@ function argparser_fold() {
     max_col_width="$2"
     largest_col_width="$3"
 
-    # Split the column element word by word (on whitespace), such that
-    # line breaks aren't inserted into entire words.
+    # Split the (uncolorized) column element word by word on whitespace,
+    # such that line breaks aren't inserted into entire words.
     joined_words=""
     col_width=0
     IFS=" " read -r -a words <<< "${line}"
 
+    argparser_uncolorize "array" "${words[@]}"
+
     for i in "${!words[@]}"; do
         word="${words[i]}"
-        len_word="${#word}"
+        len_word="${#uncolorized_array[i]}"
 
         if (( col_width == 0 )); then
             # For the first word in the line, add the word only and set
@@ -996,12 +999,12 @@ function argparser_colorize() {
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a style_requests \
             <<< "${style_requests}"
         for style_request in "${style_requests[@]}"; do
-            style+=$'\e['"${styles[${style_request}]}"'m'
+            style+=$'\e['"${styles[${style_request}]}m"
         done
 
         for i in "${!colorized_array[@]}"; do
             if [[ -n "${colorized_array[i]}" ]]; then
-                colorized_array[i]="${style}${colorized_array[i]}"$'\e[m'
+                colorized_array[i]="${style}${colorized_array[i]}"$'\e[0m'
             fi
         done
     fi
@@ -1014,6 +1017,66 @@ function argparser_colorize() {
     elif [[ "${var}" != "array" ]]; then
         declare -n var="${var}"
         var="${colorized_array[0]}"
+    fi
+}
+
+function argparser_uncolorize() {
+    # Remove the colors and styles (in the form of ANSI escape
+    # sequences) from an array's elements.
+    #
+    # Arguments:
+    # - $1: the variable to set the uncolorized array's first element
+    #       to; if set to "array", set the entire uncolorized array's
+    #       elements to ${uncolorized_array}; if set to "print", print
+    #       the uncolorized array's first element instead
+    # - $@: the array to uncolorize
+    #
+    # Nonlocals:
+    # - $1: the uncolorized array's first element (if $1 is neither set
+    #       to "array" nor to "print")
+    # - uncolorized_array: the uncolorized array (if $1 is set to
+    #       "array")
+    #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+    # - ARGPARSER_USE_STYLES_IN_FILES (read-only)
+    #
+    # Output:
+    # - the uncolorized string (if $1 is set to "print")
+
+    # Define the local variable.
+    local var
+
+    # Read the arguments.
+    var="$1"
+
+    if [[ "${var}" != "array" ]]; then
+        # Set ${uncolorized_array} as local instead of nonlocal
+        # variable, since it's not used by the calling function (the
+        # uncolorized array's first element shall be printed or set to a
+        # variable, instead).
+        local -a uncolorized_array
+    fi
+
+    shift
+    uncolorized_array=("$@")
+
+    # Remove the Select Graphic Rendition (SGR) ANSI escape sequence
+    # codes from the array's elements.  The sequences consist of an ESC
+    # character, an opening bracket, and one or two digits, followed by
+    # an "m".
+    uncolorized_array=("${uncolorized_array[@]//$'\e['[0-9]m}")
+    # shellcheck disable=SC2180  # ShellCheck bug, no multi-dimensional array.
+    uncolorized_array=("${uncolorized_array[@]//$'\e['[0-9][0-9]m}")
+
+    # Print the uncolorized array's first element, or set it to the
+    # target variable, using a name reference to the variable name given
+    # as ${var} (i.e., as $1).
+    if [[ "${var}" == "print" ]]; then
+        printf '%s' "${uncolorized_array[0]}"
+    elif [[ "${var}" != "array" ]]; then
+        declare -n var="${var}"
+        var="${uncolorized_array[0]}"
     fi
 }
 
@@ -9262,6 +9325,7 @@ function argparser_main() {
         unset -f argparser_toggle_debugger
         unset -f argparser_translate
         unset -f argparser_trim
+        unset -f argparser_uncolorize
         unset -f argparser_uniq
         unset -f argparser_write_args
     fi
