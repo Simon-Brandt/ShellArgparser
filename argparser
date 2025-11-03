@@ -2470,8 +2470,8 @@ function argparser_read_styles() {
             1111) error_message+="does not exist." ;;
         esac
 
-        argparser_translate "Error file" "${error_message}" \
-            "ARGPARSER_STYLE_FILE" "${ARGPARSER_STYLE_FILE}"
+        argparser_translate "Error env var file ${file_attributes}" \
+            "${error_message}" "ARGPARSER_STYLE_FILE" "${ARGPARSER_STYLE_FILE}"
         error_message="${translation}"
 
         if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then

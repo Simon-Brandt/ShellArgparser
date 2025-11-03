@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-19
+# Last Modification: 2025-11-03
 # License: Public Domain
 
 # 1.    Define the general translations.
@@ -217,6 +217,14 @@ Error env var styles:
     blink, reverse} (also {normal, fett, blass, kursiv, unterstrichen, doppelt
     unterstrichen, überstrichen, durchgestrichen, blinkend, revers} für Stile
     liegen.
+
+Error env var style usage:
+  en: >
+    Error: The environment variable "ARGPARSER_USE_STYLES" must be in
+    {always,never,file,tty}, but is "$1".
+  de: >
+    Fehler: Die Umgebungsvariable "ARGPARSER_USE_STYLES" muss in
+    {always,never,file,tty} ("{immer,nie,Datei,TTY}") liegen, ist aber "$1".
 
 Error env var option type:
   en: >
