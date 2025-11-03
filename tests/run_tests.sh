@@ -1714,6 +1714,7 @@ Usage: argparser [--help | --usage | --version]
                  [--set-arrays]
                  [--silence-errors]
                  [--silence-warnings]
+                 [--style-file=FILE]
                  [--translation-file=FILE]
                  [--unset-args]
                  [--unset-env-vars]
@@ -1728,6 +1729,7 @@ Usage: argparser [--help | --usage | --version]
                  [--usage-style=STYLE...]
                  [--use-long-options]
                  [--use-short-options]
+                 [--use-styles={always,never,file,tty}]
                  [--use-styles-in-files]
                  [--version-exit-code=INT]
                  [--version-number=VERSION]
@@ -1803,7 +1805,7 @@ Options:
 [--error-exit-code=INT]          the exit code when errors occurred upon
                                  parsing (default: 1)
 [--error-style=STYLE...]         the color and style specification for error
-                                 messages (default: "red,bold,reverse")
+                                 messages (default: "red","bold","reverse")
 [--help-arg-group=NAME]          the name of the argument group holding all
                                  help options, i.e., --help, --usage, and
                                  --version (default: "Help options")
@@ -1818,7 +1820,7 @@ Options:
 [--help-file-keep-comments]      keep commented lines in the help file
                                  (default: false)
 [--help-options=CHAR...]         the short (single-character) option names to
-                                 invoke the help message (default: "h,?")
+                                 invoke the help message (default: "h","?")
 [--help-style=STYLE...]          the color and style specification for help
                                  messages (default: "italic")
 [--language=LANG]                the language in which to localize the help and
@@ -1848,6 +1850,8 @@ Options:
                                  messages (default: false)
 [--silence-warnings]             silence the emission (output) of warning
                                  messages (default: false)
+[--style-file=FILE]              the path to a file holding the style
+                                 definitions for the messages (default: "''")
 [--translation-file=FILE]        the path to a simplified YAML file holding the
                                  translation to ARGPARSER_LANGUAGE (default:
                                  "''")
@@ -1880,8 +1884,14 @@ Options:
                                  (default: true)
 [--use-short-options]            use the short option names for parsing
                                  (default: true)
-[--use-styles-in-files]          use the colors and styles when STDOUT/STDERR
-                                 is not a terminal (default: false)
+[--use-styles={always,never,file,tty}]
+                                 use the colors and styles "always", "never",
+                                 or only when STDOUT/STDERR is ("tty") or is
+                                 not ("file") a terminal (default: "tty")
+[--use-styles-in-files]          (DEPRECATED) use the colors and styles when
+                                 STDOUT/STDERR is not a terminal, deprecated in
+                                 favor of "--use-styles=always" (default:
+                                 false)
 [--version-exit-code=INT]        the exit code for version messages (default:
                                  0)
 [--version-number=VERSION]       the script's version number for the version
@@ -1891,7 +1901,7 @@ Options:
 [--version-style=STYLE...]       the color and style specification for version
                                  messages (default: "bold")
 [--warning-style=STYLE...]       the color and style specification for warning
-                                 messages (default: "red,bold")
+                                 messages (default: "red","bold")
 [--write-args]                   write the arguments from
                                  ARGPARSER_ARG_ARRAY_NAME to STDOUT (default:
                                  false)
