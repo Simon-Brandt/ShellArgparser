@@ -7929,11 +7929,13 @@ function argparser_create_usage_message() {
             <<< "${choice_values_str}"
         arg_number="${all_arg_numbers[${arg_key}]}"
 
-        # If no value name is given, set them to the capitalized short
-        # option names.
-        if [[ -z "${value_names_str}" ]]; then
-            value_names_arr=( )
-            for short_option in "${short_options_arr[@]}"; do
+        # If there are less value names than short option names, create
+        # the remaining value names by capitalizing the short option
+        # names.
+        if (( "${#value_names_arr[@]}" < "${#short_options_arr[@]}" ))
+        then
+            for short_option in "${short_options_arr[@]:${#value_names_arr[@]}}"
+            do
                 value_name="${short_option//-/_}"
                 value_names_arr+=("${value_name^^}")
             done
@@ -8025,11 +8027,13 @@ function argparser_create_usage_message() {
             <<< "${choice_values_str}"
         arg_number="${all_arg_numbers[${arg_key}]}"
 
-        # If no value name is given, set them to the capitalized long
-        # option names.
-        if [[ -z "${value_names_str}" ]]; then
-            value_names_arr=( )
-            for long_option in "${long_options_arr[@]}"; do
+        # If there are less value names than long option names, create
+        # the remaining value names by capitalizing the long option
+        # names.
+        if (( "${#value_names_arr[@]}" < "${#long_options_arr[@]}" ))
+        then
+            for long_option in "${long_options_arr[@]:${#value_names_arr[@]}}"
+            do
                 value_name="${long_option//-/_}"
                 value_names_arr+=("${value_name^^}")
             done
@@ -8121,11 +8125,13 @@ function argparser_create_usage_message() {
             <<< "${choice_values_str}"
         arg_number="${all_arg_numbers[${arg_key}]}"
 
-        # If no value name is given, set them to the capitalized short
-        # option names.
-        if [[ -z "${value_names_str}" ]]; then
-            value_names_arr=( )
-            for short_option in "${short_options_arr[@]}"; do
+        # If there are less value names than short option names, create
+        # the remaining value names by capitalizing the short option
+        # names.
+        if (( "${#value_names_arr[@]}" < "${#short_options_arr[@]}" ))
+        then
+            for short_option in "${short_options_arr[@]:${#value_names_arr[@]}}"
+            do
                 value_name="${short_option//-/_}"
                 value_names_arr+=("${value_name^^}")
             done
@@ -8217,11 +8223,13 @@ function argparser_create_usage_message() {
             <<< "${choice_values_str}"
         arg_number="${all_arg_numbers[${arg_key}]}"
 
-        # If no value name is given, set them to the capitalized long
-        # option names.
-        if [[ -z "${value_names_str}" ]]; then
-            value_names_arr=( )
-            for long_option in "${long_options_arr[@]}"; do
+        # If there are less value names than long option names, create
+        # the remaining value names by capitalizing the long option
+        # names.
+        if (( "${#value_names_arr[@]}" < "${#long_options_arr[@]}" ))
+        then
+            for long_option in "${long_options_arr[@]:${#value_names_arr[@]}}"
+            do
                 value_name="${long_option//-/_}"
                 value_names_arr+=("${value_name^^}")
             done

@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-10-01
+# Last Modification: 2025-11-03
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -483,7 +483,7 @@ test_number="${test_section}.11"
 test_type="usage"
 cmd="bash test_basic.sh -u"
 output="$(cat << EOF
-Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -494,7 +494,7 @@ test_number="${test_section}.12"
 test_type="usage"
 cmd="bash test_basic.sh --usage"
 output="$(cat << EOF
-Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -505,7 +505,7 @@ test_number="${test_section}.13"
 test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=row bash test_basic.sh --usage"
 output="$(cat << EOF
-Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -518,11 +518,11 @@ cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash test_basic.sh --usage"
 output="$(cat << EOF
 Usage: test_basic.sh [-h,-? | -u | -V]
                      [-d,-D={A,B,C}]
-                     [-e,-E=VAL_5]
+                     [-e,-E=VAL_5,E]
                      [-f,-F]
                      [-g,-G]
-                     -a,-A=VAL_1
-                     -b,-B=VAL_2...
+                     -a,-A=VAL_1,A
+                     -b,-B=VAL_2,B...
                      -c,-C={A,B}...
                      [{1,2}]
                      pos_2
@@ -536,7 +536,7 @@ test_number="${test_section}.15"
 test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_OPTION_TYPE=short bash test_basic.sh --usage"
 output="$(cat << EOF
-Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -547,7 +547,7 @@ test_number="${test_section}.16"
 test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_OPTION_TYPE=long bash test_basic.sh --usage"
 output="$(cat << EOF
-Usage: test_basic.sh [--help | --usage | --version] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1 --var-2,--var-b=VAL_2... --var-3,--var-c={A,B}... [{1,2}] pos_2
+Usage: test_basic.sh [--help | --usage | --version] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5,VAR_E] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1,VAR_A --var-2,--var-b=VAL_2,VAR_B... --var-3,--var-c={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -683,7 +683,7 @@ output=""
 error="$(cat << EOF
 test_short_options.sh: Error: The argument "--version" is unknown.
 
-Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
@@ -693,7 +693,7 @@ test_number="${test_section}.4"
 test_type="usage"
 cmd="bash test_short_options.sh -u"
 output="$(cat << EOF
-Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -707,7 +707,7 @@ output=""
 error="$(cat << EOF
 test_short_options.sh: Error: The argument "--usage" is unknown.
 
-Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
@@ -755,7 +755,7 @@ output=""
 error="$(cat << EOF
 test_short_options.sh: Error: The argument "--help" is unknown.
 
-Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
@@ -793,7 +793,7 @@ output=""
 error="$(cat << EOF
 test_long_options.sh: Error: The argument "-V" is unknown.
 
-Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1 --var-2,--var-b=VAL_2... --var-3,--var-c={A,B}... [{1,2}] pos_2
+Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5,VAR_E] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1,VAR_A --var-2,--var-b=VAL_2,VAR_B... --var-3,--var-c={A,B}... [{1,2}] pos_2
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
@@ -817,7 +817,7 @@ output=""
 error="$(cat << EOF
 test_long_options.sh: Error: The argument "-u" is unknown.
 
-Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1 --var-2,--var-b=VAL_2... --var-3,--var-c={A,B}... [{1,2}] pos_2
+Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5,VAR_E] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1,VAR_A --var-2,--var-b=VAL_2,VAR_B... --var-3,--var-c={A,B}... [{1,2}] pos_2
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
@@ -827,7 +827,7 @@ test_number="${test_section}.5"
 test_type="usage"
 cmd="bash test_long_options.sh --usage"
 output="$(cat << EOF
-Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1 --var-2,--var-b=VAL_2... --var-3,--var-c={A,B}... [{1,2}] pos_2
+Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5,VAR_E] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1,VAR_A --var-2,--var-b=VAL_2,VAR_B... --var-3,--var-c={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -841,7 +841,7 @@ output=""
 error="$(cat << EOF
 test_long_options.sh: Error: The argument "-h" is unknown.
 
-Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1 --var-2,--var-b=VAL_2... --var-3,--var-c={A,B}... [{1,2}] pos_2
+Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5,VAR_E] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1,VAR_A --var-2,--var-b=VAL_2,VAR_B... --var-3,--var-c={A,B}... [{1,2}] pos_2
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
@@ -1092,7 +1092,7 @@ test_number="${test_section}.3"
 test_type="usage"
 cmd="bash test_arg_number.sh --usage"
 output="$(cat << EOF
-Usage: test_arg_number.sh [-h,-? | -u | -V] [-d,-D[={A,B,C}...]] [-e,-E[=VAL_5]] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_arg_number.sh [-h,-? | -u | -V] [-d,-D[={A,B,C}...]] [-e,-E[=VAL_5,E]] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""

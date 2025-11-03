@@ -104,7 +104,7 @@ As we already saw upon the occasion of an error, our [`try_argparser.sh`](../../
 <!-- <include command="bash ../tutorial/try_argparser.sh --usage" lang="console"> -->
 ```console
 $ bash ../tutorial/try_argparser.sh --usage
-Usage: try_argparser.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+Usage: try_argparser.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
 ```
 <!-- </include> -->
 
@@ -117,11 +117,11 @@ For a better overview when having lots of arguments, we can choose a columnar la
 $ ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash ../tutorial/try_argparser.sh --usage
 Usage: try_argparser.sh [-h,-? | -u | -V]
                         [-d,-D={A,B,C}]
-                        [-e,-E=VAL_5]
+                        [-e,-E=VAL_5,E]
                         [-f,-F]
                         [-g,-G]
-                        -a,-A=VAL_1
-                        -b,-B=VAL_2...
+                        -a,-A=VAL_1,A
+                        -b,-B=VAL_2,B...
                         -c,-C={A,B}...
                         [{1,2}]
                         pos_2
@@ -135,11 +135,11 @@ Additionally, we may choose to show the long options by [`ARGPARSER_USAGE_MESSAG
 $ ARGPARSER_USAGE_MESSAGE_OPTION_TYPE=long ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash ../tutorial/try_argparser.sh --usage
 Usage: try_argparser.sh [--help | --usage | --version]
                         [--var-4,--var-d={A,B,C}]
-                        [--var-5,--var-e=VAL_5]
+                        [--var-5,--var-e=VAL_5,VAR_E]
                         [--var-6,--var-f]
                         [--var-7,--var-g]
-                        --var-1,--var-a=VAL_1
-                        --var-2,--var-b=VAL_2...
+                        --var-1,--var-a=VAL_1,VAR_A
+                        --var-2,--var-b=VAL_2,VAR_B...
                         --var-3,--var-c={A,B}...
                         [{1,2}]
                         pos_2
