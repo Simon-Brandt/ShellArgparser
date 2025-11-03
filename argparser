@@ -329,6 +329,7 @@ function argparser_check_color_or_style() {
     # - 1, else
 
     # Define the local variables.
+    local -a colors
     local request
     local requests
     local -a styles
@@ -336,9 +337,8 @@ function argparser_check_color_or_style() {
     # Read the argument.
     requests="$1"
 
-    # Define the array of implemented colors and styles.
-    # shellcheck disable=SC2190  # Indexed, not associative array.
-    styles=(
+    # Define the arrays of implemented colors and styles.
+    colors=(
         black
         red
         green
@@ -347,6 +347,9 @@ function argparser_check_color_or_style() {
         magenta
         cyan
         white
+    )
+    # shellcheck disable=SC2190  # Indexed, not associative array.
+    styles=(
         normal
         bold
         faint
@@ -367,8 +370,14 @@ function argparser_check_color_or_style() {
     fi
 
     for request in "${requests[@]}"; do
-        if ! argparser_in_array "${request}" "${styles[@]}"; then
-            return 1
+        if ! argparser_in_array "${request}" "${colors[@]}" "${styles[@]}"
+        then
+            request="${request#bright_}"
+            request="${request%_bg}"
+            request="${request%_fg}"
+            if ! argparser_in_array "${request}" "${colors[@]}"; then
+                return 1
+            fi
         fi
     done
 
@@ -938,11 +947,12 @@ function argparser_colorize() {
     # - the colorized string (if $3 is set to "print")
 
     # Define the local variables.
+    local ansi_code
+    local -A colors_and_styles
     local file_descriptor
     local style
     local style_request
     local style_requests
-    local -A styles
     local var
 
     # Read the arguments.
@@ -964,7 +974,7 @@ function argparser_colorize() {
     # Define the associative array with colors and styles, and their
     # corresponding Select Graphic Rendition (SGR) ANSI escape sequence
     # codes.
-    styles=(
+    colors_and_styles=(
         [black]=30
         [red]=31
         [green]=32
@@ -1000,7 +1010,27 @@ function argparser_colorize() {
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a style_requests \
             <<< "${style_requests}"
         for style_request in "${style_requests[@]}"; do
-            style+=$'\e['"${styles[${style_request}]}m"
+            if [[ "${style_request}" == "bright_"*"_bg" ]]; then
+                style_request="${style_request#bright_}"
+                style_request="${style_request%_bg}"
+                (( ansi_code = "${colors_and_styles[${style_request}]}" + 70 ))
+            elif [[ "${style_request}" == "bright_"*"_fg" ]]; then
+                style_request="${style_request#bright_}"
+                style_request="${style_request%_fg}"
+                (( ansi_code = "${colors_and_styles[${style_request}]}" + 60 ))
+            elif [[ "${style_request}" == "bright_"* ]]; then
+                style_request="${style_request#bright_}"
+                (( ansi_code = "${colors_and_styles[${style_request}]}" + 60 ))
+            elif [[ "${style_request}" == *"_bg" ]]; then
+                style_request="${style_request%_bg}"
+                (( ansi_code = "${colors_and_styles[${style_request}]}" + 10 ))
+            elif [[ "${style_request}" == *"_fg" ]]; then
+                style_request="${style_request%_fg}"
+                ansi_code="${colors_and_styles[${style_request}]}"
+            else
+                ansi_code="${colors_and_styles[${style_request}]}"
+            fi
+            style+=$'\e['"${ansi_code}m"
         done
 
         for i in "${!colorized_array[@]}"; do
@@ -1921,7 +1951,9 @@ function argparser_check_env_vars() {
             error_message+="green, yellow, blue, magenta, cyan, white} for "
             error_message+="colors and in {normal, bold, faint, italic, "
             error_message+="underline, double, overline, crossed-out, blink, "
-            error_message+="reverse} for styles."
+            error_message+="reverse} for styles.  Colors, only, may be "
+            error_message+="prefixed by \"bright_\" or suffixed by \"_fg\" or "
+            error_message+="\"_bg\"."
 
             argparser_translate "Error env var styles" "${error_message}" \
                 "${var}" "${!var}"
@@ -2531,7 +2563,8 @@ function argparser_read_styles() {
             error_message+="yellow, blue, magenta, cyan, white} for colors "
             error_message+="and in {normal, bold, faint, italic, underline, "
             error_message+="double, overline, crossed-out, blink, reverse} "
-            error_message+="for styles."
+            error_message+="for styles.  Colors, only, may be prefixed by "
+            error_message+="\"bright_\" or suffixed by \"_fg\" or \"_bg\"."
 
             argparser_translate "Error style file styles" "${error_message}" \
                 "${name}" "${style}"
