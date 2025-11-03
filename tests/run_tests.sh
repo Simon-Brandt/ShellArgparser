@@ -161,7 +161,6 @@ function print_diff() {
     printf '...\n'
 
     diff --side-by-side --suppress-common-lines --color=always --width=120 \
-        <(eval "${cmd}" 2>&1 3> /dev/null 4> /dev/null) \
         <(
             if [[ -n "${error}" ]]; then
                 printf '%s\n' "${error}"
@@ -170,6 +169,7 @@ function print_diff() {
                 printf '%s\n' "${output}"
             fi
         ) \
+        <(eval "${cmd}" 2>&1 3> /dev/null 4> /dev/null) \
         >&2
     exit_code="$?"
 
