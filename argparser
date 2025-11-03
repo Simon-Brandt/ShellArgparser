@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-10-30
+# Last Modification: 2025-11-03
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -6355,6 +6355,7 @@ function argparser_create_help_message() {
     #   (read-only)
     # - help_message_groups: the associative array holding the help
     #   message's groups usable as include directive
+    # - styles: the associative array containing the styles
     #
     # Environment:
     # - ARGPARSER_ADD_HELP (read-only)
@@ -6381,14 +6382,19 @@ function argparser_create_help_message() {
     local -a arg_groups
     local arg_key
     local arg_number
-    local choice_values
+    local caption
+    local choice_values_str
+    local -a choice_values_arr
     local -a col_1
     local -a col_2
     local -a col_3
     local col_width_1
     local col_width_2
     local col_width_3
+    local -a colorized_array
     local count
+    local default_text_end
+    local default_text_start
     local default_value
     local -a default_values_arr
     local default_values_str
@@ -6403,6 +6409,8 @@ function argparser_create_help_message() {
     local j
     local joined_words
     local largest_col_width
+    local len_line_1
+    local len_line_2
     local line
     local line_count_1
     local line_count_2
@@ -6411,7 +6419,9 @@ function argparser_create_help_message() {
     local lines_col_2
     local lines_col_3
     local long_option
-    local -a long_options
+    local -a long_options_arr
+    local long_options_str
+    local mandatory_arguments_hint
     local max_col_width_3
     local max_line_count
     local -a new_col_1
@@ -6426,17 +6436,24 @@ function argparser_create_help_message() {
     local note
     local -a notes
     local -a option_names
+    local optional_arguments_hint
     local remark
+    local script_name
     local short_option
-    local -a short_options
+    local -a short_options_arr
+    local short_options_str
     local -a sorted_array
     local -A sorted_col_1
     local -A sorted_col_2
     local -A sorted_col_3
     local translation
     local type
+    local -a uncolorized_array
+    local -a uncolorized_col_1
+    local -a uncolorized_col_2
     local usage
-    local -a value_names
+    local -a value_names_arr
+    local value_names_str
     local -a whitespace_1
     local -a whitespace_2
     local whitespace_len_1
@@ -6468,16 +6485,50 @@ function argparser_create_help_message() {
     # Compute the columns for the positional arguments.
     for arg_key in "${all_positional_args[@]}"; do
         # Read the argument's definition.
-        value_names="${all_value_names[${arg_key}]}"
+        value_names_str="${all_value_names[${arg_key}]}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a value_names_arr \
+            <<< "${value_names_str}"
         default_values_str="${all_default_values[${arg_key}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a default_values_arr \
             <<< "${default_values_str}"
-        choice_values="${all_choice_values[${arg_key}]}"
+        choice_values_str="${all_choice_values[${arg_key}]}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values_arr \
+            <<< "${choice_values_str}"
         type="${all_types[${arg_key}]}"
         arg_number="${all_arg_numbers[${arg_key}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
             <<< "${all_notes[${arg_key}]}"
         help_text="${all_help_texts[${arg_key}]}"
+
+        # For character, file, and string arguments, wrap the default
+        # values in quotes.
+        if argparser_in_array "${type}" "char" "file" "str"; then
+            default_values_arr=("${default_values_arr[@]/#/\"}")
+            default_values_arr=("${default_values_arr[@]/%/\"}")
+        fi
+
+        # Concatenate and colorize the value names, default values, and
+        # choice values.  Then, colorize the help text.
+        argparser_colorize "${styles["value_names"]}" 1 "array" \
+            "${value_names_arr[@]}"
+        value_names_arr=("${colorized_array[@]}")
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${value_names_arr[@]}"
+        value_names_str="${joined_array}"
+
+        argparser_colorize "${styles["default_values"]}" 1 "array" \
+            "${default_values_arr[@]}"
+        default_values_arr=("${colorized_array[@]}")
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
+            "${default_values_arr[@]}"
+        default_values_str="${joined_array}"
+
+        argparser_colorize "${styles["choice_values"]}" 1 "array" \
+            "${choice_values_arr[@]}"
+        choice_values_arr=("${colorized_array[@]}")
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${choice_values_arr[@]}"
+        choice_values_str="${joined_array}"
+
+        argparser_colorize "${styles["help_text"]}" 1 help_text "${help_text}"
 
         # Set a flag whether the argument is deprecated.
         is_deprecated=false
@@ -6497,37 +6548,44 @@ function argparser_create_help_message() {
             # Set the first column's value.
             if [[ "${arg_number}" == "+" || "${arg_number}" == "*" ]]; then
                 # [1, inf) or [0, inf) values.
-                if [[ -n "${choice_values}" && -n "${default_values_str}" ]]
+                if [[ -n "${choice_values_str}" \
+                    && -n "${default_values_str}" ]]
                 then
                     # Choice and default.
-                    col_1+=("[${value_names}={${choice_values}}...]")
-                elif [[ -n "${choice_values}" ]]; then
+                    new_col_1_value="[${value_names_str}"
+                    new_col_1_value+="={${choice_values_str}}...]"
+                elif [[ -n "${choice_values_str}" ]]; then
                     # Choice only.
-                    col_1+=("${value_names}={${choice_values}}...")
+                    new_col_1_value="${value_names_str}"
+                    new_col_1_value+="={${choice_values_str}}..."
                 elif [[ -n "${default_values_str}" ]]; then
                     # Default only.
-                    col_1+=("[${value_names}...]")
+                    new_col_1_value="[${value_names_str}...]"
                 else
                     # No choice nor default.
-                    col_1+=("${value_names}...")
+                    new_col_1_value="${value_names_str}..."
                 fi
             else
                 # Integer-count or [0, 1] values.
-                if [[ -n "${choice_values}" && -n "${default_values_str}" ]]
+                if [[ -n "${choice_values_str}" \
+                    && -n "${default_values_str}" ]]
                 then
                     # Choice and default.
-                    col_1+=("[${value_names}={${choice_values}}]")
-                elif [[ -n "${choice_values}" ]]; then
+                    new_col_1_value="[${value_names_str}"
+                    new_col_1_value+="={${choice_values_str}}]"
+                elif [[ -n "${choice_values_str}" ]]; then
                     # Choice only.
-                    col_1+=("${value_names}={${choice_values}}")
+                    new_col_1_value="${value_names_str}"
+                    new_col_1_value+="={${choice_values_str}}"
                 elif [[ -n "${default_values_str}" ]]; then
                     # Default only.
-                    col_1+=("[${value_names}]")
+                    new_col_1_value="[${value_names_str}]"
                 else
                     # No choice nor default.
-                    col_1+=("${value_names}")
+                    new_col_1_value="${value_names_str}"
                 fi
             fi
+            col_1+=("${new_col_1_value}")
 
             # Set the second column's value.
             col_2+=("")
@@ -6538,84 +6596,79 @@ function argparser_create_help_message() {
             # Set the second column's value.
             if [[ "${arg_number}" == "+" || "${arg_number}" == "*" ]]; then
                 # [1, inf) or [0, inf) values.
-                if [[ -n "${choice_values}" && -n "${default_values_str}" ]]
+                if [[ -n "${choice_values_str}" \
+                    && -n "${default_values_str}" ]]
                 then
                     # Choice and default.
-                    col_2+=("[${value_names}={${choice_values}}...]")
-                elif [[ -n "${choice_values}" ]]; then
+                    new_col_2_value="[${value_names_str}"
+                    new_col_2_value+="={${choice_values_str}}...]"
+                elif [[ -n "${choice_values_str}" ]]; then
                     # Choice only.
-                    col_2+=("${value_names}={${choice_values}}...")
+                    new_col_2_value="${value_names_str}"
+                    new_col_2_value+="={${choice_values_str}}..."
                 elif [[ -n "${default_values_str}" ]]; then
                     # Default only.
-                    col_2+=("[${value_names}...]")
+                    new_col_2_value="[${value_names_str}...]"
                 else
                     # No choice nor default.
-                    col_2+=("${value_names}...")
+                    new_col_2_value="${value_names_str}..."
                 fi
             else
                 # Integer-count or [0, 1] values.
-                if [[ -n "${choice_values}" && -n "${default_values_str}" ]]
+                if [[ -n "${choice_values_str}" \
+                    && -n "${default_values_str}" ]]
                 then
                     # Choice and default.
-                    col_2+=("[${value_names}={${choice_values}}]")
-                elif [[ -n "${choice_values}" ]]; then
+                    new_col_2_value="[${value_names_str}"
+                    new_col_2_value+="={${choice_values_str}}]"
+                elif [[ -n "${choice_values_str}" ]]; then
                     # Choice only.
-                    col_2+=("${value_names}={${choice_values}}")
+                    new_col_2_value="${value_names_str}"
+                    new_col_2_value+="={${choice_values_str}}"
                 elif [[ -n "${default_values_str}" ]]; then
                     # Default only.
-                    col_2+=("[${value_names}]")
+                    new_col_2_value="[${value_names_str}]"
                 else
                     # No choice nor default.
-                    col_2+=("${value_names}")
+                    new_col_2_value="${value_names_str}"
                 fi
             fi
+            col_2+=("${new_col_2_value}")
         fi
 
         # Set the third column's value.
         if [[ -n "${default_values_str}" && "${is_deprecated}" == true ]]; then
             # Default and deprecated.
             argparser_translate "Deprecated" "DEPRECATED"
-            new_col_3_value="(${translation}) "
-            new_col_3_value+="${help_text} ("
+            argparser_colorize "${styles["deprecation_note"]}" 1 note \
+                "${translation}"
             argparser_translate "Default" "default"
-            new_col_3_value+="${translation}: "
-            if argparser_in_array "${type}" "char" "file" "str"; then
-                new_col_3_value+="\""
-                for default_value in "${default_values_arr[@]}"; do
-                    new_col_3_value+="${default_value},"
-                done
-                new_col_3_value="${new_col_3_value%,}\""
-            else
-                new_col_3_value+="${default_values_str}"
-            fi
-            new_col_3_value+=")"
-            col_3+=("${new_col_3_value}")
+            argparser_colorize "${styles["default_text"]}" 1 \
+                default_text_start "(${translation}:"
+            argparser_colorize "${styles["default_text"]}" 1 default_text_end \
+                ")"
+            new_col_3_value="(${note}) ${help_text} ${default_text_start} "
+            new_col_3_value+="${default_values_str}${default_text_end}"
         elif [[ -n "${default_values_str}" ]]; then
             # Default only.
-            new_col_3_value="${help_text} ("
             argparser_translate "Default" "default"
-            new_col_3_value+="${translation}: "
-            if argparser_in_array "${type}" "char" "file" "str"; then
-                new_col_3_value+="\""
-                for default_value in "${default_values_arr[@]}"; do
-                    new_col_3_value+="${default_value},"
-                done
-                new_col_3_value="${new_col_3_value%,}\""
-            else
-                new_col_3_value+="${default_values_str}"
-            fi
-            new_col_3_value+=")"
-            col_3+=("${new_col_3_value}")
+            argparser_colorize "${styles["default_text"]}" 1 \
+                default_text_start "(${translation}:"
+            argparser_colorize "${styles["default_text"]}" 1 default_text_end \
+                ")"
+            new_col_3_value="${help_text} ${default_text_start} "
+            new_col_3_value+="${default_values_str}${default_text_end}"
         elif [[ "${is_deprecated}" == true ]]; then
             # Deprecated only.
             argparser_translate "Deprecated" "DEPRECATED"
-            new_col_3_value="(${translation}) "
-            new_col_3_value+="${help_text}"
-            col_3+=("${new_col_3_value}")
+            argparser_colorize "${styles["deprecation_note"]}" 1 note \
+                "${translation}"
+            new_col_3_value="(${note}) ${help_text}"
         else
             # No default nor deprecated.
-            col_3+=("${help_text}")
+            new_col_3_value="${help_text}"
         fi
+        col_3+=("${new_col_3_value}")
     done
 
     # To mark the end of an argument group later upon printing, add an
@@ -6645,21 +6698,26 @@ function argparser_create_help_message() {
             fi
 
             # Read the argument's remaining definition.
-            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a short_options \
-                <<< "${all_short_options[${arg_key}]}"
-            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a long_options \
-                <<< "${all_long_options[${arg_key}]}"
-            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a value_names \
-                <<< "${all_value_names[${arg_key}]}"
+            short_options_str="${all_short_options[${arg_key}]}"
+            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a short_options_arr \
+                <<< "${short_options_str}"
+            long_options_str="${all_long_options[${arg_key}]}"
+            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a long_options_arr \
+                <<< "${long_options_str}"
+            value_names_str="${all_value_names[${arg_key}]}"
+            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a value_names_arr \
+                <<< "${value_names_str}"
+            default_values_str="${all_default_values[${arg_key}]}"
             if [[ "${arg_key}" == "ARGPARSER_ARG_DELIMITER_2" ]]; then
-                default_values_arr=("${all_default_values[${arg_key}]}")
+                default_values_arr=("${default_values_str}")
             else
                 IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a \
                     default_values_arr \
-                        <<< "${all_default_values[${arg_key}]}"
+                        <<< "${default_values_str}"
             fi
-            default_values_str="${all_default_values[${arg_key}]}"
-            choice_values="${all_choice_values[${arg_key}]}"
+            choice_values_str="${all_choice_values[${arg_key}]}"
+            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values_arr \
+                <<< "${choice_values_str}"
             type="${all_types[${arg_key}]}"
             arg_number="${all_arg_numbers[${arg_key}]}"
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
@@ -6670,6 +6728,91 @@ function argparser_create_help_message() {
             # sorting of all arguments, later.
             argparser_get_option_names "${arg_key}" "long-short" false
             all_option_names+=("${option_names}")
+
+            # If there are less value names than short or long option
+            # names, create the remaining value names by capitalizing
+            # the respective option names.  If the argument has long
+            # option names, use them, and only else the short option
+            # names, as the value names are preferentially appended to
+            # the long option names.
+            if [[ -n "${long_options_str}" ]]; then
+                # Long option.
+                if (( "${#value_names_arr[@]}" < "${#long_options_arr[@]}" ))
+                then
+                    for long_option in "${long_options_arr[@]:${#value_names_arr[@]}}"
+                    do
+                        value_name="${long_option//-/_}"
+                        value_names_arr+=("${value_name^^}")
+                    done
+                fi
+            else
+                # No long option.
+                if (( "${#value_names_arr[@]}" < "${#short_options_arr[@]}" ))
+                then
+                    for short_option in "${short_options_arr[@]:${#value_names_arr[@]}}"
+                    do
+                        value_name="${short_option//-/_}"
+                        value_names_arr+=("${value_name^^}")
+                    done
+                fi
+            fi
+
+            # For character, file, and string arguments, wrap the
+            # default values in quotes.
+            if argparser_in_array "${type}" "char" "file" "str"; then
+                default_values_arr=("${default_values_arr[@]/#/\"}")
+                default_values_arr=("${default_values_arr[@]/%/\"}")
+            fi
+
+            # Translate the default value of "true" or "false" for
+            # flags.
+            if [[ "${arg_number}" == 0 ]]; then
+                argparser_translate "${default_values_str}" \
+                    "${default_values_str}"
+                default_values_arr=("${translation}")
+                default_values_str="${translation}"
+            fi
+
+            # Concatenate and colorize the short and long option names,
+            # the value names, default values, and choice values.  Then,
+            # colorize the help text.
+            argparser_colorize "${styles["short_options"]}" 1 "array" \
+                "${short_options_arr[@]/#/-}"
+            short_options_arr=("${colorized_array[@]}")
+            argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
+                "${short_options_arr[@]}"
+            short_options_str="${joined_array}"
+
+            argparser_colorize "${styles["long_options"]}" 1 "array" \
+                "${long_options_arr[@]/#/--}"
+            long_options_arr=("${colorized_array[@]}")
+            argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
+                "${long_options_arr[@]}"
+            long_options_str="${joined_array}"
+
+            argparser_colorize "${styles["value_names"]}" 1 "array" \
+                "${value_names_arr[@]}"
+            value_names_arr=("${colorized_array[@]}")
+            argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
+                "${value_names_arr[@]}"
+            value_names_str="${joined_array}"
+
+            argparser_colorize "${styles["default_values"]}" 1 "array" \
+                "${default_values_arr[@]}"
+            default_values_arr=("${colorized_array[@]}")
+            argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
+                "${default_values_arr[@]}"
+            default_values_str="${joined_array}"
+
+            argparser_colorize "${styles["choice_values"]}" 1 "array" \
+                "${choice_values_arr[@]}"
+            choice_values_arr=("${colorized_array[@]}")
+            argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
+                "${choice_values_arr[@]}"
+            choice_values_str="${joined_array}"
+
+            argparser_colorize "${styles["help_text"]}" 1 help_text \
+                "${help_text}"
 
             # Set a flag whether the option has default values for
             # adjustment of the help message header, later.
@@ -6697,246 +6840,174 @@ function argparser_create_help_message() {
             # short or no long option is given, use the empty string
             # instead.
             # Set the first column's value.
-            if [[ -z "${short_options[0]}" ]]; then
+            if [[ -z "${short_options_str}" ]]; then
                 # No short option.
                 new_col_1_value=""
-            elif [[ -z "${long_options[0]}" ]]; then
+            elif [[ -z "${long_options_str}" ]]; then
                 # No long option.
                 if [[ "${arg_number}" == 0 ]]; then
                     # Flag.
                     if [[ -n "${default_values_str}" ]]; then
                         # Default.
                         new_col_1_value="["
-                        for short_option in "${short_options[@]}"; do
-                            new_col_1_value+="-${short_option}, "
+                        for short_option in "${short_options_arr[@]}"; do
+                            new_col_1_value+="${short_option}, "
                         done
                         new_col_1_value="${new_col_1_value%, }"
                         new_col_1_value+="]"
                     else
                         # No default.
                         new_col_1_value=""
-                        for short_option in "${short_options[@]}"; do
-                            new_col_1_value+="-${short_option}, "
+                        for short_option in "${short_options_arr[@]}"; do
+                            new_col_1_value+="${short_option}, "
                         done
                         new_col_1_value="${new_col_1_value%, }"
                     fi
                 elif [[ "${arg_number}" == "+" ]]; then
                     # [1, inf) values.
-                    if [[ -n "${choice_values}" \
+                    if [[ -n "${choice_values_str}" \
                         && -n "${default_values_str}" ]]
                     then
                         # Choice and default.
                         new_col_1_value=""
-                        for short_option in "${short_options[@]}"; do
-                            new_col_1_value+="[-${short_option}"
-                            new_col_1_value+="={${choice_values}}...], "
+                        for short_option in "${short_options_arr[@]}"; do
+                            new_col_1_value+="[${short_option}"
+                            new_col_1_value+="={${choice_values_str}}...], "
                         done
                         new_col_1_value="${new_col_1_value%, }"
-                    elif [[ -n "${choice_values}" ]]; then
+                    elif [[ -n "${choice_values_str}" ]]; then
                         # Choice only.
                         new_col_1_value=""
-                        for short_option in "${short_options[@]}"; do
-                            new_col_1_value+="-${short_option}"
-                            new_col_1_value+="={${choice_values}}..., "
+                        for short_option in "${short_options_arr[@]}"; do
+                            new_col_1_value+="${short_option}"
+                            new_col_1_value+="={${choice_values_str}}..., "
                         done
                         new_col_1_value="${new_col_1_value%, }"
                     elif [[ -n "${default_values_str}" ]]; then
                         # Default only.
                         new_col_1_value=""
-                        for i in "${!short_options[@]}"; do
-                            short_option="${short_options[i]}"
-                            new_col_1_value+="[-${short_option}"
-                            if [[ -z "${value_names[0]}" ]] \
-                                || (( "${#value_names[@]}" < i + 1 ))
-                            then
-                                short_option="${short_option//-/_}"
-                                short_option="${short_option^^}"
-                                new_col_1_value+="=${short_option}...], "
-                            else
-                                new_col_1_value+="=${value_names[i]}...], "
-                            fi
+                        for i in "${!short_options_arr[@]}"; do
+                            new_col_1_value+="[${short_options_arr[i]}"
+                            new_col_1_value+="=${value_names_arr[i]}...], "
                         done
                         new_col_1_value="${new_col_1_value%, }"
                     else
                         # No choice nor default.
                         new_col_1_value=""
-                        for i in "${!short_options[@]}"; do
-                            short_option="${short_options[i]}"
-                            new_col_1_value+="-${short_option}"
-                            if [[ -z "${value_names[0]}" ]] \
-                                || (( "${#value_names[@]}" < i + 1 ))
-                            then
-                                short_option="${short_option//-/_}"
-                                short_option="${short_option^^}"
-                                new_col_1_value+="=${short_option}..., "
-                            else
-                                new_col_1_value+="=${value_names[i]}..., "
-                            fi
+                        for i in "${!short_options_arr[@]}"; do
+                            new_col_1_value+="${short_options_arr[i]}"
+                            new_col_1_value+="=${value_names_arr[i]}..., "
                         done
                         new_col_1_value="${new_col_1_value%, }"
                     fi
                 elif [[ "${arg_number}" == "*" ]]; then
                     # [0, inf) values.
-                    if [[ -n "${choice_values}" \
+                    if [[ -n "${choice_values_str}" \
                         && -n "${default_values_str}" ]]
                     then
                         # Choice and default.
                         new_col_1_value=""
-                        for short_option in "${short_options[@]}"; do
-                            new_col_1_value+="[-${short_option}"
-                            new_col_1_value+="[={${choice_values}}...]], "
+                        for short_option in "${short_options_arr[@]}"; do
+                            new_col_1_value+="[${short_option}"
+                            new_col_1_value+="[={${choice_values_str}}...]], "
                         done
                         new_col_1_value="${new_col_1_value%, }"
-                    elif [[ -n "${choice_values}" ]]; then
+                    elif [[ -n "${choice_values_str}" ]]; then
                         # Choice only.
                         new_col_1_value=""
-                        for short_option in "${short_options[@]}"; do
-                            new_col_1_value+="-${short_option}"
-                            new_col_1_value+="[={${choice_values}}...], "
+                        for short_option in "${short_options_arr[@]}"; do
+                            new_col_1_value+="${short_option}"
+                            new_col_1_value+="[={${choice_values_str}}...], "
                         done
                         new_col_1_value="${new_col_1_value%, }"
                     elif [[ -n "${default_values_str}" ]]; then
                         # Default only.
                         new_col_1_value=""
-                        for i in "${!short_options[@]}"; do
-                            short_option="${short_options[i]}"
-                            new_col_1_value+="[-${short_option}"
-                            if [[ -z "${value_names[0]}" ]] \
-                                || (( "${#value_names[@]}" < i + 1 ))
-                            then
-                                short_option="${short_option//-/_}"
-                                short_option="${short_option^^}"
-                                new_col_1_value+="[=${short_option}...]], "
-                            else
-                                new_col_1_value+="[=${value_names[i]}...]], "
-                            fi
+                        for i in "${!short_options_arr[@]}"; do
+                            new_col_1_value+="[${short_options_arr[i]}"
+                            new_col_1_value+="[=${value_names_arr[i]}...]], "
                         done
                         new_col_1_value="${new_col_1_value%, }"
                     else
                         # No choice nor default.
                         new_col_1_value=""
-                        for i in "${!short_options[@]}"; do
-                            short_option="${short_options[i]}"
-                            new_col_1_value+="-${short_option}"
-                            if [[ -z "${value_names[0]}" ]] \
-                                || (( "${#value_names[@]}" < i + 1 ))
-                            then
-                                short_option="${short_option//-/_}"
-                                short_option="${short_option^^}"
-                                new_col_1_value+="[=${short_option}...], "
-                            else
-                                new_col_1_value+="[=${value_names[i]}...], "
-                            fi
+                        for i in "${!short_options_arr[@]}"; do
+                            new_col_1_value+="${short_options_arr[i]}"
+                            new_col_1_value+="[=${value_names_arr[i]}...], "
                         done
                         new_col_1_value="${new_col_1_value%, }"
                     fi
                 elif [[ "${arg_number}" == "?" ]]; then
                     # [0, 1] values.
-                    if [[ -n "${choice_values}" \
+                    if [[ -n "${choice_values_str}" \
                         && -n "${default_values_str}" ]]
                     then
                         # Choice and default.
                         new_col_1_value=""
-                        for short_option in "${short_options[@]}"; do
-                            new_col_1_value+="[-${short_option}"
-                            new_col_1_value+="[={${choice_values}}]], "
+                        for short_option in "${short_options_arr[@]}"; do
+                            new_col_1_value+="[${short_option}"
+                            new_col_1_value+="[={${choice_values_str}}]], "
                         done
                         new_col_1_value="${new_col_1_value%, }"
-                    elif [[ -n "${choice_values}" ]]; then
+                    elif [[ -n "${choice_values_str}" ]]; then
                         # Choice only.
                         new_col_1_value=""
-                        for short_option in "${short_options[@]}"; do
-                            new_col_1_value+="-${short_option}"
-                            new_col_1_value+="[={${choice_values}}], "
+                        for short_option in "${short_options_arr[@]}"; do
+                            new_col_1_value+="${short_option}"
+                            new_col_1_value+="[={${choice_values_str}}], "
                         done
                         new_col_1_value="${new_col_1_value%, }"
                     elif [[ -n "${default_values_str}" ]]; then
                         # Default only.
                         new_col_1_value=""
-                        for i in "${!short_options[@]}"; do
-                            short_option="${short_options[i]}"
-                            new_col_1_value+="[-${short_option}"
-                            if [[ -z "${value_names[0]}" ]] \
-                                || (( "${#value_names[@]}" < i + 1 ))
-                            then
-                                short_option="${short_option//-/_}"
-                                short_option="${short_option^^}"
-                                new_col_1_value+="[=${short_option}]], "
-                            else
-                                new_col_1_value+="[=${value_names[i]}]], "
-                            fi
+                        for i in "${!short_options_arr[@]}"; do
+                            new_col_1_value+="[${short_options_arr[i]}"
+                            new_col_1_value+="[=${value_names_arr[i]}]], "
                         done
                         new_col_1_value="${new_col_1_value%, }"
                     else
                         # No choice nor default.
                         new_col_1_value=""
-                        for i in "${!short_options[@]}"; do
-                            short_option="${short_options[i]}"
-                            new_col_1_value+="-${short_option}"
-                            if [[ -z "${value_names[0]}" ]] \
-                                || (( "${#value_names[@]}" < i + 1 ))
-                            then
-                                short_option="${short_option//-/_}"
-                                short_option="${short_option^^}"
-                                new_col_1_value+="[=${short_option}], "
-                            else
-                                new_col_1_value+="[=${value_names[i]}], "
-                            fi
+                        for i in "${!short_options_arr[@]}"; do
+                            new_col_1_value+="${short_options_arr[i]}"
+                            new_col_1_value+="[=${value_names_arr[i]}], "
                         done
                         new_col_1_value="${new_col_1_value%, }"
                     fi
                 else
                     # Integer-count values.
-                    if [[ -n "${choice_values}" \
+                    if [[ -n "${choice_values_str}" \
                         && -n "${default_values_str}" ]]
                     then
                         # Choice and default.
                         new_col_1_value=""
-                        for short_option in "${short_options[@]}"; do
-                            new_col_1_value+="[-${short_option}"
-                            new_col_1_value+="={${choice_values}}], "
+                        for short_option in "${short_options_arr[@]}"; do
+                            new_col_1_value+="[${short_option}"
+                            new_col_1_value+="={${choice_values_str}}], "
                         done
                         new_col_1_value="${new_col_1_value%, }"
-                    elif [[ -n "${choice_values}" ]]; then
+                    elif [[ -n "${choice_values_str}" ]]; then
                         # Choice only.
                         new_col_1_value=""
-                        for short_option in "${short_options[@]}"; do
-                            new_col_1_value+="-${short_option}"
-                            new_col_1_value+="={${choice_values}}, "
+                        for short_option in "${short_options_arr[@]}"; do
+                            new_col_1_value+="${short_option}"
+                            new_col_1_value+="={${choice_values_str}}, "
                         done
                         new_col_1_value="${new_col_1_value%, }"
                     elif [[ -n "${default_values_str}" ]]; then
                         # Default only.
                         new_col_1_value=""
-                        for i in "${!short_options[@]}"; do
-                            short_option="${short_options[i]}"
-                            new_col_1_value+="[-${short_option}"
-                            if [[ -z "${value_names[0]}" ]] \
-                                || (( "${#value_names[@]}" < i + 1 ))
-                            then
-                                short_option="${short_option//-/_}"
-                                short_option="${short_option^^}"
-                                new_col_1_value+="=${short_option}], "
-                            else
-                                new_col_1_value+="=${value_names[i]}], "
-                            fi
+                        for i in "${!short_options_arr[@]}"; do
+                            new_col_1_value+="[${short_options_arr[i]}"
+                            new_col_1_value+="=${value_names_arr[i]}], "
                         done
                         new_col_1_value="${new_col_1_value%, }"
                     else
                         # No choice nor default.
                         new_col_1_value=""
-                        for i in "${!short_options[@]}"; do
-                            short_option="${short_options[i]}"
-                            new_col_1_value+="-${short_option}"
-                            if [[ -z "${value_names[0]}" ]] \
-                                || (( "${#value_names[@]}" < i + 1 ))
-                            then
-                                short_option="${short_option//-/_}"
-                                short_option="${short_option^^}"
-                                new_col_1_value+="=${short_option}, "
-                            else
-                                new_col_1_value+="=${value_names[i]}, "
-                            fi
+                        for i in "${!short_options_arr[@]}"; do
+                            new_col_1_value+="${short_options_arr[i]}"
+                            new_col_1_value+="=${value_names_arr[i]}, "
                         done
                         new_col_1_value="${new_col_1_value%, }"
                     fi
@@ -6944,22 +7015,22 @@ function argparser_create_help_message() {
             elif [[ -n "${default_values_str}" ]]; then
                 # Long option, default.
                 new_col_1_value="["
-                for short_option in "${short_options[@]}"; do
-                    new_col_1_value+="-${short_option}, "
+                for short_option in "${short_options_arr[@]}"; do
+                    new_col_1_value+="${short_option}, "
                 done
                 new_col_1_value="${new_col_1_value%, }"
                 new_col_1_value+="],"
             else
                 # Long option, no default.
                 new_col_1_value=""
-                for short_option in "${short_options[@]}"; do
-                    new_col_1_value+="-${short_option}, "
+                for short_option in "${short_options_arr[@]}"; do
+                    new_col_1_value+="${short_option}, "
                 done
             fi
             new_col_1+=("${new_col_1_value}")
 
             # Set the second column's value.
-            if [[ -z "${long_options[0]}" ]]; then
+            if [[ -z "${long_options_str}" ]]; then
                 # No long option.
                 new_col_2_value=""
             elif [[ "${arg_number}" == 0 ]]; then
@@ -6967,230 +7038,158 @@ function argparser_create_help_message() {
                 if [[ -n "${default_values_str}" ]]; then
                     # Default.
                     new_col_2_value="["
-                    for long_option in "${long_options[@]}"; do
-                        new_col_2_value+="--${long_option}, "
+                    for long_option in "${long_options_arr[@]}"; do
+                        new_col_2_value+="${long_option}, "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                     new_col_2_value+="]"
                 else
                     # No default.
                     new_col_2_value=""
-                    for long_option in "${long_options[@]}"; do
-                        new_col_2_value+="--${long_option}, "
+                    for long_option in "${long_options_arr[@]}"; do
+                        new_col_2_value+="${long_option}, "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                 fi
             elif [[ "${arg_number}" == "+" ]]; then
                 # [1, inf) values.
-                if [[ -n "${choice_values}" && -n "${default_values_str}" ]]
+                if [[ -n "${choice_values_str}" && -n "${default_values_str}" ]]
                 then
                     # Choice and default.
                     new_col_2_value=""
-                    for long_option in "${long_options[@]}"; do
-                        new_col_2_value+="[--${long_option}"
-                        new_col_2_value+="={${choice_values}}...], "
+                    for long_option in "${long_options_arr[@]}"; do
+                        new_col_2_value+="[${long_option}"
+                        new_col_2_value+="={${choice_values_str}}...], "
                     done
                     new_col_2_value="${new_col_2_value%, }"
-                elif [[ -n "${choice_values}" ]]; then
+                elif [[ -n "${choice_values_str}" ]]; then
                     # Choice only.
                     new_col_2_value=""
-                    for long_option in "${long_options[@]}"; do
-                        new_col_2_value+="--${long_option}"
-                        new_col_2_value+="={${choice_values}}..., "
+                    for long_option in "${long_options_arr[@]}"; do
+                        new_col_2_value+="${long_option}"
+                        new_col_2_value+="={${choice_values_str}}..., "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                 elif [[ -n "${default_values_str}" ]]; then
                     # Default only.
                     new_col_2_value=""
-                    for i in "${!long_options[@]}"; do
-                        long_option="${long_options[i]}"
-                        new_col_2_value+="[--${long_option}"
-                        if [[ -z "${value_names[0]}" ]] \
-                            || (( "${#value_names[@]}" < i + 1 ))
-                        then
-                            long_option="${long_option//-/_}"
-                            long_option="${long_option^^}"
-                            new_col_2_value+="=${long_option}...], "
-                        else
-                            new_col_2_value+="=${value_names[i]}...], "
-                        fi
+                    for i in "${!long_options_arr[@]}"; do
+                        new_col_2_value+="[${long_options_arr[i]}"
+                        new_col_2_value+="=${value_names_arr[i]}...], "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                 else
                     # No choice nor default.
                     new_col_2_value=""
-                    for i in "${!long_options[@]}"; do
-                        long_option="${long_options[i]}"
-                        new_col_2_value+="--${long_option}"
-                        if [[ -z "${value_names[0]}" ]] \
-                            || (( "${#value_names[@]}" < i + 1 ))
-                        then
-                            long_option="${long_option//-/_}"
-                            long_option="${long_option^^}"
-                            new_col_2_value+="=${long_option}..., "
-                        else
-                            new_col_2_value+="=${value_names[i]}..., "
-                        fi
+                    for i in "${!long_options_arr[@]}"; do
+                        new_col_2_value+="${long_options_arr[i]}"
+                        new_col_2_value+="=${value_names_arr[i]}..., "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                 fi
             elif [[ "${arg_number}" == "*" ]]; then
                 # [0, inf) values.
-                if [[ -n "${choice_values}" && -n "${default_values_str}" ]]
+                if [[ -n "${choice_values_str}" && -n "${default_values_str}" ]]
                 then
                     # Choice and default.
                     new_col_2_value=""
-                    for long_option in "${long_options[@]}"; do
-                        new_col_2_value+="[--${long_option}"
-                        new_col_2_value+="[={${choice_values}}...]], "
+                    for long_option in "${long_options_arr[@]}"; do
+                        new_col_2_value+="[${long_option}"
+                        new_col_2_value+="[={${choice_values_str}}...]], "
                     done
                     new_col_2_value="${new_col_2_value%, }"
-                elif [[ -n "${choice_values}" ]]; then
+                elif [[ -n "${choice_values_str}" ]]; then
                     # Choice only.
                     new_col_2_value=""
-                    for long_option in "${long_options[@]}"; do
-                        new_col_2_value+="--${long_option}"
-                        new_col_2_value+="={${choice_values}}...], "
+                    for long_option in "${long_options_arr[@]}"; do
+                        new_col_2_value+="${long_option}"
+                        new_col_2_value+="={${choice_values_str}}...], "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                 elif [[ -n "${default_values_str}" ]]; then
                     # Default only.
                     new_col_2_value=""
-                    for i in "${!long_options[@]}"; do
-                        long_option="${long_options[i]}"
-                        new_col_2_value+="[--${long_option}"
-                        if [[ -z "${value_names[0]}" ]] \
-                            || (( "${#value_names[@]}" < i + 1 ))
-                        then
-                            long_option="${long_option//-/_}"
-                            long_option="${long_option^^}"
-                            new_col_2_value+="[=${long_option}...]], "
-                        else
-                            new_col_2_value+="[=${value_names[i]}...]], "
-                        fi
+                    for i in "${!long_options_arr[@]}"; do
+                        new_col_2_value+="[${long_options_arr[i]}"
+                        new_col_2_value+="[=${value_names_arr[i]}...]], "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                 else
                     # No choice nor default.
                     new_col_2_value=""
-                    for i in "${!long_options[@]}"; do
-                        long_option="${long_options[i]}"
-                        new_col_2_value+="--${long_option}"
-                        if [[ -z "${value_names[0]}" ]] \
-                            || (( "${#value_names[@]}" < i + 1 ))
-                        then
-                            long_option="${long_option//-/_}"
-                            long_option="${long_option^^}"
-                            new_col_2_value+="[=${long_option}...], "
-                        else
-                            new_col_2_value+="[=${value_names[i]}...], "
-                        fi
+                    for i in "${!long_options_arr[@]}"; do
+                        new_col_2_value+="${long_options_arr[i]}"
+                        new_col_2_value+="[=${value_names_arr[i]}...], "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                 fi
             elif [[ "${arg_number}" == "?" ]]; then
                 # [0, 1] values.
-                if [[ -n "${choice_values}" && -n "${default_values_str}" ]]
+                if [[ -n "${choice_values_str}" && -n "${default_values_str}" ]]
                 then
                     # Choice and default.
                     new_col_2_value=""
-                    for long_option in "${long_options[@]}"; do
-                        new_col_2_value+="[--${long_option}"
-                        new_col_2_value+="[={${choice_values}}]], "
+                    for long_option in "${long_options_arr[@]}"; do
+                        new_col_2_value+="[${long_option}"
+                        new_col_2_value+="[={${choice_values_str}}]], "
                     done
                     new_col_2_value="${new_col_2_value%, }"
-                elif [[ -n "${choice_values}" ]]; then
+                elif [[ -n "${choice_values_str}" ]]; then
                     # Choice only.
                     new_col_2_value=""
-                    for long_option in "${long_options[@]}"; do
-                        new_col_2_value+="--${long_option}"
-                        new_col_2_value+="[={${choice_values}}], "
+                    for long_option in "${long_options_arr[@]}"; do
+                        new_col_2_value+="${long_option}"
+                        new_col_2_value+="[={${choice_values_str}}], "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                 elif [[ -n "${default_values_str}" ]]; then
                     # Default only.
                     new_col_2_value=""
-                    for i in "${!long_options[@]}"; do
-                        long_option="${long_options[i]}"
-                        new_col_2_value+="[--${long_option}"
-                        if [[ -z "${value_names[0]}" ]] \
-                            || (( "${#value_names[@]}" < i + 1 ))
-                        then
-                            long_option="${long_option//-/_}"
-                            long_option="${long_option^^}"
-                            new_col_2_value+="[=${long_option}]], "
-                        else
-                            new_col_2_value+="[=${value_names[i]}]], "
-                        fi
+                    for i in "${!long_options_arr[@]}"; do
+                        new_col_2_value+="[${long_options_arr[i]}"
+                        new_col_2_value+="[=${value_names_arr[i]}]], "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                 else
                     # No choice nor default.
                     new_col_2_value=""
-                    for i in "${!long_options[@]}"; do
-                        long_option="${long_options[i]}"
-                        new_col_2_value+="--${long_option}"
-                        if [[ -z "${value_names[0]}" ]] \
-                            || (( "${#value_names[@]}" < i + 1 ))
-                        then
-                            long_option="${long_option//-/_}"
-                            long_option="${long_option^^}"
-                            new_col_2_value+="[=${long_option}], "
-                        else
-                            new_col_2_value+="[=${value_names[i]}], "
-                        fi
+                    for i in "${!long_options_arr[@]}"; do
+                        new_col_2_value+="${long_options_arr[i]}"
+                        new_col_2_value+="[=${value_names_arr[i]}], "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                 fi
             else
                 # Integer-count values.
-                if [[ -n "${choice_values}" && -n "${default_values_str}" ]]
+                if [[ -n "${choice_values_str}" && -n "${default_values_str}" ]]
                 then
                     # Choice and default.
                     new_col_2_value=""
-                    for long_option in "${long_options[@]}"; do
-                        new_col_2_value+="[--${long_option}={${choice_values}}], "
+                    for long_option in "${long_options_arr[@]}"; do
+                        new_col_2_value+="[${long_option}={${choice_values_str}}], "
                     done
                     new_col_2_value="${new_col_2_value%, }"
-                elif [[ -n "${choice_values}" ]]; then
+                elif [[ -n "${choice_values_str}" ]]; then
                     # Choice only.
                     new_col_2_value=""
-                    for long_option in "${long_options[@]}"; do
-                        new_col_2_value+="--${long_option}={${choice_values}}, "
+                    for long_option in "${long_options_arr[@]}"; do
+                        new_col_2_value+="${long_option}={${choice_values_str}}, "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                 elif [[ -n "${default_values_str}" ]]; then
                     # Default only.
                     new_col_2_value=""
-                    for i in "${!long_options[@]}"; do
-                        long_option="${long_options[i]}"
-                        new_col_2_value+="[--${long_option}"
-                        if [[ -z "${value_names[0]}" ]] \
-                            || (( "${#value_names[@]}" < i + 1 ))
-                        then
-                            long_option="${long_option//-/_}"
-                            long_option="${long_option^^}"
-                            new_col_2_value+="=${long_option}], "
-                        else
-                            new_col_2_value+="=${value_names[i]}], "
-                        fi
+                    for i in "${!long_options_arr[@]}"; do
+                        new_col_2_value+="[${long_options_arr[i]}"
+                        new_col_2_value+="=${value_names_arr[i]}], "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                 else
                     # No choice nor default.
                     new_col_2_value=""
-                    for i in "${!long_options[@]}"; do
-                        long_option="${long_options[i]}"
-                        new_col_2_value+="--${long_option}"
-                        if [[ -z "${value_names[0]}" ]] \
-                            || (( "${#value_names[@]}" < i + 1 ))
-                        then
-                            long_option="${long_option//-/_}"
-                            long_option="${long_option^^}"
-                            new_col_2_value+="=${long_option}, "
-                        else
-                            new_col_2_value+="=${value_names[i]}, "
-                        fi
+                    for i in "${!long_options_arr[@]}"; do
+                        new_col_2_value+="${long_options_arr[i]}"
+                        new_col_2_value+="=${value_names_arr[i]}, "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                 fi
@@ -7198,62 +7197,34 @@ function argparser_create_help_message() {
             new_col_2+=("${new_col_2_value}")
 
             # Set the third column's value.
-            if [[ "${arg_number}" == 0 && "${is_deprecated}" == true ]]; then
-                # Flag and deprecated.
-                argparser_translate "Deprecated" "DEPRECATED"
-                new_col_3_value="(${translation}) "
-                new_col_3_value+="${help_text} ("
-                argparser_translate "Default" "default"
-                new_col_3_value+="${translation}: "
-                argparser_translate "${default_values_str}" \
-                    "${default_values_str}"
-                new_col_3_value+="${translation})"
-            elif [[ "${arg_number}" == 0 ]]; then
-                # Flag only.
-                new_col_3_value="${help_text} ("
-                argparser_translate "Default" "default"
-                new_col_3_value+="${translation}: "
-                argparser_translate "${default_values_str}" \
-                    "${default_values_str}"
-                new_col_3_value+="${translation})"
-            elif [[ -n "${default_values_str}" && "${is_deprecated}" == true ]]
+            if [[ -n "${default_values_str}" && "${is_deprecated}" == true ]]
             then
                 # Default and deprecated.
                 argparser_translate "Deprecated" "DEPRECATED"
-                new_col_3_value="(${translation}) "
-                new_col_3_value+="${help_text} ("
+                argparser_colorize "${styles["deprecation_note"]}" 1 note \
+                    "${translation}"
                 argparser_translate "Default" "default"
-                new_col_3_value+="${translation}: "
-                if argparser_in_array "${type}" "char" "file" "str"; then
-                    new_col_3_value+="\""
-                    for default_value in "${default_values_arr[@]}"; do
-                        new_col_3_value+="${default_value},"
-                    done
-                    new_col_3_value="${new_col_3_value%,}\""
-                else
-                    new_col_3_value+="${default_values_str}"
-                fi
-                new_col_3_value+=")"
+                argparser_colorize "${styles["default_text"]}" 1 \
+                    default_text_start "(${translation}:"
+                argparser_colorize "${styles["default_text"]}" 1 \
+                    default_text_end ")"
+                new_col_3_value="(${note}) ${help_text} ${default_text_start} "
+                new_col_3_value+="${default_values_str}${default_text_end}"
             elif [[ -n "${default_values_str}" ]]; then
                 # Default only.
-                new_col_3_value="${help_text} ("
                 argparser_translate "Default" "default"
-                new_col_3_value+="${translation}: "
-                if argparser_in_array "${type}" "char" "file" "str"; then
-                    new_col_3_value+="\""
-                    for default_value in "${default_values_arr[@]}"; do
-                        new_col_3_value+="${default_value},"
-                    done
-                    new_col_3_value="${new_col_3_value%,}\""
-                else
-                    new_col_3_value+="${default_values_str}"
-                fi
-                new_col_3_value+=")"
+                argparser_colorize "${styles["default_text"]}" 1 \
+                    default_text_start "(${translation}:"
+                argparser_colorize "${styles["default_text"]}" 1 \
+                    default_text_end ")"
+                new_col_3_value="${help_text} ${default_text_start} "
+                new_col_3_value+="${default_values_str}${default_text_end}"
             elif [[ "${is_deprecated}" == true ]]; then
                 # Deprecated only.
                 argparser_translate "Deprecated" "DEPRECATED"
-                new_col_3_value="(${translation}) "
-                new_col_3_value+="${help_text}"
+                argparser_colorize "${styles["deprecation_note"]}" 1 note \
+                    "${translation}"
+                new_col_3_value="(${note}) ${help_text}"
             else
                 # No default nor deprecated.
                 new_col_3_value="${help_text}"
@@ -7431,24 +7402,38 @@ function argparser_create_help_message() {
     col_2=("${new_col_2[@]}")
     col_3=("${new_col_3[@]}")
 
+    # Create an uncolorized copy of the first two columns, needed to
+    # obtain the actual width without ANSI escape sequence codes.
+    argparser_uncolorize "array" "${col_1[@]}"
+    uncolorized_col_1=("${uncolorized_array[@]}")
+
+    argparser_uncolorize "array" "${col_2[@]}"
+    uncolorized_col_2=("${uncolorized_array[@]}")
+
     # For proper alignment of the columns, whitespace must be used as
     # separation between shorter elements.  Compute the width for both
-    # the first and the second column.  If a line is wider, set the
-    # width to the respective value, as long as the width doesn't exceed
-    # the limit set by ${ARGPARSER_MAX_COL_WIDTH_*}.
+    # the first and the second (uncolorized) column.  If a line is
+    # wider, set the width to the respective value, as long as the width
+    # doesn't exceed the limit set by ${ARGPARSER_MAX_COL_WIDTH_*}.
     col_width_1=0
     col_width_2=0
     for i in "${!col_1[@]}"; do
-        if (( "${#col_1[i]}" <= ARGPARSER_MAX_COL_WIDTH_1 \
-            && "${#col_1[i]}" > col_width_1 ))
+        line="${col_1[i]}"
+        len_line_1="${#uncolorized_col_1[i]}"
+
+        if (( len_line_1 <= ARGPARSER_MAX_COL_WIDTH_1 \
+            && len_line_1 > col_width_1 ))
         then
-            col_width_1="${#col_1[i]}"
+            col_width_1="${len_line_1}"
         fi
 
-        if (( "${#col_2[i]}" <= ARGPARSER_MAX_COL_WIDTH_2 \
-            && "${#col_2[i]}" > col_width_2 ))
+        line="${col_2[i]}"
+        len_line_2="${#uncolorized_col_2[i]}"
+
+        if (( len_line_2 <= ARGPARSER_MAX_COL_WIDTH_2 \
+            && len_line_2 > col_width_2 ))
         then
-            col_width_2="${#col_2[i]}"
+            col_width_2="${len_line_2}"
         fi
     done
 
@@ -7472,15 +7457,18 @@ function argparser_create_help_message() {
         whitespace_2+=("")
         is_overlong=false
 
+        len_line_1="${#uncolorized_col_1[i]}"
+        len_line_2="${#uncolorized_col_2[i]}"
+
         # Set the first column's width.
-        if (( "${#col_1[i]}" <= ARGPARSER_MAX_COL_WIDTH_1 )); then
+        if (( len_line_1 <= ARGPARSER_MAX_COL_WIDTH_1 )); then
             if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
-                (( whitespace_len_1 = col_width_1 - "${#col_1[i]}" + 1 ))
+                (( whitespace_len_1 = col_width_1 - len_line_1 + 1 ))
             else
-                (( whitespace_len_1 = col_width_1 - "${#col_1[i]}" ))
+                (( whitespace_len_1 = col_width_1 - len_line_1 ))
             fi
         elif [[ -z "${col_2[i]}" ]] \
-            && (( "${#col_1[i]}" <= ARGPARSER_MAX_COL_WIDTH_1 + col_width_2 ))
+            && (( len_line_1 <= ARGPARSER_MAX_COL_WIDTH_1 + col_width_2 ))
         then
             is_overlong=true
             whitespace_len_1=0
@@ -7501,16 +7489,16 @@ function argparser_create_help_message() {
         if [[ "${is_overlong}" == true ]]; then
             if [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]; then
                 (( whitespace_len_2 = col_width_1 + col_width_2 \
-                    - "${#col_1[i]}" + 2 ))
+                    - len_line_1 + 2 ))
             else
                 (( whitespace_len_2 = col_width_1 + col_width_2 \
-                    - "${#col_1[i]}" + 1 ))
+                    - len_line_1 + 1 ))
             fi
-        elif (( "${#col_2[i]}" <= ARGPARSER_MAX_COL_WIDTH_2 )); then
+        elif (( len_line_2 <= ARGPARSER_MAX_COL_WIDTH_2 )); then
             if [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]; then
-                (( whitespace_len_2 = col_width_2 - "${#col_2[i]}" + 1 ))
+                (( whitespace_len_2 = col_width_2 - len_line_2 + 1 ))
             else
-                (( whitespace_len_2 = col_width_2 - "${#col_2[i]}" ))
+                (( whitespace_len_2 = col_width_2 - len_line_2 ))
             fi
         else
             if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true \
@@ -7530,20 +7518,27 @@ function argparser_create_help_message() {
 
     # Set the help message's usage line, including the script's name.
     argparser_translate "Usage" "Usage"
-    usage="${translation}: ${ARGPARSER_SCRIPT_NAME}"
+    argparser_colorize "${styles["usage_caption"]}" 1 caption "${translation}"
+    argparser_colorize "${styles["script_name"]}" 1 script_name \
+        "${ARGPARSER_SCRIPT_NAME}"
+    usage="${caption}: ${script_name}"
 
     # Add a hint for the optional keyword arguments (as summary), if
     # existing.
     if [[ "${has_default_args}" == true ]]; then
         argparser_translate "Options" "OPTIONS"
-        usage+=" [${translation}]"
+        argparser_colorize "${styles["value_names"]}" 1 \
+            optional_arguments_hint "${translation}"
+        usage+=" [${optional_arguments_hint}]"
     fi
 
     # Add a hint for the mandatory keyword arguments (as summary), if
     # existing.
     if [[ "${has_required_args}" == true ]]; then
         argparser_translate "Arguments" "ARGUMENTS"
-        usage+=" ${translation}"
+        argparser_colorize "${styles["value_names"]}" 1 \
+            mandatory_arguments_hint "${translation}"
+        usage+=" ${mandatory_arguments_hint}"
     fi
 
     # Add the names of the positional arguments, if existing.
@@ -7555,13 +7550,22 @@ function argparser_create_help_message() {
         fi
 
         for arg_key in "${all_positional_args[@]}"; do
-            value_names=("${all_value_names[${arg_key}]}")
+            value_names_str="${all_value_names[${arg_key}]}"
+            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a value_names_arr \
+                <<< "${value_names_str}"
             default_values_str="${all_default_values[${arg_key}]}"
 
+            argparser_colorize "${styles["value_names"]}" 1 "array" \
+                "${value_names_arr[@]}"
+            value_names_arr=("${colorized_array[@]}")
+            argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
+                "${value_names_arr[@]}"
+            value_names_str="${joined_array}"
+
             if [[ -n "${default_values_str}" ]]; then
-                usage+=" [${value_names[0]}]"
+                usage+=" [${value_names_str}]"
             else
-                usage+=" ${value_names[0]}"
+                usage+=" ${value_names_str}"
             fi
         done
     fi
@@ -7571,9 +7575,10 @@ function argparser_create_help_message() {
 
     # Set the description.
     if [[ -n "${ARGPARSER_HELP_DESCRIPTION}" ]]; then
-        description="${ARGPARSER_HELP_DESCRIPTION}"
-        argparser_fold "${description}" "${ARGPARSER_MAX_WIDTH}" 0
-        description="${joined_words}"
+        argparser_fold "${ARGPARSER_HELP_DESCRIPTION}" \
+            "${ARGPARSER_MAX_WIDTH}" 0
+        argparser_colorize "${styles["description_text"]}" 1 description \
+            "${joined_words}"
         description+=$'\n'
     else
         description=""
@@ -7585,7 +7590,8 @@ function argparser_create_help_message() {
     remark+="options too."
 
     argparser_translate "Mandatory arguments" "${remark}"
-    remark="${translation}"
+    argparser_fold "${translation}" "${ARGPARSER_MAX_WIDTH}" 0
+    argparser_colorize "${styles["remark_text"]}" 1 remark "${joined_words}"
     remark+=$'\n'
     help_message_groups["Remark"]="${remark}"
 
@@ -8383,6 +8389,7 @@ function argparser_print_help_or_usage_message() {
     #   option names (read-only)
     # - help_message_groups: the associative array holding the help
     #   message's groups usable as include directive (read-only)
+    # - styles: the associative array containing the styles
     # - usage_message_groups: the associative array holding the usage
     #   message's groups usable as include directive (read-only)
     #
@@ -8619,7 +8626,10 @@ function argparser_print_help_or_usage_message() {
                 elif [[ "${include_directive}" == "Help" ]]; then
                     # Add the help options group, possibly with heading.
                     if [[ "${add_heading}" == true ]]; then
-                        message+="${ARGPARSER_HELP_ARG_GROUP}:"
+                        argparser_colorize \
+                            "${styles["argument_group_names"]}" 1 arg_group \
+                            "${ARGPARSER_HELP_ARG_GROUP}:"
+                        message+="${arg_group}"
                         message+=$'\n'
                     fi
                     message+="${help_message_groups["${ARGPARSER_HELP_ARG_GROUP}"]}"
@@ -8638,7 +8648,10 @@ function argparser_print_help_or_usage_message() {
                 then
                     # Add the arguments group, possibly with heading.
                     if [[ "${add_heading}" == true ]]; then
-                        message+="${include_directive}:"
+                        argparser_colorize \
+                            "${styles["argument_group_names"]}" 1 arg_group \
+                            "${include_directive}:"
+                        message+="${arg_group}"
                         message+=$'\n'
                     fi
                     message+="${help_message_groups["${include_directive}"]}"
