@@ -48,15 +48,16 @@ function colorize() {
     # - the colorized string
 
     # Define the local variables.
+    local colorized_string
+    local -A colors_and_styles
     local IFS
-    local request
-    local requests
     local string
     local style
-    local -A styles
+    local style_request
+    local style_requests
 
     # Read the arguments.
-    requests="$1"
+    style_requests="$1"
     shift
     IFS=" "
     string="$*"
@@ -65,7 +66,7 @@ function colorize() {
     # Define the associative array with colors and styles, and their
     # corresponding Select Graphic Rendition (SGR) ANSI escape sequence
     # codes.
-    styles=(
+    colors_and_styles=(
         [black]=30
         [red]=31
         [green]=32
@@ -89,17 +90,15 @@ function colorize() {
     # Split the requested color and/or style on commas and replace it
     # with the corresponding escape sequence.
     style=""
-    IFS="," read -r -a requests <<< "${requests}"
-    for request in "${requests[@]}"; do
-        style+="\e[${styles[${request}]}m"
+    IFS="," read -r -a style_requests <<< "${style_requests}"
+    for style_request in "${style_requests[@]}"; do
+        style+=$'\e'"[${colors_and_styles[${style_request}]}m"
     done
 
     # Print the colorized string.  Possibly, right-pad the string.
     # Finally, reset the color/style.
-
-    # shellcheck disable=SC2059  # Escape sequence in variable.
-    printf "${style}"
-    printf '%s' "${string%$'\n'}"
+    colorized_string="${style}${string}"
+    printf '%s' "${colorized_string%$'\n'}"
     if [[ "${string: -1}" == $'\n' ]]; then
         printf '%*s' $(( 120 - ${#string} + 1 )) ""
         printf '\e[m\n'
