@@ -2477,6 +2477,8 @@ function argparser_read_styles() {
     local -a lines
     local name
     local style
+    local warning_message
+    local -a warning_messages
 
     # Check if the style file exists and is readable.  Else, output an
     # error message and exit.  Since at this point of invokation, the
@@ -2525,21 +2527,33 @@ function argparser_read_styles() {
             continue
         elif [[ "${line}" =~ = ]]; then
             # Get the style name as shortest part before an equals sign
-            # ("="), and strip leading and trailing spaces.  Then,
-            # extract the style as longest part after the equals sign
-            # and strip leading and trailing spaces and a double quote
-            # each.
+            # ("="), and strip leading and trailing spaces.
             name="${line%%=*}"
             argparser_trim "${name}"
             name="${trimmed_string}"
 
-            style="${line#*=}"
-            argparser_trim "${style}"
-            style="${trimmed_string}"
-            style="${style#\"}"
-            style="${style%\"}"
+            if [[ -n "${styles[${name}]+set}" ]]; then
+                # The style name exists, so extract the style as longest
+                # part after the equals sign and strip leading and
+                # trailing spaces and a double quote each.
+                style="${line#*=}"
+                argparser_trim "${style}"
+                style="${trimmed_string}"
+                style="${style#\"}"
+                style="${style%\"}"
 
-            styles[${name}]="${style}"
+                styles[${name}]="${style}"
+            else
+                # Output a warning message when the style name doesn't
+                # exist.
+                warning_message="Warning: In the style file \"\$1\", the line "
+                warning_message+="\"\$2\" sets a non-existent message key."
+
+                argparser_translate "Warning style file message key" \
+                    "${warning_message}" "${ARGPARSER_STYLE_FILE}" "${line}"
+                warning_message="${translation}"
+                warning_messages+=("${warning_message}")
+            fi
         else
             # Output an error message when the line doesn't contain an
             # equals sign ("=").
@@ -2581,6 +2595,14 @@ function argparser_read_styles() {
     fi
 
     argparser_print_error_message true true "${error_messages[@]}"
+
+    # Sort, filter, colorize, and print all warning messages.
+    if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
+        ARGPARSER_ARG_DELIMITER_2=","
+        ARGPARSER_WARNING_STYLE="red,bold"
+    fi
+
+    argparser_print_warning_message true "${warning_messages[@]}"
 }
 
 # Define the Argparser functions for creating, reading, parsing, and
