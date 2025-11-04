@@ -85,8 +85,10 @@ Options:
                                  to STDERR (default: false)
 [--error-exit-code=INT]          the exit code when errors occurred upon
                                  parsing (default: 1)
-[--error-style=STYLE...]         the color and style specification for error
-                                 messages (default: "red","bold","reverse")
+[--error-style=STYLE...]         (DEPRECATED) the color and style specification
+                                 for error messages, deprecated in favor of
+                                 "--style-file=FILE" (default:
+                                 "red","bold","reverse")
 [--help-arg-group=NAME]          the name of the argument group holding all
                                  help options, i.e., --help, --usage, and
                                  --version (default: "Help options")
@@ -102,8 +104,9 @@ Options:
                                  (default: false)
 [--help-options=CHAR...]         the short (single-character) option names to
                                  invoke the help message (default: "h","?")
-[--help-style=STYLE...]          the color and style specification for help
-                                 messages (default: "italic")
+[--help-style=STYLE...]          (DEPRECATED) the color and style specification
+                                 for help messages, deprecated in favor of
+                                 "--style-file=FILE" (default: "italic")
 [--language=LANG]                the language in which to localize the help and
                                  usage messages (default: "en")
 [--max-col-width-1=INT]          the maximum column width of the first column
@@ -159,8 +162,9 @@ Options:
                                  (default: "row")
 [--usage-options=CHAR...]        the short (single-character) option names to
                                  invoke the usage message (default: "u")
-[--usage-style=STYLE...]         the color and style specification for usage
-                                 messages (default: "italic")
+[--usage-style=STYLE...]         (DEPRECATED) the color and style specification
+                                 for usage messages, deprecated in favor of
+                                 "--style-file=FILE" (default: "italic")
 [--use-long-options]             use the long option names for parsing
                                  (default: true)
 [--use-short-options]            use the short option names for parsing
@@ -179,10 +183,12 @@ Options:
                                  message (default: "1.0.0")
 [--version-options=CHAR...]      the short (single-character) option names to
                                  invoke the version message (default: "V")
-[--version-style=STYLE...]       the color and style specification for version
-                                 messages (default: "bold")
-[--warning-style=STYLE...]       the color and style specification for warning
-                                 messages (default: "red","bold")
+[--version-style=STYLE...]       (DEPRECATED) the color and style specification
+                                 for version messages, deprecated in favor of
+                                 "--style-file=FILE" (default: "bold")
+[--warning-style=STYLE...]       (DEPRECATED) the color and style specification
+                                 for warning messages, deprecated in favor of
+                                 "--style-file=FILE" (default: "red","bold")
 [--write-args]                   write the arguments from
                                  ARGPARSER_ARG_ARRAY_NAME to STDOUT (default:
                                  false)
@@ -260,7 +266,7 @@ fi | sort
 
 As you can see, the script is written POSIX conformantly and by this already executable by `sh` or `dash`. Since POSIX doesn't specify useful programming constructs like arrays, the arguments definition must be a single string, delimited by linefeeds. By passing this string to the Argparser via its `STDIN` stream (piping from [`printf`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-printf "gnu.org &rightarrow; Bash Builtins &rightarrow; printf") to `argparser`), it is possible to feed the arguments definition to the Argparser without requiring the usual [`ARGPARSER_ARG_ARRAY_NAME`](../reference/environment_variables/environment_variables.md#9410-argparser_arg_array_name). Just as when sourcing, the Argparser requires your script's command line as argument, separated from its own arguments by a double hyphen.
 
-It is important to set [`ARGPARSER_WRITE_ARGS`](../reference/environment_variables/environment_variables.md#9463-argparser_write_args) to `true`. By this, the Argparser will write the parsed arguments as key&ndash;value pairs to its `STDOUT` stream, since setting them as variables to the environment would result in them being lost when the child process the Argparser is running in terminates.
+It is important to set [`ARGPARSER_WRITE_ARGS`](../reference/environment_variables/environment_variables.md#9465-argparser_write_args) to `true`. By this, the Argparser will write the parsed arguments as key&ndash;value pairs to its `STDOUT` stream, since setting them as variables to the environment would result in them being lost when the child process the Argparser is running in terminates.
 
 In our example script, the whole pipeline is run in a subshell, such that `STDOUT` gets captured by `eval`. This facilitates the setting of the variables to the main environment, as the Argparser outputs one argument per line, with an `=` sign as delimiter between key and value. In other terms, the Argparser produces output which may be re-used as input to `eval`&mdash;here assuming that no special shell characters are included. For the purpose of this example, calls for the help, usage, and version message are caught in a separate branch to circumvent the parsing by `eval`&mdash;after all, these messages are also written to `STDOUT`, while the usual error and warning messages end in `STDERR`. Depending on your shell, you may find more sophisticated solutions that can also handle the occurrence of these help options among other (regular) options on the command line.
 

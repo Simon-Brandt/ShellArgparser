@@ -20,7 +20,7 @@
 
 ### 5.5. Help and usage messages
 
-No matter how many keyword arguments are defined, as long as [`ARGPARSER_ADD_HELP`](../reference/environment_variables/environment_variables.md#942-argparser_add_help) and [`ARGPARSER_ADD_USAGE`](../reference/environment_variables/environment_variables.md#943-argparser_add_usage) are set to `true` (the default), the Argparser interprets the flags from the [`ARGPARSER_HELP_OPTIONS`](../reference/environment_variables/environment_variables.md#9429-argparser_help_options) (default: `-h` and `-?`) and `--help` as call for a verbose help message and the flags from the [`ARGPARSER_USAGE_OPTIONS`](../reference/environment_variables/environment_variables.md#9453-argparser_usage_options) (default: `-u`) and `--usage` as call for a brief usage message. Then, these options are automatically added to the script's arguments definition and override any same-named argument name (yielding an error message if [`ARGPARSER_CHECK_ARG_DEF`](../reference/environment_variables/environment_variables.md#9415-argparser_check_arg_def) is set to `true`). This is to ensure that the novice user of your script can do exactly what we did, above: trying the most common variants to get some help over how to use a program or script by typing
+No matter how many keyword arguments are defined, as long as [`ARGPARSER_ADD_HELP`](../reference/environment_variables/environment_variables.md#942-argparser_add_help) and [`ARGPARSER_ADD_USAGE`](../reference/environment_variables/environment_variables.md#943-argparser_add_usage) are set to `true` (the default), the Argparser interprets the flags from the [`ARGPARSER_HELP_OPTIONS`](../reference/environment_variables/environment_variables.md#9429-argparser_help_options) (default: `-h` and `-?`) and `--help` as call for a verbose help message and the flags from the [`ARGPARSER_USAGE_OPTIONS`](../reference/environment_variables/environment_variables.md#9454-argparser_usage_options) (default: `-u`) and `--usage` as call for a brief usage message. Then, these options are automatically added to the script's arguments definition and override any same-named argument name (yielding an error message if [`ARGPARSER_CHECK_ARG_DEF`](../reference/environment_variables/environment_variables.md#9415-argparser_check_arg_def) is set to `true`). This is to ensure that the novice user of your script can do exactly what we did, above: trying the most common variants to get some help over how to use a program or script by typing
 
 ```bash
 try_argparser.sh --help
@@ -110,7 +110,7 @@ Usage: try_argparser.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5,E] [-f,-F
 
 The usage message clearly summarizes the arguments, including name aliases (always taking all short options, or, if absent, all long options, or *vice versa*, see below), indicates whether they're optional or mandatory (optionals use square brackets), and specifies the choice values (in curly braces) and, partially, the argument number (an ellipsis, *i.e.*, `"..."`, for an infinite number). Short options precede long options, options with default precede those without, likewise for positionals, and keyword arguments precede positional arguments. All of these groups are sorted alphabetically by the first option name as key. The help, usage, and [version](version_messages.md#58-version-messages) options precede all groups.
 
-For a better overview when having lots of arguments, we can choose a columnar layout instead of the single row, using [`ARGPARSER_USAGE_MESSAGE_ORIENTATION`](../reference/environment_variables/environment_variables.md#9452-argparser_usage_message_orientation):
+For a better overview when having lots of arguments, we can choose a columnar layout instead of the single row, using [`ARGPARSER_USAGE_MESSAGE_ORIENTATION`](../reference/environment_variables/environment_variables.md#9453-argparser_usage_message_orientation):
 
 <!-- <include command="ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash ../tutorial/try_argparser.sh --usage" lang="console"> -->
 ```console
@@ -128,7 +128,7 @@ Usage: try_argparser.sh [-h,-? | -u | -V]
 ```
 <!-- </include> -->
 
-Additionally, we may choose to show the long options by [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](../reference/environment_variables/environment_variables.md#9451-argparser_usage_message_option_type):
+Additionally, we may choose to show the long options by [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](../reference/environment_variables/environment_variables.md#9452-argparser_usage_message_option_type):
 
 <!-- <include command="ARGPARSER_USAGE_MESSAGE_OPTION_TYPE=long ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash ../tutorial/try_argparser.sh --usage" lang="console"> -->
 ```console

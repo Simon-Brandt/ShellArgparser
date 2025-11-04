@@ -81,12 +81,12 @@
 #### 9.5.13. `--usage`
 
 - ***Message:*** `display the usage and exit`
-- ***Description:*** the help text for the usage options, *i.e.*, the [`ARGPARSER_USAGE_OPTIONS`](../environment_variables/environment_variables.md#9453-argparser_usage_options) and `--usage`, if [`ARGPARSER_ADD_USAGE`](../environment_variables/environment_variables.md#943-argparser_add_usage) is set to `true`.
+- ***Description:*** the help text for the usage options, *i.e.*, the [`ARGPARSER_USAGE_OPTIONS`](../environment_variables/environment_variables.md#9454-argparser_usage_options) and `--usage`, if [`ARGPARSER_ADD_USAGE`](../environment_variables/environment_variables.md#943-argparser_add_usage) is set to `true`.
 
 #### 9.5.14. `--version`
 
 - ***Message:*** `display the version and exit`
-- ***Description:*** the help text for the version options, *i.e.*, the [`ARGPARSER_VERSION_OPTIONS`](../environment_variables/environment_variables.md#9460-argparser_version_options) and `--version`, if [`ARGPARSER_ADD_VERSION`](../environment_variables/environment_variables.md#944-argparser_add_version) is set to `true`.
+- ***Description:*** the help text for the version options, *i.e.*, the [`ARGPARSER_VERSION_OPTIONS`](../environment_variables/environment_variables.md#9462-argparser_version_options) and `--version`, if [`ARGPARSER_ADD_VERSION`](../environment_variables/environment_variables.md#944-argparser_add_version) is set to `true`.
 
 #### 9.5.15. `false`
 
@@ -236,7 +236,7 @@
 #### 9.5.32. `Error env var style usage`
 
 - ***Message:*** `Error: The environment variable "ARGPARSER_USE_STYLES" must be in {always,never,file,tty}, but is "$1".`
-- ***Description:*** The error that the environment variable [`ARGPARSER_USE_STYLES`](../../#) is not set to `always`, `never`, `file`, or `tty`.
+- ***Description:*** The error that the environment variable [`ARGPARSER_USE_STYLES`](../environment_variables/environment_variables.md#9458-argparser_use_styles) is not set to `always`, `never`, `file`, or `tty`.
 - ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variable `ARGPARSER_USE_STYLES`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value other than `always`, `never`, `file`, and `tty`. Since there are only files and TTYs where the help, usage, version, error, and warning messages may be redirected to, other values are refused.
 - ***Interpolated variables:***
   - `$1`: The environment variable's value.
@@ -244,7 +244,7 @@
 #### 9.5.33. `Error env var option type`
 
 - ***Message:*** `Error: The environment variable "ARGPARSER_USAGE_MESSAGE_OPTION_TYPE" must be either set to "long" or "short", but is "$1".`
-- ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](../environment_variables/environment_variables.md#9451-argparser_usage_message_option_type) is not set to `long` or `short`.
+- ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](../environment_variables/environment_variables.md#9452-argparser_usage_message_option_type) is not set to `long` or `short`.
 - ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variable `ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value other than `long` and `short`. Since there are only short and long option names possible, other values are refused.
 - ***Interpolated variables:***
   - `$1`: The environment variable's value.
@@ -252,7 +252,7 @@
 #### 9.5.34. `Error env var orientation`
 
 - ***Message:*** `Error: The environment variable "ARGPARSER_USAGE_MESSAGE_ORIENTATION" must be either set to "row" or "column", but is "$1".`
-- ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_ORIENTATION`](../environment_variables/environment_variables.md#9452-argparser_usage_message_orientation) is not set to `row` or `column`.
+- ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_ORIENTATION`](../environment_variables/environment_variables.md#9453-argparser_usage_message_orientation) is not set to `row` or `column`.
 - ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variable `ARGPARSER_USAGE_MESSAGE_ORIENTATION`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, has a value other than `row` and `column`. Since only a row-like or column-like structure is possible, other values are refused.
 - ***Interpolated variables:***
   - `$1`: The environment variable's value.
@@ -306,13 +306,13 @@
 #### 9.5.40. `Error env var short options`
 
 - ***Message:*** `Error: The environment variable "ARGPARSER_USAGE_MESSAGE_OPTION_TYPE" requests the usage of short option names, but "ARGPARSER_USE_SHORT_OPTIONS" turns them off.`
-- ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](#9533-error-env-var-option-type) requests short option names, while [`ARGPARSER_USE_SHORT_OPTIONS`](../environment_variables/environment_variables.md#9456-argparser_use_short_options) prohibits this.
+- ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](#9533-error-env-var-option-type) requests short option names, while [`ARGPARSER_USE_SHORT_OPTIONS`](../environment_variables/environment_variables.md#9457-argparser_use_short_options) prohibits this.
 - ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variable `ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, is set to `short`, while `ARGPARSER_USE_SHORT_OPTIONS` is set to `false`. Consequently, the usage message could not be created, since no short option name is available.
 
 #### 9.5.41. `Error env var long options`
 
 - ***Message:*** `Error: The environment variable "ARGPARSER_USAGE_MESSAGE_OPTION_TYPE" requests the usage of long option names, but "ARGPARSER_USE_LONG_OPTIONS" turns them off.`
-- ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](#9533-error-env-var-option-type) requests long option names, while [`ARGPARSER_USE_LONG_OPTIONS`](../environment_variables/environment_variables.md#9455-argparser_use_long_options) prohibits this.
+- ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](#9533-error-env-var-option-type) requests long option names, while [`ARGPARSER_USE_LONG_OPTIONS`](../environment_variables/environment_variables.md#9456-argparser_use_long_options) prohibits this.
 - ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variable `ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invokation command line, or as an environment variable, is set to `long`, while `ARGPARSER_USE_LONG_OPTIONS` is set to `false`. Consequently, the usage message could not be created, since no long option name is available.
 
 #### 9.5.42. `Error env var files`
@@ -1035,7 +1035,7 @@
 
 - ***Message:*** `Error: The YAML line "$1" could not be recognized.`
 - ***Description:*** The error that a translation file's [YAML](https://en.wikipedia.org/wiki/YAML "wikipedia.org &rightarrow; YAML") line cannot be parsed.
-- ***Reasons for error:*** When parsing the [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9443-argparser_translation_file), the Argparser found a YAML line that it doesn't recognize. This is most likely due to a YAML feature that the Argparser doesn't support to keep the parser simple.
+- ***Reasons for error:*** When parsing the [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9444-argparser_translation_file), the Argparser found a YAML line that it doesn't recognize. This is most likely due to a YAML feature that the Argparser doesn't support to keep the parser simple.
 - ***Interpolated variables:***
   - `$1`: The YAML line.
 
@@ -1043,7 +1043,7 @@
 
 - ***Message:*** `Error: In the style file "$1", the line "$2" doesn't contain an equals sign ("="), nor is it empty or commented.`
 - ***Description:*** The error that a style file's line cannot be parsed.
-- ***Reasons for error:*** When parsing the [`ARGPARSER_STYLE_FILE`](../../#), the Argparser found a line that it doesn't recognize. Each line must contain key&ndash;value pairs, delimited by an equals sign (`"="`), or be entirely empty, or start with a hashmark (`"#"`), indicating the line to be commented.
+- ***Reasons for error:*** When parsing the [`ARGPARSER_STYLE_FILE`](../environment_variables/environment_variables.md#9443-argparser_style_file), the Argparser found a line that it doesn't recognize. Each line must contain key&ndash;value pairs, delimited by an equals sign (`"="`), or be entirely empty, or start with a hashmark (`"#"`), indicating the line to be commented.
 - ***Interpolated variables:***
   - `$1`: The style file.
   - `$2`: The line.
@@ -1052,7 +1052,7 @@
 
 - ***Message:*** `Error: The style "$1" is set to "$2", but the values must lie in {black, red, green, yellow, blue, magenta, cyan, white} for colors and in {normal, bold, faint, italic, underline, double, overline, crossed-out, blink, reverse} for styles.  Colors, only, may be prefixed by "bright_" or suffixed by "_fg" or "_bg".`
 - ***Description:*** The error that a style file's line refers to an undefined [color or style](../colors_and_styles.md#92-colors-and-styles).
-- ***Reasons for error:*** When parsing the [`ARGPARSER_STYLE_FILE`](../../#), the Argparser found a line trying to set a message color or style which does not exist.
+- ***Reasons for error:*** When parsing the [`ARGPARSER_STYLE_FILE`](../environment_variables/environment_variables.md#9443-argparser_style_file), the Argparser found a line trying to set a message color or style which does not exist.
 - ***Interpolated variables:***
   - `$1`: The style's message key.
   - `$2`: The style.
@@ -1061,7 +1061,7 @@
 
 - ***Message:*** `Error: The include directive "$1" could not be recognized.`
 - ***Description:*** The error that an include directive cannot be parsed.
-- ***Reasons for error:*** When parsing the [`ARGPARSER_HELP_FILE`](../environment_variables/environment_variables.md#9426-argparser_help_file) or [`ARGPARSER_USAGE_FILE`](../environment_variables/environment_variables.md#9448-argparser_usage_file), the Argparser found an include directive that is not supported.
+- ***Reasons for error:*** When parsing the [`ARGPARSER_HELP_FILE`](../environment_variables/environment_variables.md#9426-argparser_help_file) or [`ARGPARSER_USAGE_FILE`](../environment_variables/environment_variables.md#9449-argparser_usage_file), the Argparser found an include directive that is not supported.
 - ***Interpolated variables:***
   - `$1`: The include directive.
 
@@ -1069,18 +1069,18 @@
 
 - ***Message:*** `Warning: In the translation file "$1", the identifier "$2" is missing.  For convenience, the untranslated string is used, instead.`
 - ***Description:*** The warning that in a translation file, an identifier is missing.
-- ***Reasons for warning:*** When trying to translate a string from the [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9443-argparser_translation_file), the Argparser found that the identifier is missing in the dictionary, and by this, also in the translation file. Thus, it uses the untranslated English string as fallback.
+- ***Reasons for warning:*** When trying to translate a string from the [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9444-argparser_translation_file), the Argparser found that the identifier is missing in the dictionary, and by this, also in the translation file. Thus, it uses the untranslated English string as fallback.
 - ***Interpolated variables:***
-  - `$1`: The [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9443-argparser_translation_file).
+  - `$1`: The [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9444-argparser_translation_file).
   - `$2`: The missing identifier.
 
 #### 9.5.128. `Warning no translation`
 
 - ***Message:*** `Warning: In the translation file "$1", the translation to "$2" for the identifier "$3" is missing.  For convenience, the untranslated string is used, instead.`
 - ***Description:*** The warning that in a translation file, an identifier's translation is missing.
-- ***Reasons for warning:*** When trying to translate a string from the [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9443-argparser_translation_file), the Argparser found that the translation to the [`ARGPARSER_LANGUAGE`](../environment_variables/environment_variables.md#9431-argparser_language) for the identifier is missing in the dictionary, and by this, also in the translation file. Thus, it uses the untranslated English string as fallback.
+- ***Reasons for warning:*** When trying to translate a string from the [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9444-argparser_translation_file), the Argparser found that the translation to the [`ARGPARSER_LANGUAGE`](../environment_variables/environment_variables.md#9431-argparser_language) for the identifier is missing in the dictionary, and by this, also in the translation file. Thus, it uses the untranslated English string as fallback.
 - ***Interpolated variables:***
-  - `$1`: The [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9443-argparser_translation_file).
+  - `$1`: The [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9444-argparser_translation_file).
   - `$2`: The [`ARGPARSER_LANGUAGE`](../environment_variables/environment_variables.md#9431-argparser_language).
   - `$3`: The identifier with missing translation.
 
@@ -1088,7 +1088,7 @@
 
 - ***Message:*** `Warning: In the style file "$1", the line "$2" sets a non-existent message key.`
 - ***Description:*** The warning that a style file's line sets a non-existent message key.
-- ***Reasons for warning:*** When parsing the [`ARGPARSER_STYLE_FILE`](../../#), the Argparser found a line that sets a message key (the part before the equals sign) which the Argparser never uses, and which is thus unnecessary to give.
+- ***Reasons for warning:*** When parsing the [`ARGPARSER_STYLE_FILE`](../environment_variables/environment_variables.md#9443-argparser_style_file), the Argparser found a line that sets a message key (the part before the equals sign) which the Argparser never uses, and which is thus unnecessary to give.
 - ***Interpolated variables:***
   - `$1`: The style file.
   - `$2`: The line.
