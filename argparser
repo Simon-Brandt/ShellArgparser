@@ -9364,15 +9364,8 @@ function argparser_main() {
     fi
 
     if [[ -v ARGPARSER_USAGE_STYLE ]]; then
-        styles["argument_group_names"]="${ARGPARSER_USAGE_STYLE}"
         styles["choice_values"]="${ARGPARSER_USAGE_STYLE}"
-        styles["default_text"]="${ARGPARSER_USAGE_STYLE}"
-        styles["default_values"]="${ARGPARSER_USAGE_STYLE}"
-        styles["deprecation_note"]="${ARGPARSER_USAGE_STYLE}"
-        styles["description_text"]="${ARGPARSER_USAGE_STYLE}"
-        styles["help_text"]="${ARGPARSER_USAGE_STYLE}"
         styles["long_options"]="${ARGPARSER_USAGE_STYLE}"
-        styles["remark_text"]="${ARGPARSER_USAGE_STYLE}"
         styles["script_name"]="${ARGPARSER_USAGE_STYLE}"
         styles["short_options"]="${ARGPARSER_USAGE_STYLE}"
         styles["usage_caption"]="${ARGPARSER_USAGE_STYLE}"
