@@ -506,7 +506,7 @@ Error arg def long name duplication 2:
 
 # 3.5.  Define the translations for checking the values of the
 #       positional arguments in the arguments definition.
-Error arg def option default flag:
+Error arg def pos default flag:
   en: >
     Error: The positional argument with the identifier "$1" must be "true" or
     "false", but has {$2} given as default.
