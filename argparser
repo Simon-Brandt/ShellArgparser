@@ -1211,7 +1211,6 @@ function argparser_read_configuration() {
         if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
             ARGPARSER_ARG_DELIMITER_2=","
             ARGPARSER_ERROR_EXIT_CODE=1
-            ARGPARSER_ERROR_STYLE="red,bold,reverse"
         fi
 
         argparser_print_error_message false true "${error_message}"
@@ -1301,7 +1300,6 @@ function argparser_read_configuration() {
     if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
         ARGPARSER_ARG_DELIMITER_2=","
         ARGPARSER_ERROR_EXIT_CODE=1
-        ARGPARSER_ERROR_STYLE="red,bold,reverse"
     fi
 
     argparser_print_error_message true true "${error_messages[@]}"
@@ -1509,7 +1507,6 @@ function argparser_set_env_vars() {
         ARGPARSER_COUNT_FLAGS=false \
         ARGPARSER_CREATE_ARG_DEF=false \
         ARGPARSER_ERROR_EXIT_CODE=1 \
-        ARGPARSER_ERROR_STYLE="red,bold,reverse" \
         ARGPARSER_HELP_ARG_GROUP="Help options" \
         ARGPARSER_HELP_DESCRIPTION="" \
         ARGPARSER_HELP_EXIT_CODE=0 \
@@ -1517,7 +1514,6 @@ function argparser_set_env_vars() {
         ARGPARSER_HELP_FILE_INCLUDE_CHAR="@" \
         ARGPARSER_HELP_FILE_KEEP_COMMENTS=false \
         ARGPARSER_HELP_OPTIONS="h,?" \
-        ARGPARSER_HELP_STYLE="italic" \
         ARGPARSER_LANGUAGE="en" \
         ARGPARSER_MAX_COL_WIDTH_1=5 \
         ARGPARSER_MAX_COL_WIDTH_2=33 \
@@ -1542,15 +1538,12 @@ function argparser_set_env_vars() {
         ARGPARSER_USAGE_MESSAGE_OPTION_TYPE="long" \
         ARGPARSER_USAGE_MESSAGE_ORIENTATION="column" \
         ARGPARSER_USAGE_OPTIONS="u" \
-        ARGPARSER_USAGE_STYLE="italic" \
         ARGPARSER_USE_LONG_OPTIONS=true \
         ARGPARSER_USE_SHORT_OPTIONS=false \
         ARGPARSER_USE_STYLES="tty" \
         ARGPARSER_VERSION_EXIT_CODE=0 \
         ARGPARSER_VERSION_NUMBER="${argparser_version}" \
         ARGPARSER_VERSION_OPTIONS="V" \
-        ARGPARSER_VERSION_STYLE="bold" \
-        ARGPARSER_WARNING_STYLE="red,bold" \
         ARGPARSER_WRITE_ARGS=false \
         argparser_parse_args "${args[@]}"
 
@@ -2167,15 +2160,12 @@ function argparser_check_env_vars() {
     # If there are error messages, sort, filter, colorize, and print
     # them, then exit, as parsing the arguments with a faulty
     # environment variable configuration might be impossible.  If
-    # ${ARGPARSER_ERROR_STYLE} is among the faulty variables, the error
-    # messages cannot be properly colorized.  Thus, set the style to its
-    # default value.  The same holds true for
-    # ${ARGPARSER_ERROR_EXIT_CODE}.
+    # ${ARGPARSER_ERROR_EXIT_CODE} is among the faulty variables, the
+    # exit would fail, so set it to its default value.
     for error_message in "${error_messages[@]}"; do
         if [[ "${error_message}" == *"ARGPARSER_ERROR_EXIT_CODE"* ]]; then
             ARGPARSER_ERROR_EXIT_CODE=1
-        elif [[ "${error_message}" == *"ARGPARSER_ERROR_STYLE"* ]]; then
-            ARGPARSER_ERROR_STYLE="red,bold,reverse"
+            break
         fi
     done
 
@@ -2195,7 +2185,6 @@ function argparser_read_translation() {
     # - ARGPARSER_ARG_DELIMITER_2
     # - ARGPARSER_CHECK_ENV_VARS
     # - ARGPARSER_ERROR_EXIT_CODE
-    # - ARGPARSER_ERROR_STYLE
     # - ARGPARSER_LANGUAGE (read-only)
     # - ARGPARSER_TRANSLATION_FILE (read-only)
 
@@ -2241,7 +2230,6 @@ function argparser_read_translation() {
         if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
             ARGPARSER_ARG_DELIMITER_2=","
             ARGPARSER_ERROR_EXIT_CODE=1
-            ARGPARSER_ERROR_STYLE="red,bold,reverse"
         fi
 
         argparser_print_error_message false true "${error_message}"
@@ -2340,7 +2328,6 @@ function argparser_read_translation() {
     if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
         ARGPARSER_ARG_DELIMITER_2=","
         ARGPARSER_ERROR_EXIT_CODE=1
-        ARGPARSER_ERROR_STYLE="red,bold,reverse"
     fi
 
     for i in "${!error_messages[@]}"; do
@@ -2413,7 +2400,6 @@ function argparser_translate() {
             if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
                 ARGPARSER_ARG_DELIMITER_2=","
                 ARGPARSER_ERROR_EXIT_CODE=1
-                ARGPARSER_ERROR_STYLE="red,bold,reverse"
             fi
 
             argparser_print_warning_message false "${warning_message}"
@@ -2437,7 +2423,6 @@ function argparser_translate() {
             if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
                 ARGPARSER_ARG_DELIMITER_2=","
                 ARGPARSER_ERROR_EXIT_CODE=1
-                ARGPARSER_ERROR_STYLE="red,bold,reverse"
             fi
 
             argparser_print_warning_message false "${warning_message}"
@@ -2466,7 +2451,6 @@ function argparser_read_styles() {
     # - ARGPARSER_ARG_DELIMITER_2
     # - ARGPARSER_CHECK_ENV_VARS
     # - ARGPARSER_ERROR_EXIT_CODE
-    # - ARGPARSER_ERROR_STYLE
     # - ARGPARSER_STYLE_FILE (read-only)
 
     # Define the local variables.
@@ -2511,7 +2495,6 @@ function argparser_read_styles() {
         if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
             ARGPARSER_ARG_DELIMITER_2=","
             ARGPARSER_ERROR_EXIT_CODE=1
-            ARGPARSER_ERROR_STYLE="red,bold,reverse"
         fi
 
         argparser_print_error_message false true "${error_message}"
@@ -2591,7 +2574,6 @@ function argparser_read_styles() {
     if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
         ARGPARSER_ARG_DELIMITER_2=","
         ARGPARSER_ERROR_EXIT_CODE=1
-        ARGPARSER_ERROR_STYLE="red,bold,reverse"
     fi
 
     argparser_print_error_message true true "${error_messages[@]}"
@@ -2599,7 +2581,6 @@ function argparser_read_styles() {
     # Sort, filter, colorize, and print all warning messages.
     if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
         ARGPARSER_ARG_DELIMITER_2=","
-        ARGPARSER_WARNING_STYLE="red,bold"
     fi
 
     argparser_print_warning_message true "${warning_messages[@]}"
@@ -8503,13 +8484,11 @@ function argparser_print_help_or_usage_message() {
     # - ARGPARSER_HELP_FILE (read-only)
     # - ARGPARSER_HELP_FILE_INCLUDE_CHAR (read-only)
     # - ARGPARSER_HELP_FILE_KEEP_COMMENTS (read-only)
-    # - ARGPARSER_HELP_STYLE (read-only)
     # - ARGPARSER_POSITIONAL_ARG_GROUP (read-only)
     # - ARGPARSER_USAGE_EXIT_CODE (read-only)
     # - ARGPARSER_USAGE_FILE (read-only)
     # - ARGPARSER_USAGE_FILE_INCLUDE_CHAR (read-only)
     # - ARGPARSER_USAGE_FILE_KEEP_COMMENTS (read-only)
-    # - ARGPARSER_USAGE_STYLE (read-only)
 
     # Define the local variables.
     local add_heading
@@ -8533,7 +8512,6 @@ function argparser_print_help_or_usage_message() {
     local -a resolved_lines
     local skip_blank_line
     local -a sorted_array
-    local style
     local translation
 
     # Read the arguments.
@@ -8546,13 +8524,11 @@ function argparser_print_help_or_usage_message() {
         file="${ARGPARSER_HELP_FILE}"
         include_char="${ARGPARSER_HELP_FILE_INCLUDE_CHAR}"
         keep_comments="${ARGPARSER_HELP_FILE_KEEP_COMMENTS}"
-        style="${ARGPARSER_HELP_STYLE}"
         exit_code="${ARGPARSER_HELP_EXIT_CODE}"
     else
         file="${ARGPARSER_USAGE_FILE}"
         include_char="${ARGPARSER_USAGE_FILE_INCLUDE_CHAR}"
         keep_comments="${ARGPARSER_USAGE_FILE_KEEP_COMMENTS}"
-        style="${ARGPARSER_USAGE_STYLE}"
         exit_code="${ARGPARSER_USAGE_EXIT_CODE}"
     fi
 
@@ -8833,7 +8809,6 @@ function argparser_print_version_message() {
     # - ARGPARSER_SCRIPT_NAME (read-only)
     # - ARGPARSER_VERSION_EXIT_CODE (read-only)
     # - ARGPARSER_VERSION_NUMBER (read-only)
-    # - ARGPARSER_VERSION_STYLE (read-only)
 
     # Define the local variables.
     local exit
@@ -8869,10 +8844,8 @@ function argparser_print_error_message() {
     #
     # Environment:
     # - ARGPARSER_ERROR_EXIT_CODE (read-only)
-    # - ARGPARSER_ERROR_STYLE (read-only)
     # - ARGPARSER_SCRIPT_NAME (read-only)
     # - ARGPARSER_SILENCE_ERRORS (read-only)
-    # - ARGPARSER_SILENCE_WARNINGS (read-only)
 
     # Define the local variables.
     local caption
@@ -8946,9 +8919,7 @@ function argparser_print_warning_message() {
     #
     # Environment:
     # - ARGPARSER_SCRIPT_NAME (read-only)
-    # - ARGPARSER_SILENCE_ERRORS (read-only)
     # - ARGPARSER_SILENCE_WARNINGS (read-only)
-    # - ARGPARSER_WARNING_STYLE (read-only)
 
     # Define the local variables.
     local caption
@@ -9366,6 +9337,62 @@ function argparser_main() {
     # have been wrongly set.
     if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
         argparser_check_env_vars
+    fi
+
+    # If the (deprecated) style environment variables are set, overwrite
+    # the default styles and those from the style file.  Since the help
+    # and usage message need the same message keys for their styles,
+    # ${ARGPARSER_HELP_STYLE} overrides ${ARGPARSER_USAGE_STYLE}, if
+    # both are given.  The script name style is needed for all message
+    # types, where the value is overridden in the following order of
+    # priority: warning < error < version < usage < help.
+    if [[ -v ARGPARSER_WARNING_STYLE ]]; then
+        styles["script_name"]="${ARGPARSER_WARNING_STYLE}"
+        styles["warning_caption"]="${ARGPARSER_WARNING_STYLE}"
+        styles["warning_text"]="${ARGPARSER_WARNING_STYLE}"
+    fi
+
+    if [[ -v ARGPARSER_ERROR_STYLE ]]; then
+        styles["error_caption"]="${ARGPARSER_ERROR_STYLE}"
+        styles["error_text"]="${ARGPARSER_ERROR_STYLE}"
+        styles["script_name"]="${ARGPARSER_ERROR_STYLE}"
+    fi
+
+    if [[ -v ARGPARSER_VERSION_STYLE ]]; then
+        styles["script_name"]="${ARGPARSER_VERSION_STYLE}"
+        styles["version_string"]="${ARGPARSER_VERSION_STYLE}"
+    fi
+
+    if [[ -v ARGPARSER_USAGE_STYLE ]]; then
+        styles["argument_group_names"]="${ARGPARSER_USAGE_STYLE}"
+        styles["choice_values"]="${ARGPARSER_USAGE_STYLE}"
+        styles["default_text"]="${ARGPARSER_USAGE_STYLE}"
+        styles["default_values"]="${ARGPARSER_USAGE_STYLE}"
+        styles["deprecation_note"]="${ARGPARSER_USAGE_STYLE}"
+        styles["description_text"]="${ARGPARSER_USAGE_STYLE}"
+        styles["help_text"]="${ARGPARSER_USAGE_STYLE}"
+        styles["long_options"]="${ARGPARSER_USAGE_STYLE}"
+        styles["remark_text"]="${ARGPARSER_USAGE_STYLE}"
+        styles["script_name"]="${ARGPARSER_USAGE_STYLE}"
+        styles["short_options"]="${ARGPARSER_USAGE_STYLE}"
+        styles["usage_caption"]="${ARGPARSER_USAGE_STYLE}"
+        styles["value_names"]="${ARGPARSER_USAGE_STYLE}"
+    fi
+
+    if [[ -v ARGPARSER_HELP_STYLE ]]; then
+        styles["argument_group_names"]="${ARGPARSER_HELP_STYLE}"
+        styles["choice_values"]="${ARGPARSER_HELP_STYLE}"
+        styles["default_text"]="${ARGPARSER_HELP_STYLE}"
+        styles["default_values"]="${ARGPARSER_HELP_STYLE}"
+        styles["deprecation_note"]="${ARGPARSER_HELP_STYLE}"
+        styles["description_text"]="${ARGPARSER_HELP_STYLE}"
+        styles["help_text"]="${ARGPARSER_HELP_STYLE}"
+        styles["long_options"]="${ARGPARSER_HELP_STYLE}"
+        styles["remark_text"]="${ARGPARSER_HELP_STYLE}"
+        styles["script_name"]="${ARGPARSER_HELP_STYLE}"
+        styles["short_options"]="${ARGPARSER_HELP_STYLE}"
+        styles["usage_caption"]="${ARGPARSER_HELP_STYLE}"
+        styles["value_names"]="${ARGPARSER_HELP_STYLE}"
     fi
 
     # If ${ARGPARSER_CREATE_ARG_DEF} is set to "true", create the
