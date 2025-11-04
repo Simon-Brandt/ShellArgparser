@@ -2488,7 +2488,7 @@ function argparser_create_args_definition() {
     # Set flags for empty columns to be dropped.  Thereby, any column
     # but the argument identifier may be empty, i.e., all elements but
     # the header only consist of spaces, there.
-    for short_options in in "${col_short_options[@]:1}"; do
+    for short_options in "${col_short_options[@]:1}"; do
         if [[ ! "${short_options}" =~ ^" "+$ ]]; then
             drop_short_options=false
             break
@@ -2496,7 +2496,7 @@ function argparser_create_args_definition() {
         drop_short_options=true
     done
 
-    for long_options in in "${col_long_options[@]:1}"; do
+    for long_options in "${col_long_options[@]:1}"; do
         if [[ ! "${long_options}" =~ ^" "+$ ]]; then
             drop_long_options=false
             break
@@ -2504,7 +2504,7 @@ function argparser_create_args_definition() {
         drop_long_options=true
     done
 
-    for value_names in in "${col_value_names[@]:1}"; do
+    for value_names in "${col_value_names[@]:1}"; do
         if [[ ! "${value_names}" =~ ^" "+$ ]]; then
             drop_value_names=false
             break
@@ -2512,7 +2512,7 @@ function argparser_create_args_definition() {
         drop_value_names=true
     done
 
-    for default_values in in "${col_default_values[@]:1}"; do
+    for default_values in "${col_default_values[@]:1}"; do
         if [[ ! "${default_values}" =~ ^" "+$ ]]; then
             drop_default_values=false
             break
@@ -2520,7 +2520,7 @@ function argparser_create_args_definition() {
         drop_default_values=true
     done
 
-    for choice_values in in "${col_choice_values[@]:1}"; do
+    for choice_values in "${col_choice_values[@]:1}"; do
         if [[ ! "${choice_values}" =~ ^" "+$ ]]; then
             drop_choice_values=false
             break
@@ -2528,7 +2528,7 @@ function argparser_create_args_definition() {
         drop_choice_values=true
     done
 
-    for type in in "${col_types[@]:1}"; do
+    for type in "${col_types[@]:1}"; do
         if [[ ! "${type}" =~ ^" "+$ ]]; then
             drop_type=false
             break
@@ -2536,7 +2536,7 @@ function argparser_create_args_definition() {
         drop_type=true
     done
 
-    for arg_number in in "${col_arg_numbers[@]:1}"; do
+    for arg_number in "${col_arg_numbers[@]:1}"; do
         if [[ ! "${arg_number}" =~ ^" "+$ ]]; then
             drop_arg_number=false
             break
@@ -2544,7 +2544,7 @@ function argparser_create_args_definition() {
         drop_arg_number=true
     done
 
-    for arg_group in in "${col_arg_groups[@]:1}"; do
+    for arg_group in "${col_arg_groups[@]:1}"; do
         if [[ ! "${arg_group}" =~ ^" "+$ ]]; then
             drop_arg_group=false
             break
@@ -2552,7 +2552,7 @@ function argparser_create_args_definition() {
         drop_arg_group=true
     done
 
-    for note in in "${col_notes[@]:1}"; do
+    for note in "${col_notes[@]:1}"; do
         if [[ ! "${note}" =~ ^" "+$ ]]; then
             drop_note=false
             break
@@ -2560,7 +2560,7 @@ function argparser_create_args_definition() {
         drop_note=true
     done
 
-    for help_text in in "${col_help_texts[@]:1}"; do
+    for help_text in "${col_help_texts[@]:1}"; do
         if [[ ! "${help_text}" =~ ^" "+$ ]]; then
             drop_help_text=false
             break
