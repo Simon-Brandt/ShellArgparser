@@ -1235,7 +1235,7 @@ function argparser_read_configuration() {
             error_message="${error_message/"\$1"/"${ARGPARSER_CONFIG_FILE}"}"
             error_message="${error_message/"\$2"/"${line}"}"
             error_messages+=("${error_message}")
-        elif [[ "${line}" =~ = ]]; then
+        elif [[ "${line}" == *=* ]]; then
             # Set the variable name as shortest part before an equals
             # sign ("="), strip leading and trailing spaces, replace
             # hyphens and spaces by underscores, capitalize the variable
@@ -2525,7 +2525,7 @@ function argparser_read_styles() {
         if [[ -z "${line}" || "${line}" == \#* ]]; then
             # Ignore the empty or commented line.
             continue
-        elif [[ "${line}" =~ = ]]; then
+        elif [[ "${line}" == *=* ]]; then
             # Get the style name as shortest part before an equals sign
             # ("="), and strip leading and trailing spaces.
             name="${line%%=*}"
@@ -4828,7 +4828,7 @@ function argparser_parse_long_option() {
     # argument.
     prefix="${given_arg::1}"
     option_name="${given_arg:2}"
-    if [[ "${given_arg}" =~ "=" ]]; then
+    if [[ "${given_arg}" == *=* ]]; then
         option_name="${option_name%%=*}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values \
             <<< "${given_arg#*=}"
@@ -5032,7 +5032,7 @@ function argparser_parse_short_option() {
     # argument.
     prefix="${given_arg::1}"
     option_name="${given_arg:1}"
-    if [[ "${given_arg}" =~ "=" ]]; then
+    if [[ "${given_arg}" == *=* ]]; then
         option_name="${option_name%%=*}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values \
             <<< "${given_arg#*=}"
