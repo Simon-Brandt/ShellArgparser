@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-03
+# Last Modification: 2025-11-04
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -9244,6 +9244,28 @@ function argparser_main() {
     shopt -q extglob
     is_extglob_set="$?"
     shopt -s extglob
+
+    # Define the default styles.
+    styles=(
+        ["argument_group_names"]="cyan,bold"
+        ["choice_values"]="yellow"
+        ["default_text"]="italic"
+        ["default_values"]="cyan,italic"
+        ["deprecation_note"]="red,bold"
+        ["description_text"]="italic"
+        ["error_caption"]="red,bold,reverse"
+        ["error_text"]="red"
+        ["help_text"]="normal"
+        ["long_options"]="magenta,bold"
+        ["remark_text"]="italic"
+        ["script_name"]="bold"
+        ["short_options"]="green,bold"
+        ["usage_caption"]="bold"
+        ["value_names"]="blue"
+        ["version_string"]="normal"
+        ["warning_caption"]="red,bold"
+        ["warning_text"]="red"
+    )
 
     # If ${ARGPARSER_CONFIG_FILE} isn't set to the empty string, read
     # the configuration file.
