@@ -1095,6 +1095,8 @@ function argparser_uncolorize() {
     uncolorized_array=("${uncolorized_array[@]//$'\e['[0-9]m}")
     # shellcheck disable=SC2180  # ShellCheck bug, no multi-dimensional array.
     uncolorized_array=("${uncolorized_array[@]//$'\e['[0-9][0-9]m}")
+    # shellcheck disable=SC2180  # ShellCheck bug, no multi-dimensional array.
+    uncolorized_array=("${uncolorized_array[@]//$'\e['[0-9][0-9][0-9]m}")
 
     # Print the uncolorized array's first element, or set it to the
     # target variable, using a name reference to the variable name given
