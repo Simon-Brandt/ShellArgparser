@@ -1,10 +1,9 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-19
+# Last Modification: 2025-11-04
 # License: Public Domain
 
 # 1.    Define the general translations.
----
 Positional arguments:
   en: Positional arguments
   de: Positionale Argumente
@@ -24,11 +23,9 @@ Error:
 Warning:
   en: Warning
   de: Warnung
-...
 
 # 2.    Define the translations for help messages.
 # 2.1.  Define the translations for the usage line (part of the header).
----
 Usage:
   en: Usage
   de: Aufruf
@@ -40,20 +37,16 @@ Arguments:
 Options:
   en: OPTIONS
   de: OPTIONEN
-...
 
 # 2.2.  Define the translations for the remark (part of the header).
----
 Mandatory arguments:
   en: >
     Mandatory arguments to long options are mandatory for short options too.
   de: >
     Erforderliche Argumente für lange Optionen sind auch für kurze
     erforderlich.
-...
 
 # 2.3.  Define the translations for the help column.
----
 Deprecated:
   en: DEPRECATED
   de: VERALTET
@@ -81,11 +74,9 @@ false:
 true:
   en: true
   de: wahr
-...
 
 # 3.    Define the translations for error messages.
 # 3.1.  Define the translations for checking the environment variables.
----
 Error env var bool:
   en: >
     Error: The environment variable "$1" is set to "$2", but must be a Boolean,
@@ -302,10 +293,8 @@ Error env var files:
     Error: The environment variables "$1" and "$2" point to the same file.
   de: >
     Fehler: Die Umgebungsvariablen "$1" und "$2" verweisen auf dieselbe Datei.
-...
 
 # 3.2.  Define the translations for reading the arguments definition.
----
 Error arg array 1:
   en: >
     Error: Calling (instead of sourcing) the Argparser requires the arguments
@@ -351,10 +340,8 @@ Error no arg def:
     Error: No argument definition for "$1".
   de: >
     Fehler: Keine Argumentdefinition für "$1".
-...
 
 # 3.3.  Define the translations for parsing the arguments definition.
----
 Error arg def id:
   en: >
     Error: In the arguments definition in "$1", the column "id" is missing.
@@ -402,11 +389,9 @@ Error arg def choice range:
     Fehler: Das Argument mit dem Identifikator "$1" hat Auswahlwerte gegeben
     mit "$2" als Start, "$3" als Stopp, und "$4" als Schrittweite, während nur
     Ganzzahl-, Gleitkommazahl- und Buchstaben-Sequenzen unterstützt werden.
-...
 
 # 3.4.  Define the translations for checking the names of the arguments
 #       in the arguments definition.
----
 Error arg def short name empty:
   en: >
     Error: The short option with the identifier "$1" has an empty string given
@@ -518,11 +503,9 @@ Error arg def long name duplication 2:
   de: >
     Fehler: Die lange Option mit dem Identifikator "$1" hat die lange Option
     "--$2" gegeben, diese wird aber bereits von "$3" genutzt.
-...
 
 # 3.5.  Define the translations for checking the values of the
 #       positional arguments in the arguments definition.
----
 Error arg def option default flag:
   en: >
     Error: The positional argument with the identifier "$1" must be "true" or
@@ -682,11 +665,9 @@ Error arg def pos note:
   de: >
     Fehler: Das positionale Argument mit dem Identifikator "$1" hat "$2" als
     Anmerkung gegeben, aber nur "deprecated" ("veraltet") wird unterstützt.
-...
 
 # 3.6.  Define the translations for checking the values of the keyword
 #       arguments in the arguments definition.
----
 Error arg def option default flag:
   en: >
     Error: The option with the identifier "$1" must be "true" or "false", but
@@ -800,10 +781,8 @@ Error arg def option note:
   de: >
     Fehler: Die Option mit dem Identifikator "$1" hat "$2" als Anmerkung
     gegeben, aber nur "deprecated" ("veraltet") wird unterstützt.
-...
 
 # 3.7.  Define the translations for parsing the arguments.
----
 Error arg double hyphen:
   en: >
     Error: The special option "--" takes no value.
@@ -871,11 +850,9 @@ Error pos arg count 2:
     Error: $1 positional arguments are required, but $2 are given.
   de: >
     Fehler: $1 positionale Argumente sind erforderlich, aber $2 sind gegeben.
-...
 
 # 3.8.  Define the translations for checking the values of the
 #       arguments.
----
 Error arg no flag 1:
   en: >
     Error: Error: The option "$1" is no flag and thus needs a value
@@ -978,30 +955,24 @@ Error arg uint:
   de: >
     Fehler: Das Argument "$1" ist auf "$2" gesetzt, muss aber eine
     natürliche Zahl sein, d. h. nur Ziffern und kein Vorzeichen umfassen.
-...
 
 # 3.9.  Define the translations for reading the translation file.
----
 Error YAML:
   en: >
     Error: The YAML line "$1" could not be recognized.
   de: >
     Fehler: Die YAML-Zeile "$1" konnte nicht erkannt werden.
-...
 
 # 3.10. Define the translations for creating the help or usage messages.
----
 Error include directive:
   en: >
     Error: The include directive "$1" could not be recognized.
   de: >
     Fehler: Die Include-Anweisung "$1" konnte nicht erkannt werden.
-...
 
 # 4.    Define the translations for warning messages.
 # 4.1.  Define the translations for checking the values of the
 #       arguments.
----
 Warning deprecation:
   en: >
     Warning: The argument "$1" is deprecated and will be removed in the future.
@@ -1039,11 +1010,9 @@ Warning wrong arg number 4:
   de: >
     Warnung: Das Argument "$1" erfordert $2 Werte, hat aber $3 gegeben.  Zwecks
     Einfachheit wird die Vorgabe ($4) genutzt.
-...
 
 # 4.2.  Define the translations for translating from the translation
 #       file.
----
 Warning no identifier:
   en: >
     Warning: In the translation file "$1", the identifier "$2" is missing.  For
@@ -1062,4 +1031,3 @@ Warning no translation:
     Warnung: In der Übersetzungsdatei "$1" fehlt die Übersetzung nach "$2" für
     den Identifikator "$3".  Zwecks Einfachheit wird stattdessen die nicht
     übersetzte Zeichenkette genutzt.
-...
