@@ -127,7 +127,6 @@ Finally, we need a translation file (here [`translations.yaml`](../../resources/
 <!-- <include command="sed '1,5d;84q' ../resources/translations.yaml" lang="yaml"> -->
 ```yaml
 # 1.    Define the general translations.
----
 Positional arguments:
   en: Positional arguments
   de: Positionale Argumente
@@ -147,11 +146,9 @@ Error:
 Warning:
   en: Warning
   de: Warnung
-...
 
 # 2.    Define the translations for help messages.
 # 2.1.  Define the translations for the usage line (part of the header).
----
 Usage:
   en: Usage
   de: Aufruf
@@ -163,20 +160,16 @@ Arguments:
 Options:
   en: OPTIONS
   de: OPTIONEN
-...
 
 # 2.2.  Define the translations for the remark (part of the header).
----
 Mandatory arguments:
   en: >
     Mandatory arguments to long options are mandatory for short options too.
   de: >
     Erforderliche Argumente für lange Optionen sind auch für kurze
     erforderlich.
-...
 
 # 2.3.  Define the translations for the help column.
----
 Deprecated:
   en: DEPRECATED
   de: VERALTET
@@ -204,7 +197,14 @@ false:
 true:
   en: true
   de: wahr
-...
+
+# 3.    Define the translations for error messages.
+# 3.1.  Define the translations for checking the environment variables.
+Error env var bool:
+  en: >
+    Error: The environment variable "$1" is set to "$2", but must be a Boolean,
+    i.e., "true" or "false".
+  de: >
 ```
 <!-- </include> -->
 

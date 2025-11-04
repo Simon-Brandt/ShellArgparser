@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-10-01
+# Last Modification: 2025-11-04
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -1662,7 +1662,7 @@ test_number="${test_section}.2"
 test_type="version"
 cmd="bash ../argparser --version"
 output="$(cat << EOF
-argparser v1.2.0 "Callospermophilus lateralis"
+argparser v1.2.1 "Callospermophilus madrensis"
 EOF
 )"
 error=""
