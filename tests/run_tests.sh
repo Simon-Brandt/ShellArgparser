@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-03
+# Last Modification: 2025-11-04
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -1804,8 +1804,10 @@ Options:
                                  to STDERR (default: false)
 [--error-exit-code=INT]          the exit code when errors occurred upon
                                  parsing (default: 1)
-[--error-style=STYLE...]         the color and style specification for error
-                                 messages (default: "red","bold","reverse")
+[--error-style=STYLE...]         (DEPRECATED) the color and style specification
+                                 for error messages, deprecated in favor of
+                                 "--style-file=FILE" (default:
+                                 "red","bold","reverse")
 [--help-arg-group=NAME]          the name of the argument group holding all
                                  help options, i.e., --help, --usage, and
                                  --version (default: "Help options")
@@ -1821,8 +1823,9 @@ Options:
                                  (default: false)
 [--help-options=CHAR...]         the short (single-character) option names to
                                  invoke the help message (default: "h","?")
-[--help-style=STYLE...]          the color and style specification for help
-                                 messages (default: "italic")
+[--help-style=STYLE...]          (DEPRECATED) the color and style specification
+                                 for help messages, deprecated in favor of
+                                 "--style-file=FILE" (default: "italic")
 [--language=LANG]                the language in which to localize the help and
                                  usage messages (default: "en")
 [--max-col-width-1=INT]          the maximum column width of the first column
@@ -1878,8 +1881,9 @@ Options:
                                  (default: "row")
 [--usage-options=CHAR...]        the short (single-character) option names to
                                  invoke the usage message (default: "u")
-[--usage-style=STYLE...]         the color and style specification for usage
-                                 messages (default: "italic")
+[--usage-style=STYLE...]         (DEPRECATED) the color and style specification
+                                 for usage messages, deprecated in favor of
+                                 "--style-file=FILE" (default: "italic")
 [--use-long-options]             use the long option names for parsing
                                  (default: true)
 [--use-short-options]            use the short option names for parsing
@@ -1898,10 +1902,12 @@ Options:
                                  message (default: "1.0.0")
 [--version-options=CHAR...]      the short (single-character) option names to
                                  invoke the version message (default: "V")
-[--version-style=STYLE...]       the color and style specification for version
-                                 messages (default: "bold")
-[--warning-style=STYLE...]       the color and style specification for warning
-                                 messages (default: "red","bold")
+[--version-style=STYLE...]       (DEPRECATED) the color and style specification
+                                 for version messages, deprecated in favor of
+                                 "--style-file=FILE" (default: "bold")
+[--warning-style=STYLE...]       (DEPRECATED) the color and style specification
+                                 for warning messages, deprecated in favor of
+                                 "--style-file=FILE" (default: "red","bold")
 [--write-args]                   write the arguments from
                                  ARGPARSER_ARG_ARRAY_NAME to STDOUT (default:
                                  false)
