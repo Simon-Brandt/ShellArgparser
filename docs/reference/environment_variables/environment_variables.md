@@ -433,7 +433,7 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 - ***Type:*** *str* (String)
 - ***Allowed values:*** `"always"`, `"never"`, `"file"`, and `"tty"`
 - ***Default value:*** `"tty"`
-- ***Description:*** When to use the message colors and styles. `"always"` adds the styles on any occasion, `"never"` on none, and `"tty"` and `"file"` only when `STDOUT`/`STDERR` is or is not a terminal (and thus a file). Deactivating the styles is useful to get plain 7-bit ASCII text output for files, while in interactive sessions, the escape sequences offer more user-friendly formatting and possibilities for highlighting. By this, you can parse your files afterwards more easily. Still, using *e.g.* [`less --raw-control-chars <filename>`](https://man7.org/linux/man-pages/man1/less.1.html "man7.org &rightarrow; man pages &rightarrow; less(1)"), these escape sequences can be displayed from files, when included.
+- ***Description:*** When to use the message colors and styles. `"always"` adds the styles on any occasion, `"never"` on none, and `"tty"` and `"file"` only when `STDOUT`/`STDERR` is or is not a terminal (and thus a file). Deactivating the styles is useful to get plain ASCII text output for files, while in interactive sessions, the escape sequences offer more user-friendly formatting and possibilities for highlighting. By this, you can parse your files afterwards more easily. Still, using *e.g.* [`less --raw-control-chars <filename>`](https://man7.org/linux/man-pages/man1/less.1.html "man7.org &rightarrow; man pages &rightarrow; less(1)"), these escape sequences can be displayed from files, when included. `ARGPARSER_USE_STYLES` overrides [`NO_COLOR`](https://no-color.org/ "no-color.org").
 
 #### 9.4.59. `ARGPARSER_USE_STYLES_IN_FILES`
 
@@ -443,7 +443,7 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
-- ***Description:*** Whether to use the message colors and styles when `STDOUT`/`STDERR` is not a terminal (and thus perhaps a file).
+- ***Description:*** Whether to use the message colors and styles when `STDOUT`/`STDERR` is not a terminal (and thus perhaps a file). `ARGPARSER_USE_STYLES_IN_FILES` overrides [`NO_COLOR`](https://no-color.org/ "no-color.org").
 
 #### 9.4.60. `ARGPARSER_VERSION_EXIT_CODE`
 

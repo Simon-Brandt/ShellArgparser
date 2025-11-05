@@ -9236,7 +9236,9 @@ function argparser_main() {
     is_extglob_set="$?"
     shopt -s extglob
 
-    # Define the default styles.
+    # Define the default styles, and set them to be disabled if the
+    # non-empty environment variable ${NO_COLOR} is given, but neither
+    # ${ARGPARSER_USE_STYLES} nor ${ARGPARSER_USE_STYLES_IN_FILES}.
     styles=(
         ["argument_group_names"]="cyan,bold"
         ["choice_values"]="yellow"
@@ -9257,6 +9259,14 @@ function argparser_main() {
         ["warning_caption"]="red,bold"
         ["warning_text"]="red"
     )
+
+    if [[ -v NO_COLOR \
+        && -n "${NO_COLOR}" \
+        && ! -v ARGPARSER_USE_STYLES \
+        && ! -v ARGPARSER_USE_STYLES_IN_FILES ]]
+    then
+        ARGPARSER_USE_STYLES="never"
+    fi
 
     # If ${ARGPARSER_CONFIG_FILE} isn't set to the empty string, read
     # the configuration file.
