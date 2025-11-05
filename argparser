@@ -1044,7 +1044,7 @@ function argparser_colorize() {
     # variable, using a name reference to the variable name given as
     # ${var} (i.e., as $3).
     if [[ "${var}" == "print" ]]; then
-        printf '%s' "${colorized_array[0]}"
+        printf '%s' "${colorized_array[0]}" >&"${file_descriptor}"
     elif [[ "${var}" != "array" ]]; then
         declare -n var="${var}"
         var="${colorized_array[0]}"
@@ -1060,6 +1060,7 @@ function argparser_uncolorize() {
     #       to; if set to "array", set the entire uncolorized array's
     #       elements to ${uncolorized_array}; if set to "print", print
     #       the uncolorized array's first element instead
+    # - $2: the file descriptor to write to (1 or 2)
     # - $@: the array to uncolorize
     #
     # Nonlocals:
@@ -1071,11 +1072,13 @@ function argparser_uncolorize() {
     # Output:
     # - the uncolorized string (if $1 is set to "print")
 
-    # Define the local variable.
+    # Define the local variables.
+    local file_descriptor
     local var
 
     # Read the arguments.
     var="$1"
+    file_descriptor="$2"
 
     if [[ "${var}" != "array" ]]; then
         # Set ${uncolorized_array} as local instead of nonlocal
@@ -1102,7 +1105,7 @@ function argparser_uncolorize() {
     # target variable, using a name reference to the variable name given
     # as ${var} (i.e., as $1).
     if [[ "${var}" == "print" ]]; then
-        printf '%s' "${uncolorized_array[0]}"
+        printf '%s' "${uncolorized_array[0]}" >&"${file_descriptor}"
     elif [[ "${var}" != "array" ]]; then
         declare -n var="${var}"
         var="${uncolorized_array[0]}"
@@ -8900,7 +8903,7 @@ function argparser_print_error_message() {
             argparser_colorize "${styles["error_text"]}" 2 error_message \
                 "${error_message#Error: }"
             printf '%s %s %s\n' "${script_name}" "${caption}" \
-                "${error_message}"
+                "${error_message}" >&2
         done
 
         if [[ "${exit}" == true ]]; then
@@ -8968,7 +8971,7 @@ function argparser_print_warning_message() {
             argparser_colorize "${styles["warning_text"]}" 2 warning_message \
                 "${warning_message#Warning: }"
             printf '%s %s %s\n' "${script_name}" "${caption}" \
-                "${warning_message}"
+                "${warning_message}" >&2
         done
     fi
 }
