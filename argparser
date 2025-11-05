@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-04
+# Last Modification: 2025-11-05
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -9003,164 +9003,164 @@ function argparser_print_logo() {
     font_9="blue,reverse"     # R
 
     # Output the first line, which is empty.
-    argparser_colorize "${space}" 1 "print" "000000000000000000000000000000"   # _
-    argparser_colorize "${space}" 1 "print" "000000000000000000000000000000"   # _
-    argparser_colorize "${space}" 1 "print" "00000000000000"                   # _
+    argparser_colorize "${space}" 1 "print" "0000000000000000000000000"  # _
+    argparser_colorize "${space}" 1 "print" "0000000000000000000000000"  # _
+    argparser_colorize "${space}" 1 "print" "000000000000000000000000"   # _
     printf '\n'
 
     # Output the second line, containing the first of five lines of the
     # letters.
-    argparser_colorize "${space}"  1 "print" "001"       # _, A
-    argparser_colorize "${font_1}" 1 "print" "0000"      # A
-    argparser_colorize "${space}"  1 "print" "0101"      # A, _, R
-    argparser_colorize "${font_2}" 1 "print" "0100"      # R
-    argparser_colorize "${space}"  1 "print" "1001"      # R, _, G
-    argparser_colorize "${font_3}" 1 "print" "00011"     # G
-    argparser_colorize "${space}"  1 "print" "101"       # _, P
-    argparser_colorize "${font_4}" 1 "print" "0100"      # P
-    argparser_colorize "${space}"  1 "print" "0001"      # P, _, A
-    argparser_colorize "${font_5}" 1 "print" "0000"      # A
-    argparser_colorize "${space}"  1 "print" "0101"      # A, _, R
-    argparser_colorize "${font_6}" 1 "print" "0100"      # R
-    argparser_colorize "${space}"  1 "print" "1001"      # R, _, S
-    argparser_colorize "${font_7}" 1 "print" "01001"     # S
-    argparser_colorize "${space}"  1 "print" "10"        # _
-    argparser_colorize "${font_8}" 1 "print" "100010"    # E
-    argparser_colorize "${space}"  1 "print" "101"       # _, R
-    argparser_colorize "${font_9}" 1 "print" "0100"      # R
-    argparser_colorize "${space}"  1 "print" "100"       # R, _
+    argparser_colorize "${space}"  1 "print" "001"      # _, A
+    argparser_colorize "${font_1}" 1 "print" "0000"     # A
+    argparser_colorize "${space}"  1 "print" "0101"     # A, _, R
+    argparser_colorize "${font_2}" 1 "print" "0100"     # R
+    argparser_colorize "${space}"  1 "print" "1001"     # R, _, G
+    argparser_colorize "${font_3}" 1 "print" "00011"    # G
+    argparser_colorize "${space}"  1 "print" "101"      # _, P
+    argparser_colorize "${font_4}" 1 "print" "0100"     # P
+    argparser_colorize "${space}"  1 "print" "0001"     # P, _, A
+    argparser_colorize "${font_5}" 1 "print" "0000"     # A
+    argparser_colorize "${space}"  1 "print" "0101"     # A, _, R
+    argparser_colorize "${font_6}" 1 "print" "0100"     # R
+    argparser_colorize "${space}"  1 "print" "1001"     # R, _, S
+    argparser_colorize "${font_7}" 1 "print" "01001"    # S
+    argparser_colorize "${space}"  1 "print" "10"       # _
+    argparser_colorize "${font_8}" 1 "print" "100010"   # E
+    argparser_colorize "${space}"  1 "print" "101"      # _, R
+    argparser_colorize "${font_9}" 1 "print" "0100"     # R
+    argparser_colorize "${space}"  1 "print" "100"      # R, _
     printf '\n'
 
     # Output the third line, containing the second of five lines of the
     # letters.
-    argparser_colorize "${space}"  1 "print" "00"        # _
-    argparser_colorize "${font_1}" 1 "print" "10"        # A
-    argparser_colorize "${space}"  1 "print" "00"        # A
-    argparser_colorize "${font_1}" 1 "print" "00"        # A
-    argparser_colorize "${space}"  1 "print" "10"        # _
-    argparser_colorize "${font_2}" 1 "print" "10"        # R
-    argparser_colorize "${space}"  1 "print" "10"        # R
-    argparser_colorize "${font_2}" 1 "print" "01"        # R
-    argparser_colorize "${space}"  1 "print" "00"        # _
-    argparser_colorize "${font_3}" 1 "print" "10"        # G
-    argparser_colorize "${space}"  1 "print" "001110"    # G, _
-    argparser_colorize "${font_4}" 1 "print" "10"        # P
-    argparser_colorize "${space}"  1 "print" "10"        # P
-    argparser_colorize "${font_4}" 1 "print" "00"        # P
-    argparser_colorize "${space}"  1 "print" "00"        # _
-    argparser_colorize "${font_5}" 1 "print" "10"        # A
-    argparser_colorize "${space}"  1 "print" "00"        # A
-    argparser_colorize "${font_5}" 1 "print" "00"        # A
-    argparser_colorize "${space}"  1 "print" "10"        # _
-    argparser_colorize "${font_6}" 1 "print" "10"        # R
-    argparser_colorize "${space}"  1 "print" "10"        # R
-    argparser_colorize "${font_6}" 1 "print" "01"        # R
-    argparser_colorize "${space}"  1 "print" "00"        # _
-    argparser_colorize "${font_7}" 1 "print" "10"        # S
-    argparser_colorize "${space}"  1 "print" "100110"    # S, _
-    argparser_colorize "${font_8}" 1 "print" "10"        # E
-    argparser_colorize "${space}"  1 "print" "001010"    # E, _
-    argparser_colorize "${font_9}" 1 "print" "10"        # R
-    argparser_colorize "${space}"  1 "print" "10"        # R
-    argparser_colorize "${font_9}" 1 "print" "01"        # R
-    argparser_colorize "${space}"  1 "print" "00"        # _
+    argparser_colorize "${space}"  1 "print" "00"       # _
+    argparser_colorize "${font_1}" 1 "print" "10"       # A
+    argparser_colorize "${space}"  1 "print" "00"       # A
+    argparser_colorize "${font_1}" 1 "print" "00"       # A
+    argparser_colorize "${space}"  1 "print" "10"       # _
+    argparser_colorize "${font_2}" 1 "print" "10"       # R
+    argparser_colorize "${space}"  1 "print" "10"       # R
+    argparser_colorize "${font_2}" 1 "print" "01"       # R
+    argparser_colorize "${space}"  1 "print" "00"       # _
+    argparser_colorize "${font_3}" 1 "print" "10"       # G
+    argparser_colorize "${space}"  1 "print" "001110"   # G, _
+    argparser_colorize "${font_4}" 1 "print" "10"       # P
+    argparser_colorize "${space}"  1 "print" "10"       # P
+    argparser_colorize "${font_4}" 1 "print" "00"       # P
+    argparser_colorize "${space}"  1 "print" "00"       # _
+    argparser_colorize "${font_5}" 1 "print" "10"       # A
+    argparser_colorize "${space}"  1 "print" "00"       # A
+    argparser_colorize "${font_5}" 1 "print" "00"       # A
+    argparser_colorize "${space}"  1 "print" "10"       # _
+    argparser_colorize "${font_6}" 1 "print" "10"       # R
+    argparser_colorize "${space}"  1 "print" "10"       # R
+    argparser_colorize "${font_6}" 1 "print" "01"       # R
+    argparser_colorize "${space}"  1 "print" "00"       # _
+    argparser_colorize "${font_7}" 1 "print" "10"       # S
+    argparser_colorize "${space}"  1 "print" "100110"   # S, _
+    argparser_colorize "${font_8}" 1 "print" "10"       # E
+    argparser_colorize "${space}"  1 "print" "001010"   # E, _
+    argparser_colorize "${font_9}" 1 "print" "10"       # R
+    argparser_colorize "${space}"  1 "print" "10"       # R
+    argparser_colorize "${font_9}" 1 "print" "01"       # R
+    argparser_colorize "${space}"  1 "print" "00"       # _
     printf '\n'
 
     # Output the fourth line, containing the third of five lines of the
     # letters.
-    argparser_colorize "${space}"  1 "print" "00"        # _
-    argparser_colorize "${font_1}" 1 "print" "100000"    # A
-    argparser_colorize "${space}"  1 "print" "10"        # _
-    argparser_colorize "${font_2}" 1 "print" "101001"    # R
-    argparser_colorize "${space}"  1 "print" "00"        # _
-    argparser_colorize "${font_3}" 1 "print" "10001"     # G
-    argparser_colorize "${space}"  1 "print" "110"       # G, _
-    argparser_colorize "${font_4}" 1 "print" "10100"     # P
-    argparser_colorize "${space}"  1 "print" "000"       # P, _
-    argparser_colorize "${font_5}" 1 "print" "100000"    # A
-    argparser_colorize "${space}"  1 "print" "10"        # _
-    argparser_colorize "${font_6}" 1 "print" "101001"    # R
-    argparser_colorize "${space}"  1 "print" "001"       # _, S
-    argparser_colorize "${font_7}" 1 "print" "0100"      # S
-    argparser_colorize "${space}"  1 "print" "110"       # S, _
-    argparser_colorize "${font_8}" 1 "print" "100010"    # E
-    argparser_colorize "${space}"  1 "print" "10"        # _
-    argparser_colorize "${font_9}" 1 "print" "101001"    # R
-    argparser_colorize "${space}"  1 "print" "00"        # _
+    argparser_colorize "${space}"  1 "print" "00"       # _
+    argparser_colorize "${font_1}" 1 "print" "100000"   # A
+    argparser_colorize "${space}"  1 "print" "10"       # _
+    argparser_colorize "${font_2}" 1 "print" "101001"   # R
+    argparser_colorize "${space}"  1 "print" "00"       # _
+    argparser_colorize "${font_3}" 1 "print" "10001"    # G
+    argparser_colorize "${space}"  1 "print" "110"      # G, _
+    argparser_colorize "${font_4}" 1 "print" "10100"    # P
+    argparser_colorize "${space}"  1 "print" "000"      # P, _
+    argparser_colorize "${font_5}" 1 "print" "100000"   # A
+    argparser_colorize "${space}"  1 "print" "10"       # _
+    argparser_colorize "${font_6}" 1 "print" "101001"   # R
+    argparser_colorize "${space}"  1 "print" "001"      # _, S
+    argparser_colorize "${font_7}" 1 "print" "0100"     # S
+    argparser_colorize "${space}"  1 "print" "110"      # S, _
+    argparser_colorize "${font_8}" 1 "print" "100010"   # E
+    argparser_colorize "${space}"  1 "print" "10"       # _
+    argparser_colorize "${font_9}" 1 "print" "101001"   # R
+    argparser_colorize "${space}"  1 "print" "00"       # _
     printf '\n'
 
     # Output the fifth line, containing the fourth of five lines of the
     # letters.
-    argparser_colorize "${space}"  1 "print" "00"        # _
-    argparser_colorize "${font_1}" 1 "print" "10"        # A
-    argparser_colorize "${space}"  1 "print" "00"        # A
-    argparser_colorize "${font_1}" 1 "print" "00"        # A
-    argparser_colorize "${space}"  1 "print" "10"        # _
-    argparser_colorize "${font_2}" 1 "print" "10"        # R
-    argparser_colorize "${space}"  1 "print" "1"         # R
-    argparser_colorize "${font_2}" 1 "print" "00"        # R
-    argparser_colorize "${space}"  1 "print" "100"       # R, _
-    argparser_colorize "${font_3}" 1 "print" "10"        # G
-    argparser_colorize "${space}"  1 "print" "00"        # G
-    argparser_colorize "${font_3}" 1 "print" "11"        # G
-    argparser_colorize "${space}"  1 "print" "10"        # _
-    argparser_colorize "${font_4}" 1 "print" "10"        # P
-    argparser_colorize "${space}"  1 "print" "100000"    # P, _
-    argparser_colorize "${font_5}" 1 "print" "10"        # A
-    argparser_colorize "${space}"  1 "print" "00"        # A
-    argparser_colorize "${font_5}" 1 "print" "00"        # A
-    argparser_colorize "${space}"  1 "print" "10"        # _
-    argparser_colorize "${font_6}" 1 "print" "10"        # R
-    argparser_colorize "${space}"  1 "print" "1"         # R
-    argparser_colorize "${font_6}" 1 "print" "00"        # R
-    argparser_colorize "${space}"  1 "print" "1001010"   # R, _, S
-    argparser_colorize "${font_7}" 1 "print" "01"        # S
-    argparser_colorize "${space}"  1 "print" "10"        # _
-    argparser_colorize "${font_8}" 1 "print" "10"        # E
-    argparser_colorize "${space}"  1 "print" "001010"    # E, _
-    argparser_colorize "${font_9}" 1 "print" "10"        # R
-    argparser_colorize "${space}"  1 "print" "1"         # R
-    argparser_colorize "${font_9}" 1 "print" "00"        # R
-    argparser_colorize "${space}"  1 "print" "100"       # R, _
+    argparser_colorize "${space}"  1 "print" "00"       # _
+    argparser_colorize "${font_1}" 1 "print" "10"       # A
+    argparser_colorize "${space}"  1 "print" "00"       # A
+    argparser_colorize "${font_1}" 1 "print" "00"       # A
+    argparser_colorize "${space}"  1 "print" "10"       # _
+    argparser_colorize "${font_2}" 1 "print" "10"       # R
+    argparser_colorize "${space}"  1 "print" "1"        # R
+    argparser_colorize "${font_2}" 1 "print" "00"       # R
+    argparser_colorize "${space}"  1 "print" "100"      # R, _
+    argparser_colorize "${font_3}" 1 "print" "10"       # G
+    argparser_colorize "${space}"  1 "print" "00"       # G
+    argparser_colorize "${font_3}" 1 "print" "11"       # G
+    argparser_colorize "${space}"  1 "print" "10"       # _
+    argparser_colorize "${font_4}" 1 "print" "10"       # P
+    argparser_colorize "${space}"  1 "print" "100000"   # P, _
+    argparser_colorize "${font_5}" 1 "print" "10"       # A
+    argparser_colorize "${space}"  1 "print" "00"       # A
+    argparser_colorize "${font_5}" 1 "print" "00"       # A
+    argparser_colorize "${space}"  1 "print" "10"       # _
+    argparser_colorize "${font_6}" 1 "print" "10"       # R
+    argparser_colorize "${space}"  1 "print" "1"        # R
+    argparser_colorize "${font_6}" 1 "print" "00"       # R
+    argparser_colorize "${space}"  1 "print" "1001010"  # R, _, S
+    argparser_colorize "${font_7}" 1 "print" "01"       # S
+    argparser_colorize "${space}"  1 "print" "10"       # _
+    argparser_colorize "${font_8}" 1 "print" "10"       # E
+    argparser_colorize "${space}"  1 "print" "001010"   # E, _
+    argparser_colorize "${font_9}" 1 "print" "10"       # R
+    argparser_colorize "${space}"  1 "print" "1"        # R
+    argparser_colorize "${font_9}" 1 "print" "00"       # R
+    argparser_colorize "${space}"  1 "print" "100"      # R, _
     printf '\n'
 
     # Output the sixth line, containing the fifth of five lines of the
     # letters.
-    argparser_colorize "${space}"  1 "print" "00"        # _
-    argparser_colorize "${font_1}" 1 "print" "10"        # A
-    argparser_colorize "${space}"  1 "print" "00"        # A
-    argparser_colorize "${font_1}" 1 "print" "00"        # A
-    argparser_colorize "${space}"  1 "print" "10"        # _
-    argparser_colorize "${font_2}" 1 "print" "10"        # R
-    argparser_colorize "${space}"  1 "print" "10"        # R
-    argparser_colorize "${font_2}" 1 "print" "01"        # R
-    argparser_colorize "${space}"  1 "print" "001"       # _, G
-    argparser_colorize "${font_3}" 1 "print" "0001"      # G
-    argparser_colorize "${space}"  1 "print" "110"       # G, _
-    argparser_colorize "${font_4}" 1 "print" "10"        # P
-    argparser_colorize "${space}"  1 "print" "100000"    # P, _
-    argparser_colorize "${font_5}" 1 "print" "10"        # A
-    argparser_colorize "${space}"  1 "print" "00"        # A
-    argparser_colorize "${font_5}" 1 "print" "00"        # A
-    argparser_colorize "${space}"  1 "print" "10"        # _
-    argparser_colorize "${font_6}" 1 "print" "10"        # R
-    argparser_colorize "${space}"  1 "print" "10"        # R
-    argparser_colorize "${font_6}" 1 "print" "01"        # R
-    argparser_colorize "${space}"  1 "print" "00"        # _
-    argparser_colorize "${font_7}" 1 "print" "10100"     # S
-    argparser_colorize "${space}"  1 "print" "110"       # S, _
-    argparser_colorize "${font_8}" 1 "print" "100010"    # E
-    argparser_colorize "${space}"  1 "print" "10"        # _
-    argparser_colorize "${font_9}" 1 "print" "10"        # R
-    argparser_colorize "${space}"  1 "print" "10"        # R
-    argparser_colorize "${font_9}" 1 "print" "01"        # R
-    argparser_colorize "${space}"  1 "print" "00"        # _
+    argparser_colorize "${space}"  1 "print" "00"       # _
+    argparser_colorize "${font_1}" 1 "print" "10"       # A
+    argparser_colorize "${space}"  1 "print" "00"       # A
+    argparser_colorize "${font_1}" 1 "print" "00"       # A
+    argparser_colorize "${space}"  1 "print" "10"       # _
+    argparser_colorize "${font_2}" 1 "print" "10"       # R
+    argparser_colorize "${space}"  1 "print" "10"       # R
+    argparser_colorize "${font_2}" 1 "print" "01"       # R
+    argparser_colorize "${space}"  1 "print" "001"      # _, G
+    argparser_colorize "${font_3}" 1 "print" "0001"     # G
+    argparser_colorize "${space}"  1 "print" "110"      # G, _
+    argparser_colorize "${font_4}" 1 "print" "10"       # P
+    argparser_colorize "${space}"  1 "print" "100000"   # P, _
+    argparser_colorize "${font_5}" 1 "print" "10"       # A
+    argparser_colorize "${space}"  1 "print" "00"       # A
+    argparser_colorize "${font_5}" 1 "print" "00"       # A
+    argparser_colorize "${space}"  1 "print" "10"       # _
+    argparser_colorize "${font_6}" 1 "print" "10"       # R
+    argparser_colorize "${space}"  1 "print" "10"       # R
+    argparser_colorize "${font_6}" 1 "print" "01"       # R
+    argparser_colorize "${space}"  1 "print" "00"       # _
+    argparser_colorize "${font_7}" 1 "print" "10100"    # S
+    argparser_colorize "${space}"  1 "print" "110"      # S, _
+    argparser_colorize "${font_8}" 1 "print" "100010"   # E
+    argparser_colorize "${space}"  1 "print" "10"       # _
+    argparser_colorize "${font_9}" 1 "print" "10"       # R
+    argparser_colorize "${space}"  1 "print" "10"       # R
+    argparser_colorize "${font_9}" 1 "print" "01"       # R
+    argparser_colorize "${space}"  1 "print" "00"       # _
     printf '\n'
 
     # Output the seventh line, which is empty again.
-    argparser_colorize "${space}" 1 "print" "000000000000000000000000000000"   # _
-    argparser_colorize "${space}" 1 "print" "000000000000000000000000000000"   # _
-    argparser_colorize "${space}" 1 "print" "00000000000000"                   # _
+    argparser_colorize "${space}" 1 "print" "0000000000000000000000000"  # _
+    argparser_colorize "${space}" 1 "print" "0000000000000000000000000"  # _
+    argparser_colorize "${space}" 1 "print" "000000000000000000000000"   # _
     printf '\n'
 }
 
