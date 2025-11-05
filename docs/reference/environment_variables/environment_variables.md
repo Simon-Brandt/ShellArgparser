@@ -163,7 +163,7 @@
 
 #### 9.4.22. `ARGPARSER_ERROR_STYLE`
 
-> [!CAUTION]
+> [!WARNING]
 > Deprecated in favor of [`ARGPARSER_STYLE_FILE`](#9443-argparser_style_file). Scheduled for removal in `v2.0.0`.
 
 - ***Type:*** *str* (String)
@@ -222,7 +222,7 @@
 
 #### 9.4.30. `ARGPARSER_HELP_STYLE`
 
-> [!CAUTION]
+> [!WARNING]
 > Deprecated in favor of [`ARGPARSER_STYLE_FILE`](#9443-argparser_style_file). Scheduled for removal in `v2.0.0`.
 
 - ***Type:*** *str* (String)
@@ -406,7 +406,7 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 
 #### 9.4.55. `ARGPARSER_USAGE_STYLE`
 
-> [!CAUTION]
+> [!WARNING]
 > Deprecated in favor of [`ARGPARSER_STYLE_FILE`](#9443-argparser_style_file). Scheduled for removal in `v2.0.0`.
 
 - ***Type:*** *str* (String)
@@ -437,7 +437,7 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 
 #### 9.4.59. `ARGPARSER_USE_STYLES_IN_FILES`
 
-> [!CAUTION]
+> [!WARNING]
 > Deprecated in favor of [`ARGPARSER_USE_STYLES="always"`](#9458-argparser_use_styles). Scheduled for removal in `v2.0.0`.
 
 - ***Type:*** *bool* (Boolean)
@@ -468,7 +468,7 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 
 #### 9.4.63. `ARGPARSER_VERSION_STYLE`
 
-> [!CAUTION]
+> [!WARNING]
 > Deprecated in favor of [`ARGPARSER_STYLE_FILE`](#9443-argparser_style_file). Scheduled for removal in `v2.0.0`.
 
 - ***Type:*** *str* (String)
@@ -478,7 +478,7 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 
 #### 9.4.64. `ARGPARSER_WARNING_STYLE`
 
-> [!CAUTION]
+> [!WARNING]
 > Deprecated in favor of [`ARGPARSER_STYLE_FILE`](#9443-argparser_style_file). Scheduled for removal in `v2.0.0`.
 
 - ***Type:*** *str* (String)
