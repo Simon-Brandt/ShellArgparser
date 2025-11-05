@@ -1606,7 +1606,10 @@ function argparser_modify_env_vars() {
     # ARGPARSER_USE_STYLES_IN_FILES (read-only)
 
     # For the deprecated ${ARGPARSER_USE_STYLES_IN_FILES}, set
-    # ${ARGPARSER_USE_STYLES} to "always" or "tty".
+    # ${ARGPARSER_USE_STYLES} to "always" or "tty".  Should the
+    # (unchecked) ${ARGPARSER_USE_STYLES_IN_FILES} be neither "true" nor
+    # "false", still assign the default value of "tty" without reporting
+    # an error.
     if [[ -v ARGPARSER_USE_STYLES_IN_FILES ]]; then
         if [[ "${ARGPARSER_USE_STYLES_IN_FILES}" == true ]]; then
             ARGPARSER_USE_STYLES="always"
@@ -1926,8 +1929,9 @@ function argparser_check_env_vars() {
         fi
     done
 
-    # Then, check if all environment variables for styles only have
-    # values supported by argparser_colorize.
+    # Then, check if all (existing, i.e., given though deprecated)
+    # environment variables for styles only have values supported by
+    # argparser_colorize.
     vars=(
         ARGPARSER_ERROR_STYLE
         ARGPARSER_HELP_STYLE
@@ -1936,7 +1940,9 @@ function argparser_check_env_vars() {
         ARGPARSER_WARNING_STYLE
     )
     for var in "${vars[@]}"; do
-        if ! argparser_check_color_or_style "${!var}"; then
+        if [[ -v "${var}" ]] \
+            && ! argparser_check_color_or_style "${!var}"
+        then
             error_message="Error: The environment variable \"\$1\" is set to "
             error_message+="\"\$2\", but the values must lie in {black, red, "
             error_message+="green, yellow, blue, magenta, cyan, white} for "
