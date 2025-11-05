@@ -2646,13 +2646,14 @@ function argparser_create_args_definition() {
     # Set the horizontal separator.
     printf -v separator "%${ARGPARSER_MAX_WIDTH}s" ""
     separator="${separator// /-}"
+    argparser_colorize "green,bold" 1 separator "${separator}"
 
     # Get the target shell from user input.
     message="Does your script use Bash (y) or only a POSIX-compliant shell "
     message+="(n)?"
     argparser_fold "${message}" "${ARGPARSER_MAX_WIDTH}" 0
-    argparser_colorize "blue,bold" 1 "print" "${joined_words}"
-    printf '\n\n'
+    argparser_colorize "blue,bold" 1 message "${joined_words}"
+    printf '%s\n\n' "${message}"
 
     while read -r -p "Bash usage (y/n):  " shell 2>&1; do
         if [[ "${shell}" == "y" ]]; then
@@ -2665,31 +2666,28 @@ function argparser_create_args_definition() {
         printf 'Please answer with "y" or "n".\n'
     done
 
-    argparser_colorize "green,bold" 1 "print" "${separator}"
-    printf '\n'
+    printf '%s\n' "${separator}"
 
     # Get the target file from user input.
     message="Which file shall the arguments definition be written to?"
     argparser_fold "${message}" "${ARGPARSER_MAX_WIDTH}" 0
-    argparser_colorize "blue,bold" 1 "print" "${joined_words}"
-    printf '\n\n'
+    argparser_colorize "blue,bold" 1 message "${joined_words}"
+    printf '%s\n\n' "${message}"
 
     read -r -p "Target file:  " file 2>&1
 
-    argparser_colorize "green,bold" 1 "print" "${separator}"
-    printf '\n'
+    printf '%s\n' "${separator}"
 
     # Get the arguments definition delimiters from user input.
     message="Which character do you want to use as primary arguments "
     message+="definition delimiter?"
     argparser_fold "${message}" "${ARGPARSER_MAX_WIDTH}" 0
-    argparser_colorize "blue,bold" 1 "print" "${joined_words}"
-    printf '\n\n'
+    argparser_colorize "blue,bold" 1 message "${joined_words}"
+    printf '%s\n\n' "${message}"
 
     read -r -p "Primary delimiter:  " delimiter 2>&1
 
-    argparser_colorize "green,bold" 1 "print" "${separator}"
-    printf '\n'
+    printf '%s\n' "${separator}"
 
     # Get the arguments definition fields from user input.
     col_arg_keys=("id")
@@ -2707,8 +2705,8 @@ function argparser_create_args_definition() {
     message="Enter the fields for each argument.  Submit an empty argument "
     message+="identifier to end the input."
     argparser_fold "${message}" "${ARGPARSER_MAX_WIDTH}" 0
-    argparser_colorize "blue,bold" 1 "print" "${joined_words}"
-    printf '\n\n'
+    argparser_colorize "blue,bold" 1 message "${joined_words}"
+    printf '%s\n\n' "${message}"
 
     while :; do
         read -r -p "Argument identifier:  " arg_key 2>&1
@@ -2741,8 +2739,7 @@ function argparser_create_args_definition() {
         col_notes+=("${note}")
         col_help_texts+=("${help_text}")
 
-        argparser_colorize "green,bold" 1 "print" "${separator}"
-        printf '\n'
+        printf '%s\n' "${separator}"
     done
 
     # Set each field in a column to the same width by right-padding with
