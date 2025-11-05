@@ -1171,7 +1171,7 @@ function argparser_read_configuration() {
     # ARGPARSER_USE_LONG_OPTIONS
     # ARGPARSER_USE_SHORT_OPTIONS
     # ARGPARSER_USE_STYLES
-    # ARGPARSER_USE_STYLES_IN_FILES (read-only)
+    # ARGPARSER_USE_STYLES_IN_FILES
     # ARGPARSER_VERSION_EXIT_CODE
     # ARGPARSER_VERSION_NUMBER
     # ARGPARSER_VERSION_STYLE
@@ -1261,31 +1261,9 @@ function argparser_read_configuration() {
 
             # Set the environment variable, as long as it isn't already
             # set by the calling script or environment to prevent
-            # overriding it.  For ${ARGPARSER_SCRIPT_NAME}, set the
-            # value to the basename of the script's $0, if an empty
-            # string is given.  For the deprecated
-            # ${ARGPARSER_USE_STYLES_IN_FILES}, set
-            # ${ARGPARSER_USE_STYLES} to "always" or "tty" instead.
+            # overriding it.
             if [[ ! -v "${var}" ]]; then
-                if [[ "${var}" == "ARGPARSER_SCRIPT_NAME" ]]; then
-                    if [[ -z "${value}" ]]; then
-                        value="${0##*/}"
-                    fi
-
-                    declare -g "${var}"="${value}"
-                elif [[ "${var}" == "ARGPARSER_USE_STYLES_IN_FILES" ]]; then
-                    if [[ "${value}" == true ]]; then
-                        value="always"
-                    else
-                        value="tty"
-                    fi
-
-                    if [[ ! -v ARGPARSER_USE_STYLES ]]; then
-                        declare -g ARGPARSER_USE_STYLES="${value}"
-                    fi
-                else
-                    declare -g "${var}"="${value}"
-                fi
+                declare -g "${var}"="${value}"
             fi
         else
             # Output an error message when the line doesn't contain an
@@ -1379,6 +1357,7 @@ function argparser_set_env_vars() {
     # ARGPARSER_USE_LONG_OPTIONS
     # ARGPARSER_USE_SHORT_OPTIONS
     # ARGPARSER_USE_STYLES
+    # ARGPARSER_USE_STYLES_IN_FILES
     # ARGPARSER_VERSION_EXIT_CODE
     # ARGPARSER_VERSION_NUMBER
     # ARGPARSER_VERSION_OPTIONS
@@ -1562,25 +1541,20 @@ function argparser_set_env_vars() {
     # By this, the command-line parameters have a higher importance than
     # environment variables.  For those environment variables whose
     # default is given as "''" (two single quotes), set the value to the
-    # empty string.  For ${ARGPARSER_SCRIPT_NAME}, set the value to the
-    # basename of the script's $0, if an empty string is given.  For the
-    # deprecated ${ARGPARSER_USE_STYLES_IN_FILES}, set
-    # ${ARGPARSER_USE_STYLES} to "always" or "tty" instead.  Skip
-    # ${script_args}, i.e., the command line.
+    # empty string.
     for arg_key in "${!ARGPARSER_ARGS[@]}"; do
         if [[ "${arg_key}" == "script_args" ]]; then
+            # Skip ${script_args}, i.e., the command line.
             continue
-        elif [[ "${arg_key}" == "ARGPARSER_USE_STYLES_IN_FILES" ]]; then
-            value="${ARGPARSER_ARGS[${arg_key}]}"
-            if [[ "${value}" == true ]]; then
-                value="always"
-            else
-                value="tty"
-            fi
-
-            if [[ ! -v ARGPARSER_USE_STYLES ]]; then
-                declare -g ARGPARSER_USE_STYLES="${value}"
-            fi
+        elif argparser_in_array "${arg_key}" "ARGPARSER_USE_STYLES_IN_FILES" \
+            "ARGPARSER_HELP_STYLE" "ARGPARSER_USAGE_STYLE" \
+            "ARGPARSER_VERSION_STYLE" "ARGPARSER_ERROR_STYLE" \
+            "ARGPARSER_WARNING_STYLE"
+        then
+            # Skip the deprecated options that shall only come into
+            # effect when explicitly given, not when using the default
+            # values.
+            continue
         elif [[ -v "${arg_key}" ]]; then
             # The environment variable has already been set.  Override
             # it if it was also given on the command line.
@@ -1601,11 +1575,7 @@ function argparser_set_env_vars() {
                 if [[ "${arg}" == "${arg_key}" ]]; then
                     value="${ARGPARSER_ARGS[${arg_key}]}"
                     if [[ "${value}" == "''" ]]; then
-                        if [[ "${arg_key}" == "ARGPARSER_SCRIPT_NAME" ]]; then
-                            value="${0##*/}"
-                        else
-                            value=""
-                        fi
+                        value=""
                     fi
                     declare -g "${arg_key}"="${value}"
                     break
@@ -1618,15 +1588,38 @@ function argparser_set_env_vars() {
             # value.
             value="${ARGPARSER_ARGS[${arg_key}]}"
             if [[ "${value}" == "''" ]]; then
-                if [[ "${arg_key}" == "ARGPARSER_SCRIPT_NAME" ]]; then
-                    value="${0##*/}"
-                else
-                    value=""
-                fi
+                value=""
             fi
             declare -g "${arg_key}"="${value}"
         fi
     done
+}
+
+function argparser_modify_env_vars() {
+    # Modify the Argparser environment variables with special values,
+    # irrespective of being set on the command line, by the calling
+    # script, or in the environment.
+    #
+    # Environment:
+    # ARGPARSER_SCRIPT_NAME
+    # ARGPARSER_USE_STYLES
+    # ARGPARSER_USE_STYLES_IN_FILES (read-only)
+
+    # For the deprecated ${ARGPARSER_USE_STYLES_IN_FILES}, set
+    # ${ARGPARSER_USE_STYLES} to "always" or "tty".
+    if [[ -v ARGPARSER_USE_STYLES_IN_FILES ]]; then
+        if [[ "${ARGPARSER_USE_STYLES_IN_FILES}" == true ]]; then
+            ARGPARSER_USE_STYLES="always"
+        else
+            ARGPARSER_USE_STYLES="tty"
+        fi
+    fi
+
+    # For ${ARGPARSER_SCRIPT_NAME}, set the value to the
+    # basename of the script's $0, if an empty string is given.
+    if [[ -z "${ARGPARSER_SCRIPT_NAME}" ]]; then
+        ARGPARSER_SCRIPT_NAME="${0##*/}"
+    fi
 }
 
 function argparser_check_env_vars() {
@@ -9267,12 +9260,14 @@ function argparser_main() {
 
     # Set the environment variables that aren't already set by the
     # calling script or environment or read from the configuration file
-    # to prevent overriding them.  Then, set the script's command-line
+    # to prevent overriding them.  Modify the values for all variables
+    # with special values.  Then, set the script's command-line
     # arguments (with the Argparser arguments being removed) as the
     # current command line.  Finally, reset the arrays holding the
     # arguments definition data.
     is_self_parsing=true
     argparser_set_env_vars "$@"
+    argparser_modify_env_vars "$@"
     set -- "${script_args[@]}"
     is_self_parsing=false
 
@@ -9459,6 +9454,7 @@ function argparser_main() {
         unset -f argparser_is_uint
         unset -f argparser_join
         unset -f argparser_main
+        unset -f argparser_modify_env_vars
         unset -f argparser_pad
         unset -f argparser_parse_arg
         unset -f argparser_parse_args
