@@ -6179,11 +6179,11 @@ function argparser_parse_args() {
     done
 
     if [[ "${is_help}" == true ]]; then
-        argparser_print_help_or_usage_message "help" true 1
+        argparser_print_help_or_usage_message "help" true
     elif [[ "${is_usage}" == true ]]; then
-        argparser_print_help_or_usage_message "usage" true 1
+        argparser_print_help_or_usage_message "usage" true
     elif [[ "${is_version}" == true ]]; then
-        argparser_print_version_message true 1
+        argparser_print_version_message true
     elif [[ "${is_logo}" == true ]]; then
         argparser_print_logo
         exit 0
@@ -6226,7 +6226,7 @@ function argparser_parse_args() {
         if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
             {
                 printf '\n'
-                argparser_print_help_or_usage_message "usage" false 2
+                argparser_print_help_or_usage_message "usage" false
             } >&2
         fi
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
@@ -6283,7 +6283,7 @@ function argparser_parse_args() {
         if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
             {
                 printf '\n'
-                argparser_print_help_or_usage_message "usage" false 2
+                argparser_print_help_or_usage_message "usage" false
             } >&2
         fi
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
@@ -8468,7 +8468,6 @@ function argparser_print_help_or_usage_message() {
     # Arguments:
     # - $1: the help type ("help" or "usage")
     # - $2: whether to exit after printing
-    # - $3: the file descriptor to write to (1 or 2)
     #
     # Nonlocals:
     # - all_arg_groups: the associative array holding the argument
@@ -8505,7 +8504,6 @@ function argparser_print_help_or_usage_message() {
     local exit
     local exit_code
     local file
-    local file_descriptor
     local help_type
     local include_char
     local include_directive
@@ -8522,7 +8520,6 @@ function argparser_print_help_or_usage_message() {
     # Read the arguments.
     help_type="$1"
     exit="$2"
-    file_descriptor="$3"
 
     # Set the constants to the respective environment variables.
     if [[ "${help_type}" == "help" ]]; then
