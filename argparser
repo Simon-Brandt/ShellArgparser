@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-05
+# Last Modification: 2025-11-06
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -439,24 +439,27 @@ function argparser_pad() {
     # Nonlocals:
     # - padded_array: the array with padded elements.
 
-    # Set the local variables.
-    local arg_key
+    # Define the local variables.
     local i
+    local max_width
     local whitespace
     local width
 
+    # Read the arguments.
     padded_array=("$@")
 
     # Pad the array's elements in-place.
-    width=0
-    for arg_key in "${padded_array[@]}"; do
-        if (( "${#arg_key}" > width )); then
-            width="${#arg_key}"
+    max_width=0
+    for i in "${!padded_array[@]}"; do
+        width="${#padded_array[i]}"
+        if (( width > max_width )); then
+            max_width="${width}"
         fi
     done
 
     for i in "${!padded_array[@]}"; do
-        printf -v whitespace '%*s' $(( width - "${#padded_array[i]}" )) ""
+        printf -v whitespace '%*s' \
+            "$(( max_width - "${#padded_array[i]}" ))" ""
         padded_array[i]="${padded_array[i]}${whitespace}"
     done
 }
@@ -950,9 +953,10 @@ function argparser_colorize() {
     local ansi_code
     local -A colors_and_styles
     local file_descriptor
+    local i
     local style
     local style_request
-    local style_requests
+    local -a style_requests
     local var
 
     # Read the arguments.
@@ -2643,7 +2647,7 @@ function argparser_create_args_definition() {
     local value_names
 
     # Set the horizontal separator.
-    printf -v separator "%${ARGPARSER_MAX_WIDTH}s" ""
+    printf -v separator '%*s' "${ARGPARSER_MAX_WIDTH}" ""
     separator="${separator// /-}"
     argparser_colorize "green,bold" 1 separator "${separator}"
 
@@ -6478,7 +6482,7 @@ function argparser_create_help_message() {
     local default_values_str
     local has_default_args
     local has_required_args
-    local help_message
+    local -a help_message
     local help_text
     local i
     local index
@@ -7559,9 +7563,7 @@ function argparser_create_help_message() {
             whitespace_1[-1]+=$'\n'
         fi
 
-        for (( j = 0; j < whitespace_length_1; j++ )); do
-            whitespace_1[-1]+=" "
-        done
+        printf -v whitespace_1[-1] '%*s' "${whitespace_length_1}" ""
 
         # Set the second column's width.
         if [[ "${is_overlong}" == true ]]; then
@@ -7589,9 +7591,7 @@ function argparser_create_help_message() {
             whitespace_2[-1]+=$'\n'
         fi
 
-        for (( j = 0; j < whitespace_length_2; j++ )); do
-            whitespace_2[-1]+=" "
-        done
+        printf -v whitespace_2[-1] '%*s' "${whitespace_length_2}" ""
     done
 
     # Set the help message's usage line, including the script's name.
