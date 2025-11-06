@@ -442,6 +442,7 @@ function argparser_pad() {
     # Define the local variables.
     local i
     local max_width
+    local -a uncolorized_array
     local whitespace
     local width
 
@@ -449,9 +450,10 @@ function argparser_pad() {
     padded_array=("$@")
 
     # Pad the array's elements in-place.
+    argparser_uncolorize "array" "${padded_array[@]}"
     max_width=0
     for i in "${!padded_array[@]}"; do
-        width="${#padded_array[i]}"
+        width="${#uncolorized_array[i]}"
         if (( width > max_width )); then
             max_width="${width}"
         fi
@@ -459,7 +461,7 @@ function argparser_pad() {
 
     for i in "${!padded_array[@]}"; do
         printf -v whitespace '%*s' \
-            "$(( max_width - "${#padded_array[i]}" ))" ""
+            "$(( max_width - "${#uncolorized_array[i]}" ))" ""
         padded_array[i]="${padded_array[i]}${whitespace}"
     done
 }
