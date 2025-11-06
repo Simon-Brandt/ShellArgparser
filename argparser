@@ -313,12 +313,13 @@ function argparser_is_uint() {
     fi
 }
 
-function argparser_check_color_or_style() {
+function argparser_check_styles() {
     # Check if the specified colors and/or styles are implemented for
     # argparser_colorize.
     #
     # Arguments:
-    # - $1: the colors and/or styles to use as
+    # - $1: the array(s) to check ("colors", "styles", or "both")
+    # - $2: the colors and/or styles to use as
     #       ${ARGPARSER_ARG_DELIMITER_2}-separated list
     #
     # Environment:
@@ -329,13 +330,15 @@ function argparser_check_color_or_style() {
     # - 1, else
 
     # Define the local variables.
+    local check_type
     local -a colors
     local request
-    local requests
+    local -a requests
     local -a styles
 
-    # Read the argument.
-    requests="$1"
+    # Read the arguments.
+    check_type="$1"
+    requests="$2"
 
     # Define the arrays of implemented colors and styles.
     colors=(
@@ -348,6 +351,7 @@ function argparser_check_color_or_style() {
         cyan
         white
     )
+
     # shellcheck disable=SC2190  # Indexed, not associative array.
     styles=(
         normal
@@ -362,24 +366,41 @@ function argparser_check_color_or_style() {
         reverse
     )
 
-    # Split the requested color and/or style on
+    # Split the requested colors and/or styles on
     # ${ARGPARSER_ARG_DELIMITER_2} characters and check any.
     IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a requests <<< "${requests}"
     if (( "${#requests[@]}" == 0 )); then
         return 1
     fi
 
-    for request in "${requests[@]}"; do
-        if ! argparser_in_array "${request}" "${colors[@]}" "${styles[@]}"
-        then
+    if [[ "${check_type}" == "colors" ]]; then
+        for request in "${requests[@]}"; do
             request="${request#bright_}"
             request="${request%_bg}"
             request="${request%_fg}"
             if ! argparser_in_array "${request}" "${colors[@]}"; then
                 return 1
             fi
-        fi
-    done
+        done
+    elif [[ "${check_type}" == "styles" ]]; then
+        for request in "${requests[@]}"; do
+            if ! argparser_in_array "${request}" "${styles[@]}"; then
+                return 1
+            fi
+        done
+    elif [[ "${check_type}" == "both" ]]; then
+        for request in "${requests[@]}"; do
+            if ! argparser_in_array "${request}" "${colors[@]}" "${styles[@]}"
+            then
+                request="${request#bright_}"
+                request="${request%_bg}"
+                request="${request%_fg}"
+                if ! argparser_in_array "${request}" "${colors[@]}"; then
+                    return 1
+                fi
+            fi
+        done
+    fi
 
     return 0
 }
@@ -2168,7 +2189,7 @@ function argparser_check_env_vars() {
     )
     for var in "${vars[@]}"; do
         if [[ -v "${var}" ]] \
-            && ! argparser_check_color_or_style "${!var}"
+            && ! argparser_check_styles "both" "${!var}"
         then
             error_message="Error: The environment variable \"\$1\" is set to "
             error_message+="\"\$2\", but the values must lie in {black, red, "
@@ -2785,7 +2806,7 @@ function argparser_read_styles() {
     # Check if styles only have values supported by argparser_colorize.
     for name in "${!styles[@]}"; do
         style="${styles[${name}]}"
-        if ! argparser_check_color_or_style "${style}"; then
+        if ! argparser_check_styles "both" "${style}"; then
             error_message="Error: The style \"\$1\" is set to \"\$2\", but "
             error_message+="the values must lie in {black, red, green, "
             error_message+="yellow, blue, magenta, cyan, white} for colors "
@@ -9676,10 +9697,10 @@ function argparser_main() {
         unset -f argparser_check_args_definition_option_values
         unset -f argparser_check_args_definition_positional_values
         unset -f argparser_check_bash_version
-        unset -f argparser_check_color_or_style
         unset -f argparser_check_env_vars
         unset -f argparser_check_file
         unset -f argparser_check_shell
+        unset -f argparser_check_styles
         unset -f argparser_colorize
         unset -f argparser_count
         unset -f argparser_create_args_definition
