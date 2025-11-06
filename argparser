@@ -1132,6 +1132,213 @@ function argparser_uncolorize() {
     fi
 }
 
+function argparser_draw_frame() {
+    # Draw a colorized frame around an array's elements.
+    #
+    # Arguments:
+    # - $1: the frame styles to use as
+    #       ${ARGPARSER_ARG_DELIMITER_2}-separated list
+    # - $2: the file descriptor to write to (1 or 2)
+    # - $3: the variable to set the framed array's first element to; if
+    #       set to "array", set the entire framed array's elements
+    #       to ${framed_array}; if set to "print", print the framed
+    #       array's first element instead
+    # - $@: the array to frame
+    #
+    # Nonlocals:
+    # - $3: the framed array's first element (if $3 is neither set to
+    #       "array" nor to "print")
+    # - framed_array: the framed array (if $3 is set to "array")
+    #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+    # - ARGPARSER_USE_STYLES (read-only)
+    #
+    # Output:
+    # - the framed string (if $3 is set to "print")
+
+    # Define the local variables.
+    local corner_style
+    local -a corner_styles
+    local file_descriptor
+    local -A frame_chars
+    local horizontal_line
+    local i
+    local line_style
+    local -a line_styles
+    local line_width
+    local -a line_widths
+    local -a padded_array
+    local style_request
+    local -a style_requests
+    local -a uncolorized_array
+    local var
+
+    # Read the arguments.
+    style_requests="$1"
+    file_descriptor="$2"
+    var="$3"
+
+    if [[ "${var}" != "array" ]]; then
+        # Set ${framed_array} as local instead of nonlocal variable,
+        # since it's not used by the calling function (the framed
+        # array's first element shall be printed or set to a variable,
+        # instead).
+        local -a framed_array
+    fi
+
+    shift 3
+    framed_array=("$@")
+
+    # Define the indexed arrays with frame styles, as well as their
+    # default values.
+    corner_style="angular"
+    corner_styles=(
+        "angular"
+        "rounded"
+        "double"
+    )
+
+    line_style="solid"
+    line_styles=(
+        "solid"
+        "double-dashed"
+        "triple-dashed"
+        "quadruple-dashed"
+    )
+
+    line_width="thin"
+    line_widths=(
+        "thin"
+        "thick"
+        "double"
+    )
+
+    # Split the requested frame styles on ${ARGPARSER_ARG_DELIMITER_2}
+    # characters and set the last style specified per category for
+    # usage.
+    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a style_requests \
+        <<< "${style_requests}"
+    for style_request in "${style_requests[@]}"; do
+        if argparser_in_array "${style_request}" "${corner_styles[@]}"; then
+            corner_style="${style_request}"
+        fi
+
+        if argparser_in_array "${style_request}" "${line_styles[@]}"; then
+            line_style="${style_request}"
+        fi
+
+        if argparser_in_array "${style_request}" "${line_widths[@]}"; then
+            line_width="${style_request}"
+        fi
+    done
+
+    # Set the box drawing characters corresponding to the requested
+    # frame styles per category.
+    if [[ "${corner_style}" == "angular" ]]; then
+        if [[ "${line_width}" == "thin" ]]; then
+            frame_chars["top-left"]=$'\u250C'
+            frame_chars["top-right"]=$'\u2510'
+            frame_chars["bottom-left"]=$'\u2514'
+            frame_chars["bottom-right"]=$'\u2518'
+        elif [[ "${line_width}" == "thick" ]]; then
+            frame_chars["top-left"]=$'\u250F'
+            frame_chars["top-right"]=$'\u2513'
+            frame_chars["bottom-left"]=$'\u2517'
+            frame_chars["bottom-right"]=$'\u251B'
+        elif [[ "${line_width}" == "double" ]]; then
+            frame_chars["top-left"]=$'\u2554'
+            frame_chars["top-right"]=$'\u2557'
+            frame_chars["bottom-left"]=$'\u255A'
+            frame_chars["bottom-right"]=$'\u255D'
+        fi
+    elif [[ "${corner_style}" == "rounded" ]]; then
+        frame_chars["top-left"]=$'\u256D'
+        frame_chars["top-right"]=$'\u256E'
+        frame_chars["bottom-left"]=$'\u2570'
+        frame_chars["bottom-right"]=$'\u256F'
+    elif [[ "${corner_style}" == "double" ]]; then
+        frame_chars["top-left"]=$'\u2554'
+        frame_chars["top-right"]=$'\u2557'
+        frame_chars["bottom-left"]=$'\u255A'
+        frame_chars["bottom-right"]=$'\u255D'
+    fi
+
+    if [[ "${line_style}" == "solid" ]]; then
+        if [[ "${line_width}" == "thin" ]]; then
+            frame_chars["horizontal"]=$'\u2500'
+            frame_chars["vertical"]=$'\u2502'
+        elif [[ "${line_width}" == "thick" ]]; then
+            frame_chars["horizontal"]=$'\u2501'
+            frame_chars["vertical"]=$'\u2503'
+        elif [[ "${line_width}" == "double" ]]; then
+            frame_chars["horizontal"]=$'\u2550'
+            frame_chars["vertical"]=$'\u2551'
+        fi
+    elif [[ "${line_style}" == "double-dashed" ]]; then
+        if [[ "${line_width}" == "thin" ]]; then
+            frame_chars["horizontal"]=$'\u254C'
+            frame_chars["vertical"]=$'\u254E'
+        elif [[ "${line_width}" == "thick" ]]; then
+            frame_chars["horizontal"]=$'\u254D'
+            frame_chars["vertical"]=$'\u254F'
+        fi
+    elif [[ "${line_style}" == "triple-dashed" ]]; then
+        if [[ "${line_width}" == "thin" ]]; then
+            frame_chars["horizontal"]=$'\u2504'
+            frame_chars["vertical"]=$'\u2506'
+        elif [[ "${line_width}" == "thick" ]]; then
+            frame_chars["horizontal"]=$'\u2505'
+            frame_chars["vertical"]=$'\u2507'
+        fi
+    elif [[ "${line_style}" == "quadruple-dashed" ]]; then
+        if [[ "${line_width}" == "thin" ]]; then
+            frame_chars["horizontal"]=$'\u2508'
+            frame_chars["vertical"]=$'\u250A'
+        elif [[ "${line_width}" == "thick" ]]; then
+            frame_chars["horizontal"]=$'\u2509'
+            frame_chars["vertical"]=$'\u250B'
+        fi
+    fi
+
+    # Surround the array by a frame, if there were styles requested.
+    if (( "${#style_requests[@]}" > 0 )); then
+        # Right-pad each line of the array and create an uncolorized
+        # copy to compute the line length, below.  Then, surround the
+        # lines with vertical lines, separated by a space each.
+        argparser_pad "right" "${framed_array[@]}"
+        argparser_uncolorize "array" "${padded_array[@]}"
+        for i in "${!framed_array[@]}"; do
+            framed_array[i]="${frame_chars["vertical"]} ${padded_array[i]} "
+            framed_array[i]+="${frame_chars["vertical"]}"
+        done
+
+        # Surround the entire array by horizontal lines, which are as
+        # long as any line in the uncolorized, but padded array, plus
+        # the two spaces separation to the left and right between the
+        # array's contents and the frame's vertical lines.
+        # Additionally, add the frame's four corner characters.
+        printf -v whitespace '%*s' "$(( "${#uncolorized_array[0]}" + 2 ))" ""
+        horizontal_line="${whitespace// /${frame_chars["horizontal"]}}"
+
+        framed_array=(
+            "${frame_chars["top-left"]}${horizontal_line}${frame_chars["top-right"]}"
+            "${framed_array[@]}"
+            "${frame_chars["bottom-left"]}${horizontal_line}${frame_chars["bottom-right"]}"
+        )
+    fi
+
+    # Print the framed array's first element, or set it to the target
+    # variable, using a name reference to the variable name given as
+    # ${var} (i.e., as $3).
+    if [[ "${var}" == "print" ]]; then
+        printf '%s' "${framed_array[0]}" >&"${file_descriptor}"
+    elif [[ "${var}" != "array" ]]; then
+        declare -n var="${var}"
+        var="${framed_array[0]}"
+    fi
+}
+
 # Define the Argparser functions for reading the configuration and
 # setting and checking the environment variables.
 function argparser_read_configuration() {
@@ -6505,6 +6712,7 @@ function argparser_create_help_message() {
     local is_deprecated
     local is_overlong
     local j
+    local -a joined_array
     local joined_words
     local largest_col_width
     local line
@@ -7710,7 +7918,7 @@ function argparser_create_help_message() {
         # For any argument line, output the three columns and their
         # delimiting whitespace.  If all three columns are empty, the
         # end of the current argument group has been reached.
-        help_message=""
+        help_message=( )
         for (( i = index; i < "${#col_1[@]}"; i++ )); do
             if [[ -z "${col_1[i]}" && -z "${col_2[i]}" && -z "${col_3[i]}" ]]
             then
@@ -7722,10 +7930,13 @@ function argparser_create_help_message() {
             line+="${col_3[i]}"
 
             line="${line%%+( )}"
-            line+=$'\n'
-            help_message+="${line}"
+            help_message+=("${line}")
         done
-        help_message_groups[${arg_group}]="${help_message}"
+
+        argparser_draw_frame "${styles["frame"]}" 1 "array" \
+            "${help_message[@]}"
+        argparser_join $'\n' "${framed_array[@]}"
+        help_message_groups[${arg_group}]="${joined_array}"$'\n'
 
         # Set the start index for the next argument group to the current
         # group's end index plus 1 (with the latter being the empty line
@@ -9264,6 +9475,7 @@ function argparser_main() {
         ["description_text"]="italic"
         ["error_caption"]="red,bold,reverse"
         ["error_text"]="red"
+        ["frame"]=""
         ["help_text"]="normal"
         ["long_options"]="magenta,bold"
         ["remark_text"]="italic"
@@ -9473,6 +9685,7 @@ function argparser_main() {
         unset -f argparser_create_args_definition
         unset -f argparser_create_help_message
         unset -f argparser_create_usage_message
+        unset -f argparser_draw_frame
         unset -f argparser_fold
         unset -f argparser_get_arg_key
         unset -f argparser_get_option_names
