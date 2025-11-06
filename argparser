@@ -431,9 +431,11 @@ function argparser_check_file() {
 
 # Define the general Argparser utility functions.
 function argparser_pad() {
-    # Right-pad all elements of an array to have the same length.
+    # Pad all elements of an array to the left or right to have the same
+    # length.
     #
     # Arguments:
+    # - $1: the pad side ("left" or "right")
     # - $@: the array whose elements to pad
     #
     # Nonlocals:
@@ -442,14 +444,17 @@ function argparser_pad() {
     # Define the local variables.
     local i
     local max_width
+    local side
     local -a uncolorized_array
     local whitespace
     local width
 
     # Read the arguments.
+    side="$1"
+    shift
     padded_array=("$@")
 
-    # Pad the array's elements in-place.
+    # Get the maximum width of the (uncolorized) array's elements.
     argparser_uncolorize "array" "${padded_array[@]}"
     max_width=0
     for i in "${!padded_array[@]}"; do
@@ -459,11 +464,20 @@ function argparser_pad() {
         fi
     done
 
-    for i in "${!padded_array[@]}"; do
-        printf -v whitespace '%*s' \
-            "$(( max_width - "${#uncolorized_array[i]}" ))" ""
-        padded_array[i]="${padded_array[i]}${whitespace}"
-    done
+    # Pad the array's elements in-place.
+    if [[ "${side}" == "left" ]]; then
+        for i in "${!padded_array[@]}"; do
+            printf -v whitespace '%*s' \
+                "$(( max_width - "${#uncolorized_array[i]}" ))" ""
+            padded_array[i]="${whitespace}${padded_array[i]}"
+        done
+    else
+        for i in "${!padded_array[@]}"; do
+            printf -v whitespace '%*s' \
+                "$(( max_width - "${#uncolorized_array[i]}" ))" ""
+            padded_array[i]="${padded_array[i]}${whitespace}"
+        done
+    fi
 }
 
 function argparser_trim() {
@@ -2749,37 +2763,37 @@ function argparser_create_args_definition() {
 
     # Set each field in a column to the same width by right-padding with
     # spaces.
-    argparser_pad "${col_arg_keys[@]}"
+    argparser_pad "right" "${col_arg_keys[@]}"
     col_arg_keys=("${padded_array[@]}")
 
-    argparser_pad "${col_short_options[@]}"
+    argparser_pad "right" "${col_short_options[@]}"
     col_short_options=("${padded_array[@]}")
 
-    argparser_pad "${col_long_options[@]}"
+    argparser_pad "right" "${col_long_options[@]}"
     col_long_options=("${padded_array[@]}")
 
-    argparser_pad "${col_value_names[@]}"
+    argparser_pad "right" "${col_value_names[@]}"
     col_value_names=("${padded_array[@]}")
 
-    argparser_pad "${col_default_values[@]}"
+    argparser_pad "right" "${col_default_values[@]}"
     col_default_values=("${padded_array[@]}")
 
-    argparser_pad "${col_choice_values[@]}"
+    argparser_pad "right" "${col_choice_values[@]}"
     col_choice_values=("${padded_array[@]}")
 
-    argparser_pad "${col_types[@]}"
+    argparser_pad "right" "${col_types[@]}"
     col_types=("${padded_array[@]}")
 
-    argparser_pad "${col_arg_numbers[@]}"
+    argparser_pad "right" "${col_arg_numbers[@]}"
     col_arg_numbers=("${padded_array[@]}")
 
-    argparser_pad "${col_arg_groups[@]}"
+    argparser_pad "right" "${col_arg_groups[@]}"
     col_arg_groups=("${padded_array[@]}")
 
-    argparser_pad "${col_notes[@]}"
+    argparser_pad "right" "${col_notes[@]}"
     col_notes=("${padded_array[@]}")
 
-    argparser_pad "${col_help_texts[@]}"
+    argparser_pad "right" "${col_help_texts[@]}"
     col_help_texts=("${padded_array[@]}")
 
     # Set flags for empty columns to be dropped.  Thereby, any column
