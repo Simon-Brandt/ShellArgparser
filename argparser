@@ -1179,6 +1179,9 @@ function argparser_draw_frame() {
     # - the framed string (if $3 is set to "print")
 
     # Define the local variables.
+    local bottom_line
+    local -a colors_arr
+    local colors_str
     local corner_style
     local -a corner_styles
     local file_descriptor
@@ -1192,8 +1195,10 @@ function argparser_draw_frame() {
     local -a padded_array
     local style_request
     local -a style_requests
+    local top_line
     local -a uncolorized_array
     local var
+    local vertical_line
 
     # Read the arguments.
     style_requests="$1"
@@ -1236,8 +1241,10 @@ function argparser_draw_frame() {
     )
 
     # Split the requested frame styles on ${ARGPARSER_ARG_DELIMITER_2}
-    # characters and set the last style specified per category for
-    # usage.
+    # characters and separate them by their purpose as corner style,
+    # line style, line width modifier, or color.  Later styles override
+    # the respective category's style specified earlier.
+    colors_arr=( )
     IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a style_requests \
         <<< "${style_requests}"
     for style_request in "${style_requests[@]}"; do
@@ -1252,7 +1259,14 @@ function argparser_draw_frame() {
         if argparser_in_array "${style_request}" "${line_widths[@]}"; then
             line_width="${style_request}"
         fi
+
+        if argparser_check_styles "colors" "${style_request}"; then
+            colors_arr+=("${style_request}")
+        fi
     done
+
+    argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colors_arr[@]}"
+    colors_str="${joined_array}"
 
     # Set the box drawing characters corresponding to the requested
     # frame styles per category.
@@ -1326,26 +1340,33 @@ function argparser_draw_frame() {
     if (( "${#style_requests[@]}" > 0 )); then
         # Right-pad each line of the array and create an uncolorized
         # copy to compute the line length, below.  Then, surround the
-        # lines with vertical lines, separated by a space each.
+        # lines with (colorized) vertical lines, separated by a space
+        # each.
         argparser_pad "right" "${framed_array[@]}"
         argparser_uncolorize "array" "${padded_array[@]}"
+        argparser_colorize "${colors_str}" "${file_descriptor}" vertical_line \
+            "${frame_chars["vertical"]}"
+
         for i in "${!framed_array[@]}"; do
-            framed_array[i]="${frame_chars["vertical"]} ${padded_array[i]} "
-            framed_array[i]+="${frame_chars["vertical"]}"
+            framed_array[i]="${vertical_line} ${padded_array[i]} ${vertical_line}"
         done
 
-        # Surround the entire array by horizontal lines, which are as
-        # long as any line in the uncolorized, but padded array, plus
-        # the two spaces separation to the left and right between the
-        # array's contents and the frame's vertical lines.
+        # Surround the entire array by (colorized) horizontal lines,
+        # which are as long as any line in the uncolorized, but padded
+        # array, plus the two spaces separation to the left and right
+        # between the array's contents and the frame's vertical lines.
         # Additionally, add the frame's four corner characters.
         printf -v whitespace '%*s' "$(( "${#uncolorized_array[0]}" + 2 ))" ""
         horizontal_line="${whitespace// /${frame_chars["horizontal"]}}"
+        argparser_colorize "${colors_str}" "${file_descriptor}" top_line \
+            "${frame_chars["top-left"]}${horizontal_line}${frame_chars["top-right"]}"
+        argparser_colorize "${colors_str}" "${file_descriptor}" bottom_line \
+            "${frame_chars["bottom-left"]}${horizontal_line}${frame_chars["bottom-right"]}"
 
         framed_array=(
-            "${frame_chars["top-left"]}${horizontal_line}${frame_chars["top-right"]}"
+            "${top_line}"
             "${framed_array[@]}"
-            "${frame_chars["bottom-left"]}${horizontal_line}${frame_chars["bottom-right"]}"
+            "${bottom_line}"
         )
     fi
 
