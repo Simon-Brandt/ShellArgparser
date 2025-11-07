@@ -6800,9 +6800,7 @@ function argparser_create_help_message() {
     local -a col_1
     local -a col_2
     local -a col_3
-    local col_width_1
-    local col_width_2
-    local col_width_3
+    local -a col_widths
     local -a colorized_array
     local count
     local default_text_end
@@ -6828,6 +6826,7 @@ function argparser_create_help_message() {
     local line_count_3
     local line_length_1
     local line_length_2
+    local line_length_3
     local lines_col_1
     local lines_col_2
     local lines_col_3
@@ -7686,32 +7685,32 @@ function argparser_create_help_message() {
     # ${ARGPARSER_MAX_WIDTH} or ${ARGPARSER_MAX_COL_WIDTH_3} (if given)
     # by inserting line breaks.
     # Split the element of column 1.
-    col_width_1=0
+    col_widths[1]=0
     for i in "${!col_1[@]}"; do
         argparser_fold "${col_1[i]}" "${ARGPARSER_MAX_COL_WIDTH_1}" \
-            "${col_width_1}"
+            "${col_widths[1]}"
         col_1[i]="${joined_words}"
-        col_width_1="${largest_col_width}"
+        col_widths[1]="${largest_col_width}"
     done
 
     # Split the element of column 2.
-    col_width_2=0
+    col_widths[2]=0
     for i in "${!col_2[@]}"; do
         argparser_fold "${col_2[i]}" "${ARGPARSER_MAX_COL_WIDTH_2}" \
-            "${col_width_2}"
+            "${col_widths[2]}"
         col_2[i]="${joined_words}"
-        col_width_2="${largest_col_width}"
+        col_widths[2]="${largest_col_width}"
     done
 
     # Split the element of column 3.
     if (( ARGPARSER_MAX_COL_WIDTH_3 == 0 )); then
-        if (( col_width_1 > 0 && col_width_2 > 0 )); then
-            (( max_col_width_3 = ARGPARSER_MAX_WIDTH - col_width_1 \
-                - col_width_2 - 2 ))
-        elif (( col_width_1 > 0 )); then
-            (( max_col_width_3 = ARGPARSER_MAX_WIDTH - col_width_1 - 1 ))
-        elif (( col_width_2 > 0 )); then
-            (( max_col_width_3 = ARGPARSER_MAX_WIDTH - col_width_2 - 1 ))
+        if (( col_widths[1] > 0 && col_widths[2] > 0 )); then
+            (( max_col_width_3 = ARGPARSER_MAX_WIDTH - col_widths[1] \
+                - col_widths[2] - 2 ))
+        elif (( col_widths[1] > 0 )); then
+            (( max_col_width_3 = ARGPARSER_MAX_WIDTH - col_widths[1] - 1 ))
+        elif (( col_widths[2] > 0 )); then
+            (( max_col_width_3 = ARGPARSER_MAX_WIDTH - col_widths[2] - 1 ))
         else
             (( max_col_width_3 = ARGPARSER_MAX_WIDTH ))
         fi
@@ -7719,11 +7718,11 @@ function argparser_create_help_message() {
         max_col_width_3="${ARGPARSER_MAX_COL_WIDTH_3}"
     fi
 
-    col_width_3=0
+    col_widths[3]=0
     for i in "${!col_3[@]}"; do
-        argparser_fold "${col_3[i]}" "${max_col_width_3}" "${col_width_3}"
+        argparser_fold "${col_3[i]}" "${max_col_width_3}" "${col_widths[3]}"
         col_3[i]="${joined_words}"
-        col_width_3="${largest_col_width}"
+        col_widths[3]="${largest_col_width}"
     done
 
     # Adjust the number of line breaks between each column's rows, such
@@ -7828,25 +7827,25 @@ function argparser_create_help_message() {
     # the first and the second (uncolorized) column.  If a line is
     # wider, set the width to the respective value, as long as the width
     # doesn't exceed the limit set by ${ARGPARSER_MAX_COL_WIDTH_*}.
-    col_width_1=0
-    col_width_2=0
+    col_widths[1]=0
+    col_widths[2]=0
     for i in "${!col_1[@]}"; do
         line="${col_1[i]}"
         line_length_1="${#uncolorized_col_1[i]}"
 
         if (( line_length_1 <= ARGPARSER_MAX_COL_WIDTH_1 \
-            && line_length_1 > col_width_1 ))
+            && line_length_1 > col_widths[1] ))
         then
-            col_width_1="${line_length_1}"
+            col_widths[1]="${line_length_1}"
         fi
 
         line="${col_2[i]}"
         line_length_2="${#uncolorized_col_2[i]}"
 
         if (( line_length_2 <= ARGPARSER_MAX_COL_WIDTH_2 \
-            && line_length_2 > col_width_2 ))
+            && line_length_2 > col_widths[2] ))
         then
-            col_width_2="${line_length_2}"
+            col_widths[2]="${line_length_2}"
         fi
     done
 
@@ -7876,22 +7875,22 @@ function argparser_create_help_message() {
         # Set the first column's width.
         if (( line_length_1 <= ARGPARSER_MAX_COL_WIDTH_1 )); then
             if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
-                (( whitespace_length_1 = col_width_1 - line_length_1 + 1 ))
+                (( whitespace_length_1 = col_widths[1] - line_length_1 + 1 ))
             else
-                (( whitespace_length_1 = col_width_1 - line_length_1 ))
+                (( whitespace_length_1 = col_widths[1] - line_length_1 ))
             fi
             printf -v 'whitespace_1[-1]' '%*s' "${whitespace_length_1}" ""
         elif [[ -z "${col_2[i]}" ]] \
-            && (( line_length_1 <= ARGPARSER_MAX_COL_WIDTH_1 + col_width_2 ))
+            && (( line_length_1 <= ARGPARSER_MAX_COL_WIDTH_1 + col_widths[2] ))
         then
             is_overlong=true
             whitespace_length_1=0
             printf -v 'whitespace_1[-1]' '%*s' "${whitespace_length_1}" ""
         else
             if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
-                (( whitespace_length_1 = col_width_1 + 1 ))
+                (( whitespace_length_1 = col_widths[1] + 1 ))
             else
-                (( whitespace_length_1 = col_width_1 ))
+                (( whitespace_length_1 = col_widths[1] ))
             fi
             printf -v 'whitespace_1[-1]' '\n%*s' "${whitespace_length_1}" ""
         fi
@@ -7899,27 +7898,27 @@ function argparser_create_help_message() {
         # Set the second column's width.
         if [[ "${is_overlong}" == true ]]; then
             if [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]; then
-                (( whitespace_length_2 = col_width_1 + col_width_2 \
+                (( whitespace_length_2 = col_widths[1] + col_widths[2] \
                     - line_length_1 + 2 ))
             else
-                (( whitespace_length_2 = col_width_1 + col_width_2 \
+                (( whitespace_length_2 = col_widths[1] + col_widths[2] \
                     - line_length_1 + 1 ))
             fi
             printf -v 'whitespace_2[-1]' '%*s' "${whitespace_length_2}" ""
         elif (( line_length_2 <= ARGPARSER_MAX_COL_WIDTH_2 )); then
             if [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]; then
-                (( whitespace_length_2 = col_width_2 - line_length_2 + 1 ))
+                (( whitespace_length_2 = col_widths[2] - line_length_2 + 1 ))
             else
-                (( whitespace_length_2 = col_width_2 - line_length_2 ))
+                (( whitespace_length_2 = col_widths[2] - line_length_2 ))
             fi
             printf -v 'whitespace_2[-1]' '%*s' "${whitespace_length_2}" ""
         else
             if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true \
                 && "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]
             then
-                (( whitespace_length_2 = col_width_1 + col_width_2 + 2 ))
+                (( whitespace_length_2 = col_widths[1] + col_widths[2] + 2 ))
             else
-                (( whitespace_length_2 = col_width_1 + col_width_2 + 1 ))
+                (( whitespace_length_2 = col_widths[1] + col_widths[2] + 1 ))
             fi
             printf -v 'whitespace_2[-1]' '\n%*s' "${whitespace_length_2}" ""
         fi
