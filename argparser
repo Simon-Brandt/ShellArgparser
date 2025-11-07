@@ -314,11 +314,13 @@ function argparser_is_uint() {
 }
 
 function argparser_check_styles() {
-    # Check if the specified colors and/or styles are implemented for
-    # argparser_colorize.
+    # Check if the specified colors, text styles, and/or frame styles
+    # are implemented for argparser_colorize.
     #
     # Arguments:
-    # - $1: the array(s) to check ("colors", "styles", or "both")
+    # - $1: the array(s) to check ("colors", "text styles",
+    #       "frame styles", "colors, text styles", or "colors, frame
+    #       styles")
     # - $2: the colors and/or styles to use as
     #       ${ARGPARSER_ARG_DELIMITER_2}-separated list
     #
@@ -332,15 +334,19 @@ function argparser_check_styles() {
     # Define the local variables.
     local check_type
     local -a colors
+    local -a corner_styles
+    local -a line_styles
+    local -a line_widths
     local request
     local -a requests
-    local -a styles
+    local -a text_styles
 
     # Read the arguments.
     check_type="$1"
     requests="$2"
 
-    # Define the arrays of implemented colors and styles.
+    # Define the arrays of implemented colors, text styles, and frame
+    # styles (corner and line styles, as well as line widths).
     colors=(
         black
         red
@@ -352,8 +358,7 @@ function argparser_check_styles() {
         white
     )
 
-    # shellcheck disable=SC2190  # Indexed, not associative array.
-    styles=(
+    text_styles=(
         normal
         bold
         faint
@@ -364,6 +369,25 @@ function argparser_check_styles() {
         crossed-out
         blink
         reverse
+    )
+
+    corner_styles=(
+        "angular"
+        "rounded"
+        "double"
+    )
+
+    line_styles=(
+        "solid"
+        "double-dashed"
+        "triple-dashed"
+        "quadruple-dashed"
+    )
+
+    line_widths=(
+        "thin"
+        "thick"
+        "double"
     )
 
     # Split the requested colors and/or styles on
@@ -382,15 +406,37 @@ function argparser_check_styles() {
                 return 1
             fi
         done
-    elif [[ "${check_type}" == "styles" ]]; then
+    elif [[ "${check_type}" == "text styles" ]]; then
         for request in "${requests[@]}"; do
-            if ! argparser_in_array "${request}" "${styles[@]}"; then
+            if ! argparser_in_array "${request}" "${text_styles[@]}"; then
                 return 1
             fi
         done
-    elif [[ "${check_type}" == "both" ]]; then
+    elif [[ "${check_type}" == "frame styles" ]]; then
         for request in "${requests[@]}"; do
-            if ! argparser_in_array "${request}" "${colors[@]}" "${styles[@]}"
+            if ! argparser_in_array "${request}" "${corner_styles[@]}" \
+                "${line_styles[@]}" "${line_widths[@]}"
+            then
+                return 1
+            fi
+        done
+    elif [[ "${check_type}" == "colors, text styles" ]]; then
+        for request in "${requests[@]}"; do
+            if ! argparser_in_array "${request}" "${colors[@]}" \
+                "${text_styles[@]}"
+            then
+                request="${request#bright_}"
+                request="${request%_bg}"
+                request="${request%_fg}"
+                if ! argparser_in_array "${request}" "${colors[@]}"; then
+                    return 1
+                fi
+            fi
+        done
+    elif [[ "${check_type}" == "colors, frame styles" ]]; then
+        for request in "${requests[@]}"; do
+            if ! argparser_in_array "${request}" "${colors[@]}" \
+                "${corner_styles[@]}" "${line_styles[@]}" "${line_widths[@]}"
             then
                 request="${request#bright_}"
                 request="${request%_bg}"
@@ -2210,7 +2256,7 @@ function argparser_check_env_vars() {
     )
     for var in "${vars[@]}"; do
         if [[ -v "${var}" ]] \
-            && ! argparser_check_styles "both" "${!var}"
+            && ! argparser_check_styles "colors, text styles" "${!var}"
         then
             error_message="Error: The environment variable \"\$1\" is set to "
             error_message+="\"\$2\", but the values must lie in {black, red, "
@@ -2827,35 +2873,49 @@ function argparser_read_styles() {
     # Check if styles only have values supported by argparser_colorize.
     for name in "${!styles[@]}"; do
         style="${styles[${name}]}"
-        if ! argparser_check_styles "both" "${style}"; then
-            error_message="Error: The style \"\$1\" is set to \"\$2\", but "
-            error_message+="the values must lie in {black, red, green, "
-            error_message+="yellow, blue, magenta, cyan, white} for colors "
-            error_message+="and in {normal, bold, faint, italic, underline, "
-            error_message+="double, overline, crossed-out, blink, reverse} "
-            error_message+="for styles.  Colors, only, may be prefixed by "
-            error_message+="\"bright_\" or suffixed by \"_fg\" or \"_bg\"."
+        if [[ "${name}" == "frame" ]]; then
+            if ! argparser_check_styles "colors, frame styles" "${style}"; then
+                error_message="Error: The style \"\$1\" is set to \"\$2\", "
+                error_message+="but the values must lie in {black, red, "
+                error_message+="green, yellow, blue, magenta, cyan, white} "
+                error_message+="for colors and in {thin, thick, double, "
+                error_message+="angular, rounded, solid, double-dashed, "
+                error_message+="triple-dashed, quadruple-dashed} for frame "
+                error_message+="styles.  Colors, only, may be prefixed by "
+                error_message+="\"bright_\" or suffixed by \"_fg\" or \"_bg\"."
 
-            argparser_translate "Error style file styles" "${error_message}" \
-                "${name}" "${style}"
-            error_message="${translation}"
-            error_messages+=("${error_message}")
+                argparser_translate "Error style file frame styles" \
+                    "${error_message}" "${name}" "${style}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            fi
+        else
+            if ! argparser_check_styles "colors, text styles" "${style}"; then
+                error_message="Error: The style \"\$1\" is set to \"\$2\", "
+                error_message+="but the values must lie in {black, red, "
+                error_message+="green, yellow, blue, magenta, cyan, white} "
+                error_message+="for colors and in {normal, bold, faint, "
+                error_message+="italic, underline, double, overline, "
+                error_message+="crossed-out, blink, reverse} for text "
+                error_message+="styles.  Colors, only, may be prefixed by "
+                error_message+="\"bright_\" or suffixed by \"_fg\" or \"_bg\"."
+
+                argparser_translate "Error style file text styles" \
+                    "${error_message}" "${name}" "${style}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            fi
         fi
     done
 
     # Sort, filter, colorize, and print all error messages, then exit.
+    # If there are no error messages, print all warning messages.
     if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
         ARGPARSER_ARG_DELIMITER_2=","
         ARGPARSER_ERROR_EXIT_CODE=1
     fi
 
     argparser_print_error_message true true "${error_messages[@]}"
-
-    # Sort, filter, colorize, and print all warning messages.
-    if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
-        ARGPARSER_ARG_DELIMITER_2=","
-    fi
-
     argparser_print_warning_message true "${warning_messages[@]}"
 }
 

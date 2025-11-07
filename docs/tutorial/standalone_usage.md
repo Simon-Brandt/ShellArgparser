@@ -153,11 +153,9 @@ Options:
                                  "@")
 [--usage-file-keep-comments]     keep commented lines in the usage file
                                  (default: false)
-[--usage-message-option-type={long,short}]
-                                 use short or long option names in usage
+[--usage-message-option-type={long,short}]                                 use short or long option names in usage
                                  messages (default: "short")
-[--usage-message-orientation={row,column}]
-                                 output the positional and keyword arguments in
+[--usage-message-orientation={row,column}]                                 output the positional and keyword arguments in
                                  usage messages in a row or in a column
                                  (default: "row")
 [--usage-options=CHAR...]        the short (single-character) option names to
@@ -169,8 +167,7 @@ Options:
                                  (default: true)
 [--use-short-options]            use the short option names for parsing
                                  (default: true)
-[--use-styles={always,never,file,tty}]
-                                 use the colors and styles "always", "never",
+[--use-styles={always,never,file,tty}]                                 use the colors and styles "always", "never",
                                  or only when STDOUT/STDERR is ("tty") or is
                                  not ("file") a terminal (default: "tty")
 [--use-styles-in-files]          (DEPRECATED) use the colors and styles when

@@ -1048,16 +1048,25 @@
   - `$1`: The style file.
   - `$2`: The line.
 
-#### 9.5.125. `Error style file styles`
+#### 9.5.125. `Error style file frame styles`
 
-- ***Message:*** `Error: The style "$1" is set to "$2", but the values must lie in {black, red, green, yellow, blue, magenta, cyan, white} for colors and in {normal, bold, faint, italic, underline, double, overline, crossed-out, blink, reverse} for styles.  Colors, only, may be prefixed by "bright_" or suffixed by "_fg" or "_bg".`
-- ***Description:*** The error that a style file's line refers to an undefined [color or style](../colors_and_styles.md#92-colors-and-styles).
-- ***Reasons for error:*** When parsing the [`ARGPARSER_STYLE_FILE`](../environment_variables/environment_variables.md#9443-argparser_style_file), the Argparser found a line trying to set a message color or style which does not exist.
+- ***Message:*** `Error: The style "$1" is set to "$2", but the values must lie in {black, red, green, yellow, blue, magenta, cyan, white} for colors and in {thin, thick, double, angular, rounded, solid, double-dashed, triple-dashed, quadruple-dashed} for frame styles.  Colors, only, may be prefixed by \"bright_\" or suffixed by \"_fg\" or \"_bg\".`
+- ***Description:*** The error that a style file's line refers to an undefined [color or frame style](../colors_and_styles.md#92-colors-and-styles).
+- ***Reasons for error:*** When parsing the [`ARGPARSER_STYLE_FILE`](../environment_variables/environment_variables.md#9443-argparser_style_file), the Argparser found a line trying to set a frame color or frame style which does not exist.
 - ***Interpolated variables:***
   - `$1`: The style's message key.
   - `$2`: The style.
 
-#### 9.5.126. `Error include directive`
+#### 9.5.126. `Error style file text styles`
+
+- ***Message:*** `Error: The style "$1" is set to "$2", but the values must lie in {black, red, green, yellow, blue, magenta, cyan, white} for colors and in {normal, bold, faint, italic, underline, double, overline, crossed-out, blink, reverse} for text styles.  Colors, only, may be prefixed by "bright_" or suffixed by "_fg" or "_bg".`
+- ***Description:*** The error that a style file's line refers to an undefined [color or text style](../colors_and_styles.md#92-colors-and-styles).
+- ***Reasons for error:*** When parsing the [`ARGPARSER_STYLE_FILE`](../environment_variables/environment_variables.md#9443-argparser_style_file), the Argparser found a line trying to set a text/message color or text/message style which does not exist.
+- ***Interpolated variables:***
+  - `$1`: The style's message key.
+  - `$2`: The style.
+
+#### 9.5.127. `Error include directive`
 
 - ***Message:*** `Error: The include directive "$1" could not be recognized.`
 - ***Description:*** The error that an include directive cannot be parsed.
@@ -1065,7 +1074,7 @@
 - ***Interpolated variables:***
   - `$1`: The include directive.
 
-#### 9.5.127. `Warning no identifier`
+#### 9.5.128. `Warning no identifier`
 
 - ***Message:*** `Warning: In the translation file "$1", the identifier "$2" is missing.  For convenience, the untranslated string is used, instead.`
 - ***Description:*** The warning that in a translation file, an identifier is missing.
@@ -1074,7 +1083,7 @@
   - `$1`: The [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9444-argparser_translation_file).
   - `$2`: The missing identifier.
 
-#### 9.5.128. `Warning no translation`
+#### 9.5.129. `Warning no translation`
 
 - ***Message:*** `Warning: In the translation file "$1", the translation to "$2" for the identifier "$3" is missing.  For convenience, the untranslated string is used, instead.`
 - ***Description:*** The warning that in a translation file, an identifier's translation is missing.
@@ -1084,7 +1093,7 @@
   - `$2`: The [`ARGPARSER_LANGUAGE`](../environment_variables/environment_variables.md#9431-argparser_language).
   - `$3`: The identifier with missing translation.
 
-#### 9.5.129. `Warning style file message key`
+#### 9.5.130. `Warning style file message key`
 
 - ***Message:*** `Warning: In the style file "$1", the line "$2" sets a non-existent message key.`
 - ***Description:*** The warning that a style file's line sets a non-existent message key.
@@ -1093,7 +1102,7 @@
   - `$1`: The style file.
   - `$2`: The line.
 
-#### 9.5.130. `Warning deprecation`
+#### 9.5.131. `Warning deprecation`
 
 - ***Message:*** `Warning: The argument "$1" is deprecated and will be removed in the future.`
 - ***Description:*** The warning that on the command line, a deprecated argument is given.
@@ -1101,7 +1110,7 @@
 - ***Interpolated variables:***
   - `$1`: The argument's option or value names.
 
-#### 9.5.131. `Warning wrong arg number 1`
+#### 9.5.132. `Warning wrong arg number 1`
 
 - ***Message:*** `Warning: The argument "$1" requires at least 1 value, but has $2 given.  For convenience, the default ($3) is used.`
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring at least one.
@@ -1111,7 +1120,7 @@
   - `$2`: The number of given values.
   - `$3`: The default values.
 
-#### 9.5.132. `Warning wrong arg number 2`
+#### 9.5.133. `Warning wrong arg number 2`
 
 - ***Message:*** `Warning: The argument "$1" requires at 0 or 1 value, but has $2 given.  For convenience, the default ($3) is used.`
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring zero or one.
@@ -1121,7 +1130,7 @@
   - `$2`: The number of given values.
   - `$3`: The default values.
 
-#### 9.5.133. `Warning wrong arg number 3`
+#### 9.5.134. `Warning wrong arg number 3`
 
 - ***Message:*** `Warning: The argument "$1" requires 1 value, but has $2 given.  For convenience, the default ($3) is used.`
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring one.
@@ -1131,7 +1140,7 @@
   - `$2`: The number of given values.
   - `$3`: The default values.
 
-#### 9.5.134. `Warning wrong arg number 4`
+#### 9.5.135. `Warning wrong arg number 4`
 
 - ***Message:*** `Warning: The argument "$1" requires $2 values, but has $3 given.  For convenience, the default ($4) is used.`
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given.
