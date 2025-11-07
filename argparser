@@ -8015,35 +8015,28 @@ function argparser_create_help_message() {
     fi
 
     # For each argument group, print its arguments.
-    index=0
+    i=0
     for arg_group in "${arg_groups[@]}"; do
         # For any argument line, output the three columns and their
         # delimiting whitespace.  If all three columns are empty, the
         # end of the current argument group has been reached.
         help_message=( )
-        for (( i = index; i < "${#col_1[@]}"; i++ )); do
-            if [[ -z "${col_1[i]}" && -z "${col_2[i]}" && -z "${col_3[i]}" ]]
-            then
-                break
-            fi
-
-            line="${col_1[i]}${whitespace_1[i]}"
-            line+="${col_2[i]}${whitespace_2[i]}"
+        while [[ -n "${col_1[i]}" || -n "${col_2[i]}" || -n "${col_3[i]}" ]]
+        do
+            line="${col_1[i]}${whitespace_1[i]}${col_2[i]}${whitespace_2[i]}"
             line+="${col_3[i]}"
-
-            line="${line%%+( )}"
             help_message+=("${line}")
+            (( i++ ))
         done
+
+        # Increment the start index for the next argument group by the
+        # empty line used as argument group delimiter.
+        (( i++ ))
 
         argparser_draw_frame "${styles["frame"]}" 1 "array" \
             "${help_message[@]}"
         argparser_join $'\n' "${framed_array[@]}"
         help_message_groups[${arg_group}]="${joined_array}"$'\n'
-
-        # Set the start index for the next argument group to the current
-        # group's end index plus 1 (with the latter being the empty line
-        # used as argument group delimiter).
-        (( index = i + 1 ))
     done
 }
 
