@@ -1224,7 +1224,6 @@ function argparser_draw_frame() {
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
-    # - ARGPARSER_USE_STYLES (read-only)
     #
     # Output:
     # - the framed string (if $3 is set to "print")
@@ -1243,7 +1242,6 @@ function argparser_draw_frame() {
     local -a line_styles
     local line_width
     local -a line_widths
-    local -a padded_array
     local style_request
     local -a style_requests
     local top_line
@@ -1389,26 +1387,25 @@ function argparser_draw_frame() {
 
     # Surround the array by a frame, if there were styles requested.
     if (( "${#style_requests[@]}" > 0 )); then
-        # Right-pad each line of the array and create an uncolorized
-        # copy to compute the line length, below.  Then, surround the
-        # lines with (colorized) vertical lines, separated by a space
-        # each.
-        argparser_pad "right" "${framed_array[@]}"
-        argparser_uncolorize "array" "${padded_array[@]}"
+        # Create an uncolorized copy of the array to compute the line
+        # length, below.  Then, surround the lines with (colorized)
+        # vertical lines, separated by a space each.
+        argparser_uncolorize "array" "${framed_array[@]}"
         argparser_colorize "${colors_str}" "${file_descriptor}" vertical_line \
             "${frame_chars["vertical"]}"
 
         for i in "${!framed_array[@]}"; do
-            framed_array[i]="${vertical_line} ${padded_array[i]} ${vertical_line}"
+            framed_array[i]="${vertical_line} ${framed_array[i]} ${vertical_line}"
         done
 
         # Surround the entire array by (colorized) horizontal lines,
-        # which are as long as any line in the uncolorized, but padded
-        # array, plus the two spaces separation to the left and right
-        # between the array's contents and the frame's vertical lines.
+        # which are as long as any line in the uncolorized array, plus
+        # the two spaces separation to the left and right between the
+        # array's contents and the frame's vertical lines.
         # Additionally, add the frame's four corner characters.
         printf -v whitespace '%*s' "$(( "${#uncolorized_array[0]}" + 2 ))" ""
         horizontal_line="${whitespace// /${frame_chars["horizontal"]}}"
+
         argparser_colorize "${colors_str}" "${file_descriptor}" top_line \
             "${frame_chars["top-left"]}${horizontal_line}${frame_chars["top-right"]}"
         argparser_colorize "${colors_str}" "${file_descriptor}" bottom_line \
@@ -6849,6 +6846,7 @@ function argparser_create_help_message() {
     local -a notes
     local -a option_names
     local optional_arguments_hint
+    local -a padded_array
     local remark
     local script_name
     local short_option
@@ -6863,6 +6861,7 @@ function argparser_create_help_message() {
     local -a uncolorized_array
     local -a uncolorized_col_1
     local -a uncolorized_col_2
+    local -a uncolorized_col_3
     local usage
     local -a value_names_arr
     local value_names_str
@@ -7814,21 +7813,25 @@ function argparser_create_help_message() {
     col_2=("${new_col_2[@]}")
     col_3=("${new_col_3[@]}")
 
-    # Create an uncolorized copy of the first two columns, needed to
-    # obtain the actual width without ANSI escape sequence codes.
+    # Create an uncolorized copy of each columns, needed to obtain the
+    # actual widths without ANSI escape sequence codes.
     argparser_uncolorize "array" "${col_1[@]}"
     uncolorized_col_1=("${uncolorized_array[@]}")
 
     argparser_uncolorize "array" "${col_2[@]}"
     uncolorized_col_2=("${uncolorized_array[@]}")
 
+    argparser_uncolorize "array" "${col_3[@]}"
+    uncolorized_col_3=("${uncolorized_array[@]}")
+
     # For proper alignment of the columns, whitespace must be used as
-    # separation between shorter elements.  Compute the width for both
-    # the first and the second (uncolorized) column.  If a line is
-    # wider, set the width to the respective value, as long as the width
-    # doesn't exceed the limit set by ${ARGPARSER_MAX_COL_WIDTH_*}.
+    # separation between shorter elements.  Compute the width for each
+    # uncolorized column.  If a line is wider, set the width to the
+    # respective value, as long as the width doesn't exceed the limit
+    # set by ${ARGPARSER_MAX_COL_WIDTH_*}.
     col_widths[1]=0
     col_widths[2]=0
+    col_widths[3]=0
     for i in "${!col_1[@]}"; do
         line="${col_1[i]}"
         line_length_1="${#uncolorized_col_1[i]}"
@@ -7846,6 +7849,15 @@ function argparser_create_help_message() {
             && line_length_2 > col_widths[2] ))
         then
             col_widths[2]="${line_length_2}"
+        fi
+
+        line="${col_3[i]}"
+        line_length_3="${#uncolorized_col_3[i]}"
+
+        if (( line_length_3 <= max_col_width_3 \
+            && line_length_3 > col_widths[3] ))
+        then
+            col_widths[3]="${line_length_3}"
         fi
     done
 
@@ -7923,6 +7935,17 @@ function argparser_create_help_message() {
             printf -v 'whitespace_2[-1]' '\n%*s' "${whitespace_length_2}" ""
         fi
     done
+
+    # Compute the maximum width of all three columns, i.e., the actual
+    # column widths plus the mandatory separation between the used
+    # columns.
+    (( max_col_width = col_widths[1] + col_widths[2] + col_widths[3] ))
+    if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
+        (( max_col_width++ ))
+    fi
+    if [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]; then
+        (( max_col_width++ ))
+    fi
 
     # Set the help message's usage line, including the script's name.
     argparser_translate "Usage" "Usage"
@@ -8037,9 +8060,19 @@ function argparser_create_help_message() {
         # empty line used as argument group delimiter.
         (( i++ ))
 
-        argparser_draw_frame "${styles["frame"]}" 1 "array" \
-            "${help_message[@]}"
-        argparser_join $'\n' "${framed_array[@]}"
+        # Right-pad the lines of the argument group's block, such that
+        # all blocks have the same width.  Then, draw a frame around the
+        # block and join the lines to a single string.
+        if [[ -n "${styles["frame"]}" ]]; then
+            argparser_pad "right" "${max_col_width}" "${help_message[@]}"
+            argparser_draw_frame "${styles["frame"]}" 1 "array" \
+                "${padded_array[@]}"
+            help_message=("${framed_array[@]}")
+        else
+            help_message=("${help_message[@]%%+( )}")
+        fi
+
+        argparser_join $'\n' "${help_message[@]}"
         help_message_groups[${arg_group}]="${joined_array}"$'\n'
     done
 }
