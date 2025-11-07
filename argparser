@@ -7875,21 +7875,21 @@ function argparser_create_help_message() {
             else
                 (( whitespace_length_1 = col_width_1 - line_length_1 ))
             fi
+            printf -v 'whitespace_1[-1]' '%*s' "${whitespace_length_1}" ""
         elif [[ -z "${col_2[i]}" ]] \
             && (( line_length_1 <= ARGPARSER_MAX_COL_WIDTH_1 + col_width_2 ))
         then
             is_overlong=true
             whitespace_length_1=0
+            printf -v 'whitespace_1[-1]' '%*s' "${whitespace_length_1}" ""
         else
             if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
                 (( whitespace_length_1 = col_width_1 + 1 ))
             else
                 (( whitespace_length_1 = col_width_1 ))
             fi
-            whitespace_1[-1]+=$'\n'
+            printf -v 'whitespace_1[-1]' '\n%*s' "${whitespace_length_1}" ""
         fi
-
-        printf -v 'whitespace_1[-1]' '%*s' "${whitespace_length_1}" ""
 
         # Set the second column's width.
         if [[ "${is_overlong}" == true ]]; then
@@ -7900,12 +7900,14 @@ function argparser_create_help_message() {
                 (( whitespace_length_2 = col_width_1 + col_width_2 \
                     - line_length_1 + 1 ))
             fi
+            printf -v 'whitespace_2[-1]' '%*s' "${whitespace_length_2}" ""
         elif (( line_length_2 <= ARGPARSER_MAX_COL_WIDTH_2 )); then
             if [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]; then
                 (( whitespace_length_2 = col_width_2 - line_length_2 + 1 ))
             else
                 (( whitespace_length_2 = col_width_2 - line_length_2 ))
             fi
+            printf -v 'whitespace_2[-1]' '%*s' "${whitespace_length_2}" ""
         else
             if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true \
                 && "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]
@@ -7914,10 +7916,8 @@ function argparser_create_help_message() {
             else
                 (( whitespace_length_2 = col_width_1 + col_width_2 + 1 ))
             fi
-            whitespace_2[-1]+=$'\n'
+            printf -v 'whitespace_2[-1]' '\n%*s' "${whitespace_length_2}" ""
         fi
-
-        printf -v 'whitespace_2[-1]' '%*s' "${whitespace_length_2}" ""
     done
 
     # Set the help message's usage line, including the script's name.
