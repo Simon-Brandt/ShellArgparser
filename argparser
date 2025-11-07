@@ -2923,7 +2923,7 @@ function argparser_create_args_definition() {
     argparser_colorize "blue,bold" 1 message "${joined_words}"
     printf '%s\n\n' "${message}"
 
-    while read -r -p "Bash usage (y/n):  " shell 2>&1; do
+    while read -r -e -p "Bash usage (y/n):  " shell 2>&1; do
         if [[ "${shell}" == "y" ]]; then
             shell="Bash"
             break
@@ -2942,7 +2942,7 @@ function argparser_create_args_definition() {
     argparser_colorize "blue,bold" 1 message "${joined_words}"
     printf '%s\n\n' "${message}"
 
-    read -r -p "Target file:  " file 2>&1
+    read -r -e -p "Target file:  " file 2>&1
 
     printf '%s\n' "${separator}"
 
@@ -2953,7 +2953,7 @@ function argparser_create_args_definition() {
     argparser_colorize "blue,bold" 1 message "${joined_words}"
     printf '%s\n\n' "${message}"
 
-    read -r -p "Primary delimiter:  " delimiter 2>&1
+    read -r -e -p "Primary delimiter:  " delimiter 2>&1
 
     printf '%s\n' "${separator}"
 
@@ -2977,22 +2977,22 @@ function argparser_create_args_definition() {
     printf '%s\n\n' "${message}"
 
     while :; do
-        read -r -p "Argument identifier:  " arg_key 2>&1
+        read -r -e -p "Argument identifier:  " arg_key 2>&1
         if [[ -z "${arg_key}" ]]; then
             break
         fi
 
         {
-            read -r -p "Short option names:   " short_options
-            read -r -p "Long option names:    " long_options
-            read -r -p "Value names:          " value_names
-            read -r -p "Default values:       " default_values
-            read -r -p "Choice values:        " choice_values
-            read -r -p "Data type:            " type
-            read -r -p "Argument number:      " arg_number
-            read -r -p "Argument group:       " arg_group
-            read -r -p "Notes:                " note
-            read -r -p "Help text:            " help_text
+            read -r -e -p "Short option names:   " short_options
+            read -r -e -p "Long option names:    " long_options
+            read -r -e -p "Value names:          " value_names
+            read -r -e -p "Default values:       " default_values
+            read -r -e -p "Choice values:        " choice_values
+            read -r -e -p "Data type:            " type
+            read -r -e -p "Argument number:      " arg_number
+            read -r -e -p "Argument group:       " arg_group
+            read -r -e -p "Notes:                " note
+            read -r -e -p "Help text:            " help_text
         } 2>&1
 
         col_arg_keys+=("${arg_key}")
