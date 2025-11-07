@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-06
+# Last Modification: 2025-11-07
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -7829,7 +7829,7 @@ function argparser_create_help_message() {
             whitespace_1[-1]+=$'\n'
         fi
 
-        printf -v whitespace_1[-1] '%*s' "${whitespace_length_1}" ""
+        printf -v 'whitespace_1[-1]' '%*s' "${whitespace_length_1}" ""
 
         # Set the second column's width.
         if [[ "${is_overlong}" == true ]]; then
@@ -7857,7 +7857,7 @@ function argparser_create_help_message() {
             whitespace_2[-1]+=$'\n'
         fi
 
-        printf -v whitespace_2[-1] '%*s' "${whitespace_length_2}" ""
+        printf -v 'whitespace_2[-1]' '%*s' "${whitespace_length_2}" ""
     done
 
     # Set the help message's usage line, including the script's name.
