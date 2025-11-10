@@ -4926,7 +4926,7 @@ function argparser_get_option_names() {
     #   (read-only)
     # - option_names: the name of all short and long options as
     #   ${ARGPARSER_ARG_DELIMITER_2}-separated string
-    # - styles: the associative array containing the styles
+    # - styles: the associative array containing the styles (read-only)
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
@@ -6535,9 +6535,9 @@ function argparser_parse_args() {
     done
 
     if [[ "${is_help}" == true ]]; then
-        argparser_print_help_or_usage_message "help" true
+        argparser_print_help_message true
     elif [[ "${is_usage}" == true ]]; then
-        argparser_print_help_or_usage_message "usage" true
+        argparser_print_usage_message true
     elif [[ "${is_version}" == true ]]; then
         argparser_print_version_message true
     elif [[ "${is_logo}" == true ]]; then
@@ -6582,7 +6582,7 @@ function argparser_parse_args() {
         if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
             {
                 printf '\n'
-                argparser_print_help_or_usage_message "usage" false
+                argparser_print_usage_message false
             } >&2
         fi
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
@@ -6639,7 +6639,7 @@ function argparser_parse_args() {
         if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
             {
                 printf '\n'
-                argparser_print_help_or_usage_message "usage" false
+                argparser_print_usage_message false
             } >&2
         fi
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
@@ -6793,7 +6793,7 @@ function argparser_create_help_message() {
     #   (read-only)
     # - help_message_blocks: the associative array holding the help
     #   message's groups usable as include directive
-    # - styles: the associative array containing the styles
+    # - styles: the associative array containing the styles (read-only)
     #
     # Environment:
     # - ARGPARSER_ADD_HELP (read-only)
@@ -8156,7 +8156,7 @@ function argparser_create_usage_message() {
     #   option names (read-only)
     # - all_value_names: the associative array holding the value names
     #   (read-only)
-    # - styles: the associative array containing the styles
+    # - styles: the associative array containing the styles (read-only)
     # - usage_message_blocks: the associative array holding the usage
     #   message's groups usable as include directive
     #
@@ -8871,17 +8871,16 @@ function argparser_create_usage_message() {
     usage_message_blocks["Usage"]="${usage_message}"
 }
 
-function argparser_print_help_or_usage_message() {
-    # Print a help or usage message.  If a file with such is given,
-    # print the file, else, create a message for the script's arguments.
-    # For files, possibly skip commented lines (i.e., lines starting
-    # with "#") and their trailing blank lines.  Replace lines starting
-    # with ${ARGPARSER_*_FILE_INCLUDE_CHAR} by the auto-generated help
-    #   or usage message.
+function argparser_print_help_message() {
+    # Print a help message.  If a file with such is given, print the
+    # file, else, create a message for the script's arguments.  For
+    # files, possibly skip commented lines (i.e., lines starting with
+    # "#") and their trailing blank lines.  Replace lines starting with
+    # ${ARGPARSER_HELP_FILE_INCLUDE_CHAR} by the auto-generated help
+    # message.
     #
     # Arguments:
-    # - $1: the help type ("help" or "usage")
-    # - $2: whether to exit after printing
+    # - $1: whether to exit after printing
     #
     # Nonlocals:
     # - all_arg_groups: the associative array holding the argument
@@ -8899,10 +8898,6 @@ function argparser_print_help_or_usage_message() {
     # - ARGPARSER_HELP_FILE_INCLUDE_CHAR (read-only)
     # - ARGPARSER_HELP_FILE_KEEP_COMMENTS (read-only)
     # - ARGPARSER_POSITIONAL_ARG_GROUP (read-only)
-    # - ARGPARSER_USAGE_EXIT_CODE (read-only)
-    # - ARGPARSER_USAGE_FILE (read-only)
-    # - ARGPARSER_USAGE_FILE_INCLUDE_CHAR (read-only)
-    # - ARGPARSER_USAGE_FILE_KEEP_COMMENTS (read-only)
 
     # Define the local variables.
     local add_heading
@@ -8913,43 +8908,24 @@ function argparser_print_help_or_usage_message() {
     local error_message
     local -a error_messages
     local exit
-    local exit_code
-    local file
     local frame
     local frame_char
     local heading
+    local help_message
     local -A help_message_blocks
-    local help_type
     local include_char
     local include_directive
-    local keep_comments
     local line
     local -a lines
     local line_type
-    local message
     local -a resolved_lines
     local skip_blank_line
     local -a sorted_array
     local translation
     local uncolorized_heading
-    local -A usage_message_blocks
 
-    # Read the arguments.
-    help_type="$1"
-    exit="$2"
-
-    # Set the constants to the respective environment variables.
-    if [[ "${help_type}" == "help" ]]; then
-        file="${ARGPARSER_HELP_FILE}"
-        include_char="${ARGPARSER_HELP_FILE_INCLUDE_CHAR}"
-        keep_comments="${ARGPARSER_HELP_FILE_KEEP_COMMENTS}"
-        exit_code="${ARGPARSER_HELP_EXIT_CODE}"
-    else
-        file="${ARGPARSER_USAGE_FILE}"
-        include_char="${ARGPARSER_USAGE_FILE_INCLUDE_CHAR}"
-        keep_comments="${ARGPARSER_USAGE_FILE_KEEP_COMMENTS}"
-        exit_code="${ARGPARSER_USAGE_EXIT_CODE}"
-    fi
+    # Read the argument.
+    exit="$1"
 
     # Read the keyword arguments' groups to sort them for the help
     # message.
@@ -8984,25 +8960,21 @@ function argparser_print_help_or_usage_message() {
     # "true" values in ${ARGPARSER_ADD_HELP}, ${ARGPARSER_ADD_USAGE},
     # and ${ARGPARSER_ADD_VERSION}, it is possible to check which help
     # options are defined.  All other arguments that have an entry in
-    # ${!all_short_options} are actual keyword arguments needed for the
-    # remark.
+    # ${!all_short_options[@]} are actual keyword arguments needed for
+    # the remark.
     argparser_count "true" "${ARGPARSER_ADD_HELP}" "${ARGPARSER_ADD_USAGE}" \
         "${ARGPARSER_ADD_VERSION}"
     (( keyword_args_count = "${#all_short_options[@]}" - count ))
 
-    # Create the help or usage message groups, which are saved in an
-    # associative array using the include directives as keys.
-    if [[ "${help_type}" == "help" ]]; then
-        argparser_create_help_message
-    else
-        argparser_create_usage_message
-    fi
+    # Create the help message groups, which are saved in an associative
+    # array using the include directives as keys.
+    argparser_create_help_message
 
-    # Read the help or usage file, if given, or set the lines to just
-    # the include directive "All", meaning to create the entire help or
-    # usage message.
-    if [[ -n "${file}" ]]; then
-        mapfile -t lines < "${file}"
+    # Read the help file, if given, or set the lines to just the include
+    # directive "All", meaning to create the entire help message.
+    include_char="${ARGPARSER_HELP_FILE_INCLUDE_CHAR}"
+    if [[ -n "${ARGPARSER_HELP_FILE}" ]]; then
+        mapfile -t lines < "${ARGPARSER_HELP_FILE}"
     else
         lines=("${include_char}All")
     fi
@@ -9026,93 +8998,83 @@ function argparser_print_help_or_usage_message() {
             include_directive="${line:1}"
         fi
 
-        if [[ "${help_type}" == "help" ]]; then
-            if [[ "${include_directive}" == "All" ]]; then
-                # Add the usage, description, and remark include
-                # directives, terminated by blank lines.
-                resolved_lines+=(
-                    "${include_char}Usage"
-                    ""
-                    "${include_char}Description"
-                    ""
-                    "${include_char}Remark"
-                    ""
-                )
+        if [[ "${include_directive}" == "All" ]]; then
+            # Add the usage, description, and remark include directives,
+            # terminated by blank lines.
+            resolved_lines+=(
+                "${include_char}Usage"
+                ""
+                "${include_char}Description"
+                ""
+                "${include_char}Remark"
+                ""
+            )
 
-                # Add the include directives for each argument group.
-                # Terminate all but the last by a blank line.  If the
-                # last group is the help options group, double the
-                # include character to indicate that the heading shall
-                # be suppressed.
-                for i in "${!arg_groups[@]}"; do
-                    if (( i < "${#arg_groups[@]}" - 1 )); then
-                        resolved_lines+=(
-                            "${include_char}${arg_groups[i]}"
-                            ""
-                        )
-                    elif [[ "${ARGPARSER_ADD_HELP}" == true \
-                        || "${ARGPARSER_ADD_USAGE}" == true \
-                        || "${ARGPARSER_ADD_VERSION}" == true ]]
-                    then
-                        resolved_lines+=(
-                            "${include_char}${include_char}${arg_groups[i]}"
-                        )
-                    else
-                        resolved_lines+=("${include_char}${arg_groups[i]}")
-                    fi
-                done
-            elif [[ "${include_directive}" == "Header" ]]; then
-                # Add the usage, description, and remark include
-                # directives, separated by blank lines.
-                resolved_lines+=(
-                    "${include_char}Usage"
-                    ""
-                    "${include_char}Description"
-                    ""
-                    "${include_char}Remark"
-                )
-            elif [[ "${include_directive}" == "Help" ]]; then
-                # Replace the include directive with the actual name of
-                # the help option group.
-                if [[ "${add_heading}" == true ]]; then
+            # Add the include directives for each argument group.
+            # Terminate all but the last by a blank line.  If the last
+            # group is the help options group, double the include
+            # character to indicate that the heading shall be
+            # suppressed.
+            for i in "${!arg_groups[@]}"; do
+                if (( i < "${#arg_groups[@]}" - 1 )); then
                     resolved_lines+=(
-                        "${include_char}${ARGPARSER_HELP_ARG_GROUP}"
+                        "${include_char}${arg_groups[i]}"
+                        ""
+                    )
+                elif [[ "${ARGPARSER_ADD_HELP}" == true \
+                    || "${ARGPARSER_ADD_USAGE}" == true \
+                    || "${ARGPARSER_ADD_VERSION}" == true ]]
+                then
+                    resolved_lines+=(
+                        "${include_char}${include_char}${arg_groups[i]}"
                     )
                 else
-                    resolved_lines+=(
-                        "${include_char}${include_char}${ARGPARSER_HELP_ARG_GROUP}"
-                    )
+                    resolved_lines+=("${include_char}${arg_groups[i]}")
                 fi
+            done
+        elif [[ "${include_directive}" == "Header" ]]; then
+            # Add the usage, description, and remark include directives,
+            # separated by blank lines.
+            resolved_lines+=(
+                "${include_char}Usage"
+                ""
+                "${include_char}Description"
+                ""
+                "${include_char}Remark"
+            )
+        elif [[ "${include_directive}" == "Help" ]]; then
+            # Replace the include directive with the actual name of the
+            # help option group.
+            if [[ "${add_heading}" == true ]]; then
+                resolved_lines+=(
+                    "${include_char}${ARGPARSER_HELP_ARG_GROUP}"
+                )
             else
-                # Add the unmodified line.
-                resolved_lines+=("${line}")
+                resolved_lines+=(
+                    "${include_char}${include_char}${ARGPARSER_HELP_ARG_GROUP}"
+                )
             fi
         else
-            if [[ "${include_directive}" == "All" ]]; then
-                # Add the usage include directive.
-                resolved_lines+=("${include_char}Usage")
-            else
-                # Add the unmodified line.
-                resolved_lines+=("${line}")
-            fi
+            # Add the unmodified line.
+            resolved_lines+=("${line}")
         fi
     done
 
     # For each resolved line, print the text and replace the include
-    # directives by the respective part from the help or usage message.
+    # directives by the respective part from the help message.
     # Possibly, skip comments.
     line_type="text"
-    message=""
     skip_blank_line=false
+    help_message=""
     for line in "${resolved_lines[@]}"; do
         # Set ${line_type} to "include directive" if the line contains
         # an include directive, to "comment" if the line is commented
-        # and ${keep_comments} is "false", and to "text" if it is not
-        # empty (but not commented).  Thus, empty lines following
-        # comments still have ${line_type} set to "comment".  For
-        # include directives, add the requested groups from the help or
-        # usage message.  Only add the remark if keyword arguments are
-        # given.
+        # and ${ARGPARSER_HELP_FILE_KEEP_COMMENTS} is "false", and to
+        # "text" if it is not empty (but not commented).  Thus, empty
+        # lines following comments still have ${line_type} set to
+        # "comment".  For include directives, add the requested groups
+        # from the help message.  Only add the remark if keyword
+        # arguments are given.
         if [[ "${line::1}" == "${include_char}" ]]; then
             line_type="include directive"
 
@@ -9126,92 +9088,74 @@ function argparser_print_help_or_usage_message() {
                 include_directive="${line:1}"
             fi
 
-            if [[ "${help_type}" == "help" ]]; then
-                if [[ "${include_directive}" == "Description" ]]; then
-                    # Add the description.
-                    if [[ -n "${help_message_blocks["Description"]}" ]]; then
-                        message+="${help_message_blocks["Description"]}"
-                    else
-                        skip_blank_line=true
-                    fi
-                elif [[ "${include_directive}" == "Remark" ]]; then
-                    # Add the remark.
-                    if (( keyword_args_count > 0 )); then
-                        message+="${help_message_blocks["Remark"]}"
-                    else
-                        skip_blank_line=true
-                    fi
-                elif [[ "${include_directive}" == "Usage" ]]; then
-                    # Add the usage.
-                    message+="${help_message_blocks["Usage"]}"
-                elif argparser_in_array "${include_directive}" \
-                    "${arg_groups[@]}"
-                then
-                    # Add the argument group, possibly removing the
-                    # heading.
-                    block="${help_message_blocks["${include_directive}"]}"
-                    if [[ "${add_heading}" == false ]]; then
-                        if [[ -n "${styles["frame"]}" ]]; then
-                            # A frame is used, where the first line
-                            # contains the heading on the frame.
-                            # Replace all characters (which are the
-                            # frame's horizontal line and the heading)
-                            # between the first and last character in
-                            # the uncolorized copy of the line (which
-                            # are the frame corners) by the second
-                            # uncolorized character (which is part of
-                            # the horizontal line, just before the
-                            # heading starts).  The number of characters
-                            # to replace equals the length of the
-                            # uncolorized line minus the two corner
-                            # characters. 
-                            heading="${block%%$'\n'*}"
-                            block="${block#"${heading}"$'\n'}"
-                            argparser_uncolorize uncolorized_heading \
-                                "${heading}"
-                            frame_char="${uncolorized_heading:1:1}"
-                            printf -v frame '%*s' \
-                                "$(( "${#uncolorized_heading}" - 2 ))" ""
-                            frame="${frame// /"${frame_char}"}"
-                            frame="${heading//"${frame_char}"*"${frame_char}"/"${frame}"}"
-                            block="${frame}"$'\n'"${block}"
-                        else
-                            # No frame is used, so simply remove the
-                            # first line, which contains the heading.
-                            block="${block#+([^$'\n'])$'\n'}"
-                        fi
-                    fi
-                    message+="${block}"
+            if [[ "${include_directive}" == "Description" ]]; then
+                # Add the description.
+                if [[ -n "${help_message_blocks["Description"]}" ]]; then
+                    help_message+="${help_message_blocks["Description"]}"
                 else
-                    # Output an error message for the unrecognized and
-                    # likely incorrect include directive.
-                    error_message="Error: The include directive \"\$1\" could "
-                    error_message+="not be recognized."
-
-                    argparser_translate "Error include directive" \
-                        "${error_message}" "${include_directive}"
-                    error_message="${translation}"
-                    error_messages+=("${error_message}")
+                    skip_blank_line=true
                 fi
+            elif [[ "${include_directive}" == "Remark" ]]; then
+                # Add the remark.
+                if (( keyword_args_count > 0 )); then
+                    help_message+="${help_message_blocks["Remark"]}"
+                else
+                    skip_blank_line=true
+                fi
+            elif [[ "${include_directive}" == "Usage" ]]; then
+                # Add the usage.
+                help_message+="${help_message_blocks["Usage"]}"
+            elif argparser_in_array "${include_directive}" "${arg_groups[@]}"
+            then
+                # Add the argument group, possibly removing the heading.
+                block="${help_message_blocks["${include_directive}"]}"
+                if [[ "${add_heading}" == false ]]; then
+                    if [[ -n "${styles["frame"]}" ]]; then
+                        # A frame is used, where the first line contains
+                        # the heading on the frame.  Replace all
+                        # characters (which are the frame's horizontal
+                        # line and the heading) between the first and
+                        # last character in the uncolorized copy of the
+                        # line (which are the frame corners) by the
+                        # second uncolorized character (which is part of
+                        # the horizontal line, just before the heading
+                        # starts).  The number of characters to replace
+                        # equals the length of the uncolorized line
+                        # minus the two corner characters.
+                        heading="${block%%$'\n'*}"
+                        block="${block#"${heading}"$'\n'}"
+                        argparser_uncolorize uncolorized_heading "${heading}"
+                        frame_char="${uncolorized_heading:1:1}"
+                        printf -v frame '%*s' \
+                            "$(( "${#uncolorized_heading}" - 2 ))" ""
+                        frame="${frame// /"${frame_char}"}"
+                        frame="${heading//"${frame_char}"*"${frame_char}"/"${frame}"}"
+                        block="${frame}"$'\n'"${block}"
+                    else
+                        # No frame is used, so simply remove the first
+                        # line, which contains the heading.
+                        block="${block#+([^$'\n'])$'\n'}"
+                    fi
+                fi
+                help_message+="${block}"
             else
-                if [[ "${include_directive}" == "Usage" ]]; then
-                    # Add the usage.
-                    message+="${usage_message_blocks["Usage"]}"
-                else
-                    # Output an error message for the unrecognized and
-                    # likely incorrect include directive.
-                    error_message="Error: The include directive \"\$1\" could "
-                    error_message+="not be recognized."
+                # Output an error message for the unrecognized and
+                # likely incorrect include directive.
+                error_message="Error: The include directive \"\$1\" could not "
+                error_message+="be recognized."
 
-                    argparser_translate "Error include directive" \
-                        "${error_message}" "${include_directive}"
-                    error_message="${translation}"
-                    error_messages+=("${error_message}")
-                fi
+                argparser_translate "Error include directive" \
+                    "${error_message}" "${include_directive}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
             fi
-        elif [[ "${line::1}" == \# && "${keep_comments}" == false ]]; then
+        elif [[ "${line::1}" == \# \
+            && "${ARGPARSER_HELP_FILE_KEEP_COMMENTS}" == false ]]
+        then
             line_type="comment"
-        elif [[ -n "${line}" || "${keep_comments}" == true ]]; then
+        elif [[ -n "${line}" \
+            || "${ARGPARSER_HELP_FILE_KEEP_COMMENTS}" == true ]]
+        then
             line_type="text"
         fi
 
@@ -9220,13 +9164,12 @@ function argparser_print_help_or_usage_message() {
         # for an empty group).  Else, if ${line_type} has been set to
         # "text", print the current line.  If it is set to
         # "include_directive", reset it to "text" to (possibly) print
-        # the next line, and only not the current "<ArgumentGroup>"
+        # the next line, and only not the current include directive
         # line.
         if [[ "${skip_blank_line}" == true ]]; then
             skip_blank_line=false
         elif [[ "${line_type}" == "text" ]]; then
-            message+="${line}"
-            message+=$'\n'
+            help_message+="${line}"$'\n'
         elif [[ "${line_type}" == "include directive" ]]; then
             line_type="text"
         fi
@@ -9235,11 +9178,146 @@ function argparser_print_help_or_usage_message() {
     # Sort, filter, colorize, and print all error messages.
     argparser_print_error_message true false "${error_messages[@]}"
 
-    # Print the help or usage message, then exit, if requested.
-    printf '%s' "${message}"
+    # Print the help message, then exit, if requested.
+    printf '%s' "${help_message}"
 
     if [[ "${exit}" == true ]]; then
-        exit "${exit_code}"
+        exit "${ARGPARSER_HELP_EXIT_CODE}"
+    fi
+}
+
+function argparser_print_usage_message() {
+    # Print a usage message.  If a file with such is given, print the
+    # file, else, create a message for the script's arguments.  For
+    # files, possibly skip commented lines (i.e., lines starting with
+    # "#") and their trailing blank lines.  Replace lines starting with
+    # ${ARGPARSER_USAGE_FILE_INCLUDE_CHAR} by the auto-generated usage
+    # message.
+    #
+    # Arguments:
+    # - $1: whether to exit after printing
+    #
+    # Environment:
+    # - ARGPARSER_USAGE_EXIT_CODE (read-only)
+    # - ARGPARSER_USAGE_FILE (read-only)
+    # - ARGPARSER_USAGE_FILE_INCLUDE_CHAR (read-only)
+    # - ARGPARSER_USAGE_FILE_KEEP_COMMENTS (read-only)
+
+    # Define the local variables.
+    local error_message
+    local -a error_messages
+    local exit
+    local include_directive
+    local line
+    local -a lines
+    local line_type
+    local -a resolved_lines
+    local skip_blank_line
+    local translation
+    local usage_message
+    local -A usage_message_blocks
+
+    # Read the argument.
+    exit="$1"
+
+    # Create the usage message groups, which are saved in an associative
+    # array using the include directives as keys.
+    argparser_create_usage_message
+
+    # Read the usage file, if given, or set the lines to just the
+    # include directive "All", meaning to create the entire usage
+    # message.
+    if [[ -n "${ARGPARSER_USAGE_FILE}" ]]; then
+        mapfile -t lines < "${ARGPARSER_USAGE_FILE}"
+    else
+        lines=("${ARGPARSER_USAGE_FILE_INCLUDE_CHAR}All")
+    fi
+
+    # Resolve the summarizing include directives by replacing them with
+    # the individual include directives and separating blank lines.
+    resolved_lines=( )
+    for line in "${lines[@]}"; do
+        if [[ "${line::1}" != "${ARGPARSER_USAGE_FILE_INCLUDE_CHAR}" ]]; then
+            resolved_lines+=("${line}")
+            continue
+        fi
+
+        include_directive="${line:1}"
+        if [[ "${include_directive}" == "All" ]]; then
+            # Add the usage include directive.
+            resolved_lines+=("${ARGPARSER_USAGE_FILE_INCLUDE_CHAR}Usage")
+        else
+            # Add the unmodified line.
+            resolved_lines+=("${line}")
+        fi
+    done
+
+    # For each resolved line, print the text and replace the include
+    # directives by the respective part from the usage message.
+    # Possibly, skip comments.
+    line_type="text"
+    skip_blank_line=false
+    usage_message=""
+    for line in "${resolved_lines[@]}"; do
+        # Set ${line_type} to "include directive" if the line contains
+        # an include directive, to "comment" if the line is commented
+        # and ${ARGPARSER_USAGE_FILE_KEEP_COMMENTS} is "false", and to
+        # "text" if it is not empty (but not commented).  Thus, empty
+        # lines following comments still have ${line_type} set to
+        # "comment".  For include directives, add the requested groups
+        # from the usage message.
+        if [[ "${line::1}" == "${ARGPARSER_USAGE_FILE_INCLUDE_CHAR}" ]]; then
+            line_type="include directive"
+            include_directive="${line:1}"
+
+            if [[ "${include_directive}" == "Usage" ]]; then
+                # Add the usage.
+                usage_message+="${usage_message_blocks["Usage"]}"
+            else
+                # Output an error message for the unrecognized and
+                # likely incorrect include directive.
+                error_message="Error: The include directive \"\$1\" could not "
+                error_message+="be recognized."
+
+                argparser_translate "Error include directive" \
+                    "${error_message}" "${include_directive}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            fi
+        elif [[ "${line::1}" == \# \
+            && "${ARGPARSER_USAGE_FILE_KEEP_COMMENTS}" == false ]]
+        then
+            line_type="comment"
+        elif [[ -n "${line}" \
+            || "${ARGPARSER_USAGE_FILE_KEEP_COMMENTS}" == true ]]
+        then
+            line_type="text"
+        fi
+
+        # If ${skip_blank_line} is set to "true", skip the current line,
+        # which is empty by definition (it follows an include directive
+        # for an empty group).  Else, if ${line_type} has been set to
+        # "text", print the current line.  If it is set to
+        # "include_directive", reset it to "text" to (possibly) print
+        # the next line, and only not the current include directive
+        # line.
+        if [[ "${skip_blank_line}" == true ]]; then
+            skip_blank_line=false
+        elif [[ "${line_type}" == "text" ]]; then
+            usage_message+="${line}"$'\n'
+        elif [[ "${line_type}" == "include directive" ]]; then
+            line_type="text"
+        fi
+    done
+
+    # Sort, filter, colorize, and print all error messages.
+    argparser_print_error_message true false "${error_messages[@]}"
+
+    # Print the usage message, then exit, if requested.
+    printf '%s' "${usage_message}"
+
+    if [[ "${exit}" == true ]]; then
+        exit "${ARGPARSER_USAGE_EXIT_CODE}"
     fi
 }
 
@@ -9250,7 +9328,7 @@ function argparser_print_version_message() {
     # - $1: whether to exit after printing
     #
     # Nonlocals:
-    # - styles: the associative array containing the styles
+    # - styles: the associative array containing the styles (read-only)
     #
     # Environment:
     # - ARGPARSER_SCRIPT_NAME (read-only)
@@ -9287,7 +9365,7 @@ function argparser_print_error_message() {
     # - $@: the error messages
     #
     # Nonlocals:
-    # - styles: the associative array containing the styles
+    # - styles: the associative array containing the styles (read-only)
     #
     # Environment:
     # - ARGPARSER_ERROR_EXIT_CODE (read-only)
@@ -9362,7 +9440,7 @@ function argparser_print_warning_message() {
     # - $@: the warning messages
     #
     # Nonlocals:
-    # - styles: the associative array containing the styles
+    # - styles: the associative array containing the styles (read-only)
     #
     # Environment:
     # - ARGPARSER_SCRIPT_NAME (read-only)
@@ -9930,8 +10008,9 @@ function argparser_main() {
         unset -f argparser_parse_positional_args
         unset -f argparser_parse_short_option
         unset -f argparser_print_error_message
-        unset -f argparser_print_help_or_usage_message
+        unset -f argparser_print_help_message
         unset -f argparser_print_logo
+        unset -f argparser_print_usage_message
         unset -f argparser_print_version_message
         unset -f argparser_print_warning_message
         unset -f argparser_quicksort
