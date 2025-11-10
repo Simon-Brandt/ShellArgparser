@@ -2903,10 +2903,11 @@ function argparser_read_styles() {
         fi
     done
 
-    # Check if styles only have values supported by argparser_colorize.
+    # Check if the styles only have values supported by
+    # argparser_colorize.
     for name in "${!styles[@]}"; do
         style="${styles[${name}]}"
-        if [[ "${name}" == "frame" ]]; then
+        if [[ "${name}" == *"_frame" ]]; then
             if ! argparser_check_styles "colors, frame styles" "${style}"; then
                 error_message="Error: The style \"\$1\" is set to \"\$2\", "
                 error_message+="but the values must lie in {black, red, "
@@ -8107,19 +8108,19 @@ function argparser_create_help_message() {
         # empty line used as argument group delimiter.
         (( i++ ))
 
-        # If a frame style is given, right-pad the lines of the argument
-        # group's block, such that all blocks have the same width.
-        # Then, draw a frame around the block, containing the colorized
-        # argument group name as heading.  Otherwise, use the heading as
-        # separate line, and strip the whitespace from lines where the
-        # third column is empty and the separating whitespace thus
-        # trailing instead of in-between.  Finally, join the lines into
-        # a single string.
-        if [[ -n "${styles["frame"]}" ]]; then
+        # If a help frame style is given, right-pad the lines of the
+        # argument group's block, such that all blocks have the same
+        # width.  Then, draw a frame around the block, containing the
+        # colorized argument group name as heading.  Otherwise, use the
+        # heading as separate line, and strip the whitespace from lines
+        # where the third column is empty and the separating whitespace
+        # thus trailing instead of in-between.  Finally, join the lines
+        # into a single string.
+        if [[ -n "${styles["help_frame"]}" ]]; then
             argparser_colorize "${styles["argument_group_names"]}" 1 heading \
                 " ${arg_group} "
             argparser_pad "right" "${pad_width}" "${help_message[@]}"
-            argparser_draw_frame "${styles["frame"]}" 1 "array" \
+            argparser_draw_frame "${styles["help_frame"]}" 1 "array" \
                 "${heading}" "${padded_array[@]}"
             help_message=("${framed_array[@]}")
         else
@@ -9110,7 +9111,7 @@ function argparser_print_help_message() {
                 # Add the argument group, possibly removing the heading.
                 block="${help_message_blocks["${include_directive}"]}"
                 if [[ "${add_heading}" == false ]]; then
-                    if [[ -n "${styles["frame"]}" ]]; then
+                    if [[ -n "${styles["help_frame"]}" ]]; then
                         # A frame is used, where the first line contains
                         # the heading on the frame.  Replace all
                         # characters (which are the frame's horizontal
@@ -9374,11 +9375,14 @@ function argparser_print_error_messages() {
 
     # Define the local variables.
     local caption
+    local -a colorized_array
     local exit
     local error_message
     local -a error_messages
     local filter
     local -a filtered_array
+    local -a framed_array
+    local -a padded_array
     local script_name
     local -a sorted_array
 
@@ -9410,21 +9414,36 @@ function argparser_print_error_messages() {
         error_messages=("${filtered_array[@]}")
     fi
 
-    # Colorize and print the error messages.
-    for error_message in "${error_messages[@]}"; do
-        # Prepend the script name, if given.
-        if [[ -n "${ARGPARSER_SCRIPT_NAME}" ]]; then
-            argparser_colorize "${styles["script_name"]}" 2 script_name \
-                "${ARGPARSER_SCRIPT_NAME}:"
+    # Colorize the script name and the error messages.  If an error
+    # frame style is given, right-pad the messages and draw a frame
+    # around the block, containing the colorized error caption as
+    # heading, then join the lines into a single string.  Otherwise,
+    # print each error message with script name and heading as separate
+    # lines.
+    argparser_colorize "${styles["script_name"]}" 2 script_name \
+        "${ARGPARSER_SCRIPT_NAME}:"
+    argparser_colorize "${styles["error_text"]}" 2 "array" \
+        "${error_messages[@]#Error: }"
+    error_messages=("${colorized_array[@]}")
+
+    if [[ -n "${styles["error_frame"]}" ]]; then
+        if (( "${#error_messages[@]}" == 1 )); then
+            caption="Error"
+        else
+            caption="Errors"
         fi
 
-        # Print the actual error message.
+        argparser_colorize "${styles["error_caption"]}" 2 caption \
+            " ${caption} "
+        argparser_pad "right" "auto" "${error_messages[@]/#/"${script_name} "}"
+        argparser_draw_frame "${styles["error_frame"]}" 2 "array" \
+            "${caption}" "${padded_array[@]}"
+        printf '%s\n' "${framed_array[@]}"
+    else
         argparser_colorize "${styles["error_caption"]}" 2 caption "Error:"
-        argparser_colorize "${styles["error_text"]}" 2 error_message \
-            "${error_message#Error: }"
-        printf '%s %s %s\n' "${script_name}" "${caption}" "${error_message}" \
-            >&2
-    done
+        error_messages=("${error_messages[@]/#/"${script_name} ${caption}" }")
+        printf '%s\n' "${error_messages[@]}"
+    fi >&2
 
     # Exit, if requested.
     if [[ "${exit}" == true ]]; then
@@ -9448,8 +9467,11 @@ function argparser_print_warning_messages() {
 
     # Define the local variables.
     local caption
+    local -a colorized_array
     local filter
     local -a filtered_array
+    local -a framed_array
+    local -a padded_array
     local script_name
     local -a sorted_array
     local warning_message
@@ -9477,21 +9499,39 @@ function argparser_print_warning_messages() {
         warning_messages=("${filtered_array[@]}")
     fi
 
-    # Colorize and print the warning messages.
-    for warning_message in "${warning_messages[@]}"; do
-        # Prepend the script name, if given.
-        if [[ -n "${ARGPARSER_SCRIPT_NAME}" ]]; then
-            argparser_colorize "${styles["script_name"]}" 2 script_name \
-                "${ARGPARSER_SCRIPT_NAME}:"
+    # Colorize the script name and the warning messages.  If a warning
+    # frame style is given, right-pad the messages and draw a frame
+    # around the block, containing the colorized warning caption as
+    # heading, then join the lines into a single string.  Otherwise,
+    # print each warning message with script name and heading as
+    # separate lines.
+    argparser_colorize "${styles["script_name"]}" 2 script_name \
+        "${ARGPARSER_SCRIPT_NAME}:"
+    argparser_colorize "${styles["warning_text"]}" 2 "array" \
+        "${warning_messages[@]#Warning: }"
+    warning_messages=("${colorized_array[@]}")
+
+    if [[ -n "${styles["warning_frame"]}" ]]; then
+        if (( "${#warning_messages[@]}" == 1 )); then
+            caption="Warning"
+        else
+            caption="Warnings"
         fi
 
-        # Print the actual warning message.
+        argparser_colorize "${styles["warning_caption"]}" 2 caption \
+            " ${caption} "
+        argparser_pad "right" "auto" \
+            "${warning_messages[@]/#/"${script_name} "}"
+        argparser_draw_frame "${styles["warning_frame"]}" 2 "array" \
+            "${caption}" "${padded_array[@]}"
+        printf '%s\n' "${framed_array[@]}"
+    else
         argparser_colorize "${styles["warning_caption"]}" 2 caption "Warning:"
-        argparser_colorize "${styles["warning_text"]}" 2 warning_message \
-            "${warning_message#Warning: }"
-        printf '%s %s %s\n' "${script_name}" "${caption}" \
-            "${warning_message}" >&2
-    done
+        warning_messages=(
+            "${warning_messages[@]/#/"${script_name} ${caption} "}"
+        )
+        printf '%s\n' "${warning_messages[@]}"
+    fi >&2
 }
 
 function argparser_print_logo() {
@@ -9772,8 +9812,9 @@ function argparser_main() {
         ["deprecation_note"]="red,bold"
         ["description_text"]="italic"
         ["error_caption"]="red,bold,reverse"
+        ["error_frame"]=""
         ["error_text"]="red"
-        ["frame"]=""
+        ["help_frame"]=""
         ["help_text"]="normal"
         ["long_options"]="magenta,bold"
         ["remark_text"]="italic"
@@ -9783,6 +9824,7 @@ function argparser_main() {
         ["value_names"]="blue"
         ["version_string"]="normal"
         ["warning_caption"]="red,bold"
+        ["warning_frame"]=""
         ["warning_text"]="red"
     )
 
