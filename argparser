@@ -1371,6 +1371,9 @@ function argparser_draw_frame() {
         elif [[ "${line_width}" == "thick" ]]; then
             frame_chars["horizontal"]=$'\u254D'
             frame_chars["vertical"]=$'\u254F'
+        elif [[ "${line_width}" == "double" ]]; then
+            frame_chars["horizontal"]=$'\u2550'
+            frame_chars["vertical"]=$'\u2551'
         fi
     elif [[ "${line_style}" == "triple-dashed" ]]; then
         if [[ "${line_width}" == "thin" ]]; then
@@ -1379,6 +1382,9 @@ function argparser_draw_frame() {
         elif [[ "${line_width}" == "thick" ]]; then
             frame_chars["horizontal"]=$'\u2505'
             frame_chars["vertical"]=$'\u2507'
+        elif [[ "${line_width}" == "double" ]]; then
+            frame_chars["horizontal"]=$'\u2550'
+            frame_chars["vertical"]=$'\u2551'
         fi
     elif [[ "${line_style}" == "quadruple-dashed" ]]; then
         if [[ "${line_width}" == "thin" ]]; then
@@ -1387,6 +1393,9 @@ function argparser_draw_frame() {
         elif [[ "${line_width}" == "thick" ]]; then
             frame_chars["horizontal"]=$'\u2509'
             frame_chars["vertical"]=$'\u250B'
+        elif [[ "${line_width}" == "double" ]]; then
+            frame_chars["horizontal"]=$'\u2550'
+            frame_chars["vertical"]=$'\u2551'
         fi
     fi
 
