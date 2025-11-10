@@ -9385,6 +9385,7 @@ function argparser_print_error_messages() {
     local -a padded_array
     local script_name
     local -a sorted_array
+    local translation
 
     # Read the arguments.
     filter="$1"
@@ -9420,17 +9421,19 @@ function argparser_print_error_messages() {
     # heading, then join the lines into a single string.  Otherwise,
     # print each error message with script name and heading as separate
     # lines.
+    argparser_translate "Error" "Error"
+    caption="${translation}"
+
     argparser_colorize "${styles["script_name"]}" 2 script_name \
         "${ARGPARSER_SCRIPT_NAME}:"
     argparser_colorize "${styles["error_text"]}" 2 "array" \
-        "${error_messages[@]#Error: }"
+        "${error_messages[@]#"${caption}: "}"
     error_messages=("${colorized_array[@]}")
 
     if [[ -n "${styles["error_frame"]}" ]]; then
-        if (( "${#error_messages[@]}" == 1 )); then
-            caption="Error"
-        else
-            caption="Errors"
+        if (( "${#error_messages[@]}" > 1 )); then
+            argparser_translate "Errors" "Errors"
+            caption="${translation}"
         fi
 
         argparser_colorize "${styles["error_caption"]}" 2 caption \
@@ -9440,7 +9443,7 @@ function argparser_print_error_messages() {
             "${caption}" "${padded_array[@]}"
         printf '%s\n' "${framed_array[@]}"
     else
-        argparser_colorize "${styles["error_caption"]}" 2 caption "Error:"
+        argparser_colorize "${styles["error_caption"]}" 2 caption "${caption}:"
         error_messages=("${error_messages[@]/#/"${script_name} ${caption}" }")
         printf '%s\n' "${error_messages[@]}"
     fi >&2
@@ -9474,6 +9477,7 @@ function argparser_print_warning_messages() {
     local -a padded_array
     local script_name
     local -a sorted_array
+    local translation
     local warning_message
     local -a warning_messages
 
@@ -9505,17 +9509,19 @@ function argparser_print_warning_messages() {
     # heading, then join the lines into a single string.  Otherwise,
     # print each warning message with script name and heading as
     # separate lines.
+    argparser_translate "Warning" "Warning"
+    caption="${translation}"
+
     argparser_colorize "${styles["script_name"]}" 2 script_name \
         "${ARGPARSER_SCRIPT_NAME}:"
     argparser_colorize "${styles["warning_text"]}" 2 "array" \
-        "${warning_messages[@]#Warning: }"
+        "${warning_messages[@]#"${caption}: "}"
     warning_messages=("${colorized_array[@]}")
 
     if [[ -n "${styles["warning_frame"]}" ]]; then
-        if (( "${#warning_messages[@]}" == 1 )); then
-            caption="Warning"
-        else
-            caption="Warnings"
+        if (( "${#warning_messages[@]}" > 1 )); then
+            argparser_translate "Warnings" "Warnings"
+            caption="${translation}"
         fi
 
         argparser_colorize "${styles["warning_caption"]}" 2 caption \
@@ -9526,7 +9532,8 @@ function argparser_print_warning_messages() {
             "${caption}" "${padded_array[@]}"
         printf '%s\n' "${framed_array[@]}"
     else
-        argparser_colorize "${styles["warning_caption"]}" 2 caption "Warning:"
+        argparser_colorize "${styles["warning_caption"]}" 2 caption \
+            "${caption}:"
         warning_messages=(
             "${warning_messages[@]/#/"${script_name} ${caption} "}"
         )

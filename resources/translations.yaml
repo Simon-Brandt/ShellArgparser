@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-07
+# Last Modification: 2025-11-10
 # License: Public Domain
 
 # 1.    Define the general translations.
@@ -21,9 +21,17 @@ Error:
   en: Error
   de: Fehler
 
+Errors:
+  en: Errors
+  de: Fehler
+
 Warning:
   en: Warning
   de: Warnung
+
+Warnings:
+  en: Warnings
+  de: Warnungen
 ...
 
 # 2.    Define the translations for help messages.
