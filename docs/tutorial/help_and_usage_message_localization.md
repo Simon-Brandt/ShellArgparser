@@ -124,7 +124,7 @@ Finally, we need a translation file (here [`translations.yaml`](../../resources/
 
 <summary>Beginning of <code>translations.yaml</code></summary>
 
-<!-- <include command="sed '1,5d;84q' ../resources/translations.yaml" lang="yaml"> -->
+<!-- <include command="sed '1,5d;35q' ../resources/translations.yaml" lang="yaml"> -->
 ```yaml
 # 1.    Define the general translations.
 ---
@@ -144,66 +144,17 @@ Error:
   en: Error
   de: Fehler
 
+Errors:
+  en: Errors
+  de: Fehler
+
 Warning:
   en: Warning
   de: Warnung
-...
 
-# 2.    Define the translations for help messages.
-# 2.1.  Define the translations for the usage line (part of the header).
----
-Usage:
-  en: Usage
-  de: Aufruf
-
-Arguments:
-  en: ARGUMENTS
-  de: ARGUMENTE
-
-Options:
-  en: OPTIONS
-  de: OPTIONEN
-...
-
-# 2.2.  Define the translations for the remark (part of the header).
----
-Mandatory arguments:
-  en: >
-    Mandatory arguments to long options are mandatory for short options too.
-  de: >
-    Erforderliche Argumente für lange Optionen sind auch für kurze
-    erforderlich.
-...
-
-# 2.3.  Define the translations for the help column.
----
-Deprecated:
-  en: DEPRECATED
-  de: VERALTET
-
-Default:
-  en: default
-  de: Vorgabe
-
---help:
-  en: display this help and exit
-  de: diese Hilfe anzeigen und beenden
-
---usage:
-  en: display the usage and exit
-  de: den Aufruf anzeigen und beenden
-
---version:
-  en: display the version and exit
-  de: die Version anzeigen und beenden
-
-false:
-  en: false
-  de: falsch
-
-true:
-  en: true
-  de: wahr
+Warnings:
+  en: Warnings
+  de: Warnungen
 ...
 ```
 <!-- </include> -->

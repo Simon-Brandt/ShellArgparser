@@ -25,7 +25,7 @@ The following table shall give a brief overview over the expected data types and
 Note that [`ARGPARSER_ARGS`](environment_variables.md#9414-argparser_args) is for internal usage only and thus locally declared. It is *not* part of the Argparser's command line, but listed here for reference, like when you erroneously have it set in a configuration file. Its default value is seen as implementation detail and thus shown as *"None"* here.
 
 <!-- <table caption="Overview over the Argparser environment variables"> -->
-*Tab. 9: Overview over the Argparser environment variables.*
+*Tab. 10: Overview over the Argparser environment variables.*
 
 | Variable name                                                                      | Type[^14]  | Default value[^15][^16]  |
 | ---------------------------------------------------------------------------------- | ---------- | ------------------------ |

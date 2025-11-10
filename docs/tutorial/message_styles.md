@@ -26,53 +26,31 @@ The colorization and stylization of the messages works by using [Select Graphic 
 
 To adhere to the informal [no-color standard](https://no-color.org/ "no-color.org"), the Argparser supports the `NO_COLOR` environment variable. If given, and not set to the empty string, you can globally disable ANSI colorization in any software supporting the standard, including the Argparser. You can then selectively re-enable colorization for the Argparser using `ARGPARSER_USE_STYLES={always,file,tty}`. Thereby, if `ARGPARSER_USE_STYLES` or the (deprecated) [`ARGPARSER_USE_STYLES_IN_FILES`](../reference/environment_variables/environment_variables.md#9459-argparser_use_styles_in_files) are given in the environment, including their occurrence on the command line or in a configuration file, they unconditionally override `NO_COLOR`, in line with the standard. This allows instructing no software to use colors, except of the Argparser, if wanted.
 
+The available colors and styles offer a detailled way of customizing the look of messages. Besides being possible to colorize and stylize the actual text of the messages, error and warning messages, as well as the argument groups in help messages, can be surrounded by frames, serving as visual grouping to blocks. These frame styles use characters from the [Unicode Box Drawing block](https://en.wikipedia.org/wiki/Box_Drawing "wikipedia.org &rightarrow; Box Drawing"). For maximum compatibility with output devices, the Argparser currently does not use the frames by default, you have to opt into them by using an `ARGPARSER_STYLE_FILE`.
+
 The following colors and styles are available (with the actual appearance depending on the output device):
 
 <!-- <table caption="Available colors and styles"> -->
 *Tab. 2: Available colors and styles.*
 
-| Colors                                  | Styles        |
-| --------------------------------------- | ------------- |
-| $\small\textsf{\color{black}black}$     | `normal`      |
-| $\small\textsf{\color{red}red}$         | `bold`        |
-| $\small\textsf{\color{green}green}$     | `faint`       |
-| $\small\textsf{\color{orange}yellow}$   | `italic`      |
-| $\small\textsf{\color{blue}blue}$       | `underline`   |
-| $\small\textsf{\color{magenta}magenta}$ | `double`      |
-| $\small\textsf{\color{cyan}cyan}$       | `overline`    |
-| $\small\textsf{\color{lightgray}white}$ | `crossed-out` |
-|                                         | `blink`       |
-|                                         | `reverse`     |
+| Colors                                  | Text styles   | Frame styles       |
+| --------------------------------------- | ------------- | ------------------ |
+| $\small\textsf{\color{black}black}$     | `normal`      | `angular`          |
+| $\small\textsf{\color{red}red}$         | `bold`        | `rounded`          |
+| $\small\textsf{\color{green}green}$     | `faint`       | `double`           |
+| $\small\textsf{\color{orange}yellow}$   | `italic`      | `solid`            |
+| $\small\textsf{\color{blue}blue}$       | `underline`   | `double-dashed`    |
+| $\small\textsf{\color{magenta}magenta}$ | `double`      | `triple-dashed`    |
+| $\small\textsf{\color{cyan}cyan}$       | `overline`    | `quadruple-dashed` |
+| $\small\textsf{\color{lightgray}white}$ | `crossed-out` | `thin`             |
+|                                         | `blink`       | `thick`            |
+|                                         | `reverse`     | `double`           |
 
-Colors overwrite each other, whereas styles may be combined, like `"red,bold,reverse"` as default value for error message captions. Styles may be given in any order; for colors, the last one is effectively visible. Still, the escape codes are concatenated in their order of definition in the style setting.
+Colors overwrite each other, whereas styles may be combined, like `"red,bold,reverse"` as default value for error message captions, or `"red,rounded"` for error message frames in the template [`styles.cfg`](../../resources/styles.cfg). Text styles may be given in any order, while frame styles are only in part compatible (*e.g.*, there is no way to specify thick, rounded corners since Unicode lacks characters for them); for colors, the last one is effectively visible. Still, the escape codes are concatenated in their order of definition in the style setting.
 
 You can prefix color names with `bright_` to obtain the bright ANSI colors, and suffix them with `_fg` or `_bg` to use them as either a foreground or background color. Without suffix, the color is used as foreground color. Be wary, however, that not all terminals support bright or background colors and may use substitute colors or ignore the escape sequences. Thus, the Argparser does not, and will never, use these extensions by default, only the eight classic ANSI foreground colors.
 
-Currently, the default values, as given in the template [`styles.cfg`](../../resources/styles.cfg), are as follows:
-<!-- <include command="tail --lines=+6 ../resources/styles.cfg" lang="console"> -->
-```console
-$ tail --lines=+6 ../resources/styles.cfg
-argument_group_names = "cyan,bold"
-choice_values        = "yellow"
-default_text         = "italic"
-default_values       = "cyan,italic"
-deprecation_note     = "red,bold"
-description_text     = "italic"
-error_caption        = "red,bold,reverse"
-error_text           = "red"
-frame                = "cyan,rounded"
-help_text            = "normal"
-long_options         = "magenta,bold"
-remark_text          = "italic"
-script_name          = "bold"
-short_options        = "green,bold"
-usage_caption        = "bold"
-value_names          = "blue"
-version_string       = "normal"
-warning_caption      = "red,bold"
-warning_text         = "red"
-```
-<!-- </include> -->
+For the default values currently in use, refer to the [reference](../reference/colors_and_styles.md#92-colors-and-styles). You may also want to have a look at the template [`styles.cfg`](../../resources/styles.cfg), where frames are employed.
 
 [&#129092;&nbsp;5.9. Error and warning messages](error_and_warning_messages.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.11. Standalone usage&nbsp;&#129094;](standalone_usage.md)

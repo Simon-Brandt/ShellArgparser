@@ -28,7 +28,7 @@ When [`ARGPARSER_USE_STYLES`](environment_variables/environment_variables.md#945
 
 Both `ARGPARSER_USE_STYLES` and the (deprecated) [`ARGPARSER_USE_STYLES_IN_FILES`](environment_variables/environment_variables.md#9459-argparser_use_styles_in_files) allow, when set in the environment, on the command line, or in a configuration file, overriding the informal [no-color standard](https://no-color.org/ "no-color.org")'s `NO_COLOR` environment variable. If given, and not set to the empty string, the latter globally disables ANSI colorization in any software supporting the standard, including the Argparser. `ARGPARSER_USE_STYLES` and `ARGPARSER_USE_STYLES_IN_FILES` then disable `NO_COLOR`'s effect selectively for the Argparser, if desired, and turn the colors back on.
 
-A number of colors and styles is available. You don't need to remember the SGR codes, they're only internally used and given here for reference of what to expect from the keywords for the colors and styles. Further note that the actual RGB/Hex color values will depend on the output device.
+A number of colors and styles is available. You don't need to remember the SGR codes and Unicode codepoints/characters, they're only internally used and given here for reference of what to expect from the keywords for the colors and styles. Further note that the actual RGB/Hex color values will depend on the output device.
 
 <!-- <table caption="Available colors and their SGR codes"> -->
 *Tab. 7: Available colors and their SGR codes.*
@@ -44,8 +44,8 @@ A number of colors and styles is available. You don't need to remember the SGR c
 | $\small\textsf{\color{cyan}cyan}$       | `36`     |
 | $\small\textsf{\color{lightgray}white}$ | `37`     |
 
-<!-- <table caption="Available styles and their SGR codes"> -->
-*Tab. 8: Available styles and their SGR codes.*
+<!-- <table caption="Available text styles and their SGR codes"> -->
+*Tab. 8: Available text styles and their SGR codes.*
 
 | Style         | SGR code |
 | ------------- | -------- |
@@ -60,16 +60,18 @@ A number of colors and styles is available. You don't need to remember the SGR c
 | `blink`       | `5`      |
 | `reverse`     | `7`      |
 
-While colors overwrite each other, some styles can be combined. For instance, the default value for error message captions is `"red,bold,reverse"`, meaning to colorize the message in red and to format it in bold font, using reverse video. Other useful combinations may include `"faint"` and `"italic"` or `"bold"` and `"underline"`. The order of giving the colors and styles in the environment variables' values does only matter if multiple colors are given, when the last one "wins". Else, the colors and styles are simply composed (concatenated).
+<!-- <table caption="Available frame styles and their Unicode characters"> -->
+*Tab. 9: Available frame styles and their Unicode characters.*
+
+While colors overwrite each other, some styles can be combined. For instance, the default value for error message captions is `"red,bold,reverse"`, meaning to colorize the message in red and to format it in bold font, using reverse video. Regarding frame styles, `"red,rounded"` is used for error message frames in the template [`styles.cfg`](../../resources/styles.cfg), setting the frame to be red and to use rounded corners (along the default `thin` line width and `solid` line style). Other useful combinations for text styles may include `"faint"` and `"italic"` or `"bold"` and `"underline"`. The order of giving the colors and styles in the style file or the environment variables' values does only matter if multiple colors are given, when the last one "wins". Else, the colors and text styles are simply composed (concatenated), whereas frame styles are only in part compatible (*e.g.*, there are no thick, rounded corners since Unicode lacks characters for them, so thin, rounded corners are used, instead).
 
 There are a further 24 colors supported, *viz.*, bright and background colors (including bright background colors). By prefixing the color names with `bright_`, you obtain the bright ANSI colors from the 90&ndash;97 range. By suffixing them with `_bg`, you obtain the background colors from the 40&ndash;47 range, and by using both the `bright_` prefix and the `_bg` suffix, you obtain the background colors from the 100&ndash;107 range. The suffix `_fg` is also supported (both with and without `bright_` prefix) and yields the normal foreground colors, just as without specifying a suffix.
 
 Note that not all terminals support bright or background colors and may use substitute colors or ignore the escape sequences. Thus, the Argparser does not, and will never, use these extensions by default, only the eight classic ANSI foreground colors.
 
-Currently, the default values for the styles, and all used message keys, as given in the template [`styles.cfg`](../../resources/styles.cfg), are as follows:
-<!-- <include command="tail --lines=+6 ../resources/styles.cfg" lang="console"> -->
-```console
-$ tail --lines=+6 ../resources/styles.cfg
+Currently, the default values for the styles, and all used message keys (to be used in the `ARGPARSER_STYLE_FILE`), are as follows:
+
+```ini
 argument_group_names = "cyan,bold"
 choice_values        = "yellow"
 default_text         = "italic"
@@ -77,8 +79,9 @@ default_values       = "cyan,italic"
 deprecation_note     = "red,bold"
 description_text     = "italic"
 error_caption        = "red,bold,reverse"
+error_frame          = ""
 error_text           = "red"
-frame                = "cyan,rounded"
+help_frame           = ""
 help_text            = "normal"
 long_options         = "magenta,bold"
 remark_text          = "italic"
@@ -88,6 +91,7 @@ usage_caption        = "bold"
 value_names          = "blue"
 version_string       = "normal"
 warning_caption      = "red,bold"
+warning_frame        = ""
 warning_text         = "red"
 ```
 <!-- </include> -->
