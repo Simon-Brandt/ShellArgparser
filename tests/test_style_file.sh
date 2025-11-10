@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-04
+# Last Modification: 2025-11-10
 
 # Usage: Run this script with "bash test_style_file.sh".
 
@@ -30,6 +30,7 @@
 dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
 dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
 ARGPARSER_STYLE_FILE="${dir}/styles.cfg"
+ARGPARSER_MAX_WIDTH=75
 
 # Define the arguments.
 # shellcheck disable=SC2190  # Indexed, not associative array.
