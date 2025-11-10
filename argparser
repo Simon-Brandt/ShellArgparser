@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-07
+# Last Modification: 2025-11-10
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -6145,7 +6145,6 @@ function argparser_parse_args() {
     local given_arg
     local -a given_args
     local -a given_positional_args
-    local -A help_message_groups
     local i
     local is_help
     local is_logo
@@ -6162,7 +6161,6 @@ function argparser_parse_args() {
     local translated_error
     local translated_warning
     local translation
-    local -A usage_message_groups
     local value
     local values
     local warning_message
@@ -6793,7 +6791,7 @@ function argparser_create_help_message() {
     #   option names (read-only)
     # - all_value_names: the associative array holding the value names
     #   (read-only)
-    # - help_message_groups: the associative array holding the help
+    # - help_message_blocks: the associative array holding the help
     #   message's groups usable as include directive
     # - styles: the associative array containing the styles
     #
@@ -8066,7 +8064,7 @@ function argparser_create_help_message() {
     fi
 
     usage+=$'\n'
-    help_message_groups["Usage"]="${usage}"
+    help_message_blocks["Usage"]="${usage}"
 
     # Set the description.
     if [[ -n "${ARGPARSER_HELP_DESCRIPTION}" ]]; then
@@ -8078,7 +8076,7 @@ function argparser_create_help_message() {
     else
         description=""
     fi
-    help_message_groups["Description"]="${description}"
+    help_message_blocks["Description"]="${description}"
 
     # Set the remark.
     remark="Mandatory arguments to long options are mandatory for short "
@@ -8088,7 +8086,7 @@ function argparser_create_help_message() {
     argparser_fold "${translation}" "${ARGPARSER_MAX_WIDTH}" 0
     argparser_colorize "${styles["remark_text"]}" 1 remark "${joined_words}"
     remark+=$'\n'
-    help_message_groups["Remark"]="${remark}"
+    help_message_blocks["Remark"]="${remark}"
 
     # For each argument group, print its arguments.
     i=0
@@ -8134,7 +8132,7 @@ function argparser_create_help_message() {
         fi
 
         argparser_join $'\n' "${help_message[@]}"
-        help_message_groups[${arg_group}]="${joined_array}"$'\n'
+        help_message_blocks[${arg_group}]="${joined_array}"$'\n'
     done
 }
 
@@ -8159,7 +8157,7 @@ function argparser_create_usage_message() {
     # - all_value_names: the associative array holding the value names
     #   (read-only)
     # - styles: the associative array containing the styles
-    # - usage_message_groups: the associative array holding the usage
+    # - usage_message_blocks: the associative array holding the usage
     #   message's groups usable as include directive
     #
     # Environment:
@@ -8870,7 +8868,7 @@ function argparser_create_usage_message() {
 
     # Output the final usage message.
     usage_message+=$'\n'
-    usage_message_groups["Usage"]="${usage_message}"
+    usage_message_blocks["Usage"]="${usage_message}"
 }
 
 function argparser_print_help_or_usage_message() {
@@ -8892,11 +8890,7 @@ function argparser_print_help_or_usage_message() {
     #   argument names (read-only)
     # - all_short_options: the associative array holding the short
     #   option names (read-only)
-    # - help_message_groups: the associative array holding the help
-    #   message's groups usable as include directive (read-only)
     # - styles: the associative array containing the styles
-    # - usage_message_groups: the associative array holding the usage
-    #   message's groups usable as include directive (read-only)
     #
     # Environment:
     # - ARGPARSER_HELP_ARG_GROUP (read-only)
@@ -8924,6 +8918,7 @@ function argparser_print_help_or_usage_message() {
     local frame
     local frame_char
     local heading
+    local -A help_message_blocks
     local help_type
     local include_char
     local include_directive
@@ -8937,6 +8932,7 @@ function argparser_print_help_or_usage_message() {
     local -a sorted_array
     local translation
     local uncolorized_heading
+    local -A usage_message_blocks
 
     # Read the arguments.
     help_type="$1"
@@ -9119,15 +9115,15 @@ function argparser_print_help_or_usage_message() {
             if [[ "${help_type}" == "help" ]]; then
                 if [[ "${include_directive}" == "Description" ]]; then
                     # Add the description.
-                    if [[ -n "${help_message_groups["Description"]}" ]]; then
-                        message+="${help_message_groups["Description"]}"
+                    if [[ -n "${help_message_blocks["Description"]}" ]]; then
+                        message+="${help_message_blocks["Description"]}"
                     else
                         skip_blank_line=true
                     fi
                 elif [[ "${include_directive}" == "Help" ]]; then
                     # Add the help options group, possibly removing the
                     # heading.
-                    block="${help_message_groups["${ARGPARSER_HELP_ARG_GROUP}"]}"
+                    block="${help_message_blocks["${ARGPARSER_HELP_ARG_GROUP}"]}"
                     if [[ "${add_heading}" == false ]]; then
                         if [[ -n "${styles["frame"]}" ]]; then
                             # A frame is used, where the first line
@@ -9163,19 +9159,19 @@ function argparser_print_help_or_usage_message() {
                 elif [[ "${include_directive}" == "Remark" ]]; then
                     # Add the remark.
                     if (( keyword_args_count > 0 )); then
-                        message+="${help_message_groups["Remark"]}"
+                        message+="${help_message_blocks["Remark"]}"
                     else
                         skip_blank_line=true
                     fi
                 elif [[ "${include_directive}" == "Usage" ]]; then
                     # Add the usage.
-                    message+="${help_message_groups["Usage"]}"
+                    message+="${help_message_blocks["Usage"]}"
                 elif argparser_in_array "${include_directive}" \
                     "${arg_groups[@]}"
                 then
                     # Add the argument group, possibly removing the
                     # heading.
-                    block="${help_message_groups["${include_directive}"]}"
+                    block="${help_message_blocks["${include_directive}"]}"
                     if [[ "${add_heading}" == false ]]; then
                         if [[ -n "${styles["frame"]}" ]]; then
                             # A frame is used, where the first line
@@ -9222,7 +9218,7 @@ function argparser_print_help_or_usage_message() {
             else
                 if [[ "${include_directive}" == "Usage" ]]; then
                     # Add the usage.
-                    message+="${usage_message_groups["Usage"]}"
+                    message+="${usage_message_blocks["Usage"]}"
                 else
                     # Output an error message for the unrecognized and
                     # likely incorrect include directive.
