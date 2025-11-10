@@ -9019,8 +9019,10 @@ function argparser_print_help_or_usage_message() {
         # Extract the include directive, where the include character may
         # be doubled.
         if [[ "${line:1:1}" == "${include_char}" ]]; then
+            add_heading=false
             include_directive="${line:2}"
         else
+            add_heading=true
             include_directive="${line:1}"
         fi
 
@@ -9069,6 +9071,18 @@ function argparser_print_help_or_usage_message() {
                     ""
                     "${include_char}Remark"
                 )
+            elif [[ "${include_directive}" == "Help" ]]; then
+                # Replace the include directive with the actual name of
+                # the help option group.
+                if [[ "${add_heading}" == true ]]; then
+                    resolved_lines+=(
+                        "${include_char}${ARGPARSER_HELP_ARG_GROUP}"
+                    )
+                else
+                    resolved_lines+=(
+                        "${include_char}${include_char}${ARGPARSER_HELP_ARG_GROUP}"
+                    )
+                fi
             else
                 # Add the unmodified line.
                 resolved_lines+=("${line}")
@@ -9120,42 +9134,6 @@ function argparser_print_help_or_usage_message() {
                     else
                         skip_blank_line=true
                     fi
-                elif [[ "${include_directive}" == "Help" ]]; then
-                    # Add the help options group, possibly removing the
-                    # heading.
-                    block="${help_message_blocks["${ARGPARSER_HELP_ARG_GROUP}"]}"
-                    if [[ "${add_heading}" == false ]]; then
-                        if [[ -n "${styles["frame"]}" ]]; then
-                            # A frame is used, where the first line
-                            # contains the heading on the frame.
-                            # Replace all characters (which are the
-                            # frame's horizontal line and the heading)
-                            # between the first and last character in
-                            # the uncolorized copy of the line (which
-                            # are the frame corners) by the second
-                            # uncolorized character (which is part of
-                            # the horizontal line, just before the
-                            # heading starts).  The number of characters
-                            # to replace equals the length of the
-                            # uncolorized line minus the two corner
-                            # characters. 
-                            heading="${block%%$'\n'*}"
-                            block="${block#"${heading}"$'\n'}"
-                            argparser_uncolorize uncolorized_heading \
-                                "${heading}"
-                            frame_char="${uncolorized_heading:1:1}"
-                            printf -v frame '%*s' \
-                                "$(( "${#uncolorized_heading}" - 2 ))" ""
-                            frame="${frame// /"${frame_char}"}"
-                            frame="${heading//"${frame_char}"*"${frame_char}"/"${frame}"}"
-                            block="${frame}"$'\n'"${block}"
-                        else
-                            # No frame is used, so simply remove the
-                            # first line, which contains the heading.
-                            block="${block#+([^$'\n'])$'\n'}"
-                        fi
-                    fi
-                    message+="${block}"
                 elif [[ "${include_directive}" == "Remark" ]]; then
                     # Add the remark.
                     if (( keyword_args_count > 0 )); then
