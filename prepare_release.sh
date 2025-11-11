@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-10-01
+# Last Modification: 2025-11-11
 
 # Usage: Run this script with "bash prepare_release.sh".
 
@@ -81,9 +81,10 @@ pattern_version_1='\| v[1-9][0-9]*\.[0-9]+\.[0-9]+ +\| '
 pattern_version_1+='\*[[:alpha:]]+ [[:alpha:]]+\* +\|'
 replacement_version_1='| v'"${version_number}"' | *'"${codename}"'* |'
 
-pattern_version_2='argparser v[1-9][0-9]*\.[0-9]+\.[0-9]+ '
+pattern_version_2='Version: argparser v[1-9][0-9]*\.[0-9]+\.[0-9]+ '
 pattern_version_2+='"[[:alpha:]]+ [[:alpha:]]+"'
-replacement_version_2='argparser v'"${version_number}"' "'"${codename}"'"'
+replacement_version_2='Version: argparser v'"${version_number}"' "'
+replacement_version_2+="${codename}"'"'
 
 sed --in-place --regexp-extended \
     --expression="0,/${pattern_version_1}/s//${replacement_version_1}\n&/" \

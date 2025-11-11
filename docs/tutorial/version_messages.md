@@ -27,7 +27,7 @@ The output version message is very simple:
 <!-- <include command="bash ../tutorial/try_argparser.sh -V" lang="console"> -->
 ```console
 $ bash ../tutorial/try_argparser.sh -V
-try_argparser.sh v1.0.0
+Version: try_argparser.sh v1.0.0
 ```
 <!-- </include> -->
 

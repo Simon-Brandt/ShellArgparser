@@ -47,7 +47,7 @@ You can obtain the version number of your Argparser copy by querying `argparser 
 <!-- <include command="argparser --version" lang="console"> -->
 ```console
 $ argparser --version
-argparser v1.2.0 "Callospermophilus lateralis"
+Version: argparser v1.2.0 "Callospermophilus lateralis"
 ```
 <!-- </include> -->
 

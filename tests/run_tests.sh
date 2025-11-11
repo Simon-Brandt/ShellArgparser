@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-10
+# Last Modification: 2025-11-11
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -460,7 +460,7 @@ test_number="${test_section}.9"
 test_type="version"
 cmd="bash test_basic.sh -V"
 output="$(cat << EOF
-test_basic.sh v1.0.0
+Version: test_basic.sh v1.0.0
 EOF
 )"
 error=""
@@ -471,7 +471,7 @@ test_number="${test_section}.10"
 test_type="version"
 cmd="bash test_basic.sh --version"
 output="$(cat << EOF
-test_basic.sh v1.0.0
+Version: test_basic.sh v1.0.0
 EOF
 )"
 error=""
@@ -668,7 +668,7 @@ test_number="${test_section}.2"
 test_type="version"
 cmd="bash test_short_options.sh -V"
 output="$(cat << EOF
-test_short_options.sh v1.0.0
+Version: test_short_options.sh v1.0.0
 EOF
 )"
 error=""
@@ -802,7 +802,7 @@ test_number="${test_section}.3"
 test_type="version"
 cmd="bash test_long_options.sh --version"
 output="$(cat << EOF
-test_long_options.sh v1.0.0
+Version: test_long_options.sh v1.0.0
 EOF
 )"
 error=""
@@ -911,7 +911,7 @@ test_number="${test_section}.2"
 test_type="version"
 cmd="bash test_keyword_arguments.sh --version"
 output="$(cat << EOF
-test_keyword_arguments.sh v1.0.0
+Version: test_keyword_arguments.sh v1.0.0
 EOF
 )"
 error=""
@@ -980,7 +980,7 @@ test_number="${test_section}.2"
 test_type="version"
 cmd="bash test_positional_arguments.sh --version"
 output="$(cat << EOF
-test_positional_arguments.sh v1.0.0
+Version: test_positional_arguments.sh v1.0.0
 EOF
 )"
 error=""
@@ -1080,7 +1080,7 @@ test_number="${test_section}.2"
 test_type="version"
 cmd="bash test_arg_number.sh --version"
 output="$(cat << EOF
-test_arg_number.sh v1.0.0
+Version: test_arg_number.sh v1.0.0
 EOF
 )"
 error=""
@@ -1170,7 +1170,7 @@ test_number="${test_section}.2"
 test_type="version"
 cmd="bash test_config_file.sh --version"
 output="$(cat << EOF
-test_config_file.sh v1.0.0
+Version: test_config_file.sh v1.0.0
 EOF
 )"
 error=""
@@ -1251,7 +1251,7 @@ test_number="${test_section}.2"
 test_type="version"
 cmd="bash test_arg_def_file.sh --version"
 output="$(cat << EOF
-test_arg_def_file.sh v1.0.0
+Version: test_arg_def_file.sh v1.0.0
 EOF
 )"
 error=""
@@ -1332,7 +1332,7 @@ test_number="${test_section}.2"
 test_type="version"
 cmd="bash test_help_file.sh --version"
 output="$(cat << EOF
-test_help_file.sh v1.0.0
+Version: test_help_file.sh v1.0.0
 EOF
 )"
 error=""
@@ -1415,7 +1415,9 @@ test_number="${test_section}.2"
 test_type="version"
 cmd="bash test_style_file.sh --version"
 output="$(cat << EOF
-test_style_file.sh v1.0.0
+╭─ Version ─────────────────╮
+│ test_style_file.sh v1.0.0 │
+╰───────────────────────────╯
 EOF
 )"
 error=""
@@ -1521,7 +1523,7 @@ test_number="${test_section}.3"
 test_type="version"
 cmd="LANG=en_US.UTF-8 bash test_localization.sh --version"
 output="$(cat << EOF
-test_localization.sh v1.0.0
+Version: test_localization.sh v1.0.0
 EOF
 )"
 error=""
@@ -1532,7 +1534,7 @@ test_number="${test_section}.4"
 test_type="version"
 cmd="LANG=de_DE.UTF-8 bash test_localization.sh --version"
 output="$(cat << EOF
-test_localization.sh v1.0.0
+Version: test_localization.sh v1.0.0
 EOF
 )"
 error=""
@@ -1675,7 +1677,7 @@ test_number="${test_section}.2"
 test_type="version"
 cmd="dash test_pipeline.sh --version"
 output="$(cat << EOF
-test_pipeline.sh v1.0.0
+Version: test_pipeline.sh v1.0.0
 EOF
 )"
 error=""
@@ -1748,7 +1750,7 @@ test_number="${test_section}.2"
 test_type="version"
 cmd="bash ../argparser --version"
 output="$(cat << EOF
-argparser v1.2.0 "Callospermophilus lateralis"
+Version: argparser v1.2.0 "Callospermophilus lateralis"
 EOF
 )"
 error=""

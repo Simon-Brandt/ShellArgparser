@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-10
+# Last Modification: 2025-11-11
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -9346,21 +9346,42 @@ function argparser_print_version_message() {
     # - ARGPARSER_VERSION_NUMBER (read-only)
 
     # Define the local variables.
+    local caption
     local exit
+    local -a framed_array
     local script_name
+    local translation
     local version_message
 
     # Read the argument.
     exit="$1"
 
-    # Colorize and print the version message, then exit, if requested.
+    # Colorize the script name and the version message.  If a version
+    # frame style is given, draw a frame around the message, containing
+    # the colorized version caption as heading.  Otherwise, print the
+    # version message with script name and heading in one line.
+    argparser_translate "Version" "Version"
+    caption="${translation}"
+
     argparser_colorize "${styles["script_name"]}" 1 script_name \
         "${ARGPARSER_SCRIPT_NAME}"
     argparser_colorize "${styles["version_string"]}" 1 version_message \
         "v${ARGPARSER_VERSION_NUMBER}"
+    version_message="${script_name} ${version_message}"
 
-    printf '%s %s\n' "${script_name}" "${version_message}"
+    if [[ -n "${styles["version_frame"]}" ]]; then
+        argparser_colorize "${styles["version_caption"]}" 1 caption \
+            " ${caption} "
+        argparser_draw_frame "${styles["version_frame"]}" 1 "array" \
+            "${caption}" "${version_message}"
+        printf '%s\n' "${framed_array[@]}"
+    else
+        argparser_colorize "${styles["version_caption"]}" 1 caption \
+            "${caption}:"
+        printf '%s %s\n' "${caption}" "${version_message}"
+    fi
 
+    # Exit, if requested.
     if [[ "${exit}" == true ]]; then
         exit "${ARGPARSER_VERSION_EXIT_CODE}"
     fi
@@ -9838,6 +9859,8 @@ function argparser_main() {
         ["short_options"]="green,bold"
         ["usage_caption"]="bold"
         ["value_names"]="blue"
+        ["version_caption"]="magenta"
+        ["version_frame"]=""
         ["version_string"]="normal"
         ["warning_caption"]="red,bold"
         ["warning_frame"]=""

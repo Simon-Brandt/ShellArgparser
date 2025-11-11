@@ -124,7 +124,7 @@ Finally, we need a translation file (here [`translations.yaml`](../../resources/
 
 <summary>Beginning of <code>translations.yaml</code></summary>
 
-<!-- <include command="sed '1,5d;35q' ../resources/translations.yaml" lang="yaml"> -->
+<!-- <include command="sed '1,5d;39q' ../resources/translations.yaml" lang="yaml"> -->
 ```yaml
 # 1.    Define the general translations.
 ---
@@ -139,6 +139,10 @@ Help options:
 Help description:
   en:
   de:
+
+Version:
+  en: Version
+  de: Version
 
 Error:
   en: Error
