@@ -1019,15 +1019,15 @@ function argparser_colorize() {
     # - $1: the colors and/or styles to use as
     #       ${ARGPARSER_ARG_DELIMITER_2}-separated list
     # - $2: the file descriptor to write to (1 or 2)
-    # - $3: the variable to set the colorized array's first element to;
-    #       if set to "array", set the entire colorized array's elements
-    #       to ${colorized_array}; if set to "print", print the
-    #       colorized array's first element instead
+    # - $3: the variable to set the joined colorized array to; if set to
+    #       "array", set the entire colorized array's elements to
+    #       ${colorized_array}; if set to "print", print the joined
+    #       colorized array instead
     # - $@: the array to colorize
     #
     # Nonlocals:
-    # - $3: the colorized array's first element (if $3 is neither set to
-    #       "array" nor to "print")
+    # - $3: the joined colorized array (if $3 is neither set to "array"
+    #       nor to "print")
     # - colorized_array: the colorized array (if $3 is set to "array")
     #
     # Environment:
@@ -1042,6 +1042,7 @@ function argparser_colorize() {
     local -A colors_and_styles
     local file_descriptor
     local i
+    local joined_array
     local style
     local style_request
     local -a style_requests
@@ -1054,8 +1055,8 @@ function argparser_colorize() {
 
     if [[ "${var}" != "array" ]]; then
         # Set ${colorized_array} as local instead of nonlocal variable,
-        # since it's not used by the calling function (the colorized
-        # array's first element shall be printed or set to a variable,
+        # since it's not used by the calling function (the joined
+        # colorized array shall be printed or set to a variable,
         # instead).
         local -a colorized_array
     fi
@@ -1132,14 +1133,16 @@ function argparser_colorize() {
         done
     fi
 
-    # Print the colorized array's first element, or set it to the target
+    # Join the colorized array, then print it or set it to the target
     # variable, using a name reference to the variable name given as
     # ${var} (i.e., as $3).
     if [[ "${var}" == "print" ]]; then
-        printf '%s' "${colorized_array[0]}" >&"${file_descriptor}"
+        argparser_join $'\n' "${colorized_array[@]}"
+        printf '%s' "${joined_array}" >&"${file_descriptor}"
     elif [[ "${var}" != "array" ]]; then
+        argparser_join $'\n' "${colorized_array[@]}"
         declare -n var="${var}"
-        var="${colorized_array[0]}"
+        var="${joined_array}"
     fi
 }
 
@@ -1148,16 +1151,16 @@ function argparser_uncolorize() {
     # sequences) from an array's elements.
     #
     # Arguments:
-    # - $1: the variable to set the uncolorized array's first element
-    #       to; if set to "array", set the entire uncolorized array's
-    #       elements to ${uncolorized_array}; if set to "print", print
-    #       the uncolorized array's first element instead
+    # - $1: the variable to set the joined uncolorized array to; if set
+    #       to "array", set the entire uncolorized array's elements to
+    #       ${uncolorized_array}; if set to "print", print the joined
+    #       uncolorized array instead
     # - $2: the file descriptor to write to (1 or 2)
     # - $@: the array to uncolorize
     #
     # Nonlocals:
-    # - $1: the uncolorized array's first element (if $1 is neither set
-    #       to "array" nor to "print")
+    # - $1: the joined uncolorized array (if $1 is neither set to
+    #       "array" nor to "print")
     # - uncolorized_array: the uncolorized array (if $1 is set to
     #       "array")
     #
@@ -1166,6 +1169,7 @@ function argparser_uncolorize() {
 
     # Define the local variables.
     local file_descriptor
+    local joined_array
     local var
 
     # Read the arguments.
@@ -1175,7 +1179,7 @@ function argparser_uncolorize() {
     if [[ "${var}" != "array" ]]; then
         # Set ${uncolorized_array} as local instead of nonlocal
         # variable, since it's not used by the calling function (the
-        # uncolorized array's first element shall be printed or set to a
+        # joined uncolorized array shall be printed or set to a
         # variable, instead).
         local -a uncolorized_array
     fi
@@ -1193,14 +1197,16 @@ function argparser_uncolorize() {
     # shellcheck disable=SC2180  # ShellCheck bug, no multi-dimensional array.
     uncolorized_array=("${uncolorized_array[@]//$'\e['[0-9][0-9][0-9]m}")
 
-    # Print the uncolorized array's first element, or set it to the
-    # target variable, using a name reference to the variable name given
-    # as ${var} (i.e., as $1).
+    # Join the uncolorized array, then print it or set it to the target
+    # variable, using a name reference to the variable name given as
+    # ${var} (i.e., as $1).
     if [[ "${var}" == "print" ]]; then
-        printf '%s' "${uncolorized_array[0]}" >&"${file_descriptor}"
+        argparser_join $'\n' "${uncolorized_array[@]}"
+        printf '%s' "${joined_array}" >&"${file_descriptor}"
     elif [[ "${var}" != "array" ]]; then
+        argparser_join $'\n' "${uncolorized_array[@]}"
         declare -n var="${var}"
-        var="${uncolorized_array[0]}"
+        var="${joined_array}"
     fi
 }
 
@@ -1211,16 +1217,16 @@ function argparser_draw_frame() {
     # - $1: the frame styles to use as
     #       ${ARGPARSER_ARG_DELIMITER_2}-separated list
     # - $2: the file descriptor to write to (1 or 2)
-    # - $3: the variable to set the framed array's first element to; if
-    #       set to "array", set the entire framed array's elements
-    #       to ${framed_array}; if set to "print", print the framed
-    #       array's first element instead
+    # - $3: the variable to set the joined framed array to; if set to
+    #       "array", set the entire framed array's elements to
+    #       ${framed_array}; if set to "print", print the joined framed
+    #       array instead
     # - $4: the frame's heading
     # - $@: the array to frame
     #
     # Nonlocals:
-    # - $3: the framed array's first element (if $3 is neither set to
-    #       "array" nor to "print")
+    # - $3: the joined framed array (if $3 is neither set to "array" nor
+    #       to "print")
     # - framed_array: the framed array (if $3 is set to "array")
     #
     # Environment:
@@ -1243,6 +1249,7 @@ function argparser_draw_frame() {
     local frame_vertical
     local heading
     local i
+    local joined_array
     local line_style
     local -a line_styles
     local line_width
@@ -1261,9 +1268,8 @@ function argparser_draw_frame() {
 
     if [[ "${var}" != "array" ]]; then
         # Set ${framed_array} as local instead of nonlocal variable,
-        # since it's not used by the calling function (the framed
-        # array's first element shall be printed or set to a variable,
-        # instead).
+        # since it's not used by the calling function (the joined framed
+        # array shall be printed or set to a variable, instead).
         local -a framed_array
     fi
 
@@ -1458,14 +1464,16 @@ function argparser_draw_frame() {
         )
     fi
 
-    # Print the framed array's first element, or set it to the target
+    # Join the framed array, then print it or set it to the target
     # variable, using a name reference to the variable name given as
     # ${var} (i.e., as $3).
     if [[ "${var}" == "print" ]]; then
-        printf '%s' "${framed_array[0]}" >&"${file_descriptor}"
+        argparser_join $'\n' "${framed_array[@]}"
+        printf '%s' "${joined_array}" >&"${file_descriptor}"
     elif [[ "${var}" != "array" ]]; then
+        argparser_join $'\n' "${framed_array[@]}"
         declare -n var="${var}"
-        var="${framed_array[0]}"
+        var="${joined_array}"
     fi
 }
 
