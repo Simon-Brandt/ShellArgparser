@@ -8139,14 +8139,14 @@ function argparser_create_help_message() {
         # thus trailing instead of in-between.  Finally, join the lines
         # into a single string.
         if [[ -n "${styles["help_frame"]}" ]]; then
-            argparser_colorize "${styles["argument_group_names"]}" 1 caption \
+            argparser_colorize "${styles["argument_group"]}" 1 caption \
                 " ${arg_group} "
             argparser_pad "right" "${pad_width}" "${help_message[@]}"
             argparser_draw_frame "${styles["help_frame"]}" 1 "array" \
                 "${caption}" "${padded_array[@]}"
             help_message=("${framed_array[@]}")
         else
-            argparser_colorize "${styles["argument_group_names"]}" 1 caption \
+            argparser_colorize "${styles["argument_group"]}" 1 caption \
                 "${arg_group}:"
             help_message=(
                 "${caption}"
@@ -9381,7 +9381,7 @@ function argparser_print_version_message() {
 
     argparser_colorize "${styles["script_name"]}" 1 script_name \
         "${ARGPARSER_SCRIPT_NAME}"
-    argparser_colorize "${styles["version_string"]}" 1 version_message \
+    argparser_colorize "${styles["version_text"]}" 1 version_message \
         "v${ARGPARSER_VERSION_NUMBER}"
     version_message="${script_name} ${version_message}"
 
@@ -9858,7 +9858,7 @@ function argparser_main() {
     # non-empty environment variable ${NO_COLOR} is given, but neither
     # ${ARGPARSER_USE_STYLES} nor ${ARGPARSER_USE_STYLES_IN_FILES}.
     styles=(
-        ["argument_group_names"]="cyan,bold"
+        ["argument_group"]="cyan,bold"
         ["choice_values"]="yellow"
         ["default_text"]="italic"
         ["default_values"]="cyan,italic"
@@ -9878,7 +9878,7 @@ function argparser_main() {
         ["value_names"]="blue"
         ["version_caption"]="magenta,bold"
         ["version_frame"]=""
-        ["version_string"]="normal"
+        ["version_text"]="normal"
         ["warning_caption"]="red,bold"
         ["warning_frame"]=""
         ["warning_text"]="red"
@@ -9994,7 +9994,7 @@ function argparser_main() {
 
     if [[ -v ARGPARSER_VERSION_STYLE ]]; then
         styles["script_name"]="${ARGPARSER_VERSION_STYLE}"
-        styles["version_string"]="${ARGPARSER_VERSION_STYLE}"
+        styles["version_text"]="${ARGPARSER_VERSION_STYLE}"
     fi
 
     if [[ -v ARGPARSER_USAGE_STYLE ]]; then
@@ -10007,7 +10007,7 @@ function argparser_main() {
     fi
 
     if [[ -v ARGPARSER_HELP_STYLE ]]; then
-        styles["argument_group_names"]="${ARGPARSER_HELP_STYLE}"
+        styles["argument_group"]="${ARGPARSER_HELP_STYLE}"
         styles["choice_values"]="${ARGPARSER_HELP_STYLE}"
         styles["default_text"]="${ARGPARSER_HELP_STYLE}"
         styles["default_values"]="${ARGPARSER_HELP_STYLE}"
