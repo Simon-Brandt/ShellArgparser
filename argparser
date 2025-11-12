@@ -2456,10 +2456,8 @@ function argparser_check_env_vars() {
 
             # Check if the short option name is already given in
             # another environment variable's value.
-            if argparser_in_array "${short_option}" \
-                "${!checked_short_options[@]}" \
-                && [[ "${checked_short_options[${short_option}]}" \
-                    != "${var}" ]]
+            if [[ -n "${checked_short_options[${short_option}]+set}" \
+                && "${checked_short_options[${short_option}]}" != "${var}" ]]
             then
                 error_message="Error: The environment variable \"\$1\" has "
                 error_message+="the short option \"-\$2\" given, but that is "
@@ -2756,7 +2754,7 @@ function argparser_translate() {
     # loop would arise by trying to fetch the inexistent translation
     # over and over.
     if [[ -n "${ARGPARSER_TRANSLATION_FILE}" ]]; then
-        if ! argparser_in_array "${key}" "${!dictionary[@]}"; then
+        if [[ -z "${dictionary[${key}]+set}" ]]; then
             warning_message="Warning: In the translation file \"\$1\", the "
             warning_message+="identifier \"\$2\" is missing.  For "
             warning_message+="convenience, the untranslated string is used, "
@@ -3935,9 +3933,8 @@ function argparser_check_args_definition_names() {
 
                 # Check if the short option name is already given in
                 # another argument's definition.
-                if argparser_in_array "${short_option}" \
-                    "${!checked_short_options[@]}" \
-                    && [[ "${checked_short_options[${short_option}]}" \
+                if [[ -n "${checked_short_options[${short_option}]+set}" \
+                    && "${checked_short_options[${short_option}]}" \
                         != "${arg_key}" ]]
                 then
                     error_message="Error: The short option with the "
@@ -4058,9 +4055,8 @@ function argparser_check_args_definition_names() {
 
                 # Check if the long option name is already given in
                 # another argument's definition.
-                if argparser_in_array "${long_option}" \
-                    "${!checked_long_options[@]}" \
-                    && [[ "${checked_long_options[${long_option}]}" \
+                if [[ -n "${checked_long_options[${long_option}]+set}"
+                    && "${checked_long_options[${long_option}]}" \
                         != "${arg_key}" ]]
                 then
                     error_message="Error: The long option with the identifier "
@@ -4979,7 +4975,7 @@ function argparser_get_option_names() {
     # them the default value of the empty string, indicating absence.
     # For the option name below, use the value name, of which positional
     # arguments can only have one (thus using a string, not an array).
-    if argparser_in_array "${arg_key}" "${!all_short_options[@]}"; then
+    if [[ -n "${all_short_options[${arg_key}]+set}" ]]; then
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a short_options \
             <<< "${all_short_options[${arg_key}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a long_options \
@@ -6411,7 +6407,7 @@ function argparser_parse_args() {
                     # multiple times, but partly without value.
                     is_positional=false
                     arg_key="${message#Argument: }"
-                    if ! argparser_in_array "${arg_key}" "${!args[@]}"; then
+                    if [[ -z "${args[${arg_key}]+set}" ]]; then
                         args[${arg_key}]="${ARGPARSER_ARG_DELIMITER_2}"
                     else
                         args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
@@ -6421,8 +6417,7 @@ function argparser_parse_args() {
                 Prefix*)
                     # Set the current argument's prefix ("-" or "+").
                     prefix="${message#Prefix: }"
-                    if ! argparser_in_array "${arg_key}" "${!prefixes[@]}"
-                    then
+                    if [[ -z "${prefixes[${arg_key}]+set}" ]]; then
                         prefixes[${arg_key}]="${prefix}"
                     else
                         prefixes[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
@@ -6586,7 +6581,7 @@ function argparser_parse_args() {
             Value*)
                 # Set the current argument's value.
                 value="${message#Value: }"
-                if ! argparser_in_array "${arg_key}" "${!args[@]}"; then
+                if [[ -z "${args[${arg_key}]+set}" ]]; then
                     args[${arg_key}]="${value}"
                 else
                     args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
@@ -6620,13 +6615,13 @@ function argparser_parse_args() {
         # arguments or those without value are assigned the empty string
         # as prefix and/or value. This is then interpreted as hint for
         # the argument's or value's absence.
-        if argparser_in_array "${arg_key}" "${!prefixes[@]}"; then
+        if [[ -n "${prefixes[${arg_key}]+set}" ]]; then
             prefix="${prefixes[${arg_key}]}"
         else
             prefix=""
         fi
 
-        if argparser_in_array "${arg_key}" "${!args[@]}"; then
+        if [[ -n "${args[${arg_key}]+set}" ]]; then
             values="${args[${arg_key}]}"
         else
             values=""
