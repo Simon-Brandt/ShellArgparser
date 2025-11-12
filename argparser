@@ -8032,12 +8032,13 @@ function argparser_create_help_message() {
         fi
     done
 
-    # Set the help message's usage line, including the script's name.
+    # Set the help message's usage line with the caption and the script
+    # name.
     argparser_translate "Usage" "Usage"
-    argparser_colorize "${styles["usage_caption"]}" 1 caption "${translation}"
+    argparser_colorize "${styles["help_caption"]}" 1 caption "${translation}:"
     argparser_colorize "${styles["script_name"]}" 1 script_name \
         "${ARGPARSER_SCRIPT_NAME}"
-    usage="${caption}: ${script_name}"
+    usage="${caption} ${script_name}"
 
     # Add a hint for the optional keyword arguments (as summary), if
     # existing.
@@ -9788,8 +9789,11 @@ function argparser_main() {
     # - ARGPARSER_CHECK_ENV_VARS (read-only)
     # - ARGPARSER_CONFIG_FILE (read-only)
     # - ARGPARSER_CREATE_ARG_DEF (read-only)
+    # - ARGPARSER_DEBUG (read-only)
+    # - ARGPARSER_ERROR_STYLE (read-only)
     # - ARGPARSER_HELP_ARG_GROUP
     # - ARGPARSER_HELP_DESCRIPTION
+    # - ARGPARSER_HELP_STYLE (read-only)
     # - ARGPARSER_POSITIONAL_ARG_GROUP
     # - ARGPARSER_READ_ARGS (read-only)
     # - ARGPARSER_SET_ARGS (read-only)
@@ -9798,7 +9802,11 @@ function argparser_main() {
     # - ARGPARSER_UNSET_ARGS (read-only)
     # - ARGPARSER_UNSET_ENV_VARS (read-only)
     # - ARGPARSER_UNSET_FUNCTIONS (read-only)
-    # - ARGPARSER_WRITE_ARGS (read-only)
+    # - ARGPARSER_USAGE_STYLE (read-only)
+    # - ARGPARSER_USE_STYLES
+    # - ARGPARSER_USE_STYLES_IN_FILES (read-only)
+    # - ARGPARSER_VERSION_STYLE (read-only)
+    # - ARGPARSER_WARNING_STYLE (read-only)
     # - ARGPARSER_WRITE_ARGS (read-only)
 
     # Possibly, enable the debug mode.  Since at this point, the shell
@@ -9867,6 +9875,7 @@ function argparser_main() {
         ["error_caption"]="red,bold,reverse"
         ["error_frame"]=""
         ["error_text"]="red"
+        ["help_caption"]="green,bold"
         ["help_frame"]=""
         ["help_text"]="normal"
         ["long_options"]="magenta,bold"
@@ -9994,6 +10003,7 @@ function argparser_main() {
 
     if [[ -v ARGPARSER_VERSION_STYLE ]]; then
         styles["script_name"]="${ARGPARSER_VERSION_STYLE}"
+        styles["version_caption"]="${ARGPARSER_VERSION_STYLE}"
         styles["version_text"]="${ARGPARSER_VERSION_STYLE}"
     fi
 
@@ -10013,12 +10023,12 @@ function argparser_main() {
         styles["default_values"]="${ARGPARSER_HELP_STYLE}"
         styles["deprecation_note"]="${ARGPARSER_HELP_STYLE}"
         styles["description_text"]="${ARGPARSER_HELP_STYLE}"
+        styles["help_caption"]="${ARGPARSER_HELP_STYLE}"
         styles["help_text"]="${ARGPARSER_HELP_STYLE}"
         styles["long_options"]="${ARGPARSER_HELP_STYLE}"
         styles["remark_text"]="${ARGPARSER_HELP_STYLE}"
         styles["script_name"]="${ARGPARSER_HELP_STYLE}"
         styles["short_options"]="${ARGPARSER_HELP_STYLE}"
-        styles["usage_caption"]="${ARGPARSER_HELP_STYLE}"
         styles["value_names"]="${ARGPARSER_HELP_STYLE}"
     fi
 
