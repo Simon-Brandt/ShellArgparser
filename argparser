@@ -1227,7 +1227,7 @@ function argparser_draw_frame() {
     #       "array", set the entire framed array's elements to
     #       ${framed_array}; if set to "print", print the joined framed
     #       array instead
-    # - $4: the frame's heading
+    # - $4: the frame's caption
     # - $@: the array to frame
     #
     # Nonlocals:
@@ -1242,6 +1242,7 @@ function argparser_draw_frame() {
     # - the framed string (if $3 is set to "print")
 
     # Define the local variables.
+    local caption
     local -a colors_arr
     local colors_str
     local corner_style
@@ -1253,7 +1254,6 @@ function argparser_draw_frame() {
     local frame_top_1
     local frame_top_2
     local frame_vertical
-    local heading
     local i
     local joined_array
     local line_style
@@ -1263,14 +1263,14 @@ function argparser_draw_frame() {
     local style_request
     local -a style_requests
     local -a uncolorized_array
-    local uncolorized_heading
+    local uncolorized_caption
     local var
 
     # Read the arguments.
     style_requests="$1"
     file_descriptor="$2"
     var="$3"
-    heading="$4"
+    caption="$4"
 
     if [[ "${var}" != "array" ]]; then
         # Set ${framed_array} as local instead of nonlocal variable,
@@ -1428,18 +1428,18 @@ function argparser_draw_frame() {
         # which are as long as any line in the uncolorized array, plus
         # the two spaces separation to the left and right between the
         # array's contents and the frame's vertical lines.  For the top
-        # line, possibly add the heading (if non-empty) to the left of
+        # line, possibly add the caption (if non-empty) to the left of
         # the frame (after one frame character), which is already
         # surrounded by a space each.  Additionally, add the frame's
         # four corner characters.
-        if [[ -n "${heading}" ]]; then
+        if [[ -n "${caption}" ]]; then
             argparser_colorize "${colors_str}" "${file_descriptor}" \
                 frame_top_1 \
                 "${frame_chars["top-left"]}${frame_chars["horizontal"]}"
 
-            argparser_uncolorize uncolorized_heading "${heading}"
+            argparser_uncolorize uncolorized_caption "${caption}"
             printf -v frame_top_2 '%*s' \
-                "$(( "${#uncolorized_array[0]}" - "${#uncolorized_heading}" \
+                "$(( "${#uncolorized_array[0]}" - "${#uncolorized_caption}" \
                     + 1 ))" \
                 ""
             frame_top_2="${frame_top_2// /${frame_chars["horizontal"]}}"
@@ -1447,7 +1447,7 @@ function argparser_draw_frame() {
             argparser_colorize "${colors_str}" "${file_descriptor}" \
                 frame_top_2 "${frame_top_2}${frame_chars["top-right"]}"
 
-            frame_top="${frame_top_1}${heading}${frame_top_2}"
+            frame_top="${frame_top_1}${caption}${frame_top_2}"
         else
             printf -v frame_top '%*s' "$(( "${#uncolorized_array[0]}" + 2 ))" \
                 ""
@@ -6845,6 +6845,7 @@ function argparser_create_help_message() {
     local arg_key
     local arg_number
     local caption
+    local caption_width
     local choice_values_str
     local -a choice_values_arr
     local -a col_1
@@ -6860,8 +6861,6 @@ function argparser_create_help_message() {
     local default_values_str
     local has_default_args
     local has_required_args
-    local heading
-    local heading_width
     local -a help_message
     local help_text
     local i
@@ -8026,10 +8025,10 @@ function argparser_create_help_message() {
     # spaces used as separation around the name in the frame.
     pad_width="${max_col_width}"
     for arg_group in "${arg_groups[@]}"; do
-        (( heading_width = "${#arg_group}" + 2 ))
-        if (( heading_width > max_col_width && heading_width > pad_width ))
+        (( caption_width = "${#arg_group}" + 2 ))
+        if (( caption_width > max_col_width && caption_width > pad_width ))
         then
-            pad_width="${heading_width}"
+            pad_width="${caption_width}"
         fi
     done
 
@@ -8140,17 +8139,17 @@ function argparser_create_help_message() {
         # thus trailing instead of in-between.  Finally, join the lines
         # into a single string.
         if [[ -n "${styles["help_frame"]}" ]]; then
-            argparser_colorize "${styles["argument_group_names"]}" 1 heading \
+            argparser_colorize "${styles["argument_group_names"]}" 1 caption \
                 " ${arg_group} "
             argparser_pad "right" "${pad_width}" "${help_message[@]}"
             argparser_draw_frame "${styles["help_frame"]}" 1 "array" \
-                "${heading}" "${padded_array[@]}"
+                "${caption}" "${padded_array[@]}"
             help_message=("${framed_array[@]}")
         else
-            argparser_colorize "${styles["argument_group_names"]}" 1 heading \
+            argparser_colorize "${styles["argument_group_names"]}" 1 caption \
                 "${arg_group}:"
             help_message=(
-                "${heading}"
+                "${caption}"
                 "${help_message[@]%%+( )}"
             )
         fi
@@ -8924,17 +8923,17 @@ function argparser_print_help_message() {
     # - ARGPARSER_POSITIONAL_ARG_GROUP (read-only)
 
     # Define the local variables.
-    local add_heading
+    local add_caption
     local arg_group
     local -a arg_groups
     local block
+    local caption
     local count
     local error_message
     local -a error_messages
     local exit
     local frame
     local frame_char
-    local heading
     local help_message
     local -A help_message_blocks
     local include_char
@@ -8946,7 +8945,7 @@ function argparser_print_help_message() {
     local skip_blank_line
     local -a sorted_array
     local translation
-    local uncolorized_heading
+    local uncolorized_caption
 
     # Read the argument.
     exit="$1"
@@ -9015,10 +9014,10 @@ function argparser_print_help_message() {
         # Extract the include directive, where the include character may
         # be doubled.
         if [[ "${line:1:1}" == "${include_char}" ]]; then
-            add_heading=false
+            add_caption=false
             include_directive="${line:2}"
         else
-            add_heading=true
+            add_caption=true
             include_directive="${line:1}"
         fi
 
@@ -9037,7 +9036,7 @@ function argparser_print_help_message() {
             # Add the include directives for each argument group.
             # Terminate all but the last by a blank line.  If the last
             # group is the help options group, double the include
-            # character to indicate that the heading shall be
+            # character to indicate that the caption shall be
             # suppressed.
             for i in "${!arg_groups[@]}"; do
                 if (( i < "${#arg_groups[@]}" - 1 )); then
@@ -9069,7 +9068,7 @@ function argparser_print_help_message() {
         elif [[ "${include_directive}" == "Help" ]]; then
             # Replace the include directive with the actual name of the
             # help option group.
-            if [[ "${add_heading}" == true ]]; then
+            if [[ "${add_caption}" == true ]]; then
                 resolved_lines+=(
                     "${include_char}${ARGPARSER_HELP_ARG_GROUP}"
                 )
@@ -9102,13 +9101,13 @@ function argparser_print_help_message() {
         if [[ "${line::1}" == "${include_char}" ]]; then
             line_type="include directive"
 
-            # Set the heading to be suppressed when the include
+            # Set the caption to be suppressed when the include
             # character is doubled.
             if [[ "${line:1:1}" == "${include_char}" ]]; then
-                add_heading=false
+                add_caption=false
                 include_directive="${line:2}"
             else
-                add_heading=true
+                add_caption=true
                 include_directive="${line:1}"
             fi
 
@@ -9131,33 +9130,33 @@ function argparser_print_help_message() {
                 help_message+="${help_message_blocks["Usage"]}"
             elif argparser_in_array "${include_directive}" "${arg_groups[@]}"
             then
-                # Add the argument group, possibly removing the heading.
+                # Add the argument group, possibly removing the caption.
                 block="${help_message_blocks["${include_directive}"]}"
-                if [[ "${add_heading}" == false ]]; then
+                if [[ "${add_caption}" == false ]]; then
                     if [[ -n "${styles["help_frame"]}" ]]; then
                         # A frame is used, where the first line contains
-                        # the heading on the frame.  Replace all
+                        # the caption on the frame.  Replace all
                         # characters (which are the frame's horizontal
-                        # line and the heading) between the first and
+                        # line and the caption) between the first and
                         # last character in the uncolorized copy of the
                         # line (which are the frame corners) by the
                         # second uncolorized character (which is part of
-                        # the horizontal line, just before the heading
+                        # the horizontal line, just before the caption
                         # starts).  The number of characters to replace
                         # equals the length of the uncolorized line
                         # minus the two corner characters.
-                        heading="${block%%$'\n'*}"
-                        block="${block#"${heading}"$'\n'}"
-                        argparser_uncolorize uncolorized_heading "${heading}"
-                        frame_char="${uncolorized_heading:1:1}"
+                        caption="${block%%$'\n'*}"
+                        block="${block#"${caption}"$'\n'}"
+                        argparser_uncolorize uncolorized_caption "${caption}"
+                        frame_char="${uncolorized_caption:1:1}"
                         printf -v frame '%*s' \
-                            "$(( "${#uncolorized_heading}" - 2 ))" ""
+                            "$(( "${#uncolorized_caption}" - 2 ))" ""
                         frame="${frame// /"${frame_char}"}"
-                        frame="${heading//"${frame_char}"*"${frame_char}"/"${frame}"}"
+                        frame="${caption//"${frame_char}"*"${frame_char}"/"${frame}"}"
                         block="${frame}"$'\n'"${block}"
                     else
                         # No frame is used, so simply remove the first
-                        # line, which contains the heading.
+                        # line, which contains the caption.
                         block="${block#+([^$'\n'])$'\n'}"
                     fi
                 fi
@@ -9370,10 +9369,11 @@ function argparser_print_version_message() {
     # Read the argument.
     exit="$1"
 
-    # Colorize the script name and the version message.  If a version
-    # frame style is given, draw a frame around the message, containing
-    # the colorized version caption as heading.  Otherwise, print the
-    # version message with script name and heading in one line.
+    # Colorize the caption, the script name, and the version message.
+    # If a version frame style is given, draw a frame around the
+    # message, containing the colorized version caption as heading.
+    # Otherwise, print the version message with script name and heading
+    # in one line.
     argparser_translate "Version" "Version"
     caption="${translation}"
 
@@ -9459,9 +9459,9 @@ function argparser_print_error_messages() {
         error_messages=("${filtered_array[@]}")
     fi
 
-    # Colorize the script name and the error messages.  If an error
-    # frame style is given, right-pad the messages and draw a frame
-    # around the block, containing the colorized error caption as
+    # Colorize the caption, the script name, and the error messages.  If
+    # an error frame style is given, right-pad the messages and draw a
+    # frame around the block, containing the colorized error caption as
     # heading, then join the lines into a single string.  Otherwise,
     # print each error message with script name and heading as separate
     # lines.
@@ -9547,10 +9547,10 @@ function argparser_print_warning_messages() {
         warning_messages=("${filtered_array[@]}")
     fi
 
-    # Colorize the script name and the warning messages.  If a warning
-    # frame style is given, right-pad the messages and draw a frame
-    # around the block, containing the colorized warning caption as
-    # heading, then join the lines into a single string.  Otherwise,
+    # Colorize the caption, the script name, and the warning messages.
+    # If a warning frame style is given, right-pad the messages and draw
+    # a frame around the block, containing the colorized warning caption
+    # as heading, then join the lines into a single string.  Otherwise,
     # print each warning message with script name and heading as
     # separate lines.
     argparser_translate "Warning" "Warning"
