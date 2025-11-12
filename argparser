@@ -8206,12 +8206,12 @@ function argparser_create_usage_message() {
     local choice_values_str
     local -a colorized_array
     local default_values
+    local -a framed_array
     local header
-    local header_width
     local -a help_option_args
     local help_options
     local i
-    local line
+    local joined_array
     local -a lines
     local long_option
     local -a long_option_default_args
@@ -8221,6 +8221,7 @@ function argparser_create_usage_message() {
     local -a positional_default_args
     local -a positional_required_args
     local option_names
+    local -a padded_array
     local script_name
     local short_option
     local -a short_option_default_args
@@ -8229,23 +8230,11 @@ function argparser_create_usage_message() {
     local short_options_str
     local -a sorted_array
     local translation
-    local usage_message
+    local -a usage_message
     local value_name
     local -a value_names_arr
     local value_names_str
     local whitespace
-
-    # Output the usage message's header, giving the script's name and
-    # the existence of the help, usage, and version arguments.  For the
-    # computation of the whitespace below, set the header width to the
-    # width of the uncolored strings.
-    argparser_translate "Usage" "Usage"
-    argparser_colorize "${styles["usage_caption"]}" 1 caption "${translation}"
-    argparser_colorize "${styles["script_name"]}" 1 script_name \
-        "${ARGPARSER_SCRIPT_NAME}"
-    header="${caption}: ${script_name}"
-    (( header_width = "${#translation}" + "${#ARGPARSER_SCRIPT_NAME}" + 2 ))
-    usage_message="${header}"
 
     # Get the help options and sort them by the argument identifier,
     # such that the order is always "help", "usage", "version".
@@ -8289,18 +8278,9 @@ function argparser_create_usage_message() {
     done
 
     # Add the help options to the usage message.
+    usage_message=( )
     if [[ -n "${help_options}" ]]; then
-        usage_message+=" [${help_options}]"
-    fi
-
-    # To keep all arguments aligned in columnar output, compute the
-    # length of the script name and the (translated) leading "Usage: ".
-    # For a row-like orientation, only use one space.
-    if [[ "${ARGPARSER_USAGE_MESSAGE_ORIENTATION}" == "column" ]]; then
-        printf -v whitespace '%*s' "${header_width}" ""
-        whitespace=$'\n '"${whitespace}"
-    else
-        whitespace=" "
+        usage_message+=("[${help_options}]")
     fi
 
     # If ${ARGPARSER_USAGE_MESSAGE_OPTION_TYPE} is set to "short",
@@ -8482,11 +8462,7 @@ function argparser_create_usage_message() {
 
     if (( "${#lines[@]}" > 0 )); then
         argparser_sort false "${lines[@]}"
-        lines=("${sorted_array[@]}")
-
-        for line in "${lines[@]}"; do
-            usage_message+="${whitespace}${line}"
-        done
+        usage_message+=("${sorted_array[@]}")
     fi
 
     # Output each keyword argument with long options and default values
@@ -8580,11 +8556,7 @@ function argparser_create_usage_message() {
 
     if (( "${#lines[@]}" > 0 )); then
         argparser_sort false "${lines[@]}"
-        lines=("${sorted_array[@]}")
-
-        for line in "${lines[@]}"; do
-            usage_message+="${whitespace}${line}"
-        done
+        usage_message+=("${sorted_array[@]}")
     fi
 
     # Output each keyword argument with short options and without
@@ -8678,11 +8650,7 @@ function argparser_create_usage_message() {
 
     if (( "${#lines[@]}" > 0 )); then
         argparser_sort false "${lines[@]}"
-        lines=("${sorted_array[@]}")
-
-        for line in "${lines[@]}"; do
-            usage_message+="${whitespace}${line}"
-        done
+        usage_message+=("${sorted_array[@]}")
     fi
 
     # Output each keyword argument with long options and without default
@@ -8776,11 +8744,7 @@ function argparser_create_usage_message() {
 
     if (( "${#lines[@]}" > 0 )); then
         argparser_sort false "${lines[@]}"
-        lines=("${sorted_array[@]}")
-
-        for line in "${lines[@]}"; do
-            usage_message+="${whitespace}${line}"
-        done
+        usage_message+=("${sorted_array[@]}")
     fi
 
     # Output each positional argument with default values.
@@ -8830,11 +8794,7 @@ function argparser_create_usage_message() {
         fi
     done
 
-    if (( "${#lines[@]}" > 0 )); then
-        for line in "${lines[@]}"; do
-            usage_message+="${whitespace}${line}"
-        done
-    fi
+    usage_message+=("${lines[@]}")
 
     # Output each positional argument without default values.
     lines=( )
@@ -8883,15 +8843,57 @@ function argparser_create_usage_message() {
         fi
     done
 
-    if (( "${#lines[@]}" > 0 )); then
-        for line in "${lines[@]}"; do
-            usage_message+="${whitespace}${line}"
-        done
+    usage_message+=("${lines[@]}")
+
+    # To keep all arguments aligned in columnar output, prepend
+    # whitespace to the usage message's lines.  Its length equals the
+    # length of the header with the script name, and, if no usage frame
+    # is given, the (translated) caption.  For the first line, where the
+    # header will be added, below, remove the whitespace afterwards.
+    # For a row-like orientation, join the lines using one space,
+    # instead.
+    argparser_translate "Usage" "Usage"
+    caption="${translation}"
+
+    if [[ "${ARGPARSER_USAGE_MESSAGE_ORIENTATION}" == "column" ]]; then
+        if [[ -n "${styles["usage_frame"]}" ]]; then
+            header="${ARGPARSER_SCRIPT_NAME} "
+        else
+            header="${caption}: ${ARGPARSER_SCRIPT_NAME} "
+        fi
+
+        printf -v whitespace '%*s' "${#header}" ""
+        usage_message=("${usage_message[@]/#/"${whitespace}"}")
+        usage_message[0]="${usage_message[0]#"${whitespace}"}"
+    else
+        argparser_join " " "${usage_message[@]}"
+        usage_message=("${joined_array}")
     fi
 
-    # Output the final usage message.
-    usage_message+=$'\n'
-    usage_message_blocks["Usage"]="${usage_message}"
+    # Colorize the caption and script name.  If a usage frame style is
+    # given, prepend the script name to the first option line, right-pad
+    # the messages and draw a frame around the block, containing the
+    # colorized usage caption as heading.  Otherwise, print the usage
+    # message with script name, heading, and the first option line in
+    # one line.  Finally, join the lines into a single string.
+    argparser_colorize "${styles["script_name"]}" 2 script_name \
+        "${ARGPARSER_SCRIPT_NAME}"
+
+    if [[ -n "${styles["usage_frame"]}" ]]; then
+        argparser_colorize "${styles["usage_caption"]}" 1 caption \
+            " ${caption} "
+        usage_message[0]="${script_name} ${usage_message[0]}"
+        argparser_pad "right" "auto" "${usage_message[@]}"
+        argparser_draw_frame "${styles["usage_frame"]}" 1 "array" \
+            "${caption}" "${padded_array[@]}"
+        usage_message=("${framed_array[@]}")
+    else
+        argparser_colorize "${styles["usage_caption"]}" 1 caption "${caption}:"
+        usage_message[0]="${caption} ${script_name} ${usage_message[0]}"
+    fi
+
+    argparser_join $'\n' "${usage_message[@]}"
+    usage_message_blocks["Usage"]="${joined_array}"$'\n'
 }
 
 function argparser_print_help_message() {
@@ -9871,9 +9873,10 @@ function argparser_main() {
         ["remark_text"]="italic"
         ["script_name"]="bold"
         ["short_options"]="green,bold"
-        ["usage_caption"]="bold"
+        ["usage_caption"]="green,bold"
+        ["usage_frame"]=""
         ["value_names"]="blue"
-        ["version_caption"]="magenta"
+        ["version_caption"]="magenta,bold"
         ["version_frame"]=""
         ["version_string"]="normal"
         ["warning_caption"]="red,bold"

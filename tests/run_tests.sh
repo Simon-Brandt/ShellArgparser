@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-11
+# Last Modification: 2025-11-12
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -1423,19 +1423,43 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 11.3. Test the usage message.
+# 11.3. Test the usage message in "row" orientation.
 test_number="${test_section}.3"
 test_type="usage"
-cmd="bash test_style_file.sh --usage"
+cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=row bash test_style_file.sh --usage"
 output="$(cat << EOF
-Usage: test_style_file.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+╭─ Usage ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ test_style_file.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 EOF
 )"
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 11.4. Test the help message.
+# 11.4. Test the usage message in "column" orientation.
 test_number="${test_section}.4"
+test_type="usage"
+cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash test_style_file.sh --usage"
+output="$(cat << EOF
+╭─ Usage ──────────────────────────────╮
+│ test_style_file.sh [-h,-? | -u | -V] │
+│                    [-d={A,B,C}]      │
+│                    [-f]              │
+│                    [-g]              │
+│                    [--var-5=VAL_5]   │
+│                    -a=VAL_1          │
+│                    -b=VAL_2...       │
+│                    -c={A,B}...       │
+│                    [{1,2}]           │
+│                    pos_2             │
+╰──────────────────────────────────────╯
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 11.5. Test the help message.
+test_number="${test_section}.5"
 test_type="help"
 cmd="bash test_style_file.sh --help"
 output="$(cat << EOF

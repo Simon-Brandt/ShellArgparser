@@ -28,7 +28,7 @@ When [`ARGPARSER_USE_STYLES`](environment_variables/environment_variables.md#945
 
 Both `ARGPARSER_USE_STYLES` and the (deprecated) [`ARGPARSER_USE_STYLES_IN_FILES`](environment_variables/environment_variables.md#9459-argparser_use_styles_in_files) allow, when set in the environment, on the command line, or in a configuration file, overriding the informal [no-color standard](https://no-color.org/ "no-color.org")'s `NO_COLOR` environment variable. If given, and not set to the empty string, the latter globally disables ANSI colorization in any software supporting the standard, including the Argparser. `ARGPARSER_USE_STYLES` and `ARGPARSER_USE_STYLES_IN_FILES` then disable `NO_COLOR`'s effect selectively for the Argparser, if desired, and turn the colors back on.
 
-A number of colors and styles is available. You don't need to remember the SGR codes and Unicode codepoints/characters, they're only internally used and given here for reference of what to expect from the keywords for the colors and styles. Further note that the actual RGB/Hex color values will depend on the output device.
+A number of colors, as well as text and frame styles, are available. You don't need to remember the SGR codes and Unicode codepoints/characters, they're only internally used and given here for reference of what to expect from the keywords for the colors and styles. Further note that the actual RGB/Hex color values will depend on the output device.
 
 <!-- <table caption="Available colors and their SGR codes"> -->
 *Tab. 7: Available colors and their SGR codes.*
@@ -87,9 +87,10 @@ long_options         = "magenta,bold"
 remark_text          = "italic"
 script_name          = "bold"
 short_options        = "green,bold"
-usage_caption        = "bold"
+usage_caption        = "green,bold"
+usage_frame          = ""
 value_names          = "blue"
-version_caption     = "magenta"
+version_caption      = "magenta,bold"
 version_frame        = ""
 version_string       = "normal"
 warning_caption      = "red,bold"
