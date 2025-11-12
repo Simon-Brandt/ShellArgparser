@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-11
+# Last Modification: 2025-11-12
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -393,20 +393,24 @@ function argparser_check_styles() {
     # Split the requested colors and/or styles on
     # ${ARGPARSER_ARG_DELIMITER_2} characters and check any.
     IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a requests <<< "${requests}"
-    if (( "${#requests[@]}" == 0 )); then
-        return 1
-    fi
 
     if [[ "${check_type}" == "colors" ]]; then
+        if (( "${#requests[@]}" == 0 )); then
+            return 1
+        fi
+
         for request in "${requests[@]}"; do
             request="${request#bright_}"
-            request="${request%_bg}"
-            request="${request%_fg}"
+            request="${request%@(_bg|_fg)}"
             if ! argparser_in_array "${request}" "${colors[@]}"; then
                 return 1
             fi
         done
     elif [[ "${check_type}" == "text styles" ]]; then
+        if (( "${#requests[@]}" == 0 )); then
+            return 1
+        fi
+
         for request in "${requests[@]}"; do
             if ! argparser_in_array "${request}" "${text_styles[@]}"; then
                 return 1
@@ -421,13 +425,16 @@ function argparser_check_styles() {
             fi
         done
     elif [[ "${check_type}" == "colors, text styles" ]]; then
+        if (( "${#requests[@]}" == 0 )); then
+            return 1
+        fi
+
         for request in "${requests[@]}"; do
             if ! argparser_in_array "${request}" "${colors[@]}" \
                 "${text_styles[@]}"
             then
                 request="${request#bright_}"
-                request="${request%_bg}"
-                request="${request%_fg}"
+                request="${request%@(_bg|_fg)}"
                 if ! argparser_in_array "${request}" "${colors[@]}"; then
                     return 1
                 fi
@@ -439,8 +446,7 @@ function argparser_check_styles() {
                 "${corner_styles[@]}" "${line_styles[@]}" "${line_widths[@]}"
             then
                 request="${request#bright_}"
-                request="${request%_bg}"
-                request="${request%_fg}"
+                request="${request%@(_bg|_fg)}"
                 if ! argparser_in_array "${request}" "${colors[@]}"; then
                     return 1
                 fi
