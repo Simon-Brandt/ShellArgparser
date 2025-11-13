@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-12
+# Last Modification: 2025-11-13
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -3456,6 +3456,8 @@ function argparser_parse_args_definition() {
     # - all_notes: the associative array holding the notes
     # - all_positional_args: the indexed array holding the positional
     #   argument names
+    # - all_resolved_choice_values: the associative array holding the
+    #   resolved (range-expanded) choice values
     # - all_short_options: the associative array holding the short
     #   option names
     # - all_types: the associative array holding the argument types
@@ -3473,10 +3475,7 @@ function argparser_parse_args_definition() {
     local arg_key
     local arg_number
     local -a args_definition
-    local choice_value
-    local -a choice_values
     local -a choice_values_arr
-    local choice_values_range
     local choice_values_str
     local column_index
     local -A column_indices
@@ -3493,9 +3492,12 @@ function argparser_parse_args_definition() {
     local -a line
     local long_options
     local notes
+    local range
     local range_start
     local range_step
     local range_stop
+    local -a resolved_choice_values_arr
+    local resolved_choice_values_str
     local sequence
     local short_options
     local translation
@@ -3673,9 +3675,9 @@ function argparser_parse_args_definition() {
 
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values_arr \
                 <<< "${choice_values_str}"
-            choice_values=( )
-            for choice_values_range in "${choice_values_arr[@]}"; do
-                if [[ "${choice_values_range}" == *-*-*-* ]]; then
+            resolved_choice_values_arr=( )
+            for range in "${choice_values_arr[@]}"; do
+                if [[ "${range}" == *-*-*-* ]]; then
                     error_message="Error: The argument with the identifier "
                     error_message+="\"\$1\" has more hyphens in the choice "
                     error_message+="values given than supported (2)."
@@ -3683,37 +3685,36 @@ function argparser_parse_args_definition() {
                     argparser_translate "Error arg def choice range hyphens" \
                         "${error_message}" "${arg_key}"
                     error_messages+=("${error_message}")
-                elif [[ "${choice_values_range}" == *-*-* ]]; then
-                    range_start="${choice_values_range%%-*}"
-                    range_stop="${choice_values_range#*-}"
+                elif [[ "${range}" == *-*-* ]]; then
+                    range_start="${range%%-*}"
+                    range_stop="${range#*-}"
                     range_step="${range_stop#*-}"
                     range_stop="${range_stop%%-*}"
 
                     argparser_seq "${arg_key}" "${range_start}" \
                         "${range_stop}" "${range_step}"
-
-                    for choice_value in "${sequence[@]}"; do
-                        choice_values+=("${choice_value}")
-                    done
-                elif [[ "${choice_values_range}" == *-* ]]; then
-                    range_start="${choice_values_range%%-*}"
-                    range_stop="${choice_values_range#*-}"
+                    resolved_choice_values_arr+=("${sequence[@]}")
+                elif [[ "${range}" == *-* ]]; then
+                    range_start="${range%-*}"
+                    range_stop="${range#*-}"
 
                     argparser_seq "${arg_key}" "${range_start}" "${range_stop}"
-
-                    for choice_value in "${sequence[@]}"; do
-                        choice_values+=("${choice_value}")
-                    done
+                    resolved_choice_values_arr+=("${sequence[@]}")
                 else
-                    choice_values+=("${choice_values_range}")
+                    resolved_choice_values_arr+=("${range}")
                 fi
             done
+
+            argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
+                "${resolved_choice_values_arr[@]}"
+            resolved_choice_values_str="${joined_array}"
         else
-            choice_values=( )
+            choice_values_str=""
+            resolved_choice_values_str=""
         fi
 
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${choice_values[@]}"
-        all_choice_values[${arg_key}]="${joined_array}"
+        all_choice_values[${arg_key}]="${choice_values_str}"
+        all_resolved_choice_values[${arg_key}]="${resolved_choice_values_str}"
 
         # Get the data type.
         if [[ -n "${column_indices["type"]}" ]]; then
@@ -4096,6 +4097,8 @@ function argparser_check_args_definition_positional_values() {
     # - all_notes: the associative array holding the notes (read-only)
     # - all_positional_args: the indexed array holding the positional
     #   argument names (read-only)
+    # - all_resolved_choice_values: the associative array holding the
+    #   resolved (range-expanded) choice values (read-only)
     # - all_types: the associative array holding the argument types
     #   (read-only)
     # - error_messages: the error messages, starting with "Error: "
@@ -4119,6 +4122,8 @@ function argparser_check_args_definition_positional_values() {
     local note
     local -a notes
     local optional_arg
+    local -a resolved_choice_values_arr
+    local resolved_choice_values_str
     local translation
     local type
 
@@ -4133,6 +4138,10 @@ function argparser_check_args_definition_positional_values() {
         choice_values_str="${all_choice_values[${arg_key}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values_arr \
             <<< "${choice_values_str}"
+        resolved_choice_values_str="${all_resolved_choice_values[${arg_key}]}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a \
+            resolved_choice_values_arr \
+                <<< "${resolved_choice_values_str}"
         type="${all_types[${arg_key}]}"
         arg_number="${all_arg_numbers[${arg_key}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
@@ -4185,9 +4194,9 @@ function argparser_check_args_definition_positional_values() {
         # Check if the default values accord to the choice values, i.e.,
         # if each default value lies within the array of choice values.
         # Else, output an error message.
-        if [[ -n "${choice_values_str}" ]]; then
+        if [[ -n "${resolved_choice_values_str}" ]]; then
             # Check that "true" and "false" aren't choice values.
-            for choice_value in "${choice_values_arr[@]}"; do
+            for choice_value in "${resolved_choice_values_arr[@]}"; do
                 if [[ "${choice_value}" == true \
                     || "${choice_value}" == false ]]
                 then
@@ -4213,7 +4222,7 @@ function argparser_check_args_definition_positional_values() {
 
                 if argparser_in_array "${arg_number}" "*" "?"; then
                     if ! argparser_in_array "${default_value}" \
-                        "${choice_values_arr[@]}" true false
+                        "${resolved_choice_values_arr[@]}" true false
                     then
                         error_message="Error: The positional argument with "
                         error_message+="the identifier \"\$1\" accepts only "
@@ -4230,7 +4239,7 @@ function argparser_check_args_definition_positional_values() {
                     fi
                 else
                     if ! argparser_in_array "${default_value}" \
-                        "${choice_values_arr[@]}"
+                        "${resolved_choice_values_arr[@]}"
                     then
                         error_message="Error: The positional argument with "
                         error_message+="the identifier \"\$1\" accepts only "
@@ -4363,7 +4372,7 @@ function argparser_check_args_definition_positional_values() {
         fi
 
         # Check if the choice values accord to the type.
-        for choice_value in "${choice_values_arr[@]}"; do
+        for choice_value in "${resolved_choice_values_arr[@]}"; do
             if [[ -z "${choice_value}" ]]; then
                 # No choice value is given, so abort the loop.
                 break
@@ -4471,6 +4480,8 @@ function argparser_check_args_definition_option_values() {
     # - all_default_values: the associative array holding the default
     #   values (read-only)
     # - all_notes: the associative array holding the notes (read-only)
+    # - all_resolved_choice_values: the associative array holding the
+    #   resolved (range-expanded) choice values (read-only)
     # - all_short_options: the associative array holding the short
     #   option names (read-only)
     # - all_types: the associative array holding the argument types
@@ -4494,6 +4505,8 @@ function argparser_check_args_definition_option_values() {
     local joined_array
     local note
     local -a notes
+    local -a resolved_choice_values_arr
+    local resolved_choice_values_str
     local translation
     local type
 
@@ -4506,6 +4519,10 @@ function argparser_check_args_definition_option_values() {
         choice_values_str="${all_choice_values[${arg_key}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values_arr \
             <<< "${choice_values_str}"
+        resolved_choice_values_str="${all_resolved_choice_values[${arg_key}]}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a \
+            resolved_choice_values_arr \
+                <<< "${resolved_choice_values_str}"
         type="${all_types[${arg_key}]}"
         arg_number="${all_arg_numbers[${arg_key}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
@@ -4558,7 +4575,7 @@ function argparser_check_args_definition_option_values() {
         # Check if the default values accord to the choice values, i.e.,
         # if each default value lies within the array of choice values.
         # Else, output an error message.
-        if [[ -n "${choice_values_str}" ]]; then
+        if [[ -n "${resolved_choice_values_str}" ]]; then
             # Check that flags have no choice value and that "true" and
             # "false" aren't choice values.
             if [[ "${arg_number}" == 0 ]]; then
@@ -4570,7 +4587,7 @@ function argparser_check_args_definition_option_values() {
                 error_message="${translation}"
                 error_messages+=("${error_message}")
             else
-                for choice_value in "${choice_values_arr[@]}"; do
+                for choice_value in "${resolved_choice_values_arr[@]}"; do
                     if [[ "${choice_value}" == true \
                         || "${choice_value}" == false ]]
                     then
@@ -4600,7 +4617,7 @@ function argparser_check_args_definition_option_values() {
 
                 if argparser_in_array "${arg_number}" "*" "?"; then
                     if ! argparser_in_array "${default_value}" \
-                        "${choice_values_arr[@]}" true false
+                        "${resolved_choice_values_arr[@]}" true false
                     then
                         error_message="Error: The option with the identifier "
                         error_message+="\"\$1\" accepts only the choice "
@@ -4617,7 +4634,7 @@ function argparser_check_args_definition_option_values() {
                     fi
                 else
                     if ! argparser_in_array "${default_value}" \
-                        "${choice_values_arr[@]}"
+                        "${resolved_choice_values_arr[@]}"
                     then
                         error_message="Error: The option with the identifier "
                         error_message+="\"\$1\" accepts only the choice "
@@ -4652,7 +4669,7 @@ function argparser_check_args_definition_option_values() {
         fi
 
         # Check if the choice values accord to the type.
-        for choice_value in "${choice_values_arr[@]}"; do
+        for choice_value in "${resolved_choice_values_arr[@]}"; do
             if [[ -z "${choice_value}" ]]; then
                 # No choice value is given, so abort the loop.
                 break
@@ -4759,6 +4776,8 @@ function argparser_add_args_definition_help_options() {
     # - all_long_options: the associative array holding the long option
     #   names
     # - all_notes: the associative array holding the notes
+    # - all_resolved_choice_values: the associative array holding the
+    #   resolved (range-expanded) choice values
     # - all_short_options: the associative array holding the short
     #   option names
     # - all_types: the associative array holding the argument types
@@ -4844,6 +4863,7 @@ function argparser_add_args_definition_help_options() {
             all_value_names[${arg_key}]=""
             all_default_values[${arg_key}]="false"
             all_choice_values[${arg_key}]=""
+            all_resolved_choice_values[${arg_key}]=""
             all_types[${arg_key}]="bool"
             all_arg_numbers[${arg_key}]="0"
             all_arg_groups[${arg_key}]="${ARGPARSER_HELP_ARG_GROUP}"
@@ -5665,6 +5685,8 @@ function argparser_check_arg_values() {
     # - all_notes: the associative array holding the notes (read-only)
     # - all_positional_args: the indexed array holding the positional
     #   argument names (read-only)
+    # - all_resolved_choice_values: the associative array holding the
+    #   resolved (range-expanded) choice values (read-only)
     # - all_types: the associative array holding the argument types
     #   (read-only)
     # - messages: the parsed argument as message or an error or warning
@@ -5695,6 +5717,8 @@ function argparser_check_arg_values() {
     local option_names
     local prefix
     local -a prefixes
+    local -a resolved_choice_values_arr
+    local resolved_choice_values_str
     local translation
     local type
     local value
@@ -5726,6 +5750,8 @@ function argparser_check_arg_values() {
         default_values_arr=("${default_values_str}")
         choice_values_str="${all_choice_values[${arg_key}]}"
         choice_values_arr=("${choice_values_str}")
+        resolved_choice_values_str="${all_resolved_choice_values[${arg_key}]}"
+        resolved_choice_values_arr=("${resolved_choice_values_str}")
         type="${all_types[${arg_key}]}"
         arg_number="${all_arg_numbers[${arg_key}]}"
         notes=("${all_notes[${arg_key}]}")
@@ -5750,6 +5776,10 @@ function argparser_check_arg_values() {
         choice_values_str="${all_choice_values[${arg_key}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values_arr \
             <<< "${choice_values_str}"
+        resolved_choice_values_str="${all_resolved_choice_values[${arg_key}]}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a \
+            resolved_choice_values_arr \
+                <<< "${resolved_choice_values_str}"
         type="${all_types[${arg_key}]}"
         arg_number="${all_arg_numbers[${arg_key}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
@@ -6041,9 +6071,11 @@ function argparser_check_arg_values() {
     # Check if the given values accord to the choice values, i.e., if
     # each given value lies within the array of choice values.  Else,
     # output an error message.
-    if [[ -n "${choice_values_str}" ]]; then
+    if [[ -n "${resolved_choice_values_str}" ]]; then
         for value in "${values_arr[@]}"; do
-            if ! argparser_in_array "${value}" "${choice_values_arr[@]}"; then
+            if ! argparser_in_array "${value}" \
+                "${resolved_choice_values_arr[@]}"
+            then
                 error_message="Error: The argument \"\$1\" must be in {\$2}, "
                 error_message+="but is {\$3}."
 
@@ -9822,6 +9854,7 @@ function argparser_main() {
     local -A all_long_options
     local -A all_notes
     local -a all_positional_args
+    local -A all_resolved_choice_values
     local -A all_short_options
     local -A all_types
     local -A all_value_names
@@ -9923,6 +9956,7 @@ function argparser_main() {
     unset all_long_options
     unset all_notes
     unset all_positional_args
+    unset all_resolved_choice_values
     unset all_short_options
     unset all_types
     unset all_value_names
@@ -9935,6 +9969,7 @@ function argparser_main() {
     local -A all_long_options
     local -A all_notes
     local -a all_positional_args
+    local -A all_resolved_choice_values
     local -A all_short_options
     local -A all_types
     local -A all_value_names

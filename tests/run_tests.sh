@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-12
+# Last Modification: 2025-11-13
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -482,7 +482,7 @@ test_number="${test_section}.11"
 test_type="usage"
 cmd="bash test_basic.sh -u"
 output="$(cat << EOF
-Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A-C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -493,7 +493,7 @@ test_number="${test_section}.12"
 test_type="usage"
 cmd="bash test_basic.sh --usage"
 output="$(cat << EOF
-Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A-C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -504,7 +504,7 @@ test_number="${test_section}.13"
 test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=row bash test_basic.sh --usage"
 output="$(cat << EOF
-Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A-C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -516,7 +516,7 @@ test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash test_basic.sh --usage"
 output="$(cat << EOF
 Usage: test_basic.sh [-h,-? | -u | -V]
-                     [-d,-D={A,B,C}]
+                     [-d,-D={A-C}]
                      [-e,-E=VAL_5,E]
                      [-f,-F]
                      [-g,-G]
@@ -535,7 +535,7 @@ test_number="${test_section}.15"
 test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_OPTION_TYPE=short bash test_basic.sh --usage"
 output="$(cat << EOF
-Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A-C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -546,7 +546,7 @@ test_number="${test_section}.16"
 test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_OPTION_TYPE=long bash test_basic.sh --usage"
 output="$(cat << EOF
-Usage: test_basic.sh [--help | --usage | --version] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5,VAR_E] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1,VAR_A --var-2,--var-b=VAL_2,VAR_B... --var-3,--var-c={A,B}... [{1,2}] pos_2
+Usage: test_basic.sh [--help | --usage | --version] [--var-4,--var-d={A-C}] [--var-5,--var-e=VAL_5,VAR_E] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1,VAR_A --var-2,--var-b=VAL_2,VAR_B... --var-3,--var-c={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -575,8 +575,8 @@ Mandatory options:
           --var-c={A,B}...
 
 Optional options:
-[-d, -D], [--var-4={A,B,C}],               one value with default and choice
-          [--var-d={A,B,C}]                (default: "A")
+[-d, -D], [--var-4={A-C}], [--var-d={A-C}] one value with default and choice
+                                           (default: "A")
 [-e, -E], [--var-5=VAL_5], [--var-e=VAR_E] one value with default (default:
                                            "E")
 [-f, -F], [--var-6, --var-f]               no value (flag) with default
@@ -618,8 +618,8 @@ Mandatory options:
           --var-c={A,B}...
 
 Optional options:
-[-d, -D], [--var-4={A,B,C}],               one value with default and choice
-          [--var-d={A,B,C}]                (default: "A")
+[-d, -D], [--var-4={A-C}], [--var-d={A-C}] one value with default and choice
+                                           (default: "A")
 [-e, -E], [--var-5=VAL_5], [--var-e=VAR_E] one value with default (default:
                                            "E")
 [-f, -F], [--var-6, --var-f]               no value (flag) with default
@@ -682,7 +682,7 @@ output=""
 error="$(cat << EOF
 test_short_options.sh: Error: The argument "--version" is unknown.
 
-Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A-C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
@@ -692,7 +692,7 @@ test_number="${test_section}.4"
 test_type="usage"
 cmd="bash test_short_options.sh -u"
 output="$(cat << EOF
-Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A-C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -706,7 +706,7 @@ output=""
 error="$(cat << EOF
 test_short_options.sh: Error: The argument "--usage" is unknown.
 
-Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A-C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
@@ -732,8 +732,8 @@ Mandatory options:
 -C={A,B}...
 
 Optional options:
-[-d={A,B,C}],      one value with default and choice (default: "A")
-[-D={A,B,C}]
+[-d={A-C}],        one value with default and choice (default: "A")
+[-D={A-C}]
 [-e=VAL_5], [-E=E] one value with default (default: "E")
 [-f, -F]           no value (flag) with default (default: false)
 [-g, -G]           (DEPRECATED) no value (flag) with default (default: true)
@@ -754,7 +754,7 @@ output=""
 error="$(cat << EOF
 test_short_options.sh: Error: The argument "--help" is unknown.
 
-Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A-C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
@@ -792,7 +792,7 @@ output=""
 error="$(cat << EOF
 test_long_options.sh: Error: The argument "-V" is unknown.
 
-Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5,VAR_E] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1,VAR_A --var-2,--var-b=VAL_2,VAR_B... --var-3,--var-c={A,B}... [{1,2}] pos_2
+Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A-C}] [--var-5,--var-e=VAL_5,VAR_E] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1,VAR_A --var-2,--var-b=VAL_2,VAR_B... --var-3,--var-c={A,B}... [{1,2}] pos_2
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
@@ -816,7 +816,7 @@ output=""
 error="$(cat << EOF
 test_long_options.sh: Error: The argument "-u" is unknown.
 
-Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5,VAR_E] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1,VAR_A --var-2,--var-b=VAL_2,VAR_B... --var-3,--var-c={A,B}... [{1,2}] pos_2
+Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A-C}] [--var-5,--var-e=VAL_5,VAR_E] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1,VAR_A --var-2,--var-b=VAL_2,VAR_B... --var-3,--var-c={A,B}... [{1,2}] pos_2
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
@@ -826,7 +826,7 @@ test_number="${test_section}.5"
 test_type="usage"
 cmd="bash test_long_options.sh --usage"
 output="$(cat << EOF
-Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5,VAR_E] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1,VAR_A --var-2,--var-b=VAL_2,VAR_B... --var-3,--var-c={A,B}... [{1,2}] pos_2
+Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A-C}] [--var-5,--var-e=VAL_5,VAR_E] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1,VAR_A --var-2,--var-b=VAL_2,VAR_B... --var-3,--var-c={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -840,7 +840,7 @@ output=""
 error="$(cat << EOF
 test_long_options.sh: Error: The argument "-h" is unknown.
 
-Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A,B,C}] [--var-5,--var-e=VAL_5,VAR_E] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1,VAR_A --var-2,--var-b=VAL_2,VAR_B... --var-3,--var-c={A,B}... [{1,2}] pos_2
+Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A-C}] [--var-5,--var-e=VAL_5,VAR_E] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1,VAR_A --var-2,--var-b=VAL_2,VAR_B... --var-3,--var-c={A,B}... [{1,2}] pos_2
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
@@ -868,8 +868,8 @@ Mandatory options:
 --var-c={A,B}...
 
 Optional options:
-[--var-4={A,B,C}],               one value with default and choice (default:
-[--var-d={A,B,C}]                "A")
+[--var-4={A-C}], [--var-d={A-C}] one value with default and choice (default:
+                                 "A")
 [--var-5=VAL_5], [--var-e=VAR_E] one value with default (default: "E")
 [--var-6, --var-f]               no value (flag) with default (default: false)
 [--var-7, --var-g]               (DEPRECATED) no value (flag) with default
@@ -922,7 +922,7 @@ test_number="${test_section}.3"
 test_type="usage"
 cmd="bash test_keyword_arguments.sh --usage"
 output="$(cat << EOF
-Usage: test_keyword_arguments.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}...
+Usage: test_keyword_arguments.sh [-h,-? | -u | -V] [-d={A-C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}...
 EOF
 )"
 error=""
@@ -943,7 +943,7 @@ Mandatory options:
 -c,       --var-3={A,B}... at least one value with choice
 
 Optional options:
-[-d={A,B,C}]               one value with default and choice (default: "A")
+[-d={A-C}]                 one value with default and choice (default: "A")
           [--var-5=VAL_5]  one value with default (default: "E")
 [-f],     [--var-6]        no value (flag) with default (default: false)
 [-g],     [--var-7]        (DEPRECATED) no value (flag) with default (default:
@@ -1091,7 +1091,7 @@ test_number="${test_section}.3"
 test_type="usage"
 cmd="bash test_arg_number.sh --usage"
 output="$(cat << EOF
-Usage: test_arg_number.sh [-h,-? | -u | -V] [-d,-D[={A,B,C}...]] [-e,-E[=VAL_5,E]] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_arg_number.sh [-h,-? | -u | -V] [-d,-D[={A-C}...]] [-e,-E[=VAL_5,E]] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -1120,8 +1120,8 @@ Mandatory options:
           --var-c={A,B}...
 
 Optional options:
-[-d, -D], [--var-4[={A,B,C}...]],      arbitrarily many values with default and
-          [--var-d[={A,B,C}...]]       choice (default: "false")
+[-d, -D], [--var-4[={A-C}...]],        arbitrarily many values with default and
+          [--var-d[={A-C}...]]         choice (default: "false")
 [-e, -E], [--var-5[=VAL_5]],           one optional value with default
           [--var-e[=VAR_E]]            (default: "true")
 [-f, -F], [--var-6, --var-f]           no value (flag) with default (default:
@@ -1181,7 +1181,7 @@ test_number="${test_section}.3"
 test_type="usage"
 cmd="bash test_config_file.sh --usage"
 output="$(cat << EOF
-Usage: test_config_file.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+Usage: test_config_file.sh [-h,-? | -u | -V] [-d={A-C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -1207,7 +1207,7 @@ Mandatory options:
 -c,       --var-3={A,B}... at least one value with choice
 
 Optional options:
-[-d={A,B,C}]               one value with default and choice (default: "A")
+[-d={A-C}]                 one value with default and choice (default: "A")
           [--var-5=VAL_5]  one value with default (default: "E")
 [-f],     [--var-6]        no value (flag) with default (default: false)
 [-g],     [--var-7]        (DEPRECATED) no value (flag) with default (default:
@@ -1262,7 +1262,7 @@ test_number="${test_section}.3"
 test_type="usage"
 cmd="bash test_arg_def_file.sh --usage"
 output="$(cat << EOF
-Usage: test_arg_def_file.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+Usage: test_arg_def_file.sh [-h,-? | -u | -V] [-d={A-C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -1288,7 +1288,7 @@ Mandatory options:
 -c,       --var-3={A,B}... at least one value with choice
 
 Optional options:
-[-d={A,B,C}]               one value with default and choice (default: "A")
+[-d={A-C}]                 one value with default and choice (default: "A")
           [--var-5=VAL_5]  one value with default (default: "E")
 [-f],     [--var-6]        no value (flag) with default (default: false)
 [-g],     [--var-7]        (DEPRECATED) no value (flag) with default (default:
@@ -1343,7 +1343,7 @@ test_number="${test_section}.3"
 test_type="usage"
 cmd="bash test_help_file.sh --usage"
 output="$(cat << EOF
-Usage: test_help_file.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+Usage: test_help_file.sh [-h,-? | -u | -V] [-d={A-C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -1370,7 +1370,7 @@ The following options have no default value:
 -c,       --var-3={A,B}... at least one value with choice
 
 The following options have a default value:
-[-d={A,B,C}]               one value with default and choice (default: "A")
+[-d={A-C}]                 one value with default and choice (default: "A")
           [--var-5=VAL_5]  one value with default (default: "E")
 [-f],     [--var-6]        no value (flag) with default (default: false)
 [-g],     [--var-7]        (DEPRECATED) no value (flag) with default (default:
@@ -1416,9 +1416,9 @@ test_type="error"
 cmd="bash test_style_file.sh -g"
 output="$(cat << EOF
 
-╭─ Usage ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ test_style_file.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2 │
-╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Usage ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ test_style_file.sh [-h,-? | -u | -V] [-d={A-C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2 │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 EOF
 )"
 error="$(cat << EOF
@@ -1453,9 +1453,9 @@ test_number="${test_section}.4"
 test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=row bash test_style_file.sh --usage"
 output="$(cat << EOF
-╭─ Usage ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ test_style_file.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2 │
-╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Usage ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ test_style_file.sh [-h,-? | -u | -V] [-d={A-C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2 │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 EOF
 )"
 error=""
@@ -1468,7 +1468,7 @@ cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash test_style_file.sh --usage"
 output="$(cat << EOF
 ╭─ Usage ──────────────────────────────╮
 │ test_style_file.sh [-h,-? | -u | -V] │
-│                    [-d={A,B,C}]      │
+│                    [-d={A-C}]        │
 │                    [-f]              │
 │                    [-g]              │
 │                    [--var-5=VAL_5]   │
@@ -1506,7 +1506,7 @@ Mandatory arguments to long options are mandatory for short options too.
 ╰─────────────────────────────────────────────────────────────────────────────╯
 
 ╭─ Optional options ──────────────────────────────────────────────────────────╮
-│ [-d={A,B,C}]               one value with default and choice (default: "A") │
+│ [-d={A-C}]                 one value with default and choice (default: "A") │
 │           [--var-5=VAL_5]  one value with default (default: "E")            │
 │ [-f],     [--var-6]        no value (flag) with default (default: false)    │
 │ [-g],     [--var-7]        (DEPRECATED) no value (flag) with default        │
@@ -1594,7 +1594,7 @@ test_number="${test_section}.5"
 test_type="usage"
 cmd="LANG=en_US.UTF-8 bash test_localization.sh --usage"
 output="$(cat << EOF
-Usage: test_localization.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+Usage: test_localization.sh [-h,-? | -u | -V] [-d={A-C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -1605,7 +1605,7 @@ test_number="${test_section}.6"
 test_type="usage"
 cmd="LANG=de_DE.UTF-8 bash test_localization.sh --usage"
 output="$(cat << EOF
-Aufruf: test_localization.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+Aufruf: test_localization.sh [-h,-? | -u | -V] [-d={A-C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -1632,7 +1632,7 @@ The following options have no default value:
 -c,       --var-3={A,B}... at least one value with choice
 
 The following options have a default value:
-[-d={A,B,C}]               one value with default and choice (default: "A")
+[-d={A-C}]                 one value with default and choice (default: "A")
           [--var-5=VAL_5]  one value with default (default: "E")
 [-f],     [--var-6]        no value (flag) with default (default: false)
 [-g],     [--var-7]        (DEPRECATED) no value (flag) with default (default:
@@ -1669,7 +1669,7 @@ Die folgenden Optionen haben keinen Vorgabewert:
 -c,       --var-3={A,B}... mindestens ein Wert mit Auswahl
 
 Die folgenden Optionen haben einen Vorgabewert:
-[-d={A,B,C}]               ein Wert mit Vorgabe und Auswahl (Vorgabe: "A")
+[-d={A-C}]                 ein Wert mit Vorgabe und Auswahl (Vorgabe: "A")
           [--var-5=VAL_5]  ein Wert mit Vorgabe (Vorgabe: "E")
 [-f],     [--var-6]        kein Wert (Flag) mit Vorgabe (Vorgabe: falsch)
 [-g],     [--var-7]        (VERALTET) kein Wert (Flag) mit Vorgabe (Vorgabe:
@@ -1737,7 +1737,7 @@ test_number="${test_section}.3"
 test_type="usage"
 cmd="dash test_pipeline.sh --usage"
 output="$(cat << EOF
-Usage: test_pipeline.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+Usage: test_pipeline.sh [-h,-? | -u | -V] [-d={A-C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 EOF
 )"
 error=""
@@ -1763,7 +1763,7 @@ Mandatory options:
 -c,       --var-3={A,B}... at least one value with choice
 
 Optional options:
-[-d={A,B,C}]               one value with default and choice (default: "A")
+[-d={A-C}]                 one value with default and choice (default: "A")
           [--var-5=VAL_5]  one value with default (default: "E")
 [-f],     [--var-6]        no value (flag) with default (default: false)
 [-g],     [--var-7]        (DEPRECATED) no value (flag) with default (default:
