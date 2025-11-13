@@ -2963,15 +2963,19 @@ function argparser_read_styles() {
         fi
     done
 
-    # Sort, filter, colorize, and print all error messages, then exit.
-    # If there are no error messages, print all warning messages.
+    # Sort, filter, colorize, and print all error and warning messages.
+    # Exit iff there are error messages.
     if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
         ARGPARSER_ARG_DELIMITER_2=","
         ARGPARSER_ERROR_EXIT_CODE=1
     fi
 
-    argparser_print_error_messages true true "${error_messages[@]}"
+    argparser_print_error_messages true false "${error_messages[@]}"
     argparser_print_warning_messages true "${warning_messages[@]}"
+
+    if (( "${#error_messages[@]}" > 0 )); then
+        exit "${ARGPARSER_ERROR_EXIT_CODE}"
+    fi
 }
 
 # Define the Argparser functions for creating, reading, parsing, and
@@ -5560,7 +5564,7 @@ function argparser_parse_positional_args() {
         # given in each case.
         if [[ "${arg_number}" == "+" ]]; then
             arg_number=1
-        elif [[ "${arg_number}" == "*" ||  "${arg_number}" == "?" ]]; then
+        elif [[ "${arg_number}" == "*" || "${arg_number}" == "?" ]]; then
             arg_number=0
         fi
 
@@ -5579,9 +5583,9 @@ function argparser_parse_positional_args() {
     # values defined, a higher number of given values than required
     # means that either some values for arguments with default values
     # are given (then, their count exceeds zero), or that an argument
-    # accepting an arbitrary number of values is given as last once
-    # (then, the count of default arguments is zero).  This allows to
-    # distinguish these two cases.
+    # accepting an arbitrary number of values is given as last one
+    # (then, the count of arguments with default values is zero).  This
+    # allows to distinguish these two cases.
     args_count="${#values[@]}"
     if (( args_count > required_args_count && default_args_count > 0 )); then
         # There are arguments having default values given.  Get the
@@ -6688,11 +6692,9 @@ function argparser_parse_args() {
     # and abort the script.
     if (( "${#error_messages[@]}" > 0 )); then
         if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
-            {
-                printf '\n'
-                argparser_print_usage_message false
-            } >&2
-        fi
+            printf '\n'
+            argparser_print_usage_message false
+        fi >&2
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
     fi
 
