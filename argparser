@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-13
+# Last Modification: 2025-11-14
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -650,6 +650,93 @@ function argparser_fold() {
         then
             largest_col_width="${col_width}"
         fi
+    done
+}
+
+function argparser_fold_arr() {
+    # Limit the width of an array's elements to the maximum width by
+    # spltting them into separate elements.  Upon joining the array with
+    # newline characters, these effectively become inserted line breaks.
+    #
+    # Arguments:
+    # - $1: the maximum width a column may have
+    # - $2: the amount of indentation after each line break
+    # - $@: the array in which to insert line breaks
+    #
+    # Nonlocals:
+    # - folded_array: the array with introduced line breaks
+
+    # Define the local variables.
+    local -a array
+    local element
+    local i
+    local indentation
+    local max_width
+    local pattern
+    local style
+    local -a uncolorized_array
+    local whitespace
+    local width
+    local word
+    local word_length
+    local -a words
+
+    # Read the arguments.
+    max_width="$1"
+    indentation="$2"
+    shift 2
+    array=("$@")
+
+    # Set the indentation whitespace.
+    printf -v whitespace '%*s' "${indentation}" ""
+
+    # Split each (uncolorized) element (line) in the array word by word
+    # on spaces, such that line breaks aren't inserted into entire
+    # words.
+    pattern=$'((\e\[[1-9][0-9]?[0-9]?m)+)[^\e]*(\e\[0m)?$'
+    folded_array=( )
+    for element in "${array[@]}"; do
+        folded_array+=("")
+        width=0
+        IFS=" " read -r -a words <<< "${element}"
+
+        argparser_uncolorize "array" "${words[@]}"
+
+        for i in "${!words[@]}"; do
+            word="${words[i]}"
+            word_length="${#uncolorized_array[i]}"
+
+            if (( width == 0 )); then
+                # For the first word in the line, add the word only and
+                # set the width.  Since the word *must* be given on some
+                # line, don't test whether it is too long for the line,
+                # i.e., if it exceeds ${max_width}.
+                folded_array[-1]+="${word}"
+                width="${word_length}"
+            elif (( width + word_length + 1 > max_width )); then
+                # As the line with the appended word (and the preceding
+                # space) would be too long, put the word as (indented)
+                # next array element and set the width.  If the style
+                # pattern matches, end the current line with the ANSI
+                # escape sequence for the end of colors and styles and
+                # add the line's last pattern to the next line.
+                if [[ "${folded_array[-1]}" =~ ${pattern} ]]; then
+                    style="${BASH_REMATCH[1]}"
+                    folded_array[-1]+=$'\e[0m'
+                    folded_array+=("${whitespace}${style}${word}")
+                else
+                    folded_array+=("${whitespace}${word}")
+                fi
+                (( width = word_length + indentation ))
+            else
+                # For any other word, add the word and a leading space
+                # (otherwise, the words would be concatenated without
+                # separation since the splitting removed any spaces).
+                # Increase the width appropriately.
+                folded_array[-1]+=" ${word}"
+                (( width += word_length + 1 ))
+            fi
+        done
     done
 }
 
@@ -10125,6 +10212,7 @@ function argparser_main() {
         unset -f argparser_create_usage_message
         unset -f argparser_draw_frame
         unset -f argparser_fold
+        unset -f argparser_fold_arr
         unset -f argparser_get_arg_key
         unset -f argparser_get_option_names
         unset -f argparser_in_array
