@@ -9532,6 +9532,7 @@ function argparser_print_error_messages() {
     # - styles: the associative array containing the styles (read-only)
     #
     # Environment:
+    # - ARGPARSER_MAX_WIDTH (read-only)
     # - ARGPARSER_ERROR_EXIT_CODE (read-only)
     # - ARGPARSER_SCRIPT_NAME (read-only)
     # - ARGPARSER_SILENCE_ERRORS (read-only)
@@ -9544,7 +9545,9 @@ function argparser_print_error_messages() {
     local -a error_messages
     local filter
     local -a filtered_array
+    local -a folded_array
     local -a framed_array
+    local indentation
     local -a padded_array
     local script_name
     local -a sorted_array
@@ -9579,11 +9582,11 @@ function argparser_print_error_messages() {
     fi
 
     # Colorize the caption, the script name, and the error messages.  If
-    # an error frame style is given, right-pad the messages and draw a
-    # frame around the block, containing the colorized error caption as
-    # heading, then join the lines into a single string.  Otherwise,
-    # print each error message with script name and heading as separate
-    # lines.
+    # an error frame style is given, fold and right-pad the messages,
+    # then draw a frame around the block, containing the colorized error
+    # caption as heading, and join the lines into a single string.
+    # Otherwise, print each folded error message with script name and
+    # heading as separate lines.
     argparser_translate "Error" "Error"
     caption="${translation}"
 
@@ -9594,6 +9597,8 @@ function argparser_print_error_messages() {
     error_messages=("${colorized_array[@]}")
 
     if [[ -n "${styles["error_frame"]}" ]]; then
+        (( indentation = "${#ARGPARSER_SCRIPT_NAME}" + 2 ))
+
         if (( "${#error_messages[@]}" > 1 )); then
             argparser_translate "Errors" "Errors"
             caption="${translation}"
@@ -9601,14 +9606,21 @@ function argparser_print_error_messages() {
 
         argparser_colorize "${styles["error_caption"]}" 2 caption \
             " ${caption} "
-        argparser_pad "right" "auto" "${error_messages[@]/#/"${script_name} "}"
+
+        argparser_fold_arr "${ARGPARSER_MAX_WIDTH}" "${indentation}" \
+            "${error_messages[@]/#/"${script_name} "}"
+        argparser_pad "right" "auto" "${folded_array[@]}"
         argparser_draw_frame "${styles["error_frame"]}" 2 "array" \
             "${caption}" "${padded_array[@]}"
         printf '%s\n' "${framed_array[@]}"
     else
+        (( indentation = "${#ARGPARSER_SCRIPT_NAME}" + "${#caption}" + 4 ))
+
         argparser_colorize "${styles["error_caption"]}" 2 caption "${caption}:"
-        error_messages=("${error_messages[@]/#/"${script_name} ${caption}" }")
-        printf '%s\n' "${error_messages[@]}"
+
+        argparser_fold_arr "${ARGPARSER_MAX_WIDTH}" "${indentation}" \
+            "${error_messages[@]/#/"${script_name} ${caption}" }"
+        printf '%s\n' "${folded_array[@]}"
     fi >&2
 
     # Exit, if requested.
@@ -9628,6 +9640,7 @@ function argparser_print_warning_messages() {
     # - styles: the associative array containing the styles (read-only)
     #
     # Environment:
+    # - ARGPARSER_MAX_WIDTH (read-only)
     # - ARGPARSER_SCRIPT_NAME (read-only)
     # - ARGPARSER_SILENCE_WARNINGS (read-only)
 
@@ -9636,7 +9649,9 @@ function argparser_print_warning_messages() {
     local -a colorized_array
     local filter
     local -a filtered_array
+    local -a folded_array
     local -a framed_array
+    local indentation
     local -a padded_array
     local script_name
     local -a sorted_array
@@ -9667,11 +9682,11 @@ function argparser_print_warning_messages() {
     fi
 
     # Colorize the caption, the script name, and the warning messages.
-    # If a warning frame style is given, right-pad the messages and draw
-    # a frame around the block, containing the colorized warning caption
-    # as heading, then join the lines into a single string.  Otherwise,
-    # print each warning message with script name and heading as
-    # separate lines.
+    # If a warning frame style is given, fold and right-pad the
+    # messages, then draw a frame around the block, containing the
+    # colorized warning caption as heading, and join the lines into a
+    # single string.  Otherwise, print each folded warning message with
+    # script name and heading as separate lines.
     argparser_translate "Warning" "Warning"
     caption="${translation}"
 
@@ -9682,6 +9697,8 @@ function argparser_print_warning_messages() {
     warning_messages=("${colorized_array[@]}")
 
     if [[ -n "${styles["warning_frame"]}" ]]; then
+        (( indentation = "${#ARGPARSER_SCRIPT_NAME}" + 2 ))
+
         if (( "${#warning_messages[@]}" > 1 )); then
             argparser_translate "Warnings" "Warnings"
             caption="${translation}"
@@ -9689,18 +9706,22 @@ function argparser_print_warning_messages() {
 
         argparser_colorize "${styles["warning_caption"]}" 2 caption \
             " ${caption} "
-        argparser_pad "right" "auto" \
+
+        argparser_fold_arr "${ARGPARSER_MAX_WIDTH}" "${indentation}" \
             "${warning_messages[@]/#/"${script_name} "}"
+        argparser_pad "right" "auto" "${folded_array[@]}"
         argparser_draw_frame "${styles["warning_frame"]}" 2 "array" \
             "${caption}" "${padded_array[@]}"
         printf '%s\n' "${framed_array[@]}"
     else
+        (( indentation = "${#ARGPARSER_SCRIPT_NAME}" + "${#caption}" + 4 ))
+
         argparser_colorize "${styles["warning_caption"]}" 2 caption \
             "${caption}:"
-        warning_messages=(
+
+        argparser_fold_arr "${ARGPARSER_MAX_WIDTH}" "${indentation}" \
             "${warning_messages[@]/#/"${script_name} ${caption} "}"
-        )
-        printf '%s\n' "${warning_messages[@]}"
+        printf '%s\n' "${folded_array[@]}"
     fi >&2
 }
 
