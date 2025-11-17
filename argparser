@@ -664,6 +664,7 @@ function argparser_fold_arr() {
     local element
     local i
     local indentation
+    local is_style
     local max_width
     local pattern
     local style
@@ -701,11 +702,71 @@ function argparser_fold_arr() {
 
             if (( width == 0 )); then
                 # For the first word in the line, add the word only and
-                # set the width.  Since the word *must* be given on some
-                # line, don't test whether it is too long for the line,
-                # i.e., if it exceeds ${max_width}.
-                folded_array[-1]+="${word}"
-                width="${word_length}"
+                # set the width.
+                if (( word_length > max_width )); then
+                    # The word is too long to fit a single line, so put
+                    # as many characters as possible on the line and the
+                    # (indented) remainder as next array element.
+                    if [[ "${word}" == *$'\e'* ]]; then
+                        # The word contains a style, whose length must
+                        # not be taken into account for gauging the word
+                        # length.  Thus, append one character at a time
+                        # to the line, only increasing the word length
+                        # when no style is being processed.  As soon as
+                        # the word length approaches the maximum width,
+                        # end the current line with the ANSI escape
+                        # sequence for the end of colors and styles,
+                        # append a backslash, and add the word's last
+                        # pattern to the next line.  Finally, add the
+                        # word's remainder to the next line.
+                        word_length=0
+                        is_style=false
+                        style=""
+                        for (( j = 0; j < "${#word}"; j++ )); do
+                            folded_array[-1]+="${word:j:1}"
+
+                            if [[ "${is_style}" == true ]]; then
+                                if [[ "${word:j:1}" == "m" \
+                                    && "${word:j+1:1}" != $'\e' ]]
+                                then
+                                    is_style=false
+                                fi
+                                style+="${word:j:1}"
+                                continue
+                            fi
+
+                            if [[ "${word:j:1}" == $'\e' ]]; then
+                                is_style=true
+                                style=$'\e'
+                                continue
+                            fi
+
+                            (( word_length++ ))
+                            if (( word_length == max_width - 1 )); then
+                                if [[ "${style}" == $'\e[0m' ]]; then
+                                    folded_array[-1]+="\\"
+                                    folded_array+=("${whitespace}")
+                                else
+                                    folded_array[-1]+=$'\e[0m\\'
+                                    folded_array+=("${whitespace}${style}")
+                                fi
+                                break
+                            fi
+                        done
+                        folded_array[-1]+="${word:j+1}"
+                    else
+                        # The word doesn't contain any style, so string
+                        # slicing works correctly.
+                        folded_array[-1]+="${word::max_width}"
+                        folded_array+=("${whitespace}${word:max_width}")
+                    fi
+                    (( width = word_length - max_width + indentation ))
+                else
+                    # The word is short enough to fit the line, so add
+                    # it directly.
+                    folded_array[-1]+="${word}"
+                    width="${word_length}"
+                fi
             elif (( width + word_length + 1 > max_width )); then
                 # As the line with the appended word (and the preceding
                 # space) would be too long, put the word as (indented)
