@@ -6996,13 +6996,14 @@ function argparser_create_help_message() {
     local arg_key
     local arg_number
     local caption
-    local caption_width
     local choice_values_str
     local -a choice_values_arr
     local -a col_1
     local -a col_2
     local -a col_3
-    local -a col_widths
+    local col_width_1
+    local col_width_2
+    local col_width_3
     local -a colorized_array
     local count
     local default_text_end
@@ -7010,6 +7011,7 @@ function argparser_create_help_message() {
     local default_value
     local -a default_values_arr
     local default_values_str
+    local -a folded_array
     local has_default_args
     local has_required_args
     local -a help_message
@@ -7017,36 +7019,22 @@ function argparser_create_help_message() {
     local i
     local index
     local is_deprecated
-    local is_overlong
     local j
     local -a joined_array
-    local joined_words
-    local largest_col_width
     local line
-    local line_count_1
-    local line_count_2
-    local line_count_3
-    local line_length_1
-    local line_length_2
-    local line_length_3
-    local lines_col_1
-    local lines_col_2
-    local lines_col_3
     local long_option
     local -a long_options_arr
     local long_options_str
     local mandatory_arguments_hint
     local max_col_width_3
-    local max_line_count
+    local max_value
+    local max_width
     local -a new_col_1
     local new_col_1_value
     local -a new_col_2
     local new_col_2_value
     local -a new_col_3
     local new_col_3_value
-    local newline_count_1
-    local newline_count_2
-    local newline_count_3
     local note
     local -a notes
     local -a option_names
@@ -7065,16 +7053,9 @@ function argparser_create_help_message() {
     local translation
     local type
     local -a uncolorized_array
-    local -a uncolorized_col_1
-    local -a uncolorized_col_2
-    local -a uncolorized_col_3
     local usage
     local -a value_names_arr
     local value_names_str
-    local -a whitespace_1
-    local -a whitespace_2
-    local whitespace_length_1
-    local whitespace_length_2
 
     # Read the arguments' groups to sort the keyword arguments by group
     # in the help message.  To this end, compare each argument's group
@@ -7643,6 +7624,7 @@ function argparser_create_help_message() {
                 for short_option in "${short_options_arr[@]}"; do
                     new_col_1_value+="${short_option}, "
                 done
+                new_col_1_value="${new_col_1_value% }"
             fi
             new_col_1+=("${new_col_1_value}")
 
@@ -7902,267 +7884,101 @@ function argparser_create_help_message() {
         arg_groups+=("${ARGPARSER_HELP_ARG_GROUP}")
     fi
 
-    # Limit the width of the first two columns of the help message to
-    # ${ARGPARSER_MAX_COL_WIDTH_*}, and of the third column to
-    # ${ARGPARSER_MAX_WIDTH} or ${ARGPARSER_MAX_COL_WIDTH_3} (if given)
-    # by inserting line breaks.
-    # Split the element of column 1.
-    col_widths[1]=0
-    for i in "${!col_1[@]}"; do
-        argparser_fold "${col_1[i]}" "${ARGPARSER_MAX_COL_WIDTH_1}" \
-            "${col_widths[1]}"
-        col_1[i]="${joined_words}"
-        col_widths[1]="${largest_col_width}"
-    done
+    # Get the maximum width the first and second column will actually
+    # occupy, once line-wrapped (folded), to be able to compute the
+    # width for the third column.  To this end, fold the first two
+    # (uncolorized) columns and compute their maximum width, then throw
+    # them away.
+    argparser_uncolorize "array" "${col_1[@]}"
+    argparser_fold "${ARGPARSER_MAX_COL_WIDTH_1}" 0 "${uncolorized_array[@]}"
+    argparser_get_max_width "${folded_array[@]}"
+    col_width_1="${max_width}"
 
-    # Split the element of column 2.
-    col_widths[2]=0
-    for i in "${!col_2[@]}"; do
-        argparser_fold "${col_2[i]}" "${ARGPARSER_MAX_COL_WIDTH_2}" \
-            "${col_widths[2]}"
-        col_2[i]="${joined_words}"
-        col_widths[2]="${largest_col_width}"
-    done
+    argparser_uncolorize "array" "${col_2[@]}"
+    argparser_fold "${ARGPARSER_MAX_COL_WIDTH_2}" 0 "${uncolorized_array[@]}"
+    argparser_get_max_width "${folded_array[@]}"
+    col_width_2="${max_width}"
 
-    # Split the element of column 3.
     if (( ARGPARSER_MAX_COL_WIDTH_3 == 0 )); then
-        if (( col_widths[1] > 0 && col_widths[2] > 0 )); then
-            (( max_col_width_3 = ARGPARSER_MAX_WIDTH - col_widths[1] \
-                - col_widths[2] - 2 ))
-        elif (( col_widths[1] > 0 )); then
-            (( max_col_width_3 = ARGPARSER_MAX_WIDTH - col_widths[1] - 1 ))
-        elif (( col_widths[2] > 0 )); then
-            (( max_col_width_3 = ARGPARSER_MAX_WIDTH - col_widths[2] - 1 ))
+        if (( col_width_1 > 0 && col_width_2 > 0 )); then
+            (( max_col_width_3 = ARGPARSER_MAX_WIDTH - col_width_1 \
+                - col_width_2 - 2 ))
+        elif (( col_width_1 > 0 )); then
+            (( max_col_width_3 = ARGPARSER_MAX_WIDTH - col_width_1 - 1 ))
+        elif (( col_width_2 > 0 )); then
+            (( max_col_width_3 = ARGPARSER_MAX_WIDTH - col_width_2 - 1 ))
         else
-            (( max_col_width_3 = ARGPARSER_MAX_WIDTH ))
+            max_col_width_3="${ARGPARSER_MAX_WIDTH}"
         fi
     else
         max_col_width_3="${ARGPARSER_MAX_COL_WIDTH_3}"
     fi
 
-    col_widths[3]=0
-    for i in "${!col_3[@]}"; do
-        argparser_fold "${col_3[i]}" "${max_col_width_3}" "${col_widths[3]}"
-        col_3[i]="${joined_words}"
-        col_widths[3]="${largest_col_width}"
-    done
-
-    # Adjust the number of line breaks between each column's rows, such
-    # that each element shares the same number of rows.
-    for i in "${!col_1[@]}"; do
-        # Count the number of rows for each element.
-        mapfile -t lines_col_1 <<< "${col_1[i]}"
-        line_count_1="${#lines_col_1[@]}"
-
-        mapfile -t lines_col_2 <<< "${col_2[i]}"
-        line_count_2="${#lines_col_2[@]}"
-
-        mapfile -t lines_col_3 <<< "${col_3[i]}"
-        line_count_3="${#lines_col_3[@]}"
-
-        # Get the largest line count.
-        if (( line_count_1 >= line_count_2 )); then
-            if (( line_count_1 >= line_count_3 )); then
-                max_line_count="${line_count_1}"
-            else
-                max_line_count="${line_count_3}"
-            fi
-        else
-            if (( line_count_2 >= line_count_3 )); then
-                max_line_count="${line_count_2}"
-            else
-                max_line_count="${line_count_3}"
-            fi
-        fi
-
-        # Set the number of required line breaks to align each line.  If
-        # the line count is 0, 1 is subtracted from the maximum line
-        # count, such that the last line does not end in a line break.
-        # The same holds true for a line count of greater than 0, where
-        # normally 1 would have to be added.  This trailing newline
-        # character gets added by the here string upon re-reading the
-        # arrays, below.
-        if (( line_count_1 == 0 )); then
-            (( newline_count_1 = max_line_count - 1 ))
-        else
-            (( newline_count_1 = max_line_count - line_count_1 ))
-        fi
-
-        if (( line_count_2 == 0 )); then
-            (( newline_count_2 = max_line_count - 1 ))
-        else
-            (( newline_count_2 = max_line_count - line_count_2 ))
-        fi
-
-        if (( line_count_3 == 0 )); then
-            (( newline_count_3 = max_line_count - 1 ))
-        else
-            (( newline_count_3 = max_line_count - line_count_3 ))
-        fi
-
-        # To each element, add as many line breaks as computed.
-        for (( j = 0; j < newline_count_1; j++ )); do
-            col_1[i]+=$'\n'
-        done
-
-        for (( j = 0; j < newline_count_2; j++ )); do
-            col_2[i]+=$'\n'
-        done
-
-        for (( j = 0; j < newline_count_3; j++ )); do
-            col_3[i]+=$'\n'
-        done
-    done
-
-    # Re-read in the columns' lines, such that each line makes up one
-    # element of the array.  To this end, split the lines on newline
-    # characters (that get stripped off the lines).  The here string
-    # adds a trailing newline that acts as additional delimiter.  Else,
-    # a line without line break would give the same number of lines
-    # (one) as a line with one line break as trailing newline, since
-    # line breaks act as trailing delimiters for mapfile, not as inner
-    # separators.
+    # Fold each line per column separately and immediately set each
+    # folded line to the same number of line breaks, to keep the lines
+    # synchronized with each other, despite likely needing a different
+    # number of rows in the final help message.
     new_col_1=( )
     new_col_2=( )
     new_col_3=( )
     for i in "${!col_1[@]}"; do
-        mapfile -t -O "${#new_col_1[@]}" new_col_1 <<< "${col_1[i]}"
-        mapfile -t -O "${#new_col_2[@]}" new_col_2 <<< "${col_2[i]}"
-        mapfile -t -O "${#new_col_3[@]}" new_col_3 <<< "${col_3[i]}"
+        # Limit the width of the first two columns of the help message
+        # to ${ARGPARSER_MAX_COL_WIDTH_*}, and of the third column to
+        # ${ARGPARSER_MAX_WIDTH} minus the first two columns' actual
+        # widths, or ${ARGPARSER_MAX_COL_WIDTH_3} (if given), by
+        # inserting line breaks (as separate array elements).
+        argparser_fold "${ARGPARSER_MAX_COL_WIDTH_1}" 0 "${col_1[i]}"
+        new_col_1+=("${folded_array[@]}")
+
+        argparser_fold "${ARGPARSER_MAX_COL_WIDTH_2}" 0 "${col_2[i]}"
+        new_col_2+=("${folded_array[@]}")
+
+        argparser_fold "${max_col_width_3}" 0 "${col_3[i]}"
+        new_col_3+=("${folded_array[@]}")
+
+        # Adjust the number of line breaks between each column's rows,
+        # such that each column shares the same number of rows, thus
+        # re-synchronizing the columns.  Thereby, get the largest line
+        # count and add as many empty lines as needed to set each column
+        # to the same line count.
+        argparser_get_max "${#new_col_1[@]}" "${#new_col_2[@]}" \
+            "${#new_col_3[@]}"
+
+        while (( "${#new_col_1[@]}" < max_value )); do
+            new_col_1+=("")
+        done
+
+        while (( "${#new_col_2[@]}" < max_value )); do
+            new_col_2+=("")
+        done
+
+        while (( "${#new_col_3[@]}" < max_value )); do
+            new_col_3+=("")
+        done
     done
+
+    # Right-pad the first and second column to properly align all three
+    # columns.
+    argparser_pad "right" "${col_width_1}" "${new_col_1[@]}"
+    new_col_1=("${padded_array[@]}")
+    argparser_pad "right" "${col_width_2}" "${new_col_2[@]}"
+    new_col_2=("${padded_array[@]}")
 
     # Store the lines back in the original columns' variables.
     col_1=("${new_col_1[@]}")
     col_2=("${new_col_2[@]}")
     col_3=("${new_col_3[@]}")
 
-    # Create an uncolorized copy of each columns, needed to obtain the
-    # actual widths without ANSI escape sequence codes.
-    argparser_uncolorize "array" "${col_1[@]}"
-    uncolorized_col_1=("${uncolorized_array[@]}")
+    # Compute the padding width for the frame around argument group
+    # blocks.  This equals the greater value of the maximum width of all
+    # three columns, i.e., the actual column widths plus the mandatory
+    # separation between the used columns, and the largest argument
+    # group name, including the two spaces used as separation around the
+    # name in the frame.
+    argparser_get_max_width "${col_3[@]}"
+    col_width_3="${max_width}"
 
-    argparser_uncolorize "array" "${col_2[@]}"
-    uncolorized_col_2=("${uncolorized_array[@]}")
-
-    argparser_uncolorize "array" "${col_3[@]}"
-    uncolorized_col_3=("${uncolorized_array[@]}")
-
-    # For proper alignment of the columns, whitespace must be used as
-    # separation between shorter elements.  Compute the width for each
-    # uncolorized column.  If a line is wider, set the width to the
-    # respective value, as long as the width doesn't exceed the limit
-    # set by ${ARGPARSER_MAX_COL_WIDTH_*}.
-    col_widths[1]=0
-    col_widths[2]=0
-    col_widths[3]=0
-    for i in "${!col_1[@]}"; do
-        line="${col_1[i]}"
-        line_length_1="${#uncolorized_col_1[i]}"
-
-        if (( line_length_1 <= ARGPARSER_MAX_COL_WIDTH_1 \
-            && line_length_1 > col_widths[1] ))
-        then
-            col_widths[1]="${line_length_1}"
-        fi
-
-        line="${col_2[i]}"
-        line_length_2="${#uncolorized_col_2[i]}"
-
-        if (( line_length_2 <= ARGPARSER_MAX_COL_WIDTH_2 \
-            && line_length_2 > col_widths[2] ))
-        then
-            col_widths[2]="${line_length_2}"
-        fi
-
-        line="${col_3[i]}"
-        line_length_3="${#uncolorized_col_3[i]}"
-
-        if (( line_length_3 <= max_col_width_3 \
-            && line_length_3 > col_widths[3] ))
-        then
-            col_widths[3]="${line_length_3}"
-        fi
-    done
-
-    # Compute the length of whitespace between column 1 and 2, as well
-    # as between column 2 and 3.  This length equals the column's
-    # maximum width minus the current line's element's length plus 1 to
-    # have at least one space as separation.  If the column width
-    # exceeds the limit set by ${ARGPARSER_MAX_COL_WIDTH_*}, insert a
-    # line break instead to make the following column's content begin on
-    # the next line.  Then, insert as much whitespace as needed to align
-    # the column with the other elements.  For column 1, this equals the
-    # column's maximum width plus 1 (the mandatory separation), for
-    # column 2, both columns' maximum widths plus 2 (twice the mandatory
-    # separation).  If the first column is too long, but the second one
-    # (which is used) empty and fits the remainder of the first column's
-    # content, write in the second column instead of breaking the line.
-    whitespace_1=( )
-    whitespace_2=( )
-    for i in "${!col_1[@]}"; do
-        whitespace_1+=("")
-        whitespace_2+=("")
-        is_overlong=false
-
-        line_length_1="${#uncolorized_col_1[i]}"
-        line_length_2="${#uncolorized_col_2[i]}"
-
-        # Set the first column's width.
-        if (( line_length_1 <= ARGPARSER_MAX_COL_WIDTH_1 )); then
-            if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
-                (( whitespace_length_1 = col_widths[1] - line_length_1 + 1 ))
-            else
-                (( whitespace_length_1 = col_widths[1] - line_length_1 ))
-            fi
-            printf -v 'whitespace_1[-1]' '%*s' "${whitespace_length_1}" ""
-        elif [[ -z "${col_2[i]}" ]] \
-            && (( line_length_1 <= ARGPARSER_MAX_COL_WIDTH_1 + col_widths[2] ))
-        then
-            is_overlong=true
-            whitespace_length_1=0
-            printf -v 'whitespace_1[-1]' '%*s' "${whitespace_length_1}" ""
-        else
-            if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
-                (( whitespace_length_1 = col_widths[1] + 1 ))
-            else
-                (( whitespace_length_1 = col_widths[1] ))
-            fi
-            printf -v 'whitespace_1[-1]' '\n%*s' "${whitespace_length_1}" ""
-        fi
-
-        # Set the second column's width.
-        if [[ "${is_overlong}" == true ]]; then
-            if [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]; then
-                (( whitespace_length_2 = col_widths[1] + col_widths[2] \
-                    - line_length_1 + 2 ))
-            else
-                (( whitespace_length_2 = col_widths[1] + col_widths[2] \
-                    - line_length_1 + 1 ))
-            fi
-            printf -v 'whitespace_2[-1]' '%*s' "${whitespace_length_2}" ""
-        elif (( line_length_2 <= ARGPARSER_MAX_COL_WIDTH_2 )); then
-            if [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]; then
-                (( whitespace_length_2 = col_widths[2] - line_length_2 + 1 ))
-            else
-                (( whitespace_length_2 = col_widths[2] - line_length_2 ))
-            fi
-            printf -v 'whitespace_2[-1]' '%*s' "${whitespace_length_2}" ""
-        else
-            if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true \
-                && "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]
-            then
-                (( whitespace_length_2 = col_widths[1] + col_widths[2] + 2 ))
-            else
-                (( whitespace_length_2 = col_widths[1] + col_widths[2] + 1 ))
-            fi
-            printf -v 'whitespace_2[-1]' '\n%*s' "${whitespace_length_2}" ""
-        fi
-    done
-
-    # Compute the maximum width of all three columns, i.e., the actual
-    # column widths plus the mandatory separation between the used
-    # columns.
-    (( max_col_width = col_widths[1] + col_widths[2] + col_widths[3] ))
+    (( max_col_width = col_width_1 + col_width_2 + col_width_3 ))
     if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
         (( max_col_width++ ))
     fi
@@ -8170,18 +7986,9 @@ function argparser_create_help_message() {
         (( max_col_width++ ))
     fi
 
-    # Compute the padding width for the frame around argument group
-    # blocks.  This equals the greater value of the maximum total column
-    # width and the largest argument group name, including the two
-    # spaces used as separation around the name in the frame.
-    pad_width="${max_col_width}"
-    for arg_group in "${arg_groups[@]}"; do
-        (( caption_width = "${#arg_group}" + 2 ))
-        if (( caption_width > max_col_width && caption_width > pad_width ))
-        then
-            pad_width="${caption_width}"
-        fi
-    done
+    argparser_get_max_width "${arg_groups[@]}"
+    argparser_get_max "${max_col_width}" "$(( max_width + 2 ))"
+    pad_width="${max_value}"
 
     # Set the help message's usage line with the caption and the script
     # name.
@@ -8243,10 +8050,10 @@ function argparser_create_help_message() {
 
     # Set the description.
     if [[ -n "${ARGPARSER_HELP_DESCRIPTION}" ]]; then
-        argparser_fold "${ARGPARSER_HELP_DESCRIPTION}" \
-            "${ARGPARSER_MAX_WIDTH}" 0
+        argparser_fold "${ARGPARSER_MAX_WIDTH}" 0 \
+            "${ARGPARSER_HELP_DESCRIPTION}"
         argparser_colorize "${styles["description_text"]}" 1 description \
-            "${joined_words}"
+            "${folded_array[@]}"
         description+=$'\n'
     else
         description=""
@@ -8258,8 +8065,8 @@ function argparser_create_help_message() {
     remark+="options too."
 
     argparser_translate "Mandatory arguments" "${remark}"
-    argparser_fold "${translation}" "${ARGPARSER_MAX_WIDTH}" 0
-    argparser_colorize "${styles["remark_text"]}" 1 remark "${joined_words}"
+    argparser_fold "${ARGPARSER_MAX_WIDTH}" 0 "${translation}"
+    argparser_colorize "${styles["remark_text"]}" 1 remark "${folded_array[@]}"
     remark+=$'\n'
     help_message_blocks["Remark"]="${remark}"
 
@@ -8270,10 +8077,16 @@ function argparser_create_help_message() {
         # delimiting whitespace.  If all three columns are empty, the
         # end of the current argument group has been reached.
         help_message=( )
-        while [[ -n "${col_1[i]}" || -n "${col_2[i]}" || -n "${col_3[i]}" ]]
-        do
-            line="${col_1[i]}${whitespace_1[i]}${col_2[i]}${whitespace_2[i]}"
-            line+="${col_3[i]}"
+        while [[ "${col_1[i]} ${col_2[i]} ${col_3[i]}" != +( ) ]]; do
+            if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true \
+                && "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]
+            then
+                line="${col_1[i]} ${col_2[i]} ${col_3[i]}"
+            elif [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
+                line="${col_1[i]} ${col_3[i]}"
+            elif [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]; then
+                line="${col_2[i]} ${col_3[i]}"
+            fi
             help_message+=("${line}")
             (( i++ ))
         done
