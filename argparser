@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-14
+# Last Modification: 2025-11-17
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -505,7 +505,7 @@ function argparser_check_file() {
 # Define the general Argparser utility functions.
 function argparser_pad() {
     # Pad all elements of an array to the left or right to have the same
-    # length.
+    # width.
     #
     # Arguments:
     # - $1: the pad side ("left" or "right")
@@ -522,7 +522,6 @@ function argparser_pad() {
     local side
     local -a uncolorized_array
     local whitespace
-    local width
 
     # Read the arguments.
     side="$1"
@@ -530,19 +529,13 @@ function argparser_pad() {
     shift 2
     padded_array=("$@")
 
-    # Get the maximum width of the (uncolorized) array's elements.
-    argparser_uncolorize "array" "${padded_array[@]}"
+    # Possibly, get the maximum width of the array's elements.
     if [[ "${max_width}" == "auto" ]]; then
-        max_width=0
-        for i in "${!padded_array[@]}"; do
-            width="${#uncolorized_array[i]}"
-            if (( width > max_width )); then
-                max_width="${width}"
-            fi
-        done
+        argparser_get_max_width "${padded_array[@]}"
     fi
 
     # Pad the array's elements in-place.
+    argparser_uncolorize "array" "${padded_array[@]}"
     if [[ "${side}" == "left" ]]; then
         for i in "${!padded_array[@]}"; do
             printf -v whitespace '%*s' \
@@ -948,6 +941,59 @@ function argparser_seq() {
             sequence[i]="${number::offset}.${number:offset}"
         done
     fi
+}
+
+function argparser_get_max() {
+    # Get the maximum value of an array's elements.
+    #
+    # Arguments:
+    # - $@: the array whose maximum value to find
+    #
+    # Nonlocals:
+    # - max_value: the array's element with the maximum value
+
+    # Define the local variables.
+    local -a array
+    local width
+
+    # Read the arguments.
+    array=("$@")
+
+    # Get the maximum value of the array's elements.
+    max_value="$1"
+    for element in "${array[@]:1}"; do
+        if (( element > max_value )); then
+            max_value="${element}"
+        fi
+    done
+}
+
+function argparser_get_max_width() {
+    # Get the maximum width of all elements of an array.
+    #
+    # Arguments:
+    # - $@: the array whose elements to pad
+    #
+    # Nonlocals:
+    # - max_width: the width of the array's widest element
+
+    # Define the local variables.
+    local element
+    local -a uncolorized_array
+    local width
+
+    # Read the arguments.
+    uncolorized_array=("$@")
+
+    # Get the maximum width of the (uncolorized) array's elements.
+    argparser_uncolorize "array" "${uncolorized_array[@]}"
+    max_width=0
+    for element in "${uncolorized_array[@]}"; do
+        width="${#element}"
+        if (( width > max_width )); then
+            max_width="${width}"
+        fi
+    done
 }
 
 function argparser_count() {
@@ -10235,6 +10281,8 @@ function argparser_main() {
         unset -f argparser_fold
         unset -f argparser_fold_arr
         unset -f argparser_get_arg_key
+        unset -f argparser_get_max
+        unset -f argparser_get_max_width
         unset -f argparser_get_option_names
         unset -f argparser_in_array
         unset -f argparser_is_alpha
