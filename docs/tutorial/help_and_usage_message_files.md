@@ -92,8 +92,8 @@ Usage: try_help_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 Mandatory arguments to long options are mandatory for short options too.
 
 The following arguments are positional:
-[pos_1={1,2}]              one positional argument with default and choice
-                           (default: 2)
+[pos_1={\                  one positional argument with default and choice
+1,2}]                      (default: 2)
 pos_2                      two positional arguments without default or choice
 
 The following options have no default value:
@@ -102,7 +102,8 @@ The following options have no default value:
 -c,       --var-3={A,B}... at least one value with choice
 
 The following options have a default value:
-[-d={A,B,C}]               one value with default and choice (default: "A")
+[-d={A-C\                  one value with default and choice (default: "A")
+}]
           [--var-5=VAL_5]  one value with default (default: "E")
 [-f],     [--var-6]        no value (flag) with default (default: false)
 [-g],     [--var-7]        (DEPRECATED) no value (flag) with default (default:

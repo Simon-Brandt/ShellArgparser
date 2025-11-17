@@ -113,7 +113,7 @@ Likewise, the [usage (and help) message](help_and_usage_messages.md#55-help-and-
 <!-- <include command="bash ../tutorial/try_arg_def_file.sh -u" lang="console"> -->
 ```console
 $ bash ../tutorial/try_arg_def_file.sh -u
-Usage: try_arg_def_file.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+Usage: try_arg_def_file.sh [-h,-? | -u | -V] [-d={A-C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 ```
 <!-- </include> -->
 

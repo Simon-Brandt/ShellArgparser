@@ -60,8 +60,8 @@ Usage: try_argparser.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 Mandatory arguments to long options are mandatory for short options too.
 
 Positional arguments:
-[pos_1={1,2}]                              one positional argument with default
-                                           and choice (default: 2)
+[pos_1={\                                  one positional argument with default
+1,2}]                                      and choice (default: 2)
 pos_2                                      two positional arguments without
                                            default or choice
 
@@ -73,8 +73,8 @@ Mandatory options:
           --var-c={A,B}...
 
 Optional options:
-[-d, -D], [--var-4={A,B,C}],               one value with default and choice
-          [--var-d={A,B,C}]                (default: "A")
+[-d, -D], [--var-4={A-C}], [--var-d={A-C}] one value with default and choice
+                                           (default: "A")
 [-e, -E], [--var-5=VAL_5], [--var-e=VAR_E] one value with default (default:
                                            "E")
 [-f, -F], [--var-6, --var-f]               no value (flag) with default
@@ -104,7 +104,7 @@ As we already saw upon the occasion of an error, our [`try_argparser.sh`](../../
 <!-- <include command="bash ../tutorial/try_argparser.sh --usage" lang="console"> -->
 ```console
 $ bash ../tutorial/try_argparser.sh --usage
-Usage: try_argparser.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
+Usage: try_argparser.sh [-h,-? | -u | -V] [-d,-D={A-C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
 ```
 <!-- </include> -->
 
@@ -116,7 +116,7 @@ For a better overview when having lots of arguments, we can choose a columnar la
 ```console
 $ ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash ../tutorial/try_argparser.sh --usage
 Usage: try_argparser.sh [-h,-? | -u | -V]
-                        [-d,-D={A,B,C}]
+                        [-d,-D={A-C}]
                         [-e,-E=VAL_5,E]
                         [-f,-F]
                         [-g,-G]
@@ -134,7 +134,7 @@ Additionally, we may choose to show the long options by [`ARGPARSER_USAGE_MESSAG
 ```console
 $ ARGPARSER_USAGE_MESSAGE_OPTION_TYPE=long ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash ../tutorial/try_argparser.sh --usage
 Usage: try_argparser.sh [--help | --usage | --version]
-                        [--var-4,--var-d={A,B,C}]
+                        [--var-4,--var-d={A-C}]
                         [--var-5,--var-e=VAL_5,VAR_E]
                         [--var-6,--var-f]
                         [--var-7,--var-g]

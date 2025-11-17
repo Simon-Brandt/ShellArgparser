@@ -194,8 +194,8 @@ Aufruf: try_localization.sh [OPTIONEN] ARGUMENTE -- [pos_1] pos_2
 Erforderliche Argumente für lange Optionen sind auch für kurze erforderlich.
 
 Die folgenden Argumente sind positional:
-[pos_1={1,2}]              ein positionales Argument mit Vorgabe und Auswahl
-                           (Vorgabe: 2)
+[pos_1={\                  ein positionales Argument mit Vorgabe und Auswahl
+1,2}]                      (Vorgabe: 2)
 pos_2                      zwei positionale Argumente ohne Vorgabe oder Auswahl
 
 Die folgenden Optionen haben keinen Vorgabewert:
@@ -204,7 +204,8 @@ Die folgenden Optionen haben keinen Vorgabewert:
 -c,       --var-3={A,B}... mindestens ein Wert mit Auswahl
 
 Die folgenden Optionen haben einen Vorgabewert:
-[-d={A,B,C}]               ein Wert mit Vorgabe und Auswahl (Vorgabe: "A")
+[-d={A-C\                  ein Wert mit Vorgabe und Auswahl (Vorgabe: "A")
+}]
           [--var-5=VAL_5]  ein Wert mit Vorgabe (Vorgabe: "E")
 [-f],     [--var-6]        kein Wert (Flag) mit Vorgabe (Vorgabe: falsch)
 [-g],     [--var-7]        (VERALTET) kein Wert (Flag) mit Vorgabe (Vorgabe:
@@ -222,7 +223,7 @@ Likewise, the usage message is localized:
 <!-- <include command="LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -u" lang="console"> -->
 ```console
 $ LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -u
-Aufruf: try_localization.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+Aufruf: try_localization.sh [-h,-? | -u | -V] [-d={A-C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
 ```
 <!-- </include> -->
 
