@@ -573,80 +573,6 @@ function argparser_trim() {
 }
 
 function argparser_fold() {
-    # Limit the width of a help message's column to the maximum column
-    # width by inserting line breaks.
-    #
-    # Arguments:
-    # - $1: the line in the column in which to insert line breaks
-    # - $2: the maximum width a column may have
-    # - $3: the maximum width a column has yet
-    #
-    # Nonlocals:
-    # - joined_words: the line with introduced line breaks
-    # - largest_col_width: the width of the widest line part
-
-    # Define the local variables.
-    local col_width
-    local i
-    local line
-    local max_col_width
-    local -a uncolorized_array
-    local word
-    local word_length
-    local words
-
-    # Read the arguments.
-    line="$1"
-    max_col_width="$2"
-    largest_col_width="$3"
-
-    # Split the (uncolorized) column element word by word on whitespace,
-    # such that line breaks aren't inserted into entire words.
-    joined_words=""
-    col_width=0
-    IFS=" " read -r -a words <<< "${line}"
-
-    argparser_uncolorize "array" "${words[@]}"
-
-    for i in "${!words[@]}"; do
-        word="${words[i]}"
-        word_length="${#uncolorized_array[i]}"
-
-        if (( col_width == 0 )); then
-            # For the first word in the line, add the word only and set
-            # the column width.  Since the word *must* be given on some
-            # line, don't test whether it is too long for the line,
-            # i.e., if it exceeds ${max_col_width}
-            joined_words+="${word}"
-            col_width="${word_length}"
-        elif (( col_width + word_length + 1 > max_col_width )); then
-            # As the line with the appended word (and the preceding
-            # space) would be too long, introduce a line break, print
-            # the word, and set the column width.
-            joined_words+=$'\n'
-            joined_words+="${word}"
-            col_width="${word_length}"
-        else
-            # For any other word, add the word and a leading space
-            # (otherwise, the words would be concatenated without
-            # separation since the splitting removed any whitespace).
-            # Increase the column width appropriately.
-            joined_words+=" ${word}"
-            (( col_width += word_length + 1 ))
-        fi
-
-        # If the current line is wider than the previous ones and less
-        # wide than the maximum column width, set ${largest_col_width}
-        # correspondingly.  Later, this value is used to determine the
-        # amount of whitespace between the columns' elements.
-        if (( col_width > largest_col_width && col_width <= max_col_width ))
-        then
-            largest_col_width="${col_width}"
-        fi
-    done
-}
-
-function argparser_fold_arr() {
     # Limit the width of an array's elements to the maximum width by
     # spltting them into separate elements.  Upon joining the array with
     # newline characters, these effectively become inserted line breaks.
@@ -692,8 +618,9 @@ function argparser_fold_arr() {
     for element in "${array[@]}"; do
         folded_array+=("")
         width=0
-        IFS=" " read -r -a words <<< "${element}"
 
+        mapfile -d " " -t words <<< "${element}"
+        words[-1]="${words[-1]%$'\n'}"
         argparser_uncolorize "array" "${words[@]}"
 
         for i in "${!words[@]}"; do
@@ -747,7 +674,7 @@ function argparser_fold_arr() {
                                     folded_array[-1]+="\\"
                                     folded_array+=("${whitespace}")
                                 else
-                                    folded_array[-1]+=$'\e[0m\\'
+                                    folded_array[-1]+=$'\e[0m'
                                     folded_array+=("${whitespace}${style}")
                                 fi
                                 break
@@ -757,8 +684,8 @@ function argparser_fold_arr() {
                     else
                         # The word doesn't contain any style, so string
                         # slicing works correctly.
-                        folded_array[-1]+="${word::max_width}"
-                        folded_array+=("${whitespace}${word:max_width}")
+                        folded_array[-1]+="${word::max_width-1}\\"
+                        folded_array+=("${whitespace}${word:max_width-1}")
                     fi
                     (( width = word_length - max_width + indentation ))
                 else
@@ -3177,6 +3104,9 @@ function argparser_read_styles() {
 function argparser_create_args_definition() {
     # Create the arguments definition from user input and write it to a
     # file.
+    #
+    # Environment:
+    # - ARGPARSER_MAX_WIDTH (read-only)
 
     # Define the local variables.
     local arg_group
@@ -3211,8 +3141,6 @@ function argparser_create_args_definition() {
     local file
     local help_text
     local i
-    local joined_words
-    local largest_col_width
     local line
     local long_options
     local message
@@ -3232,8 +3160,8 @@ function argparser_create_args_definition() {
     # Get the target shell from user input.
     message="Does your script use Bash (y) or only a POSIX-compliant shell "
     message+="(n)?"
-    argparser_fold "${message}" "${ARGPARSER_MAX_WIDTH}" 0
-    argparser_colorize "blue,bold" 1 message "${joined_words}"
+    argparser_fold "${ARGPARSER_MAX_WIDTH}" 0 "${message}"
+    argparser_colorize "blue,bold" 1 message "${folded_array[@]}"
     printf '%s\n\n' "${message}"
 
     while read -r -e -p "Bash usage (y/n):  " shell 2>&1; do
@@ -3251,8 +3179,8 @@ function argparser_create_args_definition() {
 
     # Get the target file from user input.
     message="Which file shall the arguments definition be written to?"
-    argparser_fold "${message}" "${ARGPARSER_MAX_WIDTH}" 0
-    argparser_colorize "blue,bold" 1 message "${joined_words}"
+    argparser_fold "${ARGPARSER_MAX_WIDTH}" 0 "${message}"
+    argparser_colorize "blue,bold" 1 message "${folded_array[@]}"
     printf '%s\n\n' "${message}"
 
     read -r -e -p "Target file:  " file 2>&1
@@ -3262,8 +3190,8 @@ function argparser_create_args_definition() {
     # Get the arguments definition delimiters from user input.
     message="Which character do you want to use as primary arguments "
     message+="definition delimiter?"
-    argparser_fold "${message}" "${ARGPARSER_MAX_WIDTH}" 0
-    argparser_colorize "blue,bold" 1 message "${joined_words}"
+    argparser_fold "${ARGPARSER_MAX_WIDTH}" 0 "${message}"
+    argparser_colorize "blue,bold" 1 message "${folded_array[@]}"
     printf '%s\n\n' "${message}"
 
     read -r -e -p "Primary delimiter:  " delimiter 2>&1
@@ -3285,8 +3213,8 @@ function argparser_create_args_definition() {
 
     message="Enter the fields for each argument.  Submit an empty argument "
     message+="identifier to end the input."
-    argparser_fold "${message}" "${ARGPARSER_MAX_WIDTH}" 0
-    argparser_colorize "blue,bold" 1 message "${joined_words}"
+    argparser_fold "${ARGPARSER_MAX_WIDTH}" 0 "${message}"
+    argparser_colorize "blue,bold" 1 message "${folded_array[@]}"
     printf '%s\n\n' "${message}"
 
     while :; do
@@ -9714,7 +9642,7 @@ function argparser_print_error_messages() {
         argparser_colorize "${styles["error_caption"]}" 2 caption \
             " ${caption} "
 
-        argparser_fold_arr "${ARGPARSER_MAX_WIDTH}" "${indentation}" \
+        argparser_fold "${ARGPARSER_MAX_WIDTH}" "${indentation}" \
             "${error_messages[@]/#/"${script_name} "}"
         argparser_pad "right" "auto" "${folded_array[@]}"
         argparser_draw_frame "${styles["error_frame"]}" 2 "array" \
@@ -9725,7 +9653,7 @@ function argparser_print_error_messages() {
 
         argparser_colorize "${styles["error_caption"]}" 2 caption "${caption}:"
 
-        argparser_fold_arr "${ARGPARSER_MAX_WIDTH}" "${indentation}" \
+        argparser_fold "${ARGPARSER_MAX_WIDTH}" "${indentation}" \
             "${error_messages[@]/#/"${script_name} ${caption}" }"
         printf '%s\n' "${folded_array[@]}"
     fi >&2
@@ -9814,7 +9742,7 @@ function argparser_print_warning_messages() {
         argparser_colorize "${styles["warning_caption"]}" 2 caption \
             " ${caption} "
 
-        argparser_fold_arr "${ARGPARSER_MAX_WIDTH}" "${indentation}" \
+        argparser_fold "${ARGPARSER_MAX_WIDTH}" "${indentation}" \
             "${warning_messages[@]/#/"${script_name} "}"
         argparser_pad "right" "auto" "${folded_array[@]}"
         argparser_draw_frame "${styles["warning_frame"]}" 2 "array" \
@@ -9826,7 +9754,7 @@ function argparser_print_warning_messages() {
         argparser_colorize "${styles["warning_caption"]}" 2 caption \
             "${caption}:"
 
-        argparser_fold_arr "${ARGPARSER_MAX_WIDTH}" "${indentation}" \
+        argparser_fold "${ARGPARSER_MAX_WIDTH}" "${indentation}" \
             "${warning_messages[@]/#/"${script_name} ${caption} "}"
         printf '%s\n' "${folded_array[@]}"
     fi >&2
@@ -10340,7 +10268,6 @@ function argparser_main() {
         unset -f argparser_create_usage_message
         unset -f argparser_draw_frame
         unset -f argparser_fold
-        unset -f argparser_fold_arr
         unset -f argparser_get_arg_key
         unset -f argparser_get_max
         unset -f argparser_get_max_width
