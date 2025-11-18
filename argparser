@@ -20,7 +20,13 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-17
+# Last Modification: 2025-11-18
+
+# TODO: Output a warning message when options in the configuration file
+#       are set that don't correspond to Argparser environment
+#       variables.
+# TODO: Remove need for message parsing after argument parsing by using
+#       nonlocal variables.
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
