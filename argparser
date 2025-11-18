@@ -609,7 +609,7 @@ function argparser_fold() {
     # Split each (uncolorized) element (line) in the array word by word
     # on spaces, such that line breaks aren't inserted into entire
     # words.
-    pattern=$'((\e\[[1-9][0-9]?[0-9]?m)+)[^\e]*(\e\[0m)?$'
+    pattern=$'(\e\[0[0-9;]+m)[^\e]*(\e\[0m)?$'
     folded_array=( )
     for element in "${array[@]}"; do
         folded_array+=("")
@@ -649,9 +649,7 @@ function argparser_fold() {
                             folded_array[-1]+="${word:j:1}"
 
                             if [[ "${is_style}" == true ]]; then
-                                if [[ "${word:j:1}" == "m" \
-                                    && "${word:j+1:1}" != $'\e' ]]
-                                then
+                                if [[ "${word:j:1}" == "m" ]]; then
                                     is_style=false
                                 fi
                                 style+="${word:j:1}"
@@ -666,11 +664,11 @@ function argparser_fold() {
 
                             (( word_length++ ))
                             if (( word_length == max_width - 1 )); then
-                                if [[ "${style}" == $'\e[0m' ]]; then
+                                if [[ "${style}" == *"0m" ]]; then
                                     folded_array[-1]+="\\"
                                     folded_array+=("${whitespace}")
                                 else
-                                    folded_array[-1]+=$'\e[0m'
+                                    folded_array[-1]+=$'\e[0m\\'
                                     folded_array+=("${whitespace}${style}")
                                 fi
                                 break
@@ -1222,7 +1220,7 @@ function argparser_colorize() {
         || ("${ARGPARSER_USE_STYLES}" == "file" && ! -t "${file_descriptor}") \
         || ("${ARGPARSER_USE_STYLES}" == "tty" && -t "${file_descriptor}") ]]
     then
-        style=""
+        style=$'\e[0'
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a style_requests \
             <<< "${style_requests}"
         for style_request in "${style_requests[@]}"; do
@@ -1246,8 +1244,9 @@ function argparser_colorize() {
             else
                 ansi_code="${colors_and_styles[${style_request}]}"
             fi
-            style+=$'\e['"${ansi_code}m"
+            style+=";${ansi_code}"
         done
+        style+="m"
 
         for i in "${!colorized_array[@]}"; do
             if [[ -n "${colorized_array[i]}" ]]; then
@@ -1312,13 +1311,10 @@ function argparser_uncolorize() {
 
     # Remove the Select Graphic Rendition (SGR) ANSI escape sequence
     # codes from the array's elements.  The sequences consist of an ESC
-    # character, an opening bracket, and one or two digits, followed by
-    # an "m".
-    uncolorized_array=("${uncolorized_array[@]//$'\e['[0-9]m}")
-    # shellcheck disable=SC2180  # ShellCheck bug, no multi-dimensional array.
-    uncolorized_array=("${uncolorized_array[@]//$'\e['[0-9][0-9]m}")
-    # shellcheck disable=SC2180  # ShellCheck bug, no multi-dimensional array.
-    uncolorized_array=("${uncolorized_array[@]//$'\e['[0-9][0-9][0-9]m}")
+    # character, an opening bracket, and an arbitrary number of codes
+    # with one to three digits, separated by semicolons, and finally
+    # followed by an "m".
+    uncolorized_array=("${uncolorized_array[@]//$'\e['+([0-9;])m}")
 
     # Join the uncolorized array, then print it or set it to the target
     # variable, using a name reference to the variable name given as
