@@ -57,13 +57,8 @@ argparser_check_shell() {
 
     # shellcheck disable=SC2292  # Intentional POSIX conformance.
     if [ -z "${BASH}" ]; then
-        if [ -t 2 ]; then
-            printf '\e[31;1;7m%s: %s\e[m\n' "$0" \
-                "Error: The Argparser requires Bash as executing shell."
-        else
-            printf '%s: %s\n' "$0" \
-                "Error: The Argparser requires Bash as executing shell."
-        fi >&2
+        printf '%s: %s\n' "$0" \
+            "Error: The Argparser requires Bash as executing shell." >&2
         exit 1
     fi
 }
@@ -76,13 +71,8 @@ function argparser_check_bash_version() {
     if (( BASH_VERSINFO[0] < 4 \
         || (BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] < 4) ))
     then
-        if [[ -t 2 ]]; then
-            printf '\e[31;1;7m%s: %s\e[m\n' "$0" \
-                "Error: The Argparser requires Bash 4.4 or higher."
-        else
-            printf '%s: %s\n' "$0" \
-                "Error: The Argparser requires Bash 4.4 or higher."
-        fi >&2
+        printf '%s: %s\n' "$0" \
+            "Error: The Argparser requires Bash 4.4 or higher." >&2
         exit 1
     fi
 }
