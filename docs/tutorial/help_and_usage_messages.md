@@ -104,7 +104,16 @@ As we already saw upon the occasion of an error, our [`try_argparser.sh`](../../
 <!-- <include command="bash ../tutorial/try_argparser.sh --usage" lang="console"> -->
 ```console
 $ bash ../tutorial/try_argparser.sh --usage
-Usage: try_argparser.sh [-h,-? | -u | -V] [-d,-D={A-C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
+Usage: try_argparser.sh [-h,-? | -u | -V]
+                        [-d,-D={A-C}]
+                        [-e,-E=VAL_5,E]
+                        [-f,-F]
+                        [-g,-G]
+                        -a,-A=VAL_1,A
+                        -b,-B=VAL_2,B...
+                        -c,-C={A,B}...
+                        [{1,2}]
+                        pos_2
 ```
 <!-- </include> -->
 

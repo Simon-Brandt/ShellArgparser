@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-18
+# Last Modification: 2025-11-19
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -486,7 +486,16 @@ test_number="${test_section}.11"
 test_type="usage"
 cmd="bash test_basic.sh -u"
 output="$(cat << EOF
-Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A-C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_basic.sh [-h,-? | -u | -V]
+                     [-d,-D={A-C}]
+                     [-e,-E=VAL_5,E]
+                     [-f,-F]
+                     [-g,-G]
+                     -a,-A=VAL_1,A
+                     -b,-B=VAL_2,B...
+                     -c,-C={A,B}...
+                     [{1,2}]
+                     pos_2
 EOF
 )"
 error=""
@@ -497,18 +506,37 @@ test_number="${test_section}.12"
 test_type="usage"
 cmd="bash test_basic.sh --usage"
 output="$(cat << EOF
-Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A-C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_basic.sh [-h,-? | -u | -V]
+                     [-d,-D={A-C}]
+                     [-e,-E=VAL_5,E]
+                     [-f,-F]
+                     [-g,-G]
+                     -a,-A=VAL_1,A
+                     -b,-B=VAL_2,B...
+                     -c,-C={A,B}...
+                     [{1,2}]
+                     pos_2
 EOF
 )"
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 1.13. Test the usage message in "row" orientation.
+# 1.13. Test the usage message in "row" orientation (still being a
+#       column due to the number of arguments).
 test_number="${test_section}.13"
 test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=row bash test_basic.sh --usage"
 output="$(cat << EOF
-Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A-C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_basic.sh [-h,-? | -u | -V]
+                     [-d,-D={A-C}]
+                     [-e,-E=VAL_5,E]
+                     [-f,-F]
+                     [-g,-G]
+                     -a,-A=VAL_1,A
+                     -b,-B=VAL_2,B...
+                     -c,-C={A,B}...
+                     [{1,2}]
+                     pos_2
 EOF
 )"
 error=""
@@ -539,7 +567,16 @@ test_number="${test_section}.15"
 test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_OPTION_TYPE=short bash test_basic.sh --usage"
 output="$(cat << EOF
-Usage: test_basic.sh [-h,-? | -u | -V] [-d,-D={A-C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_basic.sh [-h,-? | -u | -V]
+                     [-d,-D={A-C}]
+                     [-e,-E=VAL_5,E]
+                     [-f,-F]
+                     [-g,-G]
+                     -a,-A=VAL_1,A
+                     -b,-B=VAL_2,B...
+                     -c,-C={A,B}...
+                     [{1,2}]
+                     pos_2
 EOF
 )"
 error=""
@@ -550,7 +587,16 @@ test_number="${test_section}.16"
 test_type="usage"
 cmd="ARGPARSER_USAGE_MESSAGE_OPTION_TYPE=long bash test_basic.sh --usage"
 output="$(cat << EOF
-Usage: test_basic.sh [--help | --usage | --version] [--var-4,--var-d={A-C}] [--var-5,--var-e=VAL_5,VAR_E] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1,VAR_A --var-2,--var-b=VAL_2,VAR_B... --var-3,--var-c={A,B}... [{1,2}] pos_2
+Usage: test_basic.sh [--help | --usage | --version]
+                     [--var-4,--var-d={A-C}]
+                     [--var-5,--var-e=VAL_5,VAR_E]
+                     [--var-6,--var-f]
+                     [--var-7,--var-g]
+                     --var-1,--var-a=VAL_1,VAR_A
+                     --var-2,--var-b=VAL_2,VAR_B...
+                     --var-3,--var-c={A,B}...
+                     [{1,2}]
+                     pos_2
 EOF
 )"
 error=""
@@ -686,7 +732,16 @@ output=""
 error="$(cat << EOF
 test_short_options.sh: Error: The argument "--version" is unknown.
 
-Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A-C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_short_options.sh [-h,-? | -u | -V]
+                             [-d,-D={A-C}]
+                             [-e,-E=VAL_5,E]
+                             [-f,-F]
+                             [-g,-G]
+                             -a,-A=VAL_1,A
+                             -b,-B=VAL_2,B...
+                             -c,-C={A,B}...
+                             [{1,2}]
+                             pos_2
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
@@ -696,7 +751,16 @@ test_number="${test_section}.4"
 test_type="usage"
 cmd="bash test_short_options.sh -u"
 output="$(cat << EOF
-Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A-C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_short_options.sh [-h,-? | -u | -V]
+                             [-d,-D={A-C}]
+                             [-e,-E=VAL_5,E]
+                             [-f,-F]
+                             [-g,-G]
+                             -a,-A=VAL_1,A
+                             -b,-B=VAL_2,B...
+                             -c,-C={A,B}...
+                             [{1,2}]
+                             pos_2
 EOF
 )"
 error=""
@@ -710,7 +774,16 @@ output=""
 error="$(cat << EOF
 test_short_options.sh: Error: The argument "--usage" is unknown.
 
-Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A-C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_short_options.sh [-h,-? | -u | -V]
+                             [-d,-D={A-C}]
+                             [-e,-E=VAL_5,E]
+                             [-f,-F]
+                             [-g,-G]
+                             -a,-A=VAL_1,A
+                             -b,-B=VAL_2,B...
+                             -c,-C={A,B}...
+                             [{1,2}]
+                             pos_2
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
@@ -758,7 +831,16 @@ output=""
 error="$(cat << EOF
 test_short_options.sh: Error: The argument "--help" is unknown.
 
-Usage: test_short_options.sh [-h,-? | -u | -V] [-d,-D={A-C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_short_options.sh [-h,-? | -u | -V]
+                             [-d,-D={A-C}]
+                             [-e,-E=VAL_5,E]
+                             [-f,-F]
+                             [-g,-G]
+                             -a,-A=VAL_1,A
+                             -b,-B=VAL_2,B...
+                             -c,-C={A,B}...
+                             [{1,2}]
+                             pos_2
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
@@ -796,7 +878,16 @@ output=""
 error="$(cat << EOF
 test_long_options.sh: Error: The argument "-V" is unknown.
 
-Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A-C}] [--var-5,--var-e=VAL_5,VAR_E] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1,VAR_A --var-2,--var-b=VAL_2,VAR_B... --var-3,--var-c={A,B}... [{1,2}] pos_2
+Usage: test_long_options.sh [--help | --usage | --version]
+                            [--var-4,--var-d={A-C}]
+                            [--var-5,--var-e=VAL_5,VAR_E]
+                            [--var-6,--var-f]
+                            [--var-7,--var-g]
+                            --var-1,--var-a=VAL_1,VAR_A
+                            --var-2,--var-b=VAL_2,VAR_B...
+                            --var-3,--var-c={A,B}...
+                            [{1,2}]
+                            pos_2
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
@@ -820,7 +911,16 @@ output=""
 error="$(cat << EOF
 test_long_options.sh: Error: The argument "-u" is unknown.
 
-Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A-C}] [--var-5,--var-e=VAL_5,VAR_E] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1,VAR_A --var-2,--var-b=VAL_2,VAR_B... --var-3,--var-c={A,B}... [{1,2}] pos_2
+Usage: test_long_options.sh [--help | --usage | --version]
+                            [--var-4,--var-d={A-C}]
+                            [--var-5,--var-e=VAL_5,VAR_E]
+                            [--var-6,--var-f]
+                            [--var-7,--var-g]
+                            --var-1,--var-a=VAL_1,VAR_A
+                            --var-2,--var-b=VAL_2,VAR_B...
+                            --var-3,--var-c={A,B}...
+                            [{1,2}]
+                            pos_2
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
@@ -830,7 +930,16 @@ test_number="${test_section}.5"
 test_type="usage"
 cmd="bash test_long_options.sh --usage"
 output="$(cat << EOF
-Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A-C}] [--var-5,--var-e=VAL_5,VAR_E] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1,VAR_A --var-2,--var-b=VAL_2,VAR_B... --var-3,--var-c={A,B}... [{1,2}] pos_2
+Usage: test_long_options.sh [--help | --usage | --version]
+                            [--var-4,--var-d={A-C}]
+                            [--var-5,--var-e=VAL_5,VAR_E]
+                            [--var-6,--var-f]
+                            [--var-7,--var-g]
+                            --var-1,--var-a=VAL_1,VAR_A
+                            --var-2,--var-b=VAL_2,VAR_B...
+                            --var-3,--var-c={A,B}...
+                            [{1,2}]
+                            pos_2
 EOF
 )"
 error=""
@@ -844,7 +953,16 @@ output=""
 error="$(cat << EOF
 test_long_options.sh: Error: The argument "-h" is unknown.
 
-Usage: test_long_options.sh [--help | --usage | --version] [--var-4,--var-d={A-C}] [--var-5,--var-e=VAL_5,VAR_E] [--var-6,--var-f] [--var-7,--var-g] --var-1,--var-a=VAL_1,VAR_A --var-2,--var-b=VAL_2,VAR_B... --var-3,--var-c={A,B}... [{1,2}] pos_2
+Usage: test_long_options.sh [--help | --usage | --version]
+                            [--var-4,--var-d={A-C}]
+                            [--var-5,--var-e=VAL_5,VAR_E]
+                            [--var-6,--var-f]
+                            [--var-7,--var-g]
+                            --var-1,--var-a=VAL_1,VAR_A
+                            --var-2,--var-b=VAL_2,VAR_B...
+                            --var-3,--var-c={A,B}...
+                            [{1,2}]
+                            pos_2
 EOF
 )"
 print_diff "${cmd}" "${output}" "${error}"
@@ -926,7 +1044,14 @@ test_number="${test_section}.3"
 test_type="usage"
 cmd="bash test_keyword_arguments.sh --usage"
 output="$(cat << EOF
-Usage: test_keyword_arguments.sh [-h,-? | -u | -V] [-d={A-C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}...
+Usage: test_keyword_arguments.sh [-h,-? | -u | -V]
+                                 [-d={A-C}]
+                                 [-f]
+                                 [-g]
+                                 [--var-5=VAL_5]
+                                 -a=VAL_1
+                                 -b=VAL_2...
+                                 -c={A,B}...
 EOF
 )"
 error=""
@@ -991,7 +1116,7 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 5.3.  Test the usage message.
+# 5.3.  Test the usage message in "row" orientation.
 test_number="${test_section}.3"
 test_type="usage"
 cmd="bash test_positional_arguments.sh --usage"
@@ -1002,7 +1127,20 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 5.4.  Test the help message.
+# 5.4.  Test the usage message in "column" orientation.
+test_number="${test_section}.3"
+test_type="usage"
+cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash test_positional_arguments.sh --usage"
+output="$(cat << EOF
+Usage: test_positional_arguments.sh [-h,-? | -u | -V]
+                                    [{1,2}]
+                                    pos_2
+EOF
+)"
+error=""
+print_diff "${cmd}" "${output}" "${error}"
+
+# 5.5.  Test the help message.
 test_number="${test_section}.4"
 test_type="help"
 cmd="bash test_positional_arguments.sh --help"
@@ -1096,7 +1234,16 @@ test_number="${test_section}.3"
 test_type="usage"
 cmd="bash test_arg_number.sh --usage"
 output="$(cat << EOF
-Usage: test_arg_number.sh [-h,-? | -u | -V] [-d,-D[={A-C}...]] [-e,-E[=VAL_5,E]] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
+Usage: test_arg_number.sh [-h,-? | -u | -V]
+                          [-d,-D[={A-C}...]]
+                          [-e,-E[=VAL_5,E]]
+                          [-f,-F]
+                          [-g,-G]
+                          -a,-A=VAL_1,A
+                          -b,-B=VAL_2,B...
+                          -c,-C={A,B}...
+                          [{1,2}]
+                          pos_2
 EOF
 )"
 error=""
@@ -1186,7 +1333,16 @@ test_number="${test_section}.3"
 test_type="usage"
 cmd="bash test_config_file.sh --usage"
 output="$(cat << EOF
-Usage: test_config_file.sh [-h,-? | -u | -V] [-d={A-C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+Usage: test_config_file.sh [-h,-? | -u | -V]
+                           [-d={A-C}]
+                           [-f]
+                           [-g]
+                           [--var-5=VAL_5]
+                           -a=VAL_1
+                           -b=VAL_2...
+                           -c={A,B}...
+                           [{1,2}]
+                           pos_2
 EOF
 )"
 error=""
@@ -1268,7 +1424,16 @@ test_number="${test_section}.3"
 test_type="usage"
 cmd="bash test_arg_def_file.sh --usage"
 output="$(cat << EOF
-Usage: test_arg_def_file.sh [-h,-? | -u | -V] [-d={A-C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+Usage: test_arg_def_file.sh [-h,-? | -u | -V]
+                            [-d={A-C}]
+                            [-f]
+                            [-g]
+                            [--var-5=VAL_5]
+                            -a=VAL_1
+                            -b=VAL_2...
+                            -c={A,B}...
+                            [{1,2}]
+                            pos_2
 EOF
 )"
 error=""
@@ -1350,7 +1515,16 @@ test_number="${test_section}.3"
 test_type="usage"
 cmd="bash test_help_file.sh --usage"
 output="$(cat << EOF
-Usage: test_help_file.sh [-h,-? | -u | -V] [-d={A-C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+Usage: test_help_file.sh [-h,-? | -u | -V]
+                         [-d={A-C}]
+                         [-f]
+                         [-g]
+                         [--var-5=VAL_5]
+                         -a=VAL_1
+                         -b=VAL_2...
+                         -c={A,B}...
+                         [{1,2}]
+                         pos_2
 EOF
 )"
 error=""
@@ -1424,9 +1598,18 @@ test_type="error"
 cmd="bash test_style_file.sh -g"
 output="$(cat << EOF
 
-╭─ Usage ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ test_style_file.sh [-h,-? | -u | -V] [-d={A-C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2 │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Usage ──────────────────────────────╮
+│ test_style_file.sh [-h,-? | -u | -V] │
+│                    [-d={A-C}]        │
+│                    [-f]              │
+│                    [-g]              │
+│                    [--var-5=VAL_5]   │
+│                    -a=VAL_1          │
+│                    -b=VAL_2...       │
+│                    -c={A,B}...       │
+│                    [{1,2}]           │
+│                    pos_2             │
+╰──────────────────────────────────────╯
 EOF
 )"
 error="$(cat << EOF
@@ -1457,23 +1640,10 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 11.4. Test the usage message in "row" orientation.
-test_number="${test_section}.4"
-test_type="usage"
-cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=row bash test_style_file.sh --usage"
-output="$(cat << EOF
-╭─ Usage ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ test_style_file.sh [-h,-? | -u | -V] [-d={A-C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2 │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-EOF
-)"
-error=""
-print_diff "${cmd}" "${output}" "${error}"
-
-# 11.5. Test the usage message in "column" orientation.
+# 11.4. Test the usage message.
 test_number="${test_section}.5"
 test_type="usage"
-cmd="ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash test_style_file.sh --usage"
+cmd="bash test_style_file.sh --usage"
 output="$(cat << EOF
 ╭─ Usage ──────────────────────────────╮
 │ test_style_file.sh [-h,-? | -u | -V] │
@@ -1492,7 +1662,7 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 11.6. Test the help message.
+# 11.5. Test the help message.
 test_number="${test_section}.6"
 test_type="help"
 cmd="bash test_style_file.sh --help"
@@ -1604,7 +1774,16 @@ test_number="${test_section}.5"
 test_type="usage"
 cmd="LANG=en_US.UTF-8 bash test_localization.sh --usage"
 output="$(cat << EOF
-Usage: test_localization.sh [-h,-? | -u | -V] [-d={A-C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+Usage: test_localization.sh [-h,-? | -u | -V]
+                            [-d={A-C}]
+                            [-f]
+                            [-g]
+                            [--var-5=VAL_5]
+                            -a=VAL_1
+                            -b=VAL_2...
+                            -c={A,B}...
+                            [{1,2}]
+                            pos_2
 EOF
 )"
 error=""
@@ -1615,7 +1794,16 @@ test_number="${test_section}.6"
 test_type="usage"
 cmd="LANG=de_DE.UTF-8 bash test_localization.sh --usage"
 output="$(cat << EOF
-Aufruf: test_localization.sh [-h,-? | -u | -V] [-d={A-C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+Aufruf: test_localization.sh [-h,-? | -u | -V]
+                             [-d={A-C}]
+                             [-f]
+                             [-g]
+                             [--var-5=VAL_5]
+                             -a=VAL_1
+                             -b=VAL_2...
+                             -c={A,B}...
+                             [{1,2}]
+                             pos_2
 EOF
 )"
 error=""
@@ -1750,7 +1938,16 @@ test_number="${test_section}.3"
 test_type="usage"
 cmd="dash test_pipeline.sh --usage"
 output="$(cat << EOF
-Usage: test_pipeline.sh [-h,-? | -u | -V] [-d={A-C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+Usage: test_pipeline.sh [-h,-? | -u | -V]
+                        [-d={A-C}]
+                        [-f]
+                        [-g]
+                        [--var-5=VAL_5]
+                        -a=VAL_1
+                        -b=VAL_2...
+                        -c={A,B}...
+                        [{1,2}]
+                        pos_2
 EOF
 )"
 error=""

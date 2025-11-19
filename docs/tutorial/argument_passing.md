@@ -117,7 +117,16 @@ $ bash ../tutorial/try_argparser.sh 1 --var-1=1 --var-2=2 --var-3=A
 try_argparser.sh: Error: The argument "pos_2" requires 2 values, but has 1
                          given.
 
-Usage: try_argparser.sh [-h,-? | -u | -V] [-d,-D={A-C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
+Usage: try_argparser.sh [-h,-? | -u | -V]
+                        [-d,-D={A-C}]
+                        [-e,-E=VAL_5,E]
+                        [-f,-F]
+                        [-g,-G]
+                        -a,-A=VAL_1,A
+                        -b,-B=VAL_2,B...
+                        -c,-C={A,B}...
+                        [{1,2}]
+                        pos_2
 ```
 <!-- </include> -->
 
@@ -216,7 +225,16 @@ And since the long option names only differ in their last character, here, it is
 $ ARGPARSER_ALLOW_OPTION_ABBREVIATION=true bash ../tutorial/try_argparser.sh --var-1 1 --var-2 2 --var A -- 1 2
 try_argparser.sh: Error: The long option "--var" matches multiple long options.
 
-Usage: try_argparser.sh [-h,-? | -u | -V] [-d,-D={A-C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
+Usage: try_argparser.sh [-h,-? | -u | -V]
+                        [-d,-D={A-C}]
+                        [-e,-E=VAL_5,E]
+                        [-f,-F]
+                        [-g,-G]
+                        -a,-A=VAL_1,A
+                        -b,-B=VAL_2,B...
+                        -c,-C={A,B}...
+                        [{1,2}]
+                        pos_2
 ```
 <!-- </include> -->
 
@@ -355,7 +373,16 @@ try_argparser.sh: Error: The option "-c,-C,--var-3,--var-c" is no flag and thus
 try_argparser.sh: Warning: The argument "-g,-G,--var-7,--var-g" is deprecated
                            and will be removed in the future.
 
-Usage: try_argparser.sh [-h,-? | -u | -V] [-d,-D={A-C}] [-e,-E=VAL_5,E] [-f,-F] [-g,-G] -a,-A=VAL_1,A -b,-B=VAL_2,B... -c,-C={A,B}... [{1,2}] pos_2
+Usage: try_argparser.sh [-h,-? | -u | -V]
+                        [-d,-D={A-C}]
+                        [-e,-E=VAL_5,E]
+                        [-f,-F]
+                        [-g,-G]
+                        -a,-A=VAL_1,A
+                        -b,-B=VAL_2,B...
+                        -c,-C={A,B}...
+                        [{1,2}]
+                        pos_2
 ```
 <!-- </include> -->
 

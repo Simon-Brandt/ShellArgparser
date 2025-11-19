@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-18
+# Last Modification: 2025-11-19
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -8239,6 +8239,7 @@ function argparser_create_usage_message() {
     local -a sorted_array
     local translation
     local -a usage_message
+    local uncolorized_message
     local value_name
     local -a value_names_arr
     local value_names_str
@@ -8853,28 +8854,33 @@ function argparser_create_usage_message() {
 
     usage_message+=("${lines[@]}")
 
-    # To keep all arguments aligned in columnar output, prepend
+    # To keep all arguments aligned in columnar orientation, prepend
     # whitespace to the usage message's lines.  Its length equals the
     # length of the header with the script name, and, if no usage frame
     # is given, the (translated) caption.  For the first line, where the
     # header will be added, below, remove the whitespace afterwards.
     # For a row-like orientation, join the lines using one space,
-    # instead.
+    # instead.  Even if a row-like orientation is preferred, use a
+    # columnar orientation if the (uncolorized) usage message's length,
+    # when joined to a row, exceeds ${ARGPARSER_MAX_WIDTH}.
     argparser_translate "Usage" "Usage"
     caption="${translation}"
 
-    if [[ "${ARGPARSER_USAGE_MESSAGE_ORIENTATION}" == "column" ]]; then
-        if [[ -n "${styles["usage_frame"]}" ]]; then
-            header="${ARGPARSER_SCRIPT_NAME} "
-        else
-            header="${caption}: ${ARGPARSER_SCRIPT_NAME} "
-        fi
+    if [[ -n "${styles["usage_frame"]}" ]]; then
+        header="${ARGPARSER_SCRIPT_NAME} "
+    else
+        header="${caption}: ${ARGPARSER_SCRIPT_NAME} "
+    fi
 
+    argparser_join " " "${usage_message[@]}"
+    argparser_uncolorize uncolorized_message 1 "${joined_array}"
+    if (( "${#uncolorized_message}" + "${#header}" > ARGPARSER_MAX_WIDTH )) \
+        || [[ "${ARGPARSER_USAGE_MESSAGE_ORIENTATION}" == "column" ]]
+    then
         printf -v whitespace '%*s' "${#header}" ""
         usage_message=("${usage_message[@]/#/"${whitespace}"}")
         usage_message[0]="${usage_message[0]#"${whitespace}"}"
     else
-        argparser_join " " "${usage_message[@]}"
         usage_message=("${joined_array}")
     fi
 

@@ -224,7 +224,16 @@ Likewise, the usage message is localized:
 <!-- <include command="LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -u" lang="console"> -->
 ```console
 $ LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -u
-Aufruf: try_localization.sh [-h,-? | -u | -V] [-d={A-C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+Aufruf: try_localization.sh [-h,-? | -u | -V]
+                            [-d={A-C}]
+                            [-f]
+                            [-g]
+                            [--var-5=VAL_5]
+                            -a=VAL_1
+                            -b=VAL_2...
+                            -c={A,B}...
+                            [{1,2}]
+                            pos_2
 ```
 <!-- </include> -->
 
