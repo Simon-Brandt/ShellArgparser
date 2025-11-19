@@ -807,12 +807,14 @@ function argparser_seq() {
     local decimals_start
     local decimals_step
     local decimals_stop
+    local error_message
     local i
     local number
     local offset
     local start
     local stop
     local step
+    local translation
 
     # Read the arguments.
     arg_key="$1"
@@ -982,7 +984,7 @@ function argparser_get_max() {
 
     # Define the local variables.
     local -a array
-    local width
+    local element
 
     # Read the arguments.
     array=("$@")
@@ -1713,6 +1715,7 @@ function argparser_read_configuration() {
     local file_attributes
     local line
     local -a lines
+    local trimmed_string
     local value
     local var
 
@@ -1827,6 +1830,7 @@ function argparser_set_env_vars() {
     # - $@: the command line upon sourcing the Argparser
     #
     # Nonlocals:
+    # - argparser_version: the Argparser's own version number
     # - script_args: the script's command line
     #
     # Environment:
@@ -2232,6 +2236,7 @@ function argparser_check_env_vars() {
 
     # Define the local variables.
     local -A checked_short_options
+    local count
     local error_message
     local -a error_messages
     local file_attributes
@@ -2894,8 +2899,8 @@ function argparser_translate() {
     local i
     local key
     local string
-    local var
     local -a vars
+    local warning_message
 
     # Read the arguments.
     key="$1"
@@ -2993,6 +2998,8 @@ function argparser_read_styles() {
     local -a lines
     local name
     local style
+    local translation
+    local trimmed_string
     local warning_message
     local -a warning_messages
 
@@ -3177,6 +3184,7 @@ function argparser_create_args_definition() {
     local drop_type
     local drop_value_names
     local file
+    local -a folded_array
     local help_text
     local i
     local line
@@ -3651,7 +3659,6 @@ function argparser_parse_args_definition() {
     local -a fields
     local -a header
     local help_text
-    local i
     local joined_array
     local -a line
     local long_options
@@ -4275,14 +4282,12 @@ function argparser_check_args_definition_positional_values() {
     local arg_key
     local arg_number
     local choice_value
-    local -a choice_values_arr
     local choice_values_str
     local default_value
     local -a default_values_arr
     local default_values_str
     local error_message
     local infinite_arg_number_arg
-    local joined_array
     local note
     local -a notes
     local optional_arg
@@ -4300,8 +4305,6 @@ function argparser_check_args_definition_positional_values() {
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a default_values_arr \
             <<< "${default_values_str}"
         choice_values_str="${all_choice_values[${arg_key}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values_arr \
-            <<< "${choice_values_str}"
         resolved_choice_values_str="${all_resolved_choice_values[${arg_key}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a \
             resolved_choice_values_arr \
@@ -4660,13 +4663,11 @@ function argparser_check_args_definition_option_values() {
     local arg_key
     local arg_number
     local choice_value
-    local -a choice_values_arr
     local choice_values_str
     local default_value
     local -a default_values_arr
     local default_values_str
     local error_message
-    local joined_array
     local note
     local -a notes
     local -a resolved_choice_values_arr
@@ -4681,8 +4682,6 @@ function argparser_check_args_definition_option_values() {
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a default_values_arr \
             <<< "${default_values_str}"
         choice_values_str="${all_choice_values[${arg_key}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values_arr \
-            <<< "${choice_values_str}"
         resolved_choice_values_str="${all_resolved_choice_values[${arg_key}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a \
             resolved_choice_values_arr \
@@ -5141,11 +5140,9 @@ function argparser_get_option_names() {
     local -a colorized_array
     local joined_array
     local long_option_names
-    local long_option
     local -a long_options
     local order
     local short_option_names
-    local short_option
     local -a short_options
     local value_names
 
@@ -5565,6 +5562,7 @@ function argparser_parse_short_option() {
     local arg_key
     local arg_number
     local char
+    local error_message
     local given_arg
     local i
     local option_name
@@ -5864,14 +5862,10 @@ function argparser_check_arg_values() {
     # Define the local variables.
     local arg_key
     local arg_number
-    local choice_value
-    local -a choice_values_arr
     local choice_values_str
     local count
     local count_hyphen
     local count_plus
-    local default_value
-    local -a default_values_arr
     local default_values_str
     local error_message
     local i
@@ -5911,9 +5905,7 @@ function argparser_check_arg_values() {
 
         # Read the argument's definition.
         default_values_str="${all_default_values[${arg_key}]}"
-        default_values_arr=("${default_values_str}")
         choice_values_str="${all_choice_values[${arg_key}]}"
-        choice_values_arr=("${choice_values_str}")
         resolved_choice_values_str="${all_resolved_choice_values[${arg_key}]}"
         resolved_choice_values_arr=("${resolved_choice_values_str}")
         type="${all_types[${arg_key}]}"
@@ -5935,11 +5927,7 @@ function argparser_check_arg_values() {
 
         # Read the argument's definition.
         default_values_str="${all_default_values[${arg_key}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a default_values_arr \
-            <<< "${default_values_str}"
         choice_values_str="${all_choice_values[${arg_key}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values_arr \
-            <<< "${choice_values_str}"
         resolved_choice_values_str="${all_resolved_choice_values[${arg_key}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a \
             resolved_choice_values_arr \
@@ -6361,7 +6349,6 @@ function argparser_parse_args() {
     local given_arg
     local -a given_args
     local -a given_positional_args
-    local i
     local is_help
     local is_logo
     local is_positional
@@ -6379,7 +6366,6 @@ function argparser_parse_args() {
     local translation
     local value
     local values
-    local warning_message
     local -a warning_messages
 
     # Read the arguments.
@@ -6472,7 +6458,6 @@ function argparser_parse_args() {
     fi
 
     # Define the remaining local variables that start with "arg".
-    local arg
     local arg_key
     local arg_number
     local -A arg_numbers
@@ -6954,6 +6939,7 @@ function argparser_write_args() {
     # Define the local variables.
     local arg_key
     local -a args_repr
+    local -a sorted_array
 
     # Get the associative array ${ARGPARSER_ARG_ARRAY_NAME} refers to.
     # If it is already "args" (the default name), nothing needs to be
@@ -7043,27 +7029,26 @@ function argparser_create_help_message() {
     local col_width_2
     local col_width_3
     local -a colorized_array
-    local count
     local default_text_end
     local default_text_start
-    local default_value
     local -a default_values_arr
     local default_values_str
+    local description
     local -a folded_array
+    local -a framed_array
     local has_default_args
     local has_required_args
     local -a help_message
     local help_text
     local i
-    local index
     local is_deprecated
-    local j
     local -a joined_array
     local line
     local long_option
     local -a long_options_arr
     local long_options_str
     local mandatory_arguments_hint
+    local max_col_width
     local max_col_width_3
     local max_value
     local max_width
@@ -7092,6 +7077,7 @@ function argparser_create_help_message() {
     local type
     local -a uncolorized_array
     local usage
+    local value_name
     local -a value_names_arr
     local value_names_str
 
@@ -8198,6 +8184,7 @@ function argparser_create_usage_message() {
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_HELP_ARG_GROUP (read-only)
     # - ARGPARSER_HELP_OPTIONS (read-only)
+    # - ARGPARSER_MAX_WIDTH (read-only)
     # - ARGPARSER_SCRIPT_NAME (read-only)
     # - ARGPARSER_USAGE_MESSAGE_OPTION_TYPE(read-only)
     # - ARGPARSER_USAGE_MESSAGE_ORIENTATION (read-only)
@@ -8218,7 +8205,6 @@ function argparser_create_usage_message() {
     local header
     local -a help_option_args
     local help_options
-    local i
     local joined_array
     local -a lines
     local long_option
@@ -9438,7 +9424,6 @@ function argparser_print_error_messages() {
     local caption
     local -a colorized_array
     local exit
-    local error_message
     local -a error_messages
     local filter
     local -a filtered_array
@@ -9555,7 +9540,6 @@ function argparser_print_warning_messages() {
     local script_name
     local -a sorted_array
     local translation
-    local warning_message
     local -a warning_messages
 
     # Read the arguments.
@@ -9640,7 +9624,6 @@ function argparser_print_logo() {
     local font_8
     local font_9
     local space
-    local style
 
     # Set each letter's color as all primary and secondary colors,
     # traversing the color wheel for one and a half rounds.
