@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-04
+# Last Modification: 2025-11-11
 # License: Public Domain
 
 # 1.    Define the general translations.
@@ -16,13 +16,26 @@ Help description:
   en:
   de:
 
+Version:
+  en: Version
+  de: Version
+
 Error:
   en: Error
+  de: Fehler
+
+Errors:
+  en: Errors
   de: Fehler
 
 Warning:
   en: Warning
   de: Warnung
+
+Warnings:
+  en: Warnings
+  de: Warnungen
+
 
 # 2.    Define the translations for help messages.
 # 2.1.  Define the translations for the usage line (part of the header).
@@ -199,7 +212,8 @@ Error env var styles:
     Error: The environment variable "$1" is set to "$2", but the values must
     lie in {black, red, green, yellow, blue, magenta, cyan, white} for colors
     and in {normal, bold, faint, italic, underline, double, overline,
-    crossed-out, blink, reverse} for styles.
+    crossed-out, blink, reverse} for styles.  Colors, only, may be prefixed by
+    "bright_" or suffixed by "_fg" or "_bg".
   de: >
     Fehler: Die Umgebungsvariable "$1" ist auf "$2" gesetzt, die Werte müssen
     aber in {black, red, green, yellow, blue, magenta, cyan, white} (also
@@ -207,7 +221,17 @@ Error env var styles:
     {normal, bold, faint, italic, underline, double, overline, crossed-out,
     blink, reverse} (also {normal, fett, blass, kursiv, unterstrichen, doppelt
     unterstrichen, überstrichen, durchgestrichen, blinkend, revers} für Stile
-    liegen.
+    liegen.  Ausschließlich Farben können mit dem Präfix "bright_" ("hell_")
+    oder dem Suffix "_fg" (Vordergrund) oder "_bg" (Hintergrund) gegeben
+    werden.
+
+Error env var style usage:
+  en: >
+    Error: The environment variable "ARGPARSER_USE_STYLES" must be in
+    {always,never,file,tty}, but is "$1".
+  de: >
+    Fehler: Die Umgebungsvariable "ARGPARSER_USE_STYLES" muss in
+    {always,never,file,tty} ("{immer,nie,Datei,TTY}") liegen, ist aber "$1".
 
 Error env var option type:
   en: >
@@ -963,6 +987,54 @@ Error YAML:
   de: >
     Fehler: Die YAML-Zeile "$1" konnte nicht erkannt werden.
 
+
+# 3.10. Define the translations for reading the style file.
+
+Error style file equals sign:
+  en: >
+    Error: In the style file "$1", the line "$2" doesn't contain an equals sign
+    ("="), nor is it empty or commented.
+  de: >
+    Fehler: In der Stildatei "$1" enthält die Zeile "$2" kein
+    Gleichheitszeichen ("=") und ist auch nicht leer oder auskommentiert.
+
+Error style file frame styles:
+  en: >
+    Error: The style "$1" is set to "$2", but the values must lie in {black,
+    red, green, yellow, blue, magenta, cyan, white} for colors and in {thin,
+    thick, double, angular, rounded, solid, double-dashed, triple-dashed,
+    quadruple-dashed} for frame styles.  Colors, only, may be prefixed by
+    \"bright_\" or suffixed by \"_fg\" or \"_bg\".
+  de: >
+    Fehler: Der Stil "$1" ist auf "$2" gesetzt, die Werte müssen aber in
+    {black, red, green, yellow, blue, magenta, cyan, white} (also {schwarz,
+    rot, grün, gelb, blau, magenta, cyan, weiß}) für Farben und in {thin,
+    thick, double, angular, rounded, solid, double-dashed, triple-dashed,
+    quadruple-dashed} (also {dünn, dick, doppelt, eckig, rund, durchgezogen,
+    doppelt gestrichelt, dreifach gestrichelt, vierfach gestrichelt} für
+    Rahmenstile liegen.  Ausschließlich Farben können mit dem Präfix "bright_"
+    ("hell_") oder dem Suffix "_fg" (Vordergrund) oder "_bg" (Hintergrund)
+    gegeben werden.
+
+Error style file text styles:
+  en: >
+    Error: The style "$1" is set to "$2", but the values must lie in {black,
+    red, green, yellow, blue, magenta, cyan, white} for colors and in {normal,
+    bold, faint, italic, underline, double, overline, crossed-out, blink,
+    reverse} for text styles.  Colors, only, may be prefixed by "bright_" or
+    suffixed by "_fg" or "_bg".
+  de: >
+    Fehler: Der Stil "$1" ist auf "$2" gesetzt, die Werte müssen aber in
+    {black, red, green, yellow, blue, magenta, cyan, white} (also {schwarz,
+    rot, grün, gelb, blau, magenta, cyan, weiß}) für Farben und in {normal,
+    bold, faint, italic, underline, double, overline, crossed-out, blink,
+    reverse} (also {normal, fett, blass, kursiv, unterstrichen, doppelt
+    unterstrichen, überstrichen, durchgestrichen, blinkend, revers} für
+    Textstile liegen.  Ausschließlich Farben können mit dem Präfix "bright_"
+    ("hell_") oder dem Suffix "_fg" (Vordergrund) oder "_bg" (Hintergrund)
+    gegeben werden.
+
+
 # 3.10. Define the translations for creating the help or usage messages.
 Error include directive:
   en: >
@@ -971,8 +1043,43 @@ Error include directive:
     Fehler: Die Include-Anweisung "$1" konnte nicht erkannt werden.
 
 # 4.    Define the translations for warning messages.
-# 4.1.  Define the translations for checking the values of the
+# 4.1.  Define the translations for translating from the translation
+#       file.
+
+Warning no identifier:
+  en: >
+    Warning: In the translation file "$1", the identifier "$2" is missing.  For
+    convenience, the untranslated string is used, instead.
+  de: >
+    Warnung: In der Übersetzungsdatei "$1" fehlt der Identifikator "$2". 
+    Zwecks Einfachheit wird stattdessen die nicht übersetzte Zeichenkette
+    genutzt.
+
+Warning no translation:
+  en: >
+    Warning: In the translation file "$1", the translation to "$2" for the
+    identifier "$3" is missing.  For convenience, the untranslated string is
+    used, instead.
+  de: >
+    Warnung: In der Übersetzungsdatei "$1" fehlt die Übersetzung nach "$2" für
+    den Identifikator "$3".  Zwecks Einfachheit wird stattdessen die nicht
+    übersetzte Zeichenkette genutzt.
+
+
+# 4.2.  Define the translations for reading the style file.
+
+Warning style file message key:
+  en: >
+    Warning: In the style file "$1", the line "$2" sets a non-existent message
+    key.
+  de: >
+    Warnung: In der Stildatei "$1" setzt die Zeile "$2" einen inexistenten
+    Nachrichten-Schlüssel.
+
+
+# 4.3.  Define the translations for checking the values of the
 #       arguments.
+
 Warning deprecation:
   en: >
     Warning: The argument "$1" is deprecated and will be removed in the future.
@@ -1011,23 +1118,3 @@ Warning wrong arg number 4:
     Warnung: Das Argument "$1" erfordert $2 Werte, hat aber $3 gegeben.  Zwecks
     Einfachheit wird die Vorgabe ($4) genutzt.
 
-# 4.2.  Define the translations for translating from the translation
-#       file.
-Warning no identifier:
-  en: >
-    Warning: In the translation file "$1", the identifier "$2" is missing.  For
-    convenience, the untranslated string is used, instead.
-  de: >
-    Warnung: In der Übersetzungsdatei "$1" fehlt der Identifikator "$2". 
-    Zwecks Einfachheit wird stattdessen die nicht übersetzte Zeichenkette
-    genutzt.
-
-Warning no translation:
-  en: >
-    Warning: In the translation file "$1", the translation to "$2" for the
-    identifier "$3" is missing.  For convenience, the untranslated string is
-    used, instead.
-  de: >
-    Warnung: In der Übersetzungsdatei "$1" fehlt die Übersetzung nach "$2" für
-    den Identifikator "$3".  Zwecks Einfachheit wird stattdessen die nicht
-    übersetzte Zeichenkette genutzt.

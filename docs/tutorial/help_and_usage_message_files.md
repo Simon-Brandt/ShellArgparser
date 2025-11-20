@@ -92,26 +92,27 @@ Usage: try_help_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 Mandatory arguments to long options are mandatory for short options too.
 
 The following arguments are positional:
-[pos_1={1,2}]              one positional argument with default and choice
-                           (default: 2)
-pos_2                      two positional arguments without default or choice
+[pos_1=                     one positional argument with default and choice
+    {1,2}]                  (default: 2)
+pos_2                       two positional arguments without default or choice
 
 The following options have no default value:
--a,       --var-1=VAL_1    one value without default or choice
--b,       --var-2=VAL_2... at least one value without default or choice
--c,       --var-3={A,B}... at least one value with choice
+-a,        --var-1=VAL_1    one value without default or choice
+-b,        --var-2=VAL_2... at least one value without default or choice
+-c,        --var-3={A,B}... at least one value with choice
 
 The following options have a default value:
-[-d={A,B,C}]               one value with default and choice (default: "A")
-          [--var-5=VAL_5]  one value with default (default: "E")
-[-f],     [--var-6]        no value (flag) with default (default: false)
-[-g],     [--var-7]        (DEPRECATED) no value (flag) with default (default:
-                           true)
+[-d=                        one value with default and choice (default: "A")
+    {A-C}]
+           [--var-5=VAL_5]  one value with default (default: "E")
+[-f],      [--var-6]        no value (flag) with default (default: false)
+[-g],      [--var-7]        (DEPRECATED) no value (flag) with default (default:
+                            true)
 
 There are always three options for the help messages:
-[-h, -?], [--help]         display this help and exit (default: false)
-[-u],     [--usage]        display the usage and exit (default: false)
-[-V],     [--version]      display the version and exit (default: false)
+[-h, -?],  [--help]         display this help and exit (default: false)
+[-u],      [--usage]        display the usage and exit (default: false)
+[-V],      [--version]      display the version and exit (default: false)
 ```
 <!-- </include> -->
 
@@ -133,7 +134,7 @@ If the include character is doubled, the section name (the respective arguments 
 
 Further, lines starting with a `"#"` character in the help file aren't printed if [`ARGPARSER_HELP_FILE_KEEP_COMMENTS`](../reference/environment_variables/environment_variables.md#9428-argparser_help_file_keep_comments) is set to `false` (the default). This allows you to comment your help file, perhaps to explain the structure&mdash;or just to write a header or footer with your name and debug email address inside.
 
-The same as for help messages can be done for usage messages, using the [`ARGPARSER_USAGE_FILE`](../reference/environment_variables/environment_variables.md#9448-argparser_usage_file), [`ARGPARSER_USAGE_FILE_INCLUDE_CHAR`](../reference/environment_variables/environment_variables.md#9449-argparser_usage_file_include_char), and [`ARGPARSER_USAGE_FILE_KEEP_COMMENTS`](../reference/environment_variables/environment_variables.md#9450-argparser_usage_file_keep_comments) environment variables. However there, only the `@All` directive is supported, yet.
+The same as for help messages can be done for usage messages, using the [`ARGPARSER_USAGE_FILE`](../reference/environment_variables/environment_variables.md#9449-argparser_usage_file), [`ARGPARSER_USAGE_FILE_INCLUDE_CHAR`](../reference/environment_variables/environment_variables.md#9450-argparser_usage_file_include_char), and [`ARGPARSER_USAGE_FILE_KEEP_COMMENTS`](../reference/environment_variables/environment_variables.md#9451-argparser_usage_file_keep_comments) environment variables. However there, only the `@All` directive is supported, yet.  Further, since there are no sections, the include character cannot be doubled.
 
 [&#129092;&nbsp;5.5. Help and usage messages](help_and_usage_messages.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.7. Help and usage message localization&nbsp;&#129094;](help_and_usage_message_localization.md)

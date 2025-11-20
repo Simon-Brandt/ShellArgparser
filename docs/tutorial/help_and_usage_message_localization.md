@@ -20,7 +20,7 @@
 
 ### 5.7. Help and usage message localization
 
-It is even possible to localize your script's help and usage message. For the usage message, all you need is an [`ARGPARSER_TRANSLATION_FILE`](../reference/environment_variables/environment_variables.md#9443-argparser_translation_file), a simplified [YAML](https://en.wikipedia.org/wiki/YAML "wikipedia.org &rightarrow; YAML") file giving the translation of the auto-generated parts in the messages. For each section, you give the language identifier for the language you want the message to be translated to, *i.e.*, the [`ARGPARSER_LANGUAGE`](../reference/environment_variables/environment_variables.md#9431-argparser_language). For the usage message, this suffices, but in the help message, also non-auto-generated parts are included, especially each argument's help text. For them to be translated, you need a dedicated [`ARGPARSER_ARG_DEF_FILE`](../reference/environment_variables/environment_variables.md#9411-argparser_arg_def_file) and possibly a localized [`ARGPARSER_HELP_FILE`](../reference/environment_variables/environment_variables.md#9426-argparser_help_file).
+It is even possible to localize your script's help and usage message. For the usage message, all you need is an [`ARGPARSER_TRANSLATION_FILE`](../reference/environment_variables/environment_variables.md#9444-argparser_translation_file), a simplified [YAML](https://en.wikipedia.org/wiki/YAML "wikipedia.org &rightarrow; YAML") file giving the translation of the auto-generated parts in the messages. For each section, you give the language identifier for the language you want the message to be translated to, *i.e.*, the [`ARGPARSER_LANGUAGE`](../reference/environment_variables/environment_variables.md#9431-argparser_language). For the usage message, this suffices, but in the help message, also non-auto-generated parts are included, especially each argument's help text. For them to be translated, you need a dedicated [`ARGPARSER_ARG_DEF_FILE`](../reference/environment_variables/environment_variables.md#9411-argparser_arg_def_file) and possibly a localized [`ARGPARSER_HELP_FILE`](../reference/environment_variables/environment_variables.md#9426-argparser_help_file).
 
 If you set these environment variables to files whose filename contains the language, like so:
 
@@ -124,7 +124,7 @@ Finally, we need a translation file (here [`translations.yaml`](../../resources/
 
 <summary>Beginning of <code>translations.yaml</code></summary>
 
-<!-- <include command="sed '1,5d;84q' ../resources/translations.yaml" lang="yaml"> -->
+<!-- <include command="sed '1,5d;39q' ../resources/translations.yaml" lang="yaml"> -->
 ```yaml
 # 1.    Define the general translations.
 Positional arguments:
@@ -139,72 +139,25 @@ Help description:
   en:
   de:
 
+Version:
+  en: Version
+  de: Version
+
 Error:
   en: Error
+  de: Fehler
+
+Errors:
+  en: Errors
   de: Fehler
 
 Warning:
   en: Warning
   de: Warnung
 
-# 2.    Define the translations for help messages.
-# 2.1.  Define the translations for the usage line (part of the header).
-Usage:
-  en: Usage
-  de: Aufruf
-
-Arguments:
-  en: ARGUMENTS
-  de: ARGUMENTE
-
-Options:
-  en: OPTIONS
-  de: OPTIONEN
-
-# 2.2.  Define the translations for the remark (part of the header).
-Mandatory arguments:
-  en: >
-    Mandatory arguments to long options are mandatory for short options too.
-  de: >
-    Erforderliche Argumente für lange Optionen sind auch für kurze
-    erforderlich.
-
-# 2.3.  Define the translations for the help column.
-Deprecated:
-  en: DEPRECATED
-  de: VERALTET
-
-Default:
-  en: default
-  de: Vorgabe
-
---help:
-  en: display this help and exit
-  de: diese Hilfe anzeigen und beenden
-
---usage:
-  en: display the usage and exit
-  de: den Aufruf anzeigen und beenden
-
---version:
-  en: display the version and exit
-  de: die Version anzeigen und beenden
-
-false:
-  en: false
-  de: falsch
-
-true:
-  en: true
-  de: wahr
-
-# 3.    Define the translations for error messages.
-# 3.1.  Define the translations for checking the environment variables.
-Error env var bool:
-  en: >
-    Error: The environment variable "$1" is set to "$2", but must be a Boolean,
-    i.e., "true" or "false".
-  de: >
+Warnings:
+  en: Warnings
+  de: Warnungen
 ```
 <!-- </include> -->
 
@@ -239,26 +192,28 @@ Aufruf: try_localization.sh [OPTIONEN] ARGUMENTE -- [pos_1] pos_2
 Erforderliche Argumente für lange Optionen sind auch für kurze erforderlich.
 
 Die folgenden Argumente sind positional:
-[pos_1={1,2}]              ein positionales Argument mit Vorgabe und Auswahl
-                           (Vorgabe: 2)
-pos_2                      zwei positionale Argumente ohne Vorgabe oder Auswahl
+[pos_1=                     ein positionales Argument mit Vorgabe und Auswahl
+    {1,2}]                  (Vorgabe: 2)
+pos_2                       zwei positionale Argumente ohne Vorgabe oder
+                            Auswahl
 
 Die folgenden Optionen haben keinen Vorgabewert:
--a,       --var-1=VAL_1    ein Wert ohne Vorgabe oder Auswahl
--b,       --var-2=VAL_2... mindestens ein Wert ohne Vorgabe oder Auswahl
--c,       --var-3={A,B}... mindestens ein Wert mit Auswahl
+-a,        --var-1=VAL_1    ein Wert ohne Vorgabe oder Auswahl
+-b,        --var-2=VAL_2... mindestens ein Wert ohne Vorgabe oder Auswahl
+-c,        --var-3={A,B}... mindestens ein Wert mit Auswahl
 
 Die folgenden Optionen haben einen Vorgabewert:
-[-d={A,B,C}]               ein Wert mit Vorgabe und Auswahl (Vorgabe: "A")
-          [--var-5=VAL_5]  ein Wert mit Vorgabe (Vorgabe: "E")
-[-f],     [--var-6]        kein Wert (Flag) mit Vorgabe (Vorgabe: falsch)
-[-g],     [--var-7]        (VERALTET) kein Wert (Flag) mit Vorgabe (Vorgabe:
-                           wahr)
+[-d=                        ein Wert mit Vorgabe und Auswahl (Vorgabe: "A")
+    {A-C}]
+           [--var-5=VAL_5]  ein Wert mit Vorgabe (Vorgabe: "E")
+[-f],      [--var-6]        kein Wert (Flag) mit Vorgabe (Vorgabe: falsch)
+[-g],      [--var-7]        (VERALTET) kein Wert (Flag) mit Vorgabe (Vorgabe:
+                            wahr)
 
 Es gibt grundsätzlich drei Optionen für die Hilfe-Meldungen:
-[-h, -?], [--help]         diese Hilfe anzeigen und beenden (Vorgabe: falsch)
-[-u],     [--usage]        den Aufruf anzeigen und beenden (Vorgabe: falsch)
-[-V],     [--version]      die Version anzeigen und beenden (Vorgabe: falsch)
+[-h, -?],  [--help]         diese Hilfe anzeigen und beenden (Vorgabe: falsch)
+[-u],      [--usage]        den Aufruf anzeigen und beenden (Vorgabe: falsch)
+[-V],      [--version]      die Version anzeigen und beenden (Vorgabe: falsch)
 ```
 <!-- </include> -->
 
@@ -267,7 +222,16 @@ Likewise, the usage message is localized:
 <!-- <include command="LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -u" lang="console"> -->
 ```console
 $ LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -u
-Aufruf: try_localization.sh [-h,-? | -u | -V] [-d={A,B,C}] [-f] [-g] [--var-5=VAL_5] -a=VAL_1 -b=VAL_2... -c={A,B}... [{1,2}] pos_2
+Aufruf: try_localization.sh [-h,-? | -u | -V]
+                            [-d={A-C}]
+                            [-f]
+                            [-g]
+                            [--var-5=VAL_5]
+                            -a=VAL_1
+                            -b=VAL_2...
+                            -c={A,B}...
+                            [{1,2}]
+                            pos_2
 ```
 <!-- </include> -->
 

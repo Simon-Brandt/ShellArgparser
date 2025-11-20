@@ -20,11 +20,15 @@
 
 ### 9.2. Colors and styles
 
-The Argparser employs [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters") to set the appearance of help, usage, version, error, and warning messages. To this end, five environment variable are defined, *viz.* [`ARGPARSER_HELP_STYLE`](environment_variables/environment_variables.md#9430-argparser_help_style), [`ARGPARSER_USAGE_STYLE`](environment_variables/environment_variables.md#9454-argparser_usage_style), [`ARGPARSER_VERSION_STYLE`](environment_variables/environment_variables.md#9461-argparser_version_style), [`ARGPARSER_ERROR_STYLE`](environment_variables/environment_variables.md#9422-argparser_error_style), and [`ARGPARSER_WARNING_STYLE`](environment_variables/environment_variables.md#9462-argparser_warning_style). Since the escape codes are nonprintable, not all terminals or text editors may support them. Many terminals do, while *e.g.* [`less`](https://man7.org/linux/man-pages/man1/less.1.html "man7.org &rightarrow; man pages &rightarrow; less(1)") has a dedicated flag, `--raw-control-chars`.
+The Argparser employs [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters") to set the appearance of help, usage, version, error, and warning messages. To this end, you can use an [`ARGPARSER_STYLE_FILE`](environment_variables/environment_variables.md#9443-argparser_style_file) or fall back to the Argparser's default colors and styles. The five environment variables previously used for stylization, *viz.* [`ARGPARSER_HELP_STYLE`](environment_variables/environment_variables.md#9430-argparser_help_style), [`ARGPARSER_USAGE_STYLE`](environment_variables/environment_variables.md#9455-argparser_usage_style), [`ARGPARSER_VERSION_STYLE`](environment_variables/environment_variables.md#9463-argparser_version_style), [`ARGPARSER_ERROR_STYLE`](environment_variables/environment_variables.md#9422-argparser_error_style), and [`ARGPARSER_WARNING_STYLE`](environment_variables/environment_variables.md#9464-argparser_warning_style), are deprecated and will be removed in `v2.0.0`, in favor of the more fine-grained control the style file offers.
 
-When [`ARGPARSER_USE_STYLES_IN_FILES`](environment_variables/environment_variables.md#9457-argparser_use_styles_in_files) is set to `false`, the escape sequences are only included when `STDOUT`/`STDERR` is a terminal, keeping files plain 7-bit ASCII for simpler parsing. Note that, when your arguments definition or help file includes non-ASCII characters (as is usual for almost any language other than English varieties), the output contains these characters as well.
+Since the escape codes are nonprintable, not all terminals or text editors may support them. Many terminals do, while *e.g.* [`less`](https://man7.org/linux/man-pages/man1/less.1.html "man7.org &rightarrow; man pages &rightarrow; less(1)") has a dedicated flag, `--raw-control-chars`.
 
-A number of colors and styles is available. You don't need to remember the SGR codes, they're only internally used and given here for reference of what to expect from the keywords for the colors and styles. Further note that the actual RGB/Hex color values will depend on the output device.
+When [`ARGPARSER_USE_STYLES`](environment_variables/environment_variables.md#9458-argparser_use_styles) is set to `"tty"`, the escape sequences are only included when `STDOUT`/`STDERR` is a terminal, keeping files plain ASCII for simpler parsing. Note that, when your arguments definition or help file includes non-ASCII characters (as is usual for almost any language other than English varieties), the output contains these characters as well. You can also entirely disable the style inclusion by setting `ARGPARSER_USE_STYLES` to `"never"`, or enable it selectively for files using `"file"` as argument. `"always"`, in turn, activates the styles for both terminals and files.
+
+Both `ARGPARSER_USE_STYLES` and the (deprecated) [`ARGPARSER_USE_STYLES_IN_FILES`](environment_variables/environment_variables.md#9459-argparser_use_styles_in_files) allow, when set in the environment, on the command line, or in a configuration file, overriding the informal [no-color standard](https://no-color.org/ "no-color.org")'s `NO_COLOR` environment variable. If given, and not set to the empty string, the latter globally disables ANSI colorization in any software supporting the standard, including the Argparser. `ARGPARSER_USE_STYLES` and `ARGPARSER_USE_STYLES_IN_FILES` then disable `NO_COLOR`'s effect selectively for the Argparser, if desired, and turn the colors back on.
+
+A number of colors, as well as text and frame styles, are available. You don't need to remember the SGR codes and Unicode codepoints/characters, they're only internally used and given here for reference of what to expect from the keywords for the colors and styles. Further note that the actual RGB/Hex color values will depend on the output device.
 
 <!-- <table caption="Available colors and their SGR codes"> -->
 *Tab. 7: Available colors and their SGR codes.*
@@ -40,8 +44,8 @@ A number of colors and styles is available. You don't need to remember the SGR c
 | $\small\textsf{\color{cyan}cyan}$       | `36`     |
 | $\small\textsf{\color{lightgray}white}$ | `37`     |
 
-<!-- <table caption="Available styles and their SGR codes"> -->
-*Tab. 8: Available styles and their SGR codes.*
+<!-- <table caption="Available text styles and their SGR codes"> -->
+*Tab. 8: Available text styles and their SGR codes.*
 
 | Style         | SGR code |
 | ------------- | -------- |
@@ -56,7 +60,45 @@ A number of colors and styles is available. You don't need to remember the SGR c
 | `blink`       | `5`      |
 | `reverse`     | `7`      |
 
-While colors overwrite each other, some styles can be combined. For instance, the default value for `ARGPARSER_ERROR_STYLE` is `"red,bold,reverse"`, meaning to colorize the message in red and to format it in bold font, using reverse video. Other useful combinations may include `"faint"` and `"italic"` or `"bold"` and `"underline"`. The order of giving the colors and styles in the environment variables' values does only matter if multiple colors are given, when the last one "wins". Else, the colors and styles are simply composed (concatenated).
+<!-- <table caption="Available frame styles and their Unicode characters"> -->
+*Tab. 9: Available frame styles and their Unicode characters.*
+
+While colors overwrite each other, some styles can be combined. For instance, the default value for error message captions is `"red,bold,reverse"`, meaning to colorize the message in red and to format it in bold font, using reverse video. Regarding frame styles, `"red,rounded"` is used for error message frames in the template [`styles.cfg`](../../resources/styles.cfg), setting the frame to be red and to use rounded corners (along the default `thin` line width and `solid` line style). Other useful combinations for text styles may include `"faint"` and `"italic"` or `"bold"` and `"underline"`. The order of giving the colors and styles in the style file or the environment variables' values does only matter if multiple colors are given, when the last one "wins". Else, the colors and text styles are simply composed (concatenated), whereas frame styles are only in part compatible (*e.g.*, there are no thick, rounded corners since Unicode lacks characters for them, so thin, rounded corners are used, instead).
+
+There are a further 24 colors supported, *viz.*, bright and background colors (including bright background colors). By prefixing the color names with `bright_`, you obtain the bright ANSI colors from the 90&ndash;97 range. By suffixing them with `_bg`, you obtain the background colors from the 40&ndash;47 range, and by using both the `bright_` prefix and the `_bg` suffix, you obtain the background colors from the 100&ndash;107 range. The suffix `_fg` is also supported (both with and without `bright_` prefix) and yields the normal foreground colors, just as without specifying a suffix.
+
+Note that not all terminals support bright or background colors and may use substitute colors or ignore the escape sequences. Thus, the Argparser does not, and will never, use these extensions by default, only the eight classic ANSI foreground colors.
+
+Currently, the default values for the styles, and all used message keys (to be used in the `ARGPARSER_STYLE_FILE`), are as follows:
+
+```ini
+argument_group   = "cyan,bold"
+choice_values    = "yellow"
+default_text     = "italic"
+default_values   = "cyan,italic"
+deprecation_note = "red,bold"
+description_text = "italic"
+error_caption    = "red,bold,reverse"
+error_frame      = ""
+error_text       = "red"
+help_caption     = "green,bold"
+help_frame       = ""
+help_text        = "normal"
+long_options     = "magenta,bold"
+remark_text      = "italic"
+script_name      = "bold"
+short_options    = "green,bold"
+usage_caption    = "green,bold"
+usage_frame      = ""
+value_names      = "blue"
+version_caption  = "magenta,bold"
+version_frame    = ""
+version_text     = "normal"
+warning_caption  = "red,bold"
+warning_frame    = ""
+warning_text     = "red"
+```
+<!-- </include> -->
 
 [&#129092;&nbsp;9.1. Arguments definition](arguments_definition.md)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[9.3. Include directives&nbsp;&#129094;](include_directives.md)

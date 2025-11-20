@@ -20,7 +20,7 @@
 
 ### 5.5. Help and usage messages
 
-No matter how many keyword arguments are defined, as long as [`ARGPARSER_ADD_HELP`](../reference/environment_variables/environment_variables.md#942-argparser_add_help) and [`ARGPARSER_ADD_USAGE`](../reference/environment_variables/environment_variables.md#943-argparser_add_usage) are set to `true` (the default), the Argparser interprets the flags from the [`ARGPARSER_HELP_OPTIONS`](../reference/environment_variables/environment_variables.md#9429-argparser_help_options) (default: `-h` and `-?`) and `--help` as call for a verbose help message and the flags from the [`ARGPARSER_USAGE_OPTIONS`](../reference/environment_variables/environment_variables.md#9453-argparser_usage_options) (default: `-u`) and `--usage` as call for a brief usage message. Then, these options are automatically added to the script's arguments definition and override any same-named argument name (yielding an error message if [`ARGPARSER_CHECK_ARG_DEF`](../reference/environment_variables/environment_variables.md#9415-argparser_check_arg_def) is set to `true`). This is to ensure that the novice user of your script can do exactly what we did, above: trying the most common variants to get some help over how to use a program or script by typing
+No matter how many keyword arguments are defined, as long as [`ARGPARSER_ADD_HELP`](../reference/environment_variables/environment_variables.md#942-argparser_add_help) and [`ARGPARSER_ADD_USAGE`](../reference/environment_variables/environment_variables.md#943-argparser_add_usage) are set to `true` (the default), the Argparser interprets the flags from the [`ARGPARSER_HELP_OPTIONS`](../reference/environment_variables/environment_variables.md#9429-argparser_help_options) (default: `-h` and `-?`) and `--help` as call for a verbose help message and the flags from the [`ARGPARSER_USAGE_OPTIONS`](../reference/environment_variables/environment_variables.md#9454-argparser_usage_options) (default: `-u`) and `--usage` as call for a brief usage message. Then, these options are automatically added to the script's arguments definition and override any same-named argument name (yielding an error message if [`ARGPARSER_CHECK_ARG_DEF`](../reference/environment_variables/environment_variables.md#9415-argparser_check_arg_def) is set to `true`). This is to ensure that the novice user of your script can do exactly what we did, above: trying the most common variants to get some help over how to use a program or script by typing
 
 ```bash
 try_argparser.sh --help
@@ -60,34 +60,34 @@ Usage: try_argparser.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 Mandatory arguments to long options are mandatory for short options too.
 
 Positional arguments:
-[pos_1={1,2}]                              one positional argument with default
-                                           and choice (default: 2)
-pos_2                                      two positional arguments without
-                                           default or choice
+[pos_1=                                     one positional argument with
+    {1,2}]                                  default and choice (default: 2)
+pos_2                                       two positional arguments without
+                                            default or choice
 
 Mandatory options:
--a, -A,   --var-1=VAL_1, --var-a=VAR_A     one value without default or choice
--b, -B,   --var-2=VAL_2...,                at least one value without default
-          --var-b=VAR_B...                 or choice
--c, -C,   --var-3={A,B}...,                at least one value with choice
-          --var-c={A,B}...
+-a, -A,    --var-1=VAL_1, --var-a=VAR_A     one value without default or choice
+-b, -B,    --var-2=VAL_2...,                at least one value without default
+           --var-b=VAR_B...                 or choice
+-c, -C,    --var-3={A,B}...,                at least one value with choice
+           --var-c={A,B}...
 
 Optional options:
-[-d, -D], [--var-4={A,B,C}],               one value with default and choice
-          [--var-d={A,B,C}]                (default: "A")
-[-e, -E], [--var-5=VAL_5], [--var-e=VAR_E] one value with default (default:
-                                           "E")
-[-f, -F], [--var-6, --var-f]               no value (flag) with default
-                                           (default: false)
-[-g, -G], [--var-7, --var-g]               (DEPRECATED) no value (flag) with
-                                           default (default: true)
+[-d, -D],  [--var-4={A-C}], [--var-d={A-C}] one value with default and choice
+                                            (default: "A")
+[-e, -E],  [--var-5=VAL_5], [--var-e=VAR_E] one value with default (default:
+                                            "E")
+[-f, -F],  [--var-6, --var-f]               no value (flag) with default
+                                            (default: false)
+[-g, -G],  [--var-7, --var-g]               (DEPRECATED) no value (flag) with
+                                            default (default: true)
 
-[-h, -?], [--help]                         display this help and exit (default:
-                                           false)
-[-u],     [--usage]                        display the usage and exit (default:
-                                           false)
-[-V],     [--version]                      display the version and exit
-                                           (default: false)
+[-h, -?],  [--help]                         display this help and exit
+                                            (default: false)
+[-u],      [--usage]                        display the usage and exit
+                                            (default: false)
+[-V],      [--version]                      display the version and exit
+                                            (default: false)
 ```
 <!-- </include> -->
 
@@ -104,42 +104,51 @@ As we already saw upon the occasion of an error, our [`try_argparser.sh`](../../
 <!-- <include command="bash ../tutorial/try_argparser.sh --usage" lang="console"> -->
 ```console
 $ bash ../tutorial/try_argparser.sh --usage
-Usage: try_argparser.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
-```
-<!-- </include> -->
-
-The usage message clearly summarizes the arguments, including name aliases (always taking all short options, or, if absent, all long options, or *vice versa*, see below), indicates whether they're optional or mandatory (optionals use square brackets), and specifies the choice values (in curly braces) and, partially, the argument number (an ellipsis, *i.e.*, `"..."`, for an infinite number). Short options precede long options, options with default precede those without, likewise for positionals, and keyword arguments precede positional arguments. All of these groups are sorted alphabetically by the first option name as key. The help, usage, and [version](version_messages.md#58-version-messages) options precede all groups.
-
-For a better overview when having lots of arguments, we can choose a columnar layout instead of the single row, using [`ARGPARSER_USAGE_MESSAGE_ORIENTATION`](../reference/environment_variables/environment_variables.md#9452-argparser_usage_message_orientation):
-
-<!-- <include command="ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash ../tutorial/try_argparser.sh --usage" lang="console"> -->
-```console
-$ ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash ../tutorial/try_argparser.sh --usage
 Usage: try_argparser.sh [-h,-? | -u | -V]
-                        [-d,-D={A,B,C}]
-                        [-e,-E=VAL_5]
+                        [-d,-D={A-C}]
+                        [-e,-E=VAL_5,E]
                         [-f,-F]
                         [-g,-G]
-                        -a,-A=VAL_1
-                        -b,-B=VAL_2...
+                        -a,-A=VAL_1,A
+                        -b,-B=VAL_2,B...
                         -c,-C={A,B}...
                         [{1,2}]
                         pos_2
 ```
 <!-- </include> -->
 
-Additionally, we may choose to show the long options by [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](../reference/environment_variables/environment_variables.md#9451-argparser_usage_message_option_type):
+The usage message clearly summarizes the arguments, including name aliases (always taking all short options, or, if absent, all long options, or *vice versa*, see below), indicates whether they're optional or mandatory (optionals use square brackets), and specifies the choice values (in curly braces) and, partially, the argument number (an ellipsis, *i.e.*, `"..."`, for an infinite number). Short options precede long options, options with default precede those without, likewise for positionals, and keyword arguments precede positional arguments. All of these groups are sorted alphabetically by the first option name as key. The help, usage, and [version](version_messages.md#58-version-messages) options precede all groups.
+
+For a better overview when having lots of arguments, we can choose a columnar layout instead of the single row, using [`ARGPARSER_USAGE_MESSAGE_ORIENTATION`](../reference/environment_variables/environment_variables.md#9453-argparser_usage_message_orientation):
+
+<!-- <include command="ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash ../tutorial/try_argparser.sh --usage" lang="console"> -->
+```console
+$ ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash ../tutorial/try_argparser.sh --usage
+Usage: try_argparser.sh [-h,-? | -u | -V]
+                        [-d,-D={A-C}]
+                        [-e,-E=VAL_5,E]
+                        [-f,-F]
+                        [-g,-G]
+                        -a,-A=VAL_1,A
+                        -b,-B=VAL_2,B...
+                        -c,-C={A,B}...
+                        [{1,2}]
+                        pos_2
+```
+<!-- </include> -->
+
+Additionally, we may choose to show the long options by [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](../reference/environment_variables/environment_variables.md#9452-argparser_usage_message_option_type):
 
 <!-- <include command="ARGPARSER_USAGE_MESSAGE_OPTION_TYPE=long ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash ../tutorial/try_argparser.sh --usage" lang="console"> -->
 ```console
 $ ARGPARSER_USAGE_MESSAGE_OPTION_TYPE=long ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash ../tutorial/try_argparser.sh --usage
 Usage: try_argparser.sh [--help | --usage | --version]
-                        [--var-4,--var-d={A,B,C}]
-                        [--var-5,--var-e=VAL_5]
+                        [--var-4,--var-d={A-C}]
+                        [--var-5,--var-e=VAL_5,VAR_E]
                         [--var-6,--var-f]
                         [--var-7,--var-g]
-                        --var-1,--var-a=VAL_1
-                        --var-2,--var-b=VAL_2...
+                        --var-1,--var-a=VAL_1,VAR_A
+                        --var-2,--var-b=VAL_2,VAR_B...
                         --var-3,--var-c={A,B}...
                         [{1,2}]
                         pos_2

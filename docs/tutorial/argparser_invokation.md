@@ -96,7 +96,7 @@ or:
 ./argparser
 ```
 
-since you don't want the arguments to be set in a subprocess created after forking, as these will be gone when the Argparser (and with it, the subprocess) exits. Still, this is the required way for other shells, which make use of the Argparser's ability to write the arguments to `STDOUT`, if [`ARGPARSER_WRITE_ARGS`](../reference/environment_variables/environment_variables.md#9463-argparser_write_args) is set to `true`.
+since you don't want the arguments to be set in a subprocess created after forking, as these will be gone when the Argparser (and with it, the subprocess) exits. Still, this is the required way for other shells, which make use of the Argparser's ability to write the arguments to `STDOUT`, if [`ARGPARSER_WRITE_ARGS`](../reference/environment_variables/environment_variables.md#9465-argparser_write_args) is set to `true`.
 
 #### 5.2.2. Arguments definition and retrieval
 

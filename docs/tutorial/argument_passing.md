@@ -76,34 +76,34 @@ Usage: try_argparser.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 Mandatory arguments to long options are mandatory for short options too.
 
 Positional arguments:
-[pos_1={1,2}]                              one positional argument with default
-                                           and choice (default: 2)
-pos_2                                      two positional arguments without
-                                           default or choice
+[pos_1=                                     one positional argument with
+    {1,2}]                                  default and choice (default: 2)
+pos_2                                       two positional arguments without
+                                            default or choice
 
 Mandatory options:
--a, -A,   --var-1=VAL_1, --var-a=VAR_A     one value without default or choice
--b, -B,   --var-2=VAL_2...,                at least one value without default
-          --var-b=VAR_B...                 or choice
--c, -C,   --var-3={A,B}...,                at least one value with choice
-          --var-c={A,B}...
+-a, -A,    --var-1=VAL_1, --var-a=VAR_A     one value without default or choice
+-b, -B,    --var-2=VAL_2...,                at least one value without default
+           --var-b=VAR_B...                 or choice
+-c, -C,    --var-3={A,B}...,                at least one value with choice
+           --var-c={A,B}...
 
 Optional options:
-[-d, -D], [--var-4={A,B,C}],               one value with default and choice
-          [--var-d={A,B,C}]                (default: "A")
-[-e, -E], [--var-5=VAL_5], [--var-e=VAR_E] one value with default (default:
-                                           "E")
-[-f, -F], [--var-6, --var-f]               no value (flag) with default
-                                           (default: false)
-[-g, -G], [--var-7, --var-g]               (DEPRECATED) no value (flag) with
-                                           default (default: true)
+[-d, -D],  [--var-4={A-C}], [--var-d={A-C}] one value with default and choice
+                                            (default: "A")
+[-e, -E],  [--var-5=VAL_5], [--var-e=VAR_E] one value with default (default:
+                                            "E")
+[-f, -F],  [--var-6, --var-f]               no value (flag) with default
+                                            (default: false)
+[-g, -G],  [--var-7, --var-g]               (DEPRECATED) no value (flag) with
+                                            default (default: true)
 
-[-h, -?], [--help]                         display this help and exit (default:
-                                           false)
-[-u],     [--usage]                        display the usage and exit (default:
-                                           false)
-[-V],     [--version]                      display the version and exit
-                                           (default: false)
+[-h, -?],  [--help]                         display this help and exit
+                                            (default: false)
+[-u],      [--usage]                        display the usage and exit
+                                            (default: false)
+[-V],      [--version]                      display the version and exit
+                                            (default: false)
 ```
 <!-- </include> -->
 
@@ -114,9 +114,19 @@ Now that we had a look at the options (or keyword arguments, to cope with some b
 <!-- <include command="bash ../tutorial/try_argparser.sh 1 --var-1=1 --var-2=2 --var-3=A" lang="console"> -->
 ```console
 $ bash ../tutorial/try_argparser.sh 1 --var-1=1 --var-2=2 --var-3=A
-try_argparser.sh: Error: The argument "pos_2" requires 2 values, but has 1 given.
+try_argparser.sh: Error: The argument "pos_2" requires 2 values, but has 1
+                         given.
 
-Usage: try_argparser.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+Usage: try_argparser.sh [-h,-? | -u | -V]
+                        [-d,-D={A-C}]
+                        [-e,-E=VAL_5,E]
+                        [-f,-F]
+                        [-g,-G]
+                        -a,-A=VAL_1,A
+                        -b,-B=VAL_2,B...
+                        -c,-C={A,B}...
+                        [{1,2}]
+                        pos_2
 ```
 <!-- </include> -->
 
@@ -215,7 +225,16 @@ And since the long option names only differ in their last character, here, it is
 $ ARGPARSER_ALLOW_OPTION_ABBREVIATION=true bash ../tutorial/try_argparser.sh --var-1 1 --var-2 2 --var A -- 1 2
 try_argparser.sh: Error: The long option "--var" matches multiple long options.
 
-Usage: try_argparser.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+Usage: try_argparser.sh [-h,-? | -u | -V]
+                        [-d,-D={A-C}]
+                        [-e,-E=VAL_5,E]
+                        [-f,-F]
+                        [-g,-G]
+                        -a,-A=VAL_1,A
+                        -b,-B=VAL_2,B...
+                        -c,-C={A,B}...
+                        [{1,2}]
+                        pos_2
 ```
 <!-- </include> -->
 
@@ -282,7 +301,8 @@ Since there were some additional options given in the help message, let's have a
 <!-- <include command="bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A -f +g" lang="console"> -->
 ```console
 $ bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A -f +g
-try_argparser.sh: Warning: The argument "-g,-G,--var-7,--var-g" is deprecated and will be removed in the future.
+try_argparser.sh: Warning: The argument "-g,-G,--var-7,--var-g" is deprecated
+                           and will be removed in the future.
 The keyword argument "var_1" is set to "1".
 The keyword argument "var_2" is set to "2".
 The keyword argument "var_3" is set to "A".
@@ -310,7 +330,8 @@ Taking one final set of example invokations, we can see how the option merging w
 <!-- <include command="ARGPARSER_ALLOW_OPTION_MERGING=true bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A +fg" lang="console"> -->
 ```console
 $ ARGPARSER_ALLOW_OPTION_MERGING=true bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A +fg
-try_argparser.sh: Warning: The argument "-g,-G,--var-7,--var-g" is deprecated and will be removed in the future.
+try_argparser.sh: Warning: The argument "-g,-G,--var-7,--var-g" is deprecated
+                           and will be removed in the future.
 The keyword argument "var_1" is set to "1".
 The keyword argument "var_2" is set to "2".
 The keyword argument "var_3" is set to "A".
@@ -328,7 +349,8 @@ We merged `var_6` and `var_7` in one call, `+fg`, thus setting them both to `fal
 <!-- <include command="ARGPARSER_ALLOW_OPTION_MERGING=true bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -fgcA" lang="console"> -->
 ```console
 $ ARGPARSER_ALLOW_OPTION_MERGING=true bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -fgcA
-try_argparser.sh: Warning: The argument "-g,-G,--var-7,--var-g" is deprecated and will be removed in the future.
+try_argparser.sh: Warning: The argument "-g,-G,--var-7,--var-g" is deprecated
+                           and will be removed in the future.
 The keyword argument "var_1" is set to "1".
 The keyword argument "var_2" is set to "2".
 The keyword argument "var_3" is set to "A".
@@ -346,10 +368,21 @@ Now, we gave them together with `var_3` and its value, and we see that the flags
 <!-- <include command="ARGPARSER_ALLOW_OPTION_MERGING=true bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 +fgcA" lang="console"> -->
 ```console
 $ ARGPARSER_ALLOW_OPTION_MERGING=true bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 +fgcA
-try_argparser.sh: Error: The option "-c,-C,--var-3,--var-c" is no flag and thus cannot be given with a "+" or "no-" prefix.
-try_argparser.sh: Warning: The argument "-g,-G,--var-7,--var-g" is deprecated and will be removed in the future.
+try_argparser.sh: Error: The option "-c,-C,--var-3,--var-c" is no flag and thus
+                         cannot be given with a "+" or "no-" prefix.
+try_argparser.sh: Warning: The argument "-g,-G,--var-7,--var-g" is deprecated
+                           and will be removed in the future.
 
-Usage: try_argparser.sh [-h,-? | -u | -V] [-d,-D={A,B,C}] [-e,-E=VAL_5] [-f,-F] [-g,-G] -a,-A=VAL_1 -b,-B=VAL_2... -c,-C={A,B}... [{1,2}] pos_2
+Usage: try_argparser.sh [-h,-? | -u | -V]
+                        [-d,-D={A-C}]
+                        [-e,-E=VAL_5,E]
+                        [-f,-F]
+                        [-g,-G]
+                        -a,-A=VAL_1,A
+                        -b,-B=VAL_2,B...
+                        -c,-C={A,B}...
+                        [{1,2}]
+                        pos_2
 ```
 <!-- </include> -->
 
@@ -362,7 +395,8 @@ Let's investigate this with an example:
 <!-- <include command="ARGPARSER_COUNT_FLAGS=true bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A +f -g --var-7" lang="console"> -->
 ```console
 $ ARGPARSER_COUNT_FLAGS=true bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A +f -g --var-7
-try_argparser.sh: Warning: The argument "-g,-G,--var-7,--var-g" is deprecated and will be removed in the future.
+try_argparser.sh: Warning: The argument "-g,-G,--var-7,--var-g" is deprecated
+                           and will be removed in the future.
 The keyword argument "var_1" is set to "1".
 The keyword argument "var_2" is set to "2".
 The keyword argument "var_3" is set to "A".
