@@ -36,7 +36,6 @@ Warnings:
   en: Warnings
   de: Warnungen
 
-
 # 2.    Define the translations for help messages.
 # 2.1.  Define the translations for the usage line (part of the header).
 Usage:
@@ -987,9 +986,7 @@ Error YAML:
   de: >
     Fehler: Die YAML-Zeile "$1" konnte nicht erkannt werden.
 
-
 # 3.10. Define the translations for reading the style file.
-
 Error style file equals sign:
   en: >
     Error: In the style file "$1", the line "$2" doesn't contain an equals sign
@@ -1034,7 +1031,6 @@ Error style file text styles:
     ("hell_") oder dem Suffix "_fg" (Vordergrund) oder "_bg" (Hintergrund)
     gegeben werden.
 
-
 # 3.10. Define the translations for creating the help or usage messages.
 Error include directive:
   en: >
@@ -1045,7 +1041,6 @@ Error include directive:
 # 4.    Define the translations for warning messages.
 # 4.1.  Define the translations for translating from the translation
 #       file.
-
 Warning no identifier:
   en: >
     Warning: In the translation file "$1", the identifier "$2" is missing.  For
@@ -1065,9 +1060,7 @@ Warning no translation:
     den Identifikator "$3".  Zwecks Einfachheit wird stattdessen die nicht
     übersetzte Zeichenkette genutzt.
 
-
 # 4.2.  Define the translations for reading the style file.
-
 Warning style file message key:
   en: >
     Warning: In the style file "$1", the line "$2" sets a non-existent message
@@ -1076,10 +1069,8 @@ Warning style file message key:
     Warnung: In der Stildatei "$1" setzt die Zeile "$2" einen inexistenten
     Nachrichten-Schlüssel.
 
-
 # 4.3.  Define the translations for checking the values of the
 #       arguments.
-
 Warning deprecation:
   en: >
     Warning: The argument "$1" is deprecated and will be removed in the future.
