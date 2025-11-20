@@ -90,10 +90,6 @@ General options:
                                  variables from the environment (default: true)
 [--unset-functions]              unset (remove) the Argparser functions from
                                  the environment (default: true)
-[--use-long-options]             use the long option names for parsing
-                                 (default: true)
-[--use-short-options]            use the short option names for parsing
-                                 (default: true)
 [--write-args]                   write the arguments from
                                  ARGPARSER_ARG_ARRAY_NAME to STDOUT (default:
                                  false)
@@ -160,6 +156,10 @@ Parsing options:
 [--count-flags]                  count flags instead of setting them to "true"
                                  or "false" based on the last prefix used on
                                  the command line (default: false)
+[--use-long-options]             use the long option names for parsing
+                                 (default: true)
+[--use-short-options]            use the short option names for parsing
+                                 (default: true)
 
 Stylization options:
 [--error-style=STYLE...]         (DEPRECATED) the color and style specification
