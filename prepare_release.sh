@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-11
+# Last Modification: 2025-11-20
 
 # Usage: Run this script with "bash prepare_release.sh".
 
@@ -56,9 +56,10 @@ sed --in-place --regexp-extended \
     argparser
 
 # Replace the modification date and version info in the test suite.
-pattern_version='argparser v[1-9][0-9]*\.[0-9]+\.[0-9]+ '
+pattern_version='Version: argparser v[1-9][0-9]*\.[0-9]+\.[0-9]+ '
 pattern_version+='"[[:alpha:]]+ [[:alpha:]]+"'
-replacement_version='argparser v'"${version_number}"' "'"${codename}"'"'
+replacement_version='Version: argparser v'"${version_number}"' "'
+replacement_version+="${codename}"'"'
 sed --in-place --regexp-extended \
     --expression="s/${pattern_date}/${replacement_date}/" \
     --expression="s/${pattern_version}/${replacement_version}/" \

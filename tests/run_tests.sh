@@ -2014,7 +2014,7 @@ test_number="${test_section}.2"
 test_type="version"
 cmd="bash ../argparser --version"
 output="$(cat << EOF
-argparser v1.2.1 "Callospermophilus madrensis"
+Version: argparser v1.3.0 "Dasyprocta azarae"
 EOF
 )"
 error=""
