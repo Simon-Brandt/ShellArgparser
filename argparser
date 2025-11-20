@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-19
+# Last Modification: 2025-11-20
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -1994,8 +1994,8 @@ function argparser_set_env_vars() {
         "ARGPARSER_USAGE_MESSAGE_ORIENTATION : usage-message-orientation :              : row                  : row,column            : str  : 1      : Help/usage message options    :            : output the positional and keyword arguments in usage messages in a row or in a column                                   "
         "ARGPARSER_USAGE_OPTIONS             : usage-options             : CHAR         : u                    :                       : char : +      : Help/usage message options    :            : the short (single-character) option names to invoke the usage message                                                   "
         "ARGPARSER_USAGE_STYLE               : usage-style               : STYLE        : italic               :                       : str  : +      : Stylization options           : deprecated : the color and style specification for usage messages, deprecated in favor of \"--style-file=FILE\"                      "
-        "ARGPARSER_USE_LONG_OPTIONS          : use-long-options          :              : true                 :                       : bool : 0      : General options               :            : use the long option names for parsing                                                                                   "
-        "ARGPARSER_USE_SHORT_OPTIONS         : use-short-options         :              : true                 :                       : bool : 0      : General options               :            : use the short option names for parsing                                                                                  "
+        "ARGPARSER_USE_LONG_OPTIONS          : use-long-options          :              : true                 :                       : bool : 0      : Parsing options               :            : use the long option names for parsing                                                                                   "
+        "ARGPARSER_USE_SHORT_OPTIONS         : use-short-options         :              : true                 :                       : bool : 0      : Parsing options               :            : use the short option names for parsing                                                                                  "
         "ARGPARSER_USE_STYLES                : use-styles                :              : tty                  : always,never,file,tty : str  : 1      : Stylization options           :            : use the colors and styles \"always\", \"never\", or only when STDOUT/STDERR is (\"tty\") or is not (\"file\") a terminal"
         "ARGPARSER_USE_STYLES_IN_FILES       : use-styles-in-files       :              : false                :                       : bool : 0      : Stylization options           : deprecated : use the colors and styles when STDOUT/STDERR is not a terminal, deprecated in favor of \"--use-styles=always\"          "
         "ARGPARSER_VERSION_EXIT_CODE         : version-exit-code         : INT          : 0                    :                       : int  : 1      : Version message options       :            : the exit code for version messages                                                                                      "
