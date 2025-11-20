@@ -2299,7 +2299,7 @@ fi
 # codes are taken modulo 256 when checking $?, set the exit code to 255
 # in this case, to prevent a multiple of 256 errors appearing as success
 # in the CI running the tests.
-if (( failed_cmd_count % 256 == 0 )); then
+if (( failed_cmd_count > 0 && failed_cmd_count % 256 == 0 )); then
     failed_cmd_count=255
 fi
 exit "${failed_cmd_count}"
