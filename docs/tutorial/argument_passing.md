@@ -370,6 +370,7 @@ Now, we gave them together with `var_3` and its value, and we see that the flags
 $ ARGPARSER_ALLOW_OPTION_MERGING=true bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 +fgcA
 try_argparser.sh: Error: The option "-c,-C,--var-3,--var-c" is no flag and thus
                          cannot be given with a "+" or "no-" prefix.
+
 try_argparser.sh: Warning: The argument "-g,-G,--var-7,--var-g" is deprecated
                            and will be removed in the future.
 
