@@ -3000,6 +3000,7 @@ function argparser_read_styles() {
     # - ARGPARSER_ARG_DELIMITER_2
     # - ARGPARSER_CHECK_ENV_VARS
     # - ARGPARSER_ERROR_EXIT_CODE
+    # - ARGPARSER_SILENCE_ERRORS (read-only)
     # - ARGPARSER_STYLE_FILE (read-only)
 
     # Define the local variables.
@@ -3148,11 +3149,21 @@ function argparser_read_styles() {
         ARGPARSER_ERROR_EXIT_CODE=1
     fi
 
-    argparser_print_error_messages true false "${error_messages[@]}"
-    argparser_print_warning_messages true "${warning_messages[@]}"
+    if (( "${#error_messages[@]}" > 0 && "${#warning_messages[@]}" > 0 )); then
+        argparser_print_error_messages true false "${error_messages[@]}"
 
-    if (( "${#error_messages[@]}" > 0 )); then
+        if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
+            printf '\n' >&2
+        fi
+
+        argparser_print_warning_messages true "${warning_messages[@]}"
+
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
+    elif (( "${#error_messages[@]}" > 0 )); then
+        argparser_print_error_messages true false "${error_messages[@]}"
+        exit "${ARGPARSER_ERROR_EXIT_CODE}"
+    elif (( "${#warning_messages[@]}" > 0 )); then
+        argparser_print_warning_messages true "${warning_messages[@]}"
     fi
 }
 
@@ -6349,6 +6360,7 @@ function argparser_parse_args() {
     # - ARGPARSER_ERROR_EXIT_CODE (read-only)
     # - ARGPARSER_HELP_ARG_GROUP (read-only)
     # - ARGPARSER_SILENCE_ERRORS (read-only)
+    # - ARGPARSER_SILENCE_WARNINGS (read-only)
 
     # Define the local variables.  If the variable that
     # ${ARGPARSER_ARG_ARRAY_NAME} refers to is undefined, all variables
@@ -6841,19 +6853,38 @@ function argparser_parse_args() {
     done
 
     # Sort, filter, colorize, and print all error and warning messages.
-    argparser_print_error_messages true false "${error_messages[@]}"
-    argparser_print_warning_messages true "${warning_messages[@]}"
-
     # If any argument was not or wrongly given (i.e., there were errors
-    # and not just warnings), print a blank line and the usage message
-    # and abort the script.
-    if (( "${#error_messages[@]}" > 0 )); then
+    # and not just warnings), print also the usage message and abort the
+    # script.
+    if (( "${#error_messages[@]}" > 0 && "${#warning_messages[@]}" > 0 )); then
+        argparser_print_error_messages true false "${error_messages[@]}"
+
         if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
             printf '\n'
-            argparser_print_usage_message false
-        fi >&2
+        fi
+
+        argparser_print_warning_messages true "${warning_messages[@]}"
+
+        if [[ "${ARGPARSER_SILENCE_WARNINGS}" == false ]]; then
+            printf '\n'
+        fi
+
+        argparser_print_usage_message false
+
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
-    fi
+    elif (( "${#error_messages[@]}" > 0 )); then
+        argparser_print_error_messages true false "${error_messages[@]}"
+
+        if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
+            printf '\n'
+        fi
+
+        argparser_print_usage_message false
+
+        exit "${ARGPARSER_ERROR_EXIT_CODE}"
+    elif (( "${#warning_messages[@]}" > 0 )); then
+        argparser_print_warning_messages true "${warning_messages[@]}"
+    fi >&2
 
     # Remove the help options from the associative array ${args}.
     for arg_key in "${!args[@]}"; do
