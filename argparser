@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-20
+# Last Modification: 2025-11-28
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -368,12 +368,14 @@ function argparser_check_styles() {
     )
 
     corner_styles=(
+        "ASCII"
         "angular"
         "rounded"
         "double"
     )
 
     line_styles=(
+        "ASCII"
         "solid"
         "double-dashed"
         "triple-dashed"
@@ -1447,6 +1449,7 @@ function argparser_draw_frame() {
     # default values.
     corner_style="angular"
     corner_styles=(
+        "ASCII"
         "angular"
         "rounded"
         "double"
@@ -1454,6 +1457,7 @@ function argparser_draw_frame() {
 
     line_style="solid"
     line_styles=(
+        "ASCII"
         "solid"
         "double-dashed"
         "triple-dashed"
@@ -1497,7 +1501,12 @@ function argparser_draw_frame() {
 
     # Set the box drawing characters corresponding to the requested
     # frame styles per category.
-    if [[ "${corner_style}" == "angular" ]]; then
+    if [[ "${corner_style}" == "ASCII" ]]; then
+        frame_chars["top-left"]="+"
+        frame_chars["top-right"]="+"
+        frame_chars["bottom-left"]="+"
+        frame_chars["bottom-right"]="+"
+    elif [[ "${corner_style}" == "angular" ]]; then
         if [[ "${line_width}" == "thin" ]]; then
             frame_chars["top-left"]=$'\u250C'
             frame_chars["top-right"]=$'\u2510'
@@ -1526,7 +1535,10 @@ function argparser_draw_frame() {
         frame_chars["bottom-right"]=$'\u255D'
     fi
 
-    if [[ "${line_style}" == "solid" ]]; then
+    if [[ "${line_style}" == "ASCII" ]]; then
+        frame_chars["horizontal"]="-"
+        frame_chars["vertical"]="|"
+    elif [[ "${line_style}" == "solid" ]]; then
         if [[ "${line_width}" == "thin" ]]; then
             frame_chars["horizontal"]=$'\u2500'
             frame_chars["vertical"]=$'\u2502'
