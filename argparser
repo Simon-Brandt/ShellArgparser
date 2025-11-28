@@ -1761,6 +1761,7 @@ function argparser_read_configuration() {
         if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
             ARGPARSER_ARG_DELIMITER_2=","
             ARGPARSER_ERROR_EXIT_CODE=1
+            ARGPARSER_SILENCE_ERRORS=false
         fi
 
         argparser_print_error_messages false true "${error_message}"
@@ -1828,6 +1829,7 @@ function argparser_read_configuration() {
     if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
         ARGPARSER_ARG_DELIMITER_2=","
         ARGPARSER_ERROR_EXIT_CODE=1
+        ARGPARSER_SILENCE_ERRORS=false
     fi
 
     argparser_print_error_messages true true "${error_messages[@]}"
@@ -2735,6 +2737,7 @@ function argparser_read_translation() {
     # - ARGPARSER_CHECK_ENV_VARS
     # - ARGPARSER_ERROR_EXIT_CODE
     # - ARGPARSER_LANGUAGE (read-only)
+    # - ARGPARSER_SILENCE_ERRORS
     # - ARGPARSER_TRANSLATION_FILE (read-only)
 
     # Define the local variables.
@@ -2779,6 +2782,7 @@ function argparser_read_translation() {
         if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
             ARGPARSER_ARG_DELIMITER_2=","
             ARGPARSER_ERROR_EXIT_CODE=1
+            ARGPARSER_SILENCE_ERRORS=false
         fi
 
         argparser_print_error_messages false true "${error_message}"
@@ -2877,6 +2881,7 @@ function argparser_read_translation() {
     if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
         ARGPARSER_ARG_DELIMITER_2=","
         ARGPARSER_ERROR_EXIT_CODE=1
+        ARGPARSER_SILENCE_ERRORS=false
     fi
 
     for i in "${!error_messages[@]}"; do
@@ -2905,6 +2910,9 @@ function argparser_translate() {
     # - translation: the translated string
     #
     # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2
+    # - ARGPARSER_ERROR_EXIT_CODE
+    # - ARGPARSER_SILENCE_ERRORS
     # - ARGPARSER_TRANSLATION_FILE (read-only)
 
     # Define the local variables.
@@ -2949,6 +2957,7 @@ function argparser_translate() {
             if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
                 ARGPARSER_ARG_DELIMITER_2=","
                 ARGPARSER_ERROR_EXIT_CODE=1
+                ARGPARSER_SILENCE_ERRORS=false
             fi
 
             argparser_print_warning_messages false "${warning_message}"
@@ -2972,6 +2981,7 @@ function argparser_translate() {
             if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
                 ARGPARSER_ARG_DELIMITER_2=","
                 ARGPARSER_ERROR_EXIT_CODE=1
+                ARGPARSER_SILENCE_ERRORS=false
             fi
 
             argparser_print_warning_messages false "${warning_message}"
@@ -3000,7 +3010,7 @@ function argparser_read_styles() {
     # - ARGPARSER_ARG_DELIMITER_2
     # - ARGPARSER_CHECK_ENV_VARS
     # - ARGPARSER_ERROR_EXIT_CODE
-    # - ARGPARSER_SILENCE_ERRORS (read-only)
+    # - ARGPARSER_SILENCE_ERRORS
     # - ARGPARSER_STYLE_FILE (read-only)
 
     # Define the local variables.
@@ -3047,6 +3057,7 @@ function argparser_read_styles() {
         if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
             ARGPARSER_ARG_DELIMITER_2=","
             ARGPARSER_ERROR_EXIT_CODE=1
+            ARGPARSER_SILENCE_ERRORS=false
         fi
 
         argparser_print_error_messages false true "${error_message}"
@@ -3147,6 +3158,7 @@ function argparser_read_styles() {
     if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
         ARGPARSER_ARG_DELIMITER_2=","
         ARGPARSER_ERROR_EXIT_CODE=1
+        ARGPARSER_SILENCE_ERRORS=false
     fi
 
     if (( "${#error_messages[@]}" > 0 && "${#warning_messages[@]}" > 0 )); then
