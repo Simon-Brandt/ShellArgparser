@@ -204,6 +204,7 @@ Version message options:
 [--version-options=CHAR...]      the short (single-character) option names to
                                  invoke the version message (default: "V")
 
+Help options:
 [--help]                         display this help and exit (default: false)
 [--usage]                        display the usage and exit (default: false)
 [--version]                      display the version and exit (default: false)

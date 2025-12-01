@@ -23,7 +23,7 @@
 A second [Julia](https://julialang.org/ "julialang.org") script, [`analyze_code_length.jl`](../../comparison/analyze_code_length.jl), allows us to compare the actual number of code lines required to use the command-line parsers, and by this the complexity of employing them (including all the manual parsing steps). Thereby, only the lines for the parsing are counted, not the call to the HTML processor, no comments, and no blank lines (except of those lying in the help messages and thus being part of the syntax).
 
 <!-- <figure file="../comparison/code_lengths.svg" caption="Bar plot of all command-line parsers' code lengths"> -->
-![Bar plot of all command-line parsers' code lengths](../../comparison/code_lengths.svg)
+![Bar plot of all command-line parsers' code lengths](../../comparison/code_lengths.svg)  
 *Fig. 2: Bar plot of all command-line parsers' code lengths.*
 
 The code length statistics are given in the following table:

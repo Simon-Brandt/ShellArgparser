@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-28
+# Last Modification: 2025-12-01
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -9091,22 +9091,12 @@ function argparser_print_help_message() {
             )
 
             # Add the include directives for each argument group.
-            # Terminate all but the last by a blank line.  If the last
-            # group is the help options group, double the include
-            # character to indicate that the caption shall be
-            # suppressed.
+            # Terminate all but the last by a blank line.
             for i in "${!arg_groups[@]}"; do
                 if (( i < "${#arg_groups[@]}" - 1 )); then
                     resolved_lines+=(
                         "${include_char}${arg_groups[i]}"
                         ""
-                    )
-                elif [[ "${ARGPARSER_ADD_HELP}" == true \
-                    || "${ARGPARSER_ADD_USAGE}" == true \
-                    || "${ARGPARSER_ADD_VERSION}" == true ]]
-                then
-                    resolved_lines+=(
-                        "${include_char}${include_char}${arg_groups[i]}"
                     )
                 else
                     resolved_lines+=("${include_char}${arg_groups[i]}")

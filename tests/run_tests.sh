@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-20
+# Last Modification: 2025-12-01
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -634,6 +634,7 @@ Optional options:
 [-g, -G],  [--var-7, --var-g]               (DEPRECATED) no value (flag) with
                                             default (default: true)
 
+Help options:
 [-h, -?],  [--help]                         display this help and exit
                                             (default: false)
 [-u],      [--usage]                        display the usage and exit
@@ -677,6 +678,7 @@ Optional options:
 [-g, -G],  [--var-7, --var-g]               (DEPRECATED) no value (flag) with
                                             default (default: true)
 
+Help options:
 [-h, -?],  [--help]                         display this help and exit
                                             (default: false)
 [-u],      [--usage]                        display the usage and exit
@@ -815,6 +817,7 @@ Optional options:
 [-f, -F]           no value (flag) with default (default: false)
 [-g, -G]           (DEPRECATED) no value (flag) with default (default: true)
 
+Help options:
 [-h, -?]           display this help and exit (default: false)
 [-u]               display the usage and exit (default: false)
 [-V]               display the version and exit (default: false)
@@ -997,6 +1000,7 @@ Optional options:
 [--var-7, --var-g]               (DEPRECATED) no value (flag) with default
                                  (default: true)
 
+Help options:
 [--help]                         display this help and exit (default: false)
 [--usage]                        display the usage and exit (default: false)
 [--version]                      display the version and exit (default: false)
@@ -1079,6 +1083,7 @@ Optional options:
 [-g],      [--var-7]        (DEPRECATED) no value (flag) with default (default:
                             true)
 
+Help options:
 [-h, -?],  [--help]         display this help and exit (default: false)
 [-u],      [--usage]        display the usage and exit (default: false)
 [-V],      [--version]      display the version and exit (default: false)
@@ -1152,6 +1157,7 @@ Positional arguments:
     {1,2}]             (default: 2)
 pos_2                  two positional arguments without default or choice
 
+Help options:
 [-h, -?],  [--help]    display this help and exit (default: false)
 [-u],      [--usage]   display the usage and exit (default: false)
 [-V],      [--version] display the version and exit (default: false)
@@ -1281,6 +1287,7 @@ Optional options:
 [-g, -G],  [--var-7, --var-g]           (DEPRECATED) no value (flag) with
                                         default (default: true)
 
+Help options:
 [-h, -?],  [--help]                     display this help and exit (default:
                                         false)
 [-u],      [--usage]                    display the usage and exit (default:
@@ -1375,6 +1382,7 @@ Optional options:
 [-g],      [--var-7]        (DEPRECATED) no value (flag) with default (default:
                             true)
 
+Help options:
 [-h, -?],  [--help]         display this help and exit (default: false)
 [-u],      [--usage]        display the usage and exit (default: false)
 [-V],      [--version]      display the version and exit (default: false)
@@ -1466,6 +1474,7 @@ Optional options:
 [-g],      [--var-7]        (DEPRECATED) no value (flag) with default (default:
                             true)
 
+Help options:
 [-h, -?],  [--help]         display this help and exit (default: false)
 [-u],      [--usage]        display the usage and exit (default: false)
 [-V],      [--version]      display the version and exit (default: false)
@@ -1619,6 +1628,7 @@ error="$(cat << EOF
 │ test_style_file.sh: The argument "-c,--var-3" is mandatory, but not given. │
 │ test_style_file.sh: The argument "pos_2" is mandatory, but not given.      │
 ╰────────────────────────────────────────────────────────────────────────────╯
+
 ╭─ Warning ───────────────────────────────────────────────────────────────╮
 │ test_style_file.sh: The argument "-g,--var-7" is deprecated and will be │
 │                     removed in the future.                              │
@@ -1693,7 +1703,7 @@ Mandatory arguments to long options are mandatory for short options too.
 │                             (default: true)                                 │
 ╰─────────────────────────────────────────────────────────────────────────────╯
 
-╭─────────────────────────────────────────────────────────────────────────────╮
+╭─ Help options ──────────────────────────────────────────────────────────────╮
 │ [-h, -?],  [--help]         display this help and exit (default: false)     │
 │ [-u],      [--usage]        display the usage and exit (default: false)     │
 │ [-V],      [--version]      display the version and exit (default: false)   │
@@ -1980,6 +1990,7 @@ Optional options:
 [-g],      [--var-7]        (DEPRECATED) no value (flag) with default (default:
                             true)
 
+Help options:
 [-h, -?],  [--help]         display this help and exit (default: false)
 [-u],      [--usage]        display the usage and exit (default: false)
 [-V],      [--version]      display the version and exit (default: false)
@@ -2275,6 +2286,7 @@ Version message options:
 [--version-options=CHAR...]      the short (single-character) option names to
                                  invoke the version message (default: "V")
 
+Help options:
 [--help]                         display this help and exit (default: false)
 [--usage]                        display the usage and exit (default: false)
 [--version]                      display the version and exit (default: false)
