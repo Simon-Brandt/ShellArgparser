@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-12-01
+# Last Modification: 2025-12-02
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -5886,9 +5886,11 @@ function argparser_check_arg_values() {
     #   resolved (range-expanded) choice values (read-only)
     # - all_types: the associative array holding the argument types
     #   (read-only)
-    # - messages: the parsed argument as message or an error or warning
-    #   message, starting with "Error: " (translated), "Warning: "
-    #   (translated), or "Value: ", as indexed array
+    # - arg_values: the parsed argument's value
+    # - error_messages: the error messages, starting with "Error: "
+    #   (translated), as indexed array
+    # - warning_messages: the warning messages, starting with
+    #   "Warning: " (translated), as indexed array
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
@@ -5989,7 +5991,7 @@ function argparser_check_arg_values() {
             argparser_translate "Warning deprecation" "${warning_message}" \
                 "${option_names}"
             warning_message="${translation}"
-            messages+=("${warning_message}")
+            warning_messages+=("${warning_message}")
         fi
     done
 
@@ -6006,8 +6008,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error arg no flag 1" "${error_message}" \
                 "${option_names}"
             error_message="${translation}"
-            messages+=("${error_message}")
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
             return
         fi
     done
@@ -6042,7 +6043,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error arg no flag 2" "${error_message}" \
                 "${option_names}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
             return
         elif ! argparser_in_array "${arg_number}" "*" "?" 0; then
             error_message="Error: The option \"\$1\" is no flag and thus "
@@ -6051,7 +6052,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error arg no flag 3" "${error_message}" \
                 "${option_names}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
             return
         fi
     done
@@ -6071,7 +6072,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error mandatory arg" "${error_message}" \
                 "${option_names}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
             return
         elif [[ "${ARGPARSER_COUNT_FLAGS}" == true ]] \
             && argparser_in_array "${arg_number}" "*" "?" 0
@@ -6085,9 +6086,9 @@ function argparser_check_arg_values() {
             # Since the default values are used, further checking isn't
             # necessary.
             if [[ "${default_values_str}" == true ]]; then
-                messages+=("Value: 1")
+                arg_values=1
             else
-                messages+=("Value: -1")
+                arg_values=-1
             fi
             return
         else
@@ -6095,7 +6096,7 @@ function argparser_check_arg_values() {
             # Hence, read and output them.  This is required for
             # optional arguments, which don't need to be set.  Since the
             # default values are used, further checking isn't necessary.
-            messages+=("Value: ${default_values_str}")
+            arg_values="${default_values_str}"
             return
         fi
     elif [[ "${arg_number}" == "+" && "${#values_arr[@]}" == 0 ]]; then
@@ -6110,7 +6111,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error wrong arg number 1" "${error_message}" \
                 "${option_names}" "${#values_arr[@]}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
         else
             # As some default values are given, print a similar warning
             # message as for the absence case, but set the values to the
@@ -6124,9 +6125,9 @@ function argparser_check_arg_values() {
                 "${warning_message}" "${option_names}" "${#values_arr[@]}" \
                 "${default_values_str}"
             warning_message="${translation}"
-            messages+=("${warning_message}")
+            warning_messages+=("${warning_message}")
 
-            messages+=("Value: ${default_values_str}")
+            arg_values="${default_values_str}"
             return
         fi
     elif [[ "${arg_number}" == "?" ]] && (( "${#values_arr[@]}" > 1 )); then
@@ -6141,7 +6142,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error wrong arg number 2" \
                 "${error_message}" "${option_names}" "${#values_arr[@]}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
         else
             # As some default values are given, print a similar warning
             # message as for the absence case, but set the values to the
@@ -6155,9 +6156,9 @@ function argparser_check_arg_values() {
                 "${warning_message}" "${option_names}" "${#values_arr[@]}" \
                 "${default_values_str}"
             warning_message="${translation}"
-            messages+=("${warning_message}")
+            warning_messages+=("${warning_message}")
 
-            messages+=("Value: ${default_values_str}")
+            arg_values="${default_values_str}"
             return
         fi
     elif [[ "${arg_number}" == 1 && "${#values_arr[@]}" != 1 ]]; then
@@ -6172,7 +6173,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error wrong arg number 3" \
                 "${error_message}" "${option_names}" "${#values_arr[@]}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
         else
             # As some default values are given, print a similar warning
             # message as for the absence case, but set the values to the
@@ -6186,9 +6187,9 @@ function argparser_check_arg_values() {
                 "${warning_message}" "${option_names}" "${#values_arr[@]}" \
                 "${default_values_str}"
             warning_message="${translation}"
-            messages+=("${warning_message}")
+            warning_messages+=("${warning_message}")
 
-            messages+=("Value: ${default_values_str}")
+            arg_values="${default_values_str}"
             return
         fi
     elif argparser_in_array "${arg_number}" "*" "?" 0 \
@@ -6210,12 +6211,12 @@ function argparser_check_arg_values() {
             count_plus="${count}"
 
             (( count = count_hyphen - count_plus ))
-            messages+=("Value: ${count}")
+            arg_values="${count}"
         else
             if [[ "${prefixes[-1]}" == "-" ]]; then
-                messages+=("Value: true")
+                arg_values=true
             else
-                messages+=("Value: false")
+                arg_values=false
             fi
         fi
         return
@@ -6233,7 +6234,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error wrong arg number 4" "${error_message}" \
                 "${option_names}" "${arg_number}" "${#values_arr[@]}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
             return
         else
             # As some default values are given, print a similar warning
@@ -6248,9 +6249,9 @@ function argparser_check_arg_values() {
                 "${warning_message}" "${option_names}" "${arg_number}" \
                 "${#values_arr[@]}" "${default_values_str}"
             warning_message="${translation}"
-            messages+=("${warning_message}")
+            warning_messages+=("${warning_message}")
 
-            messages+=("Value: ${default_values_str}")
+            arg_values="${default_values_str}"
             return
         fi
     fi
@@ -6269,7 +6270,7 @@ function argparser_check_arg_values() {
                 argparser_translate "Error arg choice" "${error_message}" \
                     "${option_names}" "${choice_values_str}" "${values_str}"
                 error_message="${translation}"
-                messages+=("${error_message}")
+                error_messages+=("${error_message}")
                 return
             fi
         done
@@ -6285,7 +6286,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error arg bool" "${error_message}" \
                 "${option_names}" "${value}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
             return
         elif [[ "${type}" == "char" ]] && ! argparser_is_char "${value}"; then
             # Check if the value is a character.
@@ -6296,7 +6297,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error arg char" "${error_message}" \
                 "${option_names}" "${value}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
             return
         elif [[ "${type}" == "float" ]] && ! argparser_is_float "${value}"
         then
@@ -6308,7 +6309,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error arg float" "${error_message}" \
                 "${option_names}" "${value}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
             return
         elif [[ "${type}" == "int" ]] && ! argparser_is_int "${value}"; then
             # Check if the value is an integer.
@@ -6319,7 +6320,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error arg int" "${error_message}" \
                 "${option_names}" "${value}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
             return
         elif [[ "${type}" == "uint" ]] && ! argparser_is_uint "${value}"; then
             # Check if the value is an unsigned integer.
@@ -6330,14 +6331,14 @@ function argparser_check_arg_values() {
             argparser_translate "Error arg uint" "${error_message}" \
                 "${option_names}" "${value}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
             return
         fi
     done
 
     # Output the checked values.
     argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${values_arr[@]}"
-    messages+=("Value: ${joined_array}")
+    arg_values="${joined_array}"
 }
 
 function argparser_parse_args() {
@@ -6398,7 +6399,6 @@ function argparser_parse_args() {
     local prefix
     local -A prefixes
     local translated_error
-    local translated_warning
     local translation
     local value
     local values
@@ -6497,6 +6497,8 @@ function argparser_parse_args() {
     local arg_key
     local arg_number
     local -A arg_numbers
+    local arg_value
+    local arg_values
     local -a args_definition_file
     local -a args_definition_script
 
@@ -6526,9 +6528,6 @@ function argparser_parse_args() {
 
     argparser_translate "Error" "Error"
     translated_error="${translation}"
-
-    argparser_translate "Warning" "Warning"
-    translated_warning="${translation}"
 
     messages=( )
     argparser_read_args_definition "${args[@]}"
@@ -6839,29 +6838,15 @@ function argparser_parse_args() {
         fi
 
         if [[ -n "${args[${arg_key}]+set}" ]]; then
-            values="${args[${arg_key}]}"
+            arg_values="${args[${arg_key}]}"
         else
-            values=""
+            arg_values=""
         fi
 
-        # Check the argument's values.
-        messages=( )
-        argparser_check_arg_values "${arg_key}" "${prefix}" "${values}"
-
-        # Read the output message and either append the message to the
-        # previous error or warning messages or set the argument's
-        # values.
-        values=""
-        for message in "${messages[@]}"; do
-            case "${message}" in
-                ${translated_error}*) error_messages+=("${message}") ;;
-                ${translated_warning}*) warning_messages+=("${message}") ;;
-                Value*) values="${message#Value: }" ;;
-            esac
-        done
-
-        # Assign the checked values to the argument.
-        args[${arg_key}]="${values}"
+        # Check the argument's values and assign the checked values to
+        # it.
+        argparser_check_arg_values "${arg_key}" "${prefix}" "${arg_values}"
+        args[${arg_key}]="${arg_values}"
     done
 
     # Sort, filter, colorize, and print all error and warning messages.
