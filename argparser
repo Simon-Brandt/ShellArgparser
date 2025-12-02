@@ -5711,9 +5711,9 @@ function argparser_parse_positional_args() {
     #   values (read-only)
     # - all_positional_args: the indexed array holding the positional
     #   argument names (read-only)
-    # - messages: the parsed argument as message or an error message,
-    #   starting with "Error: " (translated), "Argument: ", or
-    #   "Value: ", as indexed array
+    # - args: the associative array holding the parsed arguments' values
+    # - error_messages: the error messages, starting with "Error: "
+    #   (translated), as indexed array
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
@@ -5728,8 +5728,8 @@ function argparser_parse_positional_args() {
     local error_message
     local given_arg
     local -a given_args
-    local i
     local index
+    local joined_array
     local required_args_count
     local translation
     local -a values
@@ -5782,25 +5782,23 @@ function argparser_parse_positional_args() {
     args_count="${#values[@]}"
     if (( args_count > required_args_count && default_args_count > 0 )); then
         # There are arguments having default values given.  Get the
-        # argument identifiers for all given arguments and output them,
-        # along with the values.
+        # argument identifiers for all given arguments and pass them
+        # their values.
         index=0
         for arg_key in "${all_positional_args[@]}"; do
             # Read the argument's definition.
             arg_number="${all_arg_numbers[${arg_key}]}"
 
-            # Output as many given arguments as requested.
-            messages+=("Argument: ${arg_key}")
-            for (( i = index; i < arg_number + index && i < args_count; i++ ))
-            do
-                messages+=("Value: ${values[i]}")
-            done
+            # Pass the positional argument as many values as requested.
+            argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
+                "${values[@]:index:arg_number}"
+            args[${arg_key}]="${joined_array}"
             (( index += arg_number ))
         done
     else
         # There are no arguments having default values given.  Get the
-        # argument identifiers for all given arguments and output them,
-        # along with the values.
+        # argument identifiers for all given arguments and pass them
+        # their values.
         index=0
         for arg_key in "${all_positional_args[@]}"; do
             # Read the argument's definition.
@@ -5815,28 +5813,27 @@ function argparser_parse_positional_args() {
             fi
 
             # If the positional argument accepts an arbitrary number of
-            # values, output all remaining given arguments.  For "?",
-            # output one argument, if existing, or else zero.  Else,
-            # output only as many arguments as requested.
-            messages+=("Argument: ${arg_key}")
+            # values, pass it all remaining given arguments.  For "?",
+            # pass one argument, if existing, or else zero.  Else, pass
+            # only as many arguments as requested.
             if [[ "${arg_number}" == "+" || "${arg_number}" == "*" ]]; then
-                for (( i = index; i < args_count; i++ )); do
-                    messages+=("Value: ${values[i]}")
-                done
+                argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
+                    "${values[@]:index}"
+                args[${arg_key}]="${joined_array}"
                 index="${args_count}"
 
                 break
             elif [[ "${arg_number}" == "?" ]]; then
                 if (( index < args_count)); then
-                    messages+=("Value: ${values[index]}")
+                    args[${arg_key}]="${values[index]}"
                     (( index++ ))
+                else
+                    args[${arg_key}]=""
                 fi
             else
-                for (( i = index; i < arg_number + index && i < args_count; \
-                    i++ ))
-                do
-                    messages+=("Value: ${values[i]}")
-                done
+                argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
+                    "${values[@]:index:arg_number}"
+                args[${arg_key}]="${joined_array}"
                 (( index += arg_number ))
             fi
         done
@@ -5860,7 +5857,7 @@ function argparser_parse_positional_args() {
                 "${index}" "${args_count}"
             error_message="${translation}"
         fi
-        messages+=("${error_message}")
+        error_messages+=("${error_message}")
     fi
 }
 
@@ -6781,47 +6778,24 @@ function argparser_parse_args() {
     fi
 
     # Parse the script's given positional arguments, that are yet only
-    # assigned to a single indexed array.
+    # assigned to a single indexed array.  Thereby, set each argument's
+    # value.
     messages=( )
     argparser_parse_positional_args "${given_positional_args[@]}"
 
-    # Read the output message and either append the message to the
-    # previous error messages or set the argument's value.  Again, in
-    # case of arguments given multiple times, i.e., when the key already
-    # exists in ${!args[@]}, add the new value to the previously given
-    # ones.
-    for message in "${messages[@]}"; do
-        case "${message}" in
-            ${translated_error}*) error_messages+=("${message}") ;;
-            Argument*) arg_key="${message#Argument: }" ;;
-            Value*)
-                # Set the current argument's value.
-                value="${message#Value: }"
-                if [[ -z "${args[${arg_key}]+set}" ]]; then
-                    args[${arg_key}]="${value}"
-                else
-                    args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
-                    args[${arg_key}]+="${value}"
-                fi
-                ;;
-        esac
-    done
-
-    # Sort, filter, colorize, and print all error messages.
-    argparser_print_error_messages true false "${error_messages[@]}"
-
-    # If any argument was not or wrongly given (i.e., there were
-    # errors), print a blank line and the usage message and abort the
-    # script.
+    # Sort, filter, colorize, and print all error messages, a blank
+    # line, and the usage message, then abort the script.
     if (( "${#error_messages[@]}" > 0 )); then
+        argparser_print_error_messages true false "${error_messages[@]}"
+
         if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
-            {
-                printf '\n'
-                argparser_print_usage_message false
-            } >&2
+            printf '\n'
         fi
+
+        argparser_print_usage_message false
+
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
-    fi
+    fi >&2
 
     # Check the arguments' values.
     error_messages=( )
