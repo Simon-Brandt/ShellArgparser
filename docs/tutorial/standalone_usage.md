@@ -24,7 +24,7 @@ Although the usual way to run the Argparser is [sourcing](https://www.gnu.org/so
 
 #### 5.11.1. Argparser introspection
 
-By invoking the Argparser, you can obtain the help, usage, and version message for the Argparser itself, *e.g.* when you're looking for a certain option name, but don't want to or can't consult the manual. The invokation is identical to your script's:
+By invoking the Argparser, you can obtain the help, usage, and version message for the Argparser itself, *e.g.* when you're looking for a certain option name, but don't want to or can't consult the manual. The invocation is identical to your script's:
 
 <!-- <include command="argparser --help" lang="console"> -->
 ```console
@@ -213,7 +213,7 @@ Help options:
 
 When the first option of the Argparser-invoking command is `--debug` or [`ARGPARSER_DEBUG`](../reference/environment_variables/environment_variables.md#9420-argparser_debug) is set to `true`, the Argparser will write each command to be executed to `STDERR`, including the command's line number and function. This allows logging the internal workings for debugging purposes, and is not designed for normal usage, but rather deemed an "expert option".
 
-#### 5.11.2. Invokation from other shells
+#### 5.11.2. Invocation from other shells
 
 The second, and perhaps more important way of standalone usage is included for compatibility with other shells. Since only Bash can successfully source Bash scripts (at least, when they rely on Bashisms, which is the case for the Argparser), the Argparser would only be usable from within Bash scripts. While this remains the central point of application, there is also a way to run the Argparser from other shell's scripts. As an example, let's have a look at the [`try_pipeline.sh`](../../tutorial/try_pipeline.sh) script:
 

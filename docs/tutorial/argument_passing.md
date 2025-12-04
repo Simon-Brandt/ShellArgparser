@@ -148,7 +148,7 @@ The positional argument "pos_2" on index 2 is set to "1,2".
 ```
 <!-- </include> -->
 
-And now we got something that looks like the intended output (and yes, it is). Even without fully understanding yet what the Argparser does, you can see that we set *three* options and their arguments ([`IFS`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Variables.html#index-IFS "gnu.org &rightarrow; Bourne Shell Variables &rightarrow; IFS") whitespace&ndash;delimited) on the command-line invokation of `try_argparser.sh`, *viz.* `--var-1`, `--var-2`, and `--var-3`. Nonetheless, the script reports *seven* options to be given. This is due to `var_4` through `var_7` (note that the *identifiers* use underscores ("snake case"), while the *option names* use hyphens ("kebab case"), here) having said default values that are used when the argument is not given on the command line. For `var_1` through `var_3`, the reported values are exactly what we specified, *i.e.*, `"1"`, `"2"`, and `"A"`, respectively.
+And now we got something that looks like the intended output (and yes, it is). Even without fully understanding yet what the Argparser does, you can see that we set *three* options and their arguments ([`IFS`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Variables.html#index-IFS "gnu.org &rightarrow; Bourne Shell Variables &rightarrow; IFS") whitespace&ndash;delimited) on the command-line invocation of `try_argparser.sh`, *viz.* `--var-1`, `--var-2`, and `--var-3`. Nonetheless, the script reports *seven* options to be given. This is due to `var_4` through `var_7` (note that the *identifiers* use underscores ("snake case"), while the *option names* use hyphens ("kebab case"), here) having said default values that are used when the argument is not given on the command line. For `var_1` through `var_3`, the reported values are exactly what we specified, *i.e.*, `"1"`, `"2"`, and `"A"`, respectively.
 
 Likewise, `pos_2` is reported to be `"1,2"`, so some sort of sequence of the two values we gave (more precisely: the concatenation of the two values, joined by an [`ARGPARSER_ARG_DELIMITER_2`](../reference/environment_variables/environment_variables.md#9413-argparser_arg_delimiter_2) character, as we'll see later), and `pos_1` has been assigned a default value of `"2"`. Note that the quotes here are added by `try_argparser.sh` upon printing the values; internally, they are unquoted.
 
@@ -224,7 +224,8 @@ And since the long option names only differ in their last character, here, it is
 <!-- <include command="ARGPARSER_ALLOW_OPTION_ABBREVIATION=true bash ../tutorial/try_argparser.sh --var-1 1 --var-2 2 --var A -- 1 2" lang="console"> -->
 ```console
 $ ARGPARSER_ALLOW_OPTION_ABBREVIATION=true bash ../tutorial/try_argparser.sh --var-1 1 --var-2 2 --var A -- 1 2
-try_argparser.sh: Error: The long option "--var" matches multiple long options.
+try_argparser.sh: Error: The argument "-c,-C,--var-3,--var-c" is mandatory, but
+                         not given.
 
 Usage: try_argparser.sh [-h,-? | -u | -V]
                         [-d,-D={A-C}]
@@ -247,7 +248,7 @@ This has the additional advantage that it's clear to a user (reading *e.g.* your
 
 Moreover, using an equals sign is the only way of providing arguments starting with a hyphen to an option, since a whitespace-separated word would be interpreted as (possibly nonexistent) option name. By this, you can give negative numbers on the command line.
 
-Let's have a look at another example invokation:
+Let's have a look at another example invocation:
 
 <!-- <include command="bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 3 -c A,B -b 4" lang="console"> -->
 ```console
@@ -264,13 +265,13 @@ The positional argument "pos_2" on index 2 is set to "1,2".
 ```
 <!-- </include> -->
 
-Two things have changed in the invokation call: The `-b` option now appears twice, with the first of which being followed by two values instead of one. Then, the `-c` option has its value given as `A,B` (note the comma).
+Two things have changed in the invocation call: The `-b` option now appears twice, with the first of which being followed by two values instead of one. Then, the `-c` option has its value given as `A,B` (note the comma).
 
 From the report for the `-b` option, an alias of `--var-2` for the option `var_2`, you can see that all three values&mdash;`2`, `3`, and `4`&mdash;are passed to `var_2`. Thus, it is possible to define keyword arguments to accept more than one value (just as `pos_2` already has shown for the positional arguments), with any given value being concatenated to the last given option name (or rather, the last hyphenated value, a difference important for nonexistent option names). You can even call an argument multiple times, passing values at different positions to it, though it seems rather counterproductive (in terms of confusing and unnecessarily verbose) for usage in scripts. On the command line, however, it may save you to go back when you realize you forgot to type a value. Another use case even for scripts would again be the gathering of command-line arguments or values from different processes, combining the two streams without needing to care whether they pass mutually exclusive option names or the same.
 
 As you can see from the `-c` option, you can also use commas (again actually [`ARGPARSER_ARG_DELIMITER_2`](../reference/environment_variables/environment_variables.md#9413-argparser_arg_delimiter_2) characters) to pass multiple values at the same time. These have the same meaning as whitespace-delimited arguments, again with the exception of not interpreting hyphens as option names. As a stylistic advice, for scripts, use long options, the equals sign, and commas, as they tend to look clearer; whereas for simple command-line usage, take advantage of the short options and the ability to use spaces as delimiter, as both are faster to type.
 
-Generally, the Argparser will aggregate all arguments (values) given after a word starting with a hyphen (*i.e.*, an option name) to this option. If the number doesn't match the number of required values, there are two possible outcomes: If [`ARGPARSER_ALLOW_ARG_INTERMIXING`](../reference/environment_variables/environment_variables.md#945-argparser_allow_arg_intermixing) is set to `true` (the default) the Argparser treats the new value as positional argument. For arguments with an arbitrary number of accepted values (those with a `"+"` or `"*"` as arguments count, see [below](argparser_invokation.md#522-arguments-definition-and-retrieval)), there can never be more values given than accepted. For arguments taking either zero or one values (`"?"` as arguments count), the Argparser will give one value to the keyword argument, and starting from the second value, treat them as positional arguments. For all other (numerical) argument counts, the Argparser will assign as many values to the keyword argument as this count states, and treat all subsequent values as positional arguments. When, in turn, there are now too many positional arguments or this argument intermixing is disabled in its entirety (*i.e.*, `ARGPARSER_ALLOW_ARG_INTERMIXING` is `false`), the Argparser throws an error instead of cutting the values. If an argument gets a wrong number of values, but has a default value, only a warning is thrown and it takes the default value.
+Generally, the Argparser will aggregate all arguments (values) given after a word starting with a hyphen (*i.e.*, an option name) to this option. If the number doesn't match the number of required values, there are two possible outcomes: If [`ARGPARSER_ALLOW_ARG_INTERMIXING`](../reference/environment_variables/environment_variables.md#945-argparser_allow_arg_intermixing) is set to `true` (the default) the Argparser treats the new value as positional argument. For arguments with an arbitrary number of accepted values (those with a `"+"` or `"*"` as arguments count, see [below](argparser_invocation.md#522-arguments-definition-and-retrieval)), there can never be more values given than accepted. For arguments taking either zero or one values (`"?"` as arguments count), the Argparser will give one value to the keyword argument, and starting from the second value, treat them as positional arguments. For all other (numerical) argument counts, the Argparser will assign as many values to the keyword argument as this count states, and treat all subsequent values as positional arguments. When, in turn, there are now too many positional arguments or this argument intermixing is disabled in its entirety (*i.e.*, `ARGPARSER_ALLOW_ARG_INTERMIXING` is `false`), the Argparser throws an error instead of cutting the values. If an argument gets a wrong number of values, but has a default value, only a warning is thrown and it takes the default value.
 
 Thereby, [errors](error_and_warning_messages.md#59-error-and-warning-messages) abort the script, while [warnings](error_and_warning_messages.md#59-error-and-warning-messages) just write a message to `STDERR`. Even after parsing or value checking errors occurred, the parsing or value checking continues and the Argparser aggregates the error messages until the end, when all are printed, to simplify the correction of multiple mistakes.
 
@@ -297,7 +298,7 @@ It may be worth noting that, if a positional argument accepts an infinite number
 
 #### 5.1.5. Flags
 
-Since there were some additional options given in the help message, let's have a look at another example invokation:
+Since there were some additional options given in the help message, let's have a look at another example invocation:
 
 <!-- <include command="bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A -f +g" lang="console"> -->
 ```console
@@ -326,7 +327,7 @@ Further, when [`ARGPARSER_ALLOW_FLAG_NEGATION`](../reference/environment_variabl
 
 Another interesting fact, unrelated to flags, is that the Argparser output a warning that `-g,-G,--var-7,--var-g` would be deprecated. This shows us that we can define arguments, and years later, when we want to change the command-line interface, we can set the obsolete arguments as deprecated, allowing the user to gradually adapt to the changes in his workflows employing your script. A common application would be the renaming of an option or the entire removal of its function.
 
-Taking one final set of example invokations, we can see how the option merging works for flags:
+Taking one final set of example invocations, we can see how the option merging works for flags:
 
 <!-- <include command="ARGPARSER_ALLOW_OPTION_MERGING=true bash ../tutorial/try_argparser.sh 1 2 -a 1 -b 2 -c A +fg" lang="console"> -->
 ```console
@@ -420,4 +421,4 @@ This behavior is unintuitive when considering `false` like in programming langua
 Allowing both types of prefixes to cancel out each other again comes in helpful when combining arguments from multiple sources on the same command line, or when typing multiple arguments and realizing that you set a flag too often. Both use cases should be rather rare in everyday usage, so the main advantage of flag counting, and indeed its reason of introduction to the Argparser, is the support of multiple levels of control for flag-controlled options, like the verbosity.
 
 [&#129092;&nbsp;Table of contents (Tutorial)](toc.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.2. Argparser invokation&nbsp;&#129094;](argparser_invokation.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.2. Argparser invocation&nbsp;&#129094;](argparser_invocation.md)

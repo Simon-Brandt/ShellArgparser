@@ -171,7 +171,7 @@ If a group identifier is missing, the Argparser will emit a warning if and only 
 
 Now, the Argparser is given the arguments definition, help, and translation file for the current locale. Thus, the help message can be generated in localized form, according to the user's `LANG`.
 
-You might also want to set the locale only for your script upon invokation from another script. Then, just prefix the invokation with the desired locale for the `LANG` variable. By this, you limit the effect of changing to the script call (just as we did above for the Argparser environment variables):
+You might also want to set the locale only for your script upon invocation from another script. Then, just prefix the invocation with the desired locale for the `LANG` variable. By this, you limit the effect of changing to the script call (just as we did above for the Argparser environment variables):
 
 ```console
 $ LANG=en_US.UTF-8 bash try_localization.sh --help

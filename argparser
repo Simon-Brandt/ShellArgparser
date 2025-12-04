@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-12-02
+# Last Modification: 2025-12-04
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -1733,7 +1733,7 @@ function argparser_read_configuration() {
 
     # Check if the configuration file exists and is readable.  Else,
     # output an error message and exit.  Since at this point of
-    # invokation, the environment variables aren't checked, yet, set the
+    # invocation, the environment variables aren't checked, yet, set the
     # needed ones to default values, if ${ARGPARSER_CHECK_ENV_VARS}
     # isn't set to "false" (and by this, the checking hasn't been
     # explicitly disabled).
@@ -2754,7 +2754,7 @@ function argparser_read_translation() {
 
     # Check if the translation file exists and is readable.  Else,
     # output an error message and exit.  Since at this point of
-    # invokation, the environment variables aren't checked, yet, set the
+    # invocation, the environment variables aren't checked, yet, set the
     # needed ones to default values, if ${ARGPARSER_CHECK_ENV_VARS}
     # isn't set to "false" (and by this, the checking hasn't been
     # explicitly disabled).
@@ -3027,7 +3027,7 @@ function argparser_read_styles() {
     local -a warning_messages
 
     # Check if the style file exists and is readable.  Else, output an
-    # error message and exit.  Since at this point of invokation, the
+    # error message and exit.  Since at this point of invocation, the
     # environment variables aren't checked, yet, set the needed ones to
     # default values, if ${ARGPARSER_CHECK_ENV_VARS} isn't set to
     # "false" (and by this, the checking hasn't been explicitly
