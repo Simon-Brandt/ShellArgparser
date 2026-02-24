@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-12-04
+# Last Modification: 2026-02-24
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -547,27 +547,6 @@ function argparser_pad() {
             padded_array[i]="${padded_array[i]}${whitespace}"
         done
     fi
-}
-
-function argparser_trim() {
-    # Trim leading and trailing space characters from a string.
-    #
-    # Arguments:
-    # - $1: the string to trim
-    #
-    # Nonlocals:
-    # - trimmed_string: the trimmed string
-
-    # Define the local variable.
-    local string
-
-    # Read the argument.
-    string="$1"
-
-    # Trim the string and set the nonlocal ${trimmed_string} to it.
-    string="${string##+( )}"
-    string="${string%%+( )}"
-    trimmed_string="${string}"
 }
 
 function argparser_fold() {
@@ -1727,7 +1706,6 @@ function argparser_read_configuration() {
     local file_attributes
     local line
     local -a lines
-    local trimmed_string
     local value
     local var
 
@@ -1793,15 +1771,15 @@ function argparser_read_configuration() {
             # the value as longest part after the equals sign and strip
             # leading and trailing spaces and a double quote each.
             var="${line%%=*}"
-            argparser_trim "${var}"
-            var="${trimmed_string}"
+            var="${var##+( )}"
+            var="${var%%+( )}"
             var="${var//-/_}"
             var="${var// /_}"
             var="ARGPARSER_${var^^}"
 
             value="${line#*=}"
-            argparser_trim "${value}"
-            value="${trimmed_string}"
+            value="${value##+( )}"
+            value="${value%%+( )}"
             value="${value#\"}"
             value="${value%\"}"
 
@@ -3022,7 +3000,6 @@ function argparser_read_styles() {
     local name
     local style
     local translation
-    local trimmed_string
     local warning_message
     local -a warning_messages
 
@@ -3075,16 +3052,16 @@ function argparser_read_styles() {
             # Get the style name as shortest part before an equals sign
             # ("="), and strip leading and trailing spaces.
             name="${line%%=*}"
-            argparser_trim "${name}"
-            name="${trimmed_string}"
+            name="${name##+( )}"
+            name="${name%%+( )}"
 
             if [[ -n "${styles[${name}]+set}" ]]; then
                 # The style name exists, so extract the style as longest
                 # part after the equals sign and strip leading and
                 # trailing spaces and a double quote each.
                 style="${line#*=}"
-                argparser_trim "${style}"
-                style="${trimmed_string}"
+                style="${style##+( )}"
+                style="${style%%+( )}"
                 style="${style#\"}"
                 style="${style%\"}"
 
@@ -3579,7 +3556,6 @@ function argparser_read_args_definition() {
     local line
     local lines
     local translation
-    local trimmed_string
 
     # Read the arguments.
     # shellcheck disable=SC2190  # Indexed, not associative array.
@@ -3619,8 +3595,8 @@ function argparser_read_args_definition() {
             # message.
             for line in "${lines[@]:1}"; do
                 arg_key="${line%%"${ARGPARSER_ARG_DELIMITER_1}"*}"
-                argparser_trim "${arg_key}"
-                arg_key="${trimmed_string}"
+                arg_key="${arg_key##+( )}"
+                arg_key="${arg_key%%+( )}"
 
                 if [[ "${arg_key}" == "${arg}" ]]; then
                     messages+=("File: ${line}")
@@ -3707,7 +3683,6 @@ function argparser_parse_args_definition() {
     local sequence
     local short_options
     local translation
-    local trimmed_string
     local type
     local value_names
 
@@ -3721,8 +3696,8 @@ function argparser_parse_args_definition() {
     IFS="${ARGPARSER_ARG_DELIMITER_1}" read -r -a header \
         <<< "${args_definition[0]}"
     for column_index in "${!header[@]}"; do
-        argparser_trim "${header[column_index]}"
-        header[column_index]="${trimmed_string}"
+        header[column_index]="${header[column_index]##+( )}"
+        header[column_index]="${header[column_index]%%+( )}"
     done
 
     # Get the column indices of all fields.
@@ -3786,6 +3761,8 @@ function argparser_parse_args_definition() {
     # given.
     for line in "${args_definition[@]:1}"; do
         IFS="${ARGPARSER_ARG_DELIMITER_1}" read -r -a fields <<< "${line}"
+        fields=("${fields[@]##+( )}")
+        fields=("${fields[@]%%+( )}")
 
         # If the line has more or less columns than the header, output
         # an error message.
@@ -3814,21 +3791,18 @@ function argparser_parse_args_definition() {
         fi
 
         # Get the argument identifier.
-        argparser_trim "${fields[${column_indices["id"]}]}"
-        arg_key="${trimmed_string}"
+        arg_key="${fields[${column_indices["id"]}]}"
 
         # Get the short option names.
         if [[ -n "${column_indices["short_opts"]}" ]]; then
-            argparser_trim "${fields[${column_indices["short_opts"]}]}"
-            short_options="${trimmed_string}"
+            short_options="${fields[${column_indices["short_opts"]}]}"
         else
             short_options=""
         fi
 
         # Get the long option names.
         if [[ -n "${column_indices["long_opts"]}" ]]; then
-            argparser_trim "${fields[${column_indices["long_opts"]}]}"
-            long_options="${trimmed_string}"
+            long_options="${fields[${column_indices["long_opts"]}]}"
         else
             long_options=""
         fi
@@ -3857,8 +3831,7 @@ function argparser_parse_args_definition() {
 
         # Get the value names.
         if [[ -n "${column_indices["val_names"]}" ]]; then
-            argparser_trim "${fields[${column_indices["val_names"]}]}"
-            value_names="${trimmed_string}"
+            value_names="${fields[${column_indices["val_names"]}]}"
         else
             value_names=""
         fi
@@ -3866,8 +3839,7 @@ function argparser_parse_args_definition() {
 
         # Get the default values.
         if [[ -n "${column_indices["defaults"]}" ]]; then
-            argparser_trim "${fields[${column_indices["defaults"]}]}"
-            default_values="${trimmed_string}"
+            default_values="${fields[${column_indices["defaults"]}]}"
         else
             default_values=""
         fi
@@ -3876,8 +3848,7 @@ function argparser_parse_args_definition() {
         # Get the choice values.  Resolve ranges in the individual
         # elements.
         if [[ -n "${column_indices["choices"]}" ]]; then
-            argparser_trim "${fields[${column_indices["choices"]}]}"
-            choice_values_str="${trimmed_string}"
+            choice_values_str="${fields[${column_indices["choices"]}]}"
 
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values_arr \
                 <<< "${choice_values_str}"
@@ -3924,8 +3895,7 @@ function argparser_parse_args_definition() {
 
         # Get the data type.
         if [[ -n "${column_indices["type"]}" ]]; then
-            argparser_trim "${fields[${column_indices["type"]}]}"
-            type="${trimmed_string}"
+            type="${fields[${column_indices["type"]}]}"
         else
             type="str"
         fi
@@ -3933,8 +3903,7 @@ function argparser_parse_args_definition() {
 
         # Get the argument number.
         if [[ -n "${column_indices["arg_no"]}" ]]; then
-            argparser_trim "${fields[${column_indices["arg_no"]}]}"
-            arg_number="${trimmed_string}"
+            arg_number="${fields[${column_indices["arg_no"]}]}"
         else
             arg_number=1
         fi
@@ -3942,8 +3911,7 @@ function argparser_parse_args_definition() {
 
         # Get the argument group.
         if [[ -n "${column_indices["arg_group"]}" ]]; then
-            argparser_trim "${fields[${column_indices["arg_group"]}]}"
-            arg_group="${trimmed_string}"
+            arg_group="${fields[${column_indices["arg_group"]}]}"
         else
             arg_group="${ARGPARSER_POSITIONAL_ARG_GROUP}"
         fi
@@ -3951,8 +3919,7 @@ function argparser_parse_args_definition() {
 
         # Get the notes.
         if [[ -n "${column_indices["notes"]}" ]]; then
-            argparser_trim "${fields[${column_indices["notes"]}]}"
-            notes="${trimmed_string}"
+            notes="${fields[${column_indices["notes"]}]}"
         else
             notes=""
         fi
@@ -3960,8 +3927,7 @@ function argparser_parse_args_definition() {
 
         # Get the help text.
         if [[ -n "${column_indices["help"]}" ]]; then
-            argparser_trim "${fields[${column_indices["help"]}]}"
-            help_text="${trimmed_string}"
+            help_text="${fields[${column_indices["help"]}]}"
         else
             help_text=""
         fi
@@ -5419,7 +5385,7 @@ function argparser_parse_long_option() {
 
     # If no argument identifier for the entire option name has been
     # found, the option name starts with "no-", and flag negation is
-    # enabled, trim the "no-" prefix, convert it to a "+", and set the
+    # enabled, strip the "no-" prefix, convert it to a "+", and set the
     # option name's remainder as new option name.
     if [[ "${ARGPARSER_ALLOW_FLAG_NEGATION}" == true \
         && -z "${arg_key}" \
@@ -10160,7 +10126,6 @@ function argparser_main() {
         unset -f argparser_sort
         unset -f argparser_toggle_debugger
         unset -f argparser_translate
-        unset -f argparser_trim
         unset -f argparser_uncolorize
         unset -f argparser_uniq
         unset -f argparser_write_args
