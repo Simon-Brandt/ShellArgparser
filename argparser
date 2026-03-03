@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-02-25
+# Last Modification: 2026-03-03
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -1631,6 +1631,262 @@ function argparser_draw_frame() {
         declare -n var="${var}"
         var="${joined_array}"
     fi
+}
+
+# Define the Argparser functions for creating a text-based user
+# interface (TUI).
+function argparser_trap_sigint() {
+    # Define the actions to perform when trapping SIGINTs.
+
+    # Set the cursor to be moved to the TUI's end and re-enable the
+    # character output (echoing).
+    printf '\e[%sE' "$(( last_option_row - cursor_row + 1 ))"
+    stty echo
+    exit 1
+}
+
+function argparser_trap_exit() {
+    # Define the actions to perform when trapping EXITs.
+
+    # Set the cursor to be moved to the TUI's end and re-enable the
+    # character output (echoing).
+    printf '\e[%sE' "$(( last_option_row - cursor_row + 1 ))"
+    stty echo
+}
+
+function argparser_get_cursor_pos() {
+    # Get the current position of the cursor on the terminal.
+    #
+    # Nonlocals:
+    # - cursor_col: the cursor's current column number, 1-based
+    # - cursor_row: the cursor's current row number, 1-based
+
+    # Define the local variable.
+    local cursor_pos
+
+    # Get the cursor position as ANSI escape code.  The output format is
+    # "\e[r;cR", with r as row number and c as column number.  Extract
+    # these.
+    read -r -s -d R -p $'\e[6n' cursor_pos
+    cursor_pos="${cursor_pos##*$'\e['}"
+    cursor_row="${cursor_pos%;*}"
+    cursor_col="${cursor_pos#*;}"
+}
+
+function argparser_create_tui_radiobuttons() {
+    # Create a TUI block with radiobuttons.
+    #
+    # Arguments:
+    # - $1: the heading (oftentimes question) starting the radiobutton
+    #       block
+    # - $@: the possible options
+    #
+    # Nonlocals:
+    # - selected_option: the selected option
+
+    # Define the local variables.
+    local cursor_col
+    local cursor_row
+    local first_option_row
+    local heading
+    local key
+    local key_remainder
+    local -A keynames
+    local last_option_row
+    local -a options
+    local -a padded_array
+    local selected_option_row
+
+    # Read the arguments.
+    heading="$1"
+    shift
+    options=("$@")
+
+    # Give the key codes appropriate symbolic names.
+    keynames=(
+        ["Up arrow"]=$'\e[A'
+        ["Down arrow"]=$'\e[B'
+        ["Return/Enter"]=$'\n'
+        ["Tab"]=$'\t'
+        ["Backspace"]=$'\c?'
+        ["Delete"]=$'\e[3~'
+        ["X"]='X'
+    )
+
+    # Print the TUI block's heading and options, then get the occupied
+    # row numbers on the terminal.
+    argparser_pad "right" "auto" "${options[@]}"
+    options=("${padded_array[@]}")
+
+    printf '%s\n' "${heading}"
+    for option in "${options[@]}"; do
+        printf '%s ( )\n' "${option}"
+    done
+
+    argparser_get_cursor_pos
+    first_option_row="$(( cursor_row - "${#options[@]}" ))"
+    last_option_row="$(( cursor_row - 1 ))"
+    printf '\e[%s;%sH' "${first_option_row}" "$(( "${#options[0]}" + 3 ))"
+
+    # Run the interactive shell-like TUI, responding to keypresses by
+    # selecting or unselecting the options.
+    selected_option=""
+    selected_option_row=""
+    while :; do
+        # Get the current cursor position, then read the pressed key
+        # (merged as one character, then forcibly uppercased).
+        argparser_get_cursor_pos
+
+        read -r -s -d "" -N 1 key
+        if [[ "${key}" == $'\e' ]]; then
+            # For composed keys, read all additional characters, one by
+            # one.  This is, e.g., necessary for the arrow keys.
+            while read -r -s -d "" -N 1 -t 0.001 key_remainder; do
+                key+="${key_remainder}"
+            done
+        fi
+        key="${key@U}"
+
+        # Depending on the pressed key, select the option under the
+        # cursor or move the cursor to another option.
+        case "${key}" in
+            "${keynames["Up arrow"]}")
+                # Move the cursor to the previous option, if there is
+                # one, by writing the CSI for "Cursor one line up".
+                if (( cursor_row > first_option_row )); then
+                    printf '\e[1A'
+                fi
+                ;;
+            "${keynames["Down arrow"]}")
+                # Move the cursor to the next option, if there is one,
+                # by writing the CSI for "Cursor one line down".
+                if (( cursor_row < last_option_row )); then
+                    printf '\e[1B'
+                fi
+                ;;
+            "${keynames["Return/Enter"]}")
+                # Select or unselect the current option by writing an
+                # "X" or a space character and the CSI for "Cursor one
+                # char back".
+                if [[ -z "${selected_option_row}" ]]; then
+                    # Select the current option.
+                    printf 'X\e[1D'
+                    selected_option_row="${cursor_row}"
+                    selected_option="${options[selected_option_row - first_option_row]}"
+                elif (( cursor_row == selected_option_row )); then
+                    # Unselect the current option.
+                    printf ' \e[1D'
+                    selected_option_row=""
+                    selected_option=""
+                elif (( cursor_row < selected_option_row )); then
+                    # Select the current option and unselect the
+                    # previously selected option (which comes after the
+                    # current option).
+                    printf 'X\e[1D\e[%sB \e[1D\e[%sA' \
+                        "$(( selected_option_row - cursor_row ))" \
+                        "$(( selected_option_row - cursor_row ))"
+                    selected_option_row="${cursor_row}"
+                    selected_option="${options[selected_option_row - first_option_row]}"
+                elif (( cursor_row > selected_option_row )); then
+                    # Select the current option and unselect the
+                    # previously selected option (which comes before the
+                    # current option).
+                    printf 'X\e[1D\e[%sA \e[1D\e[%sB' \
+                        "$(( cursor_row - selected_option_row ))" \
+                        "$(( cursor_row - selected_option_row ))"
+                    selected_option_row="${cursor_row}"
+                    selected_option="${options[selected_option_row - first_option_row]}"
+                fi
+                ;;
+            "${keynames["X"]}")
+                # Select the current option, if unselected, by writing
+                # an "X" character and the CSI for "Cursor one char
+                # back".
+                if [[ -z "${selected_option_row}" ]]; then
+                    # Select the current option.
+                    printf 'X\e[1D'
+                    selected_option_row="${cursor_row}"
+                    selected_option="${options[selected_option_row - first_option_row]}"
+                elif (( cursor_row < selected_option_row )); then
+                    # Select the current option and unselect the
+                    # previously selected option (which comes after the
+                    # current option).
+                    printf 'X\e[1D\e[%sB \e[1D\e[%sA' \
+                        "$(( selected_option_row - cursor_row ))" \
+                        "$(( selected_option_row - cursor_row ))"
+                    selected_option_row="${cursor_row}"
+                    selected_option="${options[selected_option_row - first_option_row]}"
+                elif (( cursor_row > selected_option_row )); then
+                    # Select the current option and unselect the
+                    # previously selected option (which comes before the
+                    # current option).
+                    printf 'X\e[1D\e[%sA \e[1D\e[%sB' \
+                        "$(( cursor_row - selected_option_row ))" \
+                        "$(( cursor_row - selected_option_row ))"
+                    selected_option_row="${cursor_row}"
+                    selected_option="${options[selected_option_row - first_option_row]}"
+                fi
+                ;;
+            "${keynames["Backspace"]}" | "${keynames["Delete"]}")
+                # Unselect the current option, if selected, by writing a
+                # space character and the CSI for "Cursor one char
+                # back".
+                if (( cursor_row == selected_option_row )); then
+                    # Unselect the current option.
+                    printf ' \e[1D'
+                    selected_option_row=""
+                    selected_option=""
+                fi
+                ;;
+            "${keynames["Tab"]}")
+                # Advance to the next TUI block.
+                break
+                ;;
+        esac
+
+        # "Sleep" for 10 ms.
+        # shellcheck disable=SC2162  # No actual reading intended.
+        read -t 0.01
+    done
+}
+
+function argparser_create_tui() {
+    # Create a text-based user interface (TUI).
+
+    # Define the local variables.
+    local heading
+    local -a options
+    local selected_option
+    local shell
+
+    # Trap SIGINTs and EXITs to restore the terminal state, setting the
+    # cursor to be moved to the TUI's end and re-enabling the henceforth
+    # disabled character output (echoing).
+    trap argparser_trap_sigint INT
+    trap argparser_trap_exit EXIT
+
+    # For systems without stty, create a no-op function of the same name
+    # as "alias".  Then, disable the character output (echoing).
+    if ! stty; then
+        stty() { :; }
+    fi &> /dev/null
+    stty -echo
+
+    # Create the header line.
+    printf 'Shell Argparser v1.4.0\n'
+
+    # Create the TUI block asking for the target shell.
+    heading="Does your script use Bash or only a POSIX-compliant shell?"
+    options=(
+        "Bash"
+        "POSIX shell"
+    )
+    argparser_create_tui_radiobuttons "${heading}" "${options[@]}"
+    shell="${selected_option}"
+
+    # Move the cursor to the TUI's end.
+    printf '\e[%sE' "$(( last_option_row - cursor_row + 1 ))"
+    stty echo
 }
 
 # Define the Argparser functions for reading the configuration and
