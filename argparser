@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-03-03
+# Last Modification: 2026-03-04
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -1640,7 +1640,7 @@ function argparser_trap_sigint() {
 
     # Set the cursor to be moved to the TUI's end and re-enable the
     # character output (echoing).
-    printf '\e[%sE' "$(( last_option_row - cursor_row + 1 ))"
+    printf '\e[%s;1H' "${LINES:-1000}"
     stty echo
     exit 1
 }
@@ -1650,7 +1650,7 @@ function argparser_trap_exit() {
 
     # Set the cursor to be moved to the TUI's end and re-enable the
     # character output (echoing).
-    printf '\e[%sE' "$(( last_option_row - cursor_row + 1 ))"
+    printf '\e[%s;1H' "${LINES:-1000}"
     stty echo
 }
 
@@ -1885,7 +1885,7 @@ function argparser_create_tui() {
     shell="${selected_option}"
 
     # Move the cursor to the TUI's end.
-    printf '\e[%sE' "$(( last_option_row - cursor_row + 1 ))"
+    printf '\e[%s;1H' "${LINES:-1000}"
     stty echo
 }
 
