@@ -1850,12 +1850,38 @@ function argparser_create_tui_radiobuttons() {
     done
 }
 
+function argparser_create_tui_textbox() {
+    # Create a TUI block with a textbox prompting for input.
+    #
+    # Arguments:
+    # - $1: the heading (oftentimes question) starting the textbox block
+    # - $2: the prompt
+    #
+    # Nonlocals:
+    # - input: the input text
+
+    # Define the local variables.
+    local heading
+    local prompt
+
+    # Read the arguments.
+    heading="$1"
+    prompt="$2"
+
+    # Print the TUI block's heading and prompt, then read the input.
+    printf '%s\n' "${heading}"
+    read -r -e -p "${prompt}:  " input 2>&1
+}
+
 function argparser_create_tui() {
     # Create a text-based user interface (TUI).
 
     # Define the local variables.
+    local file
     local heading
+    local input
     local -a options
+    local prompt
     local selected_option
     local shell
 
@@ -1883,6 +1909,17 @@ function argparser_create_tui() {
     )
     argparser_create_tui_radiobuttons "${heading}" "${options[@]}"
     shell="${selected_option}"
+
+    # Move the cursor to the TUI's end.
+    printf '\e[%s;1H' "${LINES:-1000}"
+
+    # Create the TUI block asking for the target file.
+    stty echo
+    heading="Which file shall the arguments definition be written to?"
+    prompt="Target file"
+    argparser_create_tui_textbox "${heading}" "${prompt}"
+    file="${input}"
+    stty -echo
 
     # Move the cursor to the TUI's end.
     printf '\e[%s;1H' "${LINES:-1000}"
