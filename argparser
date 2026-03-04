@@ -1898,6 +1898,9 @@ function argparser_create_tui() {
     fi &> /dev/null
     stty -echo
 
+    # Clear the screen.
+    printf '\e[2J'
+
     # Create the header line.
     printf 'Shell Argparser v1.4.0\n'
 
@@ -1908,7 +1911,7 @@ function argparser_create_tui() {
         "POSIX shell"
     )
     argparser_create_tui_radiobuttons "${heading}" "${options[@]}"
-    shell="${selected_option}"
+    shell="${selected_option:-Bash}"
 
     # Move the cursor to the TUI's end.
     printf '\e[%s;1H' "${LINES:-1000}"
@@ -1918,7 +1921,7 @@ function argparser_create_tui() {
     heading="Which file shall the arguments definition be written to?"
     prompt="Target file"
     argparser_create_tui_textbox "${heading}" "${prompt}"
-    file="${input}"
+    file="${input:-/dev/stdout}"
     stty -echo
 
     # Move the cursor to the TUI's end.
