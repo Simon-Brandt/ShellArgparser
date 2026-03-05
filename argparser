@@ -1958,6 +1958,36 @@ function argparser_create_tui() {
     printf '\n'
     tui_elements+=("Label" 1 0)
 
+    # Build the TUI block asking for the arguments definition delimiter.
+    heading="Which character do you want to use as primary arguments "
+    heading+="definition delimiter?"
+    prompt="Primary delimiter"
+    argparser_build_tui_textbox "${heading}" "${prompt}"
+    tui_elements+=("Textbox" 2 "${max_width}")
+
+    printf '\n'
+    tui_elements+=("Label" 1 0)
+
+    # Build the TUI block asking for the arguments definition fields.
+    heading="Enter the fields for each argument.  Submit an empty argument "
+    heading+="identifier to end the input."
+    prompts=(
+        "Argument identifier"
+        "Short option names"
+        "Long option names"
+        "Value names"
+        "Default values"
+        "Choice values"
+        "Data type"
+        "Argument number"
+        "Argument group"
+        "Notes"
+        "Help text"
+    )
+    argparser_build_tui_textbox "${heading}" "${prompts[@]}"
+    argparser_get_max_width "${prompts[@]}"
+    tui_elements+=("Textbox" "$(( "${#prompts[@]}" + 1 ))" "${max_width}")
+
     # Trap SIGINTs and EXITs to restore the terminal state, setting the
     # cursor to be moved to the TUI's end and re-enabling the henceforth
     # disabled character output (echoing).
