@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-03-04
+# Last Modification: 2026-03-05
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -981,7 +981,7 @@ function argparser_get_max_width() {
     # Get the maximum width of all elements of an array.
     #
     # Arguments:
-    # - $@: the array whose elements to pad
+    # - $@: the array whose widest element's width to get
     #
     # Nonlocals:
     # - max_width: the width of the array's widest element
@@ -1673,34 +1673,80 @@ function argparser_get_cursor_pos() {
     cursor_col="${cursor_pos#*;}"
 }
 
-function argparser_create_tui_radiobuttons() {
-    # Create a TUI block with radiobuttons.
+function argparser_build_tui_radiobuttons() {
+    # Build a TUI block with radiobuttons.
     #
     # Arguments:
     # - $1: the heading (oftentimes question) starting the radiobutton
     #       block
     # - $@: the possible options
-    #
-    # Nonlocals:
-    # - selected_option: the selected option
 
     # Define the local variables.
-    local cursor_col
-    local cursor_row
-    local first_option_row
     local heading
-    local key
-    local key_remainder
-    local -A keynames
-    local last_option_row
+    local option
     local -a options
     local -a padded_array
-    local selected_option_row
 
     # Read the arguments.
     heading="$1"
     shift
     options=("$@")
+
+    # Print the TUI block's heading and all options.
+    argparser_pad "right" "auto" "${options[@]}"
+    options=("${padded_array[@]}")
+
+    printf '%s\n' "${heading}"
+    for option in "${options[@]}"; do
+        printf '%s ( )\n' "${option}"
+    done
+}
+
+function argparser_build_tui_textbox() {
+    # Build a TUI block with textboxes prompting for input.
+    #
+    # Arguments:
+    # - $1: the heading (oftentimes question) starting the textbox block
+    # - $@: the prompts
+
+    # Define the local variables.
+    local heading
+    local -a prompts
+
+    # Read the arguments.
+    heading="$1"
+    shift
+    prompts=("$@")
+
+    # Print the TUI block's heading and all prompts.
+    printf '%s\n' "${heading}"
+    printf '%s:\n' "${prompts[@]}"
+}
+
+function argparser_run_tui_radiobuttons() {
+    # Run a TUI block with radiobuttons.
+    #
+    # Arguments:
+    # - $1: the number of rows the radiobutton block occupies, including
+    #       the heading
+    # - $2: the number of columns (width) the widest option occupies
+    #
+    # Nonlocals:
+    # - reply:  the selected option
+
+    # Define the local variables.
+    local cursor_col
+    local cursor_row
+    local first_option_row
+    local key
+    local key_remainder
+    local -A keynames
+    local last_option_row
+    local selected_option_row
+
+    # Read the arguments.
+    tui_block_rows="$1"
+    tui_block_cols="$2"
 
     # Give the key codes appropriate symbolic names.
     keynames=(
@@ -1713,16 +1759,7 @@ function argparser_create_tui_radiobuttons() {
         ["X"]='X'
     )
 
-    # Print the TUI block's heading and options, then get the occupied
-    # row numbers on the terminal.
-    argparser_pad "right" "auto" "${options[@]}"
-    options=("${padded_array[@]}")
-
-    printf '%s\n' "${heading}"
-    for option in "${options[@]}"; do
-        printf '%s ( )\n' "${option}"
-    done
-
+    # Get the occupied row numbers on the terminal.
     argparser_get_cursor_pos
     first_option_row="$(( cursor_row - "${#options[@]}" ))"
     last_option_row="$(( cursor_row - 1 ))"
@@ -1839,7 +1876,8 @@ function argparser_create_tui_radiobuttons() {
                 fi
                 ;;
             "${keynames["Tab"]}")
-                # Advance to the next TUI block.
+                # Exit the TUI block.
+                reply="${selected_option}"
                 break
                 ;;
         esac
@@ -1850,7 +1888,7 @@ function argparser_create_tui_radiobuttons() {
     done
 }
 
-function argparser_create_tui_textbox() {
+function argparser_run_tui_textbox() {
     # Create a TUI block with a textbox prompting for input.
     #
     # Arguments:
@@ -1874,16 +1912,51 @@ function argparser_create_tui_textbox() {
 }
 
 function argparser_create_tui() {
-    # Create a text-based user interface (TUI).
+    # Build and run a text-based user interface (TUI).
 
     # Define the local variables.
     local file
     local heading
-    local input
+    local max_width
     local -a options
     local prompt
-    local selected_option
+    local -a prompts
+    local -a replies
+    local reply
     local shell
+    local tui_block_cols
+    local tui_block_rows
+    local tui_element
+    local -a tui_elements
+
+    # Clear the screen.
+    printf '\e[2J'
+
+    # Build the header line.
+    printf 'Shell Argparser v1.4.0\n\n'
+    tui_elements=("Label" 2 0)
+
+    # Build the TUI block asking for the target shell.
+    heading="Does your script use Bash or only a POSIX-compliant shell?"
+    options=(
+        "Bash"
+        "POSIX shell"
+    )
+    argparser_build_tui_radiobuttons "${heading}" "${options[@]}"
+    argparser_get_max_width "${options[@]}"
+    tui_elements+=("Radiobuttons" "$(( "${#options[@]}" + 1 ))" "${max_width}")
+
+    printf '\n'
+    tui_elements+=("Label" 1 0)
+
+    # Build the TUI block asking for the target file.
+    heading="Which file shall the arguments definition be written to?"
+    prompt="Target file"
+    argparser_build_tui_textbox "${heading}" "${prompt}"
+    tui_elements+=("Textbox" 2 "${max_width}")
+
+    printf '\n'
+    tui_elements+=("Label" 1 0)
 
     # Trap SIGINTs and EXITs to restore the terminal state, setting the
     # cursor to be moved to the TUI's end and re-enabling the henceforth
@@ -1898,35 +1971,32 @@ function argparser_create_tui() {
     fi &> /dev/null
     stty -echo
 
-    # Clear the screen.
-    printf '\e[2J'
+    # Run the TUI.
+    for (( i = 0; i < "${#tui_elements[@]}"; i += 3 )); do
+        tui_element="${tui_elements[i]}"
+        tui_block_rows="${tui_elements[i+1]}"
+        tui_block_cols="${tui_elements[i+2]}"
 
-    # Create the header line.
-    printf 'Shell Argparser v1.4.0\n'
+        case "${tui_element}" in
+            "Radiobuttons")
+                argparser_run_tui_radiobuttons "${tui_block_rows}" \
+                    "${tui_block_cols}"
+                replies+=("${reply:-Bash}")
+                ;;
+            "Textbox")
+                stty echo
+                argparser_run_tui_textbox
+                replies+=("${reply:-/dev/stdout}")
+                stty -echo
+                ;;
+            "Label")
+                :
+                ;;
+        esac
 
-    # Create the TUI block asking for the target shell.
-    heading="Does your script use Bash or only a POSIX-compliant shell?"
-    options=(
-        "Bash"
-        "POSIX shell"
-    )
-    argparser_create_tui_radiobuttons "${heading}" "${options[@]}"
-    shell="${selected_option:-Bash}"
-
-    # Move the cursor to the TUI's end.
-    printf '\e[%s;1H' "${LINES:-1000}"
-
-    # Create the TUI block asking for the target file.
-    stty echo
-    heading="Which file shall the arguments definition be written to?"
-    prompt="Target file"
-    argparser_create_tui_textbox "${heading}" "${prompt}"
-    file="${input:-/dev/stdout}"
-    stty -echo
-
-    # Move the cursor to the TUI's end.
-    printf '\e[%s;1H' "${LINES:-1000}"
-    stty echo
+        # Move the cursor to the TUI's end.
+        printf '\e[%s;1H' "${LINES:-1000}"
+    done
 }
 
 # Define the Argparser functions for reading the configuration and
