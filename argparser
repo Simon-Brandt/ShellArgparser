@@ -1883,26 +1883,27 @@ function argparser_run_tui_radiobuttons() {
 }
 
 function argparser_run_tui_textbox() {
-    # Create a TUI block with a textbox prompting for input.
+    # Run a TUI block with a textbox prompting for input.
     #
     # Arguments:
-    # - $1: the heading (oftentimes question) starting the textbox block
-    # - $2: the prompt
+    # - $1: the 1-based row of the textbox block
+    # - $2: the width of the prompt
     #
     # Nonlocals:
-    # - input: the input text
+    # - reply: the input text, or the empty string if none was input
 
     # Define the local variables.
-    local heading
-    local prompt
+    local row
+    local width
 
     # Read the arguments.
-    heading="$1"
-    prompt="$2"
+    row="$1"
+    width="$2"
 
-    # Print the TUI block's heading and prompt, then read the input.
-    printf '%s\n' "${heading}"
-    read -r -e -p "${prompt}:  " input 2>&1
+    # Move the cursor to the textbox' row on the terminal, after the
+    # prompt, then read the input.
+    printf '\e[%s;%sH' "${row}" "$(( width + 3 ))"
+    read -r -e reply 2>&1
 }
 
 function argparser_create_tui() {
@@ -1931,9 +1932,8 @@ function argparser_create_tui() {
 
     # Build the header line.
     printf 'Shell Argparser v1.4.0\n\n'
-    row_count=2
-    (( total_row_count += row_count ))
-    tui_elements=("Label" "${row_count}" 0)
+    (( total_row_count += 2 ))
+    tui_elements=("Label" 2 0)
 
     # Build the TUI block asking for the target shell.
     heading="Does your script use Bash or only a POSIX-compliant shell?"
@@ -1948,36 +1948,37 @@ function argparser_create_tui() {
     tui_elements+=("Radiobuttons" "${row_count}" "${max_width}")
 
     printf '\n'
-    row_count=1
-    (( total_row_count += row_count ))
-    tui_elements+=("Label" "${row_count}" 0)
+    (( total_row_count += 1 ))
+    tui_elements+=("Label" 1 0)
 
     # Build the TUI block asking for the target file.
     heading="Which file shall the arguments definition be written to?"
     prompt="Target file"
     argparser_build_tui_textbox "${heading}" "${prompt}"
-    row_count=2
-    (( total_row_count += row_count ))
-    tui_elements+=("Textbox" "${row_count}" "${max_width}")
+    (( total_row_count += 2 ))
+    tui_elements+=(
+        "Label" 1 0
+        "Textbox" 1 "${#prompt}"
+    )
 
     printf '\n'
-    row_count=1
-    (( total_row_count += row_count ))
-    tui_elements+=("Label" "${row_count}" 0)
+    (( total_row_count += 1 ))
+    tui_elements+=("Label" 1 0)
 
     # Build the TUI block asking for the arguments definition delimiter.
     heading="Which character do you want to use as primary arguments "
     heading+="definition delimiter?"
     prompt="Primary delimiter"
     argparser_build_tui_textbox "${heading}" "${prompt}"
-    row_count=2
-    (( total_row_count += row_count ))
-    tui_elements+=("Textbox" "${row_count}" "${max_width}")
+    (( total_row_count += 2 ))
+    tui_elements+=(
+        "Label" 1 0
+        "Textbox" 1 "${#prompt}"
+    )
 
     printf '\n'
-    row_count=1
-    (( total_row_count += row_count ))
-    tui_elements+=("Label" "${row_count}" 0)
+    (( total_row_count += 1 ))
+    tui_elements+=("Label" 1 0)
 
     # Build the TUI block asking for the arguments definition fields.
     heading="Enter the fields for each argument.  Submit an empty argument "
@@ -1996,10 +1997,15 @@ function argparser_create_tui() {
         "Help text"
     )
     argparser_build_tui_textbox "${heading}" "${prompts[@]}"
+
+    (( total_row_count += 1 ))
+    tui_elements+=("Label" 1 0)
+
     argparser_get_max_width "${prompts[@]}"
-    (( row_count = "${#prompts[@]}" + 1 ))
-    (( total_row_count += row_count ))
-    tui_elements+=("Textbox" "${row_count}" "${max_width}")
+    for i in "${!prompts[@]}"; do
+        (( total_row_count += 1 ))
+        tui_elements+=("Textbox" 1 "${max_width}")
+    done
 
     # Trap SIGINTs and EXITs to restore the terminal state, setting the
     # cursor to be moved to the TUI's end and re-enabling the henceforth
@@ -2039,7 +2045,7 @@ function argparser_create_tui() {
                 ;;
             "Textbox")
                 stty echo
-                argparser_run_tui_textbox
+                argparser_run_tui_textbox "${start_row}" "${width}"
                 replies+=("${reply:-/dev/stdout}")
                 stty -echo
                 ;;
