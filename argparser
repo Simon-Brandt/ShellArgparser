@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-03-05
+# Last Modification: 2026-03-09
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -1727,26 +1727,30 @@ function argparser_run_tui_radiobuttons() {
     # Run a TUI block with radiobuttons.
     #
     # Arguments:
-    # - $1: the number of rows the radiobutton block occupies, including
-    #       the heading
-    # - $2: the number of columns (width) the widest option occupies
+    # - $1: the 1-based, inclusive start row of the radiobutton block,
+    #       excluding the heading
+    # - $2: the 1-based, inclusive end row of the radiobutton block
+    # - $3: the width of the widest option
     #
     # Nonlocals:
-    # - reply:  the selected option
+    # - reply: the selected option's row, or the empty string if none
+    #   was selected
 
     # Define the local variables.
     local cursor_col
     local cursor_row
-    local first_option_row
+    local end_row
     local key
     local key_remainder
     local -A keynames
-    local last_option_row
-    local selected_option_row
+    local selected_row
+    local start_row
+    local width
 
     # Read the arguments.
-    tui_block_rows="$1"
-    tui_block_cols="$2"
+    start_row="$1"
+    end_row="$2"
+    width="$3"
 
     # Give the key codes appropriate symbolic names.
     keynames=(
@@ -1759,16 +1763,13 @@ function argparser_run_tui_radiobuttons() {
         ["X"]='X'
     )
 
-    # Get the occupied row numbers on the terminal.
-    argparser_get_cursor_pos
-    first_option_row="$(( cursor_row - "${#options[@]}" ))"
-    last_option_row="$(( cursor_row - 1 ))"
-    printf '\e[%s;%sH' "${first_option_row}" "$(( "${#options[0]}" + 3 ))"
+    # Move the cursor to the first occupied row on the terminal, within
+    # the first radiobutton's parentheses.
+    printf '\e[%s;%sH' "${start_row}" "$(( width + 3 ))"
 
     # Run the interactive shell-like TUI, responding to keypresses by
     # selecting or unselecting the options.
-    selected_option=""
-    selected_option_row=""
+    selected_row=""
     while :; do
         # Get the current cursor position, then read the pressed key
         # (merged as one character, then forcibly uppercased).
@@ -1790,14 +1791,14 @@ function argparser_run_tui_radiobuttons() {
             "${keynames["Up arrow"]}")
                 # Move the cursor to the previous option, if there is
                 # one, by writing the CSI for "Cursor one line up".
-                if (( cursor_row > first_option_row )); then
+                if (( cursor_row > start_row )); then
                     printf '\e[1A'
                 fi
                 ;;
             "${keynames["Down arrow"]}")
                 # Move the cursor to the next option, if there is one,
                 # by writing the CSI for "Cursor one line down".
-                if (( cursor_row < last_option_row )); then
+                if (( cursor_row < end_row )); then
                     printf '\e[1B'
                 fi
                 ;;
@@ -1805,79 +1806,72 @@ function argparser_run_tui_radiobuttons() {
                 # Select or unselect the current option by writing an
                 # "X" or a space character and the CSI for "Cursor one
                 # char back".
-                if [[ -z "${selected_option_row}" ]]; then
+                if [[ -z "${selected_row}" ]]; then
                     # Select the current option.
                     printf 'X\e[1D'
-                    selected_option_row="${cursor_row}"
-                    selected_option="${options[selected_option_row - first_option_row]}"
-                elif (( cursor_row == selected_option_row )); then
+                    selected_row="${cursor_row}"
+                elif (( cursor_row == selected_row )); then
                     # Unselect the current option.
                     printf ' \e[1D'
-                    selected_option_row=""
-                    selected_option=""
-                elif (( cursor_row < selected_option_row )); then
+                    selected_row=""
+                elif (( cursor_row < selected_row )); then
                     # Select the current option and unselect the
                     # previously selected option (which comes after the
                     # current option).
                     printf 'X\e[1D\e[%sB \e[1D\e[%sA' \
-                        "$(( selected_option_row - cursor_row ))" \
-                        "$(( selected_option_row - cursor_row ))"
-                    selected_option_row="${cursor_row}"
-                    selected_option="${options[selected_option_row - first_option_row]}"
-                elif (( cursor_row > selected_option_row )); then
+                        "$(( selected_row - cursor_row ))" \
+                        "$(( selected_row - cursor_row ))"
+                    selected_row="${cursor_row}"
+                elif (( cursor_row > selected_row )); then
                     # Select the current option and unselect the
                     # previously selected option (which comes before the
                     # current option).
                     printf 'X\e[1D\e[%sA \e[1D\e[%sB' \
-                        "$(( cursor_row - selected_option_row ))" \
-                        "$(( cursor_row - selected_option_row ))"
-                    selected_option_row="${cursor_row}"
-                    selected_option="${options[selected_option_row - first_option_row]}"
+                        "$(( cursor_row - selected_row ))" \
+                        "$(( cursor_row - selected_row ))"
+                    selected_row="${cursor_row}"
                 fi
                 ;;
             "${keynames["X"]}")
                 # Select the current option, if unselected, by writing
                 # an "X" character and the CSI for "Cursor one char
                 # back".
-                if [[ -z "${selected_option_row}" ]]; then
+                if [[ -z "${selected_row}" ]]; then
                     # Select the current option.
                     printf 'X\e[1D'
-                    selected_option_row="${cursor_row}"
-                    selected_option="${options[selected_option_row - first_option_row]}"
-                elif (( cursor_row < selected_option_row )); then
+                    selected_row="${cursor_row}"
+                elif (( cursor_row < selected_row )); then
                     # Select the current option and unselect the
                     # previously selected option (which comes after the
                     # current option).
                     printf 'X\e[1D\e[%sB \e[1D\e[%sA' \
-                        "$(( selected_option_row - cursor_row ))" \
-                        "$(( selected_option_row - cursor_row ))"
-                    selected_option_row="${cursor_row}"
-                    selected_option="${options[selected_option_row - first_option_row]}"
-                elif (( cursor_row > selected_option_row )); then
+                        "$(( selected_row - cursor_row ))" \
+                        "$(( selected_row - cursor_row ))"
+                    selected_row="${cursor_row}"
+                elif (( cursor_row > selected_row )); then
                     # Select the current option and unselect the
                     # previously selected option (which comes before the
                     # current option).
                     printf 'X\e[1D\e[%sA \e[1D\e[%sB' \
-                        "$(( cursor_row - selected_option_row ))" \
-                        "$(( cursor_row - selected_option_row ))"
-                    selected_option_row="${cursor_row}"
-                    selected_option="${options[selected_option_row - first_option_row]}"
+                        "$(( cursor_row - selected_row ))" \
+                        "$(( cursor_row - selected_row ))"
+                    selected_row="${cursor_row}"
                 fi
                 ;;
             "${keynames["Backspace"]}" | "${keynames["Delete"]}")
                 # Unselect the current option, if selected, by writing a
                 # space character and the CSI for "Cursor one char
                 # back".
-                if (( cursor_row == selected_option_row )); then
+                if (( cursor_row == selected_row )); then
                     # Unselect the current option.
                     printf ' \e[1D'
-                    selected_option_row=""
-                    selected_option=""
+                    selected_row=""
                 fi
                 ;;
             "${keynames["Tab"]}")
-                # Exit the TUI block.
-                reply="${selected_option}"
+                # Exit the TUI block, returning (as nonlocal variable)
+                # the selected row.
+                reply="${selected_row}"
                 break
                 ;;
         esac
@@ -1915,6 +1909,7 @@ function argparser_create_tui() {
     # Build and run a text-based user interface (TUI).
 
     # Define the local variables.
+    local end_row
     local file
     local heading
     local max_width
@@ -1923,18 +1918,22 @@ function argparser_create_tui() {
     local -a prompts
     local -a replies
     local reply
+    local row_count
     local shell
-    local tui_block_cols
-    local tui_block_rows
+    local start_row
+    local total_row_count
     local tui_element
     local -a tui_elements
+    local width
 
     # Clear the screen.
     printf '\e[2J'
 
     # Build the header line.
     printf 'Shell Argparser v1.4.0\n\n'
-    tui_elements=("Label" 2 0)
+    row_count=2
+    (( total_row_count += row_count ))
+    tui_elements=("Label" "${row_count}" 0)
 
     # Build the TUI block asking for the target shell.
     heading="Does your script use Bash or only a POSIX-compliant shell?"
@@ -1944,29 +1943,41 @@ function argparser_create_tui() {
     )
     argparser_build_tui_radiobuttons "${heading}" "${options[@]}"
     argparser_get_max_width "${options[@]}"
-    tui_elements+=("Radiobuttons" "$(( "${#options[@]}" + 1 ))" "${max_width}")
+    (( row_count = "${#options[@]}" + 1 ))
+    (( total_row_count += row_count ))
+    tui_elements+=("Radiobuttons" "${row_count}" "${max_width}")
 
     printf '\n'
-    tui_elements+=("Label" 1 0)
+    row_count=1
+    (( total_row_count += row_count ))
+    tui_elements+=("Label" "${row_count}" 0)
 
     # Build the TUI block asking for the target file.
     heading="Which file shall the arguments definition be written to?"
     prompt="Target file"
     argparser_build_tui_textbox "${heading}" "${prompt}"
-    tui_elements+=("Textbox" 2 "${max_width}")
+    row_count=2
+    (( total_row_count += row_count ))
+    tui_elements+=("Textbox" "${row_count}" "${max_width}")
 
     printf '\n'
-    tui_elements+=("Label" 1 0)
+    row_count=1
+    (( total_row_count += row_count ))
+    tui_elements+=("Label" "${row_count}" 0)
 
     # Build the TUI block asking for the arguments definition delimiter.
     heading="Which character do you want to use as primary arguments "
     heading+="definition delimiter?"
     prompt="Primary delimiter"
     argparser_build_tui_textbox "${heading}" "${prompt}"
-    tui_elements+=("Textbox" 2 "${max_width}")
+    row_count=2
+    (( total_row_count += row_count ))
+    tui_elements+=("Textbox" "${row_count}" "${max_width}")
 
     printf '\n'
-    tui_elements+=("Label" 1 0)
+    row_count=1
+    (( total_row_count += row_count ))
+    tui_elements+=("Label" "${row_count}" 0)
 
     # Build the TUI block asking for the arguments definition fields.
     heading="Enter the fields for each argument.  Submit an empty argument "
@@ -1986,7 +1997,9 @@ function argparser_create_tui() {
     )
     argparser_build_tui_textbox "${heading}" "${prompts[@]}"
     argparser_get_max_width "${prompts[@]}"
-    tui_elements+=("Textbox" "$(( "${#prompts[@]}" + 1 ))" "${max_width}")
+    (( row_count = "${#prompts[@]}" + 1 ))
+    (( total_row_count += row_count ))
+    tui_elements+=("Textbox" "${row_count}" "${max_width}")
 
     # Trap SIGINTs and EXITs to restore the terminal state, setting the
     # cursor to be moved to the TUI's end and re-enabling the henceforth
@@ -2001,16 +2014,27 @@ function argparser_create_tui() {
     fi &> /dev/null
     stty -echo
 
-    # Run the TUI.
+    # Move the cursor to the TUI's beginning.
+    row_offset="$(( LINES - total_row_count ))"
+    printf '\e[%s;1H' "${row_offset}"
+
+    # Run the TUI.  Thereby, for each TUI element/block, call the
+    # respective function and pass the block's start and end row on the
+    # terminal to it, possibly as well as the block's width (for aligned
+    # blocks like radiobuttons).
+    (( start_row = row_offset - 1 ))
+    (( end_row = row_offset - 1 ))
     for (( i = 0; i < "${#tui_elements[@]}"; i += 3 )); do
         tui_element="${tui_elements[i]}"
-        tui_block_rows="${tui_elements[i+1]}"
-        tui_block_cols="${tui_elements[i+2]}"
+        row_count="${tui_elements[i+1]}"
+        width="${tui_elements[i+2]}"
+        (( start_row = end_row + 1 ))
+        (( end_row += row_count ))
 
         case "${tui_element}" in
             "Radiobuttons")
-                argparser_run_tui_radiobuttons "${tui_block_rows}" \
-                    "${tui_block_cols}"
+                argparser_run_tui_radiobuttons "$(( start_row + 1 ))" \
+                    "${end_row}" "${width}"
                 replies+=("${reply:-Bash}")
                 ;;
             "Textbox")
@@ -2024,9 +2048,10 @@ function argparser_create_tui() {
                 ;;
         esac
 
-        # Move the cursor to the TUI's end.
-        printf '\e[%s;1H' "${LINES:-1000}"
     done
+
+    # Move the cursor to the TUI's end.
+    printf '\e[%s;1H' "${LINES}"
 }
 
 # Define the Argparser functions for reading the configuration and
