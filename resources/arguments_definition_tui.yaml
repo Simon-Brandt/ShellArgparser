@@ -1,0 +1,161 @@
+# Author: Simon Brandt
+# E-Mail: simon.brandt@uni-greifswald.de
+# Last Modification: 2026-03-16
+# License: Public Domain
+
+TUI:
+  Width: ${COLUMNS}
+  Height: ${LINES}
+  Style:
+    Block:
+      Caption:
+        - cyan
+        - bold
+        - reverse
+      Frame:
+        - blue
+        - rounded
+    Textbox:
+      Caption: ""
+      Text:
+        - reverse
+    Button:
+      Caption:
+        - bold
+        - reverse
+    Radio button:
+      Caption: ""
+      Button: ""
+    Keymap:
+      Keyname:
+        - bold
+        - reverse
+      Key function:
+        - reverse
+      Padding:
+        - reverse
+  Elements:
+    - Type: Block
+      Top: 1
+      Left: 1
+      Width: null
+      Height: null
+      Caption: Shell Argparser v1.4.0
+      Style:
+        Caption:
+          - blue
+          - bold
+          - reverse
+        Frame:
+          - blue
+          - rounded
+      Elements:
+        - Type: Block
+          Top: 1
+          Left: 1
+          Width: null
+          Height: null
+          Caption: Shell
+          Elements:
+            - Type: Radio button
+              Caption: Bash
+              Variable: shell
+            - Type: Radio button
+              Caption: POSIX shell
+              Variable: shell
+        - Type: Block
+          Top: 1
+          Left: 1
+          Width: null
+          Height: null
+          Caption: File properties
+          Elements:
+            - Type: Textbox
+              Caption: Target file
+              Variable: file
+            - Type: Textbox
+              Caption: Primary delimiter
+              Variable: delimiter
+        - Type: Block
+          Top: 1
+          Left: 1
+          Width: null
+          Height: null
+          Caption: Argument definition
+          Elements:
+            - Type: Textbox
+              Caption: Argument identifier
+              Variable: arg_key
+            - Type: Textbox
+              Caption: Short option names
+              Variable: short_option
+            - Type: Textbox
+              Caption: Long option names
+              Variable: long_option
+            - Type: Textbox
+              Caption: Value names
+              Variable: value_name
+            - Type: Textbox
+              Caption: Default values
+              Variable: default_value
+            - Type: Textbox
+              Caption: Choice values
+              Variable: choice_value
+            - Type: Textbox
+              Caption: Data type
+              Variable: type
+            - Type: Textbox
+              Caption: Argument number
+              Variable: arg_number
+            - Type: Textbox
+              Caption: Argument group
+              Variable: arg_group
+            - Type: Textbox
+              Caption: Notes
+              Variable: note
+            - Type: Textbox
+              Caption: Help text
+              Variable: help_text
+            - Type: Button
+              Caption: Submit argument
+              Style:
+                Caption:
+                  - green
+                  - bold
+                  - reverse
+              Command: argparser_tui_submit_argument
+        - Type: Button
+          Caption: Create file
+          Style:
+            Caption:
+              - green
+              - bold
+              - reverse
+          Command: argparser_tui_create_file
+        - Type: Button
+          Caption: Exit
+          Style:
+            Caption:
+              - red
+              - bold
+              - reverse
+          Command: argparser_tui_exit
+        - Type: Keyspec
+          Style:
+            Keyname:
+              - magenta
+              - bold
+              - reverse
+            Key function:
+              - magenta
+              - reverse
+            Padding:
+              - magenta
+              - reverse
+          Keys:
+            - X: Select
+            - Del/Bsp: Unselect
+            - Enter: Toggle selection
+            - UpArrow: Previous option
+            - DownArrow: Next option
+            - Tab: Next block
