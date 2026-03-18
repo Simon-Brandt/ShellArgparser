@@ -23,17 +23,30 @@
 <!-- <toc> -->
 ## Table of contents
 
-1. [`v1.3.0` *"Dasyprocta azarae"*](#1-v130-dasyprocta-azarae)
-1. [`v1.2.1` *"Callospermophilus madrensis"*](#2-v121-callospermophilus-madrensis)
-1. [`v1.2.0` *"Callospermophilus lateralis"*](#3-v120-callospermophilus-lateralis)
-1. [`v1.1.2` *"Biswamoyopterus laoensis"*](#4-v112-biswamoyopterus-laoensis)
-1. [`v1.1.1` *"Biswamoyopterus gaoligongensis"*](#5-v111-biswamoyopterus-gaoligongensis)
-1. [`v1.1.0` *"Biswamoyopterus biswasi"*](#6-v110-biswamoyopterus-biswasi)
-1. [`v1.0.1` *"Acomys cahirinus"*](#7-v101-acomys-cahirinus)
-1. [`v1.0.0` *"Acomys airensis"*](#8-v100-acomys-airensis)
+1. [`v1.3.1` *"Dasyprocta coibae"*](#1-v131-dasyprocta-coibae)
+1. [`v1.3.0` *"Dasyprocta azarae"*](#2-v130-dasyprocta-azarae)
+1. [`v1.2.1` *"Callospermophilus madrensis"*](#3-v121-callospermophilus-madrensis)
+1. [`v1.2.0` *"Callospermophilus lateralis"*](#4-v120-callospermophilus-lateralis)
+1. [`v1.1.2` *"Biswamoyopterus laoensis"*](#5-v112-biswamoyopterus-laoensis)
+1. [`v1.1.1` *"Biswamoyopterus gaoligongensis"*](#6-v111-biswamoyopterus-gaoligongensis)
+1. [`v1.1.0` *"Biswamoyopterus biswasi"*](#7-v110-biswamoyopterus-biswasi)
+1. [`v1.0.1` *"Acomys cahirinus"*](#8-v101-acomys-cahirinus)
+1. [`v1.0.0` *"Acomys airensis"*](#9-v100-acomys-airensis)
 <!-- </toc> -->
 
-## 1. `v1.3.0` *"Dasyprocta azarae"*
+## 1. `v1.3.1` *"Dasyprocta coibae"*
+
+This is the second Shell Argparser release in the `1.3.x` series, and the ninth in the `1.x` series. This **patch release** comprises the following changes:
+
+- Bug fixes:
+  - A bug was fixed where a (missing) translation key resulted in an infinite recursion when translating the dedicated warning message.
+  - A bug was fixed where error messages might not be correctly printed upon encountering bootstrapping issues due to unset or wrongly set Argparser environment variables.
+- Other improvements:
+  - The documentation has been slightly improved.
+
+Codename: *"Dasyprocta coibae"* ([Coiban agouti](https://en.wikipedia.org/wiki/Coiban_agouti))
+
+## 2. `v1.3.0` *"Dasyprocta azarae"*
 
 This is the first Shell Argparser release in the `1.3.x` series, and the eighth in the `1.x` series. This **minor release** comprises the following changes:
 
@@ -58,7 +71,7 @@ This is the first Shell Argparser release in the `1.3.x` series, and the eighth 
 
 Codename: *"Dasyprocta azarae"* ([Azara's agouti](https://en.wikipedia.org/wiki/Azara%27s_agouti))
 
-## 2. `v1.2.1` *"Callospermophilus madrensis"*
+## 3. `v1.2.1` *"Callospermophilus madrensis"*
 
 This is the second Shell Argparser release in the `1.2.x` series, and the seventh in the `1.x` series. This **patch release** comprises the following changes:
 
@@ -71,7 +84,7 @@ This is the second Shell Argparser release in the `1.2.x` series, and the sevent
 
 Codename: *"Callospermophilus madrensis"* ([Sierra Madre ground squirrel](https://en.wikipedia.org/wiki/Sierra_Madre_ground_squirrel))
 
-## 3. `v1.2.0` *"Callospermophilus lateralis"*
+## 4. `v1.2.0` *"Callospermophilus lateralis"*
 
 This is the first Shell Argparser release in the `1.2.x` series, and the sixth in the `1.x` series. This **minor release** comprises the following changes:
 
@@ -83,7 +96,7 @@ This is the first Shell Argparser release in the `1.2.x` series, and the sixth i
 
 Codename: *"Callospermophilus lateralis"* ([Golden-mantled ground squirrel](https://en.wikipedia.org/wiki/Golden-mantled_ground_squirrel))
 
-## 4. `v1.1.2` *"Biswamoyopterus laoensis"*
+## 5. `v1.1.2` *"Biswamoyopterus laoensis"*
 
 This is the third Shell Argparser release in the `1.1.x` series, and the fifth in the `1.x` series. This **patch release** comprises the following changes:
 
@@ -92,7 +105,7 @@ This is the third Shell Argparser release in the `1.1.x` series, and the fifth i
 
 Codename: *"Biswamoyopterus laoensis"* ([Laotian giant flying squirrel](https://en.wikipedia.org/wiki/Biswamoyopterus_laoensis))
 
-## 5. `v1.1.1` *"Biswamoyopterus gaoligongensis"*
+## 6. `v1.1.1` *"Biswamoyopterus gaoligongensis"*
 
 This is the second Shell Argparser release in the `1.1.x` series, and the fourth in the `1.x` series. This **patch release** comprises the following changes:
 
@@ -104,7 +117,7 @@ This is the second Shell Argparser release in the `1.1.x` series, and the fourth
 
 Codename: *"Biswamoyopterus gaoligongensis"* ([Mount Gaoligong flying squirrel](https://en.wikipedia.org/wiki/Mount_Gaoligong_flying_squirrel))
 
-## 6. `v1.1.0` *"Biswamoyopterus biswasi"*
+## 7. `v1.1.0` *"Biswamoyopterus biswasi"*
 
 This is the first Shell Argparser release in the `1.1.x` series, and the third in the `1.x` series. This **minor release** comprises the following changes:
 
@@ -118,7 +131,7 @@ This is the first Shell Argparser release in the `1.1.x` series, and the third i
 
 Codename: *"Biswamoyopterus biswasi"* ([Namdapha flying squirrel](https://en.wikipedia.org/wiki/Namdapha_flying_squirrel))
 
-## 7. `v1.0.1` *"Acomys cahirinus"*
+## 8. `v1.0.1` *"Acomys cahirinus"*
 
 This is the second Shell Argparser release in the `1.0.x` series, and the second in the `1.x` series. This **patch release** comprises the following changes:
 
@@ -131,7 +144,7 @@ This is the second Shell Argparser release in the `1.0.x` series, and the second
 
 Codename: *"Acomys cahirinus"* ([Cairo spiny mouse](https://en.wikipedia.org/wiki/Cairo_spiny_mouse))
 
-## 8. `v1.0.0` *"Acomys airensis"*
+## 9. `v1.0.0` *"Acomys airensis"*
 
 This is the initial Shell Argparser release, the first in the `1.0.x` series, and the first in the `1.x` series. This **major release** comprises the following features:
 
