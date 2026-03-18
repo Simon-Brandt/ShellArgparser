@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-03-09
+# Last Modification: 2026-03-18
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -3347,7 +3347,10 @@ function argparser_translate() {
             warning_message+="convenience, the untranslated string is used, "
             warning_message+="instead."
 
-            if [[ "${key}" == "Warning no identifier" ]]; then
+            if [[ "${key}" == "Warning" ]]; then
+                translation="${key}"
+                return
+            elif [[ "${key}" == "Warning no identifier" ]]; then
                 warning_message="${warning_message/"\$1"/${ARGPARSER_TRANSLATION_FILE}}"
                 warning_message="${warning_message/"\$2"/${key}}"
             else
@@ -3370,7 +3373,10 @@ function argparser_translate() {
             warning_message+="\"\$3\" is missing.  For convenience, the "
             warning_message+="untranslated string is used, instead."
 
-            if [[ "${key}" == "Warning no translation" ]]; then
+            if [[ "${key}" == "Warning" ]]; then
+                translation="${key}"
+                return
+            elif [[ "${key}" == "Warning no translation" ]]; then
                 warning_message="${warning_message/"\$1"/${ARGPARSER_TRANSLATION_FILE}}"
                 warning_message="${warning_message/"\$2"/${ARGPARSER_LANGUAGE}}"
                 warning_message="${warning_message/"\$3"/${key}}"
