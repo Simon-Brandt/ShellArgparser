@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-04
+# Last Modification: 2026-03-18
 
 # Usage: Run this script with "bash run_docker.sh [--purge]".
 
@@ -133,7 +133,7 @@ declare -A sha1_hashes=(
     [5.0]=36f2c40  # v5.0.18 (final release)
     [5.1]=9439ce0  # v5.1.16 (final release)
     [5.2]=c5c97b3  # v5.2.37 (final release)
-    [5.3]=a8a1c2f  # v5.3.3  (current release)
+    [5.3]=637f5c8  # v5.3.3  (current release)
 )
 
 # Build the Docker images for the given Bash versions.
