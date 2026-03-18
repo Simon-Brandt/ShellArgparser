@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-10-01
+# Last Modification: 2026-03-18
 
 # Warning: The script will stage all changes in the Markdown files.
 
@@ -44,18 +44,40 @@ for file in "${files[@]}"; do
     fi
 
     file="${dir}/${file}"
-    bash create_toc.sh \
-        --exclude-headings="Table of contents" \
-        --exclude-levels=1 \
-        --in-place \
-        "${file}"
+
+    if [[ "${file}" == *"RELEASE_NOTES.md" ]]; then
+        bash create_toc.sh \
+            --no-number-headings \
+            --exclude-headings="Table of contents" \
+            --exclude-levels=1 \
+            --in-place \
+            "${file}"
+    else
+        bash create_toc.sh \
+            --exclude-headings="Table of contents" \
+            --exclude-levels=1 \
+            --in-place \
+            "${file}"
+    fi
+
     bash include_file.sh "${file}"
     bash create_captions.sh "${file}"
-    bash create_toc.sh \
-        --exclude-headings="Table of contents" \
-        --exclude-levels=1 \
-        --in-place \
-        "${file}"
+
+    if [[ "${file}" == *"RELEASE_NOTES.md" ]]; then
+        bash create_toc.sh \
+            --no-number-headings \
+            --exclude-headings="Table of contents" \
+            --exclude-levels=1 \
+            --in-place \
+            "${file}"
+    else
+        bash create_toc.sh \
+            --exclude-headings="Table of contents" \
+            --exclude-levels=1 \
+            --in-place \
+            "${file}"
+    fi
+
     bash split_sections.sh \
         --to-headings \
         "${file}"
