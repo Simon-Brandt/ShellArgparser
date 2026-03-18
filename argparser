@@ -1747,8 +1747,7 @@ function argparser_read_configuration() {
         error_message="${error_message/"\$2"/${ARGPARSER_CONFIG_FILE}}"
 
         if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
-            ARGPARSER_ARG_DELIMITER_2=","
-            ARGPARSER_ERROR_EXIT_CODE=1
+            argparser_set_env_var_defaults
         fi
 
         argparser_print_error_messages false true "${error_message}"
@@ -1814,8 +1813,7 @@ function argparser_read_configuration() {
     # Sort, filter, colorize, and print all error messages, then exit,
     # as the environment variables should be correctly read.
     if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
-        ARGPARSER_ARG_DELIMITER_2=","
-        ARGPARSER_ERROR_EXIT_CODE=1
+        argparser_set_env_var_defaults
     fi
 
     argparser_print_error_messages true true "${error_messages[@]}"
@@ -2127,6 +2125,131 @@ function argparser_set_env_vars() {
             declare -g "${arg_key}"="${value}"
         fi
     done
+}
+
+function argparser_set_env_var_defaults() {
+    # Set the Argparser environment variables to their default values,
+    # irrespective of being set on the command line, by the calling
+    # script, in the environment, or at all.  This is mainly necessary
+    # for coping with errors upon bootstrapping the Argparser before
+    # having parsed the environment variables.  By setting the default
+    # values upon errors, the error message printing functions can still
+    # work as intended.
+    #
+    # Environment:
+    # ARGPARSER_ADD_HELP
+    # ARGPARSER_ADD_USAGE
+    # ARGPARSER_ADD_VERSION
+    # ARGPARSER_ALLOW_ARG_INTERMIXING
+    # ARGPARSER_ALLOW_FLAG_INVERSION
+    # ARGPARSER_ALLOW_FLAG_NEGATION
+    # ARGPARSER_ALLOW_OPTION_ABBREVIATION
+    # ARGPARSER_ALLOW_OPTION_MERGING
+    # ARGPARSER_ARG_ARRAY_NAME
+    # ARGPARSER_ARG_DEF_FILE
+    # ARGPARSER_ARG_DELIMITER_1
+    # ARGPARSER_ARG_DELIMITER_2
+    # ARGPARSER_CHECK_ARG_DEF
+    # ARGPARSER_CHECK_ENV_VARS
+    # ARGPARSER_CONFIG_FILE
+    # ARGPARSER_COUNT_FLAGS
+    # ARGPARSER_CREATE_ARG_DEF
+    # ARGPARSER_ERROR_EXIT_CODE
+    # ARGPARSER_HELP_ARG_GROUP
+    # ARGPARSER_HELP_DESCRIPTION
+    # ARGPARSER_HELP_EXIT_CODE
+    # ARGPARSER_HELP_FILE
+    # ARGPARSER_HELP_FILE_INCLUDE_CHAR
+    # ARGPARSER_HELP_FILE_KEEP_COMMENTS
+    # ARGPARSER_HELP_OPTIONS
+    # ARGPARSER_LANGUAGE
+    # ARGPARSER_MAX_COL_WIDTH_1
+    # ARGPARSER_MAX_COL_WIDTH_2
+    # ARGPARSER_MAX_COL_WIDTH_3
+    # ARGPARSER_MAX_WIDTH
+    # ARGPARSER_POSITIONAL_ARG_GROUP
+    # ARGPARSER_READ_ARGS
+    # ARGPARSER_SCRIPT_NAME
+    # ARGPARSER_SET_ARGS
+    # ARGPARSER_SET_ARRAYS
+    # ARGPARSER_SILENCE_ERRORS
+    # ARGPARSER_SILENCE_WARNINGS
+    # ARGPARSER_STYLE_FILE
+    # ARGPARSER_TRANSLATION_FILE
+    # ARGPARSER_UNSET_ARGS
+    # ARGPARSER_UNSET_ENV_VARS
+    # ARGPARSER_UNSET_FUNCTIONS
+    # ARGPARSER_USAGE_EXIT_CODE
+    # ARGPARSER_USAGE_FILE
+    # ARGPARSER_USAGE_FILE_INCLUDE_CHAR
+    # ARGPARSER_USAGE_FILE_KEEP_COMMENTS
+    # ARGPARSER_USAGE_MESSAGE_OPTION_TYPE
+    # ARGPARSER_USAGE_MESSAGE_ORIENTATION
+    # ARGPARSER_USAGE_OPTIONS
+    # ARGPARSER_USE_LONG_OPTIONS
+    # ARGPARSER_USE_SHORT_OPTIONS
+    # ARGPARSER_USE_STYLES
+    # ARGPARSER_VERSION_EXIT_CODE
+    # ARGPARSER_VERSION_NUMBER
+    # ARGPARSER_VERSION_OPTIONS
+    # ARGPARSER_WRITE_ARGS
+
+    ARGPARSER_ADD_HELP=true
+    ARGPARSER_ADD_USAGE=true
+    ARGPARSER_ADD_VERSION=true
+    ARGPARSER_ALLOW_ARG_INTERMIXING=false
+    ARGPARSER_ALLOW_FLAG_INVERSION=true
+    ARGPARSER_ALLOW_FLAG_NEGATION=true
+    ARGPARSER_ALLOW_OPTION_ABBREVIATION=false
+    ARGPARSER_ALLOW_OPTION_MERGING=false
+    ARGPARSER_ARG_ARRAY_NAME="ARGPARSER_ARGS"
+    ARGPARSER_ARG_DEF_FILE=""
+    ARGPARSER_ARG_DELIMITER_1=":"
+    ARGPARSER_ARG_DELIMITER_2=","
+    ARGPARSER_CHECK_ARG_DEF=false
+    ARGPARSER_CHECK_ENV_VARS=false
+    ARGPARSER_CONFIG_FILE=""
+    ARGPARSER_COUNT_FLAGS=false
+    ARGPARSER_CREATE_ARG_DEF=false
+    ARGPARSER_ERROR_EXIT_CODE=1
+    ARGPARSER_HELP_ARG_GROUP="Help options"
+    ARGPARSER_HELP_DESCRIPTION=""
+    ARGPARSER_HELP_EXIT_CODE=0
+    ARGPARSER_HELP_FILE=""
+    ARGPARSER_HELP_FILE_INCLUDE_CHAR="@"
+    ARGPARSER_HELP_FILE_KEEP_COMMENTS=false
+    ARGPARSER_HELP_OPTIONS="h,?"
+    ARGPARSER_LANGUAGE="en"
+    ARGPARSER_MAX_COL_WIDTH_1=5
+    ARGPARSER_MAX_COL_WIDTH_2=33
+    ARGPARSER_MAX_COL_WIDTH_3=0
+    ARGPARSER_MAX_WIDTH=79
+    ARGPARSER_POSITIONAL_ARG_GROUP="Positional arguments"
+    ARGPARSER_READ_ARGS=true
+    ARGPARSER_SCRIPT_NAME="${BASH_SOURCE[0]##*/}"
+    ARGPARSER_SET_ARGS=false
+    ARGPARSER_SET_ARRAYS=false
+    ARGPARSER_SILENCE_ERRORS=false
+    ARGPARSER_SILENCE_WARNINGS=false
+    ARGPARSER_STYLE_FILE=""
+    ARGPARSER_TRANSLATION_FILE=""
+    ARGPARSER_UNSET_ARGS=true
+    ARGPARSER_UNSET_ENV_VARS=false
+    ARGPARSER_UNSET_FUNCTIONS=false
+    ARGPARSER_USAGE_EXIT_CODE=0
+    ARGPARSER_USAGE_FILE=""
+    ARGPARSER_USAGE_FILE_INCLUDE_CHAR="@"
+    ARGPARSER_USAGE_FILE_KEEP_COMMENTS=false
+    ARGPARSER_USAGE_MESSAGE_OPTION_TYPE="long"
+    ARGPARSER_USAGE_MESSAGE_ORIENTATION="column"
+    ARGPARSER_USAGE_OPTIONS="u"
+    ARGPARSER_USE_LONG_OPTIONS=true
+    ARGPARSER_USE_SHORT_OPTIONS=false
+    ARGPARSER_USE_STYLES="tty"
+    ARGPARSER_VERSION_EXIT_CODE=0
+    ARGPARSER_VERSION_NUMBER="${argparser_version}"
+    ARGPARSER_VERSION_OPTIONS="V"
+    ARGPARSER_WRITE_ARGS=false
 }
 
 function argparser_modify_env_vars() {
@@ -2765,8 +2888,7 @@ function argparser_read_translation() {
         error_message="${error_message/"\$2"/${ARGPARSER_TRANSLATION_FILE}}"
 
         if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
-            ARGPARSER_ARG_DELIMITER_2=","
-            ARGPARSER_ERROR_EXIT_CODE=1
+            argparser_set_env_var_defaults
         fi
 
         argparser_print_error_messages false true "${error_message}"
@@ -2863,8 +2985,7 @@ function argparser_read_translation() {
 
     # Sort, filter, colorize, translate, and print all error messages.
     if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
-        ARGPARSER_ARG_DELIMITER_2=","
-        ARGPARSER_ERROR_EXIT_CODE=1
+        argparser_set_env_var_defaults
     fi
 
     for i in "${!error_messages[@]}"; do
@@ -2938,8 +3059,7 @@ function argparser_translate() {
             fi
 
             if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
-                ARGPARSER_ARG_DELIMITER_2=","
-                ARGPARSER_ERROR_EXIT_CODE=1
+                argparser_set_env_var_defaults
             fi
 
             argparser_print_warning_messages false "${warning_message}"
@@ -2964,8 +3084,7 @@ function argparser_translate() {
             fi
 
             if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
-                ARGPARSER_ARG_DELIMITER_2=","
-                ARGPARSER_ERROR_EXIT_CODE=1
+                argparser_set_env_var_defaults
             fi
 
             argparser_print_warning_messages false "${warning_message}"
@@ -3038,8 +3157,7 @@ function argparser_read_styles() {
         error_message="${translation}"
 
         if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
-            ARGPARSER_ARG_DELIMITER_2=","
-            ARGPARSER_ERROR_EXIT_CODE=1
+            argparser_set_env_var_defaults
         fi
 
         argparser_print_error_messages false true "${error_message}"
@@ -3138,8 +3256,7 @@ function argparser_read_styles() {
     # Sort, filter, colorize, and print all error and warning messages.
     # Exit iff there are error messages.
     if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
-        ARGPARSER_ARG_DELIMITER_2=","
-        ARGPARSER_ERROR_EXIT_CODE=1
+        argparser_set_env_var_defaults
     fi
 
     argparser_print_error_messages true false "${error_messages[@]}"
@@ -10158,6 +10275,7 @@ function argparser_main() {
         unset -f argparser_read_translation
         unset -f argparser_seq
         unset -f argparser_set_args
+        unset -f argparser_set_env_var_defaults
         unset -f argparser_set_env_vars
         unset -f argparser_sort
         unset -f argparser_toggle_debugger
