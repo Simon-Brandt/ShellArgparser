@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-11
+# Last Modification: 2026-03-18
 # License: Public Domain
 
 # 1.    Define the general translations.
@@ -1108,4 +1108,3 @@ Warning wrong arg number 4:
   de: >
     Warnung: Das Argument "$1" erfordert $2 Werte, hat aber $3 gegeben.  Zwecks
     Einfachheit wird die Vorgabe ($4) genutzt.
-
