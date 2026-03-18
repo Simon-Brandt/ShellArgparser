@@ -20,9 +20,10 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-11-20
+# Last Modification: 2026-03-18
 
-# Usage: Run this script with "bash prepare_release.sh".
+# Usage: Run this script with
+# "bash prepare_release.sh version_number codename".
 
 # Purpose: Prepare a release for the Argparser.
 
