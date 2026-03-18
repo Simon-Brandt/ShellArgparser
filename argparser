@@ -45,7 +45,7 @@
 # Define the Argparser functions to check that the Argparser is run by
 # Bash 4.4 or higher, and execute them immediately, such that the rest
 # of the script doesn't get parsed (which would create errors since it's
-# written in Bash, not POSIX compliantly, and using Bash syntax not
+# written in Bash, not POSIX-compliantly, and using Bash syntax not
 # available prior Bash 4.4).
 argparser_check_shell() {
     # Check that the current shell is a Bash instance.  Else, print an
@@ -2864,8 +2864,8 @@ function argparser_check_env_vars() {
 # Define the Argparser functions for reading the translation and
 # translating strings.
 function argparser_read_translation() {
-    # Read the translation of the auto-generated text for help and usage
-    # messages from the YAML file into an associative array.
+    # Read the translation of the auto-generated text for messages from
+    # the YAML file into an associative array.
     #
     # Nonlocals:
     # - dictionary: the associative array containing the translations
@@ -2873,7 +2873,6 @@ function argparser_read_translation() {
     # Environment:
     # - ARGPARSER_CHECK_ENV_VARS (read-only)
     # - ARGPARSER_LANGUAGE (read-only)
-    # - ARGPARSER_SILENCE_ERRORS
     # - ARGPARSER_TRANSLATION_FILE (read-only)
 
     # Define the local variables.
@@ -3046,6 +3045,7 @@ function argparser_translate() {
     #
     # Environment:
     # - ARGPARSER_CHECK_ENV_VARS (read-only)
+    # - ARGPARSER_LANGUAGE (read-only)
     # - ARGPARSER_TRANSLATION_FILE (read-only)
 
     # Define the local variables.
@@ -3142,9 +3142,9 @@ function argparser_read_styles() {
     # - styles: the associative array containing the styles
     #
     # Environment:
-    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_CHECK_ENV_VARS (read-only)
     # - ARGPARSER_ERROR_EXIT_CODE (read-only)
+    # - ARGPARSER_SILENCE_ERRORS (read-only)
     # - ARGPARSER_STYLE_FILE (read-only)
 
     # Define the local variables.
@@ -9586,8 +9586,9 @@ function argparser_print_error_messages() {
     # - styles: the associative array containing the styles (read-only)
     #
     # Environment:
-    # - ARGPARSER_MAX_WIDTH (read-only)
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_ERROR_EXIT_CODE (read-only)
+    # - ARGPARSER_MAX_WIDTH (read-only)
     # - ARGPARSER_SCRIPT_NAME (read-only)
     # - ARGPARSER_SILENCE_ERRORS (read-only)
 
@@ -9695,6 +9696,7 @@ function argparser_print_warning_messages() {
     # - styles: the associative array containing the styles (read-only)
     #
     # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_MAX_WIDTH (read-only)
     # - ARGPARSER_SCRIPT_NAME (read-only)
     # - ARGPARSER_SILENCE_WARNINGS (read-only)
