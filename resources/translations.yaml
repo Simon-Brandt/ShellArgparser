@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-03-18
+# Last Modification: 2026-03-19
 # License: Public Domain
 
 # 1.    Define the general translations.
@@ -13,8 +13,8 @@ Help options:
   de: Hilfsoptionen
 
 Help description:
-  en:
-  de:
+  en: Command-line program
+  de: Kommandozeilenprogramm
 
 Version:
   en: Version
@@ -482,7 +482,7 @@ Error arg def long name empty:
 Error arg def long name help:
   en: >
     Error: The long option with the identifier "$1" has the long option
-     "--help"defined, which is reserved for invoking the help message.
+    "--help" defined, which is reserved for invoking the help message.
   de: >
     Fehler: Die lange Option mit dem Identifikator "$1" hat die lange Option
     "--help" definiert, die zum Aufruf der Hilfsnachricht reserviert ist.
