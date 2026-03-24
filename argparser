@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-03-18
+# Last Modification: 2026-03-24
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -2227,7 +2227,9 @@ function argparser_read_configuration() {
 
     # Sort, filter, colorize, and print all error messages, then exit,
     # as the environment variables should be correctly read.
-    if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
+    if (( "${#error_messages[@]}" > 0 )) \
+        && [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]
+    then
         argparser_set_env_var_defaults
     fi
 
@@ -3397,7 +3399,9 @@ function argparser_read_translation() {
     fi
 
     # Sort, filter, colorize, translate, and print all error messages.
-    if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
+    if (( "${#error_messages[@]}" > 0 )) \
+        && [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]
+    then
         argparser_set_env_var_defaults
     fi
 
@@ -3669,7 +3673,9 @@ function argparser_read_styles() {
 
     # Sort, filter, colorize, and print all error and warning messages.
     # Exit iff there are error messages.
-    if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
+    if (( "${#error_messages[@]}" > 0 || "${#warning_messages[@]}" > 0)) \
+        && [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]
+    then
         argparser_set_env_var_defaults
     fi
 
