@@ -1810,8 +1810,9 @@ function argparser_read_configuration() {
         fi
     done
 
-    # Sort, filter, colorize, and print all error messages, then exit,
-    # as the environment variables should be correctly read.
+    # If there are error messages, sort, filter, colorize, and print
+    # them, then exit, as the environment variables should be correctly
+    # read.
     if (( "${#error_messages[@]}" > 0 )) \
         && [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]
     then
@@ -2861,15 +2862,12 @@ function argparser_check_env_vars() {
 
     # If there are error messages, sort, filter, colorize, and print
     # them, then exit, as parsing the arguments with a faulty
-    # environment variable configuration might be impossible.  If
-    # ${ARGPARSER_ERROR_EXIT_CODE} is among the faulty variables, the
-    # exit would fail, so set it to its default value.
-    for error_message in "${error_messages[@]}"; do
-        if [[ "${error_message}" == *"ARGPARSER_ERROR_EXIT_CODE"* ]]; then
-            ARGPARSER_ERROR_EXIT_CODE=1
-            break
-        fi
-    done
+    # environment variable configuration might be impossible.
+    if (( "${#error_messages[@]}" > 0 )) \
+        && [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]
+    then
+        argparser_set_env_var_defaults
+    fi
 
     argparser_print_error_messages true true "${error_messages[@]}"
 }
@@ -3023,7 +3021,8 @@ function argparser_read_translation() {
         dictionary[${group}]="${translation}"
     fi
 
-    # Sort, filter, colorize, translate, and print all error messages.
+    # If there are error messages, sort, filter, colorize, translate,
+    # and print them.
     if (( "${#error_messages[@]}" > 0 )) \
         && [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]
     then
@@ -3357,8 +3356,8 @@ function argparser_read_styles() {
         fi
     done
 
-    # Sort, filter, colorize, and print all error and warning messages.
-    # Exit iff there are error messages.
+    # If there are error or warning messages, sort, filter, colorize,
+    # and print them, then exit (for error messages only).
     if (( "${#error_messages[@]}" > 0 || "${#warning_messages[@]}" > 0)) \
         && [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]
     then
