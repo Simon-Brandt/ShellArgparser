@@ -2884,9 +2884,7 @@ function argparser_read_translation() {
     # - dictionary: the associative array containing the translations
     #
     # Environment:
-    # - ARGPARSER_ARG_DELIMITER_2
-    # - ARGPARSER_CHECK_ENV_VARS
-    # - ARGPARSER_ERROR_EXIT_CODE
+    # - ARGPARSER_CHECK_ENV_VARS (read-only)
     # - ARGPARSER_LANGUAGE (read-only)
     # - ARGPARSER_TRANSLATION_FILE (read-only)
 
@@ -3058,6 +3056,7 @@ function argparser_translate() {
     # - translation: the translated string
     #
     # Environment:
+    # - ARGPARSER_CHECK_ENV_VARS (read-only)
     # - ARGPARSER_TRANSLATION_FILE (read-only)
 
     # Define the local variables.
@@ -3154,9 +3153,9 @@ function argparser_read_styles() {
     # - styles: the associative array containing the styles
     #
     # Environment:
-    # - ARGPARSER_ARG_DELIMITER_2
-    # - ARGPARSER_CHECK_ENV_VARS
-    # - ARGPARSER_ERROR_EXIT_CODE
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+    # - ARGPARSER_CHECK_ENV_VARS (read-only)
+    # - ARGPARSER_ERROR_EXIT_CODE (read-only)
     # - ARGPARSER_STYLE_FILE (read-only)
 
     # Define the local variables.
@@ -6561,7 +6560,7 @@ function argparser_parse_args() {
     #
     # Environment:
     # - ARGPARSER_ALLOW_ARG_INTERMIXING (read-only)
-    # - ARGPARSER_ARG_ARRAY_NAME (read-only)
+    # - ARGPARSER_ARG_ARRAY_NAME
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_CHECK_ARG_DEF (read-only)
     # - ARGPARSER_ERROR_EXIT_CODE (read-only)
