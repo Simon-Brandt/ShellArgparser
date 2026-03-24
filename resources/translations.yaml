@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-03-18
+# Last Modification: 2026-03-24
 # License: Public Domain
 
 # 1.    Define the general translations.
@@ -209,28 +209,21 @@ Error env var delimiters reserved:
 Error env var styles:
   en: >
     Error: The environment variable "$1" is set to "$2", but the values must
-    lie in {black, red, green, yellow, blue, magenta, cyan, white} for colors
-    and in {normal, bold, faint, italic, underline, double, overline,
-    crossed-out, blink, reverse} for styles.  Colors, only, may be prefixed by
-    "bright_" or suffixed by "_fg" or "_bg".
+    lie in {$3} for colors and in {$4} for styles.  Colors, only, may be
+    prefixed by "bright_" or suffixed by "_fg" or "_bg".
   de: >
     Fehler: Die Umgebungsvariable "$1" ist auf "$2" gesetzt, die Werte müssen
-    aber in {black, red, green, yellow, blue, magenta, cyan, white} (also
-    {schwarz, rot, grün, gelb, blau, magenta, cyan, weiß}) für Farben und in
-    {normal, bold, faint, italic, underline, double, overline, crossed-out,
-    blink, reverse} (also {normal, fett, blass, kursiv, unterstrichen, doppelt
-    unterstrichen, überstrichen, durchgestrichen, blinkend, revers} für Stile
-    liegen.  Ausschließlich Farben können mit dem Präfix "bright_" ("hell_")
-    oder dem Suffix "_fg" (Vordergrund) oder "_bg" (Hintergrund) gegeben
-    werden.
+    aber in {$3} für Farben und in {$4} für Stile liegen.  Ausschließlich
+    Farben können mit dem Präfix "bright_" ("hell_") oder dem Suffix "_fg"
+    (Vordergrund) oder "_bg" (Hintergrund) gegeben werden.
 
 Error env var style usage:
   en: >
-    Error: The environment variable "ARGPARSER_USE_STYLES" must be in
-    {always,never,file,tty}, but is "$1".
+    Error: The environment variable "ARGPARSER_USE_STYLES" must be in {$1}, but
+    is "$2".
   de: >
-    Fehler: Die Umgebungsvariable "ARGPARSER_USE_STYLES" muss in
-    {always,never,file,tty} ("{immer,nie,Datei,TTY}") liegen, ist aber "$1".
+    Fehler: Die Umgebungsvariable "ARGPARSER_USE_STYLES" muss in {$1} liegen,
+    ist aber "$2".
 
 Error env var option type:
   en: >
@@ -997,39 +990,25 @@ Error style file equals sign:
 
 Error style file frame styles:
   en: >
-    Error: The style "$1" is set to "$2", but the values must lie in {black,
-    red, green, yellow, blue, magenta, cyan, white} for colors and in {thin,
-    thick, double, angular, rounded, solid, double-dashed, triple-dashed,
-    quadruple-dashed} for frame styles.  Colors, only, may be prefixed by
+    Error: The style "$1" is set to "$2", but the values must lie in {$3} for
+    colors and in {$4} for frame styles.  Colors, only, may be prefixed by
     \"bright_\" or suffixed by \"_fg\" or \"_bg\".
   de: >
     Fehler: Der Stil "$1" ist auf "$2" gesetzt, die Werte müssen aber in
-    {black, red, green, yellow, blue, magenta, cyan, white} (also {schwarz,
-    rot, grün, gelb, blau, magenta, cyan, weiß}) für Farben und in {thin,
-    thick, double, angular, rounded, solid, double-dashed, triple-dashed,
-    quadruple-dashed} (also {dünn, dick, doppelt, eckig, rund, durchgezogen,
-    doppelt gestrichelt, dreifach gestrichelt, vierfach gestrichelt} für
-    Rahmenstile liegen.  Ausschließlich Farben können mit dem Präfix "bright_"
-    ("hell_") oder dem Suffix "_fg" (Vordergrund) oder "_bg" (Hintergrund)
-    gegeben werden.
+    {$3} für Farben und in {$4} für Rahmenstile liegen.  Ausschließlich Farben
+    können mit dem Präfix "bright_" ("hell_") oder dem Suffix "_fg"
+    (Vordergrund) oder "_bg" (Hintergrund) gegeben werden.
 
 Error style file text styles:
   en: >
-    Error: The style "$1" is set to "$2", but the values must lie in {black,
-    red, green, yellow, blue, magenta, cyan, white} for colors and in {normal,
-    bold, faint, italic, underline, double, overline, crossed-out, blink,
-    reverse} for text styles.  Colors, only, may be prefixed by "bright_" or
-    suffixed by "_fg" or "_bg".
+    Error: The style "$1" is set to "$2", but the values must lie in {$3} for
+    colors and in {$4} for text styles.  Colors, only, may be prefixed by
+    "bright_" or suffixed by "_fg" or "_bg".
   de: >
     Fehler: Der Stil "$1" ist auf "$2" gesetzt, die Werte müssen aber in
-    {black, red, green, yellow, blue, magenta, cyan, white} (also {schwarz,
-    rot, grün, gelb, blau, magenta, cyan, weiß}) für Farben und in {normal,
-    bold, faint, italic, underline, double, overline, crossed-out, blink,
-    reverse} (also {normal, fett, blass, kursiv, unterstrichen, doppelt
-    unterstrichen, überstrichen, durchgestrichen, blinkend, revers} für
-    Textstile liegen.  Ausschließlich Farben können mit dem Präfix "bright_"
-    ("hell_") oder dem Suffix "_fg" (Vordergrund) oder "_bg" (Hintergrund)
-    gegeben werden.
+    {$3} für Farben und in {$4} für Textstile liegen.  Ausschließlich Farben
+    können mit dem Präfix "bright_" ("hell_") oder dem Suffix "_fg"
+    (Vordergrund) oder "_bg" (Hintergrund) gegeben werden.
 
 # 3.10. Define the translations for creating the help or usage messages.
 Error include directive:

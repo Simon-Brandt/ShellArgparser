@@ -2361,6 +2361,8 @@ function argparser_check_env_vars() {
 
     # Define the local variables.
     local -A checked_short_options
+    local -a colors_arr
+    local colors_str
     local count
     local error_message
     local -a error_messages
@@ -2368,6 +2370,8 @@ function argparser_check_env_vars() {
     local i
     local short_option
     local -a short_options
+    local -a text_styles_arr
+    local text_styles_str
     local translation
     local value
     local -a values
@@ -2603,17 +2607,43 @@ function argparser_check_env_vars() {
         if [[ -v "${var}" ]] \
             && ! argparser_check_styles "colors, text styles" "${!var}"
         then
+            colors_arr=(
+                black
+                red
+                green
+                yellow
+                blue
+                magenta
+                cyan
+                white
+            )
+            argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colors_arr[@]}"
+            colors_str="${joined_array}"
+
+            text_styles_arr=(
+                normal
+                bold
+                faint
+                italic
+                underline
+                double
+                overline
+                crossed-out
+                blink
+                reverse
+            )
+            argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
+                "${text_styles_arr[@]}"
+            text_styles_str="${joined_array}"
+
             error_message="Error: The environment variable \"\$1\" is set to "
-            error_message+="\"\$2\", but the values must lie in {black, red, "
-            error_message+="green, yellow, blue, magenta, cyan, white} for "
-            error_message+="colors and in {normal, bold, faint, italic, "
-            error_message+="underline, double, overline, crossed-out, blink, "
-            error_message+="reverse} for styles.  Colors, only, may be "
-            error_message+="prefixed by \"bright_\" or suffixed by \"_fg\" or "
-            error_message+="\"_bg\"."
+            error_message+="\"\$2\", but the values must lie in {\$3} for "
+            error_message+="colors and in {\$4} for styles.  Colors, only, "
+            error_message+="may be prefixed by \"bright_\" or suffixed by "
+            error_message+="\"_fg\" or \"_bg\"."
 
             argparser_translate "Error env var styles" "${error_message}" \
-                "${var}" "${!var}"
+                "${var}" "${!var}" "${colors_str}" "${text_styles_str}"
             error_message="${translation}"
             error_messages+=("${error_message}")
         fi
@@ -2623,12 +2653,22 @@ function argparser_check_env_vars() {
     if ! argparser_in_array "${ARGPARSER_USE_STYLES}" "always" "never" "file" \
         "tty"
     then
+        styles_arr=(
+            always
+            never
+            file
+            tty
+        )
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
+            "${styles_arr[@]}"
+        styles_str="${joined_array}"
+
         error_message="Error: The environment variable "
-        error_message+="\"ARGPARSER_USE_STYLES\" must be in "
-        error_message+="{always,never,file,tty}, but is \"\$1\"."
+        error_message+="\"ARGPARSER_USE_STYLES\" must be in {\$1}, but is "
+        error_message+="\"\$2\"."
 
         argparser_translate "Error env var style usage" "${error_message}" \
-            "${ARGPARSER_USE_STYLES}"
+            "${styles_str}" "${ARGPARSER_USE_STYLES}"
         error_message="${translation}"
         error_messages+=("${error_message}")
     fi
@@ -3120,13 +3160,19 @@ function argparser_read_styles() {
     # - ARGPARSER_STYLE_FILE (read-only)
 
     # Define the local variables.
+    local -a colors_arr
+    local colors_str
     local error_message
     local -a error_messages
     local file_attributes
+    local -a frame_styles_arr
+    local frame_styles_str
     local line
     local -a lines
     local name
     local style
+    local -a text_styles_arr
+    local text_styles_str
     local translation
     local trimmed_string
     local warning_message
@@ -3224,33 +3270,88 @@ function argparser_read_styles() {
         style="${styles[${name}]}"
         if [[ "${name}" == *"_frame" ]]; then
             if ! argparser_check_styles "colors, frame styles" "${style}"; then
+                colors_arr=(
+                    black
+                    red
+                    green
+                    yellow
+                    blue
+                    magenta
+                    cyan
+                    white
+                )
+                argparser_join "${ARGPARSER_ARG_DELIMITER_2:-","}" \
+                    "${colors_arr[@]}"
+                colors_str="${joined_array}"
+
+                frame_styles_arr=(
+                    thin
+                    thick
+                    double
+                    angular
+                    rounded
+                    solid
+                    double-dashed
+                    triple-dashed
+                    quadruple-dashed
+                )
+                argparser_join "${ARGPARSER_ARG_DELIMITER_2:-","}" \
+                    "${frame_styles_arr[@]}"
+                frame_styles_str="${joined_array}"
+
                 error_message="Error: The style \"\$1\" is set to \"\$2\", "
-                error_message+="but the values must lie in {black, red, "
-                error_message+="green, yellow, blue, magenta, cyan, white} "
-                error_message+="for colors and in {thin, thick, double, "
-                error_message+="angular, rounded, solid, double-dashed, "
-                error_message+="triple-dashed, quadruple-dashed} for frame "
-                error_message+="styles.  Colors, only, may be prefixed by "
-                error_message+="\"bright_\" or suffixed by \"_fg\" or \"_bg\"."
+                error_message+="but the values must lie in {\$3} for colors "
+                error_message+="and in {\$4} for frame styles.  Colors, only, "
+                error_message+="may be prefixed by \"bright_\" or suffixed by "
+                error_message+="\"_fg\" or \"_bg\"."
 
                 argparser_translate "Error style file frame styles" \
-                    "${error_message}" "${name}" "${style}"
+                    "${error_message}" "${name}" "${style}" "${colors_str}" \
+                    "${frame_styles_str}"
                 error_message="${translation}"
                 error_messages+=("${error_message}")
             fi
         else
             if ! argparser_check_styles "colors, text styles" "${style}"; then
+                colors_arr=(
+                    black
+                    red
+                    green
+                    yellow
+                    blue
+                    magenta
+                    cyan
+                    white
+                )
+                argparser_join "${ARGPARSER_ARG_DELIMITER_2:-","}" \
+                    "${colors_arr[@]}"
+                colors_str="${joined_array}"
+
+                text_styles_arr=(
+                    normal
+                    bold
+                    faint
+                    italic
+                    underline
+                    double
+                    overline
+                    crossed-out
+                    blink
+                    reverse
+                )
+                argparser_join "${ARGPARSER_ARG_DELIMITER_2:-","}" \
+                    "${text_styles_arr[@]}"
+                text_styles_str="${joined_array}"
+                
                 error_message="Error: The style \"\$1\" is set to \"\$2\", "
-                error_message+="but the values must lie in {black, red, "
-                error_message+="green, yellow, blue, magenta, cyan, white} "
-                error_message+="for colors and in {normal, bold, faint, "
-                error_message+="italic, underline, double, overline, "
-                error_message+="crossed-out, blink, reverse} for text "
-                error_message+="styles.  Colors, only, may be prefixed by "
-                error_message+="\"bright_\" or suffixed by \"_fg\" or \"_bg\"."
+                error_message+="but the values must lie in {\$3} for colors "
+                error_message+="and in {\$4} for text styles.  Colors, only, "
+                error_message+="may be prefixed by \"bright_\" or suffixed by "
+                error_message+="\"_fg\" or \"_bg\"."
 
                 argparser_translate "Error style file text styles" \
-                    "${error_message}" "${name}" "${style}"
+                    "${error_message}" "${name}" "${style}" "${colors_str}" \
+                    "${text_styles_str}"
                 error_message="${translation}"
                 error_messages+=("${error_message}")
             fi
