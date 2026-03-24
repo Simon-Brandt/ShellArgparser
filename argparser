@@ -344,27 +344,27 @@ function argparser_check_styles() {
     # Define the arrays of implemented colors, text styles, and frame
     # styles (corner and line styles, as well as line widths).
     colors=(
-        black
-        red
-        green
-        yellow
-        blue
-        magenta
-        cyan
-        white
+        "black"
+        "red"
+        "green"
+        "yellow"
+        "blue"
+        "magenta"
+        "cyan"
+        "white"
     )
 
     text_styles=(
-        normal
-        bold
-        faint
-        italic
-        underline
-        double
-        overline
-        crossed-out
-        blink
-        reverse
+        "normal"
+        "bold"
+        "faint"
+        "italic"
+        "underline"
+        "double"
+        "overline"
+        "crossed-out"
+        "blink"
+        "reverse"
     )
 
     corner_styles=(
@@ -2608,29 +2608,29 @@ function argparser_check_env_vars() {
             && ! argparser_check_styles "colors, text styles" "${!var}"
         then
             colors_arr=(
-                black
-                red
-                green
-                yellow
-                blue
-                magenta
-                cyan
-                white
+                "black"
+                "red"
+                "green"
+                "yellow"
+                "blue"
+                "magenta"
+                "cyan"
+                "white"
             )
             argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colors_arr[@]}"
             colors_str="${joined_array}"
 
             text_styles_arr=(
-                normal
-                bold
-                faint
-                italic
-                underline
-                double
-                overline
-                crossed-out
-                blink
-                reverse
+                "normal"
+                "bold"
+                "faint"
+                "italic"
+                "underline"
+                "double"
+                "overline"
+                "crossed-out"
+                "blink"
+                "reverse"
             )
             argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
                 "${text_styles_arr[@]}"
@@ -2654,10 +2654,10 @@ function argparser_check_env_vars() {
         "tty"
     then
         styles_arr=(
-            always
-            never
-            file
-            tty
+            "always"
+            "never"
+            "file"
+            "tty"
         )
         argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
             "${styles_arr[@]}"
@@ -3271,29 +3271,29 @@ function argparser_read_styles() {
         if [[ "${name}" == *"_frame" ]]; then
             if ! argparser_check_styles "colors, frame styles" "${style}"; then
                 colors_arr=(
-                    black
-                    red
-                    green
-                    yellow
-                    blue
-                    magenta
-                    cyan
-                    white
+                    "black"
+                    "red"
+                    "green"
+                    "yellow"
+                    "blue"
+                    "magenta"
+                    "cyan"
+                    "white"
                 )
                 argparser_join "${ARGPARSER_ARG_DELIMITER_2:-","}" \
                     "${colors_arr[@]}"
                 colors_str="${joined_array}"
 
                 frame_styles_arr=(
-                    thin
-                    thick
-                    double
-                    angular
-                    rounded
-                    solid
-                    double-dashed
-                    triple-dashed
-                    quadruple-dashed
+                    "thin"
+                    "thick"
+                    "double"
+                    "angular"
+                    "rounded"
+                    "solid"
+                    "double-dashed"
+                    "triple-dashed"
+                    "quadruple-dashed"
                 )
                 argparser_join "${ARGPARSER_ARG_DELIMITER_2:-","}" \
                     "${frame_styles_arr[@]}"
@@ -3314,30 +3314,30 @@ function argparser_read_styles() {
         else
             if ! argparser_check_styles "colors, text styles" "${style}"; then
                 colors_arr=(
-                    black
-                    red
-                    green
-                    yellow
-                    blue
-                    magenta
-                    cyan
-                    white
+                    "black"
+                    "red"
+                    "green"
+                    "yellow"
+                    "blue"
+                    "magenta"
+                    "cyan"
+                    "white"
                 )
                 argparser_join "${ARGPARSER_ARG_DELIMITER_2:-","}" \
                     "${colors_arr[@]}"
                 colors_str="${joined_array}"
 
                 text_styles_arr=(
-                    normal
-                    bold
-                    faint
-                    italic
-                    underline
-                    double
-                    overline
-                    crossed-out
-                    blink
-                    reverse
+                    "normal"
+                    "bold"
+                    "faint"
+                    "italic"
+                    "underline"
+                    "double"
+                    "overline"
+                    "crossed-out"
+                    "blink"
+                    "reverse"
                 )
                 argparser_join "${ARGPARSER_ARG_DELIMITER_2:-","}" \
                     "${text_styles_arr[@]}"
