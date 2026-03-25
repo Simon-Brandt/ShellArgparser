@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-03-24
+# Last Modification: 2026-03-25
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -1631,6 +1631,241 @@ function argparser_draw_frame() {
         declare -n var="${var}"
         var="${joined_array}"
     fi
+}
+
+# Define the Argparser functions for parsing YAML files.
+function argparser_parse_yaml() {
+    # Read the YAML file into a "nested" (i.e., key-merged) associative
+    # array.
+    #
+    # Arguments:
+    # - $1: the YAML file
+    #
+    # Nonlocals:
+    # - yaml_array: the YAML file's contents, as associative array
+    #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+    # - ARGPARSER_CHECK_ENV_VARS (read-only)
+
+    # Define the local variables.
+    local -a error_lines
+    local error_message
+    local -a error_messages
+    local file
+    local file_attributes
+    local indentation
+    local i
+    local is_continued
+    local key
+    local -a keys
+    local line
+    local -a lines
+    local parent_key
+    local prev_indentation
+    local value
+
+    # Read the argument.
+    file="$1"
+
+    # Check if the file exists and is readable.  Else, output an error
+    # message and exit.  Since at this point of invocation, the
+    # environment variables may not be checked, yet, set the needed ones
+    # to default values, if ${ARGPARSER_CHECK_ENV_VARS} isn't set to
+    # "false" (and by this, the checking hasn't been explicitly
+    # disabled).
+    argparser_check_file "${file}"
+    if [[ "${file_attributes}" != "0000" ]]; then
+        error_message="Error: The referenced file \"\$1\""
+        case "${file_attributes}" in
+            0001) error_message+="is empty." ;;
+            0010) error_message+="is not readable." ;;
+            0011) error_message+="is not readable and empty." ;;
+            0100) error_message+="is not a regular file." ;;
+            0101) error_message+="is not a regular file and empty." ;;
+            0110) error_message+="is not a regular file and not readable." ;;
+            0111)
+                error_message+="is not a regular file, not readable, and "
+                error_message+="empty."
+                ;;
+            1111) error_message+="does not exist." ;;
+        esac
+
+        error_message="${error_message/"\$1"/${file}}"
+
+        if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
+            argparser_check_env_vars
+        fi
+
+        argparser_print_error_messages false true "${error_message}"
+    fi
+
+    # Read the YAML file.
+    mapfile -t lines < "${file}"
+    is_continued=false
+    parent_key=""
+    keys=("${parent_key}")
+    prev_indentation=0
+    error_lines=( )
+    error_messages=( )
+
+    for line in "${lines[@]}"; do
+        # Skip the line if it's empty, a comment, or denotes the start
+        # or end of a YAML block.
+        if [[ -z "${line}" \
+            || "${line}" =~ " "*\#.* \
+            || "${line}" == "---" \
+            || "${line}" == "..." ]]
+        then
+            continue
+        fi
+
+        # Get the line's indentation width (using a regex matching also
+        # the zero-indentation case).
+        # If it is odd, output an error message. This message must not
+        # yet be translated, as the translation requires translation
+        # identifiers that may not have been read, yet (when the current
+        # YAML file is the translation file).  This would lead to a
+        # warning message complaining that the identifier would be
+        # missing, despite being present, just later.  For the necessary
+        # interpolation, below, save the current line.
+        # For an even (correct) indentation width, set the current
+        # ("parent") key to the one corresponding to the indentation
+        # width.
+        if [[ "${line}" =~ ^(" "*) ]]; then
+            indentation="${#BASH_REMATCH[1]}"
+        fi
+
+        if (( indentation % 2 != 0 )); then
+            error_message="Error: The YAML line \"\$1\" is indented by an odd "
+            error_message+="number of spaces."
+            error_messages+=("${error_message}")
+            error_lines+=("${line}")
+            continue
+        elif (( indentation > prev_indentation + 2 )); then
+            error_message="Error: The YAML line \"\$1\" is indented by more "
+            error_message+="than two spaces more than the previous line."
+            error_messages+=("${error_message}")
+            error_lines+=("${line}")
+            continue
+        elif (( indentation < prev_indentation )) \
+            && [[ "${is_continued}" == true ]]
+        then
+            is_continued=false
+        fi
+        parent_key="${keys[indentation]}"
+
+        # Parse the line.
+        if [[ "${is_continued}" == true ]]; then
+            # The line continues the previous line(s).
+            if [[ -z "${yaml_array[${key}]}" ]]; then
+                yaml_array[${key}]+="${line##+( )}"
+            else
+                yaml_array[${key}]+=" ${line##+( )}"
+            fi
+        elif [[ "${line}" =~ ^(" "*)(.+)":"$ ]]; then
+            # The line starts a mapping, containing the key.
+            if (( indentation == 0 )); then
+                key="${BASH_REMATCH[2]}"
+            else
+                key="${parent_key}${ARGPARSER_ARG_DELIMITER_2}"
+                key+="${BASH_REMATCH[2]}"
+            fi
+        elif [[ "${line}" =~ ^(" "*)"- "(.+)": "(.*)$ ]]; then
+            # The line contains a list item, which is a mapping.
+            i=0
+            if (( indentation == 0 )); then
+                key="${parent_key}"
+            else
+                key="${parent_key}${ARGPARSER_ARG_DELIMITER_2}${i}"
+            fi
+
+            while [[ -n "${yaml_array[${key}]+set}" ]]; do
+                (( i++ ))
+                key="${parent_key}${ARGPARSER_ARG_DELIMITER_2}${i}"
+            done
+            parent_key="${key}"
+            yaml_array[${parent_key}]=""  # Empty, but key needed for checks.
+
+            key="${parent_key}${ARGPARSER_ARG_DELIMITER_2}${BASH_REMATCH[2]}"
+            value="${BASH_REMATCH[3]}"
+            if [[ "${value}" == ">" ]]; then
+                is_continued=true
+                yaml_array[${key}]=""
+            else
+                yaml_array[${key}]="${value}"
+                key="${parent_key}"  # Don't use key for next line.
+            fi
+        elif [[ "${line}" =~ ^(" "*)(.+)": "(.*)$ ]]; then
+            # The line contains a mapping.
+            if (( indentation == 0 )); then
+                key="${BASH_REMATCH[2]}"
+            else
+                key="${parent_key}${ARGPARSER_ARG_DELIMITER_2}"
+                key+="${BASH_REMATCH[2]}"
+            fi
+            value="${BASH_REMATCH[3]}"
+
+            if [[ "${value}" == ">" ]]; then
+                is_continued=true
+                yaml_array[${key}]=""
+            else
+                yaml_array[${key}]="${value}"
+                key="${parent_key}"  # Don't use key for next line.
+            fi
+        elif [[ "${line}" =~ ^(" "*)"- "(.+)$ ]]; then
+            # The line contains a list item.
+            key="${parent_key}"
+            value="${BASH_REMATCH[2]}"
+            if [[ -z "${yaml_array[${key}]}" ]]; then
+                yaml_array[${key}]="${value}"
+            else
+                yaml_array[${key}]+="${ARGPARSER_ARG_DELIMITER_2}${value}"
+            fi
+        else
+            # The line uses a YAML feature not supported by the
+            # Argparser, thus, output an error message.  Again, the
+            # message must not yet be translated.
+            error_message="Error: The YAML line \"\$1\" could not be "
+            error_message+="recognized."
+            error_messages+=("${error_message}")
+            error_lines+=("${line}")
+            continue
+        fi
+
+        # Remove all saved keys for deeper indentations, as these have
+        # become invalid by the less indented current key.  Then, save
+        # the current key as new parent for the next-higher indentation
+        # width, and store the indentation width for comparison with the
+        # next line's indentation width, later.
+        while (( "${#keys[@]}" > indentation / 2 )); do
+            unset 'keys[-1]'
+        done
+        keys[indentation + 2]="${key}"
+        prev_indentation="${indentation}"
+    done
+
+    # Remove all entries with an empty string as value.
+    for key in "${!yaml_array[@]}"; do
+        if [[ -z "${yaml_array[${key}]}" ]]; then
+            unset 'yaml_array[${key}]'
+        fi
+    done
+
+    # Sort, filter, colorize, translate, and print all error messages.
+    if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
+        argparser_check_env_vars
+    fi
+
+    for i in "${!error_messages[@]}"; do
+        error_message="${error_messages[i]}"
+        line="${error_lines[i]}"
+        argparser_translate "Error YAML" "${error_message}" "${line}"
+        error_message="${translation}"
+        error_messages[i]="${error_message}"
+    done
+
+    argparser_print_error_messages true false "${error_messages[@]}"
 }
 
 # Define the Argparser functions for creating a text-based user
@@ -10637,6 +10872,7 @@ function argparser_main() {
         unset -f argparser_parse_long_option
         unset -f argparser_parse_positional_args
         unset -f argparser_parse_short_option
+        unset -f argparser_parse_yaml
         unset -f argparser_print_error_messages
         unset -f argparser_print_help_message
         unset -f argparser_print_logo
