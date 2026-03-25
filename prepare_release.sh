@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-03-18
+# Last Modification: 2026-03-25
 
 # Usage: Run this script with
 # "bash prepare_release.sh version_number codename".
@@ -43,8 +43,9 @@ version_number="${version_number#v}"
 
 # Define the pattern and replacement text for the modification date.
 # Both are always the same, unlike the patterns for the version info.
-pattern_date='# Last Modification: 20[0-9]{2}-[0-9]{2}-[0-9]{2}'
-printf -v replacement_date '# Last Modification: %(%F)T' -1
+printf -v current_date '%(%F)T' -1
+pattern_date='# Last Modification: [0-9]{4}-[0-9]{2}-[0-9]{2}'
+replacement_date='# Last Modification: '"${current_date}"
 
 # Replace the modification date and version info in the Argparser.
 pattern_version='argparser_version="[1-9][0-9]*\.[0-9]+\.[0-9]+ '
@@ -80,8 +81,10 @@ sed --in-place --regexp-extended \
 # call.
 # shellcheck disable=SC2016  # Literal backticks in single quotes.
 pattern_version_1='\| `v[1-9][0-9]*\.[0-9]+\.[0-9]+` +\| '
-pattern_version_1+='\*[[:alpha:]]+ [[:alpha:]]+\* +\|'
-replacement_version_1='| `v'"${version_number}"'` | *'"${codename}"'* |'
+pattern_version_1+='\*[[:alpha:]]+ [[:alpha:]]+\* +\| '
+pattern_version_1+='[0-9]{4}-[0-9]{2}-[0-9]{2} +\|'
+replacement_version_1='| `v'"${version_number}"'` | *'"${codename}"'* | '
+replacement_version_1+="${current_date}"' |'
 
 pattern_version_2='Version: argparser v[1-9][0-9]*\.[0-9]+\.[0-9]+ '
 pattern_version_2+='"[[:alpha:]]+ [[:alpha:]]+"'

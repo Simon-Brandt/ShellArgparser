@@ -46,6 +46,8 @@ This is the third Shell Argparser release in the `1.3.x` series, and the tenth i
 
 Codename: *"Dasyprocta fuliginosa"* ([Black agouti](https://en.wikipedia.org/wiki/Black_agouti))
 
+Release date: 2026-03-25
+
 ## `v1.3.1` *"Dasyprocta coibae"*
 
 This is the second Shell Argparser release in the `1.3.x` series, and the ninth in the `1.x` series. This **patch release** comprises the following changes:
@@ -57,6 +59,8 @@ This is the second Shell Argparser release in the `1.3.x` series, and the ninth 
   - The documentation has been slightly improved.
 
 Codename: *"Dasyprocta coibae"* ([Coiban agouti](https://en.wikipedia.org/wiki/Coiban_agouti))
+
+Release date: 2026-03-18
 
 ## `v1.3.0` *"Dasyprocta azarae"*
 
@@ -83,6 +87,8 @@ This is the first Shell Argparser release in the `1.3.x` series, and the eighth 
 
 Codename: *"Dasyprocta azarae"* ([Azara's agouti](https://en.wikipedia.org/wiki/Azara%27s_agouti))
 
+Release date: 2025-11-20
+
 ## `v1.2.1` *"Callospermophilus madrensis"*
 
 This is the second Shell Argparser release in the `1.2.x` series, and the seventh in the `1.x` series. This **patch release** comprises the following changes:
@@ -96,6 +102,8 @@ This is the second Shell Argparser release in the `1.2.x` series, and the sevent
 
 Codename: *"Callospermophilus madrensis"* ([Sierra Madre ground squirrel](https://en.wikipedia.org/wiki/Sierra_Madre_ground_squirrel))
 
+Release date: 2025-11-04
+
 ## `v1.2.0` *"Callospermophilus lateralis"*
 
 This is the first Shell Argparser release in the `1.2.x` series, and the sixth in the `1.x` series. This **minor release** comprises the following changes:
@@ -108,6 +116,8 @@ This is the first Shell Argparser release in the `1.2.x` series, and the sixth i
 
 Codename: *"Callospermophilus lateralis"* ([Golden-mantled ground squirrel](https://en.wikipedia.org/wiki/Golden-mantled_ground_squirrel))
 
+Release date: 2025-10-01
+
 ## `v1.1.2` *"Biswamoyopterus laoensis"*
 
 This is the third Shell Argparser release in the `1.1.x` series, and the fifth in the `1.x` series. This **patch release** comprises the following changes:
@@ -116,6 +126,8 @@ This is the third Shell Argparser release in the `1.1.x` series, and the fifth i
   - A bug was fixed where non-flags were usable as flags when they're also given with value.
 
 Codename: *"Biswamoyopterus laoensis"* ([Laotian giant flying squirrel](https://en.wikipedia.org/wiki/Biswamoyopterus_laoensis))
+
+Release date: 2025-09-22
 
 ## `v1.1.1` *"Biswamoyopterus gaoligongensis"*
 
@@ -128,6 +140,8 @@ This is the second Shell Argparser release in the `1.1.x` series, and the fourth
   - The usability of the release preparation script has been improved, allowing the version numbers to start with a `v`.
 
 Codename: *"Biswamoyopterus gaoligongensis"* ([Mount Gaoligong flying squirrel](https://en.wikipedia.org/wiki/Mount_Gaoligong_flying_squirrel))
+
+Release date: 2025-09-17
 
 ## `v1.1.0` *"Biswamoyopterus biswasi"*
 
@@ -143,6 +157,8 @@ This is the first Shell Argparser release in the `1.1.x` series, and the third i
 
 Codename: *"Biswamoyopterus biswasi"* ([Namdapha flying squirrel](https://en.wikipedia.org/wiki/Namdapha_flying_squirrel))
 
+Release date: 2025-09-11
+
 ## `v1.0.1` *"Acomys cahirinus"*
 
 This is the second Shell Argparser release in the `1.0.x` series, and the second in the `1.x` series. This **patch release** comprises the following changes:
@@ -155,6 +171,8 @@ This is the second Shell Argparser release in the `1.0.x` series, and the second
   - The documentation has been slightly improved.
 
 Codename: *"Acomys cahirinus"* ([Cairo spiny mouse](https://en.wikipedia.org/wiki/Cairo_spiny_mouse))
+
+Release date: 2025-09-05
 
 ## `v1.0.0` *"Acomys airensis"*
 
@@ -170,3 +188,5 @@ This is the initial Shell Argparser release, the first in the `1.0.x` series, an
 - localization, currently for US English and German
 
 Codename: *"Acomys airensis"* ([Western Saharan spiny mouse](https://en.wikipedia.org/wiki/Western_Saharan_spiny_mouse))
+
+Release date: 2025-09-02
