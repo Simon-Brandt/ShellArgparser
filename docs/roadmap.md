@@ -35,6 +35,7 @@ The following table lists all versions released so far:
 
 | Version number | Codename                         |
 | -------------- | -------------------------------- |
+| `v1.3.2`       | *Dasyprocta fuliginosa*          |
 | `v1.3.1`       | *Dasyprocta coibae*              |
 | `v1.3.0`       | *Dasyprocta azarae*              |
 | `v1.2.1`       | *Callospermophilus madrensis*    |
@@ -50,7 +51,7 @@ You can obtain the version number of your Argparser copy by querying `argparser 
 <!-- <include command="argparser --version" lang="console"> -->
 ```console
 $ argparser --version
-Version: argparser v1.3.1 "Dasyprocta coibae"
+Version: argparser v1.3.2 "Dasyprocta fuliginosa"
 ```
 <!-- </include> -->
 
