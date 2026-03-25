@@ -23,6 +23,7 @@
 <!-- <toc> -->
 ## Table of contents
 
+- [`v1.3.2` *"Dasyprocta fuliginosa"*](#v132-dasyprocta-fuliginosa)
 - [`v1.3.1` *"Dasyprocta coibae"*](#v131-dasyprocta-coibae)
 - [`v1.3.0` *"Dasyprocta azarae"*](#v130-dasyprocta-azarae)
 - [`v1.2.1` *"Callospermophilus madrensis"*](#v121-callospermophilus-madrensis)
@@ -33,6 +34,17 @@
 - [`v1.0.1` *"Acomys cahirinus"*](#v101-acomys-cahirinus)
 - [`v1.0.0` *"Acomys airensis"*](#v100-acomys-airensis)
 <!-- </toc> -->
+
+## `v1.3.2` *"Dasyprocta fuliginosa"*
+
+This is the third Shell Argparser release in the `1.3.x` series, and the tenth in the `1.x` series. This **patch release** comprises the following changes:
+
+- Bug fixes:
+  - A bug was fixed where the Argparser environment variables would be reset to their default values in the process of bootstrapping even without errors, there.
+- Other improvements:
+  - The error messages pertaining the choice values for colors and styles now use the `ARGPARSER_ARG_DELIMITER_2` environment variable as delimiting character between the choice values.  This reflects the behavior for all other choice values.
+
+Codename: *"Dasyprocta fuliginosa"* ([Black agouti](https://en.wikipedia.org/wiki/Black_agouti))
 
 ## `v1.3.1` *"Dasyprocta coibae"*
 
