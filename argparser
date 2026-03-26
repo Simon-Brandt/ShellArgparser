@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-03-25
+# Last Modification: 2026-03-26
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -3706,6 +3706,7 @@ function argparser_translate() {
     # - translation: the translated string
     #
     # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_CHECK_ENV_VARS (read-only)
     # - ARGPARSER_TRANSLATION_FILE (read-only)
 
@@ -3731,6 +3732,7 @@ function argparser_translate() {
     # key is not the one required for translation, else, an infinite
     # loop would arise by trying to fetch the inexistent translation
     # over and over.
+    key="${key}${ARGPARSER_ARG_DELIMITER_2}${ARGPARSER_LANGUAGE}"
     if [[ -n "${ARGPARSER_TRANSLATION_FILE}" ]]; then
         if [[ -z "${dictionary[${key}]+set}" ]]; then
             warning_message="Warning: In the translation file \"\$1\", the "
@@ -3756,7 +3758,7 @@ function argparser_translate() {
             fi
 
             argparser_print_warning_messages false "${warning_message}"
-        elif [[ "${dictionary[${key}]}" == "?" ]]; then
+        elif [[ -z "${dictionary[${key}]}" ]]; then
             warning_message="Warning: In the translation file \"\$1\", the "
             warning_message+="translation to \"\$2\" for the identifier "
             warning_message+="\"\$3\" is missing.  For convenience, the "
@@ -10638,6 +10640,7 @@ function argparser_main() {
     # variables, to read, parse, and set the script's arguments.
     #
     # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_ARGS
     # - ARGPARSER_CHECK_ENV_VARS (read-only)
     # - ARGPARSER_CONFIG_FILE (read-only)
@@ -10647,6 +10650,7 @@ function argparser_main() {
     # - ARGPARSER_HELP_ARG_GROUP
     # - ARGPARSER_HELP_DESCRIPTION
     # - ARGPARSER_HELP_STYLE (read-only)
+    # - ARGPARSER_LANGUAGE (read-only)
     # - ARGPARSER_POSITIONAL_ARG_GROUP
     # - ARGPARSER_READ_ARGS (read-only)
     # - ARGPARSER_SET_ARGS (read-only)
@@ -10688,9 +10692,11 @@ function argparser_main() {
     local is_extglob_set
     local is_self_parsing
     local is_sourced
+    local key
     local -a script_args
     local -A styles
     local translation
+    local -A yaml_array
 
     # Declare the remaining internal variables.  Since ${ARGPARSER_ARGS}
     # must be set in global scope within argparser_set_args, later, it's
@@ -10801,12 +10807,20 @@ function argparser_main() {
     local -A all_value_names
 
     # If ${ARGPARSER_TRANSLATION_FILE} isn't set to the empty string,
-    # read the translation file.  To be able to use the localized names
-    # of ${ARGPARSER_HELP_DESCRIPTION}, ${ARGPARSER_HELP_ARG_GROUP}, and
-    # ${ARGPARSER_POSITIONAL_ARG_GROUP} in the arguments definition and
-    # help message, translate them.
+    # read the translation file and populate the dictionary with all
+    # translations to ${ARGPARSER_LANGUAGE}.  To be able to use the
+    # localized names of ${ARGPARSER_HELP_DESCRIPTION},
+    # ${ARGPARSER_HELP_ARG_GROUP}, and ${ARGPARSER_POSITIONAL_ARG_GROUP}
+    # in the arguments definition and help message, translate them
+    # in-place.
     if [[ -n "${ARGPARSER_TRANSLATION_FILE}" ]]; then
-        argparser_read_translation
+        argparser_parse_yaml "${ARGPARSER_TRANSLATION_FILE}"
+        for key in "${!yaml_array[@]}"; do
+            if [[ "${key}" == *"${ARGPARSER_ARG_DELIMITER_2}${ARGPARSER_LANGUAGE}" ]]
+            then
+                dictionary[${key}]="${yaml_array[${key}]}"
+            fi
+        done
 
         argparser_translate "Positional arguments" \
             "${ARGPARSER_POSITIONAL_ARG_GROUP}"
@@ -10982,7 +10996,6 @@ function argparser_main() {
         unset -f argparser_read_args_definition
         unset -f argparser_read_configuration
         unset -f argparser_read_styles
-        unset -f argparser_read_translation
         unset -f argparser_seq
         unset -f argparser_set_args
         unset -f argparser_set_env_var_defaults
