@@ -171,7 +171,7 @@ This is the second Shell Argparser release in the `1.0.x` series, and the second
 - Bug fixes:
   - A bug was fixed where some arguments could be omitted from the help message when using very narrow columns.
 - Other improvements:
-  - The CI now actually run the tests, instead of failing to find the test files.
+  - The CI now actually runs the tests, instead of failing to find the test files.
   - There is a new script to simplify the preparation of releases.
   - The documentation has been slightly improved.
 

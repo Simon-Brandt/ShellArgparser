@@ -3529,45 +3529,20 @@ function argparser_translate() {
     if [[ -n "${ARGPARSER_TRANSLATION_FILE}" ]]; then
         if [[ -z "${dictionary[${key}]+set}" ]]; then
             warning_message="Warning: In the translation file \"\$1\", the "
-            warning_message+="identifier \"\$2\" is missing.  For "
+            warning_message+="translation identifier \"\$2\" is missing.  For "
             warning_message+="convenience, the untranslated string is used, "
             warning_message+="instead."
 
             if [[ "${key}" == "Warning" ]]; then
                 translation="${key}"
                 return
-            elif [[ "${key}" == "Warning no identifier" ]]; then
+            elif [[ "${key}" == "Warning no translation" ]]; then
                 warning_message="${warning_message/"\$1"/${ARGPARSER_TRANSLATION_FILE}}"
                 warning_message="${warning_message/"\$2"/${key}}"
             else
-                argparser_translate "Warning no identifier" \
-                    "${warning_message}" "${ARGPARSER_TRANSLATION_FILE}" \
-                        "${key}"
-                warning_message="${translation}"
-            fi
-
-            if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
-                argparser_set_env_var_defaults
-            fi
-
-            argparser_print_warning_messages false "${warning_message}"
-        elif [[ -z "${dictionary[${key}]}" ]]; then
-            warning_message="Warning: In the translation file \"\$1\", the "
-            warning_message+="translation to \"\$2\" for the identifier "
-            warning_message+="\"\$3\" is missing.  For convenience, the "
-            warning_message+="untranslated string is used, instead."
-
-            if [[ "${key}" == "Warning" ]]; then
-                translation="${key}"
-                return
-            elif [[ "${key}" == "Warning no translation" ]]; then
-                warning_message="${warning_message/"\$1"/${ARGPARSER_TRANSLATION_FILE}}"
-                warning_message="${warning_message/"\$2"/${ARGPARSER_LANGUAGE}}"
-                warning_message="${warning_message/"\$3"/${key}}"
-            else
                 argparser_translate "Warning no translation" \
                     "${warning_message}" "${ARGPARSER_TRANSLATION_FILE}" \
-                    "${ARGPARSER_LANGUAGE}" "${key}"
+                        "${key}"
                 warning_message="${translation}"
             fi
 

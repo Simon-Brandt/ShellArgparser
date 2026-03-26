@@ -1084,26 +1084,16 @@
 - ***Interpolated variables:***
   - `$1`: The include directive.
 
-#### 9.5.130. `Warning no identifier`
+#### 9.5.130. `Warning no translation`
 
-- ***Message:*** `Warning: In the translation file "$1", the identifier "$2" is missing.  For convenience, the untranslated string is used, instead.`
-- ***Description:*** The warning that in a translation file, an identifier is missing.
-- ***Reasons for warning:*** When trying to translate a string from the [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9444-argparser_translation_file), the Argparser found that the identifier is missing in the dictionary, and by this, also in the translation file. Thus, it uses the untranslated English string as fallback.
+- ***Message:*** `Warning: In the translation file "$1", the translation identifier "$2" is missing.  For convenience, the untranslated string is used, instead.`
+- ***Description:*** The warning that in a translation file, a translation identifier is missing.
+- ***Reasons for warning:*** When trying to translate a string from the [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9444-argparser_translation_file) to the [`ARGPARSER_LANGUAGE`](../environment_variables/environment_variables.md#9431-argparser_language), the Argparser found that the translation identifier is missing in the dictionary, and by this, also in the translation file. Thus, it uses the untranslated English string as fallback.
 - ***Interpolated variables:***
   - `$1`: The [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9444-argparser_translation_file).
-  - `$2`: The missing identifier.
+  - `$2`: The missing identifier, including the [`ARGPARSER_LANGUAGE`](../environment_variables/environment_variables.md#9431-argparser_language).
 
-#### 9.5.131. `Warning no translation`
-
-- ***Message:*** `Warning: In the translation file "$1", the translation to "$2" for the identifier "$3" is missing.  For convenience, the untranslated string is used, instead.`
-- ***Description:*** The warning that in a translation file, an identifier's translation is missing.
-- ***Reasons for warning:*** When trying to translate a string from the [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9444-argparser_translation_file), the Argparser found that the translation to the [`ARGPARSER_LANGUAGE`](../environment_variables/environment_variables.md#9431-argparser_language) for the identifier is missing in the dictionary, and by this, also in the translation file. Thus, it uses the untranslated English string as fallback.
-- ***Interpolated variables:***
-  - `$1`: The [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9444-argparser_translation_file).
-  - `$2`: The [`ARGPARSER_LANGUAGE`](../environment_variables/environment_variables.md#9431-argparser_language).
-  - `$3`: The identifier with missing translation.
-
-#### 9.5.132. `Warning style file message key`
+#### 9.5.131. `Warning style file message key`
 
 - ***Message:*** `Warning: In the style file "$1", the line "$2" sets a non-existent message key.`
 - ***Description:*** The warning that a style file's line sets a non-existent message key.
@@ -1112,7 +1102,7 @@
   - `$1`: The style file.
   - `$2`: The line.
 
-#### 9.5.133. `Warning deprecation`
+#### 9.5.132. `Warning deprecation`
 
 - ***Message:*** `Warning: The argument "$1" is deprecated and will be removed in the future.`
 - ***Description:*** The warning that on the command line, a deprecated argument is given.
@@ -1120,7 +1110,7 @@
 - ***Interpolated variables:***
   - `$1`: The argument's option or value names.
 
-#### 9.5.134. `Warning wrong arg number 1`
+#### 9.5.133. `Warning wrong arg number 1`
 
 - ***Message:*** `Warning: The argument "$1" requires at least 1 value, but has $2 given.  For convenience, the default ($3) is used.`
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring at least one.
@@ -1130,7 +1120,7 @@
   - `$2`: The number of given values.
   - `$3`: The default values.
 
-#### 9.5.135. `Warning wrong arg number 2`
+#### 9.5.134. `Warning wrong arg number 2`
 
 - ***Message:*** `Warning: The argument "$1" requires at 0 or 1 value, but has $2 given.  For convenience, the default ($3) is used.`
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring zero or one.
@@ -1140,7 +1130,7 @@
   - `$2`: The number of given values.
   - `$3`: The default values.
 
-#### 9.5.136. `Warning wrong arg number 3`
+#### 9.5.135. `Warning wrong arg number 3`
 
 - ***Message:*** `Warning: The argument "$1" requires 1 value, but has $2 given.  For convenience, the default ($3) is used.`
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring one.
@@ -1150,7 +1140,7 @@
   - `$2`: The number of given values.
   - `$3`: The default values.
 
-#### 9.5.137. `Warning wrong arg number 4`
+#### 9.5.136. `Warning wrong arg number 4`
 
 - ***Message:*** `Warning: The argument "$1" requires $2 values, but has $3 given.  For convenience, the default ($4) is used.`
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given.

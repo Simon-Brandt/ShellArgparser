@@ -136,8 +136,8 @@ Help options:
   de: Hilfsoptionen
 
 Help description:
-  en:
-  de:
+  en: Command-line program
+  de: Kommandozeilenprogramm
 
 Version:
   en: Version
@@ -188,6 +188,8 @@ $ LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -h
 Eine kurze Kopfzeile fasst zusammen, wie die Hilfe-Meldung zu interpretieren
 ist.
 Aufruf: try_localization.sh [OPTIONEN] ARGUMENTE -- [pos_1] pos_2
+
+Kommandozeilenprogramm
 
 Erforderliche Argumente für lange Optionen sind auch für kurze erforderlich.
 

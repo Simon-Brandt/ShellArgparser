@@ -224,8 +224,7 @@ And since the long option names only differ in their last character, here, it is
 <!-- <include command="ARGPARSER_ALLOW_OPTION_ABBREVIATION=true bash ../tutorial/try_argparser.sh --var-1 1 --var-2 2 --var A -- 1 2" lang="console"> -->
 ```console
 $ ARGPARSER_ALLOW_OPTION_ABBREVIATION=true bash ../tutorial/try_argparser.sh --var-1 1 --var-2 2 --var A -- 1 2
-try_argparser.sh: Error: The argument "-c,-C,--var-3,--var-c" is mandatory, but
-                         not given.
+try_argparser.sh: Error: The long option "--var" matches multiple long options.
 
 Usage: try_argparser.sh [-h,-? | -u | -V]
                         [-d,-D={A-C}]
