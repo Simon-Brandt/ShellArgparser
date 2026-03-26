@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-03-25
+# Last Modification: 2026-03-26
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -3482,174 +3482,7 @@ function argparser_check_env_vars() {
     argparser_print_error_messages true true "${error_messages[@]}"
 }
 
-# Define the Argparser functions for reading the translation and
-# translating strings.
-function argparser_read_translation() {
-    # Read the translation of the auto-generated text for messages from
-    # the YAML file into an associative array.
-    #
-    # Nonlocals:
-    # - dictionary: the associative array containing the translations
-    #
-    # Environment:
-    # - ARGPARSER_CHECK_ENV_VARS (read-only)
-    # - ARGPARSER_LANGUAGE (read-only)
-    # - ARGPARSER_TRANSLATION_FILE (read-only)
-
-    # Define the local variables.
-    local -a error_lines
-    local error_message
-    local -a error_messages
-    local file_attributes
-    local group
-    local is_continued
-    local language
-    local line
-    local -a lines
-    local translation
-
-    # Check if the translation file exists and is readable.  Else,
-    # output an error message and exit.  Since at this point of
-    # invocation, the environment variables aren't checked, yet, set the
-    # needed ones to default values, if ${ARGPARSER_CHECK_ENV_VARS}
-    # isn't set to "false" (and by this, the checking hasn't been
-    # explicitly disabled).
-    argparser_check_file "${ARGPARSER_TRANSLATION_FILE}"
-    if [[ "${file_attributes}" != "0000" ]]; then
-        error_message="Error: The environment variable \"\$1\" is set to "
-        error_message+="\"\$2\", but the referenced file "
-        case "${file_attributes}" in
-            0001) error_message+="is empty." ;;
-            0010) error_message+="is not readable." ;;
-            0011) error_message+="is not readable and empty." ;;
-            0100) error_message+="is not a regular file." ;;
-            0101) error_message+="is not a regular file and empty." ;;
-            0110) error_message+="is not a regular file and not readable." ;;
-            0111)
-                error_message+="is not a regular file, not readable, and "
-                error_message+="empty."
-                ;;
-            1111) error_message+="does not exist." ;;
-        esac
-
-        error_message="${error_message/"\$1"/"ARGPARSER_TRANSLATION_FILE"}"
-        error_message="${error_message/"\$2"/${ARGPARSER_TRANSLATION_FILE}}"
-
-        if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
-            argparser_set_env_var_defaults
-        fi
-
-        argparser_print_error_messages false true "${error_message}"
-    fi
-
-    # Read the translation file.  Use "?" as sentinel to denote the
-    # absence of a translation, to be overridden by the actual
-    # translation, once read.
-    mapfile -t lines < "${ARGPARSER_TRANSLATION_FILE}"
-    group=""
-    language=""
-    translation="?"
-    is_continued=false
-    error_lines=( )
-    error_messages=( )
-
-    for line in "${lines[@]}"; do
-        if [[ -z "${line}" || "${line}" == \#* ]]; then
-            # The line is empty or commented.
-            continue
-        elif [[ "${line}" == "---" || "${line}" == "..." ]]; then
-            # The line denotes the start or end of a YAML block.
-            continue
-        elif [[ "${line}" == "  ${ARGPARSER_LANGUAGE}: >" ]]; then
-            # The line starts the translation to the desired language.
-            language="${ARGPARSER_LANGUAGE}"
-            translation="?"
-            is_continued=true
-        elif [[ "${line}" == "  ${ARGPARSER_LANGUAGE}:" ]]; then
-            # The line contains the translation to the desired language
-            # for an empty translation.
-            language="${ARGPARSER_LANGUAGE}"
-            translation=""
-        elif [[ "${line}" == "  ${ARGPARSER_LANGUAGE}: "* ]]; then
-            # The line contains the translation to the desired language.
-            language="${ARGPARSER_LANGUAGE}"
-            translation="${line#*: }"
-        elif [[ "${line}" == "  "*": >" ]]; then
-            # The line start the translation to another language, which
-            # can be ignored, along all following lines until the start
-            # of a new YAML key.
-            language="${line#* }"
-            language="${language%:*}"
-            is_continued=true
-        elif [[ "${line}" == "  "*([^ ])":" || "${line}" == "  "*([^ ])": "* ]]
-        then
-            # The line contains the translation to another language,
-            # which can be ignored.
-            language="${line#* }"
-            language="${language%:*}"
-        elif [[ "${line}" == "    "* \
-            && "${language}" == "${ARGPARSER_LANGUAGE}" \
-            && "${is_continued}" == true ]]
-        then
-            # The line continues the translation from the previous line.
-            if [[ "${translation}" == "?" ]]; then
-                translation="${line#    }"
-            else
-                translation+=" ${line#    }"
-            fi
-        elif [[ "${line}" == "    "* && "${is_continued}" == true ]]; then
-            # The line continues the translation to another language,
-            # from the previous line, which can be ignored.
-            continue
-        elif [[ "${line}" == *: && "${line::1}" != " " ]]; then
-            # The line starts a new group of translations.  Save the
-            # previous translation under the previous group name, then
-            # extract the new one.
-            if [[ -n "${group}" ]]; then
-                dictionary[${group}]="${translation}"
-            fi
-            group="${line%:}"
-            translation="?"
-            is_continued=false
-        else
-            # The line uses a YAML feature not supported by the
-            # Argparser, thus, output an error message.  The message
-            # must not yet be translated, as the translation requires
-            # translation identifiers that may not have been read, yet.
-            # This would lead to a warning message complaining that the
-            # identifier would be missing, despite being present.  For
-            # the necessary interpolation, below, save the current line.
-            error_message="Error: The YAML line \"\$1\" could not be "
-            error_message+="recognized."
-            error_messages+=("${error_message}")
-            error_lines+=("${line}")
-        fi
-    done
-
-    # Add the last group to the dictionary.
-    if [[ -n "${group}" ]]; then
-        dictionary[${group}]="${translation}"
-    fi
-
-    # If there are error messages, sort, filter, colorize, translate,
-    # and print them.
-    if (( "${#error_messages[@]}" > 0 )) \
-        && [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]
-    then
-        argparser_set_env_var_defaults
-    fi
-
-    for i in "${!error_messages[@]}"; do
-        error_message="${error_messages[i]}"
-        line="${error_lines[i]}"
-        argparser_translate "Error YAML" "${error_message}" "${line}"
-        error_message="${translation}"
-        error_messages[i]="${error_message}"
-    done
-
-    argparser_print_error_messages true false "${error_messages[@]}"
-}
-
+# Define the Argparser function for translating strings.
 function argparser_translate() {
     # Translate the given string.
     #
@@ -3665,6 +3498,7 @@ function argparser_translate() {
     # - translation: the translated string
     #
     # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_CHECK_ENV_VARS (read-only)
     # - ARGPARSER_LANGUAGE (read-only)
     # - ARGPARSER_TRANSLATION_FILE (read-only)
@@ -3691,6 +3525,7 @@ function argparser_translate() {
     # key is not the one required for translation, else, an infinite
     # loop would arise by trying to fetch the inexistent translation
     # over and over.
+    key="${key}${ARGPARSER_ARG_DELIMITER_2}${ARGPARSER_LANGUAGE}"
     if [[ -n "${ARGPARSER_TRANSLATION_FILE}" ]]; then
         if [[ -z "${dictionary[${key}]+set}" ]]; then
             warning_message="Warning: In the translation file \"\$1\", the "
@@ -3716,7 +3551,7 @@ function argparser_translate() {
             fi
 
             argparser_print_warning_messages false "${warning_message}"
-        elif [[ "${dictionary[${key}]}" == "?" ]]; then
+        elif [[ -z "${dictionary[${key}]}" ]]; then
             warning_message="Warning: In the translation file \"\$1\", the "
             warning_message+="translation to \"\$2\" for the identifier "
             warning_message+="\"\$3\" is missing.  For convenience, the "
@@ -10539,6 +10374,7 @@ function argparser_main() {
     # variables, to read, parse, and set the script's arguments.
     #
     # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_ARGS
     # - ARGPARSER_CHECK_ENV_VARS (read-only)
     # - ARGPARSER_CONFIG_FILE (read-only)
@@ -10548,6 +10384,7 @@ function argparser_main() {
     # - ARGPARSER_HELP_ARG_GROUP
     # - ARGPARSER_HELP_DESCRIPTION
     # - ARGPARSER_HELP_STYLE (read-only)
+    # - ARGPARSER_LANGUAGE (read-only)
     # - ARGPARSER_POSITIONAL_ARG_GROUP
     # - ARGPARSER_READ_ARGS (read-only)
     # - ARGPARSER_SET_ARGS (read-only)
@@ -10589,9 +10426,11 @@ function argparser_main() {
     local is_extglob_set
     local is_self_parsing
     local is_sourced
+    local key
     local -a script_args
     local -A styles
     local translation
+    local -A yaml_array
 
     # Declare the remaining internal variables.  Since ${ARGPARSER_ARGS}
     # must be set in global scope within argparser_set_args, later, it's
@@ -10702,12 +10541,20 @@ function argparser_main() {
     local -A all_value_names
 
     # If ${ARGPARSER_TRANSLATION_FILE} isn't set to the empty string,
-    # read the translation file.  To be able to use the localized names
-    # of ${ARGPARSER_HELP_DESCRIPTION}, ${ARGPARSER_HELP_ARG_GROUP}, and
-    # ${ARGPARSER_POSITIONAL_ARG_GROUP} in the arguments definition and
-    # help message, translate them.
+    # read the translation file and populate the dictionary with all
+    # translations to ${ARGPARSER_LANGUAGE}.  To be able to use the
+    # localized names of ${ARGPARSER_HELP_DESCRIPTION},
+    # ${ARGPARSER_HELP_ARG_GROUP}, and ${ARGPARSER_POSITIONAL_ARG_GROUP}
+    # in the arguments definition and help message, translate them
+    # in-place.
     if [[ -n "${ARGPARSER_TRANSLATION_FILE}" ]]; then
-        argparser_read_translation
+        argparser_parse_yaml "${ARGPARSER_TRANSLATION_FILE}"
+        for key in "${!yaml_array[@]}"; do
+            if [[ "${key}" == *"${ARGPARSER_ARG_DELIMITER_2}${ARGPARSER_LANGUAGE}" ]]
+            then
+                dictionary[${key}]="${yaml_array[${key}]}"
+            fi
+        done
 
         argparser_translate "Positional arguments" \
             "${ARGPARSER_POSITIONAL_ARG_GROUP}"
@@ -10883,7 +10730,6 @@ function argparser_main() {
         unset -f argparser_read_args_definition
         unset -f argparser_read_configuration
         unset -f argparser_read_styles
-        unset -f argparser_read_translation
         unset -f argparser_seq
         unset -f argparser_set_args
         unset -f argparser_set_env_var_defaults
