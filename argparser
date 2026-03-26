@@ -1676,7 +1676,7 @@ function argparser_parse_yaml() {
     # disabled).
     argparser_check_file "${file}"
     if [[ "${file_attributes}" != "0000" ]]; then
-        error_message="Error: The referenced file \"\$1\""
+        error_message="Error: The referenced file \"\$1\" "
         case "${file_attributes}" in
             0001) error_message+="is empty." ;;
             0010) error_message+="is not readable." ;;
@@ -1694,7 +1694,7 @@ function argparser_parse_yaml() {
         error_message="${error_message/"\$1"/${file}}"
 
         if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
-            argparser_check_env_vars
+            argparser_set_env_var_defaults
         fi
 
         argparser_print_error_messages false true "${error_message}"
@@ -1854,7 +1854,7 @@ function argparser_parse_yaml() {
 
     # Sort, filter, colorize, translate, and print all error messages.
     if [[ "${ARGPARSER_CHECK_ENV_VARS}" != false ]]; then
-        argparser_check_env_vars
+        argparser_set_env_var_defaults
     fi
 
     for i in "${!error_messages[@]}"; do
