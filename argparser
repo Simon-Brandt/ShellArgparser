@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-03-26
+# Last Modification: 2026-04-10
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -518,6 +518,7 @@ function argparser_pad() {
     local side
     local -a uncolorized_array
     local whitespace
+    local width
 
     # Read the arguments.
     side="$1"
@@ -534,15 +535,19 @@ function argparser_pad() {
     argparser_uncolorize "array" "${padded_array[@]}"
     if [[ "${side}" == "left" ]]; then
         for i in "${!padded_array[@]}"; do
-            printf -v whitespace '%*s' \
-                "$(( max_width - "${#uncolorized_array[i]}" ))" ""
-            padded_array[i]="${whitespace}${padded_array[i]}"
+            (( width = max_width - "${#uncolorized_array[i]}" ))
+            if (( width > 0 )); then
+                printf -v whitespace '%*s' "${width}" ""
+                padded_array[i]="${whitespace}${padded_array[i]}"
+            fi
         done
     else
         for i in "${!padded_array[@]}"; do
-            printf -v whitespace '%*s' \
-                "$(( max_width - "${#uncolorized_array[i]}" ))" ""
-            padded_array[i]="${padded_array[i]}${whitespace}"
+            (( width = max_width - "${#uncolorized_array[i]}" ))
+            if (( width > 0 )); then
+                printf -v whitespace '%*s' "${width}" ""
+                padded_array[i]="${padded_array[i]}${whitespace}"
+            fi
         done
     fi
 }
