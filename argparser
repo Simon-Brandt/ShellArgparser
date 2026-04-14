@@ -2304,12 +2304,12 @@ function argparser_build_tui_block() {
     # Build a block for a text-based user interface (TUI).
     #
     # Arguments:
-    # - $1: the TUI block's parent key in ${yaml_array}, "TUI" for the
+    # - $1: the TUI block's parent key in ${tui_def[@]}, "TUI" for the
     #       outermost block(s)
     #
     # Nonlocals:
     # - tui: the indexed array containing all yet built TUI elements
-    # - yaml_array: the associative array containing the TUI elements'
+    # - tui_def: the associative array containing the TUI elements'
     #   definitions
     #
     # Environment:
@@ -2344,7 +2344,7 @@ function argparser_build_tui_block() {
         argparser_join "${delim}" "${key_parts[@]}"
         key="${joined_array}"
 
-        if [[ -z "${yaml_array[${key}]+set}" ]]; then
+        if [[ -z "${tui_def[${key}]+set}" ]]; then
             break
         fi
 
@@ -2354,7 +2354,7 @@ function argparser_build_tui_block() {
 
     # Build all TUI elements for the current block.
     for element in "${elements[@]}"; do
-        case "${yaml_array[${element}${delim}Type]}" in
+        case "${tui_def[${element}${delim}Type]}" in
             "Block")
                 # The element is a nested block, so build it on its own.
                 argparser_build_tui_block "${element}"
@@ -2362,17 +2362,17 @@ function argparser_build_tui_block() {
 
                 # Get the nested block's width, caption, and
                 # caption/frame style settings.
-                width="${yaml_array[${element}${delim}Width]}"
-                caption="${yaml_array[${element}${delim}Caption]}"
+                width="${tui_def[${element}${delim}Width]}"
+                caption="${tui_def[${element}${delim}Caption]}"
 
-                caption_style="${yaml_array[${element}${delim}Style${delim}Caption]}"
+                caption_style="${tui_def[${element}${delim}Style${delim}Caption]}"
                 if [[ -z "${caption_style}" ]]; then
-                    caption_style="${yaml_array[TUI${delim}Style${delim}Block${delim}Caption]}"
+                    caption_style="${tui_def[TUI${delim}Style${delim}Block${delim}Caption]}"
                 fi
 
-                frame_style="${yaml_array[${element}${delim}Style${delim}Frame]}"
+                frame_style="${tui_def[${element}${delim}Style${delim}Frame]}"
                 if [[ -z "${frame_style}" ]]; then
-                    frame_style="${yaml_array[TUI${delim}Style${delim}Block${delim}Frame]}"
+                    frame_style="${tui_def[TUI${delim}Style${delim}Block${delim}Frame]}"
                 fi
                 if [[ -n "${frame_style}" ]]; then
                     (( width -= 4 ))
@@ -2406,14 +2406,14 @@ function argparser_build_tui_block() {
             "Keyspec")
                 ;;
             "Radio button")
-                caption="${yaml_array[${element}${delim}Caption]}"
-                caption_style="${yaml_array[${element}${delim}Style${delim}Caption]}"
+                caption="${tui_def[${element}${delim}Caption]}"
+                caption_style="${tui_def[${element}${delim}Style${delim}Caption]}"
                 argparser_colorize "${caption_style}" 1 caption "${caption}"
                 tui_block+=("${caption} ( )")
                 ;;
             "Textbox")
-                caption="${yaml_array[${element}${delim}Caption]}"
-                caption_style="${yaml_array[${element}${delim}Style${delim}Caption]}"
+                caption="${tui_def[${element}${delim}Caption]}"
+                caption_style="${tui_def[${element}${delim}Style${delim}Caption]}"
                 argparser_colorize "${caption_style}" 1 caption "${caption}"
                 tui_block+=("${caption}")
                 ;;
@@ -2434,20 +2434,24 @@ function argparser_build_tui() {
     # Define the local variables.
     local delim
     local -a tui
+    local -A tui_def
     local -A yaml_array
 
-    # Read the YAML configuration file for the TUI and substitute the
-    # allowed variable names by their actual values.
+    # Read the YAML configuration file for the TUI .
     argparser_parse_yaml "${ARGPARSER_TUI_FILE}"
+    for key in "${!yaml_array[@]}"; do
+        tui_def[${key}]="${yaml_array[${key}]}"
+    done
 
+    # Substitute the allowed variable names by their actual values.
     delim="${ARGPARSER_ARG_DELIMITER_2}"
     # shellcheck disable=SC2016  # Intentional single quotes around variable.
-    if [[ "${yaml_array[TUI${delim}Width]}" == '${COLUMNS}' ]]; then
-        yaml_array[TUI${delim}Width]="${COLUMNS:-ARGPARSER_MAX_WIDTH}"
+    if [[ "${tui_def[TUI${delim}Width]}" == '${COLUMNS}' ]]; then
+        tui_def[TUI${delim}Width]="${COLUMNS:-ARGPARSER_MAX_WIDTH}"
     fi
     # shellcheck disable=SC2016  # Intentional single quotes around variable.
-    if [[ "${yaml_array[TUI${delim}Height]}" == '${LINES}' ]]; then
-        yaml_array[TUI${delim}Height]="${LINES:-20}"
+    if [[ "${tui_def[TUI${delim}Height]}" == '${LINES}' ]]; then
+        tui_def[TUI${delim}Height]="${LINES:-20}"
     fi
 
     # Build the TUI.
