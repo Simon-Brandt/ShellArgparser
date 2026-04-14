@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-04-10
+# Last Modification: 2026-04-14
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -2308,9 +2308,7 @@ function argparser_build_tui_block() {
     #       outermost block(s)
     #
     # Nonlocals:
-    # - tui: the indexed array containing all built TUI elements
-    # - tui_block: the indexed containing the built TUI elements for the
-    #   current block
+    # - tui: the indexed array containing all yet built TUI elements
     # - yaml_array: the associative array containing the TUI elements'
     #   definitions
     #
@@ -2359,8 +2357,8 @@ function argparser_build_tui_block() {
         case "${yaml_array[${element}${delim}Type]}" in
             "Block")
                 # The element is a nested block, so build it on its own.
-                mapfile -t tui_sub_block \
-                    < <(argparser_build_tui_block "${element}")
+                argparser_build_tui_block "${element}"
+                tui_sub_block=("${tui[@]}")
 
                 # Get the nested block's width, caption, and
                 # caption/frame style settings.
@@ -2422,7 +2420,7 @@ function argparser_build_tui_block() {
         esac
     done
 
-    printf '%s\n' "${tui_block[@]}"
+    tui=("${tui_block[@]}")
 }
 
 function argparser_build_tui() {
@@ -2453,7 +2451,7 @@ function argparser_build_tui() {
     fi
 
     # Build the TUI.
-    mapfile -t tui < <(argparser_build_tui_block "TUI")
+    argparser_build_tui_block "TUI"
     printf '%s\n' "${tui[@]}"
 }
 
