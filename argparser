@@ -1913,54 +1913,198 @@ function argparser_get_cursor_pos() {
     cursor_col="${cursor_pos#*;}"
 }
 
+function argparser_build_tui_buttons() {
+    # Build a TUI block with buttons.
+    #
+    # Arguments:
+    # - $@: the button captions
+    #
+    # Nonlocals:
+    # - tui_def: the associative array containing the TUI elements'
+    #   definitions (read-only)
+    # - tui_buttons: the indexed array containing the built buttons
+
+    # Define the local variables.
+    local caption
+    local caption_style
+    local delim
+    local element
+    local -a elements
+
+    # Read the arguments.
+    elements=("$@")
+
+    # For each button, get its (space-surrounded) caption, as well as
+    # its local or global button caption style setting, then create and
+    # colorize the caption.
+    delim="${ARGPARSER_ARG_DELIMITER_2}"
+    tui_buttons=( )
+    for element in "${elements[@]}"; do
+        caption=" ${tui_def[${element}${delim}Caption]} "
+        caption_style="${tui_def[${element}${delim}Style${delim}Caption]}"
+        if [[ -z "${caption_style}" ]]; then
+            caption_style="${tui_def[TUI${delim}Style${delim}Button${delim}Caption]}"
+        fi
+
+        argparser_colorize "${caption_style}" 1 caption "${caption}"
+        tui_buttons+=("${caption}")
+    done
+}
+
+function argparser_build_tui_keyspec() {
+    # Build a TUI block with a keyspec.
+    #
+    # Arguments:
+    # - $1: the keyspec
+    #
+    # Nonlocals:
+    # - tui_def: the associative array containing the TUI elements'
+    #   definitions (read-only)
+    # - tui_keyspec: the indexed array containing the built keyspec
+
+    # Define the local variables.
+    local delim
+    local element
+    local key
+    local key_description
+    local key_description_style
+    local key_name
+    local key_name_style
+    local key_padding
+    local key_padding_style
+    local -a keys
+    local -a sorted_array
+
+    # Read the argument.
+    element="$1"
+
+    # Find all key name--key description pairs for the keyspec.
+    delim="${ARGPARSER_ARG_DELIMITER_2}"
+    keys=( )
+    for key in "${!tui_def[@]}"; do
+        if [[ "${key}" == "${element}${delim}Keys${delim}"* ]]; then
+            keys+=("${key}")
+        fi
+    done
+
+    argparser_sort false "${keys[@]}"
+    keys=("${sorted_array[@]}")
+
+    # Get the keys' local name/description/padding style settings.
+    key_name_style="${tui_def[${element}${delim}Style${delim}Key name]}"
+    key_description_style="${tui_def[${element}${delim}Style${delim}Key description]}"
+    key_padding_style="${tui_def[${element}${delim}Style${delim}Padding]}"
+
+    # Colorize the key names, descriptions, and padding, to create the
+    # keyspec.
+    tui_keyspec=( )
+    for key in "${keys[@]}"; do
+        argparser_colorize "${key_name_style}" 1 key_name "${key##*"${delim}"}"
+        argparser_colorize "${key_description_style}" 1 key_description \
+            "${tui_def[${key}]}"
+        argparser_colorize "${key_padding_style}" 1 key_padding " "
+        tui_keyspec+=("${key_name}${key_padding}${key_description}")
+    done
+}
+
 function argparser_build_tui_radiobuttons() {
     # Build a TUI block with radiobuttons.
     #
     # Arguments:
-    # - $1: the heading (oftentimes question) starting the radiobutton
-    #       block
-    # - $@: the possible options
+    # - $@: the radiobutton options (captions)
+    #
+    # Nonlocals:
+    # - tui_def: the associative array containing the TUI elements'
+    #   definitions (read-only)
+    # - tui_radiobuttons: the indexed array containing the built
+    #   radiobuttons
 
     # Define the local variables.
-    local heading
-    local option
-    local -a options
+    local button
+    local button_style
+    local caption
+    local -a captions
+    local caption_style
+    local -a colorized_array
+    local delim
+    local element
+    local -a elements
     local -a padded_array
 
     # Read the arguments.
-    heading="$1"
-    shift
-    options=("$@")
+    elements=("$@")
 
-    # Print the TUI block's heading and all options.
-    argparser_pad "right" "auto" "${options[@]}"
-    options=("${padded_array[@]}")
-
-    printf '%s\n' "${heading}"
-    for option in "${options[@]}"; do
-        printf '%s ( )\n' "${option}"
+    # Get all captions for the radiobuttons, as well as the global
+    # caption/radiobutton style settings.
+    delim="${ARGPARSER_ARG_DELIMITER_2}"
+    captions=( )
+    for element in "${elements[@]}"; do
+        captions+=("${tui_def[${element}${delim}Caption]}")
     done
+
+    caption_style="${tui_def[TUI${delim}Style${delim}Radio button${delim}Caption]}"
+    button_style="${tui_def[TUI${delim}Style${delim}Radio button${delim}Button]}"
+
+    # Create and colorize the radiobuttons, then colorize and pad all
+    # captions and merge them with the radiobuttons.
+    argparser_colorize "${button_style}" 1 button "( )"
+    argparser_colorize "${caption_style}" 1 "array" "${captions[@]}"
+    argparser_pad "right" "auto" "${colorized_array[@]}"
+    tui_radiobuttons=("${padded_array[@]/%/"  ${button}"}")
 }
 
 function argparser_build_tui_textbox() {
     # Build a TUI block with textboxes prompting for input.
     #
     # Arguments:
-    # - $1: the heading (oftentimes question) starting the textbox block
-    # - $@: the prompts
+    # - $@: the textbox elements
+    #
+    # Nonlocals:
+    # - tui_def: the associative array containing the TUI elements'
+    #   definitions (read-only)
+    # - tui_textbox: the indexed array containing the built textbox
 
     # Define the local variables.
-    local heading
-    local -a prompts
+    local caption
+    local -a captions
+    local caption_style
+    local -a colorized_array
+    local delim
+    local element
+    local -a elements
+    local max_width
+    local -a padded_array
+    local parent_key
+    local text
+    local text_style
+    local width
 
     # Read the arguments.
-    heading="$1"
-    shift
-    prompts=("$@")
+    elements=("$@")
 
-    # Print the TUI block's heading and all prompts.
-    printf '%s\n' "${heading}"
-    printf '%s:\n' "${prompts[@]}"
+    # Get all captions for the textbox, as well as the global
+    # caption/text style settings.
+    delim="${ARGPARSER_ARG_DELIMITER_2}"
+    captions=( )
+    for element in "${elements[@]}"; do
+        captions+=("${tui_def[${element}${delim}Caption]}")
+    done
+
+    caption_style="${tui_def[TUI${delim}Style${delim}Textbox${delim}Caption]}"
+    text_style="${tui_def[TUI${delim}Style${delim}Textbox${delim}Text]}"
+
+    # Create the caption-adjoining text fields to fit the available
+    # width, colorize them, then colorize and pad all captions and merge
+    # them with the text fields.
+    argparser_get_max_width "${captions[@]}"
+    parent_key="${element%"${delim}"*"${delim}"*}"
+    (( width = "${tui_def[${parent_key}${delim}Width]}" - max_width - 2 ))
+    printf -v text '%*s' "${width}" ""
+
+    argparser_colorize "${text_style}" 1 text "${text}"
+    argparser_colorize "${caption_style}" 1 "array" "${captions[@]}"
+    argparser_pad "right" "auto" "${colorized_array[@]}"
+    tui_textbox=("${padded_array[@]/%/"  ${text}"}")
 }
 
 function argparser_run_tui_radiobuttons() {
@@ -2318,26 +2462,26 @@ function argparser_build_tui_block() {
     # Define the local variables.
     local caption
     local caption_style
+    local -a curr_elements
     local delim
     local element
+    local element_type
     local -a elements
     local frame_style
     local -a framed_array
     local i
     local key
-    local key_description
-    local key_description_style
-    local key_name
-    local key_name_style
-    local key_padding
-    local key_padding_style
     local -a key_parts
-    local keys
+    local next_element
+    local next_element_type
     local -a padded_array
     local parent_key
-    local -a sorted_array
     local -a tui_block
+    local -a tui_buttons
+    local -a tui_keyspec
+    local -a tui_radiobuttons
     local -a tui_sub_block
+    local -a tui_textbox
     local width
 
     # Read the argument.
@@ -2361,16 +2505,40 @@ function argparser_build_tui_block() {
     done
 
     # Build all TUI elements for the current block.
-    for element in "${elements[@]}"; do
-        case "${tui_def[${element}${delim}Type]}" in
-            "Block")
-                # The element is a nested block, so build it on its own.
-                argparser_build_tui_block "${element}"
-                tui_sub_block=("${tui[@]}")
+    curr_elements=( )
+    while (( "${#elements[@]}" > 0 )); do
+        # Aggregate all elements with the same type.
+        # If the element has the same type as the next one, and is not a
+        # block, aggregate the elements instead of building the TUI.
+        # This allows for element alignment, later.
+        element="${elements[0]}"
+        element_type="${tui_def[${element}${delim}Type]}"
+        curr_elements+=("${element}")
 
-                # Get the nested block's width, caption, and
-                # caption/frame style settings.
+        if (( "${#elements[@]}" > 1 )); then
+            next_element="${elements[1]}"
+            next_element_type="${tui_def[${next_element}${delim}Type]}"
+        else
+            next_element_type=""
+        fi
+
+        if [[ "${element_type}" == "${next_element_type}"
+            && "${element_type}" != "Block" ]]
+        then
+            elements=("${elements[@]:1}")
+            continue
+        fi
+
+        # Build the TUI for the current set of elements.
+        case "${element_type}" in
+            "Block")
+                # The element is a nested block.  Get its width,
+                # caption, and caption/frame style settings.
                 width="${tui_def[${element}${delim}Width]}"
+                # if [[ "${width}" == "null" ]]; then
+                #     width="${tui_def[TUI${delim}Width]}"
+                # fi
+
                 caption="${tui_def[${element}${delim}Caption]}"
 
                 caption_style="${tui_def[${element}${delim}Style${delim}Caption]}"
@@ -2385,6 +2553,11 @@ function argparser_build_tui_block() {
                 if [[ -n "${frame_style}" ]]; then
                     (( width -= 4 ))
                 fi
+                tui_def[${element}${delim}Width]="${width}"
+
+                # Build the nested block on its own.
+                argparser_build_tui_block "${element}"
+                tui_sub_block=("${tui[@]}")
 
                 # Colorize the caption, right-pad the block's lines, and
                 # draw a frame around the block, containing the
@@ -2410,53 +2583,25 @@ function argparser_build_tui_block() {
                 tui_block+=("${tui_sub_block[@]}")
                 ;;
             "Button")
-                caption="${tui_def[${element}${delim}Caption]}"
-                caption_style="${tui_def[${element}${delim}Style${delim}Caption]}"
-                argparser_colorize "${caption_style}" 1 caption " ${caption} "
-                tui_block+=("${caption}")
+                argparser_build_tui_buttons "${curr_elements[@]}"
+                tui_block+=("${tui_buttons[@]}")
                 ;;
             "Keyspec")
-                # Find all key name--key description pairs.
-                keys=( )
-                for key in "${!tui_def[@]}"; do
-                    if [[ "${key}" == "${element}${delim}Keys${delim}"* ]]
-                    then
-                        keys+=("${key}")
-                    fi
-                done
-
-                argparser_sort false "${keys[@]}"
-                keys=("${sorted_array[@]}")
-
-                # Get the keys' name, description, and padding style
-                # settings.
-                key_name_style="${tui_def[${element}${delim}Style${delim}Key name]}"
-                key_description_style="${tui_def[${element}${delim}Style${delim}Key description]}"
-                key_padding_style="${tui_def[${element}${delim}Style${delim}Padding]}"
-
-                # Colorize the key names, descriptions, and padding.
-                for key in "${keys[@]}"; do
-                    argparser_colorize "${key_name_style}" 1 key_name \
-                        "${key##*"${delim}"}"
-                    argparser_colorize "${key_description_style}" 1 \
-                        key_description "${tui_def[${key}]}"
-                    argparser_colorize "${key_padding_style}" 1 key_padding " "
-                    tui_block+=("${key_name}${key_padding}${key_description}")
-                done
+                argparser_build_tui_keyspec "${curr_elements[@]}"
+                tui_block+=("${tui_keyspec[@]}")
                 ;;
             "Radio button")
-                caption="${tui_def[${element}${delim}Caption]}"
-                caption_style="${tui_def[${element}${delim}Style${delim}Caption]}"
-                argparser_colorize "${caption_style}" 1 caption "${caption}"
-                tui_block+=("${caption} ( )")
+                argparser_build_tui_radiobuttons "${curr_elements[@]}"
+                tui_block+=("${tui_radiobuttons[@]}")
                 ;;
             "Textbox")
-                caption="${tui_def[${element}${delim}Caption]}"
-                caption_style="${tui_def[${element}${delim}Style${delim}Caption]}"
-                argparser_colorize "${caption_style}" 1 caption "${caption}"
-                tui_block+=("${caption}")
+                argparser_build_tui_textbox "${curr_elements[@]}"
+                tui_block+=("${tui_textbox[@]}")
                 ;;
         esac
+
+        curr_elements=( )
+        elements=("${elements[@]:1}")
     done
 
     tui=("${tui_block[@]}")
