@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-04-14
+# Last Modification: 2026-04-16
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -2325,9 +2325,17 @@ function argparser_build_tui_block() {
     local -a framed_array
     local i
     local key
+    local key_description
+    local key_description_style
+    local key_name
+    local key_name_style
+    local key_padding
+    local key_padding_style
     local -a key_parts
+    local keys
     local -a padded_array
     local parent_key
+    local -a sorted_array
     local -a tui_block
     local -a tui_sub_block
     local width
@@ -2402,8 +2410,39 @@ function argparser_build_tui_block() {
                 tui_block+=("${tui_sub_block[@]}")
                 ;;
             "Button")
+                caption="${tui_def[${element}${delim}Caption]}"
+                caption_style="${tui_def[${element}${delim}Style${delim}Caption]}"
+                argparser_colorize "${caption_style}" 1 caption " ${caption} "
+                tui_block+=("${caption}")
                 ;;
             "Keyspec")
+                # Find all key name--key description pairs.
+                keys=( )
+                for key in "${!tui_def[@]}"; do
+                    if [[ "${key}" == "${element}${delim}Keys${delim}"* ]]
+                    then
+                        keys+=("${key}")
+                    fi
+                done
+
+                argparser_sort false "${keys[@]}"
+                keys=("${sorted_array[@]}")
+
+                # Get the keys' name, description, and padding style
+                # settings.
+                key_name_style="${tui_def[${element}${delim}Style${delim}Key name]}"
+                key_description_style="${tui_def[${element}${delim}Style${delim}Key description]}"
+                key_padding_style="${tui_def[${element}${delim}Style${delim}Padding]}"
+
+                # Colorize the key names, descriptions, and padding.
+                for key in "${keys[@]}"; do
+                    argparser_colorize "${key_name_style}" 1 key_name \
+                        "${key##*"${delim}"}"
+                    argparser_colorize "${key_description_style}" 1 \
+                        key_description "${tui_def[${key}]}"
+                    argparser_colorize "${key_padding_style}" 1 key_padding " "
+                    tui_block+=("${key_name}${key_padding}${key_description}")
+                done
                 ;;
             "Radio button")
                 caption="${tui_def[${element}${delim}Caption]}"
