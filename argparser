@@ -2198,6 +2198,113 @@ function argparser_build_tui_textbox() {
     tui_textbox=("${padded_array[@]/%/"  ${text}"}")
 }
 
+function argparser_build_tui() {
+    # Build a block for a text-based user interface (TUI).
+    #
+    # Arguments:
+    # - $1: the TUI block's parent key in ${tui_def[@]}, "TUI" for the
+    #       outermost block(s)
+    #
+    # Nonlocals:
+    # - tui: the indexed array containing all yet built TUI elements
+    # - tui_def: the associative array containing the TUI elements'
+    #   definitions (read-only)
+    #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+
+    # Define the local variables.
+    local -a curr_elements
+    local delim
+    local element
+    local element_type
+    local -a elements
+    local i
+    local key
+    local next_element
+    local next_element_type
+    local parent_key
+    local -a tui_block
+    local -a tui_buttons
+    local -a tui_keyspec
+    local -a tui_radiobuttons
+    local -a tui_subblock
+    local -a tui_textbox
+
+    # Read the argument.
+    parent_key="$1"
+
+    # Find all TUI elements for the current block.
+    delim="${ARGPARSER_ARG_DELIMITER_2}"
+    elements=( )
+    i=0
+    while :; do
+        key="${parent_key}${delim}Elements${delim}${i}${delim}Type"
+        if [[ -z "${tui_def[${key}]+set}" ]]; then
+            break
+        fi
+
+        elements+=("${parent_key}${delim}Elements${delim}${i}")
+        (( i++ ))
+    done
+
+    # Build all TUI elements for the current block.
+    curr_elements=( )
+    tui_block=( )
+    while (( "${#elements[@]}" > 0 )); do
+        # Aggregate all elements with the same type.
+        # If the element has the same type as the next one, and is not a
+        # block, aggregate the elements instead of building the TUI.
+        # This allows for element alignment, later.
+        element="${elements[0]}"
+        element_type="${tui_def[${element}${delim}Type]}"
+        curr_elements+=("${element}")
+
+        if (( "${#elements[@]}" > 1 )); then
+            next_element="${elements[1]}"
+            next_element_type="${tui_def[${next_element}${delim}Type]}"
+        else
+            next_element_type=""
+        fi
+
+        if [[ "${element_type}" == "${next_element_type}"
+            && "${element_type}" != "Block" ]]
+        then
+            elements=("${elements[@]:1}")
+            continue
+        fi
+
+        # Build the TUI for the current set of elements.
+        case "${element_type}" in
+            "Block")
+                argparser_build_tui_subblock "${curr_elements[@]}"
+                tui_block+=("${tui_subblock[@]}")
+                ;;
+            "Button")
+                argparser_build_tui_buttons "${curr_elements[@]}"
+                tui_block+=("${tui_buttons[@]}")
+                ;;
+            "Keyspec")
+                argparser_build_tui_keyspec "${curr_elements[@]}"
+                tui_block+=("${tui_keyspec[@]}")
+                ;;
+            "Radio button")
+                argparser_build_tui_radiobuttons "${curr_elements[@]}"
+                tui_block+=("${tui_radiobuttons[@]}")
+                ;;
+            "Textbox")
+                argparser_build_tui_textbox "${curr_elements[@]}"
+                tui_block+=("${tui_textbox[@]}")
+                ;;
+        esac
+
+        curr_elements=( )
+        elements=("${elements[@]:1}")
+    done
+
+    tui=("${tui_block[@]}")
+}
+
 function argparser_run_tui_radiobuttons() {
     # Run a TUI block with radiobuttons.
     #
@@ -2533,113 +2640,6 @@ function argparser_create_tui_old() {
 
     # Move the cursor to the TUI's end.
     printf '\e[%s;1H' "${LINES}"
-}
-
-function argparser_build_tui() {
-    # Build a block for a text-based user interface (TUI).
-    #
-    # Arguments:
-    # - $1: the TUI block's parent key in ${tui_def[@]}, "TUI" for the
-    #       outermost block(s)
-    #
-    # Nonlocals:
-    # - tui: the indexed array containing all yet built TUI elements
-    # - tui_def: the associative array containing the TUI elements'
-    #   definitions (read-only)
-    #
-    # Environment:
-    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
-
-    # Define the local variables.
-    local -a curr_elements
-    local delim
-    local element
-    local element_type
-    local -a elements
-    local i
-    local key
-    local next_element
-    local next_element_type
-    local parent_key
-    local -a tui_block
-    local -a tui_buttons
-    local -a tui_keyspec
-    local -a tui_radiobuttons
-    local -a tui_subblock
-    local -a tui_textbox
-
-    # Read the argument.
-    parent_key="$1"
-
-    # Find all TUI elements for the current block.
-    delim="${ARGPARSER_ARG_DELIMITER_2}"
-    elements=( )
-    i=0
-    while :; do
-        key="${parent_key}${delim}Elements${delim}${i}${delim}Type"
-        if [[ -z "${tui_def[${key}]+set}" ]]; then
-            break
-        fi
-
-        elements+=("${parent_key}${delim}Elements${delim}${i}")
-        (( i++ ))
-    done
-
-    # Build all TUI elements for the current block.
-    curr_elements=( )
-    tui_block=( )
-    while (( "${#elements[@]}" > 0 )); do
-        # Aggregate all elements with the same type.
-        # If the element has the same type as the next one, and is not a
-        # block, aggregate the elements instead of building the TUI.
-        # This allows for element alignment, later.
-        element="${elements[0]}"
-        element_type="${tui_def[${element}${delim}Type]}"
-        curr_elements+=("${element}")
-
-        if (( "${#elements[@]}" > 1 )); then
-            next_element="${elements[1]}"
-            next_element_type="${tui_def[${next_element}${delim}Type]}"
-        else
-            next_element_type=""
-        fi
-
-        if [[ "${element_type}" == "${next_element_type}"
-            && "${element_type}" != "Block" ]]
-        then
-            elements=("${elements[@]:1}")
-            continue
-        fi
-
-        # Build the TUI for the current set of elements.
-        case "${element_type}" in
-            "Block")
-                argparser_build_tui_subblock "${curr_elements[@]}"
-                tui_block+=("${tui_subblock[@]}")
-                ;;
-            "Button")
-                argparser_build_tui_buttons "${curr_elements[@]}"
-                tui_block+=("${tui_buttons[@]}")
-                ;;
-            "Keyspec")
-                argparser_build_tui_keyspec "${curr_elements[@]}"
-                tui_block+=("${tui_keyspec[@]}")
-                ;;
-            "Radio button")
-                argparser_build_tui_radiobuttons "${curr_elements[@]}"
-                tui_block+=("${tui_radiobuttons[@]}")
-                ;;
-            "Textbox")
-                argparser_build_tui_textbox "${curr_elements[@]}"
-                tui_block+=("${tui_textbox[@]}")
-                ;;
-        esac
-
-        curr_elements=( )
-        elements=("${elements[@]:1}")
-    done
-
-    tui=("${tui_block[@]}")
 }
 
 function argparser_create_tui() {
