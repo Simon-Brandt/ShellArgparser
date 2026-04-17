@@ -1923,6 +1923,9 @@ function argparser_build_tui_buttons() {
     # - tui_def: the associative array containing the TUI elements'
     #   definitions (read-only)
     # - tui_buttons: the indexed array containing the built buttons
+    #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
 
     # Define the local variables.
     local caption
@@ -1961,6 +1964,9 @@ function argparser_build_tui_keyspec() {
     # - tui_def: the associative array containing the TUI elements'
     #   definitions (read-only)
     # - tui_keyspec: the indexed array containing the built keyspec
+    #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
 
     # Define the local variables.
     local delim
@@ -2018,6 +2024,9 @@ function argparser_build_tui_radiobuttons() {
     #   definitions (read-only)
     # - tui_radiobuttons: the indexed array containing the built
     #   radiobuttons
+    #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
 
     # Define the local variables.
     local button
@@ -2061,8 +2070,11 @@ function argparser_build_tui_subblock() {
     #
     # Nonlocals:
     # - tui_def: the associative array containing the TUI elements'
-    #   definitions (read-only)
+    #   definitions
     # - tui_subblock: the indexed array containing the built subblock
+    #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
 
     # Define the local variables.
     local caption
@@ -2139,6 +2151,9 @@ function argparser_build_tui_textbox() {
     # - tui_def: the associative array containing the TUI elements'
     #   definitions (read-only)
     # - tui_textbox: the indexed array containing the built textbox
+    #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
 
     # Define the local variables.
     local caption
@@ -2530,7 +2545,7 @@ function argparser_build_tui_block() {
     # Nonlocals:
     # - tui: the indexed array containing all yet built TUI elements
     # - tui_def: the associative array containing the TUI elements'
-    #   definitions
+    #   definitions (read-only)
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
