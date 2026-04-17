@@ -2551,21 +2551,15 @@ function argparser_build_tui_block() {
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
 
     # Define the local variables.
-    local caption
-    local caption_style
     local -a curr_elements
     local delim
     local element
     local element_type
     local -a elements
-    local frame_style
-    local -a framed_array
     local i
     local key
-    local -a key_parts
     local next_element
     local next_element_type
-    local -a padded_array
     local parent_key
     local -a tui_block
     local -a tui_buttons
@@ -2573,7 +2567,6 @@ function argparser_build_tui_block() {
     local -a tui_radiobuttons
     local -a tui_subblock
     local -a tui_textbox
-    local width
 
     # Read the argument.
     parent_key="$1"
@@ -2583,15 +2576,12 @@ function argparser_build_tui_block() {
     elements=( )
     i=0
     while :; do
-        key_parts=("${parent_key}" "Elements" "${i}" "Type")
-        argparser_join "${delim}" "${key_parts[@]}"
-        key="${joined_array}"
-
+        key="${parent_key}${delim}Elements${delim}${i}${delim}Type"
         if [[ -z "${tui_def[${key}]+set}" ]]; then
             break
         fi
 
-        elements+=("${key%"${delim}Type"}")
+        elements+=("${parent_key}${delim}Elements${delim}${i}")
         (( i++ ))
     done
 
@@ -2662,6 +2652,7 @@ function argparser_build_tui() {
 
     # Define the local variables.
     local delim
+    local key
     local -a tui
     local -A tui_def
     local -A yaml_array
