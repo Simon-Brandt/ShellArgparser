@@ -2666,11 +2666,14 @@ function argparser_build_tui() {
     # Substitute the allowed variable names by their actual values.
     delim="${ARGPARSER_ARG_DELIMITER_2}"
     # shellcheck disable=SC2016  # Intentional single quotes around variable.
-    if [[ "${tui_def[TUI${delim}Width]}" == '${COLUMNS}' ]]; then
-        tui_def[TUI${delim}Width]="${COLUMNS:-ARGPARSER_MAX_WIDTH}"
+    if [[ "${tui_def[TUI${delim}Width]}" == '${COLUMNS}'
+        || "${tui_def[TUI${delim}Width]}" == '$COLUMNS' ]]
+    then
+        tui_def[TUI${delim}Width]="${COLUMNS:-${ARGPARSER_MAX_WIDTH}}"
     fi
     # shellcheck disable=SC2016  # Intentional single quotes around variable.
-    if [[ "${tui_def[TUI${delim}Height]}" == '${LINES}' ]]; then
+    if [[ "${tui_def[TUI${delim}Height]}" == '${LINES}'
+        || "${tui_def[TUI${delim}Height]}" == '$LINES' ]]; then
         tui_def[TUI${delim}Height]="${LINES:-20}"
     fi
 
