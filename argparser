@@ -2155,19 +2155,24 @@ function argparser_build_tui_textbox() {
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
 
     # Define the local variables.
+    local block_width
     local caption
+    local caption_width
     local -a captions
     local caption_style
     local -a colorized_array
     local delim
     local element
     local -a elements
+    local key
     local max_width
     local -a padded_array
+    local padding
+    local padding_width
     local parent_key
     local text
     local text_style
-    local width
+    local text_width
 
     # Read the arguments.
     elements=("$@")
@@ -2183,18 +2188,33 @@ function argparser_build_tui_textbox() {
     caption_style="${tui_def[TUI${delim}Style${delim}Textbox${delim}Caption]}"
     text_style="${tui_def[TUI${delim}Style${delim}Textbox${delim}Text]}"
 
-    # Create the caption-adjoining text fields to fit the available
-    # width, colorize them, then colorize and pad all captions and merge
-    # them with the text fields.
-    argparser_get_max_width "${captions[@]}"
+    # Get and/or compute the widths for the block, captions, their
+    # adjoining text fields, and the padding in-between, then create the
+    # text fields and padding.
     parent_key="${element%"${delim}"*"${delim}"*}"
-    (( width = "${tui_def[${parent_key}${delim}Width]}" - max_width - 2 ))
-    printf -v text '%*s' "${width}" ""
+    block_width="${tui_def[${parent_key}${delim}Width]}"
 
+    argparser_get_max_width "${captions[@]}"
+    caption_width="${max_width}"
+
+    key="${element}${delim}Width"
+    if [[ -n "${tui_def[${key}]+set}" && "${tui_def[${key}]}" != "null" ]]
+    then
+        text_width="${tui_def[${key}]}"
+    else
+        (( text_width = block_width - caption_width - 2 ))
+    fi
+    (( padding_width = block_width - caption_width - text_width ))
+
+    printf -v text '%*s' "${text_width}" ""
+    printf -v padding '%*s' "${padding_width}" ""
+
+    # Colorize the text fields, then colorize and pad all captions and
+    # merge them with the text fields.
     argparser_colorize "${text_style}" 1 text "${text}"
     argparser_colorize "${caption_style}" 1 "array" "${captions[@]}"
-    argparser_pad "right" "auto" "${colorized_array[@]}"
-    tui_textbox=("${padded_array[@]/%/"  ${text}"}")
+    argparser_pad "right" "${caption_width}" "${colorized_array[@]}"
+    tui_textbox=("${padded_array[@]/%/"${padding}${text}"}")
 }
 
 function argparser_build_tui() {
