@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-04-16
+# Last Modification: 2026-04-17
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -2053,6 +2053,82 @@ function argparser_build_tui_radiobuttons() {
     tui_radiobuttons=("${padded_array[@]/%/"  ${button}"}")
 }
 
+function argparser_build_tui_subblock() {
+    # Build a TUI block with a subblock.
+    #
+    # Arguments:
+    # - $1: the subblock element
+    #
+    # Nonlocals:
+    # - tui_def: the associative array containing the TUI elements'
+    #   definitions (read-only)
+    # - tui_subblock: the indexed array containing the built subblock
+
+    # Define the local variables.
+    local caption
+    local caption_style
+    local delim
+    local element
+    local frame_style
+    local -a framed_array
+    local -a padded_array
+    local width
+
+    # Read the argument.
+    element="$1"
+
+    # Get the subblock's width, caption, and local or global
+    # caption/frame style settings.  Reduce the width by 4 if the
+    # subblock is framed, and thus less screen space is available for
+    # the subblock's contents.
+    delim="${ARGPARSER_ARG_DELIMITER_2}"
+    width="${tui_def[${element}${delim}Width]}"
+    # if [[ "${width}" == "null" ]]; then
+    #     width="${tui_def[TUI${delim}Width]}"
+    # fi
+
+    caption="${tui_def[${element}${delim}Caption]}"
+
+    caption_style="${tui_def[${element}${delim}Style${delim}Caption]}"
+    if [[ -z "${caption_style}" ]]; then
+        caption_style="${tui_def[TUI${delim}Style${delim}Block${delim}Caption]}"
+    fi
+
+    frame_style="${tui_def[${element}${delim}Style${delim}Frame]}"
+    if [[ -z "${frame_style}" ]]; then
+        frame_style="${tui_def[TUI${delim}Style${delim}Block${delim}Frame]}"
+    fi
+
+    if [[ -n "${frame_style}" ]]; then
+        (( width -= 4 ))
+    fi
+    tui_def[${element}${delim}Width]="${width}"
+
+    # Build the subblock's contents.
+    argparser_build_tui_block "${element}"
+    tui_subblock=("${tui[@]}")
+
+    # Colorize the caption, right-pad the subblock's lines, and draw a
+    # frame around the subblock, containing the colorized caption as
+    # heading.
+    argparser_colorize "${caption_style}" 1 caption " ${caption} "
+    argparser_pad "right" "${width}" "${tui_subblock[@]}"
+    argparser_draw_frame "${frame_style}" 1 "array" "${caption}" \
+        "${padded_array[@]}"
+    tui_subblock=("${framed_array[@]}")
+
+    # If argparser_build_tui_block/argparser_build_tui_subblock is
+    # recursing, surround the current subblock by blank lines and spaces
+    # for better visual separation from the enclosing block.
+    if (( "${#FUNCNAME[@]}" >= 4 )) \
+        && [[ "${FUNCNAME[0]}" == "${FUNCNAME[2]}" ]]
+    then
+        tui_subblock=("" "${tui_subblock[@]}" "")
+        tui_subblock=("${tui_subblock[@]/#/ }")
+        tui_subblock=("${tui_subblock[@]/%/ }")
+    fi
+}
+
 function argparser_build_tui_textbox() {
     # Build a TUI block with textboxes prompting for input.
     #
@@ -2480,7 +2556,7 @@ function argparser_build_tui_block() {
     local -a tui_buttons
     local -a tui_keyspec
     local -a tui_radiobuttons
-    local -a tui_sub_block
+    local -a tui_subblock
     local -a tui_textbox
     local width
 
@@ -2506,6 +2582,7 @@ function argparser_build_tui_block() {
 
     # Build all TUI elements for the current block.
     curr_elements=( )
+    tui_block=( )
     while (( "${#elements[@]}" > 0 )); do
         # Aggregate all elements with the same type.
         # If the element has the same type as the next one, and is not a
@@ -2532,55 +2609,8 @@ function argparser_build_tui_block() {
         # Build the TUI for the current set of elements.
         case "${element_type}" in
             "Block")
-                # The element is a nested block.  Get its width,
-                # caption, and caption/frame style settings.
-                width="${tui_def[${element}${delim}Width]}"
-                # if [[ "${width}" == "null" ]]; then
-                #     width="${tui_def[TUI${delim}Width]}"
-                # fi
-
-                caption="${tui_def[${element}${delim}Caption]}"
-
-                caption_style="${tui_def[${element}${delim}Style${delim}Caption]}"
-                if [[ -z "${caption_style}" ]]; then
-                    caption_style="${tui_def[TUI${delim}Style${delim}Block${delim}Caption]}"
-                fi
-
-                frame_style="${tui_def[${element}${delim}Style${delim}Frame]}"
-                if [[ -z "${frame_style}" ]]; then
-                    frame_style="${tui_def[TUI${delim}Style${delim}Block${delim}Frame]}"
-                fi
-                if [[ -n "${frame_style}" ]]; then
-                    (( width -= 4 ))
-                fi
-                tui_def[${element}${delim}Width]="${width}"
-
-                # Build the nested block on its own.
-                argparser_build_tui_block "${element}"
-                tui_sub_block=("${tui[@]}")
-
-                # Colorize the caption, right-pad the block's lines, and
-                # draw a frame around the block, containing the
-                # colorized caption as heading.
-                argparser_colorize "${caption_style}" 1 caption " ${caption} "
-                argparser_pad "right" "${width}" "${tui_sub_block[@]}"
-                argparser_draw_frame "${frame_style}" 1 "array" "${caption}" \
-                    "${padded_array[@]}"
-                tui_sub_block=("${framed_array[@]}")
-
-                # If argparser_build_tui_block is recursing due to
-                # nested blocks, surround the current (nested) block by
-                # blank lines and spaces for better visual separation
-                # from the enclosing block.
-                if (( "${#FUNCNAME[@]}" >= 1 )) \
-                    && [[ "${FUNCNAME[0]}" == "${FUNCNAME[1]}" ]]
-                then
-                    tui_sub_block=("" "${tui_sub_block[@]}" "")
-                    tui_sub_block=("${tui_sub_block[@]/#/ }")
-                    tui_sub_block=("${tui_sub_block[@]/%/ }")
-                fi
-
-                tui_block+=("${tui_sub_block[@]}")
+                argparser_build_tui_subblock "${curr_elements[@]}"
+                tui_block+=("${tui_subblock[@]}")
                 ;;
             "Button")
                 argparser_build_tui_buttons "${curr_elements[@]}"
