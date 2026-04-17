@@ -2083,6 +2083,7 @@ function argparser_build_tui_subblock() {
     local element
     local frame_style
     local -a framed_array
+    local key
     local -a padded_array
     local width
 
@@ -2120,6 +2121,15 @@ function argparser_build_tui_subblock() {
     argparser_build_tui "${element}"
     tui_subblock=("${tui[@]}")
 
+    # If the subblock's first element is another subblock, insert a
+    # blank line before the latter to provide visual separation between
+    # the captions.
+    key="${element}${delim}Elements${delim}1${delim}Type"
+    if [[ -n "${tui_def[${key}]+set}" && "${tui_def[${key}]}" == "Block" ]]
+    then
+        tui_subblock=("" "${tui_subblock[@]}")
+    fi
+
     # Colorize the caption, right-pad the subblock's lines, and draw a
     # frame around the subblock, containing the colorized caption as
     # heading.
@@ -2128,17 +2138,6 @@ function argparser_build_tui_subblock() {
     argparser_draw_frame "${frame_style}" 1 "array" "${caption}" \
         "${padded_array[@]}"
     tui_subblock=("${framed_array[@]}")
-
-    # If argparser_build_tui/argparser_build_tui_subblock is recursing,
-    # surround the current subblock by blank lines and spaces for better
-    # visual separation from the enclosing block.
-    if (( "${#FUNCNAME[@]}" >= 4 )) \
-        && [[ "${FUNCNAME[0]}" == "${FUNCNAME[2]}" ]]
-    then
-        tui_subblock=("" "${tui_subblock[@]}" "")
-        tui_subblock=("${tui_subblock[@]/#/ }")
-        tui_subblock=("${tui_subblock[@]/%/ }")
-    fi
 }
 
 function argparser_build_tui_textbox() {
@@ -2264,6 +2263,7 @@ function argparser_build_tui() {
             next_element="${elements[1]}"
             next_element_type="${tui_def[${next_element}${delim}Type]}"
         else
+            next_element=""
             next_element_type=""
         fi
 
@@ -2297,6 +2297,11 @@ function argparser_build_tui() {
                 tui_block+=("${tui_textbox[@]}")
                 ;;
         esac
+
+        # Separate elements with a different type by a blank line.
+        if [[ -n "${next_element}" ]]; then
+            tui_block+=("")
+        fi
 
         curr_elements=( )
         elements=("${elements[@]:1}")
