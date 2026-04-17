@@ -2117,7 +2117,7 @@ function argparser_build_tui_subblock() {
     tui_def[${element}${delim}Width]="${width}"
 
     # Build the subblock's contents.
-    argparser_build_tui_block "${element}"
+    argparser_build_tui "${element}"
     tui_subblock=("${tui[@]}")
 
     # Colorize the caption, right-pad the subblock's lines, and draw a
@@ -2129,9 +2129,9 @@ function argparser_build_tui_subblock() {
         "${padded_array[@]}"
     tui_subblock=("${framed_array[@]}")
 
-    # If argparser_build_tui_block/argparser_build_tui_subblock is
-    # recursing, surround the current subblock by blank lines and spaces
-    # for better visual separation from the enclosing block.
+    # If argparser_build_tui/argparser_build_tui_subblock is recursing,
+    # surround the current subblock by blank lines and spaces for better
+    # visual separation from the enclosing block.
     if (( "${#FUNCNAME[@]}" >= 4 )) \
         && [[ "${FUNCNAME[0]}" == "${FUNCNAME[2]}" ]]
     then
@@ -2381,7 +2381,7 @@ function argparser_run_tui_textbox() {
     read -r -e reply 2>&1
 }
 
-function argparser_create_tui() {
+function argparser_create_tui_old() {
     # Build and run a text-based user interface (TUI).
 
     # Define the local variables.
@@ -2535,7 +2535,7 @@ function argparser_create_tui() {
     printf '\e[%s;1H' "${LINES}"
 }
 
-function argparser_build_tui_block() {
+function argparser_build_tui() {
     # Build a block for a text-based user interface (TUI).
     #
     # Arguments:
@@ -2642,8 +2642,8 @@ function argparser_build_tui_block() {
     tui=("${tui_block[@]}")
 }
 
-function argparser_build_tui() {
-    # Build a text-based user interface (TUI).
+function argparser_create_tui() {
+    # Create a text-based user interface (TUI).
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
@@ -2678,7 +2678,7 @@ function argparser_build_tui() {
     fi
 
     # Build the TUI.
-    argparser_build_tui_block "TUI"
+    argparser_build_tui "TUI"
     printf '%s\n' "${tui[@]}"
 }
 
