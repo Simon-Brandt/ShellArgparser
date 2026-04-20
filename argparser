@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-04-17
+# Last Modification: 2026-04-20
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -2690,17 +2690,34 @@ function argparser_create_tui() {
 
     # Substitute the allowed variable names by their actual values.
     delim="${ARGPARSER_ARG_DELIMITER_2}"
-    # shellcheck disable=SC2016  # Intentional single quotes around variable.
-    if [[ "${tui_def[TUI${delim}Width]}" == '${COLUMNS}'
-        || "${tui_def[TUI${delim}Width]}" == '$COLUMNS' ]]
-    then
-        tui_def[TUI${delim}Width]="${COLUMNS:-${ARGPARSER_MAX_WIDTH}}"
-    fi
-    # shellcheck disable=SC2016  # Intentional single quotes around variable.
-    if [[ "${tui_def[TUI${delim}Height]}" == '${LINES}'
-        || "${tui_def[TUI${delim}Height]}" == '$LINES' ]]; then
-        tui_def[TUI${delim}Height]="${LINES:-20}"
-    fi
+    # shellcheck disable=SC2016  # Intentional single quotes around variables.
+    {
+        # For the TUI width, substitute the number of columns on the
+        # screen.
+        key="TUI${delim}Width"
+        if [[ "${tui_def[${key}]}" == '${COLUMNS}'
+            || "${tui_def[${key}]}" == '$COLUMNS' ]]
+        then
+            tui_def[${key}]="${COLUMNS:-${ARGPARSER_MAX_WIDTH}}"
+        fi
+
+        # For the TUI height, substitute the number of lines on the
+        # screen.
+        key="TUI${delim}Height"
+        if [[ "${tui_def[${key}]}" == '${LINES}'
+            || "${tui_def[${key}]}" == '$LINES' ]]
+        then
+            tui_def[${key}]="${LINES:-20}"
+        fi
+
+        # For the TUI caption, substitute the script name and version
+        # number.
+        key="TUI${delim}Elements${delim}0${delim}Caption"
+        tui_def[${key}]="${tui_def[${key}]/'${ARGPARSER_SCRIPT_NAME}'/${ARGPARSER_SCRIPT_NAME}}"
+        tui_def[${key}]="${tui_def[${key}]/'$ARGPARSER_SCRIPT_NAME'/${ARGPARSER_SCRIPT_NAME}}"
+        tui_def[${key}]="${tui_def[${key}]/'${ARGPARSER_VERSION_NUMBER}'/${ARGPARSER_VERSION_NUMBER:-v1.0.0}}"
+        tui_def[${key}]="${tui_def[${key}]/'$ARGPARSER_VERSION_NUMBER'/${ARGPARSER_VERSION_NUMBER:-v1.0.0}}"
+    }
 
     # Build the TUI.
     argparser_build_tui "TUI"
