@@ -23,7 +23,7 @@
 
 You're very welcome to contribute to the Argparser! Be it by fixing spelling mistakes or small bugs, adding or clarifying the [documentation](../docs), or even adding new functionality to the Argparser itself, any improvement is highly appreciated.
 
-In order to facilitate the seemless integration of your commits with the Argparser codebase, please try to comply with the following guidelines. Most of them are rather irrelevant for small fixes, so you probably would follow them, anyways. If you have reasons *not* to comply, it would likely not mean that your commit can't be merged, but you should explain *why* the guideline does not apply. After all, it's a *guideline*, not a *law*. And its always possible to adjust things at a later stage.
+In order to facilitate the seamless integration of your commits with the Argparser codebase, please try to comply with the following guidelines. Most of them are rather irrelevant for small fixes, so you probably would follow them, anyways. If you have reasons *not* to comply, it would likely not mean that your commit can't be merged, but you should explain *why* the guideline does not apply. After all, it's a *guideline*, not a *law*. And its always possible to adjust things at a later stage.
 
 <!-- <toc title="Table of contents (Contribution guide)"> -->
 ### Table of contents (Contribution guide)
@@ -167,7 +167,7 @@ The Argparser emits a lot of error and warning messages for faulty arguments. Bo
 
 Within the [YAML](https://en.wikipedia.org/wiki/YAML "wikipedia.org &rightarrow; YAML") file, just add a new line below each existing translation, start it with the language identifier for your locale after two spaces indentation, add a colon and space, and then the translated text. If it doesn't fit the 79 characters line length, add a greater-than sign (`>`) after the language identifier and write the translation on the next line(s), indented by four spaces. Use `$n` (with n as natural number) as placeholder for the variables the Argparser interpolates. Refer to the [documentation](../docs/reference/translations/translations.md) for the meaning of each value.
 
-Try to use the tone and wording commonly found in command-line tool descriptions in your language. Don't just use machine translations, without having checked their validity. By this, the Argparser's output seemlessly integrates into the command-line workflows even in languages other than English.
+Try to use the tone and wording commonly found in command-line tool descriptions in your language. Don't just use machine translations, without having checked their validity. By this, the Argparser's output seamlessly integrates into the command-line workflows even in languages other than English.
 <!-- </include> -->
 
 [&#129092;&nbsp;7. Roadmap](roadmap.md)
