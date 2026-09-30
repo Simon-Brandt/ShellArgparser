@@ -27,9 +27,9 @@
    1. [Option name aliases and modifications](argument_passing.md#513-option-name-aliases-and-modifications)
    1. [Argument value delimiters and intermixing](argument_passing.md#514-argument-value-delimiters-and-intermixing)
    1. [Flags](argument_passing.md#515-flags)
-1. [Argparser invokation](argparser_invokation.md#52-argparser-invokation)
-   1. [Argparser sourcing](argparser_invokation.md#521-argparser-sourcing)
-   1. [Arguments definition and retrieval](argparser_invokation.md#522-arguments-definition-and-retrieval)
+1. [Argparser invocation](argparser_invocation.md#52-argparser-invocation)
+   1. [Argparser sourcing](argparser_invocation.md#521-argparser-sourcing)
+   1. [Arguments definition and retrieval](argparser_invocation.md#522-arguments-definition-and-retrieval)
 1. [Argparser configuration](argparser_configuration.md#53-argparser-configuration)
    1. [Configuration file](argparser_configuration.md#531-configuration-file)
    1. [Command-line options](argparser_configuration.md#532-command-line-options)
@@ -45,7 +45,7 @@
 1. [Message styles](message_styles.md#510-message-styles)
 1. [Standalone usage](standalone_usage.md#511-standalone-usage)
    1. [Argparser introspection](standalone_usage.md#5111-argparser-introspection)
-   1. [Invokation from other shells](standalone_usage.md#5112-invokation-from-other-shells)
+   1. [Invocation from other shells](standalone_usage.md#5112-invocation-from-other-shells)
 <!-- </toc> -->
 
 [&#129092;&nbsp;5. Tutorial](introduction.md)

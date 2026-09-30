@@ -346,14 +346,14 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to unset (remove) the Argparser environment variables from the environment. As long as you don't need these variables anymore or want to reset them prior to the next Argparser invokation, this is usually what you want. This prevents accidental (but also deliberate) inheritance to child scripts when passing the entire environment to them.
+- ***Description:*** Whether to unset (remove) the Argparser environment variables from the environment. As long as you don't need these variables anymore or want to reset them prior to the next Argparser invocation, this is usually what you want. This prevents accidental (but also deliberate) inheritance to child scripts when passing the entire environment to them.
 
 #### 9.4.47. `ARGPARSER_UNSET_FUNCTIONS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to unset (remove) the Argparser functions from the environment. You should not need them separated from an Argparser invokation, where they're automatically defined (set) upon sourcing it. By unsetting them, the namespace is kept clean.
+- ***Description:*** Whether to unset (remove) the Argparser functions from the environment. You should not need them separated from an Argparser invocation, where they're automatically defined (set) upon sourcing it. By unsetting them, the namespace is kept clean.
 
 #### 9.4.48. `ARGPARSER_USAGE_EXIT_CODE`
 

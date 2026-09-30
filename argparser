@@ -20,13 +20,12 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
+# Last Modification: 2026-02-25
 # Last Modification: 2026-03-25
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
 #       variables.
-# TODO: Remove need for message parsing after argument parsing by using
-#       nonlocal variables.
 
 # Usage: Source this script with 'source argparser -- "$@"' inside the
 # script whose arguments need to be parsed.  If ${ARGPARSER_READ_ARGS}
@@ -368,12 +367,14 @@ function argparser_check_styles() {
     )
 
     corner_styles=(
+        "ASCII"
         "angular"
         "rounded"
         "double"
     )
 
     line_styles=(
+        "ASCII"
         "solid"
         "double-dashed"
         "triple-dashed"
@@ -545,27 +546,6 @@ function argparser_pad() {
             padded_array[i]="${padded_array[i]}${whitespace}"
         done
     fi
-}
-
-function argparser_trim() {
-    # Trim leading and trailing space characters from a string.
-    #
-    # Arguments:
-    # - $1: the string to trim
-    #
-    # Nonlocals:
-    # - trimmed_string: the trimmed string
-
-    # Define the local variable.
-    local string
-
-    # Read the argument.
-    string="$1"
-
-    # Trim the string and set the nonlocal ${trimmed_string} to it.
-    string="${string##+( )}"
-    string="${string%%+( )}"
-    trimmed_string="${string}"
 }
 
 function argparser_fold() {
@@ -1447,6 +1427,7 @@ function argparser_draw_frame() {
     # default values.
     corner_style="angular"
     corner_styles=(
+        "ASCII"
         "angular"
         "rounded"
         "double"
@@ -1454,6 +1435,7 @@ function argparser_draw_frame() {
 
     line_style="solid"
     line_styles=(
+        "ASCII"
         "solid"
         "double-dashed"
         "triple-dashed"
@@ -1497,7 +1479,12 @@ function argparser_draw_frame() {
 
     # Set the box drawing characters corresponding to the requested
     # frame styles per category.
-    if [[ "${corner_style}" == "angular" ]]; then
+    if [[ "${corner_style}" == "ASCII" ]]; then
+        frame_chars["top-left"]="+"
+        frame_chars["top-right"]="+"
+        frame_chars["bottom-left"]="+"
+        frame_chars["bottom-right"]="+"
+    elif [[ "${corner_style}" == "angular" ]]; then
         if [[ "${line_width}" == "thin" ]]; then
             frame_chars["top-left"]=$'\u250C'
             frame_chars["top-right"]=$'\u2510'
@@ -1526,7 +1513,10 @@ function argparser_draw_frame() {
         frame_chars["bottom-right"]=$'\u255D'
     fi
 
-    if [[ "${line_style}" == "solid" ]]; then
+    if [[ "${line_style}" == "ASCII" ]]; then
+        frame_chars["horizontal"]="-"
+        frame_chars["vertical"]="|"
+    elif [[ "${line_style}" == "solid" ]]; then
         if [[ "${line_width}" == "thin" ]]; then
             frame_chars["horizontal"]=$'\u2500'
             frame_chars["vertical"]=$'\u2502'
@@ -1715,13 +1705,12 @@ function argparser_read_configuration() {
     local file_attributes
     local line
     local -a lines
-    local trimmed_string
     local value
     local var
 
     # Check if the configuration file exists and is readable.  Else,
     # output an error message and exit.  Since at this point of
-    # invokation, the environment variables aren't checked, yet, set the
+    # invocation, the environment variables aren't checked, yet, set the
     # needed ones to default values, if ${ARGPARSER_CHECK_ENV_VARS}
     # isn't set to "false" (and by this, the checking hasn't been
     # explicitly disabled).
@@ -1779,15 +1768,15 @@ function argparser_read_configuration() {
             # the value as longest part after the equals sign and strip
             # leading and trailing spaces and a double quote each.
             var="${line%%=*}"
-            argparser_trim "${var}"
-            var="${trimmed_string}"
+            var="${var##+( )}"
+            var="${var%%+( )}"
             var="${var//-/_}"
             var="${var// /_}"
             var="ARGPARSER_${var^^}"
 
             value="${line#*=}"
-            argparser_trim "${value}"
-            value="${trimmed_string}"
+            value="${value##+( )}"
+            value="${value%%+( )}"
             value="${value#\"}"
             value="${value%\"}"
 
@@ -2884,6 +2873,7 @@ function argparser_read_translation() {
     # Environment:
     # - ARGPARSER_CHECK_ENV_VARS (read-only)
     # - ARGPARSER_LANGUAGE (read-only)
+    # - ARGPARSER_SILENCE_ERRORS
     # - ARGPARSER_TRANSLATION_FILE (read-only)
 
     # Define the local variables.
@@ -2900,7 +2890,7 @@ function argparser_read_translation() {
 
     # Check if the translation file exists and is readable.  Else,
     # output an error message and exit.  Since at this point of
-    # invokation, the environment variables aren't checked, yet, set the
+    # invocation, the environment variables aren't checked, yet, set the
     # needed ones to default values, if ${ARGPARSER_CHECK_ENV_VARS}
     # isn't set to "false" (and by this, the checking hasn't been
     # explicitly disabled).
@@ -3172,12 +3162,11 @@ function argparser_read_styles() {
     local -a text_styles_arr
     local text_styles_str
     local translation
-    local trimmed_string
     local warning_message
     local -a warning_messages
 
     # Check if the style file exists and is readable.  Else, output an
-    # error message and exit.  Since at this point of invokation, the
+    # error message and exit.  Since at this point of invocation, the
     # environment variables aren't checked, yet, set the needed ones to
     # default values, if ${ARGPARSER_CHECK_ENV_VARS} isn't set to
     # "false" (and by this, the checking hasn't been explicitly
@@ -3223,16 +3212,16 @@ function argparser_read_styles() {
             # Get the style name as shortest part before an equals sign
             # ("="), and strip leading and trailing spaces.
             name="${line%%=*}"
-            argparser_trim "${name}"
-            name="${trimmed_string}"
+            name="${name##+( )}"
+            name="${name%%+( )}"
 
             if [[ -n "${styles[${name}]+set}" ]]; then
                 # The style name exists, so extract the style as longest
                 # part after the equals sign and strip leading and
                 # trailing spaces and a double quote each.
                 style="${line#*=}"
-                argparser_trim "${style}"
-                style="${trimmed_string}"
+                style="${style##+( )}"
+                style="${style%%+( )}"
                 style="${style#\"}"
                 style="${style%\"}"
 
@@ -3364,11 +3353,21 @@ function argparser_read_styles() {
         argparser_set_env_var_defaults
     fi
 
-    argparser_print_error_messages true false "${error_messages[@]}"
-    argparser_print_warning_messages true "${warning_messages[@]}"
+    if (( "${#error_messages[@]}" > 0 && "${#warning_messages[@]}" > 0 )); then
+        argparser_print_error_messages true false "${error_messages[@]}"
 
-    if (( "${#error_messages[@]}" > 0 )); then
+        if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
+            printf '\n' >&2
+        fi
+
+        argparser_print_warning_messages true "${warning_messages[@]}"
+
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
+    elif (( "${#error_messages[@]}" > 0 )); then
+        argparser_print_error_messages true false "${error_messages[@]}"
+        exit "${ARGPARSER_ERROR_EXIT_CODE}"
+    elif (( "${#warning_messages[@]}" > 0 )); then
+        argparser_print_warning_messages true "${warning_messages[@]}"
     fi
 }
 
@@ -3772,7 +3771,6 @@ function argparser_read_args_definition() {
     local line
     local lines
     local translation
-    local trimmed_string
 
     # Read the arguments.
     # shellcheck disable=SC2190  # Indexed, not associative array.
@@ -3812,8 +3810,8 @@ function argparser_read_args_definition() {
             # message.
             for line in "${lines[@]:1}"; do
                 arg_key="${line%%"${ARGPARSER_ARG_DELIMITER_1}"*}"
-                argparser_trim "${arg_key}"
-                arg_key="${trimmed_string}"
+                arg_key="${arg_key##+( )}"
+                arg_key="${arg_key%%+( )}"
 
                 if [[ "${arg_key}" == "${arg}" ]]; then
                     messages+=("File: ${line}")
@@ -3900,7 +3898,6 @@ function argparser_parse_args_definition() {
     local sequence
     local short_options
     local translation
-    local trimmed_string
     local type
     local value_names
 
@@ -3914,8 +3911,8 @@ function argparser_parse_args_definition() {
     IFS="${ARGPARSER_ARG_DELIMITER_1}" read -r -a header \
         <<< "${args_definition[0]}"
     for column_index in "${!header[@]}"; do
-        argparser_trim "${header[column_index]}"
-        header[column_index]="${trimmed_string}"
+        header[column_index]="${header[column_index]##+( )}"
+        header[column_index]="${header[column_index]%%+( )}"
     done
 
     # Get the column indices of all fields.
@@ -3979,6 +3976,8 @@ function argparser_parse_args_definition() {
     # given.
     for line in "${args_definition[@]:1}"; do
         IFS="${ARGPARSER_ARG_DELIMITER_1}" read -r -a fields <<< "${line}"
+        fields=("${fields[@]##+( )}")
+        fields=("${fields[@]%%+( )}")
 
         # If the line has more or less columns than the header, output
         # an error message.
@@ -4007,21 +4006,18 @@ function argparser_parse_args_definition() {
         fi
 
         # Get the argument identifier.
-        argparser_trim "${fields[${column_indices["id"]}]}"
-        arg_key="${trimmed_string}"
+        arg_key="${fields[${column_indices["id"]}]}"
 
         # Get the short option names.
         if [[ -n "${column_indices["short_opts"]}" ]]; then
-            argparser_trim "${fields[${column_indices["short_opts"]}]}"
-            short_options="${trimmed_string}"
+            short_options="${fields[${column_indices["short_opts"]}]}"
         else
             short_options=""
         fi
 
         # Get the long option names.
         if [[ -n "${column_indices["long_opts"]}" ]]; then
-            argparser_trim "${fields[${column_indices["long_opts"]}]}"
-            long_options="${trimmed_string}"
+            long_options="${fields[${column_indices["long_opts"]}]}"
         else
             long_options=""
         fi
@@ -4050,8 +4046,7 @@ function argparser_parse_args_definition() {
 
         # Get the value names.
         if [[ -n "${column_indices["val_names"]}" ]]; then
-            argparser_trim "${fields[${column_indices["val_names"]}]}"
-            value_names="${trimmed_string}"
+            value_names="${fields[${column_indices["val_names"]}]}"
         else
             value_names=""
         fi
@@ -4059,8 +4054,7 @@ function argparser_parse_args_definition() {
 
         # Get the default values.
         if [[ -n "${column_indices["defaults"]}" ]]; then
-            argparser_trim "${fields[${column_indices["defaults"]}]}"
-            default_values="${trimmed_string}"
+            default_values="${fields[${column_indices["defaults"]}]}"
         else
             default_values=""
         fi
@@ -4069,8 +4063,7 @@ function argparser_parse_args_definition() {
         # Get the choice values.  Resolve ranges in the individual
         # elements.
         if [[ -n "${column_indices["choices"]}" ]]; then
-            argparser_trim "${fields[${column_indices["choices"]}]}"
-            choice_values_str="${trimmed_string}"
+            choice_values_str="${fields[${column_indices["choices"]}]}"
 
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values_arr \
                 <<< "${choice_values_str}"
@@ -4117,8 +4110,7 @@ function argparser_parse_args_definition() {
 
         # Get the data type.
         if [[ -n "${column_indices["type"]}" ]]; then
-            argparser_trim "${fields[${column_indices["type"]}]}"
-            type="${trimmed_string}"
+            type="${fields[${column_indices["type"]}]}"
         else
             type="str"
         fi
@@ -4126,8 +4118,7 @@ function argparser_parse_args_definition() {
 
         # Get the argument number.
         if [[ -n "${column_indices["arg_no"]}" ]]; then
-            argparser_trim "${fields[${column_indices["arg_no"]}]}"
-            arg_number="${trimmed_string}"
+            arg_number="${fields[${column_indices["arg_no"]}]}"
         else
             arg_number=1
         fi
@@ -4135,8 +4126,7 @@ function argparser_parse_args_definition() {
 
         # Get the argument group.
         if [[ -n "${column_indices["arg_group"]}" ]]; then
-            argparser_trim "${fields[${column_indices["arg_group"]}]}"
-            arg_group="${trimmed_string}"
+            arg_group="${fields[${column_indices["arg_group"]}]}"
         else
             arg_group="${ARGPARSER_POSITIONAL_ARG_GROUP}"
         fi
@@ -4144,8 +4134,7 @@ function argparser_parse_args_definition() {
 
         # Get the notes.
         if [[ -n "${column_indices["notes"]}" ]]; then
-            argparser_trim "${fields[${column_indices["notes"]}]}"
-            notes="${trimmed_string}"
+            notes="${fields[${column_indices["notes"]}]}"
         else
             notes=""
         fi
@@ -4153,8 +4142,7 @@ function argparser_parse_args_definition() {
 
         # Get the help text.
         if [[ -n "${column_indices["help"]}" ]]; then
-            argparser_trim "${fields[${column_indices["help"]}]}"
-            help_text="${trimmed_string}"
+            help_text="${fields[${column_indices["help"]}]}"
         else
             help_text=""
         fi
@@ -5449,15 +5437,19 @@ function argparser_parse_arg() {
     # - $1: the argument to parse
     #
     # Nonlocals:
-    # - is_positional_only: whether the positional arguments delimiter
-    #   "--" has already been set and has not been unset by "++"
-    #   (read-only)
+    # - error_messages: the error messages, starting with "Error: "
+    #   (translated), as indexed array
+    # - is_logo: whether the argument is the magic string for the
+    #   Argparser
+    # - is_positional: whether the arguments are to be interpreted as
+    #   positional
+    # - is_positional_only: whether the positional-only arguments
+    #   delimiter "--" has already been set and has not been unset by
+    #   "++"
     # - is_self_parsing: whether the Argparser currently parses its own
     #   arguments (read-only)
-    # - messages: the parsed argument as message or an error message,
-    #   starting with "Help", "Usage", "Version", "Logo",
-    #   "Positional_Start", "Positional_End", "Error: " (translated),
-    #   "Argument: ", "Prefix: ", or "Value: ", as indexed array
+    # - messages: the parsed argument as message, starting with
+    #   "Argument: " or "Value: ", as indexed array
     #
     # Environment:
     # - ARGPARSER_ADD_HELP (read-only)
@@ -5476,7 +5468,7 @@ function argparser_parse_arg() {
     given_arg="$1"
 
     # Output the argument, split into option names and values, or an
-    # error message.  In the latter case, output also the given
+    # error message.  In the latter case, also output the given
     # argument, such that values following the unknown argument are
     # assigned to this argument, not the last known one that got parsed.
     if [[ "${given_arg}" != "++"* \
@@ -5484,40 +5476,48 @@ function argparser_parse_arg() {
     then
         # The argument doesn't start with a hyphen ("-") or plus sign
         # ("+"), so deem it a value to a previous keyword argument or a
-        # positional argument.  Likewise, if the positional arguments
-        # delimiter "--" has already been set and has neither been unset
-        # by "++" nor the current argument is this "++", then deem any
-        # value a positional argument.
+        # positional argument.  Likewise, if the positional-only
+        # arguments delimiter "--" has already been set and has neither
+        # been unset by "++" nor the current argument is this "++", then
+        # deem any value a positional argument.
         messages+=("Value: ${given_arg}")
     elif [[ "${given_arg}" == "--" ]]; then
-        # The argument is the positional arguments delimiter "--".
-        messages+=("Positional_Start")
+        # The argument is the positional-only arguments delimiter "--".
+        # Set the flag that it has been set, such that all following
+        # arguments are interpreted as positional.
+        is_positional=true
+        is_positional_only=true
     elif [[ "${given_arg}" == "--="* ]]; then
-        # The argument is the positional arguments delimiter "--", but
-        # followed by an illegal equals sign ("=").
+        # The argument is the positional-only arguments delimiter "--",
+        # but followed by an illegal equals sign ("=").
         error_message="Error: The special option \"--\" takes no value."
         argparser_translate "Error arg double hyphen" "${error_message}"
         error_message="${translation}"
-        messages+=("${error_message}")
+        error_messages+=("${error_message}")
         messages+=("Argument: ${given_arg}")
     elif [[ "${given_arg}" == "++" ]]; then
-        # The argument is the positional arguments delimiter "++".
-        messages+=("Positional_End")
+        # The argument is the positional-only arguments delimiter "++".
+        # Set the flag that it has been set (and thus "--" has been
+        # unset), such that all following arguments are interpreted as
+        # usual.
+        is_positional=true
+        is_positional_only=false
     elif [[ "${given_arg}" == "++="* ]]; then
-        # The argument is the positional arguments delimiter "++", but
-        # followed by an illegal equals sign ("=").
+        # The argument is the positional-only arguments delimiter "++",
+        # but followed by an illegal equals sign ("=").
         error_message="Error: The special option \"++\" takes no value."
         argparser_translate "Error arg double plus" "${error_message}"
         error_message="${translation}"
-        messages+=("${error_message}")
+        error_messages+=("${error_message}")
         messages+=("Argument: ${given_arg}")
     elif [[ "${given_arg}" == "--argparser" && "${is_self_parsing}" == true ]]
     then
         # The argument is the magic string for the Argparser, which was
         # directly called and not run from another script.  Since the
         # Argparser accepts only long options by design, no test for
-        # ${ARGPARSER_USE_LONG_OPTIONS} is necessary.
-        messages+=("Logo")
+        # ${ARGPARSER_USE_LONG_OPTIONS} is necessary.  Set the flag that
+        # the magic string has been set.
+        is_logo=true
     elif [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true \
         && ("${given_arg::2}" == "--" \
             || ("${ARGPARSER_ALLOW_FLAG_INVERSION}" == true \
@@ -5542,7 +5542,7 @@ function argparser_parse_arg() {
         error_message+="deactivated."
         argparser_translate "Error arg inversion" "${error_message}"
         error_message="${translation}"
-        messages+=("${error_message}")
+        error_messages+=("${error_message}")
         messages+=("Argument: ${given_arg}")
     else
         # The argument hasn't been matched by any condition, so deem it
@@ -5554,7 +5554,7 @@ function argparser_parse_arg() {
         argparser_translate "Error arg unknown" "${error_message}" \
             "${given_arg%%=*}"
         error_message="${translation}"
-        messages+=("${error_message}")
+        error_messages+=("${error_message}")
         messages+=("Argument: ${given_arg}")
     fi
 }
@@ -5568,9 +5568,11 @@ function argparser_parse_long_option() {
     # Nonlocals:
     # - all_long_options: the associative array holding the long option
     #   names (read-only)
-    # - messages: the parsed argument as message or an error message,
-    #   starting with "Error: " (translated), "Argument: ", "Prefix: ",
-    #   or "Value: ", as indexed array
+    # - error_messages: the error messages, starting with "Error: "
+    #   (translated), as indexed array
+    # - messages: the parsed argument as message, starting with
+    #   starting with "Argument: ", "Prefix: ", or "Value: ", as indexed
+    #   array
     #
     # Environment:
     # - ARGPARSER_ALLOW_FLAG_NEGATION (read-only)
@@ -5612,7 +5614,7 @@ function argparser_parse_long_option() {
 
     # If no argument identifier for the entire option name has been
     # found, the option name starts with "no-", and flag negation is
-    # enabled, trim the "no-" prefix, convert it to a "+", and set the
+    # enabled, strip the "no-" prefix, convert it to a "+", and set the
     # option name's remainder as new option name.
     if [[ "${ARGPARSER_ALLOW_FLAG_NEGATION}" == true \
         && -z "${arg_key}" \
@@ -5707,7 +5709,7 @@ function argparser_parse_long_option() {
             argparser_translate "Error long option match" "${error_message}" \
                 "${given_arg%%=*}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
             messages+=("Argument: ${given_arg}")
         else
             # Since the argument hasn't been found in the definition,
@@ -5719,14 +5721,14 @@ function argparser_parse_long_option() {
                     "${error_message}" "${given_arg%%=*}" \
                     "${actual_prefix}${actual_prefix}${option_name}"
                 error_message="${translation}"
-                messages+=("${error_message}")
+                error_messages+=("${error_message}")
                 messages+=("Argument: ${given_arg}")
             else
                 error_message="Error: The long option \"\$1\" is unknown."
                 argparser_translate "Error long option unknown" \
                     "${error_message}" "${given_arg%%=*}"
                 error_message="${translation}"
-                messages+=("${error_message}")
+                error_messages+=("${error_message}")
                 messages+=("Argument: ${given_arg}")
             fi
         fi
@@ -5755,14 +5757,14 @@ function argparser_parse_long_option() {
                     "${error_message}" "${given_arg%%=*}" \
                     "${actual_prefix}${actual_prefix}${option_name}"
                 error_message="${translation}"
-                messages+=("${error_message}")
+                error_messages+=("${error_message}")
                 messages+=("Argument: ${given_arg}")
             else
                 error_message="Error: The long option \"\$1\" is unknown."
                 argparser_translate "Error long option unknown" \
                     "${error_message}" "${given_arg%%=*}"
                 error_message="${translation}"
-                messages+=("${error_message}")
+                error_messages+=("${error_message}")
                 messages+=("Argument: ${given_arg}")
             fi
         fi
@@ -5778,9 +5780,11 @@ function argparser_parse_short_option() {
     # Nonlocals:
     # - all_arg_numbers: the associative array holding the argument
     #   numbers (read-only)
-    # - messages: the parsed argument as message or an error message,
-    #   starting with "Error: " (translated), "Argument: ", "Prefix: ",
-    #   or "Value: ", as indexed array
+    # - error_messages: the error messages, starting with "Error: "
+    #   (translated), as indexed array
+    # - messages: the parsed argument as message, starting with
+    #   starting with "Argument: ", "Prefix: ", or "Value: ", as indexed
+    #   array
     #
     # Environment:
     # - ARGPARSER_ALLOW_OPTION_MERGING (read-only)
@@ -5831,7 +5835,7 @@ function argparser_parse_short_option() {
                 argparser_translate "Error short option merge" \
                     "${error_message}" "${prefix}" "${char}"
                 error_message="${translation}"
-                messages+=("${error_message}")
+                error_messages+=("${error_message}")
                 messages+=("Argument: ${given_arg}")
                 return
             fi
@@ -5885,7 +5889,7 @@ function argparser_parse_short_option() {
             argparser_translate "Error short option unknown" \
                 "${error_message}" "${given_arg%%=*}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
             messages+=("Argument: ${given_arg}")
         fi
     fi
@@ -5904,9 +5908,9 @@ function argparser_parse_positional_args() {
     #   values (read-only)
     # - all_positional_args: the indexed array holding the positional
     #   argument names (read-only)
-    # - messages: the parsed argument as message or an error message,
-    #   starting with "Error: " (translated), "Argument: ", or
-    #   "Value: ", as indexed array
+    # - args: the associative array holding the parsed arguments' values
+    # - error_messages: the error messages, starting with "Error: "
+    #   (translated), as indexed array
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
@@ -5921,8 +5925,8 @@ function argparser_parse_positional_args() {
     local error_message
     local given_arg
     local -a given_args
-    local i
     local index
+    local joined_array
     local required_args_count
     local translation
     local -a values
@@ -5975,25 +5979,23 @@ function argparser_parse_positional_args() {
     args_count="${#values[@]}"
     if (( args_count > required_args_count && default_args_count > 0 )); then
         # There are arguments having default values given.  Get the
-        # argument identifiers for all given arguments and output them,
-        # along with the values.
+        # argument identifiers for all given arguments and pass them
+        # their values.
         index=0
         for arg_key in "${all_positional_args[@]}"; do
             # Read the argument's definition.
             arg_number="${all_arg_numbers[${arg_key}]}"
 
-            # Output as many given arguments as requested.
-            messages+=("Argument: ${arg_key}")
-            for (( i = index; i < arg_number + index && i < args_count; i++ ))
-            do
-                messages+=("Value: ${values[i]}")
-            done
+            # Pass the positional argument as many values as requested.
+            argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
+                "${values[@]:index:arg_number}"
+            args[${arg_key}]="${joined_array}"
             (( index += arg_number ))
         done
     else
         # There are no arguments having default values given.  Get the
-        # argument identifiers for all given arguments and output them,
-        # along with the values.
+        # argument identifiers for all given arguments and pass them
+        # their values.
         index=0
         for arg_key in "${all_positional_args[@]}"; do
             # Read the argument's definition.
@@ -6008,28 +6010,27 @@ function argparser_parse_positional_args() {
             fi
 
             # If the positional argument accepts an arbitrary number of
-            # values, output all remaining given arguments.  For "?",
-            # output one argument, if existing, or else zero.  Else,
-            # output only as many arguments as requested.
-            messages+=("Argument: ${arg_key}")
+            # values, pass it all remaining given arguments.  For "?",
+            # pass one argument, if existing, or else zero.  Else, pass
+            # only as many arguments as requested.
             if [[ "${arg_number}" == "+" || "${arg_number}" == "*" ]]; then
-                for (( i = index; i < args_count; i++ )); do
-                    messages+=("Value: ${values[i]}")
-                done
+                argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
+                    "${values[@]:index}"
+                args[${arg_key}]="${joined_array}"
                 index="${args_count}"
 
                 break
             elif [[ "${arg_number}" == "?" ]]; then
                 if (( index < args_count)); then
-                    messages+=("Value: ${values[index]}")
+                    args[${arg_key}]="${values[index]}"
                     (( index++ ))
+                else
+                    args[${arg_key}]=""
                 fi
             else
-                for (( i = index; i < arg_number + index && i < args_count; \
-                    i++ ))
-                do
-                    messages+=("Value: ${values[i]}")
-                done
+                argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
+                    "${values[@]:index:arg_number}"
+                args[${arg_key}]="${joined_array}"
                 (( index += arg_number ))
             fi
         done
@@ -6053,7 +6054,7 @@ function argparser_parse_positional_args() {
                 "${index}" "${args_count}"
             error_message="${translation}"
         fi
-        messages+=("${error_message}")
+        error_messages+=("${error_message}")
     fi
 }
 
@@ -6079,9 +6080,11 @@ function argparser_check_arg_values() {
     #   resolved (range-expanded) choice values (read-only)
     # - all_types: the associative array holding the argument types
     #   (read-only)
-    # - messages: the parsed argument as message or an error or warning
-    #   message, starting with "Error: " (translated), "Warning: "
-    #   (translated), or "Value: ", as indexed array
+    # - arg_values: the parsed argument's value
+    # - error_messages: the error messages, starting with "Error: "
+    #   (translated), as indexed array
+    # - warning_messages: the warning messages, starting with
+    #   "Warning: " (translated), as indexed array
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
@@ -6182,7 +6185,7 @@ function argparser_check_arg_values() {
             argparser_translate "Warning deprecation" "${warning_message}" \
                 "${option_names}"
             warning_message="${translation}"
-            messages+=("${warning_message}")
+            warning_messages+=("${warning_message}")
         fi
     done
 
@@ -6199,8 +6202,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error arg no flag 1" "${error_message}" \
                 "${option_names}"
             error_message="${translation}"
-            messages+=("${error_message}")
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
             return
         fi
     done
@@ -6235,7 +6237,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error arg no flag 2" "${error_message}" \
                 "${option_names}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
             return
         elif ! argparser_in_array "${arg_number}" "*" "?" 0; then
             error_message="Error: The option \"\$1\" is no flag and thus "
@@ -6244,7 +6246,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error arg no flag 3" "${error_message}" \
                 "${option_names}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
             return
         fi
     done
@@ -6264,7 +6266,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error mandatory arg" "${error_message}" \
                 "${option_names}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
             return
         elif [[ "${ARGPARSER_COUNT_FLAGS}" == true ]] \
             && argparser_in_array "${arg_number}" "*" "?" 0
@@ -6278,9 +6280,9 @@ function argparser_check_arg_values() {
             # Since the default values are used, further checking isn't
             # necessary.
             if [[ "${default_values_str}" == true ]]; then
-                messages+=("Value: 1")
+                arg_values=1
             else
-                messages+=("Value: -1")
+                arg_values=-1
             fi
             return
         else
@@ -6288,7 +6290,7 @@ function argparser_check_arg_values() {
             # Hence, read and output them.  This is required for
             # optional arguments, which don't need to be set.  Since the
             # default values are used, further checking isn't necessary.
-            messages+=("Value: ${default_values_str}")
+            arg_values="${default_values_str}"
             return
         fi
     elif [[ "${arg_number}" == "+" && "${#values_arr[@]}" == 0 ]]; then
@@ -6303,7 +6305,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error wrong arg number 1" "${error_message}" \
                 "${option_names}" "${#values_arr[@]}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
         else
             # As some default values are given, print a similar warning
             # message as for the absence case, but set the values to the
@@ -6317,9 +6319,9 @@ function argparser_check_arg_values() {
                 "${warning_message}" "${option_names}" "${#values_arr[@]}" \
                 "${default_values_str}"
             warning_message="${translation}"
-            messages+=("${warning_message}")
+            warning_messages+=("${warning_message}")
 
-            messages+=("Value: ${default_values_str}")
+            arg_values="${default_values_str}"
             return
         fi
     elif [[ "${arg_number}" == "?" ]] && (( "${#values_arr[@]}" > 1 )); then
@@ -6334,7 +6336,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error wrong arg number 2" \
                 "${error_message}" "${option_names}" "${#values_arr[@]}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
         else
             # As some default values are given, print a similar warning
             # message as for the absence case, but set the values to the
@@ -6348,9 +6350,9 @@ function argparser_check_arg_values() {
                 "${warning_message}" "${option_names}" "${#values_arr[@]}" \
                 "${default_values_str}"
             warning_message="${translation}"
-            messages+=("${warning_message}")
+            warning_messages+=("${warning_message}")
 
-            messages+=("Value: ${default_values_str}")
+            arg_values="${default_values_str}"
             return
         fi
     elif [[ "${arg_number}" == 1 && "${#values_arr[@]}" != 1 ]]; then
@@ -6365,7 +6367,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error wrong arg number 3" \
                 "${error_message}" "${option_names}" "${#values_arr[@]}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
         else
             # As some default values are given, print a similar warning
             # message as for the absence case, but set the values to the
@@ -6379,9 +6381,9 @@ function argparser_check_arg_values() {
                 "${warning_message}" "${option_names}" "${#values_arr[@]}" \
                 "${default_values_str}"
             warning_message="${translation}"
-            messages+=("${warning_message}")
+            warning_messages+=("${warning_message}")
 
-            messages+=("Value: ${default_values_str}")
+            arg_values="${default_values_str}"
             return
         fi
     elif argparser_in_array "${arg_number}" "*" "?" 0 \
@@ -6403,12 +6405,12 @@ function argparser_check_arg_values() {
             count_plus="${count}"
 
             (( count = count_hyphen - count_plus ))
-            messages+=("Value: ${count}")
+            arg_values="${count}"
         else
             if [[ "${prefixes[-1]}" == "-" ]]; then
-                messages+=("Value: true")
+                arg_values=true
             else
-                messages+=("Value: false")
+                arg_values=false
             fi
         fi
         return
@@ -6426,7 +6428,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error wrong arg number 4" "${error_message}" \
                 "${option_names}" "${arg_number}" "${#values_arr[@]}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
             return
         else
             # As some default values are given, print a similar warning
@@ -6441,9 +6443,9 @@ function argparser_check_arg_values() {
                 "${warning_message}" "${option_names}" "${arg_number}" \
                 "${#values_arr[@]}" "${default_values_str}"
             warning_message="${translation}"
-            messages+=("${warning_message}")
+            warning_messages+=("${warning_message}")
 
-            messages+=("Value: ${default_values_str}")
+            arg_values="${default_values_str}"
             return
         fi
     fi
@@ -6462,7 +6464,7 @@ function argparser_check_arg_values() {
                 argparser_translate "Error arg choice" "${error_message}" \
                     "${option_names}" "${choice_values_str}" "${values_str}"
                 error_message="${translation}"
-                messages+=("${error_message}")
+                error_messages+=("${error_message}")
                 return
             fi
         done
@@ -6478,7 +6480,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error arg bool" "${error_message}" \
                 "${option_names}" "${value}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
             return
         elif [[ "${type}" == "char" ]] && ! argparser_is_char "${value}"; then
             # Check if the value is a character.
@@ -6489,7 +6491,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error arg char" "${error_message}" \
                 "${option_names}" "${value}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
             return
         elif [[ "${type}" == "float" ]] && ! argparser_is_float "${value}"
         then
@@ -6501,7 +6503,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error arg float" "${error_message}" \
                 "${option_names}" "${value}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
             return
         elif [[ "${type}" == "int" ]] && ! argparser_is_int "${value}"; then
             # Check if the value is an integer.
@@ -6512,7 +6514,7 @@ function argparser_check_arg_values() {
             argparser_translate "Error arg int" "${error_message}" \
                 "${option_names}" "${value}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
             return
         elif [[ "${type}" == "uint" ]] && ! argparser_is_uint "${value}"; then
             # Check if the value is an unsigned integer.
@@ -6523,21 +6525,21 @@ function argparser_check_arg_values() {
             argparser_translate "Error arg uint" "${error_message}" \
                 "${option_names}" "${value}"
             error_message="${translation}"
-            messages+=("${error_message}")
+            error_messages+=("${error_message}")
             return
         fi
     done
 
     # Output the checked values.
     argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${values_arr[@]}"
-    messages+=("Value: ${joined_array}")
+    arg_values="${joined_array}"
 }
 
 function argparser_parse_args() {
     # Parse the script's given arguments and check if they accord to
     # their definition.  Give proper error messages for wrongly set
     # arguments and assign the values to the respective variables.
-    # Possibly, create and print a help message.
+    # Possibly, create and print a help, usage, or version message.
     #
     # Arguments:
     # - $@: the arguments to parse
@@ -6565,6 +6567,7 @@ function argparser_parse_args() {
     # - ARGPARSER_ERROR_EXIT_CODE (read-only)
     # - ARGPARSER_HELP_ARG_GROUP (read-only)
     # - ARGPARSER_SILENCE_ERRORS (read-only)
+    # - ARGPARSER_SILENCE_WARNINGS (read-only)
 
     # Define the local variables.  If the variable that
     # ${ARGPARSER_ARG_ARRAY_NAME} refers to is undefined, all variables
@@ -6590,10 +6593,7 @@ function argparser_parse_args() {
     local prefix
     local -A prefixes
     local translated_error
-    local translated_warning
     local translation
-    local value
-    local values
     local -a warning_messages
 
     # Read the arguments.
@@ -6689,6 +6689,8 @@ function argparser_parse_args() {
     local arg_key
     local arg_number
     local -A arg_numbers
+    local arg_value
+    local arg_values
     local -a args_definition_file
     local -a args_definition_script
 
@@ -6718,9 +6720,6 @@ function argparser_parse_args() {
 
     argparser_translate "Error" "Error"
     translated_error="${translation}"
-
-    argparser_translate "Warning" "Warning"
-    translated_warning="${translation}"
 
     messages=( )
     argparser_read_args_definition "${args[@]}"
@@ -6771,165 +6770,137 @@ function argparser_parse_args() {
     argparser_add_args_definition_help_options
 
     # Parse the script's given arguments.
+    unset args
+    local -A args
+
     is_logo=false
     is_positional=true
     is_positional_only=false
     error_messages=( )
 
-    unset args
-    local -A args
-
     for given_arg in "${given_args[@]}"; do
-        # Parse the argument.
+        # Parse the argument, then read the output message and set the
+        # argument's value or prefix. In case of arguments given
+        # multiple times, i.e., when the key already exists in
+        # ${!args[@]}, add the new value or prefix to the previously
+        # given ones.
         messages=( )
         argparser_parse_arg "${given_arg}"
 
-        # Read the output message and either set the help, usage, or
-        # version message for printing and stop parsing, append the
-        # message to the previous error messages or set the argument's
-        # value or prefix. In case of arguments given multiple times,
-        # i.e., when the key already exists in ${!args[@]}, add the new
-        # value or prefix to the previously given ones.
         for message in "${messages[@]}"; do
-            case "${message}" in
-                ${translated_error}*) error_messages+=("${message}") ;;
-                Positional_Start)
-                    # Set the flag that the positional-only arguments
-                    # delimiter "--" has been set, such that all
-                    # following arguments are interpreted as positional.
-                    is_positional=true
-                    is_positional_only=true
-                    ;;
-                Positional_End)
-                    # Set the flag that the positional-only arguments
-                    # delimiter "++" has been set (and thus "--" has
-                    # been unset), such that all following arguments are
-                    # interpreted as usual.
-                    is_positional=true
-                    is_positional_only=false
-                    ;;
-                Argument*)
-                    # Set the current argument name, and the first value
-                    # to the empty string (by ending it with an
-                    # ${ARGPARSER_ARG_DELIMITER_2} character).  This
-                    # allows for discerning non-flag arguments given
-                    # multiple times, but partly without value.
-                    is_positional=false
-                    arg_key="${message#Argument: }"
-                    if [[ -z "${args[${arg_key}]+set}" ]]; then
-                        args[${arg_key}]="${ARGPARSER_ARG_DELIMITER_2}"
-                    else
-                        args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
-                    fi
-                    arg_numbers[${arg_key}]=0
-                    ;;
-                Prefix*)
-                    # Set the current argument's prefix ("-" or "+").
-                    prefix="${message#Prefix: }"
-                    if [[ -z "${prefixes[${arg_key}]+set}" ]]; then
-                        prefixes[${arg_key}]="${prefix}"
-                    else
-                        prefixes[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
-                        prefixes[${arg_key}]+="${prefix}"
-                    fi
-                    ;;
-                Value*)
-                    # Set the current argument's value.  For values to
-                    # keyword arguments, merge the value with the
-                    # previous empty string value, iff the previous
-                    # value is indeed empty.
-                    value="${message#Value: }"
-                    if [[ "${is_positional}" == true ]]; then
-                        # The value is given in a positional-only
-                        # location.
-                        given_positional_args+=("${value}")
-                    elif [[ "${ARGPARSER_ALLOW_ARG_INTERMIXING}" == true ]]
+            if [[ "${message}" == "Argument"* ]]; then
+                # Set the current argument name, and the first value to
+                # the empty string (by ending it with an
+                # ${ARGPARSER_ARG_DELIMITER_2} character).  This allows
+                # for discerning non-flag arguments given multiple
+                # times, but partly without value.
+                is_positional=false
+                arg_key="${message#Argument: }"
+                if [[ -z "${args[${arg_key}]+set}" ]]; then
+                    args[${arg_key}]="${ARGPARSER_ARG_DELIMITER_2}"
+                else
+                    args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                fi
+                arg_numbers[${arg_key}]=0
+            elif [[ "${message}" == "Prefix"* ]]; then
+                # Set the current argument's prefix ("-" or "+").
+                prefix="${message#Prefix: }"
+                if [[ -z "${prefixes[${arg_key}]+set}" ]]; then
+                    prefixes[${arg_key}]="${prefix}"
+                else
+                    prefixes[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                    prefixes[${arg_key}]+="${prefix}"
+                fi
+            elif [[ "${message}" == "Value"* ]]; then
+                # Set the current argument's value.  For values to
+                # keyword arguments, merge the value with the previous
+                # empty string value, iff the previous value is indeed
+                # empty.
+                arg_value="${message#Value: }"
+                if [[ "${is_positional}" == true ]]; then
+                    # The value is given in a positional-only location.
+                    given_positional_args+=("${arg_value}")
+                elif [[ "${ARGPARSER_ALLOW_ARG_INTERMIXING}" == true ]]; then
+                    # The value may be either a value to the previous
+                    # keyword argument or a positional argument.  Treat
+                    # it as positional argument only if the previous
+                    # keyword argument has already taken as many values
+                    # as required.  For numerical argument counts, this
+                    # is directly this count, for [0, 1] values, this is
+                    # true when there is already 1 value, and for
+                    # [1, inf) and [0, inf) values, this is never true
+                    # since all values shall be taken.  Then, and in all
+                    # other cases, treat the value as value for the
+                    # previous keyword argument.
+                    arg_number="${all_arg_numbers[${arg_key}]}"
+                    if [[ "${arg_numbers[${arg_key}]}" == 1 \
+                        && "${arg_number}" == "?" ]]
                     then
-                        # The value may be either a value to the
-                        # previous keyword argument or a positional
-                        # argument.  Treat it as positional argument
-                        # only if the previous keyword argument has
-                        # already taken as many values as required.  For
-                        # numerical argument counts, this is directly
-                        # this count, for [0, 1] values, this is true
-                        # when there is already 1 value, and for
-                        # [1, inf) and [0, inf) values, this is never
-                        # true since all values shall be taken.  Then,
-                        # and in all other cases, treat the value as
-                        # value for the previous keyword argument.
-                        arg_number="${all_arg_numbers[${arg_key}]}"
-                        if [[ "${arg_numbers[${arg_key}]}" == 1 \
-                            && "${arg_number}" == "?" ]]
-                        then
-                            # The value is a positional argument.
-                            given_positional_args+=("${value}")
-                        elif [[ "${arg_numbers[${arg_key}]}" == "${arg_number}" \
-                            && "${arg_number}" != "+" \
-                            && "${arg_number}" != "*" ]]
-                        then
-                            # The value is a positional argument.
-                            given_positional_args+=("${value}")
-                        elif [[ "${args[${arg_key}]}" \
-                            == "${ARGPARSER_ARG_DELIMITER_2}" ]]
-                        then
-                            # The value is the first value to the
-                            # current keyword argument.
-                            args[${arg_key}]="${value}"
-                            args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
-                            (( arg_numbers[${arg_key}]++ ))
-                        elif (( "${#args[${arg_key}]}" >= 2 )) \
-                            && [[ "${args[${arg_key}]: -2}" \
-                                == "${ARGPARSER_ARG_DELIMITER_2}${ARGPARSER_ARG_DELIMITER_2}" ]]
-                        then
-                            # The value is not the first one, but the
-                            # previous argument was one of the current
-                            # keyword argument's option names, which
-                            # added an empty string needing to be
-                            # merged.
-                            args[${arg_key}]="${args[${arg_key}]::-1}"
-                            args[${arg_key}]+="${value}"
-                            args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
-                            (( arg_numbers[${arg_key}]++ ))
-                        else
-                            # The value is at least on the second place
-                            # after one of the current keyword
-                            # argument's option names.
-                            args[${arg_key}]+="${value}"
-                            args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
-                            (( arg_numbers[${arg_key}]++ ))
-                        fi
+                        # The value is a positional argument.
+                        given_positional_args+=("${arg_value}")
+                    elif [[ "${arg_numbers[${arg_key}]}" == "${arg_number}" \
+                        && "${arg_number}" != "+" \
+                        && "${arg_number}" != "*" ]]
+                    then
+                        # The value is a positional argument.
+                        given_positional_args+=("${arg_value}")
+                    elif [[ "${args[${arg_key}]}" \
+                        == "${ARGPARSER_ARG_DELIMITER_2}" ]]
+                    then
+                        # The value is the first value to the current
+                        # keyword argument.
+                        args[${arg_key}]="${arg_value}"
+                        args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                        (( arg_numbers[${arg_key}]++ ))
+                    elif (( "${#args[${arg_key}]}" >= 2 )) \
+                        && [[ "${args[${arg_key}]: -2}" \
+                            == "${ARGPARSER_ARG_DELIMITER_2}${ARGPARSER_ARG_DELIMITER_2}" ]]
+                    then
+                        # The value is not the first one, but the
+                        # previous argument was one of the current
+                        # keyword argument's option names, which added
+                        # an empty string needing to be merged.
+                        args[${arg_key}]="${args[${arg_key}]::-1}"
+                        args[${arg_key}]+="${arg_value}"
+                        args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                        (( arg_numbers[${arg_key}]++ ))
                     else
-                        if [[ "${args[${arg_key}]}" \
-                            == "${ARGPARSER_ARG_DELIMITER_2}" ]]
-                        then
-                            # The value is the first value to the
-                            # current keyword argument.
-                            args[${arg_key}]="${value}"
-                            args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
-                        elif (( "${#args[${arg_key}]}" >= 2 )) \
-                            && [[ "${args[${arg_key}]: -2}" \
-                                == "${ARGPARSER_ARG_DELIMITER_2}${ARGPARSER_ARG_DELIMITER_2}" ]]
-                        then
-                            # The value is not the first one, but the
-                            # previous argument was one of the current
-                            # keyword argument's option names, which
-                            # added an empty string needing to be
-                            # merged.
-                            args[${arg_key}]="${args[${arg_key}]::-1}"
-                            args[${arg_key}]+="${value}"
-                            args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
-                        else
-                            # The value is at least on the second place
-                            # after one of the current keyword
-                            # argument's option names.
-                            args[${arg_key}]+="${value}"
-                            args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
-                        fi
+                        # The value is at least on the second place
+                        # after one of the current keyword argument's
+                        # option names.
+                        args[${arg_key}]+="${arg_value}"
+                        args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
                         (( arg_numbers[${arg_key}]++ ))
                     fi
-                    ;;
-                Logo) is_logo=true ;;
-            esac
+                else
+                    if [[ "${args[${arg_key}]}" \
+                        == "${ARGPARSER_ARG_DELIMITER_2}" ]]
+                    then
+                        # The value is the first value to the current
+                        # keyword argument.
+                        args[${arg_key}]="${arg_value}"
+                        args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                    elif (( "${#args[${arg_key}]}" >= 2 )) \
+                        && [[ "${args[${arg_key}]: -2}" \
+                            == "${ARGPARSER_ARG_DELIMITER_2}${ARGPARSER_ARG_DELIMITER_2}" ]]
+                    then
+                        # The value is not the first one, but the
+                        # previous argument was one of the current
+                        # keyword argument's option names, which added
+                        # an empty string needing to be merged.
+                        args[${arg_key}]="${args[${arg_key}]::-1}"
+                        args[${arg_key}]+="${arg_value}"
+                        args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                    else
+                        # The value is at least on the second place
+                        # after one of the current keyword argument's
+                        # option names.
+                        args[${arg_key}]+="${arg_value}"
+                        args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
+                    fi
+                    (( arg_numbers[${arg_key}]++ ))
+                fi
+            fi
         done
     done
 
@@ -6939,7 +6910,7 @@ function argparser_parse_args() {
     # parsed earlier) is given and has a prefix of "-", since "+" should
     # deactivate it.  To respect the priority of help > usage > version,
     # use intermediate variables as flags to be assigned to "true", and
-    # check their values afterwards in the intended order (while the
+    # check their values afterwards in the intended order (since the
     # associative array ${prefixes[@]} is unordered, just as the
     # command-line arguments may be).
     is_help=false
@@ -6974,47 +6945,24 @@ function argparser_parse_args() {
     fi
 
     # Parse the script's given positional arguments, that are yet only
-    # assigned to a single indexed array.
+    # assigned to a single indexed array.  Thereby, set each argument's
+    # value.
     messages=( )
     argparser_parse_positional_args "${given_positional_args[@]}"
 
-    # Read the output message and either append the message to the
-    # previous error messages or set the argument's value.  Again, in
-    # case of arguments given multiple times, i.e., when the key already
-    # exists in ${!args[@]}, add the new value to the previously given
-    # ones.
-    for message in "${messages[@]}"; do
-        case "${message}" in
-            ${translated_error}*) error_messages+=("${message}") ;;
-            Argument*) arg_key="${message#Argument: }" ;;
-            Value*)
-                # Set the current argument's value.
-                value="${message#Value: }"
-                if [[ -z "${args[${arg_key}]+set}" ]]; then
-                    args[${arg_key}]="${value}"
-                else
-                    args[${arg_key}]+="${ARGPARSER_ARG_DELIMITER_2}"
-                    args[${arg_key}]+="${value}"
-                fi
-                ;;
-        esac
-    done
-
-    # Sort, filter, colorize, and print all error messages.
-    argparser_print_error_messages true false "${error_messages[@]}"
-
-    # If any argument was not or wrongly given (i.e., there were
-    # errors), print a blank line and the usage message and abort the
-    # script.
+    # Sort, filter, colorize, and print all error messages, a blank
+    # line, and the usage message, then abort the script.
     if (( "${#error_messages[@]}" > 0 )); then
+        argparser_print_error_messages true false "${error_messages[@]}"
+
         if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
-            {
-                printf '\n'
-                argparser_print_usage_message false
-            } >&2
+            printf '\n'
         fi
+
+        argparser_print_usage_message false
+
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
-    fi
+    fi >&2
 
     # Check the arguments' values.
     error_messages=( )
@@ -7031,45 +6979,50 @@ function argparser_parse_args() {
         fi
 
         if [[ -n "${args[${arg_key}]+set}" ]]; then
-            values="${args[${arg_key}]}"
+            arg_values="${args[${arg_key}]}"
         else
-            values=""
+            arg_values=""
         fi
 
-        # Check the argument's values.
-        messages=( )
-        argparser_check_arg_values "${arg_key}" "${prefix}" "${values}"
-
-        # Read the output message and either append the message to the
-        # previous error or warning messages or set the argument's
-        # values.
-        values=""
-        for message in "${messages[@]}"; do
-            case "${message}" in
-                ${translated_error}*) error_messages+=("${message}") ;;
-                ${translated_warning}*) warning_messages+=("${message}") ;;
-                Value*) values="${message#Value: }" ;;
-            esac
-        done
-
-        # Assign the checked values to the argument.
-        args[${arg_key}]="${values}"
+        # Check the argument's values and assign the checked values to
+        # it.
+        argparser_check_arg_values "${arg_key}" "${prefix}" "${arg_values}"
+        args[${arg_key}]="${arg_values}"
     done
 
     # Sort, filter, colorize, and print all error and warning messages.
-    argparser_print_error_messages true false "${error_messages[@]}"
-    argparser_print_warning_messages true "${warning_messages[@]}"
-
     # If any argument was not or wrongly given (i.e., there were errors
-    # and not just warnings), print a blank line and the usage message
-    # and abort the script.
-    if (( "${#error_messages[@]}" > 0 )); then
+    # and not just warnings), print also the usage message and abort the
+    # script.
+    if (( "${#error_messages[@]}" > 0 && "${#warning_messages[@]}" > 0 )); then
+        argparser_print_error_messages true false "${error_messages[@]}"
+
         if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
             printf '\n'
-            argparser_print_usage_message false
-        fi >&2
+        fi
+
+        argparser_print_warning_messages true "${warning_messages[@]}"
+
+        if [[ "${ARGPARSER_SILENCE_WARNINGS}" == false ]]; then
+            printf '\n'
+        fi
+
+        argparser_print_usage_message false
+
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
-    fi
+    elif (( "${#error_messages[@]}" > 0 )); then
+        argparser_print_error_messages true false "${error_messages[@]}"
+
+        if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
+            printf '\n'
+        fi
+
+        argparser_print_usage_message false
+
+        exit "${ARGPARSER_ERROR_EXIT_CODE}"
+    elif (( "${#warning_messages[@]}" > 0 )); then
+        argparser_print_warning_messages true "${warning_messages[@]}"
+    fi >&2
 
     # Remove the help options from the associative array ${args}.
     for arg_key in "${!args[@]}"; do
@@ -9264,22 +9217,12 @@ function argparser_print_help_message() {
             )
 
             # Add the include directives for each argument group.
-            # Terminate all but the last by a blank line.  If the last
-            # group is the help options group, double the include
-            # character to indicate that the caption shall be
-            # suppressed.
+            # Terminate all but the last by a blank line.
             for i in "${!arg_groups[@]}"; do
                 if (( i < "${#arg_groups[@]}" - 1 )); then
                     resolved_lines+=(
                         "${include_char}${arg_groups[i]}"
                         ""
-                    )
-                elif [[ "${ARGPARSER_ADD_HELP}" == true \
-                    || "${ARGPARSER_ADD_USAGE}" == true \
-                    || "${ARGPARSER_ADD_VERSION}" == true ]]
-                then
-                    resolved_lines+=(
-                        "${include_char}${include_char}${arg_groups[i]}"
                     )
                 else
                     resolved_lines+=("${include_char}${arg_groups[i]}")
@@ -10385,7 +10328,6 @@ function argparser_main() {
         unset -f argparser_sort
         unset -f argparser_toggle_debugger
         unset -f argparser_translate
-        unset -f argparser_trim
         unset -f argparser_uncolorize
         unset -f argparser_uniq
         unset -f argparser_write_args

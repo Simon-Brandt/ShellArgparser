@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-14
+# Last Modification: 2025-12-18
 
 using CSV: CSV
 using DataStructures: OrderedDict
@@ -55,7 +55,7 @@ function get_commands()::OrderedDict{String, Cmd}
     # If not called from the "comparison" directory, but the base
     # directory, prepend the "comparison" directory to the script name.
     # Set the command as `Cmd` object.
-    commands = OrderedDict()
+    commands = OrderedDict{String, Cmd}()
     for (script_name, script) in scripts
         if basename(pwd()) != "comparison"
             scripts[script_name] = "comparison/$script"
@@ -67,27 +67,27 @@ function get_commands()::OrderedDict{String, Cmd}
     return commands
 end
 
-function get_runtimes(command::Cmd)::OrderedDict{String, Integer}
-    # Run the command 1000 times and return the runtimes.
-    runtimes = OrderedDict()
-    for i in 1:1000
+function get_runtimes(command::Cmd)::Vector{Integer}
+    # Run the command 10000 times and return the runtimes.
+    runtimes = Vector{Integer}()
+    for _ in 1:10000
         start_time = Dates.datetime2epochms(Dates.now())
         run(pipeline(command, stdout=devnull))
         end_time = Dates.datetime2epochms(Dates.now())
-        runtimes["Runtime $i"] = end_time - start_time
+        push!(runtimes, end_time - start_time)
     end
 
     return runtimes
 end
 
 function compute_runtime_stats(
-    runtimes::OrderedDict{String, Integer}
+    runtimes::Vector{Integer}
 )::OrderedDict{String, Number}
     # Compute the mean, standard deviation, and median for the runtimes.
     stats = OrderedDict(
-        "Mean" => Statistics.mean(values(runtimes)),
-        "Std dev" => Statistics.std(values(runtimes)),
-        "Median" => Statistics.median(values(runtimes)),
+        "Mean" => Statistics.mean(runtimes),
+        "Std dev" => Statistics.std(runtimes),
+        "Median" => Statistics.median(runtimes),
     )
 
     return stats
@@ -95,7 +95,7 @@ end
 
 function plot_runtime_stats(
     plot_file::String,
-    runtimes::OrderedDict{String, OrderedDict{String, Integer}},
+    runtimes::OrderedDict{String, Vector{Integer}},
     backend::Function,
 )::Nothing
     # Create an empty violin plot to fill it later with the data series.
@@ -137,7 +137,7 @@ function plot_runtime_stats(
         StatsPlots.violin!(
             plot,
             repeat([script_name], length(runtimes[script_name])),
-            collect(values(runtimes[script_name])),
+            runtimes[script_name],
             color=palette[i],
         )
     end
@@ -192,26 +192,19 @@ end
 
 function write_runtimes(
     csv_file::String,
-    runtimes::OrderedDict{String, OrderedDict{String, Integer}},
+    runtimes::OrderedDict{String, Vector{Integer}},
 )::Nothing
     # Save the actual runtimes as CSV file.
     script_names = keys(runtimes)
-    header = ("Run ID", script_names...)
-    cols = collect(keys(runtimes["Shell Argparser"]))
-
-    for script_name in script_names
-        col = collect(values(runtimes[script_name]))
-        cols = hcat(cols, col)
-    end
-
-    CSV.write(csv_file, Tables.table(cols; header))
+    cols = hcat([runtimes[script_name] for script_name in script_names]...)
+    CSV.write(csv_file, Tables.table(cols; header=Tuple(script_names)))
 
     return nothing
 end
 
 function main()::Nothing
     # Compute the runtimes for the scripts for comparison.
-    runtimes = OrderedDict{String, OrderedDict{String, Integer}}()
+    runtimes = OrderedDict{String, Vector{Integer}}()
     stats = OrderedDict{String, OrderedDict{String, Number}}()
 
     commands = get_commands()
@@ -224,8 +217,8 @@ function main()::Nothing
     # Additionally, create a CSV file with the runtimes and runtime
     # stats.
     csv_file = "runtimes.csv"
-    stats_file = "stats.csv"
-    plot_file = "stats.svg"
+    stats_file = "runtime_stats.csv"
+    plot_file = "runtime_stats.svg"
     if basename(pwd()) != "comparison"
         csv_file = "comparison/$csv_file"
         stats_file = "comparison/$stats_file"

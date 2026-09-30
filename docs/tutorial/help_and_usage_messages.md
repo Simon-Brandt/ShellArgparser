@@ -82,6 +82,7 @@ Optional options:
 [-g, -G],  [--var-7, --var-g]               (DEPRECATED) no value (flag) with
                                             default (default: true)
 
+Help options:
 [-h, -?],  [--help]                         display this help and exit
                                             (default: false)
 [-u],      [--usage]                        display the usage and exit
@@ -91,7 +92,9 @@ Optional options:
 ```
 <!-- </include> -->
 
-The help message details all short and long option names, their optionality (*i.e.*, whether there are default values), and their choice values, using the same syntax as in the usage message (square brackets for optional arguments, curly braces for choice values). Additionally, the help text and notes from the arguments definition are given. The arguments are separated by their groups, thus structuring the help message. First, the group for the positional arguments is given (indicated by [`ARGPARSER_POSITIONAL_ARG_GROUP`](../reference/environment_variables/environment_variables.md#9436-argparser_positional_arg_group)), then follow the keyword argument groups in alphabetical order. Finally, the default `--help`, `--usage`, and `--version` arguments (the latter for the [version message](version_messages.md#58-version-messages)) are given as separate, yet unnamed group.
+The help message details all short and long option names, their optionality (*i.e.*, whether there are default values), and their choice values, using the same syntax as in the usage message (square brackets for optional arguments, curly braces for choice values). Additionally, the help text and notes from the arguments definition are given.
+
+The arguments are separated by their groups, thus structuring the help message. First, the group for the positional arguments is given (indicated by [`ARGPARSER_POSITIONAL_ARG_GROUP`](../reference/environment_variables/environment_variables.md#9436-argparser_positional_arg_group)), then follow the keyword argument groups in alphabetical order. Finally, the default `--help`, `--usage`, and `--version` arguments (the latter for the [version message](version_messages.md#58-version-messages)) are given as separate group (indicated by [`ARGPARSER_HELP_ARG_GROUP`](../reference/environment_variables/environment_variables.md#9423-argparser_help_arg_group)).
 
 The help message's structure aims at reproducing the commonly found structure in command-line programs. By setting [`ARGPARSER_MAX_COL_WIDTH_1`](../reference/environment_variables/environment_variables.md#9432-argparser_max_col_width_1), [`ARGPARSER_MAX_COL_WIDTH_2`](../reference/environment_variables/environment_variables.md#9433-argparser_max_col_width_2), or [`ARGPARSER_MAX_COL_WIDTH_3`](../reference/environment_variables/environment_variables.md#9434-argparser_max_col_width_3), the column widths may be adapted to your needs, recommendably totalling 77 characters (thus 79 characters including the separating spaces). Note that columns are automatically shrunk, when their content is narrower, but they're not expanded, when their content is wider. This is to guarantee that the help message, when *e.g.* sent as logging output, nicely fits in the space you have.
 

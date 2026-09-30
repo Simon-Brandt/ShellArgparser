@@ -22,7 +22,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17037185.svg)](https://doi.org/10.5281/zenodo.17037185)
 
-The Argparser is designed to be an easy-to-use, yet powerful command-line argument parser for your shell scripts. It is mainly targeting Bash, but other shells are supported, as well. Shells other than Bash just require a slightly different method of invokation (*i.e.*, running the Argparser in a pipe or process substitution, not by sourcing it).
+The Argparser is designed to be an easy-to-use, yet powerful command-line argument parser for your shell scripts. It is mainly targeting Bash, but other shells are supported, as well. Shells other than Bash just require a slightly different method of invocation (*i.e.*, running the Argparser in a pipe or process substitution, not by sourcing it).
 
 Applying the Argparser should lead to shorter and more concise code than the traditionally used [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)")/[`getopts`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-getopts "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; getopts") or a bare suite of conditionals in a [`case..esac`](https://www.gnu.org/software/bash/manual/html_node/Conditional-Constructs.html#index-case "gnu.org &rightarrow; Conditional Constructs &rightarrow; case") statement allow. More importantly, the user-friendliness of Argparser-powered command-line parsing is far superior thanks to a wide range of checked conditions with meaningful error messages.
 
