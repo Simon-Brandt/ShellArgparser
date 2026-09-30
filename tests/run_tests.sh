@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-03-25
+# Last Modification: 2026-09-30
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -1827,6 +1827,8 @@ output="$(cat << EOF
 A brief header summarizes the way how to interpret the help message.
 Usage: test_localization.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 
+Command-line program.
+
 Mandatory arguments to long options are mandatory for short options too.
 
 The following arguments are positional:
@@ -1864,6 +1866,8 @@ output="$(cat << EOF
 Eine kurze Kopfzeile fasst zusammen, wie die Hilfe-Meldung zu interpretieren
 ist.
 Aufruf: test_localization.sh [OPTIONEN] ARGUMENTE -- [pos_1] pos_2
+
+Kommandozeilenprogramm.
 
 Erforderliche Argumente für lange Optionen sind auch für kurze erforderlich.
 
