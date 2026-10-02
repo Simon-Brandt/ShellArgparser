@@ -32,13 +32,88 @@
 
 shopt -s extglob
 
+# Define the function for colorizing.
+function colorize() {
+    # Colorize and format the string(s) using ANSI escape sequences.
+    # If the last string ends in $'\n', right-pad the merged string to
+    # 120 characters using spaces.  If using reverse video ("reverse"
+    # style), this means that also the spaces (and thus the entire line)
+    # are colored.
+    #
+    # Arguments:
+    # - $1: the colors and/or styles to use as comma-separated list
+    # - $@: the string(s) to colorize
+    #
+    # Output:
+    # - the colorized string
+
+    # Define the local variables.
+    local colorized_string
+    local -A colors_and_styles
+    local IFS
+    local string
+    local style
+    local style_request
+    local style_requests
+
+    # Read the arguments.
+    style_requests="$1"
+    shift
+    IFS=" "
+    string="$*"
+    unset IFS
+
+    # Define the associative array with colors and styles, and their
+    # corresponding Select Graphic Rendition (SGR) ANSI escape sequence
+    # codes.
+    colors_and_styles=(
+        [black]=30
+        [red]=31
+        [green]=32
+        [yellow]=33
+        [blue]=34
+        [magenta]=35
+        [cyan]=36
+        [white]=37
+        [normal]=22
+        [bold]=1
+        [faint]=2
+        [italic]=3
+        [underline]=4
+        [double]=21
+        [overline]=53
+        [crossed-out]=9
+        [blink]=5
+        [reverse]=7
+    )
+
+    # Split the requested color and/or style on commas and replace it
+    # with the corresponding escape sequence.
+    style=""
+    IFS="," read -r -a style_requests <<< "${style_requests}"
+    for style_request in "${style_requests[@]}"; do
+        style+=$'\e'"[${colors_and_styles[${style_request}]}m"
+    done
+
+    # Print the colorized string.  Possibly, right-pad the string.
+    # Finally, reset the color/style.
+    colorized_string="${style}${string}"
+    printf '%s' "${colorized_string%$'\n'}"
+    if [[ "${string: -1}" == $'\n' ]]; then
+        printf '%*s' $(( 120 - ${#string} + 1 )) ""
+        printf '\e[m\n'
+    else
+        printf '\e[m'
+    fi
+}
+
 # Define the function for testing.
 function test_feature() {
     # Test which parser supports the given feature.
     #
     # Argument:
     # - $1: the feature test's directory name
-    # - $2: the feature's name
+    # - $2: the feature's name and description
     # - $3: the expected test result for the Shell Argparser
     #       ("✓"/"*"/"✗")
     # - $4: the expected test result for getopts ("✓"/"*"/"✗")
@@ -47,15 +122,19 @@ function test_feature() {
     # - $7: the expected test result for docopts ("✓"/"*"/"✗")
     # - $@: the command line arguments to pass to the parsers
 
+    local actual_result
     local command_line
     local directory
-    local feature_name
+    local expected_result
+    local feature_description
     local parser
+    local -a parsers
     local -A results
+    local -a result_markers
     local script
 
     directory="$1"
-    feature_name="$2"
+    feature_description="$2"
     results=(
         [argparser]="$3"
         [getopts]="$4"
@@ -74,12 +153,12 @@ function test_feature() {
         docopts
     )
 
-    printf '%s:\n' "${feature_name}"
+    # Run each parser's test script.  Its exit code serves as indicator
+    # whether the feature is supported or not---which may require
+    # additional checks in the respective script to ensure correctness.
+    # Ignore possible error and warning messages.
+    result_markers=( )
     for parser in "${parsers[@]}"; do
-        # Run each parser's test script.  Its exit code serves as
-        # indicator whether the feature is supported or not---which may
-        # require additional checks in the respective script to ensure
-        # correctness.  Ignore possible error and warning messages.
         script="feature_tests/${directory}/test_${parser}.sh"
         if "${script}" "${command_line[@]}" &> /dev/null; then
             actual_result="✓"
@@ -89,13 +168,18 @@ function test_feature() {
 
         expected_result="${results[${parser}]}"
         if [[ "${actual_result}" == "${expected_result}" ]]; then
-            printf -- '- %s:%*s\e[32m✓\e[m\n' "${parser}" \
-                "$(( "${#parser}" - 10 ))" ""
+            result_markers+=("$(colorize "green" "${actual_result}")")
         else
-            printf -- '- %s:%*s\e[31m✗\e[m\n' "${parser}" \
-                "$(( "${#parser}" - 10 ))" ""
+            result_markers+=("$(colorize "red" "${actual_result}")")
         fi
     done
+
+    # Write the results as new row to the result table.  Note that
+    # specifying the padding using printf wouldn't work as the result
+    # markers are colorized and thus longer than the one character
+    # that's actually printed.
+    printf '%-44s | %s         | %s         | %s         | %s         | %s         \n' \
+        "${feature_description}" "${result_markers[@]}"
 }
 
 # Parse the arguments.
@@ -215,7 +299,19 @@ fi
 # Run all requested feature tests.  These are identified by parameter
 # indirection of the given command-line arguments against all defined
 # tests.  Compare the actual test result with the expected one and
-# output whether they're identical.
+# output a table indicating whether they're identical.  Check marks
+# ("✓") indicate a feature's presence, asterisks ("*") its partial
+# presence, and crosses ("✗") its absence.  Green marks show tests where
+# the actual and expected results match, red those where the results
+# don't match.
+if (( "${#args[@]}" > 0 )); then
+    printf '%-44s | %-9s | %-9s | %-9s | %-9s | %-9s\n' "Feature description" \
+        "argparser" "getopts" "getopt" "shflags" "docopts"
+    printf -v separator '%44s + %9s + %9s + %9s + %9s + %9s' "" "" "" "" "" ""
+    separator="${separator// /-}"
+    printf "%s\n" "${separator}"
+fi
+
 for test in "${tests[@]:1}"; do
     IFS="|" read -r -a test_definition <<< "${test}"
 
