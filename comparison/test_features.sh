@@ -27,8 +27,8 @@
 # "bash test_features.sh [--test-all]".
 
 # Purpose: Test the presence or absence of specific or all features of
-# the command-line parsers (getopts, getopt, shFlags, docopts, Shell
-# Argparser).
+# the command-line parsers (the Argparser, getopts, getopt, shFlags, and
+# docopts).
 
 shopt -s extglob
 
@@ -39,26 +39,39 @@ function test_feature() {
     # Argument:
     # - $1: the feature test's directory name
     # - $2: the feature's name
+    # - $3: the expected test result for the Shell Argparser
+    #       ("✓"/"*"/"✗")
+    # - $4: the expected test result for getopts ("✓"/"*"/"✗")
+    # - $5: the expected test result for getopt ("✓"/"*"/"✗")
+    # - $6: the expected test result for shFlags ("✓"/"*"/"✗")
+    # - $7: the expected test result for docopts ("✓"/"*"/"✗")
     # - $@: the command line arguments to pass to the parsers
 
     local command_line
     local directory
     local feature_name
     local parser
-    local -a parsers
+    local -A results
     local script
 
     directory="$1"
     feature_name="$2"
-    shift 2
+    results=(
+        [argparser]="$3"
+        [getopts]="$4"
+        [getopt]="$5"
+        [shflags]="$6"
+        [docopts]="$7"
+    )
+    shift 7
     command_line=("$@")
 
     parsers=(
+        argparser
         getopts
         getopt
         shflags
         docopts
-        argparser
     )
 
     printf '%s:\n' "${feature_name}"
@@ -69,9 +82,18 @@ function test_feature() {
         # correctness.  Ignore possible error and warning messages.
         script="feature_tests/${directory}/test_${parser}.sh"
         if "${script}" "${command_line[@]}" &> /dev/null; then
-            printf -- '- %s:%*s✓\n' "${parser}" "$(( "${#parser}" - 10 ))" ""
+            actual_result="✓"
         else
-            printf -- '- %s:%*s✗\n' "${parser}" "$(( "${#parser}" - 10 ))" ""
+            actual_result="✗"
+        fi
+
+        expected_result="${results[${parser}]}"
+        if [[ "${actual_result}" == "${expected_result}" ]]; then
+            printf -- '- %s:%*s\e[32m✓\e[m\n' "${parser}" \
+                "$(( "${#parser}" - 10 ))" ""
+        else
+            printf -- '- %s:%*s\e[31m✗\e[m\n' "${parser}" \
+                "$(( "${#parser}" - 10 ))" ""
         fi
     done
 }
@@ -132,47 +154,47 @@ source argparser -- "$@"
 
 # Run the tests.
 tests=(
-    "Test name                              | Feature description                          | Command line   "
-    "test_alternative_option_prefixes       | Alternative option prefixes (\"+\" or \"/\") | /v 1           "
-    "test_argument_definition_files         | Argument definition files                    |                "
-    "test_argument_groups                   | Argument groups                              | -h             "
-    "test_argument_intermixing              | Intermixed positional and keyword arguments  | -v 1           "
-    "test_auto_set_variables                | Auto-setting of arguments to variables       |                "
-    "test_choice_values                     | Choice values                                |                "
-    "test_configurable_parsing              | Configurable parsing                         |                "
-    "test_debug_mode                        | Debug mode                                   |                "
-    "test_default_values                    | Default values                               |                "
-    "test_deprecation_notes                 | Deprecation notes                            |                "
-    "test_error_warning_silencing           | Error/warning silencing                      |                "
-    "test_exit_codes_customization          | Customizable exit codes                      |                "
-    "test_flag_counting                     | Flag counting (\"-a -a\")                    | -v -v          "
-    "test_flag_inversion                    | Flag inversion (\"+a\"/\"++arg\")            | +v             "
-    "test_flag_negation                     | Flag negation (\"--no-arg\")                 | ++var          "
-    "test_flags                             | Flags (Boolean options)                      | -v             "
-    "test_help_message                      | Help message                                 |                "
-    "test_help_options_customization        | Customizable help options                    |                "
-    "test_inheritable_argument_definition   | Inheritable argument definition              |                "
-    "test_internationalization_localization | Internationalization / localization          |                "
-    "test_long_options                      | Long options                                 | --var 1        "
-    "test_mandatory_options                 | Mandatory options                            |                "
-    "test_message_stylization               | Message stylization                          |                "
-    "test_message_text_customization        | Customizable message text                    |                "
-    "test_metavariables                     | Metavariables (value names)                  |                "
-    "test_mutually_exclusive_arguments      | Mutually exclusive arguments                 | -a -b          "
-    "test_option_abbreviation               | Option abbreviation (\"--ar\")               | --va 1         "
-    "test_option_aliases                    | Option aliases (\"-a\"/\"-A\")               | -v 1 -V 2      "
-    "test_option_merging                    | Option merging (\"-ab\")                     | -ab1           "
-    "test_positional_arguments              | Positional arguments                         | 1              "
-    "test_positional_delimiter_hyphens      | Positional arguments delimiter \"--\"        | -b 2 -- -a 1   "
-    "test_positional_delimiter_plus_signs   | Positional arguments delimiter \"++\"        | -- -a 1 ++ -b 2"
-    "test_posix_compliance                  | POSIX compliance                             |                "
-    "test_shell_independence                | Shell independence (Bash, Dash, ksh93...)    |                "
-    "test_short_options                     | Short options                                | -v 1           "
-    "test_single_hyphen_long_options        | Single-hyphen long options (\"-arg\")        | -var 1         "
-    "test_type_checking                     | Data type checking                           |                "
-    "test_usage_message                     | Usage message                                |                "
-    "test_variadic_arguments                | Any argument number (multi-value arguments)  |                "
-    "test_version_message                   | Version message                              |                "
+    "Test name                              | Feature description                          | Command line    | argparser | getopts | getopt | shflags | docopts"
+    "test_alternative_option_prefixes       | Alternative option prefixes (\"+\" or \"/\") | /v 1            | ✗         | ✗       | ✗      | ✗       | ✗      "
+    "test_argument_definition_files         | Argument definition files                    |                 | ✓         | *       | *      | *       | *      "
+    "test_argument_groups                   | Argument groups                              | -h              | ✓         | ✗       | ✗      | ✗       | ✗      "
+    "test_argument_intermixing              | Intermixed positional and keyword arguments  | -v 1            | ✓         | ✗       | ✓      | ✗       | ✓      "
+    "test_auto_set_variables                | Auto-setting of arguments to variables       |                 | ✓         | ✗       | ✗      | ✓       | ✓      "
+    "test_choice_values                     | Choice values                                |                 | ✓         | ✗       | ✗      | ✗       | ✗      "
+    "test_configurable_parsing              | Configurable parsing                         |                 | ✓         | ✗       | ✓      | ✗       | ✗      "
+    "test_debug_mode                        | Debug mode                                   |                 | ✓         | ✗       | ✗      | ✗       | ✗      "
+    "test_default_values                    | Default values                               |                 | ✓         | ✗       | ✗      | ✓       | ✓      "
+    "test_deprecation_notes                 | Deprecation notes                            |                 | ✓         | ✗       | ✗      | ✗       | ✗      "
+    "test_error_warning_silencing           | Error/warning silencing                      |                 | ✓         | ✓       | ✓      | ✗       | ✗      "
+    "test_exit_codes_customization          | Customizable exit codes                      |                 | ✓         | ✗       | ✗      | ✗       | ✗      "
+    "test_flag_counting                     | Flag counting (\"-a -a\")                    | -v -v           | ✓         | ✗       | ✗      | ✗       | *      "
+    "test_flag_inversion                    | Flag inversion (\"+a\"/\"++arg\")            | +v              | ✓         | ✗       | ✗      | ✗       | ✗      "
+    "test_flag_negation                     | Flag negation (\"--no-arg\")                 | ++var           | ✓         | ✗       | ✗      | ✓       | ✗      "
+    "test_flags                             | Flags (Boolean options)                      | -v              | ✓         | ✓       | ✓      | ✓       | ✓      "
+    "test_help_message                      | Help message                                 |                 | ✓         | ✗       | ✗      | ✓       | ✓      "
+    "test_help_options_customization        | Customizable help options                    |                 | ✓         | *       | ✓      | ✗       | *      "
+    "test_inheritable_argument_definition   | Inheritable argument definition              |                 | ✓         | *       | *      | *       | *      "
+    "test_internationalization_localization | Internationalization / localization          |                 | ✓         | ✓       | ✓      | ✗       | ✗      "
+    "test_long_options                      | Long options                                 | --var 1         | ✓         | ✗       | ✓      | ✓       | ✓      "
+    "test_mandatory_options                 | Mandatory options                            |                 | ✓         | ✗       | ✗      | ✗       | ✓      "
+    "test_message_stylization               | Message stylization                          |                 | ✓         | ✗       | ✗      | ✗       | ✗      "
+    "test_message_text_customization        | Customizable message text                    |                 | ✓         | *       | *      | ✓       | ✗      "
+    "test_metavariables                     | Metavariables (value names)                  |                 | ✓         | ✗       | ✗      | ✗       | ✗      "
+    "test_mutually_exclusive_arguments      | Mutually exclusive arguments                 | -a -b           | ✗         | ✗       | ✗      | ✗       | ✓      "
+    "test_option_abbreviation               | Option abbreviation (\"--ar\")               | --va 1          | ✓         | ✗       | ✓      | ✓       | ✓      "
+    "test_option_aliases                    | Option aliases (\"-a\"/\"-A\")               | -v 1 -V 2       | ✓         | *       | *      | ✗       | ✓      "
+    "test_option_merging                    | Option merging (\"-ab\")                     | -ab1            | ✓         | ✓       | ✓      | ✓       | ✓      "
+    "test_positional_arguments              | Positional arguments                         | 1               | ✓         | *       | *      | *       | ✓      "
+    "test_positional_delimiter_hyphens      | Positional arguments delimiter \"--\"        | -b 2 -- -a 1    | ✓         | ✓       | ✓      | ✓       | ✓      "
+    "test_positional_delimiter_plus_signs   | Positional arguments delimiter \"++\"        | -- -a 1 ++ -b 2 | ✓         | ✗       | ✗      | ✗       | ✗      "
+    "test_posix_compliance                  | POSIX compliance                             |                 | ✗         | ✓       | *      | ✗       | ✗      "
+    "test_shell_independence                | Shell independence (Bash, Dash, ksh93...)    |                 | ✓         | *       | ✓      | ✓       | ✓      "
+    "test_short_options                     | Short options                                | -v 1            | ✓         | ✓       | ✓      | ✓       | ✓      "
+    "test_single_hyphen_long_options        | Single-hyphen long options (\"-arg\")        | -var 1          | ✗         | ✗       | ✓      | ✗       | ✗      "
+    "test_type_checking                     | Data type checking                           |                 | ✓         | ✗       | ✗      | ✓       | ✗      "
+    "test_usage_message                     | Usage message                                |                 | ✓         | ✗       | ✗      | ✗       | ✗      "
+    "test_variadic_arguments                | Any argument number (multi-value arguments)  |                 | ✓         | ✗       | ✗      | ✗       | ✓      "
+    "test_version_message                   | Version message                              |                 | ✓         | ✗       | ✗      | ✗       | ✓      "
 )
 
 # Irrespective of how many tests have been requested, if all tests shall
@@ -192,7 +214,8 @@ fi
 
 # Run all requested feature tests.  These are identified by parameter
 # indirection of the given command-line arguments against all defined
-# tests.
+# tests.  Compare the actual test result with the expected one and
+# output whether they're identical.
 for test in "${tests[@]:1}"; do
     IFS="|" read -r -a test_definition <<< "${test}"
 
@@ -205,8 +228,29 @@ for test in "${tests[@]:1}"; do
 
     IFS=" " read -r -a command_line <<< "${test_definition[2]}"
 
+    result_argparser="${test_definition[3]}"
+    result_argparser="${result_argparser##+( )}"
+    result_argparser="${result_argparser%%+( )}"
+
+    result_getopts="${test_definition[4]}"
+    result_getopts="${result_getopts##+( )}"
+    result_getopts="${result_getopts%%+( )}"
+
+    result_getopt="${test_definition[5]}"
+    result_getopt="${result_getopt##+( )}"
+    result_getopt="${result_getopt%%+( )}"
+
+    result_shflags="${test_definition[6]}"
+    result_shflags="${result_shflags##+( )}"
+    result_shflags="${result_shflags%%+( )}"
+
+    result_docopts="${test_definition[7]}"
+    result_docopts="${result_docopts##+( )}"
+    result_docopts="${result_docopts%%+( )}"
+
     if [[ "${!test_name}" == true ]]; then
         test_feature "${test_name#test_}" "${feature_description}" \
-            "${command_line[@]}"
+            "${result_argparser}" "${result_getopts}" "${result_getopt}" \
+            "${result_shflags}" "${result_docopts}" "${command_line[@]}" 
     fi
 done
