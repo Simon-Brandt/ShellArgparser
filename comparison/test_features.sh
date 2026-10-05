@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-02
+# Last Modification: 2026-10-05
 
 # Usage: Run this script with
 # "bash test_features.sh [--test-<feature>...]" or
@@ -178,7 +178,7 @@ function test_feature() {
     # specifying the padding using printf wouldn't work as the result
     # markers are colorized and thus longer than the one character
     # that's actually printed.
-    printf '%-44s | %s         | %s         | %s         | %s         | %s         \n' \
+    printf '\u2502 %-44s \u2502 %s         \u2502 %s         \u2502 %s         \u2502 %s         \u2502 %s         \u2502\n' \
         "${feature_description}" "${result_markers[@]}"
 }
 
@@ -304,14 +304,24 @@ fi
 # presence, and crosses ("✗") its absence.  Green marks show tests where
 # the actual and expected results match, red those where the results
 # don't match.
+# First, print the table's header.
 if (( "${#args[@]}" > 0 )); then
-    printf '%-44s | %-9s | %-9s | %-9s | %-9s | %-9s\n' "Feature description" \
-        "argparser" "getopts" "getopt" "shflags" "docopts"
-    printf -v separator '%44s + %9s + %9s + %9s + %9s + %9s' "" "" "" "" "" ""
-    separator="${separator// /-}"
-    printf "%s\n" "${separator}"
+    printf -v top_rule '\u250C%46s\u252C%11s\u252C%11s\u252C%11s\u252C%11s\u252C%11s\u2510' \
+        "" "" "" "" "" ""
+    top_rule="${top_rule// /$'\u2500'}"
+    printf "%s\n" "${top_rule}"
+
+    printf '\u2502 %-44s \u2502 %-9s \u2502 %-9s \u2502 %-9s \u2502 %-9s \u2502 %-9s \u2502\n' \
+        "Feature description" "argparser" "getopts" "getopt" "shflags" \
+        "docopts"
+
+    printf -v mid_rule '\u251C%46s\u253C%11s\u253C%11s\u253C%11s\u253C%11s\u253C%11s\u2524' \
+        "" "" "" "" "" ""
+    mid_rule="${mid_rule// /$'\u2500'}"
+    printf "%s\n" "${mid_rule}"
 fi
 
+# Run each test and print a table row each.
 for test in "${tests[@]:1}"; do
     IFS="|" read -r -a test_definition <<< "${test}"
 
@@ -350,3 +360,18 @@ for test in "${tests[@]:1}"; do
             "${result_shflags}" "${result_docopts}" "${command_line[@]}" 
     fi
 done
+
+# Print the table's footer and legend.
+if (( "${#args[@]}" > 0 )); then
+    printf -v bottom_rule '\u2514%46s\u2534%11s\u2534%11s\u2534%11s\u2534%11s\u2534%11s\u2518' \
+        "" "" "" "" "" ""
+    bottom_rule="${bottom_rule// /$'\u2500'}"
+    printf "%s\n" "${bottom_rule}"
+
+    printf '\n%s\n' "$(colorize "bold" "Legend")"
+    printf '%s: Test succeeded: Feature is present.\n' \
+        "$(colorize "green" "✓")"
+    printf '%s: Test succeeded: Feature is absent.\n' "$(colorize "green" "✗")"
+    printf '%s: Test failed:    Feature is present.\n' "$(colorize "red" "✓")"
+    printf '%s: Test failed:    Feature is absent.\n' "$(colorize "red" "✗")"
+fi
