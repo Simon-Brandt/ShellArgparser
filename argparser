@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-03-25
+# Last Modification: 2026-10-05
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -9061,7 +9061,7 @@ function argparser_create_usage_message() {
     # colorized usage caption as heading.  Otherwise, print the usage
     # message with script name, heading, and the first option line in
     # one line.  Finally, join the lines into a single string.
-    argparser_colorize "${styles["script_name"]}" 2 script_name \
+    argparser_colorize "${styles["script_name"]}" 1 script_name \
         "${ARGPARSER_SCRIPT_NAME}"
 
     if [[ -n "${styles["usage_frame"]}" ]]; then
