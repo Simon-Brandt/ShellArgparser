@@ -532,7 +532,7 @@ function argparser_pad() {
     fi
 
     # Pad the array's elements in-place.
-    argparser_uncolorize "array" "${padded_array[@]}"
+    argparser_uncolorize "array" 1 "${padded_array[@]}"
     if [[ "${side}" == "left" ]]; then
         for i in "${!padded_array[@]}"; do
             (( width = max_width - "${#uncolorized_array[i]}" ))
@@ -627,7 +627,7 @@ function argparser_fold() {
         # uncolorize the words.
         mapfile -d "${delimiters::1}" -t words <<< "${element}"
         words[-1]="${words[-1]%$'\n'}"
-        argparser_uncolorize "array" "${words[@]}"
+        argparser_uncolorize "array" 1 "${words[@]}"
 
         # Wrap the lines.
         for i in "${!words[@]}"; do
@@ -1000,7 +1000,7 @@ function argparser_get_max_width() {
     uncolorized_array=("$@")
 
     # Get the maximum width of the (uncolorized) array's elements.
-    argparser_uncolorize "array" "${uncolorized_array[@]}"
+    argparser_uncolorize "array" 1 "${uncolorized_array[@]}"
     max_width=0
     for element in "${uncolorized_array[@]}"; do
         width="${#element}"
@@ -1338,7 +1338,7 @@ function argparser_uncolorize() {
         local -a uncolorized_array
     fi
 
-    shift
+    shift 2
     uncolorized_array=("$@")
 
     # Remove the Select Graphic Rendition (SGR) ANSI escape sequence
@@ -1571,7 +1571,7 @@ function argparser_draw_frame() {
         # Create an uncolorized copy of the array to compute the line
         # length, below.  Then, surround the lines with (colorized)
         # vertical lines, separated by a space each.
-        argparser_uncolorize "array" "${framed_array[@]}"
+        argparser_uncolorize "array" "${file_descriptor}" "${framed_array[@]}"
         argparser_colorize "${colors_str}" "${file_descriptor}" \
             frame_vertical "${frame_chars["vertical"]}"
 
@@ -1592,7 +1592,8 @@ function argparser_draw_frame() {
                 frame_top_1 \
                 "${frame_chars["top-left"]}${frame_chars["horizontal"]}"
 
-            argparser_uncolorize uncolorized_caption "${caption}"
+            argparser_uncolorize uncolorized_caption "${file_descriptor}" \
+                "${caption}"
             printf -v frame_top_2 '%*s' \
                 "$(( "${#uncolorized_array[0]}" - "${#uncolorized_caption}" \
                     + 1 ))" \
@@ -8098,13 +8099,13 @@ function argparser_create_help_message() {
     # width for the third column.  To this end, fold the first two
     # (uncolorized) columns and compute their maximum width, then throw
     # them away.
-    argparser_uncolorize "array" "${col_1[@]}"
+    argparser_uncolorize "array" 1 "${col_1[@]}"
     argparser_fold " =${ARGPARSER_ARG_DELIMITER_2}" \
         "${ARGPARSER_MAX_COL_WIDTH_1}" 0 "${uncolorized_array[@]}"
     argparser_get_max_width "${folded_array[@]}"
     col_width_1="${max_width}"
 
-    argparser_uncolorize "array" "${col_2[@]}"
+    argparser_uncolorize "array" 1 "${col_2[@]}"
     argparser_fold " =${ARGPARSER_ARG_DELIMITER_2}" \
         "${ARGPARSER_MAX_COL_WIDTH_2}" 0 "${uncolorized_array[@]}"
     argparser_get_max_width "${folded_array[@]}"
@@ -9330,7 +9331,7 @@ function argparser_print_help_message() {
                         # minus the two corner characters.
                         caption="${block%%$'\n'*}"
                         block="${block#"${caption}"$'\n'}"
-                        argparser_uncolorize uncolorized_caption "${caption}"
+                        argparser_uncolorize uncolorized_caption 1 "${caption}"
                         frame_char="${uncolorized_caption:1:1}"
                         printf -v frame '%*s' \
                             "$(( "${#uncolorized_caption}" - 2 ))" ""
