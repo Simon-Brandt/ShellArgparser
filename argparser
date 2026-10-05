@@ -8391,6 +8391,7 @@ function argparser_create_usage_message() {
     local -a help_option_args
     local help_options
     local joined_array
+    local length
     local -a lines
     local long_option
     local -a long_option_default_args
@@ -8410,7 +8411,7 @@ function argparser_create_usage_message() {
     local -a sorted_array
     local translation
     local -a usage_message
-    local uncolorized_message
+    local uncolorized_line
     local value_name
     local -a value_names_arr
     local value_names_str
@@ -9043,15 +9044,20 @@ function argparser_create_usage_message() {
         header="${caption}: ${ARGPARSER_SCRIPT_NAME} "
     fi
 
-    argparser_join " " "${usage_message[@]}"
-    argparser_uncolorize uncolorized_message 1 "${joined_array}"
-    if (( "${#uncolorized_message}" + "${#header}" > ARGPARSER_MAX_WIDTH )) \
+    length=0
+    for line in "${usage_message[@]}"; do
+        argparser_uncolorize uncolorized_line 1 "${line}"
+        (( length += "${#uncolorized_line}" ))
+    done
+
+    if (( "${length}" + "${#header}" > ARGPARSER_MAX_WIDTH )) \
         || [[ "${ARGPARSER_USAGE_MESSAGE_ORIENTATION}" == "column" ]]
     then
         printf -v whitespace '%*s' "${#header}" ""
         usage_message=("${usage_message[@]/#/"${whitespace}"}")
         usage_message[0]="${usage_message[0]#"${whitespace}"}"
     else
+        argparser_join " " "${usage_message[@]}"
         usage_message=("${joined_array}")
     fi
 
