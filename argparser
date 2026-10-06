@@ -6962,9 +6962,8 @@ function argparser_parse_args() {
 
         if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
             printf '\n'
+            argparser_print_usage_message false
         fi
-
-        argparser_print_usage_message false
 
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
     fi >&2
@@ -7012,7 +7011,11 @@ function argparser_parse_args() {
             printf '\n'
         fi
 
-        argparser_print_usage_message false
+        if [[  "${ARGPARSER_SILENCE_ERRORS}" == false \
+            || "${ARGPARSER_SILENCE_WARNINGS}" == false ]]
+        then
+            argparser_print_usage_message false
+        fi
 
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
     elif (( "${#error_messages[@]}" > 0 )); then
@@ -7020,9 +7023,8 @@ function argparser_parse_args() {
 
         if [[ "${ARGPARSER_SILENCE_ERRORS}" == false ]]; then
             printf '\n'
+            argparser_print_usage_message false
         fi
-
-        argparser_print_usage_message false
 
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
     elif (( "${#warning_messages[@]}" > 0 )); then
