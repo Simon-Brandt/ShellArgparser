@@ -20,14 +20,21 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-02
+# Last Modification: 2026-10-06
 
 # Usage: Run this script from test_features.sh as
 # "bash test_features.sh --test-option-merging".
 
 # Purpose: Test whether the Argparser supports option merging ("-ab").
 
-# Parse the arguments.
+# Parse the arguments.  In order to be able to both set the arguments to
+# variables and to ignore any "exit", define "exit" as alias for
+# "return", such that the functions are halted, but the test doesn't
+# abort.  Only the final check for the variables sets the test's result
+# as exit code.
+shopt -s expand_aliases
+alias exit=return
+
 ARGPARSER_ALLOW_OPTION_MERGING=true
 
 declare var_a
@@ -39,7 +46,9 @@ args=(
     "var_a | a          |           | VAL_A     | false    |         | bool | 0      | Options   |       | flag        "
     "var_b | b          |           | VAL_B     |          |         | str  | 1      | Options   |       | short option"
 )
-source argparser -- "$@"
+source argparser -- "$@" &> /dev/null
+
+unalias exit
 
 if [[ "${var_a}" == true && "${var_b}" == 1 ]]; then
     exit 0

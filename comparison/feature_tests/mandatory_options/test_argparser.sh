@@ -20,19 +20,32 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-02
+# Last Modification: 2026-10-06
 
 # Usage: Run this script from test_features.sh as
 # "bash test_features.sh --test-mandatory-options".
 
 # Purpose: Test whether the Argparser supports mandatory options.
 
-# Parse the arguments.
+# Parse the arguments.  In order to be able to both set the arguments to
+# variables and to ignore any "exit", define "exit" as alias for
+# "return", such that the functions are halted, but the test doesn't
+# abort.  Only the final check for the variables sets the test's result
+# as exit code.
+shopt -s expand_aliases
+alias exit=return
+
 # shellcheck disable=SC2190  # Indexed, not associative array.
 args=(
     "id  | short_opts | long_opts | val_names | defaults | choices | type | arg_no | arg_group | notes | help            "
     "var | v          |           | VAL       |          |         | str  | 1      | Options   |       | mandatory option"
 )
-(source argparser -- "$@") || exit 0  # Must raise an error to pass the test.
+error="$(source argparser -- "$@" 2>&1 > /dev/null)"
 
+unalias exit
+
+if [[ "${error}" == *"The argument \"-v\" is mandatory, but not given."* ]]
+then
+    exit 0
+fi
 exit 1

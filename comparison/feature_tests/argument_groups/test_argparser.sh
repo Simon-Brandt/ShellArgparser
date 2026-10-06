@@ -27,13 +27,22 @@
 
 # Purpose: Test whether the Argparser supports argument groups.
 
-# Parse the arguments.
+# Parse the arguments.  In order to be able to both set the arguments to
+# variables and to ignore any "exit", define "exit" as alias for
+# "return", such that the functions are halted, but the test doesn't
+# abort.  Only the final check for the variables sets the test's result
+# as exit code.
+shopt -s expand_aliases
+alias exit=return
+
 # shellcheck disable=SC2190  # Indexed, not associative array.
 args=(
     "id  | short_opts | long_opts | val_names | defaults | choices | type | arg_no | arg_group | notes | help        "
     "var | v          |           | VAL       |          |         | str  | 1      | Options   |       | short option"
 )
-output="$(source argparser -- "$@")"
+output="$(source argparser -- "$@" 2> /dev/null)"
+
+unalias exit
 
 if [[ "${output}" == *"- Options -"* ]]; then
     exit 0

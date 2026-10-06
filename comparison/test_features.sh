@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-05
+# Last Modification: 2026-10-06
 
 # Usage: Run this script with
 # "bash test_features.sh [--test-<feature>...]" or
@@ -160,7 +160,7 @@ function test_feature() {
     result_markers=( )
     for parser in "${parsers[@]}"; do
         script="feature_tests/${directory}/test_${parser}.sh"
-        if "${script}" "${command_line[@]}" &> /dev/null; then
+        if "${script}" "${command_line[@]}"; then
             actual_result="✓"
         else
             actual_result="✗"

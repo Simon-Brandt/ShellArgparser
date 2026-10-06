@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-02
+# Last Modification: 2026-10-06
 
 # Usage: Run this script from test_features.sh as
 # "bash test_features.sh --test-positional-delimiter-plus-signs".
@@ -28,7 +28,14 @@
 # Purpose: Test whether the Argparser supports the positional arguments
 # delimiter "++".
 
-# Parse the arguments.
+# Parse the arguments.  In order to be able to both set the arguments to
+# variables and to ignore any "exit", define "exit" as alias for
+# "return", such that the functions are halted, but the test doesn't
+# abort.  Only the final check for the variables sets the test's result
+# as exit code.
+shopt -s expand_aliases
+alias exit=return
+
 ARGPARSER_SET_ARRAYS=false
 declare var_a
 declare var_b
@@ -39,7 +46,9 @@ args=(
     "var_a |            |           | VAL_A     |          |         | str  | 2      | Positional arguments |       | positional argument"
     "var_b | b          |           | VAL_B     |          |         | str  | 1      | Options              |       | short option       "
 )
-source argparser -- "$@"
+source argparser -- "$@" &> /dev/null
+
+unalias exit
 
 if [[ "${var_a}" == "-a,1" && "${var_b}" == 2 ]]; then
     exit 0

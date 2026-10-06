@@ -28,7 +28,14 @@
 # Purpose: Test whether the Argparser supports option aliases
 # ("-a"/"-A").
 
-# Parse the arguments.
+# Parse the arguments.  In order to be able to both set the arguments to
+# variables and to ignore any "exit", define "exit" as alias for
+# "return", such that the functions are halted, but the test doesn't
+# abort.  Only the final check for the variables sets the test's result
+# as exit code.
+shopt -s expand_aliases
+alias exit=return
+
 ARGPARSER_ADD_VERSION=false
 ARGPARSER_SET_ARRAYS=false
 
@@ -37,7 +44,9 @@ args=(
     "id  | short_opts | long_opts | val_names | defaults | choices | type | arg_no | arg_group | notes | help        "
     "var | v,V        |           | VAL       |          |         | str  | 2      | Options   |       | short option"
 )
-source argparser -- "$@"
+source argparser -- "$@" &> /dev/null
+
+unalias exit
 
 if [[ "${var}" == "1,2" ]]; then
     exit 0
