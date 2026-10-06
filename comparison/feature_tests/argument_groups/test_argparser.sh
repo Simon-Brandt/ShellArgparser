@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-02
+# Last Modification: 2026-10-06
 
 # Usage: Run this script from test_features.sh as
 # "bash test_features.sh --test-argument-groups".
@@ -35,7 +35,7 @@ args=(
 )
 output="$(source argparser -- "$@")"
 
-if [[ "${output}" == *"Options:"* ]]; then
+if [[ "${output}" == *"- Options -"* ]]; then
     exit 0
 fi
 exit 1
