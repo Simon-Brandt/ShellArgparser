@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-02
+# Last Modification: 2026-10-06
 
 # Usage: Run this script from test_features.sh as
 # "bash test_features.sh --test-option-aliases".
@@ -29,6 +29,7 @@
 # ("-a"/"-A").
 
 # Parse the arguments.
+ARGPARSER_ADD_VERSION=false
 ARGPARSER_SET_ARRAYS=false
 
 # shellcheck disable=SC2190  # Indexed, not associative array.
