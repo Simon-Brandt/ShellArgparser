@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-06
+# Last Modification: 2026-10-07
 
 # Usage: Run this script with
 # "bash test_features.sh [--test-<feature>...]" or
@@ -244,23 +244,23 @@ tests=(
     "test_argument_intermixing              | Intermixed positional and keyword arguments  | -v 1            | ✓         | ✗       | ✓      | ✗       | ✓      "
     "test_auto_set_variables                | Auto-setting of arguments to variables       | -v 1            | ✓         | ✗       | ✗      | ✓       | ✓      "
     "test_choice_values                     | Choice values                                | -v A            | ✓         | ✗       | ✗      | ✗       | ✗      "
-    "test_configurable_parsing              | Configurable parsing                         |                 | ✓         | ✗       | ✓      | ✗       | ✗      "
+    "test_configurable_parsing              | Configurable parsing                         | -v 1;2;3        | ✓         | ✗       | ✓      | ✗       | ✗      "
     "test_debug_mode                        | Debug mode                                   |                 | ✓         | ✗       | ✗      | ✗       | ✗      "
     "test_default_values                    | Default values                               |                 | ✓         | ✗       | ✗      | ✓       | ✓      "
     "test_deprecation_notes                 | Deprecation notes                            | -v 1            | ✓         | ✗       | ✗      | ✗       | ✗      "
     "test_error_warning_silencing           | Error/warning silencing                      |                 | ✓         | ✓       | ✓      | ✗       | ✗      "
-    "test_exit_codes_customization          | Customizable exit codes                      |                 | ✓         | ✗       | ✗      | ✗       | ✗      "
+    "test_exit_codes_customization          | Customizable exit codes                      | -h              | ✓         | ✗       | ✗      | ✗       | ✗      "
     "test_flag_counting                     | Flag counting (\"-a -a\")                    | -v -v           | ✓         | ✗       | ✗      | ✗       | *      "
     "test_flag_inversion                    | Flag inversion (\"+a\"/\"++arg\")            | +v              | ✓         | ✗       | ✗      | ✗       | ✗      "
     "test_flag_negation                     | Flag negation (\"--no-arg\")                 | ++var           | ✓         | ✗       | ✗      | ✓       | ✗      "
     "test_flags                             | Flags (Boolean options)                      | -v              | ✓         | ✓       | ✓      | ✓       | ✓      "
-    "test_help_message                      | Help message                                 |                 | ✓         | ✗       | ✗      | ✓       | ✓      "
-    "test_help_options_customization        | Customizable help options                    |                 | ✓         | *       | ✓      | ✗       | *      "
+    "test_help_message                      | Help message                                 | -h              | ✓         | ✗       | ✗      | ✓       | ✓      "
+    "test_help_options_customization        | Customizable help options                    | -H              | ✓         | *       | ✓      | ✗       | *      "
     "test_internationalization_localization | Internationalization / localization          |                 | ✓         | ✓       | ✓      | ✗       | ✗      "
     "test_long_options                      | Long options                                 | --var 1         | ✓         | ✗       | ✓      | ✓       | ✓      "
     "test_mandatory_options                 | Mandatory options                            |                 | ✓         | ✗       | ✗      | ✗       | ✓      "
-    "test_message_stylization               | Message stylization                          |                 | ✓         | ✗       | ✗      | ✗       | ✗      "
-    "test_message_text_customization        | Customizable message text                    |                 | ✓         | *       | *      | ✓       | ✗      "
+    "test_message_stylization               | Message stylization                          | -h              | ✓         | ✗       | ✗      | ✗       | ✗      "
+    "test_message_text_customization        | Customizable message text                    | -h              | ✓         | *       | *      | ✓       | ✗      "
     "test_metavariables                     | Metavariables (value names)                  | -u              | ✓         | ✗       | ✗      | ✗       | ✗      "
     "test_mutually_exclusive_arguments      | Mutually exclusive arguments                 | -a -b           | ✗         | ✗       | ✗      | ✗       | ✓      "
     "test_option_abbreviation               | Option abbreviation (\"--ar\")               | --va 1          | ✓         | ✗       | ✓      | ✓       | ✓      "
@@ -274,9 +274,9 @@ tests=(
     "test_short_options                     | Short options                                | -v 1            | ✓         | ✓       | ✓      | ✓       | ✓      "
     "test_single_hyphen_long_options        | Single-hyphen long options (\"-arg\")        | -var 1          | ✗         | ✗       | ✓      | ✗       | ✗      "
     "test_type_checking                     | Data type checking                           | -v A            | ✓         | ✗       | ✗      | ✓       | ✗      "
-    "test_usage_message                     | Usage message                                |                 | ✓         | ✗       | ✗      | ✗       | ✗      "
+    "test_usage_message                     | Usage message                                | -u              | ✓         | ✗       | ✗      | ✗       | ✗      "
     "test_variadic_arguments                | Any argument number (multi-value arguments)  | -v 1 2 3        | ✓         | ✗       | ✗      | ✗       | ✓      "
-    "test_version_message                   | Version message                              |                 | ✓         | ✗       | ✗      | ✗       | ✓      "
+    "test_version_message                   | Version message                              | -V              | ✓         | ✗       | ✗      | ✗       | ✓      "
 )
 
 # Irrespective of how many tests have been requested, if all tests shall
