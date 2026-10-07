@@ -116,10 +116,12 @@ function test_feature() {
     # - $2: the feature's name and description
     # - $3: the expected test result for the Shell Argparser
     #       ("✓"/"*"/"✗")
-    # - $4: the expected test result for getopts ("✓"/"*"/"✗")
-    # - $5: the expected test result for getopt ("✓"/"*"/"✗")
-    # - $6: the expected test result for shFlags ("✓"/"*"/"✗")
-    # - $7: the expected test result for docopts ("✓"/"*"/"✗")
+    # - $4: the expected test result for Python's argparse module
+    #       ("✓"/"*"/"✗")
+    # - $5: the expected test result for getopts ("✓"/"*"/"✗")
+    # - $6: the expected test result for getopt ("✓"/"*"/"✗")
+    # - $7: the expected test result for shFlags ("✓"/"*"/"✗")
+    # - $8: the expected test result for docopts ("✓"/"*"/"✗")
     # - $@: the command line arguments to pass to the parsers
 
     local actual_result
@@ -137,16 +139,18 @@ function test_feature() {
     feature_description="$2"
     results=(
         [argparser]="$3"
-        [getopts]="$4"
-        [getopt]="$5"
-        [shflags]="$6"
-        [docopts]="$7"
+        [argparse]="$4"
+        [getopts]="$5"
+        [getopt]="$6"
+        [shflags]="$7"
+        [docopts]="$8"
     )
-    shift 7
+    shift 8
     command_line=("$@")
 
     parsers=(
         argparser
+        argparse
         getopts
         getopt
         shflags
@@ -178,7 +182,7 @@ function test_feature() {
     # specifying the padding using printf wouldn't work as the result
     # markers are colorized and thus longer than the one character
     # that's actually printed.
-    printf '\u2502 %-44s \u2502 %s         \u2502 %s         \u2502 %s         \u2502 %s         \u2502 %s         \u2502\n' \
+    printf '\u2502 %-44s \u2502 %s         \u2502 %s         \u2502 %s         \u2502 %s         \u2502 %s         \u2502 %s         \u2502\n' \
         "${feature_description}" "${result_markers[@]}"
 }
 
@@ -237,46 +241,46 @@ source argparser -- "$@"
 
 # Run the tests.
 tests=(
-    "Test name                              | Feature description                          | Command line    | argparser | getopts | getopt | shflags | docopts"
-    "test_alternative_option_prefixes       | Alternative option prefixes (\"+\" or \"/\") | /v 1            | ✗         | ✗       | ✗      | ✗       | ✗      "
-    "test_argument_definition_files         | Argument definition files                    | -v 1            | ✓         | *       | *      | *       | *      "
-    "test_argument_groups                   | Argument groups                              | -h              | ✓         | ✗       | ✗      | ✗       | ✗      "
-    "test_argument_intermixing              | Intermixed positional and keyword arguments  | -v 1            | ✓         | ✗       | ✓      | ✗       | ✓      "
-    "test_auto_set_variables                | Auto-setting of arguments to variables       | -v 1            | ✓         | ✗       | ✗      | ✓       | ✓      "
-    "test_choice_values                     | Choice values                                | -v A            | ✓         | ✗       | ✗      | ✗       | ✗      "
-    "test_configurable_parsing              | Configurable parsing                         | -v 1;2;3        | ✓         | ✗       | ✓      | ✗       | ✗      "
-    "test_debug_mode                        | Debug mode                                   | -v 1            | ✓         | ✗       | ✗      | ✗       | ✗      "
-    "test_default_values                    | Default values                               |                 | ✓         | ✗       | ✗      | ✓       | ✓      "
-    "test_deprecation_notes                 | Deprecation notes                            | -v 1            | ✓         | ✗       | ✗      | ✗       | ✗      "
-    "test_error_warning_silencing           | Error/warning silencing                      |                 | ✓         | ✓       | ✓      | ✗       | ✗      "
-    "test_exit_codes_customization          | Customizable exit codes                      | -h              | ✓         | ✗       | ✗      | ✗       | ✗      "
-    "test_flag_counting                     | Flag counting (\"-a -a\")                    | -v -v           | ✓         | ✗       | ✗      | ✗       | *      "
-    "test_flag_inversion                    | Flag inversion (\"+a\"/\"++arg\")            | +v              | ✓         | ✗       | ✗      | ✗       | ✗      "
-    "test_flag_negation                     | Flag negation (\"--no-arg\")                 | ++var           | ✓         | ✗       | ✗      | ✓       | ✗      "
-    "test_flags                             | Flags (Boolean options)                      | -v              | ✓         | ✓       | ✓      | ✓       | ✓      "
-    "test_help_message                      | Help message                                 | -h              | ✓         | ✗       | ✗      | ✓       | ✓      "
-    "test_help_options_customization        | Customizable help options                    | -H              | ✓         | *       | ✓      | ✗       | *      "
-    "test_internationalization_localization | Internationalization / localization          | -h              | ✓         | ✓       | ✓      | ✗       | ✗      "
-    "test_long_options                      | Long options                                 | --var 1         | ✓         | ✗       | ✓      | ✓       | ✓      "
-    "test_mandatory_options                 | Mandatory options                            |                 | ✓         | ✗       | ✗      | ✗       | ✓      "
-    "test_message_stylization               | Message stylization                          | -h              | ✓         | ✗       | ✗      | ✗       | ✗      "
-    "test_message_text_customization        | Customizable message text                    | -h              | ✓         | *       | *      | ✓       | ✗      "
-    "test_metavariables                     | Metavariables (value names)                  | -u              | ✓         | ✗       | ✗      | ✗       | ✗      "
-    "test_mutually_exclusive_arguments      | Mutually exclusive arguments                 | -a -b           | ✗         | ✗       | ✗      | ✗       | ✓      "
-    "test_option_abbreviation               | Option abbreviation (\"--ar\")               | --va 1          | ✓         | ✗       | ✓      | ✓       | ✓      "
-    "test_option_aliases                    | Option aliases (\"-a\"/\"-A\")               | -v 1 -V 2       | ✓         | *       | *      | ✗       | ✓      "
-    "test_option_merging                    | Option merging (\"-ab\")                     | -ab1            | ✓         | ✓       | ✓      | ✓       | ✓      "
-    "test_positional_arguments              | Positional arguments                         | 1               | ✓         | *       | *      | *       | ✓      "
-    "test_positional_delimiter_hyphens      | Positional arguments delimiter \"--\"        | -b 2 -- -a 1    | ✓         | ✓       | ✓      | ✓       | ✓      "
-    "test_positional_delimiter_plus_signs   | Positional arguments delimiter \"++\"        | -- -a 1 ++ -b 2 | ✓         | ✗       | ✗      | ✗       | ✗      "
-    "test_posix_compliance                  | POSIX compliance                             | --var 1         | ✗         | ✓       | *      | ✗       | ✗      "
-    "test_shell_independence                | Shell independence (Bash, Dash, ksh93...)    | -v 1            | ✓         | *       | ✓      | ✓       | ✓      "
-    "test_short_options                     | Short options                                | -v 1            | ✓         | ✓       | ✓      | ✓       | ✓      "
-    "test_single_hyphen_long_options        | Single-hyphen long options (\"-arg\")        | -var 1          | ✗         | ✗       | ✓      | ✗       | ✗      "
-    "test_type_checking                     | Data type checking                           | -v A            | ✓         | ✗       | ✗      | ✓       | ✗      "
-    "test_usage_message                     | Usage message                                | -u              | ✓         | ✗       | ✗      | ✗       | ✗      "
-    "test_variadic_arguments                | Any argument number (multi-value arguments)  | -v 1 2 3        | ✓         | ✗       | ✗      | ✗       | ✓      "
-    "test_version_message                   | Version message                              | -V              | ✓         | ✗       | ✗      | ✗       | ✓      "
+    "Test name                              | Feature description                          | Command line    | argparser | argparse | getopts | getopt | shflags | docopts"
+    "test_alternative_option_prefixes       | Alternative option prefixes (\"+\" or \"/\") | /v 1            | ✗         | ✓        | ✗       | ✗      | ✗       | ✗      "
+    "test_argument_definition_files         | Argument definition files                    | -v 1            | ✓         | ✓        | *       | *      | *       | *      "
+    "test_argument_groups                   | Argument groups                              | -h              | ✓         | ✓        | ✗       | ✗      | ✗       | ✗      "
+    "test_argument_intermixing              | Intermixed positional and keyword arguments  | -v 1            | ✓         | ✓        | ✗       | ✓      | ✗       | ✓      "
+    "test_auto_set_variables                | Auto-setting of arguments to variables       | -v 1            | ✓         | ✗        | ✗       | ✗      | ✓       | ✓      "
+    "test_choice_values                     | Choice values                                | -v A            | ✓         | ✓        | ✗       | ✗      | ✗       | ✗      "
+    "test_configurable_parsing              | Configurable parsing                         | -v 1;2;3        | ✓         | ✓        | ✗       | ✓      | ✗       | ✗      "
+    "test_debug_mode                        | Debug mode                                   | -v 1            | ✓         | ✗        | ✗       | ✗      | ✗       | ✗      "
+    "test_default_values                    | Default values                               |                 | ✓         | ✓        | ✗       | ✗      | ✓       | ✓      "
+    "test_deprecation_notes                 | Deprecation notes                            | -v 1            | ✓         | ✓        | ✗       | ✗      | ✗       | ✗      "
+    "test_error_warning_silencing           | Error/warning silencing                      |                 | ✓         | ✗        | ✓       | ✓      | ✗       | ✗      "
+    "test_exit_codes_customization          | Customizable exit codes                      | -h              | ✓         | *        | ✗       | ✗      | ✗       | ✗      "
+    "test_flag_counting                     | Flag counting (\"-a -a\")                    | -v -v           | ✓         | ✓        | ✗       | ✗      | ✗       | *      "
+    "test_flag_inversion                    | Flag inversion (\"+a\"/\"++arg\")            | +v              | ✓         | ✗        | ✗       | ✗      | ✗       | ✗      "
+    "test_flag_negation                     | Flag negation (\"--no-arg\")                 | ++var           | ✓         | ✗        | ✗       | ✗      | ✓       | ✗      "
+    "test_flags                             | Flags (Boolean options)                      | -v              | ✓         | ✓        | ✓       | ✓      | ✓       | ✓      "
+    "test_help_message                      | Help message                                 | -h              | ✓         | ✓        | ✗       | ✗      | ✓       | ✓      "
+    "test_help_options_customization        | Customizable help options                    | -H              | ✓         | ✓        | *       | ✓      | ✗       | *      "
+    "test_internationalization_localization | Internationalization / localization          | -h              | ✓         | ✓        | ✓       | ✓      | ✗       | ✗      "
+    "test_long_options                      | Long options                                 | --var 1         | ✓         | ✓        | ✗       | ✓      | ✓       | ✓      "
+    "test_mandatory_options                 | Mandatory options                            |                 | ✓         | ✓        | ✗       | ✗      | ✗       | ✓      "
+    "test_message_stylization               | Message stylization                          | -h              | ✓         | ✗        | ✗       | ✗      | ✗       | ✗      "
+    "test_message_text_customization        | Customizable message text                    | -h              | ✓         | ✓        | *       | *      | ✓       | ✗      "
+    "test_metavariables                     | Metavariables (value names)                  | -u              | ✓         | ✓        | ✗       | ✗      | ✗       | ✗      "
+    "test_mutually_exclusive_arguments      | Mutually exclusive arguments                 | -a -b           | ✗         | ✓        | ✗       | ✗      | ✗       | ✓      "
+    "test_option_abbreviation               | Option abbreviation (\"--ar\")               | --va 1          | ✓         | ✓        | ✗       | ✓      | ✓       | ✓      "
+    "test_option_aliases                    | Option aliases (\"-a\"/\"-A\")               | -v 1 -V 2       | ✓         | ✓        | *       | *      | ✗       | ✓      "
+    "test_option_merging                    | Option merging (\"-ab\")                     | -ab1            | ✓         | ✓        | ✓       | ✓      | ✓       | ✓      "
+    "test_positional_arguments              | Positional arguments                         | 1               | ✓         | ✓        | *       | *      | *       | ✓      "
+    "test_positional_delimiter_hyphens      | Positional arguments delimiter \"--\"        | -b 2 -- -a 1    | ✓         | ✓        | ✓       | ✓      | ✓       | ✓      "
+    "test_positional_delimiter_plus_signs   | Positional arguments delimiter \"++\"        | -- -a 1 ++ -b 2 | ✓         | ✗        | ✗       | ✗      | ✗       | ✗      "
+    "test_posix_compliance                  | POSIX compliance                             | --var 1         | ✗         | ✗        | ✓       | *      | ✗       | ✗      "
+    "test_shell_independence                | Shell independence (Bash, Dash, ksh93...)    | -v 1            | ✓         | ✗        | *       | ✓      | ✓       | ✓      "
+    "test_short_options                     | Short options                                | -v 1            | ✓         | ✓        | ✓       | ✓      | ✓       | ✓      "
+    "test_single_hyphen_long_options        | Single-hyphen long options (\"-arg\")        | -var 1          | ✗         | ✓        | ✗       | ✓      | ✗       | ✗      "
+    "test_type_checking                     | Data type checking                           | -v A            | ✓         | ✓        | ✗       | ✗      | ✓       | ✗      "
+    "test_usage_message                     | Usage message                                | -u              | ✓         | ✓        | ✗       | ✗      | ✗       | ✗      "
+    "test_variadic_arguments                | Any argument number (multi-value arguments)  | -v 1 2 3        | ✓         | ✓        | ✗       | ✗      | ✗       | ✓      "
+    "test_version_message                   | Version message                              | -V              | ✓         | ✓        | ✗       | ✗      | ✗       | ✓      "
 )
 
 # Irrespective of how many tests have been requested, if all tests shall
@@ -304,17 +308,17 @@ fi
 # don't match.
 # First, print the table's header.
 if (( "${#args[@]}" > 0 )); then
-    printf -v top_rule '\u250C%46s\u252C%11s\u252C%11s\u252C%11s\u252C%11s\u252C%11s\u2510' \
-        "" "" "" "" "" ""
+    printf -v top_rule '\u250C%46s\u252C%11s\u252C%11s\u252C%11s\u252C%11s\u252C%11s\u252C%11s\u2510' \
+        "" "" "" "" "" "" ""
     top_rule="${top_rule// /$'\u2500'}"
     printf "%s\n" "${top_rule}"
 
-    printf '\u2502 %-44s \u2502 %-9s \u2502 %-9s \u2502 %-9s \u2502 %-9s \u2502 %-9s \u2502\n' \
-        "Feature description" "argparser" "getopts" "getopt" "shflags" \
-        "docopts"
+    printf '\u2502 %-44s \u2502 %-9s \u2502 %-9s \u2502 %-9s \u2502 %-9s \u2502 %-9s \u2502 %-9s \u2502\n' \
+        "Feature description" "argparser" "argparse" "getopts" "getopt" \
+        "shflags" "docopts"
 
-    printf -v mid_rule '\u251C%46s\u253C%11s\u253C%11s\u253C%11s\u253C%11s\u253C%11s\u2524' \
-        "" "" "" "" "" ""
+    printf -v mid_rule '\u251C%46s\u253C%11s\u253C%11s\u253C%11s\u253C%11s\u253C%11s\u253C%11s\u2524' \
+        "" "" "" "" "" "" ""
     mid_rule="${mid_rule// /$'\u2500'}"
     printf "%s\n" "${mid_rule}"
 fi
@@ -361,8 +365,8 @@ done
 
 # Print the table's footer and legend.
 if (( "${#args[@]}" > 0 )); then
-    printf -v bottom_rule '\u2514%46s\u2534%11s\u2534%11s\u2534%11s\u2534%11s\u2534%11s\u2518' \
-        "" "" "" "" "" ""
+    printf -v bottom_rule '\u2514%46s\u2534%11s\u2534%11s\u2534%11s\u2534%11s\u2534%11s\u2534%11s\u2518' \
+        "" "" "" "" "" "" ""
     bottom_rule="${bottom_rule// /$'\u2500'}"
     printf "%s\n" "${bottom_rule}"
 
