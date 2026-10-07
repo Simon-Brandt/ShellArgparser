@@ -1,0 +1,2 @@
+id  | short_opts | long_opts | val_names | defaults | choices | type | arg_no | arg_group | notes | help
+var | v          |           | VAL       |          |         | str  | 1      | Optionen  |       | kurze Option

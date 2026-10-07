@@ -1,0 +1,59 @@
+# 1.    Define the general translations.
+Positional arguments:
+  en: Positional arguments
+  de: Positionale Argumente
+
+Help options:
+  en: Help options
+  de: Hilfsoptionen
+
+Help description:
+  en: Command-line program.
+  de: Kommandozeilenprogramm.
+
+Error:
+  en: Error
+  de: Fehler
+
+# 2.    Define the translations for help messages.
+# 2.1.  Define the translations for the usage line (part of the header).
+Usage:
+  en: Usage
+  de: Aufruf
+
+Arguments:
+  en: ARGUMENTS
+  de: ARGUMENTE
+
+# 2.2.  Define the translations for the remark (part of the header).
+Mandatory arguments:
+  en: >
+    Mandatory arguments to long options are mandatory for short options too.
+  de: >
+    Erforderliche Argumente für lange Optionen sind auch für kurze
+    erforderlich.
+
+# 2.3.  Define the translations for the help column.
+Default:
+  en: default
+  de: Vorgabe
+
+--help:
+  en: display this help and exit
+  de: diese Hilfe anzeigen und beenden
+
+--usage:
+  en: display the usage and exit
+  de: den Aufruf anzeigen und beenden
+
+--version:
+  en: display the version and exit
+  de: die Version anzeigen und beenden
+
+false:
+  en: false
+  de: falsch
+
+true:
+  en: true
+  de: wahr
