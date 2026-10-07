@@ -20,20 +20,16 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-06
+# Last Modification: 2026-10-07
 
 # Usage: Run this script from test_features.sh as
 # "bash test_features.sh --test-type-checking".
 
 # Purpose: Test whether the Argparser supports data type checking.
 
-# Parse the arguments.  In order to be able to both set the arguments to
-# variables and to ignore any "exit", define "exit" as alias for
-# "return", such that the functions are halted, but the test doesn't
-# abort.  Only the final check for the variables sets the test's result
-# as exit code.
-shopt -s expand_aliases
-alias exit=return
+# Parse the arguments.  Since the test runs in a subshell, it is not
+# necessary to define "exit" as alias for "return".  Then, the final
+# check for the variables sets the test's result as exit code.
 
 # shellcheck disable=SC2190  # Indexed, not associative array.
 args=(
@@ -41,8 +37,6 @@ args=(
     "var | v          |           | VAL       |          |         | int  | 1      | Options   |       | integer option"
 )
 error="$(source argparser -- "$@" 2>&1 > /dev/null)"
-
-unalias exit
 
 if [[ "${error}" == *"The argument \"-v\" is set to \"A\", but must be an integer"* ]]
 then

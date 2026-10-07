@@ -20,29 +20,23 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-06
+# Last Modification: 2026-10-07
 
 # Usage: Run this script from test_features.sh as
 # "bash test_features.sh --test-argument-groups".
 
 # Purpose: Test whether the Argparser supports argument groups.
 
-# Parse the arguments.  In order to be able to both set the arguments to
-# variables and to ignore any "exit", define "exit" as alias for
-# "return", such that the functions are halted, but the test doesn't
-# abort.  Only the final check for the variables sets the test's result
-# as exit code.
-shopt -s expand_aliases
-alias exit=return
+# Parse the arguments.  Since the test runs in a subshell, it is not
+# necessary to define "exit" as alias for "return".  Then, the final
+# check for the variables sets the test's result as exit code.
 
 # shellcheck disable=SC2190  # Indexed, not associative array.
 args=(
-    "id  | short_opts | long_opts | val_names | defaults | choices | type | arg_no | arg_group | notes | help                "
-    "var | v          |           | VAL       | 1        |         | str  | 1      | Options   |       | default-value option"
+    "id  | short_opts | long_opts | val_names | defaults | choices | type | arg_no | arg_group | notes | help        "
+    "var | v          |           | VAL       |          |         | str  | 1      | Options   |       | short option"
 )
 output="$(source argparser -- "$@" 2> /dev/null)"
-
-unalias exit
 
 if [[ "${output}" == *"- Options -"* ]]; then
     exit 0
