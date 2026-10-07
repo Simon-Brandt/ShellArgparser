@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-06
+# Last Modification: 2026-10-07
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -92,11 +92,20 @@ function argparser_toggle_debugger() {
     # shellcheck disable=SC2016  # Intentional single quotes around variables.
     # shellcheck disable=SC2064  # Intentional double-quoted trap action.
     if [[ "${status}" == "start" ]]; then
-        # Print the current 4-digit line number, the currently executing
-        # function's name, and the command to be executed, for any
-        # command.
-        trap_action='printf "Line %4d in %s:    %s\n" "${LINENO}" '
-        trap_action+='"${FUNCNAME[0]:-main}" "${BASH_COMMAND}" >&2'
+        # Print the current 5-digit line number, the currently executing
+        # function's name (padded to the width of the largest name,
+        # currently 49 characters), and the command to be executed, for
+        # any command.  Replace newlines in the commands by their ANSI-C
+        # quoting form ("$'\n'").
+        # Note that Bash single-quotes newlines when they are separate
+        # arguments to a command (to recognize them as semantic, and not
+        # as bare whitespace), but not when they are, e.g., part of a
+        # parameter expansion.  Thus, the printed command in the debug
+        # output may not be exactly identical to the actually executed
+        # one, or not runnable at all.
+        trap_action='printf "Line %5d in %-49s %s\n" "${LINENO}" '
+        trap_action+='"${FUNCNAME[0]:-main}" '
+        trap_action+='"${BASH_COMMAND//"'$'\n''"/"'"\\$'\\n'"'"}" >&2'
         trap "${trap_action}" DEBUG
         set -o functrace
     else
