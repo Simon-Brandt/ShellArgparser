@@ -1,12 +1,14 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-11
+# Last Modification: 2026-10-07
 # License: Public Domain
 
 # Look for sourced files relative to the checked script, and in
 # ${HOME}/bin.
 source-path=SCRIPTDIR
 source-path=SCRIPTDIR/..
+source-path=SCRIPTDIR/../..
+source-path=SCRIPTDIR/../../..
 source-path=/home/simon/bin/shflags
 source-path=/home/simon/bin/docopts
 

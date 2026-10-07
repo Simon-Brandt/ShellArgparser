@@ -38,8 +38,7 @@ args=(
 )
 error="$(source argparser -- "$@" 2>&1 > /dev/null)"
 
-if [[ "${error}" == *"The argument \"-v\" is deprecated"* ]]
-then
+if [[ "${error}" == *"The argument \"-v\" is deprecated"* ]]; then
     exit 0
 fi
 exit 1

@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-06
+# Last Modification: 2026-10-07
 
 # Usage: Run this script from test_features.sh as
 # "bash test_features.sh --test-argument-definition-files".
@@ -43,7 +43,6 @@ args=(
     id
     var
 )
-
 source argparser -- "$@" &> /dev/null
 
 unalias exit
