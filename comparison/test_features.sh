@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-07
+# Last Modification: 2026-10-08
 
 # Usage: Run this script with
 # "bash test_features.sh [--test-<feature>...]" or
@@ -340,26 +340,31 @@ for test in "${tests[@]:1}"; do
     result_argparser="${result_argparser##+( )}"
     result_argparser="${result_argparser%%+( )}"
 
-    result_getopts="${test_definition[4]}"
+    result_argparse="${test_definition[4]}"
+    result_argparse="${result_argparse##+( )}"
+    result_argparse="${result_argparse%%+( )}"
+
+    result_getopts="${test_definition[5]}"
     result_getopts="${result_getopts##+( )}"
     result_getopts="${result_getopts%%+( )}"
 
-    result_getopt="${test_definition[5]}"
+    result_getopt="${test_definition[6]}"
     result_getopt="${result_getopt##+( )}"
     result_getopt="${result_getopt%%+( )}"
 
-    result_shflags="${test_definition[6]}"
+    result_shflags="${test_definition[7]}"
     result_shflags="${result_shflags##+( )}"
     result_shflags="${result_shflags%%+( )}"
 
-    result_docopts="${test_definition[7]}"
+    result_docopts="${test_definition[8]}"
     result_docopts="${result_docopts##+( )}"
     result_docopts="${result_docopts%%+( )}"
 
     if [[ "${!test_name}" == true ]]; then
         test_feature "${test_name#test_}" "${feature_description}" \
-            "${result_argparser}" "${result_getopts}" "${result_getopt}" \
-            "${result_shflags}" "${result_docopts}" "${command_line[@]}" 
+            "${result_argparser}" "${result_argparse}" "${result_getopts}" \
+            "${result_getopt}" "${result_shflags}" "${result_docopts}" \
+            "${command_line[@]}" 
     fi
 done
 
