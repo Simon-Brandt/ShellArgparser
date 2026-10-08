@@ -41,7 +41,7 @@ alias exit=return
 # shellcheck disable=SC2190  # Indexed, not associative array.
 args=(
     "id  | short_opts | long_opts | val_names | defaults | choices | type | arg_no | arg_group | notes | help"
-    "var |            | var       | VAL       | false    |         | bool | 0      | Options   |       | flag"
+    "var |            | var       |           | false    |         | bool | 0      | Options   |       | flag"
 )
 source argparser -- "$@" &> /dev/null
 

@@ -28,7 +28,7 @@
 #     --test-auto-set-variables
 
 # Purpose: Test whether the Argparser supports the auto-setting of
-# arguments to variables
+# arguments to variables.
 
 # Parse the arguments.  In order to be able to both set the arguments to
 # variables and to ignore any "exit", define "exit" as alias for

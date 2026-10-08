@@ -44,8 +44,8 @@ declare var_b
 # shellcheck disable=SC2190  # Indexed, not associative array.
 args=(
     "id    | short_opts | long_opts | val_names | defaults | choices | type | arg_no | arg_group | notes | help"
-    "var_a | a          |           | VAL_A     | false    |         | bool | 0      | Options   |       | flag"
-    "var_b | b          |           | VAL_B     | false    |         | bool | 0      | Options   |       | flag"
+    "var_a | a          |           |           | false    |         | bool | 0      | Options   |       | flag"
+    "var_b | b          |           |           | false    |         | bool | 0      | Options   |       | flag"
 )
 source argparser -- "$@" &> /dev/null
 

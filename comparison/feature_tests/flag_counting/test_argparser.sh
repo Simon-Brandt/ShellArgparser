@@ -42,7 +42,7 @@ ARGPARSER_COUNT_FLAGS=true
 # shellcheck disable=SC2190  # Indexed, not associative array.
 args=(
     "id  | short_opts | long_opts | val_names | defaults | choices | type | arg_no | arg_group | notes | help"
-    "var | v          |           | VAL       | false    |         | bool | 0      | Options   |       | flag"
+    "var | v          |           |           | false    |         | bool | 0      | Options   |       | flag"
 )
 source argparser -- "$@" &> /dev/null
 

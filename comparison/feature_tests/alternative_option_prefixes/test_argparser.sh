@@ -28,7 +28,7 @@
 #     --test-alternative-option-prefixes
 
 # Purpose: Test whether the Argparser supports alternative option
-# prefixes ("+" or "/") .
+# prefixes ("+" or "/").
 
 # Parse the arguments.  In order to be able to both set the arguments to
 # variables and to ignore any "exit", define "exit" as alias for
