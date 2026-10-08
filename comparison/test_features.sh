@@ -23,7 +23,9 @@
 # Last Modification: 2026-10-08
 
 # Usage: Run this script with
-# "bash test_features.sh [--test-<feature>...]" or
+# "bash test_features.sh [--test-<parser>...] [--test-<feature>...]" or
+# "bash test_features.sh [--test-all-parsers] [--test-<feature>...]" or
+# "bash test_features.sh [--test-<parser>...] [--test-all-features]" or
 # "bash test_features.sh [--test-all]".
 
 # Purpose: Test the presence or absence of specific or all features of
@@ -132,7 +134,7 @@ function test_feature() {
     local parser
     local -a parsers
     local -A results
-    local -a result_markers
+    local -A result_markers
     local script
 
     directory="$1"
@@ -161,20 +163,22 @@ function test_feature() {
     # whether the feature is supported or not---which may require
     # additional checks in the respective script to ensure correctness.
     # Ignore possible error and warning messages.
-    result_markers=( )
     for parser in "${parsers[@]}"; do
-        script="feature_tests/${directory}/test_${parser}.sh"
-        if "${script}" "${command_line[@]}"; then
-            actual_result="✓"
-        else
-            actual_result="✗"
-        fi
+        parser_test_name="test_${parser}"
+        if [[ "${!parser_test_name}" == true ]]; then
+            script="feature_tests/${directory}/${parser_test_name}.sh"
+            if "${script}" "${command_line[@]}"; then
+                actual_result="✓"
+            else
+                actual_result="✗"
+            fi
 
-        expected_result="${results[${parser}]}"
-        if [[ "${actual_result}" == "${expected_result}" ]]; then
-            result_markers+=("$(colorize "green" "${actual_result}")")
-        else
-            result_markers+=("$(colorize "red" "${actual_result}")")
+            expected_result="${results[${parser}]}"
+            if [[ "${actual_result}" == "${expected_result}" ]]; then
+                result_markers[${parser}]="$(colorize "green" "${actual_result}")"
+            else
+                result_markers[${parser}]="$(colorize "red" "${actual_result}")"
+            fi
         fi
     done
 
@@ -182,8 +186,15 @@ function test_feature() {
     # specifying the padding using printf wouldn't work as the result
     # markers are colorized and thus longer than the one character
     # that's actually printed.
-    printf '\u2502 %-44s \u2502 %s         \u2502 %s         \u2502 %s         \u2502 %s         \u2502 %s         \u2502 %s         \u2502\n' \
-        "${feature_description}" "${result_markers[@]}"
+    printf -v row '\u2502 %-44s ' "${feature_description}"
+    for parser in "${parsers[@]}"; do
+        parser_test_name="test_${parser}"
+        if [[ "${!parser_test_name}" == true ]]; then
+            row+="$(printf '\u2502 %s         ' "${result_markers[${parser}]}")"
+        fi
+    done
+    row+=$'\u2502'
+    printf "%s\n" "${row}"
 }
 
 # Parse the arguments.
@@ -192,11 +203,21 @@ ARGPARSER_MAX_WIDTH=99
 ARGPARSER_USE_SHORT_OPTIONS=false
 
 declare test_all
+declare test_all_features
+declare test_all_parsers
 
 # shellcheck disable=SC2190  # Indexed, not associative array.
 args=(
     "id                                     | long_opts                              | defaults | type | arg_no | arg_group | help                                                                   "
-    "test_all                               | test-all                               | false    | bool | 0      | Tests     | test the presence/absence of all features in the parsers               "
+    "test_all                               | test-all                               | false    | bool | 0      | Options   | test the presence/absence of all features in all parsers               "
+    "test_all_features                      | test-all-features                      | false    | bool | 0      | Options   | test the presence/absence of all features in the given parsers         "
+    "test_all_parsers                       | test-all-parsers                       | false    | bool | 0      | Options   | test the presence/absence of the given features in all parsers         "
+    "test_argparser                         | test-argparser                         | false    | bool | 0      | Parsers   | test the features of the Shell Argparser                               "
+    "test_argparse                          | test-argparse                          | false    | bool | 0      | Parsers   | test the features of Python's argparse module                          "
+    "test_getopts                           | test-getopts                           | false    | bool | 0      | Parsers   | test the features of getopts                                           "
+    "test_getopt                            | test-getopt                            | false    | bool | 0      | Parsers   | test the features of getopt                                            "
+    "test_shflags                           | test-shflags                           | false    | bool | 0      | Parsers   | test the features of shFlags                                           "
+    "test_docopts                           | test-docopts                           | false    | bool | 0      | Parsers   | test the features of docopts                                           "
     "test_alternative_option_prefixes       | test-alternative-option-prefixes       | false    | bool | 0      | Tests     | test which parser supports alternative option prefixes (\"+\" or \"/\")"
     "test_argument_definition_files         | test-argument-definition-files         | false    | bool | 0      | Tests     | test which parser supports argument definition files                   "
     "test_argument_groups                   | test-argument-groups                   | false    | bool | 0      | Tests     | test which parser supports argument groups                             "
@@ -239,7 +260,17 @@ args=(
 )
 source argparser -- "$@"
 
-# Run the tests.
+# Define the parsers and the tests with the respective command line to
+# test and the expected results.
+parsers=(
+    argparser
+    argparse
+    getopts
+    getopt
+    shflags
+    docopts
+)
+
 tests=(
     "Test name                              | Feature description                          | Command line    | argparser | argparse | getopts | getopt | shflags | docopts"
     "test_alternative_option_prefixes       | Alternative option prefixes (\"+\" or \"/\") | /v 1            | ✗         | ✓        | ✗       | ✗      | ✗       | ✗      "
@@ -283,11 +314,20 @@ tests=(
     "test_version_message                   | Version message                              | -V              | ✓         | ✓        | ✗       | ✗      | ✗       | ✓      "
 )
 
-# Irrespective of how many tests have been requested, if all tests shall
-# be run, enable them all, such that they are run exactly once, and not
-# once by request of their command-line flag and once by request of the
-# "--test-all" flag.
-if [[ "${test_all}" == true ]]; then
+# Irrespective of which parsers have been requested, if all parsers
+# shall be tested, enable them all, such that their tests are run
+# exactly once, and not once by request of their command-line flag and
+# once by request of the "--test-all" or "--test-all-parsers" flag.
+if [[ "${test_all}" == true || "${test_all_parsers}" == true ]]; then
+    for parser in "${parsers[@]}"; do
+        declare "test_${parser}"=true
+    done
+fi
+
+# Likewise, irrespective of which tests have been requested, if all
+# tests shall be run, enable them all for the "--test-all" or
+# "--test-all-features" flag.
+if [[ "${test_all}" == true || "${test_all_features}" == true ]]; then
     for test in "${tests[@]:1}"; do
         IFS="|" read -r -a test_definition <<< "${test}"
 
@@ -308,17 +348,38 @@ fi
 # don't match.
 # First, print the table's header.
 if (( "${#args[@]}" > 0 )); then
-    printf -v top_rule '\u250C%46s\u252C%11s\u252C%11s\u252C%11s\u252C%11s\u252C%11s\u252C%11s\u2510' \
-        "" "" "" "" "" "" ""
+    # Print the top rule.
+    printf -v top_rule '\u250C %-44s ' ""
+    for parser in "${parsers[@]}"; do
+        parser_test_name="test_${parser}"
+        if [[ "${!parser_test_name}" == true ]]; then
+            top_rule+="$(printf '\u252C%11s' "")"
+        fi
+    done
+    top_rule+=$'\u2510'
     top_rule="${top_rule// /$'\u2500'}"
     printf "%s\n" "${top_rule}"
 
-    printf '\u2502 %-44s \u2502 %-9s \u2502 %-9s \u2502 %-9s \u2502 %-9s \u2502 %-9s \u2502 %-9s \u2502\n' \
-        "Feature description" "argparser" "argparse" "getopts" "getopt" \
-        "shflags" "docopts"
+    # Print the header.
+    printf -v header '\u2502 %-44s ' "Feature description"
+    for parser in "${parsers[@]}"; do
+        parser_test_name="test_${parser}"
+        if [[ "${!parser_test_name}" == true ]]; then
+            header+="$(printf '\u2502 %-9s ' "${parser}")"
+        fi
+    done
+    header+=$'\u2502'
+    printf "%s\n" "${header}"
 
-    printf -v mid_rule '\u251C%46s\u253C%11s\u253C%11s\u253C%11s\u253C%11s\u253C%11s\u253C%11s\u2524' \
-        "" "" "" "" "" "" ""
+    # Print the mid rule.
+    printf -v mid_rule '\u251C %-44s ' ""
+    for parser in "${parsers[@]}"; do
+        parser_test_name="test_${parser}"
+        if [[ "${!parser_test_name}" == true ]]; then
+            mid_rule+="$(printf '\u253C%11s' "")"
+        fi
+    done
+    mid_rule+=$'\u2524'
     mid_rule="${mid_rule// /$'\u2500'}"
     printf "%s\n" "${mid_rule}"
 fi
@@ -327,8 +388,8 @@ fi
 for test in "${tests[@]:1}"; do
     IFS="|" read -r -a test_definition <<< "${test}"
 
-    test_name="${test_definition[0]}"
-    test_name="${test_name%%+( )}"
+    feature_test_name="${test_definition[0]}"
+    feature_test_name="${feature_test_name%%+( )}"
 
     feature_description="${test_definition[1]}"
     feature_description="${feature_description##+( )}"
@@ -360,8 +421,8 @@ for test in "${tests[@]:1}"; do
     result_docopts="${result_docopts##+( )}"
     result_docopts="${result_docopts%%+( )}"
 
-    if [[ "${!test_name}" == true ]]; then
-        test_feature "${test_name#test_}" "${feature_description}" \
+    if [[ "${!feature_test_name}" == true ]]; then
+        test_feature "${feature_test_name#test_}" "${feature_description}" \
             "${result_argparser}" "${result_argparse}" "${result_getopts}" \
             "${result_getopt}" "${result_shflags}" "${result_docopts}" \
             "${command_line[@]}" 
@@ -370,11 +431,19 @@ done
 
 # Print the table's footer and legend.
 if (( "${#args[@]}" > 0 )); then
-    printf -v bottom_rule '\u2514%46s\u2534%11s\u2534%11s\u2534%11s\u2534%11s\u2534%11s\u2534%11s\u2518' \
-        "" "" "" "" "" "" ""
+    # Print the bottom rule.
+    printf -v bottom_rule '\u2514 %-44s ' ""
+    for parser in "${parsers[@]}"; do
+        parser_test_name="test_${parser}"
+        if [[ "${!parser_test_name}" == true ]]; then
+            bottom_rule+="$(printf '\u2534%11s' "")"
+        fi
+    done
+    bottom_rule+=$'\u2518'
     bottom_rule="${bottom_rule// /$'\u2500'}"
     printf "%s\n" "${bottom_rule}"
 
+    # Print the legend.
     printf '\n%s\n' "$(colorize "bold" "Legend")"
     printf '%s: Test succeeded: Feature is present.\n' \
         "$(colorize "green" "✓")"
