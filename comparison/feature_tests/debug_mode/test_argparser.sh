@@ -20,10 +20,12 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-07
+# Last Modification: 2026-10-08
 
 # Usage: Run this script from test_features.sh as
-# "bash test_features.sh --test-debug-mode".
+# bash test_features.sh \
+#     --test-argparser \
+#     --test-debug-mode
 
 # Purpose: Test whether the Argparser contains a debug mode.
 

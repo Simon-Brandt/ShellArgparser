@@ -20,10 +20,12 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-06
+# Last Modification: 2026-10-08
 
 # Usage: Run this script from test_features.sh as
-# "bash test_features.sh --test-variadic-arguments".
+# bash test_features.sh \
+#     --test-argparser \
+#     --test-variadic-arguments
 
 # Purpose: Test whether the Argparser supports any argument number
 # (multi-value arguments).

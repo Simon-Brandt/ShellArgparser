@@ -20,10 +20,12 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-07
+# Last Modification: 2026-10-08
 
 # Usage: Run this script from test_features.sh as
-# "bash test_features.sh --test-usage-message".
+# bash test_features.sh \
+#     --test-argparser \
+#     --test-usage-message
 
 # Purpose: Test whether the Argparser creates a usage message.
 
