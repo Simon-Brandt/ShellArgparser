@@ -109,94 +109,6 @@ function colorize() {
     fi
 }
 
-# Define the function for testing.
-function test_feature() {
-    # Test which parser supports the given feature.
-    #
-    # Argument:
-    # - $1: the feature test's directory name
-    # - $2: the feature's name and description
-    # - $3: the expected test result for the Shell Argparser
-    #       ("✓"/"*"/"✗")
-    # - $4: the expected test result for Python's argparse module
-    #       ("✓"/"*"/"✗")
-    # - $5: the expected test result for getopts ("✓"/"*"/"✗")
-    # - $6: the expected test result for getopt ("✓"/"*"/"✗")
-    # - $7: the expected test result for shFlags ("✓"/"*"/"✗")
-    # - $8: the expected test result for docopts ("✓"/"*"/"✗")
-    # - $@: the command line arguments to pass to the parsers
-
-    local actual_result
-    local command_line
-    local directory
-    local expected_result
-    local feature_description
-    local parser
-    local -a parsers
-    local -A results
-    local -A result_markers
-    local script
-
-    directory="$1"
-    feature_description="$2"
-    results=(
-        [argparser]="$3"
-        [argparse]="$4"
-        [getopts]="$5"
-        [getopt]="$6"
-        [shflags]="$7"
-        [docopts]="$8"
-    )
-    shift 8
-    command_line=("$@")
-
-    parsers=(
-        argparser
-        argparse
-        getopts
-        getopt
-        shflags
-        docopts
-    )
-
-    # Run each parser's test script.  Its exit code serves as indicator
-    # whether the feature is supported or not---which may require
-    # additional checks in the respective script to ensure correctness.
-    # Ignore possible error and warning messages.
-    for parser in "${parsers[@]}"; do
-        parser_test_name="test_${parser}"
-        if [[ "${!parser_test_name}" == true ]]; then
-            script="feature_tests/${directory}/${parser_test_name}.sh"
-            if "${script}" "${command_line[@]}"; then
-                actual_result="✓"
-            else
-                actual_result="✗"
-            fi
-
-            expected_result="${results[${parser}]}"
-            if [[ "${actual_result}" == "${expected_result}" ]]; then
-                result_markers[${parser}]="$(colorize "green" "${actual_result}")"
-            else
-                result_markers[${parser}]="$(colorize "red" "${actual_result}")"
-            fi
-        fi
-    done
-
-    # Write the results as new row to the result table.  Note that
-    # specifying the padding using printf wouldn't work as the result
-    # markers are colorized and thus longer than the one character
-    # that's actually printed.
-    printf -v row '\u2502 %-44s ' "${feature_description}"
-    for parser in "${parsers[@]}"; do
-        parser_test_name="test_${parser}"
-        if [[ "${!parser_test_name}" == true ]]; then
-            row+="$(printf '\u2502 %s         ' "${result_markers[${parser}]}")"
-        fi
-    done
-    row+=$'\u2502'
-    printf "%s\n" "${row}"
-}
-
 # Parse the arguments.
 ARGPARSER_MAX_COL_WIDTH_2=42
 ARGPARSER_MAX_WIDTH=99
@@ -346,43 +258,28 @@ fi
 # presence, and crosses ("✗") its absence.  Green marks show tests where
 # the actual and expected results match, red those where the results
 # don't match.
-# First, print the table's header.
-if (( "${#args[@]}" > 0 )); then
-    # Print the top rule.
-    printf -v top_rule '\u250C %-44s ' ""
-    for parser in "${parsers[@]}"; do
-        parser_test_name="test_${parser}"
-        if [[ "${!parser_test_name}" == true ]]; then
-            top_rule+="$(printf '\u252C%11s' "")"
-        fi
-    done
-    top_rule+=$'\u2510'
-    top_rule="${top_rule// /$'\u2500'}"
-    printf "%s\n" "${top_rule}"
+# Print the table's top rule, header, and mid rule.
+printf -v top_rule '\u250C %-44s ' ""
+printf -v header '\u2502 %-44s ' "Feature description"
+printf -v mid_rule '\u251C %-44s ' ""
 
-    # Print the header.
-    printf -v header '\u2502 %-44s ' "Feature description"
-    for parser in "${parsers[@]}"; do
-        parser_test_name="test_${parser}"
-        if [[ "${!parser_test_name}" == true ]]; then
-            header+="$(printf '\u2502 %-9s ' "${parser}")"
-        fi
-    done
-    header+=$'\u2502'
-    printf "%s\n" "${header}"
+for parser in "${parsers[@]}"; do
+    parser_test_name="test_${parser}"
+    if [[ "${!parser_test_name}" == true ]]; then
+        top_rule+="$(printf '\u252C%11s' "")"
+        header+="$(printf '\u2502 %-9s ' "${parser}")"
+        mid_rule+="$(printf '\u253C%11s' "")"
+    fi
+done
 
-    # Print the mid rule.
-    printf -v mid_rule '\u251C %-44s ' ""
-    for parser in "${parsers[@]}"; do
-        parser_test_name="test_${parser}"
-        if [[ "${!parser_test_name}" == true ]]; then
-            mid_rule+="$(printf '\u253C%11s' "")"
-        fi
-    done
-    mid_rule+=$'\u2524'
-    mid_rule="${mid_rule// /$'\u2500'}"
-    printf "%s\n" "${mid_rule}"
-fi
+top_rule+=$'\u2510'
+header+=$'\u2502'
+mid_rule+=$'\u2524'
+
+top_rule="${top_rule// /$'\u2500'}"
+mid_rule="${mid_rule// /$'\u2500'}"
+
+printf "%s\n" "${top_rule}" "${header}" "${mid_rule}"
 
 # Run each test and print a table row each.
 for test in "${tests[@]:1}"; do
@@ -391,63 +288,68 @@ for test in "${tests[@]:1}"; do
     feature_test_name="${test_definition[0]}"
     feature_test_name="${feature_test_name%%+( )}"
 
-    feature_description="${test_definition[1]}"
-    feature_description="${feature_description##+( )}"
-    feature_description="${feature_description%%+( )}"
-
-    IFS=" " read -r -a command_line <<< "${test_definition[2]}"
-
-    result_argparser="${test_definition[3]}"
-    result_argparser="${result_argparser##+( )}"
-    result_argparser="${result_argparser%%+( )}"
-
-    result_argparse="${test_definition[4]}"
-    result_argparse="${result_argparse##+( )}"
-    result_argparse="${result_argparse%%+( )}"
-
-    result_getopts="${test_definition[5]}"
-    result_getopts="${result_getopts##+( )}"
-    result_getopts="${result_getopts%%+( )}"
-
-    result_getopt="${test_definition[6]}"
-    result_getopt="${result_getopt##+( )}"
-    result_getopt="${result_getopt%%+( )}"
-
-    result_shflags="${test_definition[7]}"
-    result_shflags="${result_shflags##+( )}"
-    result_shflags="${result_shflags%%+( )}"
-
-    result_docopts="${test_definition[8]}"
-    result_docopts="${result_docopts##+( )}"
-    result_docopts="${result_docopts%%+( )}"
-
     if [[ "${!feature_test_name}" == true ]]; then
-        test_feature "${feature_test_name#test_}" "${feature_description}" \
-            "${result_argparser}" "${result_argparse}" "${result_getopts}" \
-            "${result_getopt}" "${result_shflags}" "${result_docopts}" \
-            "${command_line[@]}" 
+        # Run each parser's test script.  Its exit code serves as
+        # indicator whether the feature is supported or not---which may
+        # require additional checks in the respective script to ensure
+        # correctness.  Then, write the results as new row to the result
+        # table.  Note that specifying the padding using printf wouldn't
+        # work there as the result markers are colorized and thus longer
+        # than the one character that's actually printed.
+        feature_description="${test_definition[1]}"
+        feature_description="${feature_description##+( )}"
+        feature_description="${feature_description%%+( )}"
+
+        printf -v row '\u2502 %-44s ' "${feature_description}"
+
+        for i in "${!parsers[@]}"; do
+            parser_test_name="test_${parsers[i]}"
+            if [[ "${!parser_test_name}" == true ]]; then
+                directory="./feature_tests/${feature_test_name#test_}"
+                script="${directory}/${parser_test_name}.sh"
+                IFS=" " read -r -a command_line <<< "${test_definition[2]}"
+
+                if "${script}" "${command_line[@]}"; then
+                    actual_result="✓"
+                else
+                    actual_result="✗"
+                fi
+
+                expected_result="${test_definition[i + 3]}"
+                expected_result="${expected_result##+( )}"
+                expected_result="${expected_result%%+( )}"
+
+                if [[ "${actual_result}" == "${expected_result}" ]]; then
+                    result_marker="$(colorize "green" "${actual_result}")"
+                else
+                    result_marker="$(colorize "red" "${actual_result}")"
+                fi
+                row+="$(printf '\u2502 %s         ' "${result_marker}")"
+            fi
+        done
+
+        row+=$'\u2502'
+        printf "%s\n" "${row}"
     fi
 done
 
-# Print the table's footer and legend.
-if (( "${#args[@]}" > 0 )); then
-    # Print the bottom rule.
-    printf -v bottom_rule '\u2514 %-44s ' ""
-    for parser in "${parsers[@]}"; do
-        parser_test_name="test_${parser}"
-        if [[ "${!parser_test_name}" == true ]]; then
-            bottom_rule+="$(printf '\u2534%11s' "")"
-        fi
-    done
-    bottom_rule+=$'\u2518'
-    bottom_rule="${bottom_rule// /$'\u2500'}"
-    printf "%s\n" "${bottom_rule}"
+# Print the table's bottom rule.
+printf -v bottom_rule '\u2514 %-44s ' ""
 
-    # Print the legend.
-    printf '\n%s\n' "$(colorize "bold" "Legend")"
-    printf '%s: Test succeeded: Feature is present.\n' \
-        "$(colorize "green" "✓")"
-    printf '%s: Test succeeded: Feature is absent.\n' "$(colorize "green" "✗")"
-    printf '%s: Test failed:    Feature is present.\n' "$(colorize "red" "✓")"
-    printf '%s: Test failed:    Feature is absent.\n' "$(colorize "red" "✗")"
-fi
+for parser in "${parsers[@]}"; do
+    parser_test_name="test_${parser}"
+    if [[ "${!parser_test_name}" == true ]]; then
+        bottom_rule+="$(printf '\u2534%11s' "")"
+    fi
+done
+
+bottom_rule+=$'\u2518'
+bottom_rule="${bottom_rule// /$'\u2500'}"
+printf "%s\n" "${bottom_rule}"
+
+# Print the table's legend.
+printf '\n%s\n' "$(colorize "bold" "Legend")"
+printf '%s: Test succeeded: Feature is present.\n' "$(colorize "green" "✓")"
+printf '%s: Test succeeded: Feature is absent.\n' "$(colorize "green" "✗")"
+printf '%s: Test failed:    Feature is present.\n' "$(colorize "red" "✓")"
+printf '%s: Test failed:    Feature is absent.\n' "$(colorize "red" "✗")"
