@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-08
+# Last Modification: 2026-10-09
 
 # Usage: Run this script with
 # "bash test_features.sh [--test-<parser>...] [--test-<feature>...]" or
@@ -305,8 +305,15 @@ for test in "${tests[@]:1}"; do
         for i in "${!parsers[@]}"; do
             parser_test_name="test_${parsers[i]}"
             if [[ "${!parser_test_name}" == true ]]; then
+                if [[ "${parsers[i]}" == "argparse" ]]; then
+                    filename_extension="py"
+                else
+                    filename_extension="sh"
+                fi
+
                 directory="./feature_tests/${feature_test_name#test_}"
-                script="${directory}/${parser_test_name}.sh"
+                script="${directory}/${parser_test_name}.${filename_extension}"
+
                 IFS=" " read -r -a command_line <<< "${test_definition[2]}"
 
                 if "${script}" "${command_line[@]}"; then
