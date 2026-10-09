@@ -316,8 +316,12 @@ for test in "${tests[@]:1}"; do
 
                 IFS=" " read -r -a command_line <<< "${test_definition[2]}"
 
-                if "${script}" "${command_line[@]}"; then
+                "${script}" "${command_line[@]}"
+                exit_code="$?"
+                if (( "${exit_code}" == 0 )); then
                     actual_result="✓"
+                elif (( "${exit_code}" == 2 )); then
+                    actual_result="*"
                 else
                     actual_result="✗"
                 fi
