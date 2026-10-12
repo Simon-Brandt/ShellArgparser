@@ -1,0 +1,157 @@
+# Author: Simon Brandt
+# E-Mail: simon.brandt@uni-greifswald.de
+# Last Modification: 2026-10-12
+# License: Public Domain
+
+msgid ""
+msgstr ""
+"Project-Id-Version: Shell Argparser\n"
+"POT-Creation-Date: 2026-10-12 12:00+0200\n"
+"PO-Revision-Date: 2026-10-12 12:00+0200\n"
+"Last-Translator: Simon Brandt <simon.brandt@uni-greifswald.de>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+#: /usr/lib/python3.14/argparse.py:257
+msgid "%(heading)s:"
+msgstr "%(heading)s"
+
+#: /usr/lib/python3.14/argparse.py:336
+msgid "usage: "
+msgstr "Aufruf: "
+
+#: /usr/lib/python3.14/argparse.py:764
+msgid " (default: %(default)s)"
+msgstr " (Vorgabe: %(default)s)"
+
+#: /usr/lib/python3.14/argparse.py:826
+msgid "argument %(argument_name)s: %(message)s"
+msgstr "Argument %(argument_name)s: %(message)s"
+
+#: /usr/lib/python3.14/argparse.py:1201
+msgid "show program's version number and exit"
+msgstr "die Versionsnummer des Programms anzeigen und beenden"
+
+#: /usr/lib/python3.14/argparse.py:1315
+msgid "unknown parser %(parser_name)r (choices: %(choices)s)"
+msgstr "Unbekannter Parser %(parser_name)r (choices: %(choices)s)"
+
+#: /usr/lib/python3.14/argparse.py:1319
+msgid "command '%(parser_name)s' is deprecated"
+msgstr "Das Kommando '%(parser_name)s' ist veraltet"
+
+#: /usr/lib/python3.14/argparse.py:1386
+msgid "argument \"-\" with mode %r"
+msgstr "Argument \"-\" mit Modus %r"
+
+#: /usr/lib/python3.14/argparse.py:1395
+msgid "can't open '%(filename)s': %(error)s"
+msgstr "Kann '%(filename)s' nicht öffnen: %(error)s"
+
+#: /usr/lib/python3.14/argparse.py:1733
+msgid "conflicting option string: %s"
+msgid_plural "conflicting option strings: %s"
+msgstr[0] "Widersprüchlicher Optionsstring: %s"
+msgstr[1] "Widersprüchliche Optionsstrings: %s"
+
+#: /usr/lib/python3.14/argparse.py:1916
+msgid "positional arguments"
+msgstr "Positionale Argumente"
+
+#: /usr/lib/python3.14/argparse.py:1917
+msgid "options"
+msgstr "Optionen"
+
+#: /usr/lib/python3.14/argparse.py:1930
+msgid "show this help message and exit"
+msgstr "diese Hilfsnachricht anzeigen und beenden"
+
+#: /usr/lib/python3.14/argparse.py:1967
+msgid "subcommands"
+msgstr "Subkommandos"
+
+#: /usr/lib/python3.14/argparse.py:2018 /usr/lib/python3.14/argparse.py:2581
+msgid "unrecognized arguments: %s"
+msgstr "Nicht erkannte Argumente: %s"
+
+#: /usr/lib/python3.14/argparse.py:2124
+msgid "not allowed with argument %s"
+msgstr "nicht erlaubt mit Argument %s"
+
+#: /usr/lib/python3.14/argparse.py:2143
+msgid "ambiguous option: %(option)s could match %(matches)s"
+msgstr "Mehrdeutige Option: %(option)s passt auf %(matches)s"
+
+#: /usr/lib/python3.14/argparse.py:2175 /usr/lib/python3.14/argparse.py:2207
+msgid "ignored "
+msgstr "Explizites Argument %r ignoriert"
+
+#: /usr/lib/python3.14/argparse.py:2227
+msgid "option '%(option)s' is deprecated"
+msgstr "Die Option '%(option)s' ist veraltet"
+
+#: /usr/lib/python3.14/argparse.py:2259
+msgid "argument '%(argument_name)s' is deprecated"
+msgstr "Das Argument '%(argument_name)s' ist veraltet"
+
+#: /usr/lib/python3.14/argparse.py:2352
+msgid "the following arguments are required: %s"
+msgstr "Die folgenden Argumente sind erforderlich: %s"
+
+#: /usr/lib/python3.14/argparse.py:2367
+msgid "one of the arguments %s is required"
+msgstr "Eines der Argumente %s sind erforderlich"
+
+#: /usr/lib/python3.14/argparse.py:2411
+msgid "expected one argument"
+msgstr "Ein Argument erwartet"
+
+#: /usr/lib/python3.14/argparse.py:2412
+msgid "expected at most one argument"
+msgstr "Höchstens ein Argument erwartet"
+
+#: /usr/lib/python3.14/argparse.py:2413
+msgid "expected at least one argument"
+msgstr "Wenigstens ein Argument erwartet"
+
+#: /usr/lib/python3.14/argparse.py:2417
+msgid "expected %s argument"
+msgid_plural "expected %s arguments"
+msgstr[0] "%s Argument erwartet"
+msgstr[1] "%s Argumente erwartet"
+
+#: /usr/lib/python3.14/argparse.py:2527
+msgid "unexpected option string: %s"
+msgstr "Unerwarteter Optionsstring: %s"
+
+#: /usr/lib/python3.14/argparse.py:2675
+msgid "invalid %(type)s value: %(value)r"
+msgstr "Ungültiger %(type)s-Wert: %(value)r"
+
+#: /usr/lib/python3.14/argparse.py:2693
+msgid "invalid choice: %(value)r (choose from %(choices)s)"
+msgstr "Ungültige Auswahl: %(value)r (aus %(choices)s wählen)"
+
+#: /usr/lib/python3.14/argparse.py:2705
+msgid "invalid choice: %(value)r, maybe you meant %(closest)r? (choose from %(choices)s)"
+msgstr "Ungültige Auswahl: %(value)r, ist %(closest)r gemeint? (aus %(choices)s wählen)"
+
+#: /usr/lib/python3.14/argparse.py:2797
+msgid ""
+"%(prog)s: error: %(message)s\n"
+msgstr ""
+"%(prog)s: Fehler: %(message)s\n"
+
+#: /usr/lib/python3.14/argparse.py:2801
+msgid "%(prog)s: warning: %(message)s\n"
+msgstr "%(prog)s: Warnung: %(message)s\n"
+
+#: test_argparse.py:54
+msgid "Options"
+msgstr "Optionen"
+
+#: test_argparse.py:61
+msgid "short option"
+msgstr "kurze Option"
