@@ -53,8 +53,7 @@ group.add_argument(
 )
 
 os.environ["FORCE_COLOR"] = "1"
-io_buffer = io.StringIO()
-with contextlib.redirect_stdout(io_buffer):
+with contextlib.redirect_stdout(io.StringIO()) as io_buffer:
     try:
         parser.parse_args()
     except SystemExit:

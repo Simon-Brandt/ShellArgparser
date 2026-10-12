@@ -61,8 +61,7 @@ group.add_argument(
     help=translation.gettext("short option"),
 )
 
-io_buffer = io.StringIO()
-with contextlib.redirect_stdout(io_buffer):
+with contextlib.redirect_stdout(io.StringIO()) as io_buffer:
     try:
         parser.parse_args()
     except SystemExit:

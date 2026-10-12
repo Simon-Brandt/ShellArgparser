@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-09
+# Last Modification: 2026-10-12
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -50,8 +50,7 @@ group.add_argument(
     help="short option",
 )
 
-io_buffer = io.StringIO()
-with contextlib.redirect_stdout(io_buffer):
+with contextlib.redirect_stdout(io.StringIO()) as io_buffer:
     try:
         parser.parse_args()
     except SystemExit:
