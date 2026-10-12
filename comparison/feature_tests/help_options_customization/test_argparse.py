@@ -59,10 +59,8 @@ group.add_argument(
 )
 
 with contextlib.redirect_stdout(io.StringIO()) as io_buffer:
-    try:
+    with contextlib.suppress(SystemExit):
         parser.parse_args()
-    except SystemExit:
-        pass
 
 actual_output = io_buffer.getvalue()
 expected_output = """\

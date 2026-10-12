@@ -51,10 +51,8 @@ group.add_argument(
 )
 
 with contextlib.redirect_stdout(io.StringIO()) as io_buffer:
-    try:
+    with contextlib.suppress(SystemExit):
         parser.parse_args()
-    except SystemExit:
-        pass
 
 if "Options:" in io_buffer.getvalue():
     sys.exit(0)
