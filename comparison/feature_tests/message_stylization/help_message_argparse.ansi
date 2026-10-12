@@ -1,0 +1,7 @@
+[1;34musage: [0m[1;35mtest_argparse.py[0m [[32m-h[0m] [32m-v [33mVAL[0m
+
+[1;34moptions:[0m
+  [1;32m-h[0m, [1;36m--help[0m  show this help message and exit
+
+[1;34mOptions:[0m
+  [1;32m-v[0m [1;33mVAL[0m      short option
