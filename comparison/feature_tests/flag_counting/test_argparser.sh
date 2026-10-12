@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-08
+# Last Modification: 2026-10-12
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -48,7 +48,7 @@ source argparser -- "$@" &> /dev/null
 
 unalias exit
 
-if (( var > 1 )); then
+if (( var == 2 )); then
     exit 0
 fi
 exit 1

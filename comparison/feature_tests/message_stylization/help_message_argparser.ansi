@@ -1,0 +1,13 @@
+[0;32;1mUsage:[0m [0;1mtest_argparser.sh[0m [0;34mARGUMENTS[0m
+
+[0;3mMandatory arguments to long options are mandatory for short options too.[0m
+
+[0;36m╭─[0m[0;36;1;7m Options [0m[0;36m───────────────────────────────────────────────────────────╮[0m
+[0;36m│[0m [0;32;1m-v[0m=[0;34mVAL[0m                [0;22mshort option[0m                                  [0;36m│[0m
+[0;36m╰─────────────────────────────────────────────────────────────────────╯[0m
+
+[0;36m╭─[0m[0;36;1;7m Help options [0m[0;36m──────────────────────────────────────────────────────╮[0m
+[0;36m│[0m [[0;32;1m-h[0m, [0;32;1m-?[0m], [[0;35;1m--help[0m]    [0;22mdisplay this help and exit[0m [0;3m(default:[0m [0;36;3mfalse[0m[0;3m)[0m   [0;36m│[0m
+[0;36m│[0m [[0;32;1m-u[0m],     [[0;35;1m--usage[0m]   [0;22mdisplay the usage and exit[0m [0;3m(default:[0m [0;36;3mfalse[0m[0;3m)[0m   [0;36m│[0m
+[0;36m│[0m [[0;32;1m-V[0m],     [[0;35;1m--version[0m] [0;22mdisplay the version and exit[0m [0;3m(default:[0m [0;36;3mfalse[0m[0;3m)[0m [0;36m│[0m
+[0;36m╰─────────────────────────────────────────────────────────────────────╯[0m

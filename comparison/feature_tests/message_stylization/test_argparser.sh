@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-08
+# Last Modification: 2026-10-12
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -33,6 +33,7 @@
 # necessary to define "exit" as alias for "return".  Then, the final
 # check for the variables sets the test's result as exit code.
 ARGPARSER_STYLE_FILE="$(dirname "$0")/styles.cfg"
+ARGPARSER_USE_STYLES="always"
 
 # shellcheck disable=SC2190  # Indexed, not associative array.
 args=(
@@ -40,23 +41,7 @@ args=(
     "var | v          |           | VAL       |          |         | str  | 1      | Options   |       | short option"
 )
 actual_output="$(source argparser -- "$@" 2> /dev/null)"
-
-expected_output="$(cat << EOF
-Usage: test_argparser.sh ARGUMENTS
-
-Mandatory arguments to long options are mandatory for short options too.
-
-╭─ Options ───────────────────────────────────────────────────────────╮
-│ -v=VAL                short option                                  │
-╰─────────────────────────────────────────────────────────────────────╯
-
-╭─ Help options ──────────────────────────────────────────────────────╮
-│ [-h, -?], [--help]    display this help and exit (default: false)   │
-│ [-u],     [--usage]   display the usage and exit (default: false)   │
-│ [-V],     [--version] display the version and exit (default: false) │
-╰─────────────────────────────────────────────────────────────────────╯
-EOF
-)"
+expected_output="$(< "$(dirname "$0")/help_message_argparser.ansi")"
 
 if [[ "${actual_output}" == "${expected_output}" ]]; then
     exit 0

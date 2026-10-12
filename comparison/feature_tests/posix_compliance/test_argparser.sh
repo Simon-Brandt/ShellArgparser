@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-08
+# Last Modification: 2026-10-12
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -32,6 +32,7 @@
 # Parse the arguments.  Since the test runs in a subshell, it is not
 # necessary to define "exit" as alias for "return".  Then, the final
 # check for the variables sets the test's result as exit code.
+POSIXLY_CORRECT=1
 
 # shellcheck disable=SC2190  # Indexed, not associative array.
 args=(

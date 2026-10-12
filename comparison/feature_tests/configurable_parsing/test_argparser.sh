@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-08
+# Last Modification: 2026-10-12
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -45,6 +45,7 @@ args=(
     "id  | short_opts | long_opts | val_names | defaults | choices | type | arg_no | arg_group | notes | help        "
     "var | v          |           | VAL       |          |         | str  | 3      | Options   |       | short option"
 )
+set -- "-v" "1;2;3"
 source argparser -- "$@" &> /dev/null
 
 unalias exit
