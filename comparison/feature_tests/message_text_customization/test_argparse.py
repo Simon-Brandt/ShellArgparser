@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-12
+# Last Modification: 2026-10-14
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -48,7 +48,7 @@ def _print_message(
     message: str,
     file: SupportsWrite[str] | None = None,
 ) -> None:
-    filepath = pathlib.Path(__file__).parent / "help_message.txt"
+    filepath = pathlib.Path(__file__).parent / "help_message_argparse.txt"
     with open(filepath, mode="r", encoding="utf-8") as help_file:
         if file:
             file.write(help_file.read())
@@ -71,7 +71,7 @@ with contextlib.redirect_stdout(io.StringIO()) as io_buffer:
 
 actual_output = io_buffer.getvalue()
 
-filepath = pathlib.Path(__file__).parent / "help_message.txt"
+filepath = pathlib.Path(__file__).parent / "help_message_argparse.txt"
 with open(filepath, mode="r", encoding="utf-8") as file:
     expected_output = file.read()
 

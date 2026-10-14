@@ -1,0 +1,3 @@
+Usage: test_argparser.sh -v=VAL
+
+-v=VAL: short option

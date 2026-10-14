@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-08
+# Last Modification: 2026-10-14
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -33,9 +33,9 @@
 # Parse the arguments.  Since the test runs in a subshell, it is not
 # necessary to define "exit" as alias for "return".  Then, the final
 # check for the variables sets the test's result as exit code.
-ARGPARSER_ARG_DEF_FILE="$(dirname "$0")/arguments.csv"
+ARGPARSER_ARG_DEF_FILE="$(dirname "$0")/arguments_argparser.csv"
 ARGPARSER_LANGUAGE="de"
-ARGPARSER_TRANSLATION_FILE="$(dirname "$0")/translations.yaml"
+ARGPARSER_TRANSLATION_FILE="$(dirname "$0")/translations_argparser.yaml"
 
 # shellcheck disable=SC2190  # Indexed, not associative array.
 args=(

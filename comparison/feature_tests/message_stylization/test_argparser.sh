@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-12
+# Last Modification: 2026-10-14
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -32,7 +32,7 @@
 # Parse the arguments.  Since the test runs in a subshell, it is not
 # necessary to define "exit" as alias for "return".  Then, the final
 # check for the variables sets the test's result as exit code.
-ARGPARSER_STYLE_FILE="$(dirname "$0")/styles.cfg"
+ARGPARSER_STYLE_FILE="$(dirname "$0")/styles_argparser.cfg"
 ARGPARSER_USE_STYLES="always"
 
 # shellcheck disable=SC2190  # Indexed, not associative array.

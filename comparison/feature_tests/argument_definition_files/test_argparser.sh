@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-08
+# Last Modification: 2026-10-14
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -38,7 +38,7 @@
 shopt -s expand_aliases
 alias exit=return
 
-ARGPARSER_ARG_DEF_FILE="$(dirname "$0")/arguments.csv"
+ARGPARSER_ARG_DEF_FILE="$(dirname "$0")/arguments_argparser.csv"
 
 # shellcheck disable=SC2190  # Indexed, not associative array.
 args=(

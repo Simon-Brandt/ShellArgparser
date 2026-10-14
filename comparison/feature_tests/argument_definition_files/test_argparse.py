@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-09
+# Last Modification: 2026-10-14
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -33,7 +33,7 @@
 import argparse
 import sys
 
-from arguments import create_argparser
+from arguments_argparse import create_argparser
 
 # Parse the arguments.  The final check for the variables sets the
 # test's result as exit code.
