@@ -1,0 +1,4 @@
+Usage:
+  docopts_wrapper.sh -v VAL
+Options:
+  -v VAL  short option
