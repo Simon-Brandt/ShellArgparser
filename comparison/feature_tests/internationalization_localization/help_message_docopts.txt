@@ -1,0 +1,9 @@
+Aufruf:
+Usage:
+  docopts_wrapper.sh -v VAL
+
+Options: (Optionen)
+  -v VAL  kurze Option
+
+Help options: (Hilfsoptionen)
+  -h, --help  diese Hilfe anzeigen und beenden
