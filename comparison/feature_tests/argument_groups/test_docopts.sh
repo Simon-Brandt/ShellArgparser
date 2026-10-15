@@ -28,7 +28,7 @@
 #     --test-argument-groups
 
 # Usage:
-#   docopts_wrapper.sh (-a VAL | -b VAL)
+#   test_docopts.sh (-a VAL | -b VAL)
 #
 # Options:
 #   -v VAL  short option

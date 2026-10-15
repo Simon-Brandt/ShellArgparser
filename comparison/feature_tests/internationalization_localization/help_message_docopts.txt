@@ -1,6 +1,6 @@
 Aufruf:
 Usage:
-  docopts_wrapper.sh -v VAL
+  test_docopts.sh -v VAL
 
 Options: (Optionen)
   -v VAL  kurze Option

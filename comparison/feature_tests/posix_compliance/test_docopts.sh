@@ -28,7 +28,7 @@
 #     --test-posix-compliance
 
 # Usage:
-#   docopts_wrapper.sh --var=VAL
+#   test_docopts.sh --var=VAL
 #
 # Options:
 #   --var=VAL  long option

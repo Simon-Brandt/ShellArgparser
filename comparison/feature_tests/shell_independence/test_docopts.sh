@@ -34,7 +34,7 @@
 # check for the variables sets the test's result as exit code.
 help="$(cat << EOF
 Usage:
-  docopts_wrapper.sh -v VAL
+  test_docopts.sh -v VAL
 
 Options:
   -v VAL  short option

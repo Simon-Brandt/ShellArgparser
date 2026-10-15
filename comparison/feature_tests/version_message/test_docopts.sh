@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-14
+# Last Modification: 2026-10-15
 
 # Usage (from wrapper): Run this script from test_features.sh as
 # bash test_features.sh \
@@ -28,7 +28,7 @@
 #     --test-version-message
 
 # Usage:
-#   docopts_wrapper.sh -v VAL
+#   test_docopts.sh -v VAL
 #
 # Options:
 #   -v VAL  short option
@@ -43,12 +43,12 @@
 # check for the variables sets the test's result as exit code.
 source docopts.sh
 help="$(docopt_get_help_string "$0")"
-version="docopts_wrapper.sh v1.0.0"
+version="test_docopts.sh v1.0.0"
 
 actual_output="$(eval \
     "$(docopts -A ARGS --help="${help}" --version="${version}" : "$@" 2> /dev/null)"
 )"
-expected_output="docopts_wrapper.sh v1.0.0"
+expected_output="test_docopts.sh v1.0.0"
 
 if [[ "${actual_output}" == "${expected_output}" ]]; then
     exit 0

@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-14
+# Last Modification: 2026-10-15
 
 # Usage (from wrapper): Run this script from test_features.sh as
 # bash test_features.sh \
@@ -28,7 +28,7 @@
 #     --test-option-merging
 
 # Usage:
-#   docopts_wrapper.sh [-a] -b VAL_B
+#   test_docopts.sh [-a] -b VAL_B
 #
 # Options:
 #   -a        flag

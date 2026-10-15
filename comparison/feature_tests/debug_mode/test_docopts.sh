@@ -28,7 +28,7 @@
 #     --test-debug-mode
 
 # Usage:
-#   docopts_wrapper.sh -v VAL
+#   test_docopts.sh -v VAL
 #
 # Options:
 #   -v VAL  short option
