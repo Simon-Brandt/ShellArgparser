@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-08
+# Last Modification: 2026-10-13
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -38,7 +38,6 @@
 shopt -s expand_aliases
 alias exit=return
 
-ARGPARSER_SET_ARRAYS=false
 declare var_a
 declare var_b
 
@@ -52,7 +51,11 @@ source argparser -- "$@" &> /dev/null
 
 unalias exit
 
-if [[ "${var_a}" == "-a,1" && "${var_b}" == 2 ]]; then
+if [[ "${#var_a[@]}" == 2 \
+    && "${var_a[0]}" == "-a" \
+    && "${var_a[1]}" == 1 \
+    && "${var_b}" == 2 ]]
+then
     exit 0
 fi
 exit 1

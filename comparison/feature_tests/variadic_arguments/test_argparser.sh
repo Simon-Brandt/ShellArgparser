@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-08
+# Last Modification: 2026-10-13
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -38,8 +38,6 @@
 shopt -s expand_aliases
 alias exit=return
 
-ARGPARSER_SET_ARRAYS=false
-
 # shellcheck disable=SC2190  # Indexed, not associative array.
 args=(
     "id  | short_opts | long_opts | val_names | defaults | choices | type | arg_no | arg_group | notes | help        "
@@ -49,7 +47,11 @@ source argparser -- "$@" &> /dev/null
 
 unalias exit
 
-if [[ "${var}" == "1,2,3" ]]; then
+if [[ "${#var[@]}" == 3 \
+    && "${var[0]}" == 1 \
+    && "${var[1]}" == 2 \
+    && "${var[2]}" == 3 ]]
+then
     exit 0
 fi
 exit 1

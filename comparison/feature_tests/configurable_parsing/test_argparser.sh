@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-12
+# Last Modification: 2026-10-14
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -28,7 +28,8 @@
 #     --test-configurable-parsing
 
 # Purpose: Test whether the Argparser supports the configuration of the
-# parsing.
+# parsing (with a test that uses a different secondary argument
+# delimiter).
 
 # Parse the arguments.  In order to be able to both set the arguments to
 # variables and to ignore any "exit", define "exit" as alias for

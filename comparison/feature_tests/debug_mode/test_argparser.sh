@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-08
+# Last Modification: 2026-10-15
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -38,9 +38,9 @@ args=(
     "id  | short_opts | long_opts | val_names | defaults | choices | type | arg_no | arg_group | notes | help        "
     "var | v          |           | VAL       |          |         | str  | 1      | Options   |       | short option"
 )
-error="$(source argparser --debug -- "$@" 2>&1 > /dev/null)"
+debug_output="$(source argparser --debug -- "$@" 2>&1 > /dev/null)"
 
-mapfile -t lines <<< "${error}"
+mapfile -t lines <<< "${debug_output}"
 for i in "${!lines[@]}"; do
     line="${lines[i]}"
     if [[ "${line}" != "Line"* ]]; then

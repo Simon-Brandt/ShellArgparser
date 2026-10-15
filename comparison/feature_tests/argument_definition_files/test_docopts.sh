@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-14
+# Last Modification: 2026-10-15
 
 # Usage (from wrapper): Run this script from test_features.sh as
 # bash test_features.sh \
@@ -33,7 +33,7 @@
 # necessary to define "exit" as alias for "return".  Then, the final
 # check for the variables sets the test's result as exit code.
 help="$(< "$(dirname "$0")/arguments_docopts.txt")"
-eval "$(docopts -A ARGS -h "${help}" : "$@" 2> /dev/null)"
+eval "$(docopts -A ARGS --help="${help}" : "$@" 2> /dev/null)"
 
 if [[ "${ARGS[-v]}" == 1 ]]; then
     exit 2  # Indicate partial support for feature.

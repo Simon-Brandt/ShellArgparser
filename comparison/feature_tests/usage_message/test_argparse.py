@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-12
+# Last Modification: 2026-10-14
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -51,5 +51,5 @@ actual_output = parser.format_usage()
 expected_output = "usage: test_argparse.py [-h] -v VAL"
 
 if actual_output.startswith(expected_output):
-    sys.exit(2)  # Indicate partial support for feature.
+    sys.exit(0)
 sys.exit(1)

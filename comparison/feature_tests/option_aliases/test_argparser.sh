@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-08
+# Last Modification: 2026-10-14
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -28,7 +28,7 @@
 #     --test-option-aliases
 
 # Purpose: Test whether the Argparser supports option aliases
-# ("-a"/"-A").
+# ("-a"/"-A"/"--arg").
 
 # Parse the arguments.  In order to be able to both set the arguments to
 # variables and to ignore any "exit", define "exit" as alias for
@@ -39,7 +39,6 @@ shopt -s expand_aliases
 alias exit=return
 
 ARGPARSER_ADD_VERSION=false
-ARGPARSER_SET_ARRAYS=false
 
 # shellcheck disable=SC2190  # Indexed, not associative array.
 args=(
@@ -50,7 +49,7 @@ source argparser -- "$@" &> /dev/null
 
 unalias exit
 
-if [[ "${var}" == "1,2" ]]; then
+if [[ "${#var[@]}" == 2 && "${var[0]}" == 1 && "${var[1]}" == 2 ]]; then
     exit 0
 fi
 exit 1

@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-09
+# Last Modification: 2026-10-14
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -28,7 +28,7 @@
 #     --test-option-aliases
 
 # Purpose: Test whether Python's argparse module supports option aliases
-# ("-a"/"-A").
+# ("-a"/"-A"/"--arg").
 
 import argparse
 import sys
