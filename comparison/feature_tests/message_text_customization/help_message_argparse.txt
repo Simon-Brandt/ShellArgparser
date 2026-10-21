@@ -1,3 +1,4 @@
-Usage: test_argparser.sh -v=VAL
+Usage: test_argparse.py -v=VAL
 
--v=VAL: short option
+-v=VAL:     short option
+-h, --help: display this help and exit

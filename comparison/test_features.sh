@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-15
+# Last Modification: 2026-10-21
 
 # Usage: Run this script with
 # "bash test_features.sh [--test-<parser>...] [--test-<feature>...]" or
@@ -188,22 +188,22 @@ tests=(
     "test_alternative_option_prefixes       | Alternative option prefixes (\"+\" or \"/\") | /v 1            | ✘         | ✔        | ✘       | ✘      | ✘       | ✱      "
     "test_argument_definition_files         | Argument definition files                    | -v 1            | ✔         | ✱        | ✱       | ✱      | ✱       | ✱      "
     "test_argument_groups                   | Argument groups                              | -h              | ✔         | ✔        | ✘       | ✘      | ✘       | ✱      "
-    "test_argument_intermixing              | Intermixed positional and keyword arguments  | -v 1            | ✔         | ✔        | ✘       | ✔      | ✘       | ✔      "
+    "test_argument_intermixing              | Intermixed positional and keyword arguments  | -v 1            | ✔         | ✔        | ✘       | ✔      | ✔       | ✔      "
     "test_auto_set_variables                | Auto-setting of arguments to variables       | -v 1            | ✔         | ✘        | ✘       | ✘      | ✔       | ✔      "
     "test_choice_values                     | Choice values                                | -v A            | ✔         | ✔        | ✘       | ✘      | ✘       | ✘      "
     "test_configurable_parsing              | Configurable parsing                         |                 | ✔         | ✔        | ✘       | ✱      | ✘       | ✱      "
     "test_debug_mode                        | Debug mode                                   | -v 1            | ✔         | ✘        | ✘       | ✘      | ✘       | ✔      "
     "test_default_values                    | Default values                               |                 | ✔         | ✔        | ✘       | ✘      | ✔       | ✔      "
     "test_deprecation_notes                 | Deprecation notes                            | -v 1            | ✔         | ✔        | ✘       | ✘      | ✘       | ✘      "
-    "test_error_warning_silencing           | Error/warning silencing                      |                 | ✔         | ✘        | ✔       | ✔      | ✘       | ✘      "
+    "test_error_warning_silencing           | Error/warning silencing                      | --var           | ✔         | ✘        | ✔       | ✔      | ✘       | ✘      "
     "test_exit_codes_customization          | Customizable exit codes                      | -h              | ✔         | ✱        | ✘       | ✘      | ✘       | ✘      "
     "test_flag_counting                     | Flag counting (\"-a -a\")                    | -v -v           | ✔         | ✔        | ✘       | ✘      | ✘       | ✔      "
     "test_flag_inversion                    | Flag inversion (\"+a\"/\"++arg\")            | +v              | ✔         | ✘        | ✘       | ✘      | ✘       | ✘      "
     "test_flag_negation                     | Flag negation (\"--no-arg\")                 | --no-var        | ✔         | ✔        | ✘       | ✘      | ✔       | ✘      "
     "test_flags                             | Flags (Boolean options)                      | -v              | ✔         | ✔        | ✔       | ✔      | ✔       | ✔      "
     "test_help_message                      | Help message                                 | -h              | ✔         | ✔        | ✘       | ✘      | ✔       | ✔      "
-    "test_help_options_customization        | Customizable help options                    | -H              | ✔         | ✔        | ✱       | ✔      | ✘       | ✱      "
-    "test_internationalization_localization | Internationalization / localization          | -h              | ✔         | ✔        | ✔       | ✔      | ✘       | ✱      "
+    "test_help_options_customization        | Customizable help options                    | -H              | ✔         | ✔        | ✱       | ✔      | ✱       | ✱      "
+    "test_internationalization_localization | Internationalization / localization          | -h              | ✔         | ✔        | ✔       | ✔      | ✱       | ✱      "
     "test_long_options                      | Long options                                 | --var 1         | ✔         | ✔        | ✘       | ✔      | ✔       | ✔      "
     "test_mandatory_options                 | Mandatory options                            |                 | ✔         | ✔        | ✘       | ✘      | ✘       | ✔      "
     "test_message_stylization               | Message stylization                          | -h              | ✔         | ✱        | ✘       | ✘      | ✘       | ✘      "

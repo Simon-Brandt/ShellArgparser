@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-14
+# Last Modification: 2026-10-21
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -70,10 +70,12 @@ with contextlib.redirect_stdout(io.StringIO()) as io_buffer:
         parser.parse_args()
 
 actual_output = io_buffer.getvalue()
+expected_output = """\
+Usage: test_argparse.py -v=VAL
 
-filepath = pathlib.Path(__file__).parent / "help_message_argparse.txt"
-with open(filepath, mode="r", encoding="utf-8") as file:
-    expected_output = file.read()
+-v=VAL:     short option
+-h, --help: display this help and exit
+"""
 
 if actual_output == expected_output:
     sys.exit(0)

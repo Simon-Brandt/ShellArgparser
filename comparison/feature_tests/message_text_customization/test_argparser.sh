@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-14
+# Last Modification: 2026-10-21
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -45,7 +45,8 @@ actual_output="$(source argparser -- "$@" 2> /dev/null)"
 expected_output="$(cat << EOF
 Usage: test_argparser.sh -v=VAL
 
--v=VAL: short option
+-v=VAL:     short option
+-h, --help: display this help and exit
 EOF
 )"
 

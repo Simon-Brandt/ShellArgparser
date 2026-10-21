@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-15
+# Last Modification: 2026-10-21
 
 # Usage (from wrapper): Run this script from test_features.sh as
 # bash test_features.sh \
@@ -38,6 +38,8 @@
 # Parse the arguments.  Since the test runs in a subshell, it is not
 # necessary to define "exit" as alias for "return".  Then, the final
 # check for the variables sets the test's result as exit code.
+FORCE_COLOR=1
+
 actual_output="$(source docopts.sh --auto "$@" 2> /dev/null)"
 
 expected_output="$(cat << EOF
