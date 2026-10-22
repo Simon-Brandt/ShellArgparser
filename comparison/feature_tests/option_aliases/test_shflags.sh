@@ -20,11 +20,11 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-21
+# Last Modification: 2026-10-22
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
-#     --test-argparser \
+#     --test-shflags \
 #     --test-option-aliases
 
 # Purpose: Test whether shFlags supports option aliases
