@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-22
+# Last Modification: 2026-10-27
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -36,12 +36,12 @@ if ! args="$(getopt --options="v" -- "$@" 2> /dev/null)"; then
 fi
 eval set -- "${args}"
 
-var=0
+var=false
 
 while true; do
     case "$1" in
         "-v")
-            (( var++ ))
+            var=true
             shift
             ;;
         "--")
@@ -53,6 +53,6 @@ while true; do
 done
 
 if (( var == 2 )); then
-    exit 2  # Indicate partial support for feature.
+    exit 0
 fi
 exit 1

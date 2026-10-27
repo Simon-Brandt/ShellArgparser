@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-12
+# Last Modification: 2026-10-27
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -35,17 +35,20 @@ import contextlib
 import gettext
 import io
 import pathlib
+import os
 import sys
 
 # Parse the arguments.  Capture `sys.stdout` with the translated help
 # message and suppress the `SystemExit` raised by `argparse` when the
 # `-h`/`--help` flag is passed.  Only the final check for the variables
 # sets the test's result as exit code.
+os.environ["LANG"] = "de_DE.UTF-8"
+
 locale_dir = pathlib.Path(__file__).parent / "translations_argparse"
 translation = gettext.translation(
     domain="translations",
     localedir=locale_dir,
-    languages=["de"],
+    languages=[os.environ["LANG"][:2]],
 )
 argparse._ = translation.gettext  # type: ignore
 argparse.ngettext = translation.ngettext  # type: ignore

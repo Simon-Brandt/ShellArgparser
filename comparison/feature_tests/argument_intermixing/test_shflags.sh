@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-22
+# Last Modification: 2026-10-27
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -48,7 +48,9 @@ alias exit=return
 
 unalias exit
 
-if [[ "$1" == 1 && "${FLAGS_v}" == "${FLAGS_TRUE}" ]]; then
+var_a="$1"
+
+if [[ "${var_a}" == 1 && "${FLAGS_v}" == "${FLAGS_TRUE}" ]]; then
     exit 0
 fi
 exit 1

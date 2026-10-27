@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-12
+# Last Modification: 2026-10-27
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -40,17 +40,23 @@ os.environ["POSIXLY_CORRECT"] = "1"
 parser = argparse.ArgumentParser(exit_on_error=False)
 group = parser.add_argument_group("Options")
 group.add_argument(
-    "--var",
-    dest="var",
-    metavar="VAL",
-    required=True,
-    type=str,
-    help="long option",
+    "-a",
+    dest="var_a",
+    action="store_true",
+    help="flag",
+)
+group.add_argument(
+    "-b",
+    dest="var_b",
+    action="store_true",
+    help="flag",
 )
 
 try:
-    args = parser.parse_args()
+    args, var_c = parser.parse_known_args()
 except argparse.ArgumentError:
+    sys.exit(1)
+
+if args.var_a and not args.var_b and var_c == ["1", "-b", "2"]:
     sys.exit(0)
 sys.exit(1)
-

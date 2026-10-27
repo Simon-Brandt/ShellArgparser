@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-22
+# Last Modification: 2026-10-27
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -33,6 +33,7 @@
 # Parse the arguments.  Since the test runs in a subshell, it is not
 # necessary to define "exit" as alias for "return".  Then, the final
 # check for the variables sets the test's result as exit code.
+LANG="de_DE.UTF-8"
 FLAGS_HELP="$(< "$(dirname "$0")/help_message_shflags.txt")"
 FLAGS_HELP+=$'\n'
 

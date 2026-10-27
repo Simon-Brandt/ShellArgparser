@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-22
+# Last Modification: 2026-10-27
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -49,7 +49,13 @@ alias exit=return
 
 unalias exit
 
-if [[ "$#" == 2 && "$1" == "-a" && "$2" == 1 && "${FLAGS_b}" == 2 ]]; then
+var_a=("$@")
+
+if [[ "${#var_a[@]}" == 2 \
+    && "${var_a[0]}" == "-a" \
+    && "${var_a[1]}" == 1 \
+    && "${FLAGS_b}" == 2 ]]
+then
     exit 0
 fi
 exit 1

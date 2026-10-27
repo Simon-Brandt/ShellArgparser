@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-22
+# Last Modification: 2026-10-27
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -29,21 +29,37 @@
 
 # Purpose: Test whether shFlags is POSIX-compliant.
 
-# Parse the arguments.  Since the test runs in a subshell, it is not
-# necessary to define "exit" as alias for "return".  Then, the final
-# check for the variables sets the test's result as exit code.
+# Parse the arguments.  In order to be able to both set the arguments to
+# variables and to ignore any "exit", define "exit" as alias for
+# "return", such that the functions are halted, but the test doesn't
+# abort.  Only the final check for the variables sets the test's result
+# as exit code.
+shopt -s expand_aliases
+alias exit=return
+
 POSIXLY_CORRECT=1
 
 {
     source shflags
 
-    # shellcheck disable=SC2034  # Intentionally unused variable.
-    DEFINE_string "var" "" "long option"
+    DEFINE_boolean "a" "${FLAGS_FALSE}" "flag" "a"
+    DEFINE_boolean "b" "${FLAGS_FALSE}" "flag" "b"
+
+    FLAGS "$@"
+    eval set -- "${FLAGS_ARGV}"
 } &> /dev/null
 
-error="$(FLAGS "$@" 2>&1 > /dev/null)"
+unalias exit
 
-if [[ -n "${error}" ]]; then
+var_c=("$@")
+
+if [[ "${FLAGS_a}" == "${FLAGS_TRUE}" \
+    && "${FLAGS_b}" == "${FLAGS_FALSE}" \
+    && "${#var_c[@]}" == 3 \
+    && "${var_c[0]}" == 1 \
+    && "${var_c[1]}" == "-b" \
+    && "${var_c[2]}" == 2 ]]
+then
     exit 0
 fi
 exit 1

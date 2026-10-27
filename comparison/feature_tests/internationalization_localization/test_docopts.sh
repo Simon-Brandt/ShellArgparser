@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-15
+# Last Modification: 2026-10-27
 
 # Usage (from wrapper): Run this script from test_features.sh as
 # bash test_features.sh \
@@ -33,13 +33,15 @@
 # Parse the arguments.  Since the test runs in a subshell, it is not
 # necessary to define "exit" as alias for "return".  Then, the final
 # check for the variables sets the test's result as exit code.
+LANG="de_DE.UTF-8"
+
 help="$(< "$(dirname "$0")/help_message_docopts.txt")"
 actual_output="$(eval "$(docopts -A ARGS --help="${help}" : "$@" 2> /dev/null)")"
 
 expected_output="$(cat << EOF
 Aufruf:
 Usage:
-  docopts_wrapper.sh -v VAL
+  test_docopts.sh -v VAL
 
 Options: (Optionen)
   -v VAL  kurze Option

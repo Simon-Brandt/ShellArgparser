@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-21
+# Last Modification: 2026-10-27
 
 # Usage: Run this script with
 # "bash test_features.sh [--test-<parser>...] [--test-<feature>...]" or
@@ -216,7 +216,7 @@ tests=(
     "test_positional_arguments              | Positional arguments                         | 1               | ✔         | ✔        | ✱       | ✱      | ✱       | ✔      "
     "test_positional_delimiter_hyphens      | Positional arguments delimiter \"--\"        | -b 2 -- -a 1    | ✔         | ✔        | ✔       | ✔      | ✔       | ✔      "
     "test_positional_delimiter_plus_signs   | Positional arguments delimiter \"++\"        | -- -a 1 ++ -b 2 | ✔         | ✘        | ✘       | ✘      | ✘       | ✘      "
-    "test_posix_compliance                  | POSIX compliance                             | --var 1         | ✘         | ✘        | ✔       | ✱      | ✘       | ✘      "
+    "test_posix_compliance                  | POSIX compliance                             | -a 1 -b 2       | ✘         | ✘        | ✔       | ✱      | ✘       | ✘      "
     "test_shell_independence                | Shell independence (Bash, Dash, ksh93...)    | -v 1            | ✔         | ✘        | ✱       | ✔      | ✔       | ✱      "
     "test_short_options                     | Short options                                | -v 1            | ✔         | ✔        | ✔       | ✔      | ✔       | ✔      "
     "test_single_hyphen_long_options        | Single-hyphen long options (\"-arg\")        | -var 1          | ✘         | ✔        | ✘       | ✔      | ✘       | ✘      "

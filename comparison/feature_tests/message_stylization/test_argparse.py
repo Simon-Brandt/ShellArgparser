@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-12
+# Last Modification: 2026-10-27
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -41,6 +41,8 @@ import sys
 # suppress the `SystemExit` raised by `argparse` when the `-h`/`--help`
 # flag is passed.  Only the final check for the variables sets the
 # test's result as exit code.
+os.environ["FORCE_COLOR"] = "1"
+
 parser = argparse.ArgumentParser(exit_on_error=False)
 group = parser.add_argument_group("Options")
 group.add_argument(
@@ -52,7 +54,6 @@ group.add_argument(
     help="short option",
 )
 
-os.environ["FORCE_COLOR"] = "1"
 with contextlib.redirect_stdout(io.StringIO()) as io_buffer:
     with contextlib.suppress(SystemExit):
         parser.parse_args()

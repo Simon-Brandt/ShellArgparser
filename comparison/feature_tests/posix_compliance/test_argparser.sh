@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-12
+# Last Modification: 2026-10-27
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -29,19 +29,38 @@
 
 # Purpose: Test whether the Argparser is POSIX-compliant.
 
-# Parse the arguments.  Since the test runs in a subshell, it is not
-# necessary to define "exit" as alias for "return".  Then, the final
-# check for the variables sets the test's result as exit code.
+# Parse the arguments.  In order to be able to both set the arguments to
+# variables and to ignore any "exit", define "exit" as alias for
+# "return", such that the functions are halted, but the test doesn't
+# abort.  Only the final check for the variables sets the test's result
+# as exit code.
+shopt -s expand_aliases
+alias exit=return
+
 POSIXLY_CORRECT=1
+
+declare var_a
+declare var_b
+declare var_c
 
 # shellcheck disable=SC2190  # Indexed, not associative array.
 args=(
-    "id  | short_opts | long_opts | val_names | defaults | choices | type | arg_no | arg_group | notes | help       "
-    "var |            | var       | VAL       |          |         | str  | 1      | Options   |       | long option"
+    "id    | short_opts | long_opts | val_names | defaults | choices | type | arg_no | arg_group            | notes | help               "
+    "var_a | a          |           |           | false    |         | bool | 0      | Options              |       | flag               "
+    "var_b | b          |           |           | false    |         | bool | 0      | Options              |       | flag               "
+    "var_c |            |           | VAL       |          |         | str  | +      | Positional arguments |       | positional argument"
 )
-error="$(source argparser -- "$@" > /dev/null)"
+source argparser -- "$@" &> /dev/null
 
-if [[ -n "${error}" ]]; then
+unalias exit
+
+if [[ "${var_a}" == true \
+    && "${var_b}" == false \
+    && "${#var_c[@]}" == 3 \
+    && "${var_c[0]}" == 1 \
+    && "${var_c[1]}" == "-b" \
+    && "${var_c[2]}" == 2 ]]
+then
     exit 0
 fi
 exit 1

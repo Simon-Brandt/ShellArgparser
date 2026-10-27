@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-22
+# Last Modification: 2026-10-27
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -46,7 +46,9 @@ alias exit=return
 
 unalias exit
 
-if [[ "$1" == 1 ]]; then
+var=1
+
+if [[ "${var}" == 1 ]]; then
     exit 2  # Indicate partial support for feature.
 fi
 exit 1
