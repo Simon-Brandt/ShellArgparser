@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-22
+# Last Modification: 2026-10-27
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -40,7 +40,7 @@ alias exit=return
 {
     source shflags
 
-    source "$(dirname "$0")/arguments_shflags.txt"
+    source "$(dirname "$0")/arguments_shflags.sh"
 
     FLAGS "$@"
     eval set -- "${FLAGS_ARGV}"
