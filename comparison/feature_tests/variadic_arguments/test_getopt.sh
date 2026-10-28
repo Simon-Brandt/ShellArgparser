@@ -20,15 +20,15 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-26
+# Last Modification: 2026-10-28
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
 #     --test-getopt \
 #     --test-variadic-arguments
 
-# Purpose: Test whether getopt supports any argument number (multi-value
-# arguments).
+# Purpose: Test whether getopt supports variadic (arbitrary-value)
+# arguments.
 
 # Parse the arguments.  The final check for the variables sets the
 # test's result as exit code.

@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-15
+# Last Modification: 2026-10-28
 
 # Usage (from wrapper): Run this script from test_features.sh as
 # bash test_features.sh \
@@ -33,8 +33,8 @@
 # Options:
 #   -v  short option
 
-# Purpose: Test whether docopts supports any argument number
-# (multi-value arguments).
+# Purpose: Test whether docopts supports variadic (arbitrary-value)
+# arguments.
 
 # Parse the arguments.  In order to be able to both set the arguments to
 # variables and to ignore any "exit", define "exit" as alias for

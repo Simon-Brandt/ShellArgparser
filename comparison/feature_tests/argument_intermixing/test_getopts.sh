@@ -27,7 +27,8 @@
 #     --test-getopts \
 #     --test-argument-intermixing
 
-# Purpose: Test whether getopts supports argument intermixing.
+# Purpose: Test whether getopts supports argument intermixing
+# (positional between keyword).
 
 # Parse the arguments.  The final check for the variables sets the
 # test's result as exit code.

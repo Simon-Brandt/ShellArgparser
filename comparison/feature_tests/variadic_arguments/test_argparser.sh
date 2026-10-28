@@ -20,15 +20,15 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-13
+# Last Modification: 2026-10-28
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
 #     --test-argparser \
 #     --test-variadic-arguments
 
-# Purpose: Test whether the Argparser supports any argument number
-# (multi-value arguments).
+# Purpose: Test whether the Argparser supports variadic
+# (arbitrary-value) arguments.
 
 # Parse the arguments.  In order to be able to both set the arguments to
 # variables and to ignore any "exit", define "exit" as alias for

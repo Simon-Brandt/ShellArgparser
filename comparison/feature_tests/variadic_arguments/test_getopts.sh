@@ -27,8 +27,8 @@
 #     --test-getopts \
 #     --test-variadic-arguments
 
-# Purpose: Test whether getopts supports any argument number
-# (multi-value arguments).
+# Purpose: Test whether getopts supports variadic (arbitrary-value)
+# arguments.
 
 # Parse the arguments.  The final check for the variables sets the
 # test's result as exit code.

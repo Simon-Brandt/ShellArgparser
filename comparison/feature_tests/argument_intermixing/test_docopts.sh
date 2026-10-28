@@ -36,7 +36,8 @@
 # Options:
 #   -b       flag
 
-# Purpose: Test whether docopts supports argument intermixing.
+# Purpose: Test whether docopts supports argument intermixing
+# (positional between keyword).
 
 # Parse the arguments.  In order to be able to both set the arguments to
 # variables and to ignore any "exit", define "exit" as alias for

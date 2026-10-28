@@ -28,7 +28,7 @@
 #     --test-argument-intermixing
 
 # Purpose: Test whether Python's argparse module supports argument
-# intermixing.
+# intermixing (positional between keyword).
 
 import argparse
 import sys

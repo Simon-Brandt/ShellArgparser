@@ -20,15 +20,15 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-09
+# Last Modification: 2026-10-28
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
 #     --test-argparse \
 #     --test-variadic-arguments
 
-# Purpose: Test whether Python's argparse module supports any argument
-# number (multi-value arguments).
+# Purpose: Test whether Python's argparse module supports variadic
+# (arbitrary-value) arguments.
 
 import argparse
 import sys
