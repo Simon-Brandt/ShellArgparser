@@ -20,12 +20,12 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-27
+# Last Modification: 2026-10-28
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
 #     --test-getopt \
-#     --test-exit-codes-customization
+#     --test-exit-code-customization
 
 # Purpose: Test whether getopt supports customizing the exit codes.
 

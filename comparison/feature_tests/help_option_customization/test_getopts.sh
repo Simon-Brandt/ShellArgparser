@@ -25,7 +25,7 @@
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
 #     --test-getopts \
-#     --test-help-options-customization
+#     --test-help-option-customization
 
 # Purpose: Test whether getopts supports customizing the help options.
 

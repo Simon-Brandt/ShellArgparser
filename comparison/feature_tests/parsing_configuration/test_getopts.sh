@@ -25,7 +25,7 @@
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
 #     --test-getopts \
-#     --test-configurable-parsing
+#     --test-parsing-configuration
 
 # Purpose: Test whether getopts supports the configuration of the
 # parsing.

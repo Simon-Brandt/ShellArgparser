@@ -20,12 +20,12 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-22
+# Last Modification: 2026-10-28
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
 #     --test-shflags \
-#     --test-type-checking
+#     --test-data-type-checking
 
 # Purpose: Test whether shFlags supports data type checking.
 

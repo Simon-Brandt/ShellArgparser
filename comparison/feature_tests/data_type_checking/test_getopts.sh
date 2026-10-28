@@ -25,7 +25,7 @@
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
 #     --test-getopts \
-#     --test-type-checking
+#     --test-data-type-checking
 
 # Purpose: Test whether getopts supports data type checking.
 

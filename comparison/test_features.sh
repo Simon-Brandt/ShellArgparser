@@ -136,18 +136,18 @@ args=(
     "test_argument_intermixing              | test-argument-intermixing              | false    | bool | 0      | Tests     | test which parser supports argument intermixing (positional between keyword)"
     "test_auto_set_variables                | test-auto-set-variables                | false    | bool | 0      | Tests     | test which parser supports the auto-setting of arguments to variables       "
     "test_choice_values                     | test-choice-values                     | false    | bool | 0      | Tests     | test which parser supports choice values                                    "
-    "test_configurable_parsing              | test-configurable-parsing              | false    | bool | 0      | Tests     | test which parser supports the configuration of the parsing                 "
+    "test_data_type_checking                     | test-data-type-checking                     | false    | bool | 0      | Tests     | test which parser supports data type checking                               "
     "test_debug_mode                        | test-debug-mode                        | false    | bool | 0      | Tests     | test which parser contains a debug mode                                     "
     "test_default_values                    | test-default-values                    | false    | bool | 0      | Tests     | test which parser supports default values                                   "
     "test_deprecation_notes                 | test-deprecation-notes                 | false    | bool | 0      | Tests     | test which parser supports deprecation notes                                "
     "test_error_warning_silencing           | test-error-warning-silencing           | false    | bool | 0      | Tests     | test which parser supports the silencing of error and warning messages      "
-    "test_exit_codes_customization          | test-exit-codes-customization          | false    | bool | 0      | Tests     | test which parser supports customizing the exit codes                       "
+    "test_exit_code_customization           | test-exit-code-customization           | false    | bool | 0      | Tests     | test which parser supports customizing the exit codes                       "
     "test_flag_counting                     | test-flag-counting                     | false    | bool | 0      | Tests     | test which parser supports flag counting (\"-a -a\")                        "
     "test_flag_inversion                    | test-flag-inversion                    | false    | bool | 0      | Tests     | test which parser supports flag inversion (\"+a\"/\"++arg\")                "
     "test_flag_negation                     | test-flag-negation                     | false    | bool | 0      | Tests     | test which parser supports flag negation (\"--no-arg\")                     "
     "test_flags                             | test-flags                             | false    | bool | 0      | Tests     | test which parser supports flags (Boolean options)                          "
     "test_help_message                      | test-help-message                      | false    | bool | 0      | Tests     | test which parser creates a help message                                    "
-    "test_help_options_customization        | test-help-options-customization        | false    | bool | 0      | Tests     | test which parser supports customizing the help options                     "
+    "test_help_option_customization         | test-help-option-customization         | false    | bool | 0      | Tests     | test which parser supports customizing the help options                     "
     "test_internationalization_localization | test-internationalization-localization | false    | bool | 0      | Tests     | test which parser supports internationalization/localization                "
     "test_long_options                      | test-long-options                      | false    | bool | 0      | Tests     | test which parser supports long options                                     "
     "test_mandatory_options                 | test-mandatory-options                 | false    | bool | 0      | Tests     | test which parser supports mandatory options                                "
@@ -158,6 +158,7 @@ args=(
     "test_option_abbreviation               | test-option-abbreviation               | false    | bool | 0      | Tests     | test which parser supports option abbreviation (\"--ar\")                   "
     "test_option_aliases                    | test-option-aliases                    | false    | bool | 0      | Tests     | test which parser supports option aliases (\"-a\"/\"-A\")                   "
     "test_option_merging                    | test-option-merging                    | false    | bool | 0      | Tests     | test which parser supports option merging (\"-ab\")                         "
+    "test_parsing_configuration             | test-parsing-configuration             | false    | bool | 0      | Tests     | test which parser supports the configuration of the parsing                 "
     "test_positional_arguments              | test-positional-arguments              | false    | bool | 0      | Tests     | test which parser supports positional arguments                             "
     "test_positional_delimiter_hyphens      | test-positional-delimiter-hyphens      | false    | bool | 0      | Tests     | test which parser supports the positional arguments delimiter \"--\"        "
     "test_positional_delimiter_plus_signs   | test-positional-delimiter-plus-signs   | false    | bool | 0      | Tests     | test which parser supports the positional arguments delimiter \"++\"        "
@@ -165,7 +166,6 @@ args=(
     "test_shell_independence                | test-shell-independence                | false    | bool | 0      | Tests     | test which parser is shell-independent                                      "
     "test_short_options                     | test-short-options                     | false    | bool | 0      | Tests     | test which parser supports short options                                    "
     "test_single_hyphen_long_options        | test-single-hyphen-long-options        | false    | bool | 0      | Tests     | test which parser supports single-hyphen long options (\"-arg\")            "
-    "test_type_checking                     | test-type-checking                     | false    | bool | 0      | Tests     | test which parser supports data type checking                               "
     "test_usage_message                     | test-usage-message                     | false    | bool | 0      | Tests     | test which parser creates a usage message                                   "
     "test_variadic_arguments                | test-variadic-arguments                | false    | bool | 0      | Tests     | test which parser supports variadic (arbitrary-value) arguments             "
     "test_version_message                   | test-version-message                   | false    | bool | 0      | Tests     | test which parser creates a version message                                 "
@@ -191,18 +191,18 @@ tests=(
     "test_argument_intermixing              | Argument intermixing (positional between keyword) | 1 -b            | ✔         | ✔        | ✘       | ✔      | ✔       | ✔      "
     "test_auto_set_variables                | Auto-setting of arguments to variables            | -v 1            | ✔         | ✘        | ✘       | ✘      | ✔       | ✔      "
     "test_choice_values                     | Choice values                                     | -v A            | ✔         | ✔        | ✘       | ✘      | ✘       | ✘      "
-    "test_configurable_parsing              | Parsing configuration                             |                 | ✔         | ✔        | ✘       | ✱      | ✘       | ✱      "
+    "test_data_type_checking                | Data type checking                                | -v A            | ✔         | ✔        | ✘       | ✘      | ✔       | ✘      "
     "test_debug_mode                        | Debug mode                                        | -v 1            | ✔         | ✘        | ✘       | ✘      | ✘       | ✔      "
     "test_default_values                    | Default values                                    |                 | ✔         | ✔        | ✘       | ✘      | ✔       | ✔      "
     "test_deprecation_notes                 | Deprecation notes                                 | -v 1            | ✔         | ✔        | ✘       | ✘      | ✘       | ✘      "
     "test_error_warning_silencing           | Error/warning silencing                           | --var           | ✔         | ✘        | ✔       | ✔      | ✘       | ✘      "
-    "test_exit_codes_customization          | Exit code customization                           | -h              | ✔         | ✱        | ✘       | ✘      | ✘       | ✘      "
+    "test_exit_code_customization           | Exit code customization                           | -h              | ✔         | ✱        | ✘       | ✘      | ✘       | ✘      "
     "test_flag_counting                     | Flag counting (\"-a -a\")                         | -v -v           | ✔         | ✔        | ✘       | ✘      | ✘       | ✔      "
     "test_flag_inversion                    | Flag inversion (\"+a\"/\"++arg\")                 | +v              | ✔         | ✘        | ✘       | ✘      | ✘       | ✘      "
     "test_flag_negation                     | Flag negation (\"--no-arg\")                      | --no-var        | ✔         | ✔        | ✘       | ✘      | ✔       | ✘      "
     "test_flags                             | Flags (Boolean options)                           | -v              | ✔         | ✔        | ✔       | ✔      | ✔       | ✔      "
     "test_help_message                      | Help message                                      | -h              | ✔         | ✔        | ✘       | ✘      | ✔       | ✔      "
-    "test_help_options_customization        | Help option customization                         | -H              | ✔         | ✔        | ✱       | ✔      | ✱       | ✱      "
+    "test_help_option_customization         | Help option customization                         | -H              | ✔         | ✔        | ✱       | ✔      | ✱       | ✱      "
     "test_internationalization_localization | Internationalization / localization               | -h              | ✔         | ✔        | ✔       | ✔      | ✱       | ✱      "
     "test_long_options                      | Long options                                      | --var 1         | ✔         | ✔        | ✘       | ✔      | ✔       | ✔      "
     "test_mandatory_options                 | Mandatory options                                 |                 | ✔         | ✔        | ✘       | ✘      | ✘       | ✔      "
@@ -213,6 +213,7 @@ tests=(
     "test_option_abbreviation               | Option abbreviation (\"--ar\")                    | --va 1          | ✔         | ✔        | ✘       | ✔      | ✔       | ✔      "
     "test_option_aliases                    | Option aliases (\"-a\"/\"-A\"/\"--arg\")          | -v 1 -V 2       | ✔         | ✔        | ✱       | ✱      | ✘       | ✱      "
     "test_option_merging                    | Option merging (\"-ab\")                          | -ab1            | ✔         | ✔        | ✔       | ✔      | ✔       | ✔      "
+    "test_parsing_configuration             | Parsing configuration                             |                 | ✔         | ✔        | ✘       | ✱      | ✘       | ✱      "
     "test_positional_arguments              | Positional arguments                              | 1               | ✔         | ✔        | ✱       | ✱      | ✱       | ✔      "
     "test_positional_delimiter_hyphens      | Positional arguments delimiter \"--\"             | -b 2 -- -a 1    | ✔         | ✔        | ✔       | ✔      | ✔       | ✔      "
     "test_positional_delimiter_plus_signs   | Positional arguments delimiter \"++\"             | -- -a 1 ++ -b 2 | ✔         | ✘        | ✘       | ✘      | ✘       | ✘      "
@@ -220,7 +221,6 @@ tests=(
     "test_shell_independence                | Shell independence (Bash, Dash, ksh93...)         | -v 1            | ✔         | ✘        | ✱       | ✔      | ✔       | ✱      "
     "test_short_options                     | Short options                                     | -v 1            | ✔         | ✔        | ✔       | ✔      | ✔       | ✔      "
     "test_single_hyphen_long_options        | Single-hyphen long options (\"-arg\")             | -var 1          | ✘         | ✔        | ✘       | ✔      | ✘       | ✘      "
-    "test_type_checking                     | Data type checking                                | -v A            | ✔         | ✔        | ✘       | ✘      | ✔       | ✘      "
     "test_usage_message                     | Usage message                                     | -u              | ✔         | ✔        | ✘       | ✘      | ✘       | ✘      "
     "test_variadic_arguments                | Variadic (arbitrary-value) arguments              | -v 1 2 3        | ✔         | ✔        | ✘       | ✘      | ✘       | ✱      "
     "test_version_message                   | Version message                                   | -V              | ✔         | ✔        | ✘       | ✘      | ✘       | ✔      "
@@ -259,9 +259,9 @@ fi
 # the actual and expected results match, red those where the results
 # don't match.
 # Print the table's top rule, header, and mid rule.
-printf -v top_rule '\u250C %-44s ' ""
-printf -v header '\u2502 %-44s ' "Feature description"
-printf -v mid_rule '\u251C %-44s ' ""
+printf -v top_rule '\u250C %-49s ' ""
+printf -v header '\u2502 %-49s ' "Feature description"
+printf -v mid_rule '\u251C %-49s ' ""
 
 for parser in "${parsers[@]}"; do
     parser_test_name="test_${parser}"
@@ -300,7 +300,7 @@ for test in "${tests[@]:1}"; do
         feature_description="${feature_description##+( )}"
         feature_description="${feature_description%%+( )}"
 
-        printf -v row '\u2502 %-44s ' "${feature_description}"
+        printf -v row '\u2502 %-49s ' "${feature_description}"
 
         for i in "${!parsers[@]}"; do
             parser_test_name="test_${parsers[i]}"
@@ -345,7 +345,7 @@ for test in "${tests[@]:1}"; do
 done
 
 # Print the table's bottom rule.
-printf -v bottom_rule '\u2514 %-44s ' ""
+printf -v bottom_rule '\u2514 %-49s ' ""
 
 for parser in "${parsers[@]}"; do
     parser_test_name="test_${parser}"

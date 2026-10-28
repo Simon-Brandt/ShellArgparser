@@ -20,12 +20,12 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-26
+# Last Modification: 2026-10-28
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
 #     --test-getopt \
-#     --test-type-checking
+#     --test-data-type-checking
 
 # Purpose: Test whether getopt supports data type checking.
 

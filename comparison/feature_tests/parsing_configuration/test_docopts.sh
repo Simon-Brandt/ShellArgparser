@@ -25,7 +25,7 @@
 # Usage (from wrapper): Run this script from test_features.sh as
 # bash test_features.sh \
 #     --test-docopts \
-#     --test-configurable-parsing
+#     --test-parsing-configuration
 
 # Usage:
 #   test_docopts.sh [-b] <var_a>

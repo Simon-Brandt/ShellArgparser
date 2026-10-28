@@ -25,7 +25,7 @@
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
 #     --test-shflags \
-#     --test-configurable-parsing
+#     --test-parsing-configuration
 
 # Purpose: Test whether the Argparser supports the configuration of the
 # parsing.

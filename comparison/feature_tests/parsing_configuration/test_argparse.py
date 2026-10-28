@@ -20,12 +20,12 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-14
+# Last Modification: 2026-10-28
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
 #     --test-argparse \
-#     --test-configurable-parsing
+#     --test-parsing-configuration
 
 # Purpose: Test whether Python's argparse module supports the
 # configuration of the parsing (with a test that disallows option
