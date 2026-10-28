@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-27
+# Last Modification: 2026-10-28
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -41,6 +41,7 @@ alias exit=return
     source shflags
 
     source "$(dirname "$0")/arguments_shflags.sh"
+    DEFINE_boolean "b" "${FLAGS_FALSE}" "flag" "b"
 
     FLAGS "$@"
     eval set -- "${FLAGS_ARGV}"
@@ -48,7 +49,14 @@ alias exit=return
 
 unalias exit
 
-if [[ "${FLAGS_v}" == 1 ]]; then
+var_c=("$@")
+
+if [[ "${FLAGS_a}" == 1 \
+    && "${FLAGS_b}" == "${FLAGS_TRUE}" \
+    && "${#var_c[@]}" == 2 \
+    && "${var_c[0]}" == 2 \
+    && "${var_c[1]}" == 3 ]]
+then
     exit 2  # Indicate partial support for feature.
 fi
 exit 1

@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-09
+# Last Modification: 2026-10-28
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -45,7 +45,7 @@ group.add_argument(
 )
 group = parser.add_argument_group("Options")
 group.add_argument(
-    "-v",
+    "-b",
     dest="var_b",
     action="store_true",
     help="flag",

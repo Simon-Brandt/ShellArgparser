@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-22
+# Last Modification: 2026-10-28
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -31,7 +31,7 @@
 
 # Parse the arguments.  The final check for the variables sets the
 # test's result as exit code.
-if ! args="$(getopt --options="v" -- "$@" 2> /dev/null)"; then
+if ! args="$(getopt --options="b" -- "$@" 2> /dev/null)"; then
     exit 1
 fi
 eval set -- "${args}"
@@ -40,7 +40,7 @@ var_b=true
 
 while true; do
     case "$1" in
-        "-v")
+        "-b")
             var_b=true
             shift
             ;;

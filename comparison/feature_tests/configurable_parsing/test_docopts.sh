@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-15
+# Last Modification: 2026-10-28
 
 # Usage (from wrapper): Run this script from test_features.sh as
 # bash test_features.sh \
@@ -28,13 +28,13 @@
 #     --test-configurable-parsing
 
 # Usage:
-#   test_docopts.sh [-v] <var>
+#   test_docopts.sh [-b] <var_a>
 #
 # Positional arguments:
-#   <var>  positional argument
+#   <var_a>  positional argument
 #
 # Options:
-#   -v     flag
+#   -b       flag
 
 # Purpose: Test whether docopts supports the configuration of the
 # parsing (with a test that disallows argument intermixing).
@@ -45,7 +45,7 @@
 source docopts.sh
 help="$(docopt_get_help_string "$0")"
 
-set -- "1" "-v"
+set -- "1" "-b"
 error="$(eval \
     "$(docopts -A ARGS --options-first --help="${help}" : "$@")" \
     2>&1 > /dev/null

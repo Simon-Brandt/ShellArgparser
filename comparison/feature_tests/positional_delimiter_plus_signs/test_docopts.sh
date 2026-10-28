@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-15
+# Last Modification: 2026-10-28
 
 # Usage (from wrapper): Run this script from test_features.sh as
 # bash test_features.sh \
@@ -28,13 +28,13 @@
 #     --test-positional-delimiter-plus-signs
 
 # Usage:
-#   test_docopts.sh -b VAL [-- | ++] <var> <var>
+#   test_docopts.sh -b VAL [-- | ++] <var_a> <var_a>
 #
 # Positional arguments:
-#   <var>  positional argument
+#   <var_a>  positional argument
 #
 # Options:
-#   -b VAL  short option
+#   -b VAL   short option
 
 # Purpose: Test whether docopts supports the positional arguments
 # delimiter "++".
@@ -51,9 +51,9 @@ source docopts.sh --auto "$@" &> /dev/null || true
 
 unalias exit
 
-if [[ "${ARGS[<var>,#]}" == 2 \
-    && "${ARGS[<var>,0]}" == "-a" \
-    && "${ARGS[<var>,1]}" == 1 \
+if [[ "${ARGS[<var_a>,#]}" == 2 \
+    && "${ARGS[<var_a>,0]}" == "-a" \
+    && "${ARGS[<var_a>,1]}" == 1 \
     && "${ARGS[-b]}" == 2 ]]
 then
     exit 0

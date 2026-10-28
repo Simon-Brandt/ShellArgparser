@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-27
+# Last Modification: 2026-10-28
 
 # Usage: Run this script with
 # "bash test_features.sh [--test-<parser>...] [--test-<feature>...]" or
@@ -186,9 +186,9 @@ parsers=(
 tests=(
     "Test name                              | Feature description                          | Command line    | argparser | argparse | getopts | getopt | shflags | docopts"
     "test_alternative_option_prefixes       | Alternative option prefixes (\"+\" or \"/\") | /v 1            | ✘         | ✔        | ✘       | ✘      | ✘       | ✱      "
-    "test_argument_definition_files         | Argument definition files                    | -v 1            | ✔         | ✱        | ✱       | ✱      | ✱       | ✱      "
+    "test_argument_definition_files         | Argument definition files                    | -b -a 1 2 3     | ✔         | ✱        | ✱       | ✱      | ✱       | ✱      "
     "test_argument_groups                   | Argument groups                              | -h              | ✔         | ✔        | ✘       | ✘      | ✘       | ✱      "
-    "test_argument_intermixing              | Intermixed positional and keyword arguments  | -v 1            | ✔         | ✔        | ✘       | ✔      | ✔       | ✔      "
+    "test_argument_intermixing              | Intermixed positional and keyword arguments  | 1 -b            | ✔         | ✔        | ✘       | ✔      | ✔       | ✔      "
     "test_auto_set_variables                | Auto-setting of arguments to variables       | -v 1            | ✔         | ✘        | ✘       | ✘      | ✔       | ✔      "
     "test_choice_values                     | Choice values                                | -v A            | ✔         | ✔        | ✘       | ✘      | ✘       | ✘      "
     "test_configurable_parsing              | Configurable parsing                         |                 | ✔         | ✔        | ✘       | ✱      | ✘       | ✱      "

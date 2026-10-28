@@ -20,11 +20,11 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-26
+# Last Modification: 2026-10-28
 
 # Usage: Source this argument definition file from test_shflags.sh.
 
 # Purpose: Define the arguments for the argument definition file test.
 
 # shellcheck disable=SC2034  # Variable used in sourcing script.
-DEFINE_string "v" "" "short option" "v"
+DEFINE_string "a" "" "short option" "a"

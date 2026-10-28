@@ -1,4 +1,9 @@
 Usage:
-  test_docopts.sh -v VAL
+  test_docopts.sh -a VAL [-b] <var_c>...
+
+Positional arguments:
+  <var_c>  positional argument
+
 Options:
-  -v VAL  short option
+  -a VAL  short option
+  -b      flag

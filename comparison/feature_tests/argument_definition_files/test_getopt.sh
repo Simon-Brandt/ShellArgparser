@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-26
+# Last Modification: 2026-10-28
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -31,15 +31,21 @@
 
 # Parse the arguments.  The final check for the variables sets the
 # test's result as exit code.
-if ! args="$(getopt --options="v:" -- "$@" 2> /dev/null)"; then
+if ! args="$(getopt --options="a:b" -- "$@" 2> /dev/null)"; then
     exit 1
 fi
 eval set -- "${args}"
 
 source "$(dirname "$0")/arguments_getopt.sh"
 
+var_b=false
+
 while true; do
     case "$1" in
+        "-b")
+            var_b=true
+            shift
+            ;;
         "--")
             shift
             break
@@ -48,7 +54,14 @@ while true; do
     esac
 done
 
-if [[ "${var}" == 1 ]]; then
+var_c=("$@")
+
+if [[ "${var_a}" == 1 \
+    && "${var_b}" == true \
+    && "${#var_c[@]}" == 2 \
+    && "${var_c[0]}" == 2 \
+    && "${var_c[1]}" == 3 ]]
+then
     exit 2  # Indicate partial support for feature.
 fi
 exit 1

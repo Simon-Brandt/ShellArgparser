@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-14
+# Last Modification: 2026-10-28
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -40,16 +40,30 @@ alias exit=return
 
 ARGPARSER_ARG_DEF_FILE="$(dirname "$0")/arguments_argparser.csv"
 
+declare var_a
+declare var_b
+declare var_c
+
 # shellcheck disable=SC2190  # Indexed, not associative array.
 args=(
-    id
-    var
+    "id    | short_opts | long_opts | val_names | defaults | choices | type | arg_no | arg_group            | notes | help               "
+    "var_b | b          |           |           | false    |         | bool | 0      | Options              |       | flag               "
+    "var_c |            |           | VAL_A     |          |         | str  | +      | Positional arguments |       | positional argument"
 )
+
+# shellcheck disable=SC2190  # Indexed, not associative array.
+args+=(var_a)
+
 source argparser -- "$@" &> /dev/null
 
 unalias exit
 
-if [[ "${var}" == 1 ]]; then
+if [[ "${var_a}" == 1 \
+    && "${var_b}" == true \
+    && "${#var_c[@]}" == 2 \
+    && "${var_c[0]}" == 2 \
+    && "${var_c[1]}" == 3 ]]
+then
     exit 0
 fi
 exit 1

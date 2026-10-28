@@ -20,21 +20,28 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-26
+# Last Modification: 2026-10-28
 
 # Usage: Source this argument definition file from test_getopt.sh.
 
 # Purpose: Define the arguments for the argument definition file test.
 
-args=("$@")
-while (( "${#args[@]}" > 0 )); do
-    case "$1" in
-        "-v")
-            # shellcheck disable=SC2034  # Variable used in sourcing script.
-            var="$2"
-            shift 2
+args=( )
+i=1
+while (( i <= "$#" )); do
+    arg="${!i}"
+
+    # shellcheck disable=SC2034  # Variable used in sourcing script.
+    case "${arg}" in
+        "-a")
+            (( next_i = ++i ))  # Pre-increment to remove value from "i"s.
+            var_a="${!next_i}"
             ;;
         "--") break ;;
-        *) continue ;;
+        *) args+=("${arg}") ;;
     esac
+
+    (( i++ ))
 done
+
+set -- "${args[@]}" "${@:i}"

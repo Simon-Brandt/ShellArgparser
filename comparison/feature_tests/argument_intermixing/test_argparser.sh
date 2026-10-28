@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-08
+# Last Modification: 2026-10-28
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -44,7 +44,7 @@ declare var_b
 args=(
     "id    | short_opts | long_opts | val_names | defaults | choices | type | arg_no | arg_group            | notes | help               "
     "var_a |            |           | VAL_A     |          |         | str  | 1      | Positional arguments |       | positional argument"
-    "var_b | v          |           |           | false    |         | bool | 0      | Options              |       | flag               "
+    "var_b | b          |           |           | false    |         | bool | 0      | Options              |       | flag               "
 )
 source argparser -- "$@" &> /dev/null
 

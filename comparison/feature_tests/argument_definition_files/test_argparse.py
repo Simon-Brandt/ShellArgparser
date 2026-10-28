@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-14
+# Last Modification: 2026-10-28
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -33,17 +33,33 @@
 import argparse
 import sys
 
-from arguments_argparse import create_argparser
+from arguments_argparse import add_option
 
 # Parse the arguments.  The final check for the variables sets the
 # test's result as exit code.
-parser = create_argparser("var")
+parser = argparse.ArgumentParser(exit_on_error=False)
+group = parser.add_argument_group("Options")
+add_option(group)
+group.add_argument(
+    "-b",
+    dest="var_b",
+    action="store_true",
+    help="flag",
+)
+group = parser.add_argument_group("Positional arguments")
+group.add_argument(
+    "var_c",
+    metavar="VAL_C",
+    type=str,
+    nargs="+",
+    help="positional argument",
+)
 
 try:
     args = parser.parse_args()
 except argparse.ArgumentError:
     sys.exit(1)
 
-if args.var == "1":
+if args.var_a == "1" and args.var_b and args.var_c == ["2", "3"]:
     sys.exit(2)  # Indicate partial support for feature.
 sys.exit(1)

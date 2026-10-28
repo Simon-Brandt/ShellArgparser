@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-15
+# Last Modification: 2026-10-28
 
 # Usage (from wrapper): Run this script from test_features.sh as
 # bash test_features.sh \
@@ -28,13 +28,13 @@
 #     --test-argument-intermixing
 
 # Usage:
-#   test_docopts.sh [-v] <var>
+#   test_docopts.sh [-b] <var_a>
 #
 # Positional arguments:
-#   <var>  positional argument
+#   <var_a>  positional argument
 #
 # Options:
-#   -v     flag
+#   -b       flag
 
 # Purpose: Test whether docopts supports argument intermixing.
 
@@ -50,7 +50,7 @@ source docopts.sh --auto "$@" &> /dev/null || true
 
 unalias exit
 
-if [[ "${ARGS[<var>]}" == 1 && "${ARGS[-v]}" == true ]]; then
+if [[ "${ARGS[<var_a>]}" == 1 && "${ARGS[-b]}" == true ]]; then
     exit 0
 fi
 exit 1

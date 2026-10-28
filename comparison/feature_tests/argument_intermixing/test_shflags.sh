@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-27
+# Last Modification: 2026-10-28
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -40,7 +40,7 @@ alias exit=return
 {
     source shflags
 
-    DEFINE_boolean "v" "${FLAGS_FALSE}" "flag" "v"
+    DEFINE_boolean "b" "${FLAGS_FALSE}" "flag" "b"
 
     FLAGS "$@"
     eval set -- "${FLAGS_ARGV}"
@@ -50,7 +50,7 @@ unalias exit
 
 var_a="$1"
 
-if [[ "${var_a}" == 1 && "${FLAGS_v}" == "${FLAGS_TRUE}" ]]; then
+if [[ "${var_a}" == 1 && "${FLAGS_b}" == "${FLAGS_TRUE}" ]]; then
     exit 0
 fi
 exit 1

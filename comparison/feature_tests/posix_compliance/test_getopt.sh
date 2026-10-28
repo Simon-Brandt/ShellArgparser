@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-27
+# Last Modification: 2026-10-28
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -59,12 +59,14 @@ while true; do
     esac
 done
 
+var_c=("$@")
+
 if [[ "${var_a}" == true \
     && "${var_b}" == false \
-    && "$#" == 3 \
-    && "$1" == 1 \
-    && "$2" == "-b" \
-    && "$3" == 2 ]]
+    && "${#var_c[@]}" == 3 \
+    && "${var_c[0]}" == 1 \
+    && "${var_c[1]}" == "-b" \
+    && "${var_c[2]}" == 2 ]]
 then
     exit 2  # Indicate partial support for feature.
 fi

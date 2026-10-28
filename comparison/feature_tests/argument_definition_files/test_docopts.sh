@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-15
+# Last Modification: 2026-10-28
 
 # Usage (from wrapper): Run this script from test_features.sh as
 # bash test_features.sh \
@@ -35,7 +35,12 @@
 help="$(< "$(dirname "$0")/arguments_docopts.txt")"
 eval "$(docopts -A ARGS --help="${help}" : "$@" 2> /dev/null)"
 
-if [[ "${ARGS[-v]}" == 1 ]]; then
+if [[ "${ARGS[-a]}" == 1 \
+    && "${ARGS[-b]}" == true \
+    && "${ARGS[<var_c>,#]}" == 2 \
+    && "${ARGS[<var_c>,0]}" == 2 \
+    && "${ARGS[<var_c>,1]}" == 3 ]]
+then
     exit 2  # Indicate partial support for feature.
 fi
 exit 1

@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-09
+# Last Modification: 2026-10-28
 
 # Usage: Import this module from test_argparse.py.
 
@@ -28,18 +28,14 @@
 
 import argparse
 
-def create_argparser(*args: str):
-    parser = argparse.ArgumentParser(exit_on_error=False)
-    group = parser.add_argument_group("Options")
+def add_option(group: argparse._ArgumentGroup) -> None:  # type: ignore
+    group.add_argument(
+        "-a",
+        dest="var_a",
+        metavar="VAL",
+        required=True,
+        type=str,
+        help="short option",
+    )
 
-    if "var" in args:
-        group.add_argument(
-            "-v",
-            dest="var",
-            metavar="VAL",
-            required=True,
-            type=str,
-            help="short option",
-        )
-
-    return parser
+    return
