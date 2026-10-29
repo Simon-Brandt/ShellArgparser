@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-07
+# Last Modification: 2026-10-29
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -2416,7 +2416,14 @@ function argparser_check_env_vars() {
         ARGPARSER_WRITE_ARGS
     )
     for var in "${vars[@]}"; do
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values <<< "${!var}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -d "" -r -a values \
+            <<< "${!var}"
+        values[-1]="${values[-1]%$'\n'}"  # '\n' from herestring.
+
+        if [[ -z "${values[-1]}" ]]; then
+            unset 'values[-1]'
+        fi
+
         for value in "${values[@]}"; do
             if ! argparser_is_bool "${value}"; then
                 error_message="Error: The environment variable \"\$1\" is set "
@@ -2446,7 +2453,13 @@ function argparser_check_env_vars() {
         if [[ "${var}" == "ARGPARSER_ARG_DELIMITER_2" ]]; then
             values=("${!var}")
         else
-            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values <<< "${!var}"
+            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -d "" -r -a values \
+                <<< "${!var}"
+            values[-1]="${values[-1]%$'\n'}"  # '\n' from herestring.
+
+            if [[ -z "${values[-1]}" ]]; then
+                unset 'values[-1]'
+            fi
         fi
 
         for value in "${values[@]}"; do
@@ -2471,7 +2484,14 @@ function argparser_check_env_vars() {
         ARGPARSER_ARG_ARRAY_NAME
     )
     for var in "${vars[@]}"; do
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values <<< "${!var}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -d "" -r -a values \
+            <<< "${!var}"
+        values[-1]="${values[-1]%$'\n'}"  # '\n' from herestring.
+
+        if [[ -z "${values[-1]}" ]]; then
+            unset 'values[-1]'
+        fi
+
         for value in "${values[@]}"; do
             if ! argparser_is_identifier "${value}"; then
                 error_message="Error: The environment variable \"\$1\" is set "
@@ -2498,7 +2518,14 @@ function argparser_check_env_vars() {
         ARGPARSER_VERSION_EXIT_CODE
     )
     for var in "${vars[@]}"; do
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values <<< "${!var}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -d "" -r -a values \
+            <<< "${!var}"
+        values[-1]="${values[-1]%$'\n'}"  # '\n' from herestring.
+
+        if [[ -z "${values[-1]}" ]]; then
+            unset 'values[-1]'
+        fi
+
         for value in "${values[@]}"; do
             if ! argparser_is_int "${value}"; then
                 error_message="Error: The environment variable \"\$1\" is set "
@@ -2523,7 +2550,14 @@ function argparser_check_env_vars() {
         ARGPARSER_MAX_WIDTH
     )
     for var in "${vars[@]}"; do
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values <<< "${!var}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -d "" -r -a values \
+            <<< "${!var}"
+        values[-1]="${values[-1]%$'\n'}"  # '\n' from herestring.
+
+        if [[ -z "${values[-1]}" ]]; then
+            unset 'values[-1]'
+        fi
+
         for value in "${values[@]}"; do
             if ! argparser_is_uint "${value}"; then
                 error_message="Error: The environment variable \"\$1\" is set "
@@ -2730,8 +2764,13 @@ function argparser_check_env_vars() {
         ARGPARSER_VERSION_OPTIONS
     )
     for var in "${vars[@]}"; do
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a short_options \
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -d "" -r -a short_options \
             <<< "${!var}"
+        short_options[-1]="${short_options[-1]%$'\n'}"  # '\n' from herestring.
+
+        if [[ -z "${short_options[-1]}" ]]; then
+            unset 'short_options[-1]'
+        fi
 
         # If more than one short option name is given, check if any is
         # the empty string, which must only once be used as placeholder
@@ -5619,8 +5658,14 @@ function argparser_parse_long_option() {
     option_name="${given_arg:2}"
     if [[ "${given_arg}" == *=* ]]; then
         option_name="${option_name%%=*}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values \
+
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -d "" -r -a values \
             <<< "${given_arg#*=}"
+        values[-1]="${values[-1]%$'\n'}"  # '\n' from herestring.
+
+        if [[ -z "${values[-1]}" ]]; then
+            unset 'values[-1]'
+        fi
     else
         values=("")
     fi
@@ -5826,8 +5871,14 @@ function argparser_parse_short_option() {
     option_name="${given_arg:1}"
     if [[ "${given_arg}" == *=* ]]; then
         option_name="${option_name%%=*}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values \
+
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -d "" -r -a values \
             <<< "${given_arg#*=}"
+        values[-1]="${values[-1]%$'\n'}"  # '\n' from herestring.
+
+        if [[ -z "${values[-1]}" ]]; then
+            unset 'values[-1]'
+        fi
     else
         values=("")
     fi
@@ -5949,8 +6000,14 @@ function argparser_parse_positional_args() {
     # ${ARGPARSER_ARG_DELIMITER_2} characters.
     values=( )
     for given_arg in "$@"; do
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a given_args \
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -d "" -r -a given_args \
             <<< "${given_arg}"
+        given_args[-1]="${given_args[-1]%$'\n'}"  # '\n' from herestring.
+
+        if [[ -z "${given_args[-1]}" ]]; then
+            unset 'given_args[-1]'
+        fi
+
         values+=("${given_args[@]}")
     done
 
@@ -6167,8 +6224,14 @@ function argparser_check_arg_values() {
             # of being used as flag, but as missing a value, below.
             values_str=""
         fi
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a values_arr \
+
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -d "" -r -a values_arr \
             <<< "${values_str}"
+        values_arr[-1]="${values_arr[-1]%$'\n'}"  # '\n' from herestring.
+
+        if [[ -z "${values_arr[-1]}" ]]; then
+            unset 'values_arr[-1]'
+        fi
 
         # Read the argument's definition.
         default_values_str="${all_default_values[${arg_key}]}"
@@ -7083,6 +7146,8 @@ function argparser_set_args() {
 
     # Define the local variable.
     local arg_key
+    local declaration
+    local -a values_arr
 
     # Get the associative array ${ARGPARSER_ARG_ARRAY_NAME} refers to.
     # If it is already "args" (the default name), nothing needs to be
@@ -7107,11 +7172,24 @@ function argparser_set_args() {
             # ${ARGPARSER_ARG_DELIMITER_2} and hence is a sequence of
             # elements, as indexed array variable, while keeping it in
             # ${args} for usage by the calling script.
-            declare -g -a "${arg_key}"
 
             # shellcheck disable=SC2229  # Indirect variable reference.
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a "${arg_key}" \
                 <<< "${args[${arg_key}]}"
+
+            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -d "" -r -a values_arr \
+                <<< "${args[${arg_key}]}"
+            values_arr[-1]="${values_arr[-1]%$'\n'}"  # '\n' from herestring.
+
+            if [[ -z "${values_arr[-1]}" ]]; then
+                unset 'values_arr[-1]'
+            fi
+
+            # shellcheck disable=SC2124  # False positive, output is string.
+            declaration="${values_arr[@]@A}"
+            declaration="${declaration#declare -a }"
+            declaration="${declaration/#"values_arr"/"${arg_key}"}"
+            declare -g -a "${declaration}"
         else
             # Set the argument as variable, while keeping it in ${args}
             # for potential usage by the calling script.
