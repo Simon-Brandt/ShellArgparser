@@ -59,36 +59,40 @@ Usage: try_argparser.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
-Positional arguments:
-[pos_1=                                     one positional argument with
-    {1,2}]                                  default and choice (default: 2)
-pos_2                                       two positional arguments without
-                                            default or choice
++- Positional arguments ----------------------------------------------------------+
+| [pos_1=                                     one positional argument with        |
+|     {1,2}]                                  default and choice (default: 2)     |
+| pos_2                                       two positional arguments without    |
+|                                             default or choice                   |
++---------------------------------------------------------------------------------+
 
-Mandatory options:
--a, -A,    --var-1=VAL_1, --var-a=VAR_A     one value without default or choice
--b, -B,    --var-2=VAL_2...,                at least one value without default
-           --var-b=VAR_B...                 or choice
--c, -C,    --var-3={A,B}...,                at least one value with choice
-           --var-c={A,B}...
++- Mandatory options -------------------------------------------------------------+
+| -a, -A,    --var-1=VAL_1, --var-a=VAR_A     one value without default or choice |
+| -b, -B,    --var-2=VAL_2...,                at least one value without default  |
+|            --var-b=VAR_B...                 or choice                           |
+| -c, -C,    --var-3={A,B}...,                at least one value with choice      |
+|            --var-c={A,B}...                                                     |
++---------------------------------------------------------------------------------+
 
-Optional options:
-[-d, -D],  [--var-4={A-C}], [--var-d={A-C}] one value with default and choice
-                                            (default: "A")
-[-e, -E],  [--var-5=VAL_5], [--var-e=VAR_E] one value with default (default:
-                                            "E")
-[-f, -F],  [--var-6, --var-f]               no value (flag) with default
-                                            (default: false)
-[-g, -G],  [--var-7, --var-g]               (DEPRECATED) no value (flag) with
-                                            default (default: true)
++- Optional options --------------------------------------------------------------+
+| [-d, -D],  [--var-4={A-C}], [--var-d={A-C}] one value with default and choice   |
+|                                             (default: "A")                      |
+| [-e, -E],  [--var-5=VAL_5], [--var-e=VAR_E] one value with default (default:    |
+|                                             "E")                                |
+| [-f, -F],  [--var-6, --var-f]               no value (flag) with default        |
+|                                             (default: false)                    |
+| [-g, -G],  [--var-7, --var-g]               (DEPRECATED) no value (flag) with   |
+|                                             default (default: true)             |
++---------------------------------------------------------------------------------+
 
-Help options:
-[-h, -?],  [--help]                         display this help and exit
-                                            (default: false)
-[-u],      [--usage]                        display the usage and exit
-                                            (default: false)
-[-V],      [--version]                      display the version and exit
-                                            (default: false)
++- Help options ------------------------------------------------------------------+
+| [-h, -?],  [--help]                         display this help and exit          |
+|                                             (default: false)                    |
+| [-u],      [--usage]                        display the usage and exit          |
+|                                             (default: false)                    |
+| [-V],      [--version]                      display the version and exit        |
+|                                             (default: false)                    |
++---------------------------------------------------------------------------------+
 ```
 <!-- </include> -->
 
@@ -107,16 +111,18 @@ As we already saw upon the occasion of an error, our [`try_argparser.sh`](../../
 <!-- <include command="bash ../tutorial/try_argparser.sh --usage" lang="console"> -->
 ```console
 $ bash ../tutorial/try_argparser.sh --usage
-Usage: try_argparser.sh [-h,-? | -u | -V]
-                        [-d,-D={A-C}]
-                        [-e,-E=VAL_5,E]
-                        [-f,-F]
-                        [-g,-G]
-                        -a,-A=VAL_1,A
-                        -b,-B=VAL_2,B...
-                        -c,-C={A,B}...
-                        [{1,2}]
-                        pos_2
++- Usage ----------------------------+
+| try_argparser.sh [-h,-? | -u | -V] |
+|                  [-d,-D={A-C}]     |
+|                  [-e,-E=VAL_5,E]   |
+|                  [-f,-F]           |
+|                  [-g,-G]           |
+|                  -a,-A=VAL_1,A     |
+|                  -b,-B=VAL_2,B...  |
+|                  -c,-C={A,B}...    |
+|                  [{1,2}]           |
+|                  pos_2             |
++------------------------------------+
 ```
 <!-- </include> -->
 
@@ -127,16 +133,18 @@ For a better overview when having lots of arguments, we can choose a columnar la
 <!-- <include command="ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash ../tutorial/try_argparser.sh --usage" lang="console"> -->
 ```console
 $ ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash ../tutorial/try_argparser.sh --usage
-Usage: try_argparser.sh [-h,-? | -u | -V]
-                        [-d,-D={A-C}]
-                        [-e,-E=VAL_5,E]
-                        [-f,-F]
-                        [-g,-G]
-                        -a,-A=VAL_1,A
-                        -b,-B=VAL_2,B...
-                        -c,-C={A,B}...
-                        [{1,2}]
-                        pos_2
++- Usage ----------------------------+
+| try_argparser.sh [-h,-? | -u | -V] |
+|                  [-d,-D={A-C}]     |
+|                  [-e,-E=VAL_5,E]   |
+|                  [-f,-F]           |
+|                  [-g,-G]           |
+|                  -a,-A=VAL_1,A     |
+|                  -b,-B=VAL_2,B...  |
+|                  -c,-C={A,B}...    |
+|                  [{1,2}]           |
+|                  pos_2             |
++------------------------------------+
 ```
 <!-- </include> -->
 
@@ -145,16 +153,18 @@ Additionally, we may choose to show the long options by [`ARGPARSER_USAGE_MESSAG
 <!-- <include command="ARGPARSER_USAGE_MESSAGE_OPTION_TYPE=long ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash ../tutorial/try_argparser.sh --usage" lang="console"> -->
 ```console
 $ ARGPARSER_USAGE_MESSAGE_OPTION_TYPE=long ARGPARSER_USAGE_MESSAGE_ORIENTATION=column bash ../tutorial/try_argparser.sh --usage
-Usage: try_argparser.sh [--help | --usage | --version]
-                        [--var-4,--var-d={A-C}]
-                        [--var-5,--var-e=VAL_5,VAR_E]
-                        [--var-6,--var-f]
-                        [--var-7,--var-g]
-                        --var-1,--var-a=VAL_1,VAR_A
-                        --var-2,--var-b=VAL_2,VAR_B...
-                        --var-3,--var-c={A,B}...
-                        [{1,2}]
-                        pos_2
++- Usage -----------------------------------------+
+| try_argparser.sh [--help | --usage | --version] |
+|                  [--var-4,--var-d={A-C}]        |
+|                  [--var-5,--var-e=VAL_5,VAR_E]  |
+|                  [--var-6,--var-f]              |
+|                  [--var-7,--var-g]              |
+|                  --var-1,--var-a=VAL_1,VAR_A    |
+|                  --var-2,--var-b=VAL_2,VAR_B... |
+|                  --var-3,--var-c={A,B}...       |
+|                  [{1,2}]                        |
+|                  pos_2                          |
++-------------------------------------------------+
 ```
 <!-- </include> -->
 

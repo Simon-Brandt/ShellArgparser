@@ -194,28 +194,36 @@ Kommandozeilenprogramm.
 Erforderliche Argumente für lange Optionen sind auch für kurze erforderlich.
 
 Die folgenden Argumente sind positional:
-[pos_1=                     ein positionales Argument mit Vorgabe und Auswahl
-    {1,2}]                  (Vorgabe: 2)
-pos_2                       zwei positionale Argumente ohne Vorgabe oder
-                            Auswahl
++--------------------------------------------------------------------------------+
+| [pos_1=                     ein positionales Argument mit Vorgabe und Auswahl  |
+|     {1,2}]                  (Vorgabe: 2)                                       |
+| pos_2                       zwei positionale Argumente ohne Vorgabe oder       |
+|                             Auswahl                                            |
++--------------------------------------------------------------------------------+
 
 Die folgenden Optionen haben keinen Vorgabewert:
--a,        --var-1=VAL_1    ein Wert ohne Vorgabe oder Auswahl
--b,        --var-2=VAL_2... mindestens ein Wert ohne Vorgabe oder Auswahl
--c,        --var-3={A,B}... mindestens ein Wert mit Auswahl
++--------------------------------------------------------------------------------+
+| -a,        --var-1=VAL_1    ein Wert ohne Vorgabe oder Auswahl                 |
+| -b,        --var-2=VAL_2... mindestens ein Wert ohne Vorgabe oder Auswahl      |
+| -c,        --var-3={A,B}... mindestens ein Wert mit Auswahl                    |
++--------------------------------------------------------------------------------+
 
 Die folgenden Optionen haben einen Vorgabewert:
-[-d=                        ein Wert mit Vorgabe und Auswahl (Vorgabe: "A")
-    {A-C}]
-           [--var-5=VAL_5]  ein Wert mit Vorgabe (Vorgabe: "E")
-[-f],      [--var-6]        kein Wert (Flag) mit Vorgabe (Vorgabe: falsch)
-[-g],      [--var-7]        (VERALTET) kein Wert (Flag) mit Vorgabe (Vorgabe:
-                            wahr)
++--------------------------------------------------------------------------------+
+| [-d=                        ein Wert mit Vorgabe und Auswahl (Vorgabe: "A")    |
+|     {A-C}]                                                                     |
+|            [--var-5=VAL_5]  ein Wert mit Vorgabe (Vorgabe: "E")                |
+| [-f],      [--var-6]        kein Wert (Flag) mit Vorgabe (Vorgabe: falsch)     |
+| [-g],      [--var-7]        (VERALTET) kein Wert (Flag) mit Vorgabe (Vorgabe:  |
+|                             wahr)                                              |
++--------------------------------------------------------------------------------+
 
 Es gibt grundsätzlich drei Optionen für die Hilfe-Meldungen:
-[-h, -?],  [--help]         diese Hilfe anzeigen und beenden (Vorgabe: falsch)
-[-u],      [--usage]        den Aufruf anzeigen und beenden (Vorgabe: falsch)
-[-V],      [--version]      die Version anzeigen und beenden (Vorgabe: falsch)
++--------------------------------------------------------------------------------+
+| [-h, -?],  [--help]         diese Hilfe anzeigen und beenden (Vorgabe: falsch) |
+| [-u],      [--usage]        den Aufruf anzeigen und beenden (Vorgabe: falsch)  |
+| [-V],      [--version]      die Version anzeigen und beenden (Vorgabe: falsch) |
++--------------------------------------------------------------------------------+
 ```
 <!-- </include> -->
 
@@ -224,16 +232,18 @@ Likewise, the usage message is localized:
 <!-- <include command="LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -u" lang="console"> -->
 ```console
 $ LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -u
-Aufruf: try_localization.sh [-h,-? | -u | -V]
-                            [-d={A-C}]
-                            [-f]
-                            [-g]
-                            [--var-5=VAL_5]
-                            -a=VAL_1
-                            -b=VAL_2...
-                            -c={A,B}...
-                            [{1,2}]
-                            pos_2
++- Aufruf ------------------------------+
+| try_localization.sh [-h,-? | -u | -V] |
+|                     [-d={A-C}]        |
+|                     [-f]              |
+|                     [-g]              |
+|                     [--var-5=VAL_5]   |
+|                     -a=VAL_1          |
+|                     -b=VAL_2...       |
+|                     -c={A,B}...       |
+|                     [{1,2}]           |
+|                     pos_2             |
++---------------------------------------+
 ```
 <!-- </include> -->
 
