@@ -1,6 +1,7 @@
 __pycache__
 !.github
 *.code-workspace
+parser_comparison/Manifest.toml
 parser_comparison/**/*.aux
 parser_comparison/**/*.fdb_latexmk
 parser_comparison/**/*.fls
