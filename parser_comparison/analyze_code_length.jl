@@ -2,7 +2,7 @@
 
 ###############################################################################
 #                                                                             #
-# Copyright 2025 Simon Brandt                                                 #
+# Copyright 2025-2026 Simon Brandt                                            #
 #                                                                             #
 # Licensed under the Apache License, Version 2.0 (the "License");             #
 # you may not use this file except in compliance with the License.            #
@@ -20,45 +20,24 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-08-14
+# Last Modification: 2026-10-30
 
 using CSV: CSV
 using DataStructures: OrderedDict
 using StatsPlots: StatsPlots
 using Tables: Tables
 
-function get_scripts()::OrderedDict{String, String}
-    # Get the script names.
-    scripts = OrderedDict{String, String}(
-        "getopts" => "getopts_wrapper.sh",
-        "getopt" => "getopt_wrapper.sh",
-        "shFlags" => "shflags_wrapper.sh",
-        "docopts" => "docopts_wrapper.sh",
-        "Shell Argparser" => "argparser_wrapper.sh",
-    )
-
-    # If not called from the "comparison" directory, but the base
-    # directory, prepend the "comparison" directory to the script name.
-    for (script_name, script) in scripts
-        if basename(pwd()) != "comparison"
-            scripts[script_name] = "comparison/$script"
-        end
-    end
-
-    return scripts
-end
-
-function get_code_length(script::String, script_name::String)::Integer
+function get_code_length(file::String, parser::String)::Integer
     # Count the script's non-commented and non-blank lines.
-    lines = readlines(script)
+    lines = readlines(file)
     code_length = 0
     count_commented_lines = false
     count_empty_lines = false
     for line in lines
-        if script_name == "docopts"
+        if parser == "docopts"
             # Set commented lines for counting within the help block,
-            # which is necessary syntax for docopts.  The help block
-            # starts with "# Usage:" and ends at the first uncommented
+            # which is necessary syntax for `docopts`.  The help block
+            # starts with `"# Usage:"` and ends at the first uncommented
             # line.
             if line == "# Usage:"
                 count_commented_lines = true
@@ -67,10 +46,10 @@ function get_code_length(script::String, script_name::String)::Integer
             end
         else
             # Set empty lines for counting within the help block, which
-            # is necessary syntax for getopt, getopts, and shFlags.  The
-            # help block starts with "Usage:" (possibly with leading
-            # whitespace) and ends at the line ending the heredoc, a
-            # literal "EOF"
+            # is necessary syntax for `getopt`, `getopts`, and shFlags.
+            # The help block starts with `"Usage:"` (possibly with
+            # leading whitespace) and ends at the line ending the
+            # heredoc, a literal "EOF"
             if occursin(r"^\s*Usage:", line)
                 count_empty_lines = true
             elseif line == "EOF"
@@ -133,13 +112,13 @@ function plot_code_lengths(
     # For each script, plot the absolute code length in the bar plot.
     # Use an equally distributed set of colors from the `:viridis`
     # palette.
-    script_names = keys(code_lengths)
-    palette = StatsPlots.palette(:viridis, length(script_names))
-    for (i, script_name) in enumerate(script_names)
+    parsers = keys(code_lengths)
+    palette = StatsPlots.palette(:viridis, length(parsers))
+    for (i, parser) in enumerate(parsers)
         StatsPlots.bar!(
             plot,
-            [script_name],
-            [code_lengths[script_name]],
+            [parser],
+            [code_lengths[parser]],
             color=palette[i],
         )
     end
@@ -165,11 +144,11 @@ function plot_code_lengths(
     StatsPlots.savefig(plot, plot_file)
 
     if backend == StatsPlots.pgfplotsx
-        # Replace "axis y line" by its starred version and add the
-        # "-stealth" option to "y axis line style" to fix the Plots.jl
+        # Replace `axis y line` by its starred version and add the
+        # `-stealth` option to `y axis line style` to fix the Plots.jl
         # bug #5166, https://github.com/JuliaPlots/Plots.jl/issues/5166.
-        # Further, add borders (margins) to the "\documentclass" and add
-        # the "times" package for the Times Roman font.
+        # Further, add borders (margins) to the `\documentclass` and add
+        # the `times` package for the Times Roman font.
         lines = readlines(plot_file, keep=true)
         for i in eachindex(lines)
             lines[i] = replace(
@@ -194,18 +173,13 @@ function write_code_lengths(
     # Save the absolute and relative code lengths as CSV file.
     header = ("Parser", "Code length (absolute)", "Code length (relative)")
     lines = []
-    for (script_name, code_length) in code_lengths
+    for (parser, code_length) in code_lengths
         line = hcat(
-            script_name,
+            parser,
             code_length,
             round(code_length / code_lengths["Shell Argparser"], digits=1),
         )
-
-        if isempty(lines)
-            lines = line
-        else
-            lines = vcat(lines, line)
-        end
+        lines = isempty(lines) ? line : vcat(lines, line)
     end
 
     CSV.write(csv_file, Tables.table(lines; header))
@@ -214,31 +188,31 @@ function write_code_lengths(
 end
 
 function main()::Nothing
-    # Compute the code lengths for the scripts for comparison.
-    code_lengths = OrderedDict{String, Integer}()
+    # Set the script names.
+    directory = joinpath(@__DIR__, "cli_example_medium")
+    parsers = OrderedDict{String, String}(
+        "getopts"         => joinpath(directory, "test_getopts.sh"  ),
+        "getopt"          => joinpath(directory, "test_getopt.sh"   ),
+        "shFlags"         => joinpath(directory, "test_shflags.sh"  ),
+        "docopts"         => joinpath(directory, "test_docopts.sh"  ),
+        "Shell Argparser" => joinpath(directory, "test_argparser.sh"),
+    )
 
-    scripts = get_scripts()
-    for script_name in keys(scripts)
-        code_lengths[script_name] = get_code_length(
-            scripts[script_name],
-            script_name,
-        )
-    end
+    # Compute the code lengths for the parser scripts for comparison.
+    code_lengths = OrderedDict{String, Integer}(
+        parser => get_code_length(file, parser) for (parser, file) in parsers
+    )
 
     # Plot the code lengths and save the plot as SVG and LaTeX file.
     # Additionally, create a CSV file with the data.
-    csv_file = "code_lengths.csv"
-    plot_file = "code_lengths.svg"
-    if basename(pwd()) != "comparison"
-        csv_file = "comparison/$csv_file"
-        plot_file = "comparison/$plot_file"
-    end
+    directory = joinpath(@__DIR__, "code_length_comparison")
+    plot_file_svg = joinpath(directory, "code_lengths.svg")
+    plot_file_tex = joinpath(directory, "code_lengths.tex")
 
-    plot_code_lengths(plot_file, code_lengths, StatsPlots.gr)
+    plot_code_lengths(plot_file_svg, code_lengths, StatsPlots.gr)
+    plot_code_lengths(plot_file_tex, code_lengths, StatsPlots.pgfplotsx)
 
-    plot_file = replace(plot_file, ".svg" => ".tex")
-    plot_code_lengths(plot_file, code_lengths, StatsPlots.pgfplotsx)
-
+    csv_file = joinpath(directory, "code_lengths.csv")
     write_code_lengths(csv_file, code_lengths)
 
     return nothing

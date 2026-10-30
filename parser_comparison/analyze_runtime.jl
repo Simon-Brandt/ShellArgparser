@@ -2,7 +2,7 @@
 
 ###############################################################################
 #                                                                             #
-# Copyright 2025 Simon Brandt                                                 #
+# Copyright 2025-2026 Simon Brandt                                            #
 #                                                                             #
 # Licensed under the Apache License, Version 2.0 (the "License");             #
 # you may not use this file except in compliance with the License.            #
@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-12-18
+# Last Modification: 2026-10-30
 
 using CSV: CSV
 using DataStructures: OrderedDict
@@ -29,15 +29,17 @@ using Statistics: Statistics
 using StatsPlots: StatsPlots
 using Tables: Tables
 
-function get_commands()::OrderedDict{String, Cmd}
-    # Set the scripts and their common command-line arguments.
-    scripts = OrderedDict{String, String}(
-        "getopts" => "getopts_wrapper.sh",
-        "getopt" => "getopt_wrapper.sh",
-        "shFlags" => "shflags_wrapper.sh",
-        "docopts" => "docopts_wrapper.sh",
-        "Shell Argparser" => "argparser_wrapper.sh",
+function set_commands()::OrderedDict{String, Cmd}
+    # Set the scripts and their shared command-line arguments.
+    directory = joinpath(@__DIR__, "cli_example_medium")
+    parsers = OrderedDict{String, String}(
+        "getopts"         => joinpath(directory, "test_getopts.sh"  ),
+        "getopt"          => joinpath(directory, "test_getopt.sh"   ),
+        "shFlags"         => joinpath(directory, "test_shflags.sh"  ),
+        "docopts"         => joinpath(directory, "test_docopts.sh"  ),
+        "Shell Argparser" => joinpath(directory, "test_argparser.sh"),
     )
+
     args=(
         "-v",
         "-e",
@@ -52,25 +54,20 @@ function get_commands()::OrderedDict{String, Cmd}
         "argparser.html",
     )
 
-    # If not called from the "comparison" directory, but the base
-    # directory, prepend the "comparison" directory to the script name.
     # Set the command as `Cmd` object.
-    commands = OrderedDict{String, Cmd}()
-    for (script_name, script) in scripts
-        if basename(pwd()) != "comparison"
-            scripts[script_name] = "comparison/$script"
-        end
-
-        commands[script_name] = `bash $(scripts[script_name]) $args`
-    end
+    commands = OrderedDict{String, Cmd}(
+        parser => `bash $file $args` for (parser, file) in parsers
+    )
 
     return commands
 end
 
 function get_runtimes(command::Cmd)::Vector{Integer}
-    # Run the command 10000 times and return the runtimes.
+    # Run the command 5000 times and return the runtimes.
     runtimes = Vector{Integer}()
-    for _ in 1:10000
+    sizehint!(runtimes, 5000)
+
+    for _ in 1:5000
         start_time = Dates.datetime2epochms(Dates.now())
         run(pipeline(command, stdout=devnull))
         end_time = Dates.datetime2epochms(Dates.now())
@@ -85,9 +82,9 @@ function compute_runtime_stats(
 )::OrderedDict{String, Number}
     # Compute the mean, standard deviation, and median for the runtimes.
     stats = OrderedDict(
-        "Mean" => Statistics.mean(runtimes),
+        "Mean"    => Statistics.mean(runtimes),
         "Std dev" => Statistics.std(runtimes),
-        "Median" => Statistics.median(runtimes),
+        "Median"  => Statistics.median(runtimes),
     )
 
     return stats
@@ -131,13 +128,13 @@ function plot_runtime_stats(
     # For each script, extract the runtimes from the dictionary and plot
     # them together as violin plot.  Use an equally distributed set of
     # colors from the `:viridis` palette.
-    script_names = keys(runtimes)
-    palette = StatsPlots.palette(:viridis, length(script_names))
-    for (i, script_name) in enumerate(script_names)
+    parsers = keys(runtimes)
+    palette = StatsPlots.palette(:viridis, length(parsers))
+    for (i, parser) in enumerate(parsers)
         StatsPlots.violin!(
             plot,
-            repeat([script_name], length(runtimes[script_name])),
-            runtimes[script_name],
+            repeat([parser], length(runtimes[parser])),
+            runtimes[parser],
             color=palette[i],
         )
     end
@@ -145,8 +142,8 @@ function plot_runtime_stats(
     StatsPlots.savefig(plot, plot_file)
 
     if backend == StatsPlots.pgfplotsx
-        # Add borders (margins) to the "\documentclass" and add the
-        # "times" package for the Times Roman font.
+        # Add borders (margins) to the `\documentclass` and add the
+        # `times` package for the Times Roman font.
         lines = readlines(plot_file, keep=true)
         for i in eachindex(lines)
             lines[i] = replace(
@@ -170,19 +167,14 @@ function write_runtime_stats(
     # CSV file.
     header = ("Parser", "Mean", "Std dev", "Median")
     lines = []
-    for script_name in keys(stats)
+    for (parser, parser_stats) in stats
         line = hcat(
-            script_name,
-            round(stats[script_name]["Mean"], digits=1),
-            round(stats[script_name]["Std dev"], digits=1),
-            round(stats[script_name]["Median"], digits=1),
+            parser,
+            round(parser_stats["Mean"], digits=1),
+            round(parser_stats["Std dev"], digits=1),
+            round(parser_stats["Median"], digits=1),
         )
-
-        if isempty(lines)
-            lines = line
-        else
-            lines = vcat(lines, line)
-        end
+        lines = isempty(lines) ? line : vcat(lines, line)
     end
 
     CSV.write(csv_file, Tables.table(lines; header))
@@ -195,9 +187,9 @@ function write_runtimes(
     runtimes::OrderedDict{String, Vector{Integer}},
 )::Nothing
     # Save the actual runtimes as CSV file.
-    script_names = keys(runtimes)
-    cols = hcat([runtimes[script_name] for script_name in script_names]...)
-    CSV.write(csv_file, Tables.table(cols; header=Tuple(script_names)))
+    parsers = keys(runtimes)
+    cols = hcat((runtimes[parser] for parser in parsers)...)
+    CSV.write(csv_file, Tables.table(cols; header=Tuple(parsers)))
 
     return nothing
 end
@@ -207,28 +199,24 @@ function main()::Nothing
     runtimes = OrderedDict{String, Vector{Integer}}()
     stats = OrderedDict{String, OrderedDict{String, Number}}()
 
-    commands = get_commands()
-    for (script_name, command) in pairs(commands)
-        runtimes[script_name] = get_runtimes(command)
-        stats[script_name] = compute_runtime_stats(runtimes[script_name])
+    commands = set_commands()
+    for (parser, command) in pairs(commands)
+        runtimes[parser] = get_runtimes(command)
+        stats[parser] = compute_runtime_stats(runtimes[parser])
     end
 
     # Plot the runtimes and save the plot as SVG and LaTeX file.
     # Additionally, create a CSV file with the runtimes and runtime
     # stats.
-    csv_file = "runtimes.csv"
-    stats_file = "runtime_stats.csv"
-    plot_file = "runtime_stats.svg"
-    if basename(pwd()) != "comparison"
-        csv_file = "comparison/$csv_file"
-        stats_file = "comparison/$stats_file"
-        plot_file = "comparison/$plot_file"
-    end
+    directory = joinpath(@__DIR__, "runtime_comparison")
+    plot_file_svg = joinpath(directory, "runtime_stats.svg")
+    plot_file_tex = joinpath(directory, "runtime_stats.tex")
 
-    plot_runtime_stats(plot_file, runtimes, StatsPlots.gr)
+    plot_runtime_stats(plot_file_svg, runtimes, StatsPlots.gr)
+    plot_runtime_stats(plot_file_tex, runtimes, StatsPlots.pgfplotsx)
 
-    plot_file = replace(plot_file, ".svg" => ".tex")
-    plot_runtime_stats(plot_file, runtimes, StatsPlots.pgfplotsx)
+    csv_file = joinpath(directory, "runtimes.csv")
+    stats_file = joinpath(directory, "runtime_stats.csv")
 
     write_runtimes(csv_file, runtimes)
     write_runtime_stats(stats_file, stats)
