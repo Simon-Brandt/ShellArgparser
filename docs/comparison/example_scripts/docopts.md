@@ -29,10 +29,10 @@
 #!/usr/bin/env bash
 
 # Usage:
-#   docopts_wrapper.sh [--verbose] [--exit] --age=AGE --name=NAME --role=ROLE [--] <source> <destination>
-#   docopts_wrapper.sh --help
-#   docopts_wrapper.sh --usage
-#   docopts_wrapper.sh --version
+#   test_docopts.sh [--verbose] [--exit] --age=AGE --name=NAME --role=ROLE [--] <source> <destination>
+#   test_docopts.sh --help
+#   test_docopts.sh --usage
+#   test_docopts.sh --version
 #
 # Mandatory arguments to long options are mandatory for short options too.
 #

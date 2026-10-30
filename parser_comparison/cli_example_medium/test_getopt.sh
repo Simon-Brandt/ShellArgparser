@@ -22,7 +22,7 @@
 # E-Mail: simon.brandt@uni-greifswald.de
 # Last Modification: 2026-10-30
 
-# Usage: Run this script with "bash getopt_wrapper.sh".
+# Usage: Run this script with "bash test_getopt.sh".
 
 # Purpose: Parse the command line using getopt.
 
