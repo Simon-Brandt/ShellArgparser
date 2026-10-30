@@ -2,7 +2,7 @@
 
 ###############################################################################
 #                                                                             #
-# Copyright 2025 Simon Brandt                                                 #
+# Copyright 2025-2026 Simon Brandt                                            #
 #                                                                             #
 # Licensed under the Apache License, Version 2.0 (the "License");             #
 # you may not use this file except in compliance with the License.            #
@@ -53,17 +53,18 @@ source shflags
 DEFINE_string "name" "?" "the name of the homepage's owner" "n"
 DEFINE_integer "age" "-1" "the current age of the homepage's owner" "a"
 DEFINE_string "role" "?" "the role of the homepage's owner (u: user, m: moderator, b: bot)" "r"
-DEFINE_boolean "verbose" false "output verbose information" "v"
-DEFINE_boolean "exit" false "exit directly after parsing, for runtime assessment" "e"
-DEFINE_boolean "usage" false "display the usage and exit" "u"
-DEFINE_boolean "version" false "display the version and exit" "V"
+DEFINE_boolean "verbose" "${FLAGS_FALSE}" "output verbose information" "v"
+DEFINE_boolean "exit" "${FLAGS_FALSE}" "exit directly after parsing, for runtime assessment" "e"
+DEFINE_boolean "usage" "${FLAGS_FALSE}" "display the usage and exit" "u"
+DEFINE_boolean "version" "${FLAGS_FALSE}" "display the version and exit" "V"
 
 if ! FLAGS "$@"; then
     exit "$?"
 fi
 eval set -- "${FLAGS_ARGV}"
 
-# Check for the usage and version options.
+# Check for the usage and version options.  The help option is handled
+# by shflags.
 if [[ "${FLAGS_usage}" == "${FLAGS_TRUE}" ]]; then
     usage
     exit
@@ -85,33 +86,34 @@ elif (( "$#" != 2 )); then
     exit 1
 fi
 
-if [[ "${FLAGS_name}" == "?" ]]; then
+name="${FLAGS_name}"
+if [[ "${name}" == "?" ]]; then
     printf '%s: Error: The option -n,--name is mandatory, but not given.\n' \
         "$0"
     usage >&2
     exit 1
 fi
-name="${FLAGS_name}"
 
-if (( "${FLAGS_age}" == -1 )); then
+age="${FLAGS_age}"
+if (( "${age}" == -1 )); then
     printf '%s: Error: The option -a,--age is mandatory, but not given.\n' "$0"
     usage >&2
     exit 1
 fi
-age="${FLAGS_age}"
 
-if [[ "${FLAGS_role}" == "?" ]]; then
+role="${FLAGS_role}"
+if [[ "${role}" == "?" ]]; then
     printf '%s: Error: The option -r,--role is mandatory, but not given.\n' \
         "$0"
     usage >&2
     exit 1
-elif [[ "${FLAGS_role}" != [[:print:]] ]]; then
+elif [[ "${role}" != [[:print:]] ]]; then
     printf '%s: Error: The option -r,--role must be a single character.\n' "$0"
     usage >&2
     exit 1
 fi
 
-case "${FLAGS_role}" in
+case "${role}" in
     "u") role="User" ;;
     "m") role="Moderator" ;;
     "b") role="Bot" ;;
@@ -133,7 +135,7 @@ in_file="$1"
 out_file="$2"
 
 # Possibly, exit prematurely.
-[[ "${FLAGS_exit}" == true ]] && exit
+[[ "${FLAGS_exit}" == "${FLAGS_TRUE}" ]] && exit
 
 # Run the HTML processor.
 if [[ "$0" == */* ]]; then
