@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-01
+# Last Modification: 2026-10-30
 
 # Usage: Run this script with "bash getopts_wrapper.sh".
 
@@ -45,6 +45,7 @@ function help() {
     [-e]         exit directly after parsing, for runtime assessment
     [-v]         output verbose information
 
+    Help options:
     [-h]         display this help and exit
     [-u]         display the usage and exit
     [-V]         display the version and exit
@@ -61,22 +62,22 @@ function usage() {
 
 # Parse the arguments.
 verbose=false
-while getopts "n:a:r:vehuV" arg; do
+while getopts "n:a:r:vehuV" arg "$@"; do
     case "${arg}" in
-        n) name="${OPTARG}" ;;
-        a) age="${OPTARG}" ;;
-        r) role="${OPTARG}" ;;
-        v) verbose=true ;;
-        e) exit=true ;;
-        h)
+        "n") name="${OPTARG}" ;;
+        "a") age="${OPTARG}" ;;
+        "r") role="${OPTARG}" ;;
+        "v") verbose=true ;;
+        "e") exit=true ;;
+        "h")
             help
             exit
             ;;
-        u)
+        "u")
             usage
             exit
             ;;
-        V)
+        "V")
             printf '%s v1.0.0\n' "$0"
             exit
             ;;
@@ -129,9 +130,9 @@ elif [[ "${role}" != [[:print:]] ]]; then
 fi
 
 case "${role}" in
-    u) role="User" ;;
-    m) role="Moderator" ;;
-    b) role="Bot" ;;
+    "u") role="User" ;;
+    "m") role="Moderator" ;;
+    "b") role="Bot" ;;
     *)
         printf '%s: Error: The option -r must be in {u, m, b}.\n' "$0"
         usage >&2

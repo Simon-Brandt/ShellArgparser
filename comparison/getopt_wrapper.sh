@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-01
+# Last Modification: 2026-10-30
 
 # Usage: Run this script with "bash getopt_wrapper.sh".
 
@@ -48,6 +48,7 @@ function help() {
                              assessment
     [-v],     [--verbose]    output verbose information
 
+    Help options:
     [-h, -?], [--help]       display this help and exit
     [-u],     [--usage]      display the usage and exit
     [-V],     [--version]    display the version and exit
@@ -73,39 +74,39 @@ eval set -- "${args}"
 verbose=false
 while true; do
     case "$1" in
-        -n|--name)
+        "-n"|"--name")
             name="$2"
             shift 2
             ;;
-        -a|--age)
+        "-a"|"--age")
             age="$2"
             shift 2
             ;;
-        -r|--role)
+        "-r"|"--role")
             role="$2"
             shift 2
             ;;
-        -v|--verbose)
+        "-v"|"--verbose")
             verbose=true
             shift
             ;;
-        -e|--exit)
+        "-e"|"--exit")
             exit=true
             shift
             ;;
-        -h|--help)
+        "-h"|"--help")
             help
             exit
             ;;
-        -u|--usage)
+        "-u"|"--usage")
             usage
             exit
             ;;
-        -V|--version)
+        "-V"|"--version")
             printf '%s v1.0.0\n' "$0"
             exit
             ;;
-        --)
+        "--")
             shift
             break
             ;;
@@ -158,9 +159,9 @@ elif [[ "${role}" != [[:print:]] ]]; then
 fi
 
 case "${role}" in
-    u) role="User" ;;
-    m) role="Moderator" ;;
-    b) role="Bot" ;;
+    "u") role="User" ;;
+    "m") role="Moderator" ;;
+    "b") role="Bot" ;;
     *)
         printf '%s: Error: The option -r,--role must be in {u, m, b}.\n' "$0"
         usage >&2

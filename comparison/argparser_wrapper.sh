@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-01
+# Last Modification: 2026-10-30
 
 # Usage: Run this script with "bash argparser_wrapper.sh".
 
@@ -42,9 +42,9 @@ source argparser -- "$@"
 
 # Set the role to its long form.
 case "${role}" in
-    u) role="User" ;;
-    m) role="Moderator" ;;
-    b) role="Bot" ;;
+    "u") role="User" ;;
+    "m") role="Moderator" ;;
+    "b") role="Bot" ;;
 esac
 
 # Possibly, exit prematurely.

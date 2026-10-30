@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-01
+# Last Modification: 2026-10-30
 
 # Usage: Run this script with "bash shflags_wrapper.sh".
 
@@ -112,9 +112,9 @@ elif [[ "${FLAGS_role}" != [[:print:]] ]]; then
 fi
 
 case "${FLAGS_role}" in
-    u) role="User" ;;
-    m) role="Moderator" ;;
-    b) role="Bot" ;;
+    "u") role="User" ;;
+    "m") role="Moderator" ;;
+    "b") role="Bot" ;;
     *)
         printf '%s: Error: The option -r,--role must be in {u, m, b}.\n' "$0"
         usage >&2
