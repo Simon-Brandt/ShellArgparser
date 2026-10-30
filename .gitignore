@@ -1,8 +1,8 @@
 __pycache__
 !.github
 *.code-workspace
-comparison/*.aux
-comparison/*.fdb_latexmk
-comparison/*.fls
-comparison/*.log
-comparison/*.synctex.gz
+parser_comparison/**/*.aux
+parser_comparison/**/*.fdb_latexmk
+parser_comparison/**/*.fls
+parser_comparison/**/*.log
+parser_comparison/**/*.synctex.gz
