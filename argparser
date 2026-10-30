@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-29
+# Last Modification: 2026-10-30
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -1733,17 +1733,17 @@ function argparser_read_configuration() {
         error_message="Error: The environment variable \"\$1\" is set to "
         error_message+="\"\$2\", but the referenced file "
         case "${file_attributes}" in
-            0001) error_message+="is empty." ;;
-            0010) error_message+="is not readable." ;;
-            0011) error_message+="is not readable and empty." ;;
-            0100) error_message+="is not a regular file." ;;
-            0101) error_message+="is not a regular file and empty." ;;
-            0110) error_message+="is not a regular file and not readable." ;;
-            0111)
+            "0001") error_message+="is empty." ;;
+            "0010") error_message+="is not readable." ;;
+            "0011") error_message+="is not readable and empty." ;;
+            "0100") error_message+="is not a regular file." ;;
+            "0101") error_message+="is not a regular file and empty." ;;
+            "0110") error_message+="is not a regular file and not readable." ;;
+            "0111")
                 error_message+="is not a regular file, not readable, and "
                 error_message+="empty."
                 ;;
-            1111) error_message+="does not exist." ;;
+            "1111") error_message+="does not exist." ;;
         esac
 
         error_message="${error_message/"\$1"/"ARGPARSER_CONFIG_FILE"}"
@@ -2587,19 +2587,19 @@ function argparser_check_env_vars() {
             error_message="Error: The environment variable \"\$1\" is set to "
             error_message+="\"\$2\", but the referenced file "
             case "${file_attributes}" in
-                0001) error_message+="is empty." ;;
-                0010) error_message+="is not readable." ;;
-                0011) error_message+="is not readable and empty." ;;
-                0100) error_message+="is not a regular file." ;;
-                0101) error_message+="is not a regular file and empty." ;;
-                0110)
+                "0001") error_message+="is empty." ;;
+                "0010") error_message+="is not readable." ;;
+                "0011") error_message+="is not readable and empty." ;;
+                "0100") error_message+="is not a regular file." ;;
+                "0101") error_message+="is not a regular file and empty." ;;
+                "0110")
                     error_message+="is not a regular file and not readable."
                     ;;
-                0111)
+                "0111")
                     error_message+="is not a regular file, not readable, and "
                     error_message+="empty."
                     ;;
-                1111) error_message+="does not exist." ;;
+                "1111") error_message+="does not exist." ;;
             esac
 
             argparser_translate "Error env var file ${file_attributes}" \
@@ -2951,17 +2951,17 @@ function argparser_read_translation() {
         error_message="Error: The environment variable \"\$1\" is set to "
         error_message+="\"\$2\", but the referenced file "
         case "${file_attributes}" in
-            0001) error_message+="is empty." ;;
-            0010) error_message+="is not readable." ;;
-            0011) error_message+="is not readable and empty." ;;
-            0100) error_message+="is not a regular file." ;;
-            0101) error_message+="is not a regular file and empty." ;;
-            0110) error_message+="is not a regular file and not readable." ;;
-            0111)
+            "0001") error_message+="is empty." ;;
+            "0010") error_message+="is not readable." ;;
+            "0011") error_message+="is not readable and empty." ;;
+            "0100") error_message+="is not a regular file." ;;
+            "0101") error_message+="is not a regular file and empty." ;;
+            "0110") error_message+="is not a regular file and not readable." ;;
+            "0111")
                 error_message+="is not a regular file, not readable, and "
                 error_message+="empty."
                 ;;
-            1111) error_message+="does not exist." ;;
+            "1111") error_message+="does not exist." ;;
         esac
 
         error_message="${error_message/"\$1"/"ARGPARSER_TRANSLATION_FILE"}"
@@ -3229,17 +3229,17 @@ function argparser_read_styles() {
         error_message="Error: The environment variable \"\$1\" is set to "
         error_message+="\"\$2\", but the referenced file "
         case "${file_attributes}" in
-            0001) error_message+="is empty." ;;
-            0010) error_message+="is not readable." ;;
-            0011) error_message+="is not readable and empty." ;;
-            0100) error_message+="is not a regular file." ;;
-            0101) error_message+="is not a regular file and empty." ;;
-            0110) error_message+="is not a regular file and not readable." ;;
-            0111)
+            "0001") error_message+="is empty." ;;
+            "0010") error_message+="is not readable." ;;
+            "0011") error_message+="is not readable and empty." ;;
+            "0100") error_message+="is not a regular file." ;;
+            "0101") error_message+="is not a regular file and empty." ;;
+            "0110") error_message+="is not a regular file and not readable." ;;
+            "0111")
                 error_message+="is not a regular file, not readable, and "
                 error_message+="empty."
                 ;;
-            1111) error_message+="does not exist." ;;
+            "1111") error_message+="does not exist." ;;
         esac
 
         argparser_translate "Error env var file ${file_attributes}" \
@@ -6804,11 +6804,9 @@ function argparser_parse_args() {
         # Append the arguments definition to those for the file or
         # script, respectively.
         case "${message}" in
-            File*) args_definition_file+=("${message#File: }") ;;
-            Script*) args_definition_script+=("${message#Script: }") ;;
-            ${translated_error}*)
-                error_messages+=("${message}")
-            ;;
+            "File"*) args_definition_file+=("${message#File: }") ;;
+            "Script"*) args_definition_script+=("${message#Script: }") ;;
+            "${translated_error}"*) error_messages+=("${message}") ;;
         esac
     done
 
