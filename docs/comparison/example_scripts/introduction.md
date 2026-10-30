@@ -34,7 +34,7 @@ Thus, the command-line parser we choose needs to support both positional and key
 
 The following scripts perform this parsing, and shall give you an overview about the complexity of command-line parsing with the existing tools compared to the Argparser. Keep an eye on the code's [length](../code_length_comparison.md#64-code-length-comparison) and readability.
 
-The actual HTML template processing is done in [`process_html_template.sh`](../../../comparison/process_html_template.sh), which is [sourced](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash Builtins &rightarrow; source") by each script to guarantee identity among all scripts. In a real-world scenario, both parts (the command-line parsing and template processing) would likely be in the same file.
+The actual HTML template processing is done in [`process_html_template.sh`](../../../parser_comparison/cli_example_medium/process_html_template.sh), which is [sourced](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-source "gnu.org &rightarrow; Bash Builtins &rightarrow; source") by each script to guarantee identity among all scripts. In a real-world scenario, both parts (the command-line parsing and template processing) would likely be in the same file.
 
 Note that the scripts implement one more option, `-e`/`--exit`. This facilitates the scripts' abortion before running the HTML processor to compare the actual [runtime](../runtime_comparison.md#63-runtime-comparison) of the command-line parser, below, and not include the [`sed`](https://man7.org/linux/man-pages/man1/sed.1.html "man7.org &rightarrow; man pages &rightarrow; sed(1)") steps in the HTML processor.
 

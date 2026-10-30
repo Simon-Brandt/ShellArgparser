@@ -22,9 +22,9 @@
 
 <details open>
 
-<summary>Contents of <code>getopt_wrapper.sh</code></summary>
+<summary>Contents of <code>test_getopt.sh</code></summary>
 
-<!-- <include command="sed '3,28d;/shellcheck/d' ../comparison/getopt_wrapper.sh" lang="bash"> -->
+<!-- <include command="sed '3,28d;/shellcheck/d' ../parser_comparison/cli_example_medium/test_getopt.sh" lang="bash"> -->
 ```bash
 #!/usr/bin/env bash
 
@@ -50,6 +50,7 @@ function help() {
                              assessment
     [-v],     [--verbose]    output verbose information
 
+    Help options:
     [-h, -?], [--help]       display this help and exit
     [-u],     [--usage]      display the usage and exit
     [-V],     [--version]    display the version and exit
@@ -75,39 +76,39 @@ eval set -- "${args}"
 verbose=false
 while true; do
     case "$1" in
-        -n|--name)
+        "-n"|"--name")
             name="$2"
             shift 2
             ;;
-        -a|--age)
+        "-a"|"--age")
             age="$2"
             shift 2
             ;;
-        -r|--role)
+        "-r"|"--role")
             role="$2"
             shift 2
             ;;
-        -v|--verbose)
+        "-v"|"--verbose")
             verbose=true
             shift
             ;;
-        -e|--exit)
+        "-e"|"--exit")
             exit=true
             shift
             ;;
-        -h|--help)
+        "-h"|"--help")
             help
             exit
             ;;
-        -u|--usage)
+        "-u"|"--usage")
             usage
             exit
             ;;
-        -V|--version)
+        "-V"|"--version")
             printf '%s v1.0.0\n' "$0"
             exit
             ;;
-        --)
+        "--")
             shift
             break
             ;;
@@ -160,9 +161,9 @@ elif [[ "${role}" != [[:print:]] ]]; then
 fi
 
 case "${role}" in
-    u) role="User" ;;
-    m) role="Moderator" ;;
-    b) role="Bot" ;;
+    "u") role="User" ;;
+    "m") role="Moderator" ;;
+    "b") role="Bot" ;;
     *)
         printf '%s: Error: The option -r,--role must be in {u, m, b}.\n' "$0"
         usage >&2
@@ -191,27 +192,27 @@ Example calls:
 
 ```bash
 # Long options.
-bash getopt_wrapper.sh --verbose --name="A. R. G. Parser" --age=2 --role=b template.html argparser.html
+bash test_getopt.sh --verbose --name="A. R. G. Parser" --age=2 --role=b template.html argparser.html
 
 # Short options.
-bash getopt_wrapper.sh -v -n "A. R. G. Parser" -a 2 -r b template.html argparser.html
+bash test_getopt.sh -v -n "A. R. G. Parser" -a 2 -r b template.html argparser.html
 
 # Merged short options.
-bash getopt_wrapper.sh -vn "A. R. G. Parser" -a2 -rb template.html argparser.html
+bash test_getopt.sh -vn "A. R. G. Parser" -a2 -rb template.html argparser.html
 
 # Leading positional arguments.
-bash getopt_wrapper.sh template.html argparser.html -vn "A. R. G. Parser" -a2 -rb
+bash test_getopt.sh template.html argparser.html -vn "A. R. G. Parser" -a2 -rb
 
 # Positional arguments delimiter "--".
-bash getopt_wrapper.sh -vn "A. R. G. Parser" -a2 -rb -- template.html argparser.html
+bash test_getopt.sh -vn "A. R. G. Parser" -a2 -rb -- template.html argparser.html
 
 # Intermixed positional arguments.
-bash getopt_wrapper.sh -vn "A. R. G. Parser" template.html -a2 argparser.html -rb
+bash test_getopt.sh -vn "A. R. G. Parser" template.html -a2 argparser.html -rb
 
 # Help, usage, and version messages.
-bash getopt_wrapper.sh --help
-bash getopt_wrapper.sh --usage
-bash getopt_wrapper.sh --version
+bash test_getopt.sh --help
+bash test_getopt.sh --usage
+bash test_getopt.sh --version
 ```
 
 Notes:

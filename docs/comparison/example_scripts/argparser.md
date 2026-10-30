@@ -22,9 +22,9 @@
 
 <details open>
 
-<summary>Contents of <code>argparser_wrapper.sh</code></summary>
+<summary>Contents of <code>test_argparser.sh</code></summary>
 
-<!-- <include command="sed '3,28d;/shellcheck/d' ../comparison/argparser_wrapper.sh" lang="bash"> -->
+<!-- <include command="sed '3,28d;/shellcheck/d' ../parser_comparison/cli_example_medium/test_argparser.sh" lang="bash"> -->
 ```bash
 #!/usr/bin/env bash
 
@@ -43,9 +43,9 @@ source argparser -- "$@"
 
 # Set the role to its long form.
 case "${role}" in
-    u) role="User" ;;
-    m) role="Moderator" ;;
-    b) role="Bot" ;;
+    "u") role="User" ;;
+    "m") role="Moderator" ;;
+    "b") role="Bot" ;;
 esac
 
 # Possibly, exit prematurely.
@@ -65,27 +65,27 @@ Example calls:
 
 ```bash
 # Long options.
-bash argparser_wrapper.sh --verbose --name="A. R. G. Parser" --age=2 --role=b template.html argparser.html
+bash test_argparser.sh --verbose --name="A. R. G. Parser" --age=2 --role=b template.html argparser.html
 
 # Short options.
-bash argparser_wrapper.sh -v -n "A. R. G. Parser" -a 2 -r b template.html argparser.html
+bash test_argparser.sh -v -n "A. R. G. Parser" -a 2 -r b template.html argparser.html
 
 # Leading positional arguments.
-bash argparser_wrapper.sh template.html argparser.html -v -n "A. R. G. Parser" -a 2 -r b
+bash test_argparser.sh template.html argparser.html -v -n "A. R. G. Parser" -a 2 -r b
 
 # Positional arguments delimiter "--".
-bash argparser_wrapper.sh --verbose --name="A. R. G. Parser" --age=2 --role=b -- template.html argparser.html
+bash test_argparser.sh --verbose --name="A. R. G. Parser" --age=2 --role=b -- template.html argparser.html
 
 # Positional arguments delimiter "++".
-bash argparser_wrapper.sh -v -n "A. R. G. Parser" -- template.html argparser.html ++ -a 2 -r b
+bash test_argparser.sh -v -n "A. R. G. Parser" -- template.html argparser.html ++ -a 2 -r b
 
 # Intermixed positional arguments.
-bash argparser_wrapper.sh --verbose --name="A. R. G. Parser" template.html --age=2 argparser.html --role=b
+bash test_argparser.sh --verbose --name="A. R. G. Parser" template.html --age=2 argparser.html --role=b
 
 # Help, usage, and version messages.
-bash argparser_wrapper.sh --help
-bash argparser_wrapper.sh --usage
-bash argparser_wrapper.sh --version
+bash test_argparser.sh --help
+bash test_argparser.sh --usage
+bash test_argparser.sh --version
 ```
 
 [&#129092;&nbsp;6.2.4. docopts](docopts.md)

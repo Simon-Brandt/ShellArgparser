@@ -22,9 +22,9 @@
 
 <details open>
 
-<summary>Contents of <code>shflags_wrapper.sh</code></summary>
+<summary>Contents of <code>test_shflags.sh</code></summary>
 
-<!-- <include command="sed '3,28d;/shellcheck/d' ../comparison/shflags_wrapper.sh" lang="bash"> -->
+<!-- <include command="sed '3,28d;/shellcheck/d' ../parser_comparison/cli_example_medium/test_shflags.sh" lang="bash"> -->
 ```bash
 #!/usr/bin/env bash
 
@@ -55,17 +55,18 @@ source shflags
 DEFINE_string "name" "?" "the name of the homepage's owner" "n"
 DEFINE_integer "age" "-1" "the current age of the homepage's owner" "a"
 DEFINE_string "role" "?" "the role of the homepage's owner (u: user, m: moderator, b: bot)" "r"
-DEFINE_boolean "verbose" false "output verbose information" "v"
-DEFINE_boolean "exit" false "exit directly after parsing, for runtime assessment" "e"
-DEFINE_boolean "usage" false "display the usage and exit" "u"
-DEFINE_boolean "version" false "display the version and exit" "V"
+DEFINE_boolean "verbose" "${FLAGS_FALSE}" "output verbose information" "v"
+DEFINE_boolean "exit" "${FLAGS_FALSE}" "exit directly after parsing, for runtime assessment" "e"
+DEFINE_boolean "usage" "${FLAGS_FALSE}" "display the usage and exit" "u"
+DEFINE_boolean "version" "${FLAGS_FALSE}" "display the version and exit" "V"
 
 if ! FLAGS "$@"; then
     exit "$?"
 fi
 eval set -- "${FLAGS_ARGV}"
 
-# Check for the usage and version options.
+# Check for the usage and version options.  The help option is handled
+# by shflags.
 if [[ "${FLAGS_usage}" == "${FLAGS_TRUE}" ]]; then
     usage
     exit
@@ -87,36 +88,37 @@ elif (( "$#" != 2 )); then
     exit 1
 fi
 
-if [[ "${FLAGS_name}" == "?" ]]; then
+name="${FLAGS_name}"
+if [[ "${name}" == "?" ]]; then
     printf '%s: Error: The option -n,--name is mandatory, but not given.\n' \
         "$0"
     usage >&2
     exit 1
 fi
-name="${FLAGS_name}"
 
-if (( "${FLAGS_age}" == -1 )); then
+age="${FLAGS_age}"
+if (( "${age}" == -1 )); then
     printf '%s: Error: The option -a,--age is mandatory, but not given.\n' "$0"
     usage >&2
     exit 1
 fi
-age="${FLAGS_age}"
 
-if [[ "${FLAGS_role}" == "?" ]]; then
+role="${FLAGS_role}"
+if [[ "${role}" == "?" ]]; then
     printf '%s: Error: The option -r,--role is mandatory, but not given.\n' \
         "$0"
     usage >&2
     exit 1
-elif [[ "${FLAGS_role}" != [[:print:]] ]]; then
+elif [[ "${role}" != [[:print:]] ]]; then
     printf '%s: Error: The option -r,--role must be a single character.\n' "$0"
     usage >&2
     exit 1
 fi
 
-case "${FLAGS_role}" in
-    u) role="User" ;;
-    m) role="Moderator" ;;
-    b) role="Bot" ;;
+case "${role}" in
+    "u") role="User" ;;
+    "m") role="Moderator" ;;
+    "b") role="Bot" ;;
     *)
         printf '%s: Error: The option -r,--role must be in {u, m, b}.\n' "$0"
         usage >&2
@@ -135,7 +137,7 @@ in_file="$1"
 out_file="$2"
 
 # Possibly, exit prematurely.
-[[ "${FLAGS_exit}" == true ]] && exit
+[[ "${FLAGS_exit}" == "${FLAGS_TRUE}" ]] && exit
 
 # Run the HTML processor.
 if [[ "$0" == */* ]]; then
@@ -151,27 +153,27 @@ Example calls:
 
 ```bash
 # Long options.
-bash shflags_wrapper.sh --verbose --name="A. R. G. Parser" --age=2 --role=b template.html argparser.html
+bash test_shflags.sh --verbose --name="A. R. G. Parser" --age=2 --role=b template.html argparser.html
 
 # Short options.
-bash shflags_wrapper.sh -v -n "A. R. G. Parser" -a 2 -r b template.html argparser.html
+bash test_shflags.sh -v -n "A. R. G. Parser" -a 2 -r b template.html argparser.html
 
 # Merged short options.
-bash shflags_wrapper.sh -vn "A. R. G. Parser" -a2 -rb template.html argparser.html
+bash test_shflags.sh -vn "A. R. G. Parser" -a2 -rb template.html argparser.html
 
 # Leading positional arguments.
-bash shflags_wrapper.sh template.html argparser.html -vn "A. R. G. Parser" -a2 -rb
+bash test_shflags.sh template.html argparser.html -vn "A. R. G. Parser" -a2 -rb
 
 # Positional arguments delimiter "--".
-bash shflags_wrapper.sh -vn "A. R. G. Parser" -a2 -rb -- template.html argparser.html
+bash test_shflags.sh -vn "A. R. G. Parser" -a2 -rb -- template.html argparser.html
 
 # Intermixed positional arguments.
-bash shflags_wrapper.sh -vn "A. R. G. Parser" template.html -a2 argparser.html -rb
+bash test_shflags.sh -vn "A. R. G. Parser" template.html -a2 argparser.html -rb
 
 # Help, usage, and version messages.
-bash shflags_wrapper.sh --help
-bash shflags_wrapper.sh --usage
-bash shflags_wrapper.sh --version
+bash test_shflags.sh --help
+bash test_shflags.sh --usage
+bash test_shflags.sh --version
 ```
 
 Notes:

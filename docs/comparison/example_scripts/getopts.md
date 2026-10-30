@@ -22,9 +22,9 @@
 
 <details open>
 
-<summary>Contents of <code>getopts_wrapper.sh</code></summary>
+<summary>Contents of <code>test_getopts.sh</code></summary>
 
-<!-- <include command="sed '3,28d;/shellcheck/d' ../comparison/getopts_wrapper.sh" lang="bash"> -->
+<!-- <include command="sed '3,28d;/shellcheck/d' ../parser_comparison/cli_example_medium/test_getopts.sh" lang="bash"> -->
 ```bash
 #!/usr/bin/env bash
 
@@ -47,6 +47,7 @@ function help() {
     [-e]         exit directly after parsing, for runtime assessment
     [-v]         output verbose information
 
+    Help options:
     [-h]         display this help and exit
     [-u]         display the usage and exit
     [-V]         display the version and exit
@@ -63,22 +64,22 @@ function usage() {
 
 # Parse the arguments.
 verbose=false
-while getopts "n:a:r:vehuV" arg; do
+while getopts "n:a:r:vehuV" arg "$@"; do
     case "${arg}" in
-        n) name="${OPTARG}" ;;
-        a) age="${OPTARG}" ;;
-        r) role="${OPTARG}" ;;
-        v) verbose=true ;;
-        e) exit=true ;;
-        h)
+        "n") name="${OPTARG}" ;;
+        "a") age="${OPTARG}" ;;
+        "r") role="${OPTARG}" ;;
+        "v") verbose=true ;;
+        "e") exit=true ;;
+        "h")
             help
             exit
             ;;
-        u)
+        "u")
             usage
             exit
             ;;
-        V)
+        "V")
             printf '%s v1.0.0\n' "$0"
             exit
             ;;
@@ -131,9 +132,9 @@ elif [[ "${role}" != [[:print:]] ]]; then
 fi
 
 case "${role}" in
-    u) role="User" ;;
-    m) role="Moderator" ;;
-    b) role="Bot" ;;
+    "u") role="User" ;;
+    "m") role="Moderator" ;;
+    "b") role="Bot" ;;
     *)
         printf '%s: Error: The option -r must be in {u, m, b}.\n' "$0"
         usage >&2
@@ -162,18 +163,18 @@ Example calls:
 
 ```bash
 # Short options.
-bash getopts_wrapper.sh -v -n "A. R. G. Parser" -a 2 -r b template.html argparser.html
+bash test_getopts.sh -v -n "A. R. G. Parser" -a 2 -r b template.html argparser.html
 
 # Merged short options.
-bash getopts_wrapper.sh -vn "A. R. G. Parser" -a2 -rb template.html argparser.html
+bash test_getopts.sh -vn "A. R. G. Parser" -a2 -rb template.html argparser.html
 
 # Positional arguments delimiter "--".
-bash getopts_wrapper.sh -vn "A. R. G. Parser" -a2 -rb -- template.html argparser.html
+bash test_getopts.sh -vn "A. R. G. Parser" -a2 -rb -- template.html argparser.html
 
 # Help, usage, and version messages.
-bash getopts_wrapper.sh -h
-bash getopts_wrapper.sh -u
-bash getopts_wrapper.sh -V
+bash test_getopts.sh -h
+bash test_getopts.sh -u
+bash test_getopts.sh -V
 ```
 
 Notes:

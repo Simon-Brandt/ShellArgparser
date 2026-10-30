@@ -22,37 +22,38 @@
 
 <details open>
 
-<summary>Contents of <code>docopts_wrapper.sh</code></summary>
+<summary>Contents of <code>test_docopts.sh</code></summary>
 
-<!-- <include command="sed '3,26d;/shellcheck/d' ../comparison/docopts_wrapper.sh" lang="bash"> -->
+<!-- <include command="sed '3,26d;/shellcheck/d' ../parser_comparison/cli_example_medium/test_docopts.sh" lang="bash"> -->
 ```bash
 #!/usr/bin/env bash
 
 # Usage:
-#   docopts_wrapper.sh [-v | --verbose] [-e | --exit] (-a AGE | --age=AGE) (-n NAME | --name=NAME) (-r ROLE | --role=ROLE) [--] <source> <destination>
-#   docopts_wrapper.sh -h | -? | --help
-#   docopts_wrapper.sh -u | --usage
-#   docopts_wrapper.sh -V | --version
+#   docopts_wrapper.sh [--verbose] [--exit] --age=AGE --name=NAME --role=ROLE [--] <source> <destination>
+#   docopts_wrapper.sh --help
+#   docopts_wrapper.sh --usage
+#   docopts_wrapper.sh --version
 #
 # Mandatory arguments to long options are mandatory for short options too.
 #
 # Positional arguments:
-# <source>              the template HTML file to fill in
-# <destination>         the output HTML file
+#   <source>              the template HTML file to fill in
+#   <destination>         the output HTML file
 #
 # Mandatory options:
-# -a AGE,  --age=AGE    the current age of the homepage's owner
-# -n NAME, --name=NAME  the name of the homepage's owner
-# -r ROLE, --role=ROLE  the role of the homepage's owner (u: user, m:
-#                       moderator, b: bot)
+#   -a AGE, --age=AGE     the current age of the homepage's owner
+#   -n NAME, --name=NAME  the name of the homepage's owner
+#   -r ROLE, --role=ROLE  the role of the homepage's owner (u: user, m:
+#                         moderator, b: bot)
 #
 # Optional options:
-# -e,     --exit        exit directly after parsing, for runtime assessment
-# -v,     --verbose     output verbose information
+#   -e, --exit            exit directly after parsing, for runtime assessment
+#   -v, --verbose         output verbose information
 #
-# -h, -?, --help        display this help and exit
-# -u,     --usage       display the usage and exit
-# -V,     --version     display the version and exit
+# Help options:
+#   -h, -?, --help        display this help and exit
+#   -u, --usage           display the usage and exit
+#   -V, --version         display the version and exit
 
 function usage() {
     # Define the usage message.
@@ -65,67 +66,27 @@ function usage() {
 # Parse the arguments.
 source docopts.sh --auto "$@"
 
-# Set the arguments to variables.
-in_file="${ARGS[<source>]}"
-out_file="${ARGS[<destination>]}"
-
-if [[ "${ARGS[-a]}" == true ]]; then
-    age="${ARGS[AGE]}"
-else
-    age="${ARGS[--age]}"
-fi
-
-if [[ "${ARGS[-n]}" == true ]]; then
-    name="${ARGS[NAME]}"
-else
-    name="${ARGS[--name]}"
-fi
-
-if [[ "${ARGS[-r]}" == true ]]; then
-    role="${ARGS[ROLE]}"
-else
-    role="${ARGS[--role]}"
-fi
-
-if [[ "${ARGS[-v]}" == true  || "${ARGS[--verbose]}" == true ]]; then
-    verbose=true
-fi
-
-if [[ "${ARGS[-e]}" == true  || "${ARGS[--exit]}" == true ]]; then
-    exit=true
-fi
-
-if [[ "${ARGS[-?]}" == true ]]; then
-    help=true
-fi
-
-if [[ "${ARGS[-u]}" == true || "${ARGS[--usage]}" == true ]]; then
-    usage=true
-fi
-
-if [[ "${ARGS[-V]}" == true || "${ARGS[--version]}" == true ]]; then
-    version=true
-fi
-
-# Check for the help, usage, and version options.
-if [[ "${help}" == true ]]; then
-    bash "$0" --help
-    exit
-elif [[ "${usage}" == true ]]; then
+# Check for the usage and version options.  The help option is handled
+# by docopts.sh.
+if [[ "${ARGS[--usage]}" == true ]]; then
     usage
     exit
-elif [[ "${version}" == true ]]; then
+elif [[ "${ARGS[--version]}" == true ]]; then
     printf '%s v1.0.0\n' "$0"
     exit
 fi
 
 # Check the arguments' values.
+name="${ARGS[--name]}"
+
+age="${ARGS[--age]}"
 if [[ "${age}" != ?([+-])+([[:digit:]]) ]]; then
     printf '%s: Error: The option -a,--age must be an integer.\n' "$0"
     usage >&2
     exit 1
 fi
 
+role="${ARGS[--role]}"
 if [[ "${role}" != [[:print:]] ]]; then
     printf '%s: Error: The option -r,--role must be a single character.\n' "$0"
     usage >&2
@@ -133,9 +94,9 @@ if [[ "${role}" != [[:print:]] ]]; then
 fi
 
 case "${role}" in
-    u) role="User" ;;
-    m) role="Moderator" ;;
-    b) role="Bot" ;;
+    "u") role="User" ;;
+    "m") role="Moderator" ;;
+    "b") role="Bot" ;;
     *)
         printf '%s: Error: The option -r,--role must be in {u, m, b}.\n' "$0"
         usage >&2
@@ -143,8 +104,14 @@ case "${role}" in
         ;;
 esac
 
+verbose="${ARGS[--verbose]}"
+
+# Set the positional arguments to variables.
+in_file="${ARGS[<source>]}"
+out_file="${ARGS[<destination>]}"
+
 # Possibly, exit prematurely.
-[[ "${exit}" == true ]] && exit
+[[ "${ARGS[--exit]}" == true ]] && exit
 
 # Run the HTML processor.
 if [[ "$0" == */* ]]; then
@@ -160,27 +127,27 @@ Example calls:
 
 ```bash
 # Long options.
-bash docopts_wrapper.sh --verbose --name="A. R. G. Parser" --age=2 --role=b template.html argparser.html
+bash test_docopts.sh --verbose --name="A. R. G. Parser" --age=2 --role=b template.html argparser.html
 
 # Short options.
-bash docopts_wrapper.sh -v -a 2 -n "A. R. G. Parser" -r b template.html argparser.html
+bash test_docopts.sh -v -a 2 -n "A. R. G. Parser" -r b template.html argparser.html
 
 # Merged short options.
-bash docopts_wrapper.sh -va 2 -n "A. R. G. Parser" -r b template.html argparser.html
+bash test_docopts.sh -va 2 -n "A. R. G. Parser" -r b template.html argparser.html
 
 # Leading positional arguments.
-bash docopts_wrapper.sh template.html argparser.html --verbose --name="A. R. G. Parser" --age=2 --role=b
+bash test_docopts.sh template.html argparser.html --verbose --name="A. R. G. Parser" --age=2 --role=b
 
 # Positional arguments delimiter "--".
-bash docopts_wrapper.sh --verbose --name="A. R. G. Parser" --age=2 --role=b -- template.html argparser.html
+bash test_docopts.sh --verbose --name="A. R. G. Parser" --age=2 --role=b -- template.html argparser.html
 
 # Intermixed positional arguments.
-bash docopts_wrapper.sh --verbose --name="A. R. G. Parser" template.html --age=2 argparser.html --role=b
+bash test_docopts.sh --verbose --name="A. R. G. Parser" template.html --age=2 argparser.html --role=b
 
 # Help, usage, and version messages.
-bash docopts_wrapper.sh --help
-bash docopts_wrapper.sh --usage
-bash docopts_wrapper.sh --version
+bash test_docopts.sh --help
+bash test_docopts.sh --usage
+bash test_docopts.sh --version
 ```
 
 Notes:
