@@ -1194,6 +1194,7 @@ function argparser_colorize() {
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+    # - ARGPARSER_USE_COLORS (read-only)
     # - ARGPARSER_USE_STYLES (read-only)
     #
     # Output:
@@ -1201,10 +1202,11 @@ function argparser_colorize() {
 
     # Define the local variables.
     local ansi_code
-    local -A colors_and_styles
+    local -A colors
     local file_descriptor
     local i
     local joined_array
+    local -A styles
     local style
     local style_request
     local -a style_requests
@@ -1226,10 +1228,10 @@ function argparser_colorize() {
     shift 3
     colorized_array=("$@")
 
-    # Define the associative array with colors and styles, and their
+    # Define the associative arrays with colors and styles, and their
     # corresponding Select Graphic Rendition (SGR) ANSI escape sequence
     # codes.
-    colors_and_styles=(
+    colors=(
         [black]=30
         [red]=31
         [green]=32
@@ -1238,6 +1240,9 @@ function argparser_colorize() {
         [magenta]=35
         [cyan]=36
         [white]=37
+    )
+
+    styles=(
         [normal]=22
         [bold]=1
         [faint]=2
@@ -1252,11 +1257,11 @@ function argparser_colorize() {
 
     # Split the requested color/style on ${ARGPARSER_ARG_DELIMITER_2}
     # characters and replace it with the corresponding escape sequence,
-    # if they shall be used.  The test for writing to a terminal assumes
-    # that argparser_colorize is never run through command substitution,
-    # else [[ -t ${file_descriptor} ]] would always be false, i.e., it
-    # would impossible to tell if the final STDOUT/STDERR goes to a
-    # terminal.
+    # if styles (and possibly colors) are enabled.  The test for writing
+    # to a terminal assumes that argparser_colorize is never run through
+    # command substitution, else [[ -t ${file_descriptor} ]] would
+    # always be false, i.e., it would impossible to tell if the final
+    # STDOUT/STDERR goes to a terminal.
     if [[ "${ARGPARSER_USE_STYLES}" == "always" \
         || ("${ARGPARSER_USE_STYLES}" == "file" && ! -t "${file_descriptor}") \
         || ("${ARGPARSER_USE_STYLES}" == "tty" && -t "${file_descriptor}") ]]
@@ -1266,34 +1271,64 @@ function argparser_colorize() {
             <<< "${style_requests}"
         for style_request in "${style_requests[@]}"; do
             if [[ "${style_request}" == "bright_"*"_bg" ]]; then
-                style_request="${style_request#bright_}"
-                style_request="${style_request%_bg}"
-                (( ansi_code = "${colors_and_styles[${style_request}]}" + 70 ))
+                # Bright background color.
+                if [[ "${ARGPARSER_USE_COLORS}" == true ]]; then
+                    style_request="${style_request#bright_}"
+                    style_request="${style_request%_bg}"
+                    (( ansi_code = "${colors[${style_request}]}" + 70 ))
+                    style+=";${ansi_code}"
+                fi
             elif [[ "${style_request}" == "bright_"*"_fg" ]]; then
-                style_request="${style_request#bright_}"
-                style_request="${style_request%_fg}"
-                (( ansi_code = "${colors_and_styles[${style_request}]}" + 60 ))
+                # Bright foreground color.
+                if [[ "${ARGPARSER_USE_COLORS}" == true ]]; then
+                    style_request="${style_request#bright_}"
+                    style_request="${style_request%_fg}"
+                    (( ansi_code = "${colors[${style_request}]}" + 60 ))
+                    style+=";${ansi_code}"
+                fi
             elif [[ "${style_request}" == "bright_"* ]]; then
-                style_request="${style_request#bright_}"
-                (( ansi_code = "${colors_and_styles[${style_request}]}" + 60 ))
+                # Bright foreground color without "fg" qualifier.
+                if [[ "${ARGPARSER_USE_COLORS}" == true ]]; then
+                    style_request="${style_request#bright_}"
+                    (( ansi_code = "${colors[${style_request}]}" + 60 ))
+                    style+=";${ansi_code}"
+                fi
             elif [[ "${style_request}" == *"_bg" ]]; then
-                style_request="${style_request%_bg}"
-                (( ansi_code = "${colors_and_styles[${style_request}]}" + 10 ))
+                # Background color.
+                if [[ "${ARGPARSER_USE_COLORS}" == true ]]; then
+                    style_request="${style_request%_bg}"
+                    (( ansi_code = "${colors[${style_request}]}" + 10 ))
+                    style+=";${ansi_code}"
+                fi
             elif [[ "${style_request}" == *"_fg" ]]; then
-                style_request="${style_request%_fg}"
-                ansi_code="${colors_and_styles[${style_request}]}"
+                # Foreground color.
+                if [[ "${ARGPARSER_USE_COLORS}" == true ]]; then
+                    style_request="${style_request%_fg}"
+                    ansi_code="${colors[${style_request}]}"
+                    style+=";${ansi_code}"
+                fi
+            elif [[ -n "${colors[${style_request}]+set}" ]]; then
+                # Foreground color without "fg" qualifier..
+                if [[ "${ARGPARSER_USE_COLORS}" == true ]]; then
+                    ansi_code="${colors[${style_request}]}"
+                    style+=";${ansi_code}"
+                fi
             else
-                ansi_code="${colors_and_styles[${style_request}]}"
+                # Style.
+                ansi_code="${styles[${style_request}]}"
+                style+=";${ansi_code}"
             fi
-            style+=";${ansi_code}"
+
         done
         style+="m"
 
-        for i in "${!colorized_array[@]}"; do
-            if [[ -n "${colorized_array[i]}" ]]; then
-                colorized_array[i]="${style}${colorized_array[i]}"$'\e[0m'
-            fi
-        done
+        if [[ "${style}" != $'\e[0m' ]]; then
+            for i in "${!colorized_array[@]}"; do
+                if [[ -n "${colorized_array[i]}" ]]; then
+                    colorized_array[i]="${style}${colorized_array[i]}"$'\e[0m'
+                fi
+            done
+        fi
     fi
 
     # Join the colorized array, then print it or set it to the target
@@ -1704,6 +1739,7 @@ function argparser_read_configuration() {
     # ARGPARSER_USAGE_MESSAGE_OPTION_TYPE
     # ARGPARSER_USAGE_MESSAGE_ORIENTATION
     # ARGPARSER_USAGE_STYLE
+    # ARGPARSER_USE_COLORS
     # ARGPARSER_USE_LONG_OPTIONS
     # ARGPARSER_USE_SHORT_OPTIONS
     # ARGPARSER_USE_STYLES
@@ -1892,6 +1928,7 @@ function argparser_set_env_vars() {
     # ARGPARSER_USAGE_MESSAGE_ORIENTATION
     # ARGPARSER_USAGE_OPTIONS
     # ARGPARSER_USAGE_STYLE
+    # ARGPARSER_USE_COLORS
     # ARGPARSER_USE_LONG_OPTIONS
     # ARGPARSER_USE_SHORT_OPTIONS
     # ARGPARSER_USE_STYLES
@@ -2000,6 +2037,7 @@ function argparser_set_env_vars() {
         "ARGPARSER_USAGE_STYLE               : usage-style               : STYLE        : italic               :                       : str  : +      : Stylization options           : deprecated : the color and style specification for usage messages, deprecated in favor of \"--style-file=FILE\"                      "
         "ARGPARSER_USE_LONG_OPTIONS          : use-long-options          :              : true                 :                       : bool : 0      : Parsing options               :            : use the long option names for parsing                                                                                   "
         "ARGPARSER_USE_SHORT_OPTIONS         : use-short-options         :              : true                 :                       : bool : 0      : Parsing options               :            : use the short option names for parsing                                                                                  "
+        "ARGPARSER_USE_COLORS                : use-colors                :              : true                 :                       : bool : 0      : Stylization options           :            : colorize the help, usage, version, error, and warning messages, applied in conjunction with \"--use-styles\"            "
         "ARGPARSER_USE_STYLES                : use-styles                :              : tty                  : always,never,file,tty : str  : 1      : Stylization options           :            : use the colors and styles \"always\", \"never\", or only when STDOUT/STDERR is (\"tty\") or is not (\"file\") a terminal"
         "ARGPARSER_USE_STYLES_IN_FILES       : use-styles-in-files       :              : false                :                       : bool : 0      : Stylization options           : deprecated : use the colors and styles when STDOUT/STDERR is not a terminal, deprecated in favor of \"--use-styles=always\"          "
         "ARGPARSER_VERSION_EXIT_CODE         : version-exit-code         : INT          : 0                    :                       : int  : 1      : Version message options       :            : the exit code for version messages                                                                                      "
@@ -2060,6 +2098,7 @@ function argparser_set_env_vars() {
         ARGPARSER_USAGE_MESSAGE_OPTION_TYPE="long" \
         ARGPARSER_USAGE_MESSAGE_ORIENTATION="column" \
         ARGPARSER_USAGE_OPTIONS="u" \
+        ARGPARSER_USE_COLORS="${ARGPARSER_USE_COLORS:-true}" \
         ARGPARSER_USE_LONG_OPTIONS=true \
         ARGPARSER_USE_SHORT_OPTIONS=false \
         ARGPARSER_USE_STYLES="${ARGPARSER_USE_STYLES:-tty}" \
@@ -2192,6 +2231,7 @@ function argparser_set_env_var_defaults() {
     # ARGPARSER_USAGE_MESSAGE_OPTION_TYPE
     # ARGPARSER_USAGE_MESSAGE_ORIENTATION
     # ARGPARSER_USAGE_OPTIONS
+    # ARGPARSER_USE_COLORS
     # ARGPARSER_USE_LONG_OPTIONS
     # ARGPARSER_USE_SHORT_OPTIONS
     # ARGPARSER_USE_STYLES
@@ -2249,6 +2289,7 @@ function argparser_set_env_var_defaults() {
     ARGPARSER_USAGE_MESSAGE_OPTION_TYPE="long"
     ARGPARSER_USAGE_MESSAGE_ORIENTATION="column"
     ARGPARSER_USAGE_OPTIONS="u"
+    ARGPARSER_USE_COLORS=true
     ARGPARSER_USE_LONG_OPTIONS=true
     ARGPARSER_USE_SHORT_OPTIONS=false
     ARGPARSER_USE_STYLES="tty"
@@ -2354,6 +2395,7 @@ function argparser_check_env_vars() {
     # - ARGPARSER_USAGE_MESSAGE_ORIENTATION (read-only)
     # - ARGPARSER_USAGE_OPTIONS (read-only)
     # - ARGPARSER_USAGE_STYLE (read-only)
+    # - ARGPARSER_USE_COLORS (read-only)
     # - ARGPARSER_USE_LONG_OPTIONS (read-only)
     # - ARGPARSER_USE_SHORT_OPTIONS (read-only)
     # - ARGPARSER_USE_STYLES (read-only)
@@ -2411,6 +2453,7 @@ function argparser_check_env_vars() {
         ARGPARSER_UNSET_ENV_VARS
         ARGPARSER_UNSET_FUNCTIONS
         ARGPARSER_USAGE_FILE_KEEP_COMMENTS
+        ARGPARSER_USE_COLORS
         ARGPARSER_USE_LONG_OPTIONS
         ARGPARSER_USE_SHORT_OPTIONS
         ARGPARSER_WRITE_ARGS
@@ -10095,8 +10138,7 @@ function argparser_main() {
     # - ARGPARSER_UNSET_ENV_VARS (read-only)
     # - ARGPARSER_UNSET_FUNCTIONS (read-only)
     # - ARGPARSER_USAGE_STYLE (read-only)
-    # - ARGPARSER_USE_STYLES
-    # - ARGPARSER_USE_STYLES_IN_FILES (read-only)
+    # - ARGPARSER_USE_COLORS
     # - ARGPARSER_VERSION_STYLE (read-only)
     # - ARGPARSER_WARNING_STYLE (read-only)
     # - ARGPARSER_WRITE_ARGS (read-only)
@@ -10155,12 +10197,7 @@ function argparser_main() {
     is_extglob_set="$?"
     shopt -s extglob
 
-    # Define the default styles. If neither ${ARGPARSER_USE_STYLES} nor
-    # ${ARGPARSER_USE_STYLES_IN_FILES} is given, check for
-    # ${FORCE_COLOR} and ${NO_COLOR}.  If ${FORCE_COLOR} is given and
-    # not set to the empty string, forcefully enable the styles.  If
-    # ${NO_COLOR} is given and not set to the empty string, forcefully
-    # disable the styles.  ${NO_COLOR} overrides ${FORCE_COLOR}.
+    # Define the default styles.
     styles=(
         ["argument_group"]="cyan,bold,reverse"
         ["choice_values"]="yellow"
@@ -10189,13 +10226,17 @@ function argparser_main() {
         ["warning_text"]="yellow"
     )
 
-    if [[ ! -v ARGPARSER_USE_STYLES && ! -v ARGPARSER_USE_STYLES_IN_FILES ]]
-    then
+    # If ${ARGPARSER_USE_COLORS} isn't given, check for ${FORCE_COLOR}
+    # and ${NO_COLOR}.  If ${FORCE_COLOR} is given and not set to the
+    # empty string, forcefully enable the colors.  If ${NO_COLOR} is
+    # given and not set to the empty string, forcefully disable the
+    # colors.  ${NO_COLOR} overrides ${FORCE_COLOR}.
+    if [[ ! -v ARGPARSER_USE_COLORS ]]; then
         if [[ -v FORCE_COLOR && -n "${FORCE_COLOR}" ]]; then
-            ARGPARSER_USE_STYLES="always"
+            ARGPARSER_USE_COLORS=true
         fi
         if [[ -v NO_COLOR && -n "${NO_COLOR}" ]]; then
-            ARGPARSER_USE_STYLES="never"
+            ARGPARSER_USE_COLORS=false
         fi
     fi
 
@@ -10498,6 +10539,7 @@ function argparser_main() {
         unset ARGPARSER_USAGE_MESSAGE_ORIENTATION
         unset ARGPARSER_USAGE_OPTIONS
         unset ARGPARSER_USAGE_STYLE
+        unset ARGPARSER_USE_COLORS
         unset ARGPARSER_USE_LONG_OPTIONS
         unset ARGPARSER_USE_SHORT_OPTIONS
         unset ARGPARSER_USE_STYLES
