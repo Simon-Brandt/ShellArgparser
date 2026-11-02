@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-30
+# Last Modification: 2026-11-02
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -2062,7 +2062,7 @@ function argparser_set_env_vars() {
         ARGPARSER_USAGE_OPTIONS="u" \
         ARGPARSER_USE_LONG_OPTIONS=true \
         ARGPARSER_USE_SHORT_OPTIONS=false \
-        ARGPARSER_USE_STYLES="tty" \
+        ARGPARSER_USE_STYLES="${ARGPARSER_USE_STYLES:-tty}" \
         ARGPARSER_VERSION_EXIT_CODE=0 \
         ARGPARSER_VERSION_NUMBER="${argparser_version}" \
         ARGPARSER_VERSION_OPTIONS="V" \
