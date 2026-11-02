@@ -336,21 +336,21 @@ function argparser_check_styles() {
 
     # Define the local variables.
     local check_type
-    local -a colors
+    local -a colors_ # ShellCheck scope issue with associative array "colors".
     local -a corner_styles
     local -a line_styles
     local -a line_widths
-    local request
-    local -a requests
+    local style_request
+    local -a style_requests
     local -a text_styles
 
     # Read the arguments.
     check_type="$1"
-    requests="$2"
+    style_requests="$2"
 
     # Define the arrays of implemented colors, text styles, and frame
     # styles (corner and line styles, as well as line widths).
-    colors=(
+    colors_=(
         "black"
         "red"
         "green"
@@ -397,62 +397,66 @@ function argparser_check_styles() {
 
     # Split the requested colors and/or styles on
     # ${ARGPARSER_ARG_DELIMITER_2} characters and check any.
-    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a requests <<< "${requests}"
+    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a style_requests \
+        <<< "${style_requests}"
 
     if [[ "${check_type}" == "colors" ]]; then
-        if (( "${#requests[@]}" == 0 )); then
+        if (( "${#style_requests[@]}" == 0 )); then
             return 1
         fi
 
-        for request in "${requests[@]}"; do
-            request="${request#bright_}"
-            request="${request%@(_bg|_fg)}"
-            if ! argparser_in_array "${request}" "${colors[@]}"; then
+        for style_request in "${style_requests[@]}"; do
+            style_request="${style_request#bright_}"
+            style_request="${style_request%@(_bg|_fg)}"
+            if ! argparser_in_array "${style_request}" "${colors_[@]}"; then
                 return 1
             fi
         done
     elif [[ "${check_type}" == "text styles" ]]; then
-        if (( "${#requests[@]}" == 0 )); then
+        if (( "${#style_requests[@]}" == 0 )); then
             return 1
         fi
 
-        for request in "${requests[@]}"; do
-            if ! argparser_in_array "${request}" "${text_styles[@]}"; then
+        for style_request in "${style_requests[@]}"; do
+            if ! argparser_in_array "${style_request}" "${text_styles[@]}"
+            then
                 return 1
             fi
         done
     elif [[ "${check_type}" == "frame styles" ]]; then
-        for request in "${requests[@]}"; do
-            if ! argparser_in_array "${request}" "${corner_styles[@]}" \
+        for style_request in "${style_requests[@]}"; do
+            if ! argparser_in_array "${style_request}" "${corner_styles[@]}" \
                 "${line_styles[@]}" "${line_widths[@]}"
             then
                 return 1
             fi
         done
     elif [[ "${check_type}" == "colors, text styles" ]]; then
-        if (( "${#requests[@]}" == 0 )); then
+        if (( "${#style_requests[@]}" == 0 )); then
             return 1
         fi
 
-        for request in "${requests[@]}"; do
-            if ! argparser_in_array "${request}" "${colors[@]}" \
+        for style_request in "${style_requests[@]}"; do
+            if ! argparser_in_array "${style_request}" "${colors_[@]}" \
                 "${text_styles[@]}"
             then
-                request="${request#bright_}"
-                request="${request%@(_bg|_fg)}"
-                if ! argparser_in_array "${request}" "${colors[@]}"; then
+                style_request="${style_request#bright_}"
+                style_request="${style_request%@(_bg|_fg)}"
+                if ! argparser_in_array "${style_request}" "${colors_[@]}"
+                then
                     return 1
                 fi
             fi
         done
     elif [[ "${check_type}" == "colors, frame styles" ]]; then
-        for request in "${requests[@]}"; do
-            if ! argparser_in_array "${request}" "${colors[@]}" \
+        for style_request in "${style_requests[@]}"; do
+            if ! argparser_in_array "${style_request}" "${colors_[@]}" \
                 "${corner_styles[@]}" "${line_styles[@]}" "${line_widths[@]}"
             then
-                request="${request#bright_}"
-                request="${request%@(_bg|_fg)}"
-                if ! argparser_in_array "${request}" "${colors[@]}"; then
+                style_request="${style_request#bright_}"
+                style_request="${style_request%@(_bg|_fg)}"
+                if ! argparser_in_array "${style_request}" "${colors_[@]}";
+                then
                     return 1
                 fi
             fi
