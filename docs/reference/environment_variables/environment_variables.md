@@ -37,7 +37,7 @@
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to add the [`ARGPARSER_VERSION_OPTIONS`](#9462-argparser_version_options) and `--version` as flags to call the version message.
+- ***Description:*** Whether to add the [`ARGPARSER_VERSION_OPTIONS`](#9463-argparser_version_options) and `--version` as flags to call the version message.
 
 #### 9.4.5. `ARGPARSER_ALLOW_ARG_INTERMIXING`
 
@@ -414,59 +414,66 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 - ***Default value:*** `"italic"`
 - ***Description:*** The color and style specification to use for usage messages, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters").
 
-#### 9.4.56. `ARGPARSER_USE_LONG_OPTIONS`
+#### 9.4.56. `ARGPARSER_USE_COLORS`
+
+- ***Type:*** *bool* (Boolean)
+- ***Allowed values:*** `true` and `false`
+- ***Default value:*** `true`
+- ***Description:*** Whether to use colors, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters"), for help, usage, version, error, and warning messages. This requires [`ARGPARSER_USE_STYLES`](#9459-argparser_use_styles) to be set to `"always"`, `"file"`, or `"tty"` to take effect. `ARGPARSER_USE_COLORS` overrides [`NO_COLOR`](https://no-color.org/ "no-color.org") and [`FORCE_COLOR`](https://force-color.org/ "force-color.org").
+
+#### 9.4.57. `ARGPARSER_USE_LONG_OPTIONS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
 - ***Description:*** Whether to accept long option names upon parsing and creating the help and usage messages. If your script doesn't take any long option, it may be practical to disable also the long options the Argparser sets, *viz.* `--help`, `--usage`, and `--version` (given that [`ARGPARSER_ADD_HELP`](#942-argparser_add_help), [`ARGPARSER_ADD_USAGE`](#943-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](#944-argparser_add_version), respectively, are set). Additionally, the help message will only have two columns (the short option names and the help texts), then.
 
-#### 9.4.57. `ARGPARSER_USE_SHORT_OPTIONS`
+#### 9.4.58. `ARGPARSER_USE_SHORT_OPTIONS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to accept short option names upon parsing and creating the help and usage messages. If your script doesn't take any short option, it may be practical to disable also the short options the Argparser sets, *viz.* the [`ARGPARSER_HELP_OPTIONS`](#9429-argparser_help_options), the [`ARGPARSER_USAGE_OPTIONS`](#9454-argparser_usage_options), and the [`ARGPARSER_VERSION_OPTIONS`](#9462-argparser_version_options) (given that [`ARGPARSER_ADD_HELP`](#942-argparser_add_help), [`ARGPARSER_ADD_USAGE`](#943-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](#944-argparser_add_version), respectively, are set). Additionally, the help message will only have two columns (the long option names and the help texts), then.
+- ***Description:*** Whether to accept short option names upon parsing and creating the help and usage messages. If your script doesn't take any short option, it may be practical to disable also the short options the Argparser sets, *viz.* the [`ARGPARSER_HELP_OPTIONS`](#9429-argparser_help_options), the [`ARGPARSER_USAGE_OPTIONS`](#9454-argparser_usage_options), and the [`ARGPARSER_VERSION_OPTIONS`](#9463-argparser_version_options) (given that [`ARGPARSER_ADD_HELP`](#942-argparser_add_help), [`ARGPARSER_ADD_USAGE`](#943-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](#944-argparser_add_version), respectively, are set). Additionally, the help message will only have two columns (the long option names and the help texts), then.
 
-#### 9.4.58. `ARGPARSER_USE_STYLES`
+#### 9.4.59. `ARGPARSER_USE_STYLES`
 
 - ***Type:*** *str* (String)
 - ***Allowed values:*** `"always"`, `"never"`, `"file"`, and `"tty"`
 - ***Default value:*** `"tty"`
-- ***Description:*** When to use the message colors and styles. `"always"` adds the styles on any occasion, `"never"` on none, and `"tty"` and `"file"` only when `STDOUT`/`STDERR` is or is not a terminal (and thus a file). Deactivating the styles is useful to get plain ASCII text output for files, while in interactive sessions, the escape sequences offer more user-friendly formatting and possibilities for highlighting. By this, you can parse your files afterwards more easily. Still, using *e.g.* [`less --raw-control-chars <filename>`](https://man7.org/linux/man-pages/man1/less.1.html "man7.org &rightarrow; man pages &rightarrow; less(1)"), these escape sequences can be displayed from files, when included. `ARGPARSER_USE_STYLES` overrides [`NO_COLOR`](https://no-color.org/ "no-color.org").
+- ***Description:*** When to use the message colors and styles. `"always"` adds the styles on any occasion, `"never"` on none, and `"tty"` and `"file"` only when `STDOUT`/`STDERR` is or is not a terminal (and thus a file). Deactivating the styles is useful to get plain ASCII text output for files, while in interactive sessions, the escape sequences offer more user-friendly formatting and possibilities for highlighting. By this, you can parse your files afterwards more easily. Still, using *e.g.* [`less --raw-control-chars <filename>`](https://man7.org/linux/man-pages/man1/less.1.html "man7.org &rightarrow; man pages &rightarrow; less(1)"), these escape sequences can be displayed from files, when included.
 
-#### 9.4.59. `ARGPARSER_USE_STYLES_IN_FILES`
+#### 9.4.60. `ARGPARSER_USE_STYLES_IN_FILES`
 
 > [!WARNING]
-> Deprecated in favor of [`ARGPARSER_USE_STYLES="always"`](#9458-argparser_use_styles). Scheduled for removal in `v2.0.0`.
+> Deprecated in favor of [`ARGPARSER_USE_STYLES="always"`](#9459-argparser_use_styles). Scheduled for removal in `v2.0.0`.
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
-- ***Description:*** Whether to use the message colors and styles when `STDOUT`/`STDERR` is not a terminal (and thus perhaps a file). `ARGPARSER_USE_STYLES_IN_FILES` overrides [`NO_COLOR`](https://no-color.org/ "no-color.org").
+- ***Description:*** Whether to use the message colors and styles when `STDOUT`/`STDERR` is not a terminal (and thus perhaps a file).
 
-#### 9.4.60. `ARGPARSER_VERSION_EXIT_CODE`
+#### 9.4.61. `ARGPARSER_VERSION_EXIT_CODE`
 
 - ***Type:*** *int* (Integer)
 - ***Allowed values:*** Any integer, usually zero
 - ***Default value:*** `0`
-- ***Description:*** The exit code when a version message was requested using the [`ARGPARSER_VERSION_OPTIONS`](#9462-argparser_version_options) or the `--version` flag.
+- ***Description:*** The exit code when a version message was requested using the [`ARGPARSER_VERSION_OPTIONS`](#9463-argparser_version_options) or the `--version` flag.
 
-#### 9.4.61. `ARGPARSER_VERSION_NUMBER`
+#### 9.4.62. `ARGPARSER_VERSION_NUMBER`
 
 - ***Type:*** *str* (String)
 - ***Allowed values:*** Any string
 - ***Default value:*** `"1.0.0"`
 - ***Description:*** The version number of your script to be used in the version message. Consider using [semantic versioning](https://semver.org/ "semver.org") or [calendar versioning](https://calver.org/ "calver.org"), *i.e.*, give version numbers by major version, minor version, and patch, separated by dots, or by year, month, and/or day of release, again separated by dots.
 
-#### 9.4.62. `ARGPARSER_VERSION_OPTIONS`
+#### 9.4.63. `ARGPARSER_VERSION_OPTIONS`
 
 - ***Type:*** *char* (Character)
 - ***Allowed values:*** Any unique short-option character that's not used in the arguments definition
 - ***Default value:*** `"V"`
 - ***Description:*** The short option names used to call the version message. This is only evaluated if [`ARGPARSER_ADD_VERSION`](#944-argparser_add_version) is `true`.
 
-#### 9.4.63. `ARGPARSER_VERSION_STYLE`
+#### 9.4.64. `ARGPARSER_VERSION_STYLE`
 
 > [!WARNING]
 > Deprecated in favor of [`ARGPARSER_STYLE_FILE`](#9443-argparser_style_file). Scheduled for removal in `v2.0.0`.
@@ -476,7 +483,7 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 - ***Default value:*** `"bold"`
 - ***Description:*** The color and style specification to use for version messages, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters").
 
-#### 9.4.64. `ARGPARSER_WARNING_STYLE`
+#### 9.4.65. `ARGPARSER_WARNING_STYLE`
 
 > [!WARNING]
 > Deprecated in favor of [`ARGPARSER_STYLE_FILE`](#9443-argparser_style_file). Scheduled for removal in `v2.0.0`.
@@ -486,7 +493,7 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 - ***Default value:*** `"red,bold"`
 - ***Description:*** The color and style specification to use for warning messages, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters").
 
-#### 9.4.65. `ARGPARSER_WRITE_ARGS`
+#### 9.4.66. `ARGPARSER_WRITE_ARGS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`

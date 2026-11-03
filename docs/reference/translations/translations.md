@@ -96,7 +96,7 @@
 #### 9.5.16. `--version`
 
 - ***Message:*** `display the version and exit`
-- ***Description:*** the help text for the version options, *i.e.*, the [`ARGPARSER_VERSION_OPTIONS`](../environment_variables/environment_variables.md#9462-argparser_version_options) and `--version`, if [`ARGPARSER_ADD_VERSION`](../environment_variables/environment_variables.md#944-argparser_add_version) is set to `true`.
+- ***Description:*** the help text for the version options, *i.e.*, the [`ARGPARSER_VERSION_OPTIONS`](../environment_variables/environment_variables.md#9463-argparser_version_options) and `--version`, if [`ARGPARSER_ADD_VERSION`](../environment_variables/environment_variables.md#944-argparser_add_version) is set to `true`.
 
 #### 9.5.17. `false`
 
@@ -248,7 +248,7 @@
 #### 9.5.34. `Error env var style usage`
 
 - ***Message:*** `Error: The environment variable "ARGPARSER_USE_STYLES" must be in {$1}, but is "$2".`
-- ***Description:*** The error that the environment variable [`ARGPARSER_USE_STYLES`](../environment_variables/environment_variables.md#9458-argparser_use_styles) is not set to `always`, `never`, `file`, or `tty`.
+- ***Description:*** The error that the environment variable [`ARGPARSER_USE_STYLES`](../environment_variables/environment_variables.md#9459-argparser_use_styles) is not set to `always`, `never`, `file`, or `tty`.
 - ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variable `ARGPARSER_USE_STYLES`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invocation command line, or as an environment variable, has a value other than `always`, `never`, `file`, and `tty`. Since there are only files and TTYs where the help, usage, version, error, and warning messages may be redirected to, other values are refused.
 - ***Interpolated variables:***
   - `$1`: The available style usages.
@@ -319,13 +319,13 @@
 #### 9.5.42. `Error env var short options`
 
 - ***Message:*** `Error: The environment variable "ARGPARSER_USAGE_MESSAGE_OPTION_TYPE" requests the usage of short option names, but "ARGPARSER_USE_SHORT_OPTIONS" turns them off.`
-- ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](#9535-error-env-var-option-type) requests short option names, while [`ARGPARSER_USE_SHORT_OPTIONS`](../environment_variables/environment_variables.md#9457-argparser_use_short_options) prohibits this.
+- ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](#9535-error-env-var-option-type) requests short option names, while [`ARGPARSER_USE_SHORT_OPTIONS`](../environment_variables/environment_variables.md#9458-argparser_use_short_options) prohibits this.
 - ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variable `ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invocation command line, or as an environment variable, is set to `short`, while `ARGPARSER_USE_SHORT_OPTIONS` is set to `false`. Consequently, the usage message could not be created, since no short option name is available.
 
 #### 9.5.43. `Error env var long options`
 
 - ***Message:*** `Error: The environment variable "ARGPARSER_USAGE_MESSAGE_OPTION_TYPE" requests the usage of long option names, but "ARGPARSER_USE_LONG_OPTIONS" turns them off.`
-- ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](#9535-error-env-var-option-type) requests long option names, while [`ARGPARSER_USE_LONG_OPTIONS`](../environment_variables/environment_variables.md#9456-argparser_use_long_options) prohibits this.
+- ***Description:*** The error that the environment variable [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](#9535-error-env-var-option-type) requests long option names, while [`ARGPARSER_USE_LONG_OPTIONS`](../environment_variables/environment_variables.md#9457-argparser_use_long_options) prohibits this.
 - ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9416-argparser_check_env_vars) is set to `true`, the Argparser detected that the environment variable `ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9417-argparser_config_file), on the Argparser invocation command line, or as an environment variable, is set to `long`, while `ARGPARSER_USE_LONG_OPTIONS` is set to `false`. Consequently, the usage message could not be created, since no long option name is available.
 
 #### 9.5.44. `Error env var files`

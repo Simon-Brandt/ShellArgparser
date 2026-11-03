@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-29
+# Last Modification: 2026-11-03
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -2248,6 +2248,7 @@ output="$(cat << EOF
 |           [--usage-message-orientation={row,column}] |
 |           [--usage-options=CHAR...]                  |
 |           [--usage-style=STYLE...]                   |
+|           [--use-colors]                             |
 |           [--use-long-options]                       |
 |           [--use-short-options]                      |
 |           [--use-styles={always,never,file,tty}]     |
@@ -2430,6 +2431,9 @@ Mandatory arguments to long options are mandatory for short options too.
 | [--usage-style=STYLE...]         (DEPRECATED) the color and style specification |
 |                                  for usage messages, deprecated in favor of     |
 |                                  "--style-file=FILE" (default: "italic")        |
+| [--use-colors]                   colorize the help, usage, version, error, and  |
+|                                  warning messages, applied in conjunction with  |
+|                                  "--use-styles" (default: true)                 |
 | [--use-styles=                   use the colors and styles "always", "never",   |
 |     {always,never,file,tty}]     or only when STDOUT/STDERR is ("tty") or is    |
 |                                  not ("file") a terminal (default: "tty")       |
