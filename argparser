@@ -6434,7 +6434,7 @@ function argparser_get_args_definition() {
             error_message+="forgot defining the array at all (then define it)."
 
             argparser_translate "Error arg array 2" "${error_message}" \
-                "${ARGPARSER_ARG_ARRAY_NAME}"
+                "${ARGPARSER_ARG_ARRAY_NAME}" "${name}"
             error_message="${translation}"
         else
             error_message="Error: The variable ARGPARSER_ARG_ARRAY_NAME "
