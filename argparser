@@ -1687,6 +1687,155 @@ function argparser_draw_frame() {
     fi
 }
 
+function argparser_cleanup() {
+    # Unset (clean up) the Argparser functions and environment variables.
+    #
+    # Environment:
+    # - ARGPARSER_UNSET_ENV_VARS (read-only)
+    # - ARGPARSER_UNSET_FUNCTIONS (read-only)
+
+    # Possibly, unset all Argparser functions (by name to limit side
+    # effects with potentially same-named functions starting with
+    # "argparser_" from the calling script/environment that stand in no
+    # relation to the Argparser).
+    if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
+        unset -f \
+            argparser_add_args_definition_help_options \
+            argparser_check_arg_values \
+            argparser_check_args_definition_names \
+            argparser_check_args_definition_option_values \
+            argparser_check_args_definition_positional_values \
+            argparser_check_bash_version \
+            argparser_check_env_vars \
+            argparser_check_file \
+            argparser_check_shell \
+            argparser_check_styles \
+            argparser_cleanup \
+            argparser_colorize \
+            argparser_count \
+            argparser_create_args_definition \
+            argparser_create_help_message \
+            argparser_create_usage_message \
+            argparser_define_env_vars \
+            argparser_draw_frame \
+            argparser_fold \
+            argparser_get_arg_key \
+            argparser_get_args_definition \
+            argparser_get_max \
+            argparser_get_max_width \
+            argparser_get_option_names \
+            argparser_in_array \
+            argparser_is_alpha \
+            argparser_is_bool \
+            argparser_is_char \
+            argparser_is_float \
+            argparser_is_identifier \
+            argparser_is_int \
+            argparser_is_uint \
+            argparser_join \
+            argparser_main \
+            argparser_modify_env_vars \
+            argparser_pad \
+            argparser_parse_arg \
+            argparser_parse_args \
+            argparser_parse_args_definition \
+            argparser_parse_long_option \
+            argparser_parse_positional_args \
+            argparser_parse_short_option \
+            argparser_print_error_messages \
+            argparser_print_help_message \
+            argparser_print_logo \
+            argparser_print_usage_message \
+            argparser_print_version_message \
+            argparser_print_warning_messages \
+            argparser_quicksort \
+            argparser_read_args_definition \
+            argparser_read_configuration \
+            argparser_read_styles \
+            argparser_read_translation \
+            argparser_seq \
+            argparser_set_args \
+            argparser_set_env_var_defaults \
+            argparser_set_env_vars \
+            argparser_sort \
+            argparser_toggle_debugger \
+            argparser_translate \
+            argparser_uncolorize \
+            argparser_uniq \
+            argparser_write_args
+    fi
+
+    # Likewise, possibly unset all Argparser environment variables.
+    if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
+        unset -v \
+            ARGPARSER_ADD_HELP \
+            ARGPARSER_ADD_USAGE \
+            ARGPARSER_ADD_VERSION \
+            ARGPARSER_ALLOW_ARG_INTERMIXING \
+            ARGPARSER_ALLOW_FLAG_INVERSION \
+            ARGPARSER_ALLOW_FLAG_NEGATION \
+            ARGPARSER_ALLOW_OPTION_ABBREVIATION \
+            ARGPARSER_ALLOW_OPTION_MERGING \
+            ARGPARSER_ARG_ARRAY_NAME \
+            ARGPARSER_ARG_DEF_FILE \
+            ARGPARSER_ARG_DELIMITER_1 \
+            ARGPARSER_ARG_DELIMITER_2 \
+            ARGPARSER_ARGS \
+            ARGPARSER_CHECK_ARG_DEF \
+            ARGPARSER_CHECK_ENV_VARS \
+            ARGPARSER_CONFIG_FILE \
+            ARGPARSER_COUNT_FLAGS \
+            ARGPARSER_CREATE_ARG_DEF \
+            ARGPARSER_DEBUG \
+            ARGPARSER_ERROR_EXIT_CODE \
+            ARGPARSER_ERROR_STYLE \
+            ARGPARSER_HELP_ARG_GROUP \
+            ARGPARSER_HELP_DESCRIPTION \
+            ARGPARSER_HELP_EXIT_CODE \
+            ARGPARSER_HELP_FILE \
+            ARGPARSER_HELP_FILE_INCLUDE_CHAR \
+            ARGPARSER_HELP_FILE_KEEP_COMMENTS \
+            ARGPARSER_HELP_OPTIONS \
+            ARGPARSER_HELP_STYLE \
+            ARGPARSER_LANGUAGE \
+            ARGPARSER_MAX_COL_WIDTH_1 \
+            ARGPARSER_MAX_COL_WIDTH_2 \
+            ARGPARSER_MAX_COL_WIDTH_3 \
+            ARGPARSER_MAX_WIDTH \
+            ARGPARSER_POSITIONAL_ARG_GROUP \
+            ARGPARSER_READ_ARGS \
+            ARGPARSER_SCRIPT_NAME \
+            ARGPARSER_SET_ARGS \
+            ARGPARSER_SET_ARRAYS \
+            ARGPARSER_SILENCE_ERRORS \
+            ARGPARSER_SILENCE_WARNINGS \
+            ARGPARSER_STYLE_FILE \
+            ARGPARSER_TRANSLATION_FILE \
+            ARGPARSER_UNSET_ARGS \
+            ARGPARSER_UNSET_ENV_VARS \
+            ARGPARSER_UNSET_FUNCTIONS \
+            ARGPARSER_USAGE_EXIT_CODE \
+            ARGPARSER_USAGE_FILE \
+            ARGPARSER_USAGE_FILE_INCLUDE_CHAR \
+            ARGPARSER_USAGE_FILE_KEEP_COMMENTS \
+            ARGPARSER_USAGE_MESSAGE_OPTION_TYPE \
+            ARGPARSER_USAGE_MESSAGE_ORIENTATION \
+            ARGPARSER_USAGE_OPTIONS \
+            ARGPARSER_USAGE_STYLE \
+            ARGPARSER_USE_COLORS \
+            ARGPARSER_USE_LONG_OPTIONS \
+            ARGPARSER_USE_SHORT_OPTIONS \
+            ARGPARSER_USE_STYLES \
+            ARGPARSER_USE_STYLES_IN_FILES \
+            ARGPARSER_VERSION_EXIT_CODE \
+            ARGPARSER_VERSION_NUMBER \
+            ARGPARSER_VERSION_OPTIONS \
+            ARGPARSER_VERSION_STYLE \
+            ARGPARSER_WARNING_STYLE \
+            ARGPARSER_WRITE_ARGS
+    fi
+}
+
 # Define the Argparser functions for reading the configuration and
 # setting and checking the environment variables.
 function argparser_read_configuration() {
@@ -11272,146 +11421,8 @@ function argparser_main() {
         argparser_toggle_debugger stop
     fi
 
-    # If ${ARGPARSER_UNSET_FUNCTIONS} is set to "true", unset all
-    # Argparser functions.  The names are used instead of a glob to
-    # limit side effects with potentially same-named functions (i.e.,
-    # those starting with "argparser_") from the calling script that
-    # stand in no relation to the Argparser.
-    if [[ "${ARGPARSER_UNSET_FUNCTIONS}" == true ]]; then
-        unset -f argparser_add_args_definition_help_options
-        unset -f argparser_check_arg_values
-        unset -f argparser_check_args_definition_names
-        unset -f argparser_check_args_definition_option_values
-        unset -f argparser_check_args_definition_positional_values
-        unset -f argparser_check_bash_version
-        unset -f argparser_check_env_vars
-        unset -f argparser_check_file
-        unset -f argparser_check_shell
-        unset -f argparser_check_styles
-        unset -f argparser_colorize
-        unset -f argparser_count
-        unset -f argparser_create_args_definition
-        unset -f argparser_create_help_message
-        unset -f argparser_create_usage_message
-        unset -f argparser_draw_frame
-        unset -f argparser_fold
-        unset -f argparser_get_arg_key
-        unset -f argparser_get_max
-        unset -f argparser_get_max_width
-        unset -f argparser_get_option_names
-        unset -f argparser_in_array
-        unset -f argparser_is_alpha
-        unset -f argparser_is_bool
-        unset -f argparser_is_char
-        unset -f argparser_is_float
-        unset -f argparser_is_identifier
-        unset -f argparser_is_int
-        unset -f argparser_is_uint
-        unset -f argparser_join
-        unset -f argparser_main
-        unset -f argparser_modify_env_vars
-        unset -f argparser_pad
-        unset -f argparser_parse_arg
-        unset -f argparser_parse_args
-        unset -f argparser_parse_args_definition
-        unset -f argparser_parse_long_option
-        unset -f argparser_parse_positional_args
-        unset -f argparser_parse_short_option
-        unset -f argparser_print_error_messages
-        unset -f argparser_print_help_message
-        unset -f argparser_print_logo
-        unset -f argparser_print_usage_message
-        unset -f argparser_print_version_message
-        unset -f argparser_print_warning_messages
-        unset -f argparser_quicksort
-        unset -f argparser_read_args_definition
-        unset -f argparser_read_configuration
-        unset -f argparser_read_styles
-        unset -f argparser_read_translation
-        unset -f argparser_seq
-        unset -f argparser_set_args
-        unset -f argparser_set_env_var_defaults
-        unset -f argparser_set_env_vars
-        unset -f argparser_sort
-        unset -f argparser_toggle_debugger
-        unset -f argparser_translate
-        unset -f argparser_uncolorize
-        unset -f argparser_uniq
-        unset -f argparser_write_args
-    fi
-
-    # If ${ARGPARSER_UNSET_ENV_VARS} is set to "true", unset all
-    # Argparser environment variables.  Again, the names are used
-    # instead of a glob to limit side effects with potentially
-    # same-named variables (i.e., those starting with "ARGPARSER_") from
-    # the calling script that stand in no relation to the Argparser.
-    if [[ "${ARGPARSER_UNSET_ENV_VARS}" == true ]]; then
-        unset ARGPARSER_ADD_HELP
-        unset ARGPARSER_ADD_USAGE
-        unset ARGPARSER_ADD_VERSION
-        unset ARGPARSER_ALLOW_ARG_INTERMIXING
-        unset ARGPARSER_ALLOW_FLAG_INVERSION
-        unset ARGPARSER_ALLOW_FLAG_NEGATION
-        unset ARGPARSER_ALLOW_OPTION_ABBREVIATION
-        unset ARGPARSER_ALLOW_OPTION_MERGING
-        unset ARGPARSER_ARG_ARRAY_NAME
-        unset ARGPARSER_ARG_DEF_FILE
-        unset ARGPARSER_ARG_DELIMITER_1
-        unset ARGPARSER_ARG_DELIMITER_2
-        unset ARGPARSER_ARGS
-        unset ARGPARSER_CHECK_ARG_DEF
-        unset ARGPARSER_CHECK_ENV_VARS
-        unset ARGPARSER_CONFIG_FILE
-        unset ARGPARSER_COUNT_FLAGS
-        unset ARGPARSER_CREATE_ARG_DEF
-        unset ARGPARSER_DEBUG
-        unset ARGPARSER_ERROR_EXIT_CODE
-        unset ARGPARSER_ERROR_STYLE
-        unset ARGPARSER_HELP_ARG_GROUP
-        unset ARGPARSER_HELP_DESCRIPTION
-        unset ARGPARSER_HELP_EXIT_CODE
-        unset ARGPARSER_HELP_FILE
-        unset ARGPARSER_HELP_FILE_INCLUDE_CHAR
-        unset ARGPARSER_HELP_FILE_KEEP_COMMENTS
-        unset ARGPARSER_HELP_OPTIONS
-        unset ARGPARSER_HELP_STYLE
-        unset ARGPARSER_LANGUAGE
-        unset ARGPARSER_MAX_COL_WIDTH_1
-        unset ARGPARSER_MAX_COL_WIDTH_2
-        unset ARGPARSER_MAX_COL_WIDTH_3
-        unset ARGPARSER_MAX_WIDTH
-        unset ARGPARSER_POSITIONAL_ARG_GROUP
-        unset ARGPARSER_READ_ARGS
-        unset ARGPARSER_SCRIPT_NAME
-        unset ARGPARSER_SET_ARGS
-        unset ARGPARSER_SET_ARRAYS
-        unset ARGPARSER_SILENCE_ERRORS
-        unset ARGPARSER_SILENCE_WARNINGS
-        unset ARGPARSER_STYLE_FILE
-        unset ARGPARSER_TRANSLATION_FILE
-        unset ARGPARSER_UNSET_ARGS
-        unset ARGPARSER_UNSET_ENV_VARS
-        unset ARGPARSER_UNSET_FUNCTIONS
-        unset ARGPARSER_USAGE_EXIT_CODE
-        unset ARGPARSER_USAGE_FILE
-        unset ARGPARSER_USAGE_FILE_INCLUDE_CHAR
-        unset ARGPARSER_USAGE_FILE_KEEP_COMMENTS
-        unset ARGPARSER_USAGE_MESSAGE_OPTION_TYPE
-        unset ARGPARSER_USAGE_MESSAGE_ORIENTATION
-        unset ARGPARSER_USAGE_OPTIONS
-        unset ARGPARSER_USAGE_STYLE
-        unset ARGPARSER_USE_COLORS
-        unset ARGPARSER_USE_LONG_OPTIONS
-        unset ARGPARSER_USE_SHORT_OPTIONS
-        unset ARGPARSER_USE_STYLES
-        unset ARGPARSER_USE_STYLES_IN_FILES
-        unset ARGPARSER_VERSION_EXIT_CODE
-        unset ARGPARSER_VERSION_NUMBER
-        unset ARGPARSER_VERSION_OPTIONS
-        unset ARGPARSER_VERSION_STYLE
-        unset ARGPARSER_WARNING_STYLE
-        unset ARGPARSER_WRITE_ARGS
-    fi
+    # Clean up the Argparser functions and environment variables.
+    argparser_cleanup
 
     # Possibly disable extglob, if it was previously unset.
     if (( is_extglob_set == 1 )); then
