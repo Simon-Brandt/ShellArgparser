@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-11-02
+# Last Modification: 2026-11-04
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -1865,6 +1865,914 @@ function argparser_read_configuration() {
     argparser_print_error_messages true true "${error_messages[@]}"
 }
 
+function argparser_define_env_vars() {
+    # Define the Argparser environment variables.
+    #
+    # Nonlocals:
+    # - all_arg_groups: the associative array holding the argument
+    #   groups
+    # - all_arg_numbers: the associative array holding the argument
+    #   numbers
+    # - all_choice_values: the associative array holding the choice
+    #   values
+    # - all_default_values: the associative array holding the default
+    #   values
+    # - all_help_texts: the associative array holding the help texts
+    # - all_long_options: the associative array holding the long option
+    #   names
+    # - all_notes: the associative array holding the notes
+    # - all_resolved_choice_values: the associative array holding the
+    #   resolved (range-expanded) choice values
+    # - all_short_options: the associative array holding the short
+    #   option names
+    # - all_types: the associative array holding the argument types
+    # - all_value_names: the associative array holding the value names
+
+    # Define ${ARGPARSER_ADD_HELP}.
+             all_short_options["ARGPARSER_ADD_HELP"]=""
+              all_long_options["ARGPARSER_ADD_HELP"]="add-help"
+               all_value_names["ARGPARSER_ADD_HELP"]=""
+            all_default_values["ARGPARSER_ADD_HELP"]="true"
+             all_choice_values["ARGPARSER_ADD_HELP"]=""
+    all_resolved_choice_values["ARGPARSER_ADD_HELP"]=""
+                     all_types["ARGPARSER_ADD_HELP"]="bool"
+               all_arg_numbers["ARGPARSER_ADD_HELP"]="0"
+                all_arg_groups["ARGPARSER_ADD_HELP"]="General options"
+                     all_notes["ARGPARSER_ADD_HELP"]=""
+                all_help_texts["ARGPARSER_ADD_HELP"]="add ARGPARSER_HELP_OPTIONS and --help as flags to call the help message"
+
+    # Define ${ARGPARSER_ADD_USAGE}.
+             all_short_options["ARGPARSER_ADD_USAGE"]=""
+              all_long_options["ARGPARSER_ADD_USAGE"]="add-usage"
+               all_value_names["ARGPARSER_ADD_USAGE"]=""
+            all_default_values["ARGPARSER_ADD_USAGE"]="true"
+             all_choice_values["ARGPARSER_ADD_USAGE"]=""
+    all_resolved_choice_values["ARGPARSER_ADD_USAGE"]=""
+                     all_types["ARGPARSER_ADD_USAGE"]="bool"
+               all_arg_numbers["ARGPARSER_ADD_USAGE"]="0"
+                all_arg_groups["ARGPARSER_ADD_USAGE"]="General options"
+                     all_notes["ARGPARSER_ADD_USAGE"]=""
+                all_help_texts["ARGPARSER_ADD_USAGE"]="add ARGPARSER_USAGE_OPTIONS and --usage as flags to call the usage message"
+
+    # Define ${ARGPARSER_ADD_VERSION}.
+             all_short_options["ARGPARSER_ADD_VERSION"]=""
+              all_long_options["ARGPARSER_ADD_VERSION"]="add-version"
+               all_value_names["ARGPARSER_ADD_VERSION"]=""
+            all_default_values["ARGPARSER_ADD_VERSION"]="true"
+             all_choice_values["ARGPARSER_ADD_VERSION"]=""
+    all_resolved_choice_values["ARGPARSER_ADD_VERSION"]=""
+                     all_types["ARGPARSER_ADD_VERSION"]="bool"
+               all_arg_numbers["ARGPARSER_ADD_VERSION"]="0"
+                all_arg_groups["ARGPARSER_ADD_VERSION"]="General options"
+                     all_notes["ARGPARSER_ADD_VERSION"]=""
+                all_help_texts["ARGPARSER_ADD_VERSION"]="add ARGPARSER_VERSION_OPTIONS and --version as flags to call the version message"
+
+    # Define ${ARGPARSER_ALLOW_ARG_INTERMIXING}.
+             all_short_options["ARGPARSER_ALLOW_ARG_INTERMIXING"]=""
+              all_long_options["ARGPARSER_ALLOW_ARG_INTERMIXING"]="allow-arg-intermixing"
+               all_value_names["ARGPARSER_ALLOW_ARG_INTERMIXING"]=""
+            all_default_values["ARGPARSER_ALLOW_ARG_INTERMIXING"]="true"
+             all_choice_values["ARGPARSER_ALLOW_ARG_INTERMIXING"]=""
+    all_resolved_choice_values["ARGPARSER_ALLOW_ARG_INTERMIXING"]=""
+                     all_types["ARGPARSER_ALLOW_ARG_INTERMIXING"]="bool"
+               all_arg_numbers["ARGPARSER_ALLOW_ARG_INTERMIXING"]="0"
+                all_arg_groups["ARGPARSER_ALLOW_ARG_INTERMIXING"]="Parsing options"
+                     all_notes["ARGPARSER_ALLOW_ARG_INTERMIXING"]=""
+                all_help_texts["ARGPARSER_ALLOW_ARG_INTERMIXING"]="allow the user to intermix positional and keyword arguments"
+
+    # Define ${ARGPARSER_ALLOW_FLAG_INVERSION}.
+             all_short_options["ARGPARSER_ALLOW_FLAG_INVERSION"]=""
+              all_long_options["ARGPARSER_ALLOW_FLAG_INVERSION"]="allow-flag-inversion"
+               all_value_names["ARGPARSER_ALLOW_FLAG_INVERSION"]=""
+            all_default_values["ARGPARSER_ALLOW_FLAG_INVERSION"]="true"
+             all_choice_values["ARGPARSER_ALLOW_FLAG_INVERSION"]=""
+    all_resolved_choice_values["ARGPARSER_ALLOW_FLAG_INVERSION"]=""
+                     all_types["ARGPARSER_ALLOW_FLAG_INVERSION"]="bool"
+               all_arg_numbers["ARGPARSER_ALLOW_FLAG_INVERSION"]="0"
+                all_arg_groups["ARGPARSER_ALLOW_FLAG_INVERSION"]="Parsing options"
+                     all_notes["ARGPARSER_ALLOW_FLAG_INVERSION"]=""
+                all_help_texts["ARGPARSER_ALLOW_FLAG_INVERSION"]="allow the user to invert flags by prefixing them with \"+\" (short options) or \"++\" (long options)"
+
+    # Define ${ARGPARSER_ALLOW_FLAG_NEGATION}.
+             all_short_options["ARGPARSER_ALLOW_FLAG_NEGATION"]=""
+              all_long_options["ARGPARSER_ALLOW_FLAG_NEGATION"]="allow-flag-negation"
+               all_value_names["ARGPARSER_ALLOW_FLAG_NEGATION"]=""
+            all_default_values["ARGPARSER_ALLOW_FLAG_NEGATION"]="true"
+             all_choice_values["ARGPARSER_ALLOW_FLAG_NEGATION"]=""
+    all_resolved_choice_values["ARGPARSER_ALLOW_FLAG_NEGATION"]=""
+                     all_types["ARGPARSER_ALLOW_FLAG_NEGATION"]="bool"
+               all_arg_numbers["ARGPARSER_ALLOW_FLAG_NEGATION"]="0"
+                all_arg_groups["ARGPARSER_ALLOW_FLAG_NEGATION"]="Parsing options"
+                     all_notes["ARGPARSER_ALLOW_FLAG_NEGATION"]=""
+                all_help_texts["ARGPARSER_ALLOW_FLAG_NEGATION"]="allow the user to negate long-option flags by prefixing them with \"no-\""
+
+    # Define ${ARGPARSER_ALLOW_OPTION_ABBREVIATION}.
+             all_short_options["ARGPARSER_ALLOW_OPTION_ABBREVIATION"]=""
+              all_long_options["ARGPARSER_ALLOW_OPTION_ABBREVIATION"]="allow-option-abbreviation"
+               all_value_names["ARGPARSER_ALLOW_OPTION_ABBREVIATION"]=""
+            all_default_values["ARGPARSER_ALLOW_OPTION_ABBREVIATION"]="false"
+             all_choice_values["ARGPARSER_ALLOW_OPTION_ABBREVIATION"]=""
+    all_resolved_choice_values["ARGPARSER_ALLOW_OPTION_ABBREVIATION"]=""
+                     all_types["ARGPARSER_ALLOW_OPTION_ABBREVIATION"]="bool"
+               all_arg_numbers["ARGPARSER_ALLOW_OPTION_ABBREVIATION"]="0"
+                all_arg_groups["ARGPARSER_ALLOW_OPTION_ABBREVIATION"]="Parsing options"
+                     all_notes["ARGPARSER_ALLOW_OPTION_ABBREVIATION"]=""
+                all_help_texts["ARGPARSER_ALLOW_OPTION_ABBREVIATION"]="allow the user to give long option names in abbreviated form"
+
+    # Define ${ARGPARSER_ALLOW_OPTION_MERGING}.
+             all_short_options["ARGPARSER_ALLOW_OPTION_MERGING"]=""
+              all_long_options["ARGPARSER_ALLOW_OPTION_MERGING"]="allow-option-merging"
+               all_value_names["ARGPARSER_ALLOW_OPTION_MERGING"]=""
+            all_default_values["ARGPARSER_ALLOW_OPTION_MERGING"]="false"
+             all_choice_values["ARGPARSER_ALLOW_OPTION_MERGING"]=""
+    all_resolved_choice_values["ARGPARSER_ALLOW_OPTION_MERGING"]=""
+                     all_types["ARGPARSER_ALLOW_OPTION_MERGING"]="bool"
+               all_arg_numbers["ARGPARSER_ALLOW_OPTION_MERGING"]="0"
+                all_arg_groups["ARGPARSER_ALLOW_OPTION_MERGING"]="Parsing options"
+                     all_notes["ARGPARSER_ALLOW_OPTION_MERGING"]=""
+                all_help_texts["ARGPARSER_ALLOW_OPTION_MERGING"]="allow the user to give short option names in merged (concatenated) form"
+
+    # Define ${ARGPARSER_ARG_ARRAY_NAME}.
+             all_short_options["ARGPARSER_ARG_ARRAY_NAME"]=""
+              all_long_options["ARGPARSER_ARG_ARRAY_NAME"]="arg-array-name"
+               all_value_names["ARGPARSER_ARG_ARRAY_NAME"]="NAME"
+            all_default_values["ARGPARSER_ARG_ARRAY_NAME"]="args"
+             all_choice_values["ARGPARSER_ARG_ARRAY_NAME"]=""
+    all_resolved_choice_values["ARGPARSER_ARG_ARRAY_NAME"]=""
+                     all_types["ARGPARSER_ARG_ARRAY_NAME"]="str"
+               all_arg_numbers["ARGPARSER_ARG_ARRAY_NAME"]="1"
+                all_arg_groups["ARGPARSER_ARG_ARRAY_NAME"]="Parsing options"
+                     all_notes["ARGPARSER_ARG_ARRAY_NAME"]=""
+                all_help_texts["ARGPARSER_ARG_ARRAY_NAME"]="the indexed array for the raw arguments and the associative array for the parsed arguments"
+
+    # Define ${ARGPARSER_ARG_DEF_FILE}.
+             all_short_options["ARGPARSER_ARG_DEF_FILE"]=""
+              all_long_options["ARGPARSER_ARG_DEF_FILE"]="arg-def-file"
+               all_value_names["ARGPARSER_ARG_DEF_FILE"]="FILE"
+            all_default_values["ARGPARSER_ARG_DEF_FILE"]="''"
+             all_choice_values["ARGPARSER_ARG_DEF_FILE"]=""
+    all_resolved_choice_values["ARGPARSER_ARG_DEF_FILE"]=""
+                     all_types["ARGPARSER_ARG_DEF_FILE"]="file"
+               all_arg_numbers["ARGPARSER_ARG_DEF_FILE"]="1"
+                all_arg_groups["ARGPARSER_ARG_DEF_FILE"]="General options"
+                     all_notes["ARGPARSER_ARG_DEF_FILE"]=""
+                all_help_texts["ARGPARSER_ARG_DEF_FILE"]="the path to a file holding the definition of the arguments"
+
+    # Define ${ARGPARSER_ARG_DELIMITER_1}.
+             all_short_options["ARGPARSER_ARG_DELIMITER_1"]=""
+              all_long_options["ARGPARSER_ARG_DELIMITER_1"]="arg-delimiter-1"
+               all_value_names["ARGPARSER_ARG_DELIMITER_1"]="CHAR"
+            all_default_values["ARGPARSER_ARG_DELIMITER_1"]="|"
+             all_choice_values["ARGPARSER_ARG_DELIMITER_1"]=""
+    all_resolved_choice_values["ARGPARSER_ARG_DELIMITER_1"]=""
+                     all_types["ARGPARSER_ARG_DELIMITER_1"]="char"
+               all_arg_numbers["ARGPARSER_ARG_DELIMITER_1"]="1"
+                all_arg_groups["ARGPARSER_ARG_DELIMITER_1"]="General options"
+                     all_notes["ARGPARSER_ARG_DELIMITER_1"]=""
+                all_help_texts["ARGPARSER_ARG_DELIMITER_1"]="the primary delimiter that separates the fields in the arguments definition"
+
+    # Define ${ARGPARSER_ARG_DELIMITER_2}.
+             all_short_options["ARGPARSER_ARG_DELIMITER_2"]=""
+              all_long_options["ARGPARSER_ARG_DELIMITER_2"]="arg-delimiter-2"
+               all_value_names["ARGPARSER_ARG_DELIMITER_2"]="CHAR"
+            all_default_values["ARGPARSER_ARG_DELIMITER_2"]=","
+             all_choice_values["ARGPARSER_ARG_DELIMITER_2"]=""
+    all_resolved_choice_values["ARGPARSER_ARG_DELIMITER_2"]=""
+                     all_types["ARGPARSER_ARG_DELIMITER_2"]="char"
+               all_arg_numbers["ARGPARSER_ARG_DELIMITER_2"]="1"
+                all_arg_groups["ARGPARSER_ARG_DELIMITER_2"]="General options"
+                     all_notes["ARGPARSER_ARG_DELIMITER_2"]=""
+                all_help_texts["ARGPARSER_ARG_DELIMITER_2"]="the secondary delimiter that separates the elements of sequences in the arguments definition"
+
+    # Define ${ARGPARSER_CHECK_ARG_DEF}.
+             all_short_options["ARGPARSER_CHECK_ARG_DEF"]=""
+              all_long_options["ARGPARSER_CHECK_ARG_DEF"]="check-arg-def"
+               all_value_names["ARGPARSER_CHECK_ARG_DEF"]=""
+            all_default_values["ARGPARSER_CHECK_ARG_DEF"]="false"
+             all_choice_values["ARGPARSER_CHECK_ARG_DEF"]=""
+    all_resolved_choice_values["ARGPARSER_CHECK_ARG_DEF"]=""
+                     all_types["ARGPARSER_CHECK_ARG_DEF"]="bool"
+               all_arg_numbers["ARGPARSER_CHECK_ARG_DEF"]="0"
+                all_arg_groups["ARGPARSER_CHECK_ARG_DEF"]="General options"
+                     all_notes["ARGPARSER_CHECK_ARG_DEF"]=""
+                all_help_texts["ARGPARSER_CHECK_ARG_DEF"]="check if the arguments definition is consistent"
+
+    # Define ${ARGPARSER_CHECK_ENV_VARS}.
+             all_short_options["ARGPARSER_CHECK_ENV_VARS"]=""
+              all_long_options["ARGPARSER_CHECK_ENV_VARS"]="check-env-vars"
+               all_value_names["ARGPARSER_CHECK_ENV_VARS"]=""
+            all_default_values["ARGPARSER_CHECK_ENV_VARS"]="false"
+             all_choice_values["ARGPARSER_CHECK_ENV_VARS"]=""
+    all_resolved_choice_values["ARGPARSER_CHECK_ENV_VARS"]=""
+                     all_types["ARGPARSER_CHECK_ENV_VARS"]="bool"
+               all_arg_numbers["ARGPARSER_CHECK_ENV_VARS"]="0"
+                all_arg_groups["ARGPARSER_CHECK_ENV_VARS"]="General options"
+                     all_notes["ARGPARSER_CHECK_ENV_VARS"]=""
+                all_help_texts["ARGPARSER_CHECK_ENV_VARS"]="check if the Argparser environment variables accord to their definition"
+
+    # Define ${ARGPARSER_CONFIG_FILE}.
+             all_short_options["ARGPARSER_CONFIG_FILE"]=""
+              all_long_options["ARGPARSER_CONFIG_FILE"]="config-file"
+               all_value_names["ARGPARSER_CONFIG_FILE"]="FILE"
+            all_default_values["ARGPARSER_CONFIG_FILE"]="''"
+             all_choice_values["ARGPARSER_CONFIG_FILE"]=""
+    all_resolved_choice_values["ARGPARSER_CONFIG_FILE"]=""
+                     all_types["ARGPARSER_CONFIG_FILE"]="file"
+               all_arg_numbers["ARGPARSER_CONFIG_FILE"]="1"
+                all_arg_groups["ARGPARSER_CONFIG_FILE"]="General options"
+                     all_notes["ARGPARSER_CONFIG_FILE"]=""
+                all_help_texts["ARGPARSER_CONFIG_FILE"]="the path to a file holding the Argparser configuration"
+
+    # Define ${ARGPARSER_COUNT_FLAGS}.
+             all_short_options["ARGPARSER_COUNT_FLAGS"]=""
+              all_long_options["ARGPARSER_COUNT_FLAGS"]="count-flags"
+               all_value_names["ARGPARSER_COUNT_FLAGS"]=""
+            all_default_values["ARGPARSER_COUNT_FLAGS"]="false"
+             all_choice_values["ARGPARSER_COUNT_FLAGS"]=""
+    all_resolved_choice_values["ARGPARSER_COUNT_FLAGS"]=""
+                     all_types["ARGPARSER_COUNT_FLAGS"]="bool"
+               all_arg_numbers["ARGPARSER_COUNT_FLAGS"]="0"
+                all_arg_groups["ARGPARSER_COUNT_FLAGS"]="Parsing options"
+                     all_notes["ARGPARSER_COUNT_FLAGS"]=""
+                all_help_texts["ARGPARSER_COUNT_FLAGS"]="count flags instead of setting them to \"true\" or \"false\" based on the last prefix used on the command line"
+
+    # Define ${ARGPARSER_CREATE_ARG_DEF}.
+             all_short_options["ARGPARSER_CREATE_ARG_DEF"]=""
+              all_long_options["ARGPARSER_CREATE_ARG_DEF"]="create-arg-def"
+               all_value_names["ARGPARSER_CREATE_ARG_DEF"]=""
+            all_default_values["ARGPARSER_CREATE_ARG_DEF"]="false"
+             all_choice_values["ARGPARSER_CREATE_ARG_DEF"]=""
+    all_resolved_choice_values["ARGPARSER_CREATE_ARG_DEF"]=""
+                     all_types["ARGPARSER_CREATE_ARG_DEF"]="bool"
+               all_arg_numbers["ARGPARSER_CREATE_ARG_DEF"]="0"
+                all_arg_groups["ARGPARSER_CREATE_ARG_DEF"]="General options"
+                     all_notes["ARGPARSER_CREATE_ARG_DEF"]=""
+                all_help_texts["ARGPARSER_CREATE_ARG_DEF"]="create the arguments definition for a script"
+
+    # Define ${ARGPARSER_DEBUG}.
+             all_short_options["ARGPARSER_DEBUG"]=""
+              all_long_options["ARGPARSER_DEBUG"]="debug"
+               all_value_names["ARGPARSER_DEBUG"]=""
+            all_default_values["ARGPARSER_DEBUG"]="false"
+             all_choice_values["ARGPARSER_DEBUG"]=""
+    all_resolved_choice_values["ARGPARSER_DEBUG"]=""
+                     all_types["ARGPARSER_DEBUG"]="bool"
+               all_arg_numbers["ARGPARSER_DEBUG"]="0"
+                all_arg_groups["ARGPARSER_DEBUG"]="Miscellaneous options"
+                     all_notes["ARGPARSER_DEBUG"]=""
+                all_help_texts["ARGPARSER_DEBUG"]="(EXPERT OPTION) run the Argparser in debug mode, writing the stack trace for each command to STDERR"
+
+    # Define ${ARGPARSER_ERROR_EXIT_CODE}.
+             all_short_options["ARGPARSER_ERROR_EXIT_CODE"]=""
+              all_long_options["ARGPARSER_ERROR_EXIT_CODE"]="error-exit-code"
+               all_value_names["ARGPARSER_ERROR_EXIT_CODE"]="INT"
+            all_default_values["ARGPARSER_ERROR_EXIT_CODE"]="1"
+             all_choice_values["ARGPARSER_ERROR_EXIT_CODE"]=""
+    all_resolved_choice_values["ARGPARSER_ERROR_EXIT_CODE"]=""
+                     all_types["ARGPARSER_ERROR_EXIT_CODE"]="int"
+               all_arg_numbers["ARGPARSER_ERROR_EXIT_CODE"]="1"
+                all_arg_groups["ARGPARSER_ERROR_EXIT_CODE"]="Error/warning message options"
+                     all_notes["ARGPARSER_ERROR_EXIT_CODE"]=""
+                all_help_texts["ARGPARSER_ERROR_EXIT_CODE"]="the exit code when errors occurred upon parsing"
+
+    # Define ${ARGPARSER_ERROR_STYLE}.
+             all_short_options["ARGPARSER_ERROR_STYLE"]=""
+              all_long_options["ARGPARSER_ERROR_STYLE"]="error-style"
+               all_value_names["ARGPARSER_ERROR_STYLE"]="STYLE"
+            all_default_values["ARGPARSER_ERROR_STYLE"]="red,bold,reverse"
+             all_choice_values["ARGPARSER_ERROR_STYLE"]=""
+    all_resolved_choice_values["ARGPARSER_ERROR_STYLE"]=""
+                     all_types["ARGPARSER_ERROR_STYLE"]="str"
+               all_arg_numbers["ARGPARSER_ERROR_STYLE"]="+"
+                all_arg_groups["ARGPARSER_ERROR_STYLE"]="Stylization options"
+                     all_notes["ARGPARSER_ERROR_STYLE"]="deprecated"
+                all_help_texts["ARGPARSER_ERROR_STYLE"]="the color and style specification for error messages, deprecated in favor of \"--style-file=FILE\""
+
+    # Define ${ARGPARSER_HELP_ARG_GROUP}.
+             all_short_options["ARGPARSER_HELP_ARG_GROUP"]=""
+              all_long_options["ARGPARSER_HELP_ARG_GROUP"]="help-arg-group"
+               all_value_names["ARGPARSER_HELP_ARG_GROUP"]="NAME"
+            all_default_values["ARGPARSER_HELP_ARG_GROUP"]="Help options"
+             all_choice_values["ARGPARSER_HELP_ARG_GROUP"]=""
+    all_resolved_choice_values["ARGPARSER_HELP_ARG_GROUP"]=""
+                     all_types["ARGPARSER_HELP_ARG_GROUP"]="str"
+               all_arg_numbers["ARGPARSER_HELP_ARG_GROUP"]="1"
+                all_arg_groups["ARGPARSER_HELP_ARG_GROUP"]="Help/usage message options"
+                     all_notes["ARGPARSER_HELP_ARG_GROUP"]=""
+                all_help_texts["ARGPARSER_HELP_ARG_GROUP"]="the name of the argument group holding all help options, i.e., --help, --usage, and --version"
+
+    # Define ${ARGPARSER_HELP_DESCRIPTION}.
+             all_short_options["ARGPARSER_HELP_DESCRIPTION"]=""
+              all_long_options["ARGPARSER_HELP_DESCRIPTION"]="help-description"
+               all_value_names["ARGPARSER_HELP_DESCRIPTION"]="TEXT"
+            all_default_values["ARGPARSER_HELP_DESCRIPTION"]="''"
+             all_choice_values["ARGPARSER_HELP_DESCRIPTION"]=""
+    all_resolved_choice_values["ARGPARSER_HELP_DESCRIPTION"]=""
+                     all_types["ARGPARSER_HELP_DESCRIPTION"]="str"
+               all_arg_numbers["ARGPARSER_HELP_DESCRIPTION"]="1"
+                all_arg_groups["ARGPARSER_HELP_DESCRIPTION"]="Help/usage message options"
+                     all_notes["ARGPARSER_HELP_DESCRIPTION"]=""
+                all_help_texts["ARGPARSER_HELP_DESCRIPTION"]="the script's description (purpose) to show in help message"
+
+    # Define ${ARGPARSER_HELP_EXIT_CODE}.
+             all_short_options["ARGPARSER_HELP_EXIT_CODE"]=""
+              all_long_options["ARGPARSER_HELP_EXIT_CODE"]="help-exit-code"
+               all_value_names["ARGPARSER_HELP_EXIT_CODE"]="INT"
+            all_default_values["ARGPARSER_HELP_EXIT_CODE"]="0"
+             all_choice_values["ARGPARSER_HELP_EXIT_CODE"]=""
+    all_resolved_choice_values["ARGPARSER_HELP_EXIT_CODE"]=""
+                     all_types["ARGPARSER_HELP_EXIT_CODE"]="int"
+               all_arg_numbers["ARGPARSER_HELP_EXIT_CODE"]="1"
+                all_arg_groups["ARGPARSER_HELP_EXIT_CODE"]="Help/usage message options"
+                     all_notes["ARGPARSER_HELP_EXIT_CODE"]=""
+                all_help_texts["ARGPARSER_HELP_EXIT_CODE"]="the exit code for help messages"
+
+    # Define ${ARGPARSER_HELP_FILE}.
+             all_short_options["ARGPARSER_HELP_FILE"]=""
+              all_long_options["ARGPARSER_HELP_FILE"]="help-file"
+               all_value_names["ARGPARSER_HELP_FILE"]="FILE"
+            all_default_values["ARGPARSER_HELP_FILE"]="''"
+             all_choice_values["ARGPARSER_HELP_FILE"]=""
+    all_resolved_choice_values["ARGPARSER_HELP_FILE"]=""
+                     all_types["ARGPARSER_HELP_FILE"]="file"
+               all_arg_numbers["ARGPARSER_HELP_FILE"]="1"
+                all_arg_groups["ARGPARSER_HELP_FILE"]="Help/usage message options"
+                     all_notes["ARGPARSER_HELP_FILE"]=""
+                all_help_texts["ARGPARSER_HELP_FILE"]="the path to a file holding the extended help message"
+
+    # Define ${ARGPARSER_HELP_FILE_INCLUDE_CHAR}.
+             all_short_options["ARGPARSER_HELP_FILE_INCLUDE_CHAR"]=""
+              all_long_options["ARGPARSER_HELP_FILE_INCLUDE_CHAR"]="help-file-include-char"
+               all_value_names["ARGPARSER_HELP_FILE_INCLUDE_CHAR"]="CHAR"
+            all_default_values["ARGPARSER_HELP_FILE_INCLUDE_CHAR"]="@"
+             all_choice_values["ARGPARSER_HELP_FILE_INCLUDE_CHAR"]=""
+    all_resolved_choice_values["ARGPARSER_HELP_FILE_INCLUDE_CHAR"]=""
+                     all_types["ARGPARSER_HELP_FILE_INCLUDE_CHAR"]="char"
+               all_arg_numbers["ARGPARSER_HELP_FILE_INCLUDE_CHAR"]="1"
+                all_arg_groups["ARGPARSER_HELP_FILE_INCLUDE_CHAR"]="Help/usage message options"
+                     all_notes["ARGPARSER_HELP_FILE_INCLUDE_CHAR"]=""
+                all_help_texts["ARGPARSER_HELP_FILE_INCLUDE_CHAR"]="the character that introduces an include directive in an ARGPARSER_HELP_FILE"
+
+    # Define ${ARGPARSER_HELP_FILE_KEEP_COMMENTS}.
+             all_short_options["ARGPARSER_HELP_FILE_KEEP_COMMENTS"]=""
+              all_long_options["ARGPARSER_HELP_FILE_KEEP_COMMENTS"]="help-file-keep-comments"
+               all_value_names["ARGPARSER_HELP_FILE_KEEP_COMMENTS"]=""
+            all_default_values["ARGPARSER_HELP_FILE_KEEP_COMMENTS"]="false"
+             all_choice_values["ARGPARSER_HELP_FILE_KEEP_COMMENTS"]=""
+    all_resolved_choice_values["ARGPARSER_HELP_FILE_KEEP_COMMENTS"]=""
+                     all_types["ARGPARSER_HELP_FILE_KEEP_COMMENTS"]="bool"
+               all_arg_numbers["ARGPARSER_HELP_FILE_KEEP_COMMENTS"]="0"
+                all_arg_groups["ARGPARSER_HELP_FILE_KEEP_COMMENTS"]="Help/usage message options"
+                     all_notes["ARGPARSER_HELP_FILE_KEEP_COMMENTS"]=""
+                all_help_texts["ARGPARSER_HELP_FILE_KEEP_COMMENTS"]="keep commented lines in the help file"
+
+    # Define ${ARGPARSER_HELP_OPTIONS}.
+             all_short_options["ARGPARSER_HELP_OPTIONS"]=""
+              all_long_options["ARGPARSER_HELP_OPTIONS"]="help-options"
+               all_value_names["ARGPARSER_HELP_OPTIONS"]="CHAR"
+            all_default_values["ARGPARSER_HELP_OPTIONS"]="h,?"
+             all_choice_values["ARGPARSER_HELP_OPTIONS"]=""
+    all_resolved_choice_values["ARGPARSER_HELP_OPTIONS"]=""
+                     all_types["ARGPARSER_HELP_OPTIONS"]="char"
+               all_arg_numbers["ARGPARSER_HELP_OPTIONS"]="+"
+                all_arg_groups["ARGPARSER_HELP_OPTIONS"]="Help/usage message options"
+                     all_notes["ARGPARSER_HELP_OPTIONS"]=""
+                all_help_texts["ARGPARSER_HELP_OPTIONS"]="the short (single-character) option names to invoke the help message"
+
+    # Define ${ARGPARSER_HELP_STYLE}.
+             all_short_options["ARGPARSER_HELP_STYLE"]=""
+              all_long_options["ARGPARSER_HELP_STYLE"]="help-style"
+               all_value_names["ARGPARSER_HELP_STYLE"]="STYLE"
+            all_default_values["ARGPARSER_HELP_STYLE"]="italic"
+             all_choice_values["ARGPARSER_HELP_STYLE"]=""
+    all_resolved_choice_values["ARGPARSER_HELP_STYLE"]=""
+                     all_types["ARGPARSER_HELP_STYLE"]="str"
+               all_arg_numbers["ARGPARSER_HELP_STYLE"]="+"
+                all_arg_groups["ARGPARSER_HELP_STYLE"]="Stylization options"
+                     all_notes["ARGPARSER_HELP_STYLE"]="deprecated"
+                all_help_texts["ARGPARSER_HELP_STYLE"]="the color and style specification for help messages, deprecated in favor of \"--style-file=FILE\""
+
+    # Define ${ARGPARSER_LANGUAGE}.
+             all_short_options["ARGPARSER_LANGUAGE"]=""
+              all_long_options["ARGPARSER_LANGUAGE"]="language"
+               all_value_names["ARGPARSER_LANGUAGE"]="LANG"
+            all_default_values["ARGPARSER_LANGUAGE"]="en"
+             all_choice_values["ARGPARSER_LANGUAGE"]=""
+    all_resolved_choice_values["ARGPARSER_LANGUAGE"]=""
+                     all_types["ARGPARSER_LANGUAGE"]="str"
+               all_arg_numbers["ARGPARSER_LANGUAGE"]="1"
+                all_arg_groups["ARGPARSER_LANGUAGE"]="Localization options"
+                     all_notes["ARGPARSER_LANGUAGE"]=""
+                all_help_texts["ARGPARSER_LANGUAGE"]="the language in which to localize the help and usage messages"
+
+    # Define ${ARGPARSER_MAX_COL_WIDTH_1}.
+             all_short_options["ARGPARSER_MAX_COL_WIDTH_1"]=""
+              all_long_options["ARGPARSER_MAX_COL_WIDTH_1"]="max-col-width-1"
+               all_value_names["ARGPARSER_MAX_COL_WIDTH_1"]="INT"
+            all_default_values["ARGPARSER_MAX_COL_WIDTH_1"]="9"
+             all_choice_values["ARGPARSER_MAX_COL_WIDTH_1"]=""
+    all_resolved_choice_values["ARGPARSER_MAX_COL_WIDTH_1"]=""
+                     all_types["ARGPARSER_MAX_COL_WIDTH_1"]="uint"
+               all_arg_numbers["ARGPARSER_MAX_COL_WIDTH_1"]="1"
+                all_arg_groups["ARGPARSER_MAX_COL_WIDTH_1"]="Stylization options"
+                     all_notes["ARGPARSER_MAX_COL_WIDTH_1"]=""
+                all_help_texts["ARGPARSER_MAX_COL_WIDTH_1"]="the maximum column width of the first column in the help message"
+
+    # Define ${ARGPARSER_MAX_COL_WIDTH_2}.
+             all_short_options["ARGPARSER_MAX_COL_WIDTH_2"]=""
+              all_long_options["ARGPARSER_MAX_COL_WIDTH_2"]="max-col-width-2"
+               all_value_names["ARGPARSER_MAX_COL_WIDTH_2"]="INT"
+            all_default_values["ARGPARSER_MAX_COL_WIDTH_2"]="33"
+             all_choice_values["ARGPARSER_MAX_COL_WIDTH_2"]=""
+    all_resolved_choice_values["ARGPARSER_MAX_COL_WIDTH_2"]=""
+                     all_types["ARGPARSER_MAX_COL_WIDTH_2"]="uint"
+               all_arg_numbers["ARGPARSER_MAX_COL_WIDTH_2"]="1"
+                all_arg_groups["ARGPARSER_MAX_COL_WIDTH_2"]="Stylization options"
+                     all_notes["ARGPARSER_MAX_COL_WIDTH_2"]=""
+                all_help_texts["ARGPARSER_MAX_COL_WIDTH_2"]="the maximum column width of the second column in the help message"
+
+    # Define ${ARGPARSER_MAX_COL_WIDTH_3}.
+             all_short_options["ARGPARSER_MAX_COL_WIDTH_3"]=""
+              all_long_options["ARGPARSER_MAX_COL_WIDTH_3"]="max-col-width-3"
+               all_value_names["ARGPARSER_MAX_COL_WIDTH_3"]="INT"
+            all_default_values["ARGPARSER_MAX_COL_WIDTH_3"]="0"
+             all_choice_values["ARGPARSER_MAX_COL_WIDTH_3"]=""
+    all_resolved_choice_values["ARGPARSER_MAX_COL_WIDTH_3"]=""
+                     all_types["ARGPARSER_MAX_COL_WIDTH_3"]="uint"
+               all_arg_numbers["ARGPARSER_MAX_COL_WIDTH_3"]="1"
+                all_arg_groups["ARGPARSER_MAX_COL_WIDTH_3"]="Stylization options"
+                     all_notes["ARGPARSER_MAX_COL_WIDTH_3"]=""
+                all_help_texts["ARGPARSER_MAX_COL_WIDTH_3"]="the maximum column width of the third column in the help message"
+
+    # Define ${ARGPARSER_MAX_WIDTH}.
+             all_short_options["ARGPARSER_MAX_WIDTH"]=""
+              all_long_options["ARGPARSER_MAX_WIDTH"]="max-width"
+               all_value_names["ARGPARSER_MAX_WIDTH"]="INT"
+            all_default_values["ARGPARSER_MAX_WIDTH"]="79"
+             all_choice_values["ARGPARSER_MAX_WIDTH"]=""
+    all_resolved_choice_values["ARGPARSER_MAX_WIDTH"]=""
+                     all_types["ARGPARSER_MAX_WIDTH"]="uint"
+               all_arg_numbers["ARGPARSER_MAX_WIDTH"]="1"
+                all_arg_groups["ARGPARSER_MAX_WIDTH"]="Stylization options"
+                     all_notes["ARGPARSER_MAX_WIDTH"]=""
+                all_help_texts["ARGPARSER_MAX_WIDTH"]="the maximum width of the help message"
+
+    # Define ${ARGPARSER_POSITIONAL_ARG_GROUP}.
+             all_short_options["ARGPARSER_POSITIONAL_ARG_GROUP"]=""
+              all_long_options["ARGPARSER_POSITIONAL_ARG_GROUP"]="positional-arg-group"
+               all_value_names["ARGPARSER_POSITIONAL_ARG_GROUP"]="NAME"
+            all_default_values["ARGPARSER_POSITIONAL_ARG_GROUP"]="Positional arguments"
+             all_choice_values["ARGPARSER_POSITIONAL_ARG_GROUP"]=""
+    all_resolved_choice_values["ARGPARSER_POSITIONAL_ARG_GROUP"]=""
+                     all_types["ARGPARSER_POSITIONAL_ARG_GROUP"]="str"
+               all_arg_numbers["ARGPARSER_POSITIONAL_ARG_GROUP"]="1"
+                all_arg_groups["ARGPARSER_POSITIONAL_ARG_GROUP"]="General options"
+                     all_notes["ARGPARSER_POSITIONAL_ARG_GROUP"]=""
+                all_help_texts["ARGPARSER_POSITIONAL_ARG_GROUP"]="the name of the argument group holding all positional arguments"
+
+    # Define ${ARGPARSER_READ_ARGS}.
+             all_short_options["ARGPARSER_READ_ARGS"]=""
+              all_long_options["ARGPARSER_READ_ARGS"]="read-args"
+               all_value_names["ARGPARSER_READ_ARGS"]=""
+            all_default_values["ARGPARSER_READ_ARGS"]="true"
+             all_choice_values["ARGPARSER_READ_ARGS"]=""
+    all_resolved_choice_values["ARGPARSER_READ_ARGS"]=""
+                     all_types["ARGPARSER_READ_ARGS"]="bool"
+               all_arg_numbers["ARGPARSER_READ_ARGS"]="0"
+                all_arg_groups["ARGPARSER_READ_ARGS"]="General options"
+                     all_notes["ARGPARSER_READ_ARGS"]=""
+                all_help_texts["ARGPARSER_READ_ARGS"]="read the arguments and parse them to ARGPARSER_ARG_ARRAY_NAME"
+
+    # Define ${ARGPARSER_SCRIPT_NAME}.
+             all_short_options["ARGPARSER_SCRIPT_NAME"]=""
+              all_long_options["ARGPARSER_SCRIPT_NAME"]="script-name"
+               all_value_names["ARGPARSER_SCRIPT_NAME"]="NAME"
+            all_default_values["ARGPARSER_SCRIPT_NAME"]="''"
+             all_choice_values["ARGPARSER_SCRIPT_NAME"]=""
+    all_resolved_choice_values["ARGPARSER_SCRIPT_NAME"]=""
+                     all_types["ARGPARSER_SCRIPT_NAME"]="str"
+               all_arg_numbers["ARGPARSER_SCRIPT_NAME"]="1"
+                all_arg_groups["ARGPARSER_SCRIPT_NAME"]="General options"
+                     all_notes["ARGPARSER_SCRIPT_NAME"]=""
+                all_help_texts["ARGPARSER_SCRIPT_NAME"]="the script's name for the help, usage, version, error, and warning messages"
+
+    # Define ${ARGPARSER_SET_ARGS}.
+             all_short_options["ARGPARSER_SET_ARGS"]=""
+              all_long_options["ARGPARSER_SET_ARGS"]="set-args"
+               all_value_names["ARGPARSER_SET_ARGS"]=""
+            all_default_values["ARGPARSER_SET_ARGS"]="true"
+             all_choice_values["ARGPARSER_SET_ARGS"]=""
+    all_resolved_choice_values["ARGPARSER_SET_ARGS"]=""
+                     all_types["ARGPARSER_SET_ARGS"]="bool"
+               all_arg_numbers["ARGPARSER_SET_ARGS"]="0"
+                all_arg_groups["ARGPARSER_SET_ARGS"]="General options"
+                     all_notes["ARGPARSER_SET_ARGS"]=""
+                all_help_texts["ARGPARSER_SET_ARGS"]="set the arguments from ARGPARSER_ARG_ARRAY_NAME as variables in the script's scope"
+
+    # Define ${ARGPARSER_SET_ARRAYS}.
+             all_short_options["ARGPARSER_SET_ARRAYS"]=""
+              all_long_options["ARGPARSER_SET_ARRAYS"]="set-arrays"
+               all_value_names["ARGPARSER_SET_ARRAYS"]=""
+            all_default_values["ARGPARSER_SET_ARRAYS"]="true"
+             all_choice_values["ARGPARSER_SET_ARRAYS"]=""
+    all_resolved_choice_values["ARGPARSER_SET_ARRAYS"]=""
+                     all_types["ARGPARSER_SET_ARRAYS"]="bool"
+               all_arg_numbers["ARGPARSER_SET_ARRAYS"]="0"
+                all_arg_groups["ARGPARSER_SET_ARRAYS"]="General options"
+                     all_notes["ARGPARSER_SET_ARRAYS"]=""
+                all_help_texts["ARGPARSER_SET_ARRAYS"]="set arguments intended to have multiple values as indexed array"
+
+    # Define ${ARGPARSER_SILENCE_ERRORS}.
+             all_short_options["ARGPARSER_SILENCE_ERRORS"]=""
+              all_long_options["ARGPARSER_SILENCE_ERRORS"]="silence-errors"
+               all_value_names["ARGPARSER_SILENCE_ERRORS"]=""
+            all_default_values["ARGPARSER_SILENCE_ERRORS"]="false"
+             all_choice_values["ARGPARSER_SILENCE_ERRORS"]=""
+    all_resolved_choice_values["ARGPARSER_SILENCE_ERRORS"]=""
+                     all_types["ARGPARSER_SILENCE_ERRORS"]="bool"
+               all_arg_numbers["ARGPARSER_SILENCE_ERRORS"]="0"
+                all_arg_groups["ARGPARSER_SILENCE_ERRORS"]="Error/warning message options"
+                     all_notes["ARGPARSER_SILENCE_ERRORS"]=""
+                all_help_texts["ARGPARSER_SILENCE_ERRORS"]="silence the emission (output) of error messages"
+
+    # Define ${ARGPARSER_SILENCE_WARNINGS}.
+             all_short_options["ARGPARSER_SILENCE_WARNINGS"]=""
+              all_long_options["ARGPARSER_SILENCE_WARNINGS"]="silence-warnings"
+               all_value_names["ARGPARSER_SILENCE_WARNINGS"]=""
+            all_default_values["ARGPARSER_SILENCE_WARNINGS"]="false"
+             all_choice_values["ARGPARSER_SILENCE_WARNINGS"]=""
+    all_resolved_choice_values["ARGPARSER_SILENCE_WARNINGS"]=""
+                     all_types["ARGPARSER_SILENCE_WARNINGS"]="bool"
+               all_arg_numbers["ARGPARSER_SILENCE_WARNINGS"]="0"
+                all_arg_groups["ARGPARSER_SILENCE_WARNINGS"]="Error/warning message options"
+                     all_notes["ARGPARSER_SILENCE_WARNINGS"]=""
+                all_help_texts["ARGPARSER_SILENCE_WARNINGS"]="silence the emission (output) of warning messages"
+
+    # Define ${ARGPARSER_STYLE_FILE}.
+             all_short_options["ARGPARSER_STYLE_FILE"]=""
+              all_long_options["ARGPARSER_STYLE_FILE"]="style-file"
+               all_value_names["ARGPARSER_STYLE_FILE"]="FILE"
+            all_default_values["ARGPARSER_STYLE_FILE"]="''"
+             all_choice_values["ARGPARSER_STYLE_FILE"]=""
+    all_resolved_choice_values["ARGPARSER_STYLE_FILE"]=""
+                     all_types["ARGPARSER_STYLE_FILE"]="file"
+               all_arg_numbers["ARGPARSER_STYLE_FILE"]="1"
+                all_arg_groups["ARGPARSER_STYLE_FILE"]="Stylization options"
+                     all_notes["ARGPARSER_STYLE_FILE"]=""
+                all_help_texts["ARGPARSER_STYLE_FILE"]="the path to a file holding the style definitions for the messages"
+
+    # Define ${ARGPARSER_TRANSLATION_FILE}.
+             all_short_options["ARGPARSER_TRANSLATION_FILE"]=""
+              all_long_options["ARGPARSER_TRANSLATION_FILE"]="translation-file"
+               all_value_names["ARGPARSER_TRANSLATION_FILE"]="FILE"
+            all_default_values["ARGPARSER_TRANSLATION_FILE"]="''"
+             all_choice_values["ARGPARSER_TRANSLATION_FILE"]=""
+    all_resolved_choice_values["ARGPARSER_TRANSLATION_FILE"]=""
+                     all_types["ARGPARSER_TRANSLATION_FILE"]="file"
+               all_arg_numbers["ARGPARSER_TRANSLATION_FILE"]="1"
+                all_arg_groups["ARGPARSER_TRANSLATION_FILE"]="Localization options"
+                     all_notes["ARGPARSER_TRANSLATION_FILE"]=""
+                all_help_texts["ARGPARSER_TRANSLATION_FILE"]="the path to a simplified YAML file holding the translation to ARGPARSER_LANGUAGE"
+
+    # Define ${ARGPARSER_UNSET_ARGS}.
+             all_short_options["ARGPARSER_UNSET_ARGS"]=""
+              all_long_options["ARGPARSER_UNSET_ARGS"]="unset-args"
+               all_value_names["ARGPARSER_UNSET_ARGS"]=""
+            all_default_values["ARGPARSER_UNSET_ARGS"]="true"
+             all_choice_values["ARGPARSER_UNSET_ARGS"]=""
+    all_resolved_choice_values["ARGPARSER_UNSET_ARGS"]=""
+                     all_types["ARGPARSER_UNSET_ARGS"]="bool"
+               all_arg_numbers["ARGPARSER_UNSET_ARGS"]="0"
+                all_arg_groups["ARGPARSER_UNSET_ARGS"]="General options"
+                     all_notes["ARGPARSER_UNSET_ARGS"]=""
+                all_help_texts["ARGPARSER_UNSET_ARGS"]="unset (remove) all command-line arguments given to the script"
+
+    # Define ${ARGPARSER_UNSET_ENV_VARS}.
+             all_short_options["ARGPARSER_UNSET_ENV_VARS"]=""
+              all_long_options["ARGPARSER_UNSET_ENV_VARS"]="unset-env-vars"
+               all_value_names["ARGPARSER_UNSET_ENV_VARS"]=""
+            all_default_values["ARGPARSER_UNSET_ENV_VARS"]="true"
+             all_choice_values["ARGPARSER_UNSET_ENV_VARS"]=""
+    all_resolved_choice_values["ARGPARSER_UNSET_ENV_VARS"]=""
+                     all_types["ARGPARSER_UNSET_ENV_VARS"]="bool"
+               all_arg_numbers["ARGPARSER_UNSET_ENV_VARS"]="0"
+                all_arg_groups["ARGPARSER_UNSET_ENV_VARS"]="General options"
+                     all_notes["ARGPARSER_UNSET_ENV_VARS"]=""
+                all_help_texts["ARGPARSER_UNSET_ENV_VARS"]="unset (remove) the Argparser environment variables from the environment"
+
+    # Define ${ARGPARSER_UNSET_FUNCTIONS}.
+             all_short_options["ARGPARSER_UNSET_FUNCTIONS"]=""
+              all_long_options["ARGPARSER_UNSET_FUNCTIONS"]="unset-functions"
+               all_value_names["ARGPARSER_UNSET_FUNCTIONS"]=""
+            all_default_values["ARGPARSER_UNSET_FUNCTIONS"]="true"
+             all_choice_values["ARGPARSER_UNSET_FUNCTIONS"]=""
+    all_resolved_choice_values["ARGPARSER_UNSET_FUNCTIONS"]=""
+                     all_types["ARGPARSER_UNSET_FUNCTIONS"]="bool"
+               all_arg_numbers["ARGPARSER_UNSET_FUNCTIONS"]="0"
+                all_arg_groups["ARGPARSER_UNSET_FUNCTIONS"]="General options"
+                     all_notes["ARGPARSER_UNSET_FUNCTIONS"]=""
+                all_help_texts["ARGPARSER_UNSET_FUNCTIONS"]="unset (remove) the Argparser functions from the environment"
+
+    # Define ${ARGPARSER_USAGE_EXIT_CODE}.
+             all_short_options["ARGPARSER_USAGE_EXIT_CODE"]=""
+              all_long_options["ARGPARSER_USAGE_EXIT_CODE"]="usage-exit-code"
+               all_value_names["ARGPARSER_USAGE_EXIT_CODE"]="INT"
+            all_default_values["ARGPARSER_USAGE_EXIT_CODE"]="0"
+             all_choice_values["ARGPARSER_USAGE_EXIT_CODE"]=""
+    all_resolved_choice_values["ARGPARSER_USAGE_EXIT_CODE"]=""
+                     all_types["ARGPARSER_USAGE_EXIT_CODE"]="int"
+               all_arg_numbers["ARGPARSER_USAGE_EXIT_CODE"]="1"
+                all_arg_groups["ARGPARSER_USAGE_EXIT_CODE"]="Help/usage message options"
+                     all_notes["ARGPARSER_USAGE_EXIT_CODE"]=""
+                all_help_texts["ARGPARSER_USAGE_EXIT_CODE"]="the exit code for usage messages"
+
+    # Define ${ARGPARSER_USAGE_FILE}.
+             all_short_options["ARGPARSER_USAGE_FILE"]=""
+              all_long_options["ARGPARSER_USAGE_FILE"]="usage-file"
+               all_value_names["ARGPARSER_USAGE_FILE"]="FILE"
+            all_default_values["ARGPARSER_USAGE_FILE"]="''"
+             all_choice_values["ARGPARSER_USAGE_FILE"]=""
+    all_resolved_choice_values["ARGPARSER_USAGE_FILE"]=""
+                     all_types["ARGPARSER_USAGE_FILE"]="file"
+               all_arg_numbers["ARGPARSER_USAGE_FILE"]="1"
+                all_arg_groups["ARGPARSER_USAGE_FILE"]="Help/usage message options"
+                     all_notes["ARGPARSER_USAGE_FILE"]=""
+                all_help_texts["ARGPARSER_USAGE_FILE"]="the path to a file holding the extended usage message"
+
+    # Define ${ARGPARSER_USAGE_FILE_INCLUDE_CHAR}.
+             all_short_options["ARGPARSER_USAGE_FILE_INCLUDE_CHAR"]=""
+              all_long_options["ARGPARSER_USAGE_FILE_INCLUDE_CHAR"]="usage-file-include-char"
+               all_value_names["ARGPARSER_USAGE_FILE_INCLUDE_CHAR"]="CHAR"
+            all_default_values["ARGPARSER_USAGE_FILE_INCLUDE_CHAR"]="@"
+             all_choice_values["ARGPARSER_USAGE_FILE_INCLUDE_CHAR"]=""
+    all_resolved_choice_values["ARGPARSER_USAGE_FILE_INCLUDE_CHAR"]=""
+                     all_types["ARGPARSER_USAGE_FILE_INCLUDE_CHAR"]="char"
+               all_arg_numbers["ARGPARSER_USAGE_FILE_INCLUDE_CHAR"]="1"
+                all_arg_groups["ARGPARSER_USAGE_FILE_INCLUDE_CHAR"]="Help/usage message options"
+                     all_notes["ARGPARSER_USAGE_FILE_INCLUDE_CHAR"]=""
+                all_help_texts["ARGPARSER_USAGE_FILE_INCLUDE_CHAR"]="the character that introduces an include directive in an ARGPARSER_USAGE_FILE"
+
+    # Define ${ARGPARSER_USAGE_FILE_KEEP_COMMENTS}.
+             all_short_options["ARGPARSER_USAGE_FILE_KEEP_COMMENTS"]=""
+              all_long_options["ARGPARSER_USAGE_FILE_KEEP_COMMENTS"]="usage-file-keep-comments"
+               all_value_names["ARGPARSER_USAGE_FILE_KEEP_COMMENTS"]=""
+            all_default_values["ARGPARSER_USAGE_FILE_KEEP_COMMENTS"]="false"
+             all_choice_values["ARGPARSER_USAGE_FILE_KEEP_COMMENTS"]=""
+    all_resolved_choice_values["ARGPARSER_USAGE_FILE_KEEP_COMMENTS"]=""
+                     all_types["ARGPARSER_USAGE_FILE_KEEP_COMMENTS"]="bool"
+               all_arg_numbers["ARGPARSER_USAGE_FILE_KEEP_COMMENTS"]="0"
+                all_arg_groups["ARGPARSER_USAGE_FILE_KEEP_COMMENTS"]="Help/usage message options"
+                     all_notes["ARGPARSER_USAGE_FILE_KEEP_COMMENTS"]=""
+                all_help_texts["ARGPARSER_USAGE_FILE_KEEP_COMMENTS"]="keep commented lines in the usage file"
+
+    # Define ${ARGPARSER_USAGE_MESSAGE_OPTION_TYPE}.
+             all_short_options["ARGPARSER_USAGE_MESSAGE_OPTION_TYPE"]=""
+              all_long_options["ARGPARSER_USAGE_MESSAGE_OPTION_TYPE"]="usage-message-option-type"
+               all_value_names["ARGPARSER_USAGE_MESSAGE_OPTION_TYPE"]=""
+            all_default_values["ARGPARSER_USAGE_MESSAGE_OPTION_TYPE"]="short"
+             all_choice_values["ARGPARSER_USAGE_MESSAGE_OPTION_TYPE"]="long,short"
+    all_resolved_choice_values["ARGPARSER_USAGE_MESSAGE_OPTION_TYPE"]="long,short"
+                     all_types["ARGPARSER_USAGE_MESSAGE_OPTION_TYPE"]="str"
+               all_arg_numbers["ARGPARSER_USAGE_MESSAGE_OPTION_TYPE"]="1"
+                all_arg_groups["ARGPARSER_USAGE_MESSAGE_OPTION_TYPE"]="Help/usage message options"
+                     all_notes["ARGPARSER_USAGE_MESSAGE_OPTION_TYPE"]=""
+                all_help_texts["ARGPARSER_USAGE_MESSAGE_OPTION_TYPE"]="use short or long option names in usage messages"
+
+    # Define ${ARGPARSER_USAGE_MESSAGE_ORIENTATION}.
+             all_short_options["ARGPARSER_USAGE_MESSAGE_ORIENTATION"]=""
+              all_long_options["ARGPARSER_USAGE_MESSAGE_ORIENTATION"]="usage-message-orientation"
+               all_value_names["ARGPARSER_USAGE_MESSAGE_ORIENTATION"]=""
+            all_default_values["ARGPARSER_USAGE_MESSAGE_ORIENTATION"]="row"
+             all_choice_values["ARGPARSER_USAGE_MESSAGE_ORIENTATION"]="row,column"
+    all_resolved_choice_values["ARGPARSER_USAGE_MESSAGE_ORIENTATION"]="row,column"
+                     all_types["ARGPARSER_USAGE_MESSAGE_ORIENTATION"]="str"
+               all_arg_numbers["ARGPARSER_USAGE_MESSAGE_ORIENTATION"]="1"
+                all_arg_groups["ARGPARSER_USAGE_MESSAGE_ORIENTATION"]="Help/usage message options"
+                     all_notes["ARGPARSER_USAGE_MESSAGE_ORIENTATION"]=""
+                all_help_texts["ARGPARSER_USAGE_MESSAGE_ORIENTATION"]="output the positional and keyword arguments in usage messages in a row or in a column"
+
+    # Define ${ARGPARSER_USAGE_OPTIONS}.
+             all_short_options["ARGPARSER_USAGE_OPTIONS"]=""
+              all_long_options["ARGPARSER_USAGE_OPTIONS"]="usage-options"
+               all_value_names["ARGPARSER_USAGE_OPTIONS"]="CHAR"
+            all_default_values["ARGPARSER_USAGE_OPTIONS"]="u"
+             all_choice_values["ARGPARSER_USAGE_OPTIONS"]=""
+    all_resolved_choice_values["ARGPARSER_USAGE_OPTIONS"]=""
+                     all_types["ARGPARSER_USAGE_OPTIONS"]="char"
+               all_arg_numbers["ARGPARSER_USAGE_OPTIONS"]="+"
+                all_arg_groups["ARGPARSER_USAGE_OPTIONS"]="Help/usage message options"
+                     all_notes["ARGPARSER_USAGE_OPTIONS"]=""
+                all_help_texts["ARGPARSER_USAGE_OPTIONS"]="the short (single-character) option names to invoke the usage message"
+
+    # Define ${ARGPARSER_USAGE_STYLE}.
+             all_short_options["ARGPARSER_USAGE_STYLE"]=""
+              all_long_options["ARGPARSER_USAGE_STYLE"]="usage-style"
+               all_value_names["ARGPARSER_USAGE_STYLE"]="STYLE"
+            all_default_values["ARGPARSER_USAGE_STYLE"]="italic"
+             all_choice_values["ARGPARSER_USAGE_STYLE"]=""
+    all_resolved_choice_values["ARGPARSER_USAGE_STYLE"]=""
+                     all_types["ARGPARSER_USAGE_STYLE"]="str"
+               all_arg_numbers["ARGPARSER_USAGE_STYLE"]="+"
+                all_arg_groups["ARGPARSER_USAGE_STYLE"]="Stylization options"
+                     all_notes["ARGPARSER_USAGE_STYLE"]="deprecated"
+                all_help_texts["ARGPARSER_USAGE_STYLE"]="the color and style specification for usage messages, deprecated in favor of \"--style-file=FILE\""
+
+    # Define ${ARGPARSER_USE_LONG_OPTIONS}.
+             all_short_options["ARGPARSER_USE_LONG_OPTIONS"]=""
+              all_long_options["ARGPARSER_USE_LONG_OPTIONS"]="use-long-options"
+               all_value_names["ARGPARSER_USE_LONG_OPTIONS"]=""
+            all_default_values["ARGPARSER_USE_LONG_OPTIONS"]="true"
+             all_choice_values["ARGPARSER_USE_LONG_OPTIONS"]=""
+    all_resolved_choice_values["ARGPARSER_USE_LONG_OPTIONS"]=""
+                     all_types["ARGPARSER_USE_LONG_OPTIONS"]="bool"
+               all_arg_numbers["ARGPARSER_USE_LONG_OPTIONS"]="0"
+                all_arg_groups["ARGPARSER_USE_LONG_OPTIONS"]="Parsing options"
+                     all_notes["ARGPARSER_USE_LONG_OPTIONS"]=""
+                all_help_texts["ARGPARSER_USE_LONG_OPTIONS"]="use the long option names for parsing"
+
+    # Define ${ARGPARSER_USE_SHORT_OPTIONS}.
+             all_short_options["ARGPARSER_USE_SHORT_OPTIONS"]=""
+              all_long_options["ARGPARSER_USE_SHORT_OPTIONS"]="use-short-options"
+               all_value_names["ARGPARSER_USE_SHORT_OPTIONS"]=""
+            all_default_values["ARGPARSER_USE_SHORT_OPTIONS"]="true"
+             all_choice_values["ARGPARSER_USE_SHORT_OPTIONS"]=""
+    all_resolved_choice_values["ARGPARSER_USE_SHORT_OPTIONS"]=""
+                     all_types["ARGPARSER_USE_SHORT_OPTIONS"]="bool"
+               all_arg_numbers["ARGPARSER_USE_SHORT_OPTIONS"]="0"
+                all_arg_groups["ARGPARSER_USE_SHORT_OPTIONS"]="Parsing options"
+                     all_notes["ARGPARSER_USE_SHORT_OPTIONS"]=""
+                all_help_texts["ARGPARSER_USE_SHORT_OPTIONS"]="use the short option names for parsing"
+
+    # Define ${ARGPARSER_USE_COLORS}.
+             all_short_options["ARGPARSER_USE_COLORS"]=""
+              all_long_options["ARGPARSER_USE_COLORS"]="use-colors"
+               all_value_names["ARGPARSER_USE_COLORS"]=""
+            all_default_values["ARGPARSER_USE_COLORS"]="true"
+             all_choice_values["ARGPARSER_USE_COLORS"]=""
+    all_resolved_choice_values["ARGPARSER_USE_COLORS"]=""
+                     all_types["ARGPARSER_USE_COLORS"]="bool"
+               all_arg_numbers["ARGPARSER_USE_COLORS"]="0"
+                all_arg_groups["ARGPARSER_USE_COLORS"]="Stylization options"
+                     all_notes["ARGPARSER_USE_COLORS"]=""
+                all_help_texts["ARGPARSER_USE_COLORS"]="colorize the help, usage, version, error, and warning messages, applied in conjunction with \"--use-styles\""
+
+    # Define ${ARGPARSER_USE_STYLES}.
+             all_short_options["ARGPARSER_USE_STYLES"]=""
+              all_long_options["ARGPARSER_USE_STYLES"]="use-styles"
+               all_value_names["ARGPARSER_USE_STYLES"]=""
+            all_default_values["ARGPARSER_USE_STYLES"]="tty"
+             all_choice_values["ARGPARSER_USE_STYLES"]="always,never,file,tty"
+    all_resolved_choice_values["ARGPARSER_USE_STYLES"]="always,never,file,tty"
+                     all_types["ARGPARSER_USE_STYLES"]="str"
+               all_arg_numbers["ARGPARSER_USE_STYLES"]="1"
+                all_arg_groups["ARGPARSER_USE_STYLES"]="Stylization options"
+                     all_notes["ARGPARSER_USE_STYLES"]=""
+                all_help_texts["ARGPARSER_USE_STYLES"]="use the colors and styles \"always\", \"never\", or only when STDOUT/STDERR is (\"tty\") or is not (\"file\") a terminal"
+
+    # Define ${ARGPARSER_USE_STYLES_IN_FILES}.
+             all_short_options["ARGPARSER_USE_STYLES_IN_FILES"]=""
+              all_long_options["ARGPARSER_USE_STYLES_IN_FILES"]="use-styles-in-files"
+               all_value_names["ARGPARSER_USE_STYLES_IN_FILES"]=""
+            all_default_values["ARGPARSER_USE_STYLES_IN_FILES"]="false"
+             all_choice_values["ARGPARSER_USE_STYLES_IN_FILES"]=""
+    all_resolved_choice_values["ARGPARSER_USE_STYLES_IN_FILES"]=""
+                     all_types["ARGPARSER_USE_STYLES_IN_FILES"]="bool"
+               all_arg_numbers["ARGPARSER_USE_STYLES_IN_FILES"]="0"
+                all_arg_groups["ARGPARSER_USE_STYLES_IN_FILES"]="Stylization options"
+                     all_notes["ARGPARSER_USE_STYLES_IN_FILES"]="deprecated"
+                all_help_texts["ARGPARSER_USE_STYLES_IN_FILES"]="use the colors and styles when STDOUT/STDERR is not a terminal, deprecated in favor of \"--use-styles=always\""
+
+    # Define ${ARGPARSER_VERSION_EXIT_CODE}.
+             all_short_options["ARGPARSER_VERSION_EXIT_CODE"]=""
+              all_long_options["ARGPARSER_VERSION_EXIT_CODE"]="version-exit-code"
+               all_value_names["ARGPARSER_VERSION_EXIT_CODE"]="INT"
+            all_default_values["ARGPARSER_VERSION_EXIT_CODE"]="0"
+             all_choice_values["ARGPARSER_VERSION_EXIT_CODE"]=""
+    all_resolved_choice_values["ARGPARSER_VERSION_EXIT_CODE"]=""
+                     all_types["ARGPARSER_VERSION_EXIT_CODE"]="int"
+               all_arg_numbers["ARGPARSER_VERSION_EXIT_CODE"]="1"
+                all_arg_groups["ARGPARSER_VERSION_EXIT_CODE"]="Version message options"
+                     all_notes["ARGPARSER_VERSION_EXIT_CODE"]=""
+                all_help_texts["ARGPARSER_VERSION_EXIT_CODE"]="the exit code for version messages"
+
+    # Define ${ARGPARSER_VERSION_NUMBER}.
+             all_short_options["ARGPARSER_VERSION_NUMBER"]=""
+              all_long_options["ARGPARSER_VERSION_NUMBER"]="version-number"
+               all_value_names["ARGPARSER_VERSION_NUMBER"]="VERSION"
+            all_default_values["ARGPARSER_VERSION_NUMBER"]="1.0.0"
+             all_choice_values["ARGPARSER_VERSION_NUMBER"]=""
+    all_resolved_choice_values["ARGPARSER_VERSION_NUMBER"]=""
+                     all_types["ARGPARSER_VERSION_NUMBER"]="str"
+               all_arg_numbers["ARGPARSER_VERSION_NUMBER"]="1"
+                all_arg_groups["ARGPARSER_VERSION_NUMBER"]="Version message options"
+                     all_notes["ARGPARSER_VERSION_NUMBER"]=""
+                all_help_texts["ARGPARSER_VERSION_NUMBER"]="the script's version number for the version message"
+
+    # Define ${ARGPARSER_VERSION_OPTIONS}.
+             all_short_options["ARGPARSER_VERSION_OPTIONS"]=""
+              all_long_options["ARGPARSER_VERSION_OPTIONS"]="version-options"
+               all_value_names["ARGPARSER_VERSION_OPTIONS"]="CHAR"
+            all_default_values["ARGPARSER_VERSION_OPTIONS"]="V"
+             all_choice_values["ARGPARSER_VERSION_OPTIONS"]=""
+    all_resolved_choice_values["ARGPARSER_VERSION_OPTIONS"]=""
+                     all_types["ARGPARSER_VERSION_OPTIONS"]="char"
+               all_arg_numbers["ARGPARSER_VERSION_OPTIONS"]="+"
+                all_arg_groups["ARGPARSER_VERSION_OPTIONS"]="Version message options"
+                     all_notes["ARGPARSER_VERSION_OPTIONS"]=""
+                all_help_texts["ARGPARSER_VERSION_OPTIONS"]="the short (single-character) option names to invoke the version message"
+
+    # Define ${ARGPARSER_VERSION_STYLE}.
+             all_short_options["ARGPARSER_VERSION_STYLE"]=""
+              all_long_options["ARGPARSER_VERSION_STYLE"]="version-style"
+               all_value_names["ARGPARSER_VERSION_STYLE"]="STYLE"
+            all_default_values["ARGPARSER_VERSION_STYLE"]="bold"
+             all_choice_values["ARGPARSER_VERSION_STYLE"]=""
+    all_resolved_choice_values["ARGPARSER_VERSION_STYLE"]=""
+                     all_types["ARGPARSER_VERSION_STYLE"]="str"
+               all_arg_numbers["ARGPARSER_VERSION_STYLE"]="+"
+                all_arg_groups["ARGPARSER_VERSION_STYLE"]="Stylization options"
+                     all_notes["ARGPARSER_VERSION_STYLE"]="deprecated"
+                all_help_texts["ARGPARSER_VERSION_STYLE"]="the color and style specification for version messages, deprecated in favor of \"--style-file=FILE\""
+
+    # Define ${ARGPARSER_WARNING_STYLE}.
+             all_short_options["ARGPARSER_WARNING_STYLE"]=""
+              all_long_options["ARGPARSER_WARNING_STYLE"]="warning-style"
+               all_value_names["ARGPARSER_WARNING_STYLE"]="STYLE"
+            all_default_values["ARGPARSER_WARNING_STYLE"]="red,bold"
+             all_choice_values["ARGPARSER_WARNING_STYLE"]=""
+    all_resolved_choice_values["ARGPARSER_WARNING_STYLE"]=""
+                     all_types["ARGPARSER_WARNING_STYLE"]="str"
+               all_arg_numbers["ARGPARSER_WARNING_STYLE"]="+"
+                all_arg_groups["ARGPARSER_WARNING_STYLE"]="Stylization options"
+                     all_notes["ARGPARSER_WARNING_STYLE"]="deprecated"
+                all_help_texts["ARGPARSER_WARNING_STYLE"]="the color and style specification for warning messages, deprecated in favor of \"--style-file=FILE\""
+
+    # Define ${ARGPARSER_WRITE_ARGS}.
+             all_short_options["ARGPARSER_WRITE_ARGS"]=""
+              all_long_options["ARGPARSER_WRITE_ARGS"]="write-args"
+               all_value_names["ARGPARSER_WRITE_ARGS"]=""
+            all_default_values["ARGPARSER_WRITE_ARGS"]="false"
+             all_choice_values["ARGPARSER_WRITE_ARGS"]=""
+    all_resolved_choice_values["ARGPARSER_WRITE_ARGS"]=""
+                     all_types["ARGPARSER_WRITE_ARGS"]="bool"
+               all_arg_numbers["ARGPARSER_WRITE_ARGS"]="0"
+                all_arg_groups["ARGPARSER_WRITE_ARGS"]="General options"
+                     all_notes["ARGPARSER_WRITE_ARGS"]=""
+                all_help_texts["ARGPARSER_WRITE_ARGS"]="write the arguments from ARGPARSER_ARG_ARRAY_NAME to STDOUT"
+
+    # Define ${script_args}, the argument that later holds the script's
+    # command line.
+                         all_positional_args+=("script_args")
+               all_value_names["script_args"]="command_line"
+            all_default_values["script_args"]=""
+             all_choice_values["script_args"]=""
+    all_resolved_choice_values["script_args"]=""
+                     all_types["script_args"]="str"
+               all_arg_numbers["script_args"]="+"
+                all_arg_groups["script_args"]="Positional arguments"
+                     all_notes["script_args"]=""
+                all_help_texts["script_args"]="the indexed array in which the Argparser stores the script's command line upon parsing its own arguments"
+
+    # Define ${help}, the Argparser's help option.
+             all_short_options["help"]=""
+              all_long_options["help"]="help"
+               all_value_names["help"]=""
+            all_default_values["help"]="false"
+             all_choice_values["help"]=""
+    all_resolved_choice_values["help"]=""
+                     all_types["help"]="bool"
+               all_arg_numbers["help"]="0"
+                all_arg_groups["help"]="Help options"
+                     all_notes["help"]=""
+                all_help_texts["help"]="display this help and exit"
+
+    # Define ${usage}, the Argparser's usage option.
+             all_short_options["usage"]=""
+              all_long_options["usage"]="usage"
+               all_value_names["usage"]=""
+            all_default_values["usage"]="false"
+             all_choice_values["usage"]=""
+    all_resolved_choice_values["usage"]=""
+                     all_types["usage"]="bool"
+               all_arg_numbers["usage"]="0"
+                all_arg_groups["usage"]="Help options"
+                     all_notes["usage"]=""
+                all_help_texts["usage"]="display the usage and exit"
+
+    # Define ${version}, the Argparser's version option.
+             all_short_options["version"]=""
+              all_long_options["version"]="version"
+               all_value_names["version"]=""
+            all_default_values["version"]="false"
+             all_choice_values["version"]=""
+    all_resolved_choice_values["version"]=""
+                     all_types["version"]="bool"
+               all_arg_numbers["version"]="0"
+                all_arg_groups["version"]="Help options"
+                     all_notes["version"]=""
+                all_help_texts["version"]="display the version and exit"
+}
+
 function argparser_set_env_vars() {
     # Set the Argparser environment variables, as long as they aren't
     # already set by the calling script or environment to prevent
@@ -1984,75 +2892,6 @@ function argparser_set_env_vars() {
     # Argparser's command line given upon sourcing the Argparser, using
     # the Argparser itself with default values for all environment
     # variables (which are yet to be set).
-    ARGPARSER_ARGS=(
-        "id                                  : long_opts                 : val_names    : defaults             : choices               : type : arg_no : arg_group                     : notes      : help                                                                                                                    "
-        "ARGPARSER_ADD_HELP                  : add-help                  :              : true                 :                       : bool : 0      : General options               :            : add ARGPARSER_HELP_OPTIONS and --help as flags to call the help message                                                 "
-        "ARGPARSER_ADD_USAGE                 : add-usage                 :              : true                 :                       : bool : 0      : General options               :            : add ARGPARSER_USAGE_OPTIONS and --usage as flags to call the usage message                                              "
-        "ARGPARSER_ADD_VERSION               : add-version               :              : true                 :                       : bool : 0      : General options               :            : add ARGPARSER_VERSION_OPTIONS and --version as flags to call the version message                                        "
-        "ARGPARSER_ALLOW_ARG_INTERMIXING     : allow-arg-intermixing     :              : true                 :                       : bool : 0      : Parsing options               :            : allow the user to intermix positional and keyword arguments                                                             "
-        "ARGPARSER_ALLOW_FLAG_INVERSION      : allow-flag-inversion      :              : true                 :                       : bool : 0      : Parsing options               :            : allow the user to invert flags by prefixing them with \"+\" (short options) or \"++\" (long options)                    "
-        "ARGPARSER_ALLOW_FLAG_NEGATION       : allow-flag-negation       :              : true                 :                       : bool : 0      : Parsing options               :            : allow the user to negate long-option flags by prefixing them with \"no-\"                                               "
-        "ARGPARSER_ALLOW_OPTION_ABBREVIATION : allow-option-abbreviation :              : false                :                       : bool : 0      : Parsing options               :            : allow the user to give long option names in abbreviated form                                                            "
-        "ARGPARSER_ALLOW_OPTION_MERGING      : allow-option-merging      :              : false                :                       : bool : 0      : Parsing options               :            : allow the user to give short option names in merged (concatenated) form                                                 "
-        "ARGPARSER_ARG_ARRAY_NAME            : arg-array-name            : NAME         : args                 :                       : str  : 1      : Parsing options               :            : the indexed array for the raw arguments and the associative array for the parsed arguments                              "
-        "ARGPARSER_ARG_DEF_FILE              : arg-def-file              : FILE         : ''                   :                       : file : 1      : General options               :            : the path to a file holding the definition of the arguments                                                              "
-        "ARGPARSER_ARG_DELIMITER_1           : arg-delimiter-1           : CHAR         : |                    :                       : char : 1      : General options               :            : the primary delimiter that separates the fields in the arguments definition                                             "
-        "ARGPARSER_ARG_DELIMITER_2           : arg-delimiter-2           : CHAR         : ,                    :                       : char : 1      : General options               :            : the secondary delimiter that separates the elements of sequences in the arguments definition                            "
-        "ARGPARSER_CHECK_ARG_DEF             : check-arg-def             :              : false                :                       : bool : 0      : General options               :            : check if the arguments definition is consistent                                                                         "
-        "ARGPARSER_CHECK_ENV_VARS            : check-env-vars            :              : false                :                       : bool : 0      : General options               :            : check if the Argparser environment variables accord to their definition                                                 "
-        "ARGPARSER_CONFIG_FILE               : config-file               : FILE         : ''                   :                       : file : 1      : General options               :            : the path to a file holding the Argparser configuration                                                                  "
-        "ARGPARSER_COUNT_FLAGS               : count-flags               :              : false                :                       : bool : 0      : Parsing options               :            : count flags instead of setting them to \"true\" or \"false\" based on the last prefix used on the command line          "
-        "ARGPARSER_CREATE_ARG_DEF            : create-arg-def            :              : false                :                       : bool : 0      : General options               :            : create the arguments definition for a script                                                                            "
-        "ARGPARSER_DEBUG                     : debug                     :              : false                :                       : bool : 0      : Miscellaneous options         :            : (EXPERT OPTION) run the Argparser in debug mode, writing the stack trace for each command to STDERR                     "
-        "ARGPARSER_ERROR_EXIT_CODE           : error-exit-code           : INT          : 1                    :                       : int  : 1      : Error/warning message options :            : the exit code when errors occurred upon parsing                                                                         "
-        "ARGPARSER_ERROR_STYLE               : error-style               : STYLE        : red,bold,reverse     :                       : str  : +      : Stylization options           : deprecated : the color and style specification for error messages, deprecated in favor of \"--style-file=FILE\"                      "
-        "ARGPARSER_HELP_ARG_GROUP            : help-arg-group            : NAME         : Help options         :                       : str  : 1      : Help/usage message options    :            : the name of the argument group holding all help options, i.e., --help, --usage, and --version                           "
-        "ARGPARSER_HELP_DESCRIPTION          : help-description          : TEXT         : ''                   :                       : str  : 1      : Help/usage message options    :            : the script's description (purpose) to show in help message                                                              "
-        "ARGPARSER_HELP_EXIT_CODE            : help-exit-code            : INT          : 0                    :                       : int  : 1      : Help/usage message options    :            : the exit code for help messages                                                                                         "
-        "ARGPARSER_HELP_FILE                 : help-file                 : FILE         : ''                   :                       : file : 1      : Help/usage message options    :            : the path to a file holding the extended help message                                                                    "
-        "ARGPARSER_HELP_FILE_INCLUDE_CHAR    : help-file-include-char    : CHAR         : @                    :                       : char : 1      : Help/usage message options    :            : the character that introduces an include directive in an ARGPARSER_HELP_FILE                                            "
-        "ARGPARSER_HELP_FILE_KEEP_COMMENTS   : help-file-keep-comments   :              : false                :                       : bool : 0      : Help/usage message options    :            : keep commented lines in the help file                                                                                   "
-        "ARGPARSER_HELP_OPTIONS              : help-options              : CHAR         : h,?                  :                       : char : +      : Help/usage message options    :            : the short (single-character) option names to invoke the help message                                                    "
-        "ARGPARSER_HELP_STYLE                : help-style                : STYLE        : italic               :                       : str  : +      : Stylization options           : deprecated : the color and style specification for help messages, deprecated in favor of \"--style-file=FILE\"                       "
-        "ARGPARSER_LANGUAGE                  : language                  : LANG         : en                   :                       : str  : 1      : Localization options          :            : the language in which to localize the help and usage messages                                                           "
-        "ARGPARSER_MAX_COL_WIDTH_1           : max-col-width-1           : INT          : 9                    :                       : uint : 1      : Stylization options           :            : the maximum column width of the first column in the help message                                                        "
-        "ARGPARSER_MAX_COL_WIDTH_2           : max-col-width-2           : INT          : 33                   :                       : uint : 1      : Stylization options           :            : the maximum column width of the second column in the help message                                                       "
-        "ARGPARSER_MAX_COL_WIDTH_3           : max-col-width-3           : INT          : 0                    :                       : uint : 1      : Stylization options           :            : the maximum column width of the third column in the help message                                                        "
-        "ARGPARSER_MAX_WIDTH                 : max-width                 : INT          : 79                   :                       : uint : 1      : Stylization options           :            : the maximum width of the help message                                                                                   "
-        "ARGPARSER_POSITIONAL_ARG_GROUP      : positional-arg-group      : NAME         : Positional arguments :                       : str  : 1      : General options               :            : the name of the argument group holding all positional arguments                                                         "
-        "ARGPARSER_READ_ARGS                 : read-args                 :              : true                 :                       : bool : 0      : General options               :            : read the arguments and parse them to ARGPARSER_ARG_ARRAY_NAME                                                           "
-        "ARGPARSER_SCRIPT_NAME               : script-name               : NAME         : ''                   :                       : str  : 1      : General options               :            : the script's name for the help, usage, version, error, and warning messages                                             "
-        "ARGPARSER_SET_ARGS                  : set-args                  :              : true                 :                       : bool : 0      : General options               :            : set the arguments from ARGPARSER_ARG_ARRAY_NAME as variables in the script's scope                                      "
-        "ARGPARSER_SET_ARRAYS                : set-arrays                :              : true                 :                       : bool : 0      : General options               :            : set arguments intended to have multiple values as indexed array                                                         "
-        "ARGPARSER_SILENCE_ERRORS            : silence-errors            :              : false                :                       : bool : 0      : Error/warning message options :            : silence the emission (output) of error messages                                                                         "
-        "ARGPARSER_SILENCE_WARNINGS          : silence-warnings          :              : false                :                       : bool : 0      : Error/warning message options :            : silence the emission (output) of warning messages                                                                       "
-        "ARGPARSER_STYLE_FILE                : style-file                : FILE         : ''                   :                       : file : 1      : Stylization options           :            : the path to a file holding the style definitions for the messages                                                       "
-        "ARGPARSER_TRANSLATION_FILE          : translation-file          : FILE         : ''                   :                       : file : 1      : Localization options          :            : the path to a simplified YAML file holding the translation to ARGPARSER_LANGUAGE                                        "
-        "ARGPARSER_UNSET_ARGS                : unset-args                :              : true                 :                       : bool : 0      : General options               :            : unset (remove) all command-line arguments given to the script                                                           "
-        "ARGPARSER_UNSET_ENV_VARS            : unset-env-vars            :              : true                 :                       : bool : 0      : General options               :            : unset (remove) the Argparser environment variables from the environment                                                 "
-        "ARGPARSER_UNSET_FUNCTIONS           : unset-functions           :              : true                 :                       : bool : 0      : General options               :            : unset (remove) the Argparser functions from the environment                                                             "
-        "ARGPARSER_USAGE_EXIT_CODE           : usage-exit-code           : INT          : 0                    :                       : int  : 1      : Help/usage message options    :            : the exit code for usage messages                                                                                        "
-        "ARGPARSER_USAGE_FILE                : usage-file                : FILE         : ''                   :                       : file : 1      : Help/usage message options    :            : the path to a file holding the extended usage message                                                                   "
-        "ARGPARSER_USAGE_FILE_INCLUDE_CHAR   : usage-file-include-char   : CHAR         : @                    :                       : char : 1      : Help/usage message options    :            : the character that introduces an include directive in an ARGPARSER_USAGE_FILE                                           "
-        "ARGPARSER_USAGE_FILE_KEEP_COMMENTS  : usage-file-keep-comments  :              : false                :                       : bool : 0      : Help/usage message options    :            : keep commented lines in the usage file                                                                                  "
-        "ARGPARSER_USAGE_MESSAGE_OPTION_TYPE : usage-message-option-type :              : short                : long,short            : str  : 1      : Help/usage message options    :            : use short or long option names in usage messages                                                                        "
-        "ARGPARSER_USAGE_MESSAGE_ORIENTATION : usage-message-orientation :              : row                  : row,column            : str  : 1      : Help/usage message options    :            : output the positional and keyword arguments in usage messages in a row or in a column                                   "
-        "ARGPARSER_USAGE_OPTIONS             : usage-options             : CHAR         : u                    :                       : char : +      : Help/usage message options    :            : the short (single-character) option names to invoke the usage message                                                   "
-        "ARGPARSER_USAGE_STYLE               : usage-style               : STYLE        : italic               :                       : str  : +      : Stylization options           : deprecated : the color and style specification for usage messages, deprecated in favor of \"--style-file=FILE\"                      "
-        "ARGPARSER_USE_LONG_OPTIONS          : use-long-options          :              : true                 :                       : bool : 0      : Parsing options               :            : use the long option names for parsing                                                                                   "
-        "ARGPARSER_USE_SHORT_OPTIONS         : use-short-options         :              : true                 :                       : bool : 0      : Parsing options               :            : use the short option names for parsing                                                                                  "
-        "ARGPARSER_USE_COLORS                : use-colors                :              : true                 :                       : bool : 0      : Stylization options           :            : colorize the help, usage, version, error, and warning messages, applied in conjunction with \"--use-styles\"            "
-        "ARGPARSER_USE_STYLES                : use-styles                :              : tty                  : always,never,file,tty : str  : 1      : Stylization options           :            : use the colors and styles \"always\", \"never\", or only when STDOUT/STDERR is (\"tty\") or is not (\"file\") a terminal"
-        "ARGPARSER_USE_STYLES_IN_FILES       : use-styles-in-files       :              : false                :                       : bool : 0      : Stylization options           : deprecated : use the colors and styles when STDOUT/STDERR is not a terminal, deprecated in favor of \"--use-styles=always\"          "
-        "ARGPARSER_VERSION_EXIT_CODE         : version-exit-code         : INT          : 0                    :                       : int  : 1      : Version message options       :            : the exit code for version messages                                                                                      "
-        "ARGPARSER_VERSION_NUMBER            : version-number            : VERSION      : 1.0.0                :                       : str  : 1      : Version message options       :            : the script's version number for the version message                                                                     "
-        "ARGPARSER_VERSION_OPTIONS           : version-options           : CHAR         : V                    :                       : char : +      : Version message options       :            : the short (single-character) option names to invoke the version message                                                 "
-        "ARGPARSER_VERSION_STYLE             : version-style             : STYLE        : bold                 :                       : str  : +      : Stylization options           : deprecated : the color and style specification for version messages, deprecated in favor of \"--style-file=FILE\"                    "
-        "ARGPARSER_WARNING_STYLE             : warning-style             : STYLE        : red,bold             :                       : str  : +      : Stylization options           : deprecated : the color and style specification for warning messages, deprecated in favor of \"--style-file=FILE\"                    "
-        "ARGPARSER_WRITE_ARGS                : write-args                :              : false                :                       : bool : 0      : General options               :            : write the arguments from ARGPARSER_ARG_ARRAY_NAME to STDOUT                                                             "
-        "script_args                         :                           : command_line :                      :                       : str  : +      : Positional arguments          :            : the indexed array in which the Argparser stores the script's command line upon parsing its own arguments                "
-    )
-
     ARGPARSER_ADD_HELP=true \
         ARGPARSER_ADD_USAGE=true \
         ARGPARSER_ADD_VERSION=true \
@@ -2063,7 +2902,7 @@ function argparser_set_env_vars() {
         ARGPARSER_ALLOW_OPTION_MERGING=false \
         ARGPARSER_ARG_ARRAY_NAME="ARGPARSER_ARGS" \
         ARGPARSER_ARG_DEF_FILE="" \
-        ARGPARSER_ARG_DELIMITER_1=":" \
+        ARGPARSER_ARG_DELIMITER_1="|" \
         ARGPARSER_ARG_DELIMITER_2="," \
         ARGPARSER_CHECK_ARG_DEF=false \
         ARGPARSER_CHECK_ENV_VARS=false \
@@ -2254,7 +3093,7 @@ function argparser_set_env_var_defaults() {
     ARGPARSER_ALLOW_OPTION_MERGING=false
     ARGPARSER_ARG_ARRAY_NAME="ARGPARSER_ARGS"
     ARGPARSER_ARG_DEF_FILE=""
-    ARGPARSER_ARG_DELIMITER_1=":"
+    ARGPARSER_ARG_DELIMITER_1="|"
     ARGPARSER_ARG_DELIMITER_2=","
     ARGPARSER_CHECK_ARG_DEF=false
     ARGPARSER_CHECK_ENV_VARS=false
@@ -5352,6 +6191,195 @@ function argparser_add_args_definition_help_options() {
     done
 }
 
+function argparser_get_args_definition() {
+    # Set up the arguments definition, reading, parsing, and verifying
+    # it.
+    #
+    # Nonlocals:
+    # - is_sourced: whether the Argparser has been sourced (read-only)
+    #
+    # Environment:
+    # - ARGPARSER_ARG_ARRAY_NAME
+    # - ARGPARSER_CHECK_ARG_DEF (read-only)
+    # - ARGPARSER_SCRIPT_NAME (read-only)
+
+    # Define the local variables.  If the variable that
+    # ${ARGPARSER_ARG_ARRAY_NAME} refers to is undefined, all variables
+    # prefixed with "arg" are searched, later.  In order to not shadow
+    # them by local variables, all locals starting with "arg" are
+    # defined later.
+    local error_message
+    local -a error_messages
+    local message
+    local -a messages
+    local name
+    local names
+    local translated_error
+    local translation
+
+    # If the Argparser is run as standalone script and not sourced, read
+    # the arguments definition from STDIN into ${args} and remove
+    # leading blank lines.  If STDIN is empty, output an error message.
+    # If the Argparser is sourced, check if the variable that
+    # ${ARGPARSER_ARG_ARRAY_NAME} refers to is defined.  If not, guess
+    # how it may be called by searching the set variables for a variable
+    # name starting with "arg" to give a clearer error message.  If no
+    # such variable name is found, skip that part of the message.
+    if [[ "${is_sourced}" == false ]]; then
+        ARGPARSER_ARG_ARRAY_NAME="args"
+        local -a args
+        if read -t 0 -u 0; then
+            IFS=$'\n' read -r -d "" -t 0.1 -u 0 -a args
+
+            # shellcheck disable=SC2190  # Indexed, not associative array.
+            while (( "${#args[@]}" > 0 )) && [[ -z "${args[0]}" ]]; do
+                args=("${args[@]:1}")
+            done
+
+            if (( "${#args[@]}" == 0 )); then
+                error_message="Error: Calling (instead of sourcing) the "
+                error_message+="Argparser requires the arguments definition "
+                error_message+="to be provided through STDIN, separated by "
+                error_message+="newlines.  Either pipe to the Argparser or "
+                error_message+="use process substitution to give input.  "
+                error_message+="Alternatively, try \"\$1 --help\" to get a "
+                error_message+="help message with further information."
+
+                argparser_translate "Error arg array 1" "${error_message}" \
+                    "${ARGPARSER_SCRIPT_NAME}"
+                error_message="${translation}"
+
+                argparser_print_error_messages false true "${error_message}"
+            fi
+        else
+            error_message="Error: Calling (instead of sourcing) the Argparser "
+            error_message+="requires the arguments definition to be provided "
+            error_message+="through STDIN, separated by newlines.  Either "
+            error_message+="pipe to the Argparser or use process substitution "
+            error_message+="to give input.  Alternatively, try \"\$1 --help\" "
+            error_message+="to get a help message with further information."
+
+            argparser_translate "Error arg array 1" "${error_message}" \
+                "${ARGPARSER_SCRIPT_NAME}"
+            error_message="${translation}"
+
+            argparser_print_error_messages false true "${error_message}"
+        fi
+    elif [[ ! -v "${ARGPARSER_ARG_ARRAY_NAME}" ]]; then
+        mapfile -t names < <(compgen -v)
+        for name in "${names[@]}"; do
+            if [[ "${name}" == "arg"* ]]; then
+                name="${name%%=*}"
+                break
+            else
+                name=""
+            fi
+        done
+
+        if [[ -n "${name}" ]]; then
+            error_message="Error: The variable ARGPARSER_ARG_ARRAY_NAME "
+            error_message+="refers to \"\$1\", but this variable is not "
+            error_message+="defined.  Either you have given your arguments "
+            error_message+="array another name (maybe \"\$2\" -- then change "
+            error_message+="ARGPARSER_ARG_ARRAY_NAME accordingly) or you "
+            error_message+="forgot defining the array at all (then define it)."
+
+            argparser_translate "Error arg array 2" "${error_message}" \
+                "${ARGPARSER_ARG_ARRAY_NAME}"
+            error_message="${translation}"
+        else
+            error_message="Error: The variable ARGPARSER_ARG_ARRAY_NAME "
+            error_message+="refers to \"\$1\", but this variable is not "
+            error_message+="defined.  Either you have given your arguments "
+            error_message+="array another name (then change "
+            error_message+="ARGPARSER_ARG_ARRAY_NAME accordingly) or you "
+            error_message+="forgot defining the array at all (then define it)."
+
+            argparser_translate "Error arg array 3" "${error_message}" \
+                "${ARGPARSER_ARG_ARRAY_NAME}"
+            error_message="${translation}"
+        fi
+
+        argparser_print_error_messages false true "${error_message}"
+    fi
+
+    # Define the remaining local variables that start with "arg".
+    local -a args_definition_file
+    local -a args_definition_script
+
+    # Read in the requested arguments.  ${ARGPARSER_ARG_ARRAY_NAME} is
+    # set to the name of the indexed array holding the arguments in the
+    # script.  If it is already "args" (the default name), nothing needs
+    # to be done, but other variable names need to be mapped to "args"
+    # to be able to refer to the variable by name.  Thus, declare prints
+    # the array contents stored in the variable
+    # ${ARGPARSER_ARG_ARRAY_NAME} refers to, which then gets stripped
+    # from the leading assignment (before the equals sign ("=")) and set
+    # to the new indexed array ${args}.  Since later, the variable
+    # ${ARGPARSER_ARG_ARRAY_NAME} refers to is assigned an associative
+    # array, while being an indexed array, unset it.
+    if [[ "${ARGPARSER_ARG_ARRAY_NAME}" != "args" ]]; then
+        local args
+        args="$(declare -p "${ARGPARSER_ARG_ARRAY_NAME}")"
+        local -a args="${args#*=}"
+
+        unset "${ARGPARSER_ARG_ARRAY_NAME}"
+    fi
+
+    # Read the arguments definition.
+    args_definition_file=( )
+    args_definition_script=( )
+    error_messages=( )
+
+    argparser_translate "Error" "Error"
+    translated_error="${translation}"
+
+    messages=( )
+    argparser_read_args_definition "${args[@]}"
+    for message in "${messages[@]}"; do
+        # Append the arguments definition to those for the file or
+        # script, respectively.
+        case "${message}" in
+            "File"*) args_definition_file+=("${message#File: }") ;;
+            "Script"*) args_definition_script+=("${message#Script: }") ;;
+            "${translated_error}"*) error_messages+=("${message}") ;;
+        esac
+    done
+
+    # If there are error messages, sort, colorize, and print them, then
+    # exit, as parsing the arguments definition with missing parts is
+    # useless.
+    argparser_print_error_messages false true "${error_messages[@]}"
+
+    # Parse the arguments definition.
+    if (( "${#args_definition_file[@]}" > 0 )); then
+        argparser_parse_args_definition "file" "${args_definition_file[@]}"
+    fi
+    if (( "${#args_definition_script[@]}" > 0 )); then
+        argparser_parse_args_definition "script" "${args_definition_script[@]}"
+    fi
+
+    # If ${ARGPARSER_CHECK_ARG_DEF} is set to "true", check the
+    # consistency of the arguments definition.
+    error_messages=( )
+    if [[ "${ARGPARSER_CHECK_ARG_DEF}" == true ]]; then
+        # Check the arguments definition, first the short and long
+        # option names, then the default and choice values.
+        argparser_check_args_definition_names
+        argparser_check_args_definition_positional_values
+        argparser_check_args_definition_option_values
+
+        # If there are error messages, sort, filter, colorize, and print
+        # them, then exit, as parsing the arguments with a faulty
+        # definition is useless or even impossible.
+        argparser_print_error_messages true true "${error_messages[@]}"
+    fi
+
+    # Add the help, usage, and version message options to the arguments
+    # definition.
+    argparser_add_args_definition_help_options
+}
+
 # Define the Argparser functions for the argument parsing.
 function argparser_get_arg_key() {
     # Get the argument identifier (key) for a given short or long option
@@ -6661,9 +7689,8 @@ function argparser_check_arg_values() {
 
 function argparser_parse_args() {
     # Parse the script's given arguments and check if they accord to
-    # their definition.  Give proper error messages for wrongly set
-    # arguments and assign the values to the respective variables.
-    # Possibly, create and print a help, usage, or version message.
+    # their definition.  Possibly, print a help, usage, or version
+    # message.
     #
     # Arguments:
     # - $@: the arguments to parse
@@ -6672,12 +7699,9 @@ function argparser_parse_args() {
     # - all_arg_groups: the associative array holding the argument
     #   groups (read-only)
     # - all_positional_args: the indexed array holding the positional
-    #   argument names
+    #   argument names (read-only)
     # - all_short_options: the associative array holding the short
-    #   option names
-    # - is_self_parsing: whether the Argparser currently parses its own
-    #   arguments (read-only)
-    # - is_sourced: whether the Argparser has been sourced (read-only)
+    #   option names (read-only)
     #
     # Globals:
     # - ${ARGPARSER_ARG_ARRAY_NAME}: the parsed and checked arguments
@@ -6687,19 +7711,19 @@ function argparser_parse_args() {
     # - ARGPARSER_ALLOW_ARG_INTERMIXING (read-only)
     # - ARGPARSER_ARG_ARRAY_NAME
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
-    # - ARGPARSER_CHECK_ARG_DEF (read-only)
     # - ARGPARSER_ERROR_EXIT_CODE (read-only)
     # - ARGPARSER_HELP_ARG_GROUP (read-only)
     # - ARGPARSER_SILENCE_ERRORS (read-only)
     # - ARGPARSER_SILENCE_WARNINGS (read-only)
 
-    # Define the local variables.  If the variable that
-    # ${ARGPARSER_ARG_ARRAY_NAME} refers to is undefined, all variables
-    # prefixed with "arg" are searched, later.  In order to not shadow
-    # them by local variables, all locals starting with "arg" are
-    # defined later.
+    # Define the local variables.
+    local arg_key
+    local arg_number
+    local -A arg_numbers
     local -a arg_prefixes
-    local error_message
+    local arg_value
+    local arg_values
+    local declaration
     local -a error_messages
     local given_arg
     local -a given_args
@@ -6712,184 +7736,12 @@ function argparser_parse_args() {
     local is_version
     local message
     local -a messages
-    local name
-    local names
     local prefix
     local -A prefixes
-    local translated_error
-    local translation
     local -a warning_messages
 
     # Read the arguments.
     given_args=("$@")
-
-    # If the Argparser is run as standalone script and not sourced, read
-    # the arguments definition from STDIN into ${args} and remove
-    # leading blank lines.  If STDIN is empty, output an error message.
-    # If the Argparser is sourced, check if the variable that
-    # ${ARGPARSER_ARG_ARRAY_NAME} refers to is defined.  If not, guess
-    # how it may be called by searching the set variables for a variable
-    # name starting with "arg" to give a clearer error message.  If no
-    # such variable name is found, skip that part of the message.
-    if [[ "${is_sourced}" == false && "${is_self_parsing}" == false ]]; then
-        ARGPARSER_ARG_ARRAY_NAME="args"
-        local -a args
-        if read -t 0 -u 0; then
-            IFS=$'\n' read -r -d "" -t 0.1 -u 0 -a args
-
-            # shellcheck disable=SC2190  # Indexed, not associative array.
-            while (( "${#args[@]}" > 0 )) && [[ -z "${args[0]}" ]]; do
-                args=("${args[@]:1}")
-            done
-
-            if (( "${#args[@]}" == 0 )); then
-                error_message="Error: Calling (instead of sourcing) the "
-                error_message+="Argparser requires the arguments definition "
-                error_message+="to be provided through STDIN, separated by "
-                error_message+="newlines.  Either pipe to the Argparser or "
-                error_message+="use process substitution to give input.  "
-                error_message+="Alternatively, try \"\$1 --help\" to get a "
-                error_message+="help message with further information."
-
-                argparser_translate "Error arg array 1" "${error_message}" \
-                    "${ARGPARSER_SCRIPT_NAME}"
-                error_message="${translation}"
-
-                argparser_print_error_messages false true "${error_message}"
-            fi
-        else
-            error_message="Error: Calling (instead of sourcing) the Argparser "
-            error_message+="requires the arguments definition to be provided "
-            error_message+="through STDIN, separated by newlines.  Either "
-            error_message+="pipe to the Argparser or use process substitution "
-            error_message+="to give input.  Alternatively, try \"\$1 --help\" "
-            error_message+="to get a help message with further information."
-
-            argparser_translate "Error arg array 1" "${error_message}" \
-                "${ARGPARSER_SCRIPT_NAME}"
-            error_message="${translation}"
-
-            argparser_print_error_messages false true "${error_message}"
-        fi
-    elif [[ ! -v "${ARGPARSER_ARG_ARRAY_NAME}" ]]; then
-        mapfile -t names < <(compgen -v)
-        for name in "${names[@]}"; do
-            if [[ "${name}" == "arg"* ]]; then
-                name="${name%%=*}"
-                break
-            else
-                name=""
-            fi
-        done
-
-        if [[ -n "${name}" ]]; then
-            error_message="Error: The variable ARGPARSER_ARG_ARRAY_NAME "
-            error_message+="refers to \"\$1\", but this variable is not "
-            error_message+="defined.  Either you have given your arguments "
-            error_message+="array another name (maybe \"\$2\" -- then change "
-            error_message+="ARGPARSER_ARG_ARRAY_NAME accordingly) or you "
-            error_message+="forgot defining the array at all (then define it)."
-
-            argparser_translate "Error arg array 2" "${error_message}" \
-                "${ARGPARSER_ARG_ARRAY_NAME}"
-            error_message="${translation}"
-        else
-            error_message="Error: The variable ARGPARSER_ARG_ARRAY_NAME "
-            error_message+="refers to \"\$1\", but this variable is not "
-            error_message+="defined.  Either you have given your arguments "
-            error_message+="array another name (then change "
-            error_message+="ARGPARSER_ARG_ARRAY_NAME accordingly) or you "
-            error_message+="forgot defining the array at all (then define it)."
-
-            argparser_translate "Error arg array 3" "${error_message}" \
-                "${ARGPARSER_ARG_ARRAY_NAME}"
-            error_message="${translation}"
-        fi
-
-        argparser_print_error_messages false true "${error_message}"
-    fi
-
-    # Define the remaining local variables that start with "arg".
-    local arg_key
-    local arg_number
-    local -A arg_numbers
-    local arg_value
-    local arg_values
-    local -a args_definition_file
-    local -a args_definition_script
-
-    # Read in the requested arguments.  ${ARGPARSER_ARG_ARRAY_NAME} is
-    # set to the name of the indexed array holding the arguments in the
-    # script.  If it is already "args" (the default name), nothing needs
-    # to be done, but other variable names need to be mapped to "args"
-    # to be able to refer to the variable by name.  Thus, declare prints
-    # the array contents stored in the variable
-    # ${ARGPARSER_ARG_ARRAY_NAME} refers to, which then gets stripped
-    # from the leading assignment (before the equals sign ("=")) and set
-    # to the new indexed array ${args}.  Since later, the variable
-    # ${ARGPARSER_ARG_ARRAY_NAME} refers to is assigned an associative
-    # array, while being an indexed array, unset it.
-    if [[ "${ARGPARSER_ARG_ARRAY_NAME}" != "args" ]]; then
-        local args
-        args="$(declare -p "${ARGPARSER_ARG_ARRAY_NAME}")"
-        local -a args="${args#*=}"
-
-        unset "${ARGPARSER_ARG_ARRAY_NAME}"
-    fi
-
-    # Read the arguments definition.
-    args_definition_file=( )
-    args_definition_script=( )
-    error_messages=( )
-
-    argparser_translate "Error" "Error"
-    translated_error="${translation}"
-
-    messages=( )
-    argparser_read_args_definition "${args[@]}"
-    for message in "${messages[@]}"; do
-        # Append the arguments definition to those for the file or
-        # script, respectively.
-        case "${message}" in
-            "File"*) args_definition_file+=("${message#File: }") ;;
-            "Script"*) args_definition_script+=("${message#Script: }") ;;
-            "${translated_error}"*) error_messages+=("${message}") ;;
-        esac
-    done
-
-    # If there are error messages, sort, colorize, and print them, then
-    # exit, as parsing the arguments definition with missing parts is
-    # useless.
-    argparser_print_error_messages false true "${error_messages[@]}"
-
-    # Parse the arguments definition.
-    all_positional_args=( )
-    if (( "${#args_definition_file[@]}" > 0 )); then
-        argparser_parse_args_definition "file" "${args_definition_file[@]}"
-    fi
-    if (( "${#args_definition_script[@]}" > 0 )); then
-        argparser_parse_args_definition "script" "${args_definition_script[@]}"
-    fi
-
-    # If ${ARGPARSER_CHECK_ARG_DEF} is set to "true", check the
-    # consistency of the arguments definition.
-    error_messages=( )
-    if [[ "${ARGPARSER_CHECK_ARG_DEF}" == true ]]; then
-        # Check the arguments definition, first the short and long
-        # option names, then the default and choice values.
-        argparser_check_args_definition_names
-        argparser_check_args_definition_positional_values
-        argparser_check_args_definition_option_values
-
-        # If there are error messages, sort, filter, colorize, and print
-        # them, then exit, as parsing the arguments with a faulty
-        # definition is useless or even impossible.
-        argparser_print_error_messages true true "${error_messages[@]}"
-    fi
-
-    # Possibly, add the help, usage, and version message options to the
-    # arguments definition.
-    argparser_add_args_definition_help_options
 
     # Parse the script's given arguments.
     unset args
@@ -10178,9 +11030,9 @@ function argparser_main() {
     local translation
 
     # Declare the remaining internal variables.  Since ${ARGPARSER_ARGS}
-    # must be set in global scope within argparser_set_args, later, it's
-    # useless declaring it as local, here.
-    declare -a ARGPARSER_ARGS
+    # must be set in global scope, later, it cannot be declared local,
+    # here.
+    declare -g -A ARGPARSER_ARGS
     local argparser_version="1.3.2 \"Dasyprocta fuliginosa\""
 
     # Detect whether the Argparser is sourced or run as standalone
@@ -10258,6 +11110,7 @@ function argparser_main() {
     # current command line.  Finally, reset the arrays holding the
     # arguments definition data.
     is_self_parsing=true
+    argparser_define_env_vars
     argparser_set_env_vars "$@"
     argparser_modify_env_vars "$@"
     set -- "${script_args[@]}"
@@ -10384,6 +11237,10 @@ function argparser_main() {
         argparser_create_args_definition
         exit
     fi
+
+    # Set up the arguments definition, reading, parsing, and verifying
+    # it.
+    argparser_get_args_definition
 
     # If ${ARGPARSER_READ_ARGS} is set to "true", read and parse the
     # arguments.
