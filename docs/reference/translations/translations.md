@@ -96,7 +96,7 @@
 #### 9.5.16. `--version`
 
 - ***Message:*** `display the version and exit`
-- ***Description:*** the help text for the version options, *i.e.*, the [`ARGPARSER_VERSION_OPTIONS`](../environment_variables/environment_variables.md#9463-argparser_version_options), if [`ARGPARSER_ADD_VERSION`](../environment_variables/environment_variables.md#944-argparser_add_version) is set to `true`.
+- ***Description:*** the help text for the version options, *i.e.*, the [`ARGPARSER_VERSION_OPTIONS`](../environment_variables/environment_variables.md#9464-argparser_version_options), if [`ARGPARSER_ADD_VERSION`](../environment_variables/environment_variables.md#944-argparser_add_version) is set to `true`.
 
 #### 9.5.17. `false`
 

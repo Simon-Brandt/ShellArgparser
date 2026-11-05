@@ -2253,6 +2253,7 @@ output="$(cat << EOF
 |           [--use-short-options]                      |
 |           [--use-styles={always,never,file,tty}]     |
 |           [--use-styles-in-files]                    |
+|           [--use-unicode]                            |
 |           [--version-exit-code=INT]                  |
 |           [--version-number=VERSION]                 |
 |           [--version-options=OPTION...]              |
@@ -2439,6 +2440,9 @@ Mandatory arguments to long options are mandatory for short options too.
 |                                  STDOUT/STDERR is not a terminal, deprecated in |
 |                                  favor of "--use-styles=always" (default:       |
 |                                  false)                                         |
+| [--use-unicode]                  use Unicode characters for frames and          |
+|                                  messages, instead of only ASCII characters     |
+|                                  (default: false)                               |
 | [--version-style=STYLE...]       (DEPRECATED) the color and style specification |
 |                                  for version messages, deprecated in favor of   |
 |                                  "--style-file=FILE" (default: "bold")          |
