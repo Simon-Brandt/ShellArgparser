@@ -1827,6 +1827,7 @@ function argparser_cleanup() {
             ARGPARSER_USE_SHORT_OPTIONS \
             ARGPARSER_USE_STYLES \
             ARGPARSER_USE_STYLES_IN_FILES \
+            ARGPARSER_USE_UNICODE \
             ARGPARSER_VERSION_EXIT_CODE \
             ARGPARSER_VERSION_NUMBER \
             ARGPARSER_VERSION_OPTIONS \
@@ -1897,6 +1898,7 @@ function argparser_read_configuration() {
     # ARGPARSER_USE_SHORT_OPTIONS
     # ARGPARSER_USE_STYLES
     # ARGPARSER_USE_STYLES_IN_FILES
+    # ARGPARSER_USE_UNICODE
     # ARGPARSER_VERSION_EXIT_CODE
     # ARGPARSER_VERSION_NUMBER
     # ARGPARSER_VERSION_STYLE
@@ -2791,6 +2793,19 @@ function argparser_define_env_vars() {
                      all_notes["ARGPARSER_USE_STYLES_IN_FILES"]="deprecated"
                 all_help_texts["ARGPARSER_USE_STYLES_IN_FILES"]="use the colors and styles when STDOUT/STDERR is not a terminal, deprecated in favor of \"--use-styles=always\""
 
+    # Define ${ARGPARSER_USE_UNICODE}.
+             all_short_options["ARGPARSER_USE_UNICODE"]=""
+              all_long_options["ARGPARSER_USE_UNICODE"]="use-unicode"
+               all_value_names["ARGPARSER_USE_UNICODE"]=""
+            all_default_values["ARGPARSER_USE_UNICODE"]="false"
+             all_choice_values["ARGPARSER_USE_UNICODE"]=""
+    all_resolved_choice_values["ARGPARSER_USE_UNICODE"]=""
+                     all_types["ARGPARSER_USE_UNICODE"]="bool"
+               all_arg_numbers["ARGPARSER_USE_UNICODE"]="0"
+                all_arg_groups["ARGPARSER_USE_UNICODE"]="Stylization options"
+                     all_notes["ARGPARSER_USE_UNICODE"]=""
+                all_help_texts["ARGPARSER_USE_UNICODE"]="use Unicode characters for frames and messages, instead of only ASCII characters"
+
     # Define ${ARGPARSER_VERSION_EXIT_CODE}.
              all_short_options["ARGPARSER_VERSION_EXIT_CODE"]=""
               all_long_options["ARGPARSER_VERSION_EXIT_CODE"]="version-exit-code"
@@ -2994,6 +3009,7 @@ function argparser_set_env_vars() {
     # ARGPARSER_USE_SHORT_OPTIONS
     # ARGPARSER_USE_STYLES
     # ARGPARSER_USE_STYLES_IN_FILES
+    # ARGPARSER_USE_UNICODE
     # ARGPARSER_VERSION_EXIT_CODE
     # ARGPARSER_VERSION_NUMBER
     # ARGPARSER_VERSION_OPTIONS
@@ -3094,6 +3110,7 @@ function argparser_set_env_vars() {
         ARGPARSER_USE_LONG_OPTIONS=true \
         ARGPARSER_USE_SHORT_OPTIONS=false \
         ARGPARSER_USE_STYLES="${ARGPARSER_USE_STYLES:-tty}" \
+        ARGPARSER_USE_UNICODE="${ARGPARSER_USE_UNICODE:-false}" \
         ARGPARSER_VERSION_EXIT_CODE=0 \
         ARGPARSER_VERSION_NUMBER="${argparser_version}" \
         ARGPARSER_VERSION_OPTIONS="V,version" \
@@ -3227,6 +3244,7 @@ function argparser_set_env_var_defaults() {
     # ARGPARSER_USE_LONG_OPTIONS
     # ARGPARSER_USE_SHORT_OPTIONS
     # ARGPARSER_USE_STYLES
+    # ARGPARSER_USE_UNICODE
     # ARGPARSER_VERSION_EXIT_CODE
     # ARGPARSER_VERSION_NUMBER
     # ARGPARSER_VERSION_OPTIONS
@@ -3285,6 +3303,7 @@ function argparser_set_env_var_defaults() {
     ARGPARSER_USE_LONG_OPTIONS=true
     ARGPARSER_USE_SHORT_OPTIONS=false
     ARGPARSER_USE_STYLES="tty"
+    ARGPARSER_USE_UNICODE=false
     ARGPARSER_VERSION_EXIT_CODE=0
     ARGPARSER_VERSION_NUMBER="${argparser_version}"
     ARGPARSER_VERSION_OPTIONS="V,version"
@@ -3391,6 +3410,7 @@ function argparser_check_env_vars() {
     # - ARGPARSER_USE_LONG_OPTIONS (read-only)
     # - ARGPARSER_USE_SHORT_OPTIONS (read-only)
     # - ARGPARSER_USE_STYLES (read-only)
+    # - ARGPARSER_USE_UNICODE (read-only)
     # - ARGPARSER_VERSION_EXIT_CODE (read-only)
     # - ARGPARSER_VERSION_OPTIONS (read-only)
     # - ARGPARSER_VERSION_STYLE (read-only)
@@ -3449,6 +3469,7 @@ function argparser_check_env_vars() {
         ARGPARSER_USE_COLORS
         ARGPARSER_USE_LONG_OPTIONS
         ARGPARSER_USE_SHORT_OPTIONS
+        ARGPARSER_USE_UNICODE
         ARGPARSER_WRITE_ARGS
     )
     for var in "${vars[@]}"; do
@@ -11284,7 +11305,9 @@ function argparser_main() {
     is_extglob_set="$?"
     shopt -s extglob
 
-    # Define the default styles.
+    # Define the default styles.  If ${ARGPARSER_USE_UNICODE} is set to
+    # "true", use Unicode characters for the frame styles, else, use
+    # ASCII characters.
     styles=(
         ["argument_group"]="cyan,bold,reverse"
         ["choice_values"]="yellow"
@@ -11293,25 +11316,34 @@ function argparser_main() {
         ["deprecation_note"]="red,bold"
         ["description_text"]="italic"
         ["error_caption"]="red,bold,reverse"
-        ["error_frame"]="red,ASCII"
         ["error_text"]="red"
         ["help_caption"]="green,bold"
-        ["help_frame"]="cyan,ASCII"
         ["help_text"]="normal"
         ["long_options"]="magenta,bold"
         ["remark_text"]="italic"
         ["script_name"]="bold"
         ["short_options"]="green,bold"
         ["usage_caption"]="green,bold,reverse"
-        ["usage_frame"]="green,ASCII"
         ["value_names"]="blue"
         ["version_caption"]="magenta,bold,reverse"
-        ["version_frame"]="magenta,ASCII"
         ["version_text"]="normal"
         ["warning_caption"]="yellow,bold,reverse"
-        ["warning_frame"]="yellow,ASCII"
         ["warning_text"]="yellow"
     )
+
+    if [[ "${ARGPARSER_USE_UNICODE}" == true ]]; then
+        styles["error_frame"]="red,rounded"
+        styles["help_frame"]="cyan,rounded"
+        styles["usage_frame"]="green,rounded"
+        styles["version_frame"]="magenta,rounded"
+        styles["warning_frame"]="yellow,rounded"
+    else
+        styles["error_frame"]="red,ASCII"
+        styles["help_frame"]="cyan,ASCII"
+        styles["usage_frame"]="green,ASCII"
+        styles["version_frame"]="magenta,ASCII"
+        styles["warning_frame"]="yellow,ASCII"
+    fi
 
     # If ${ARGPARSER_USE_COLORS} isn't given, check for ${FORCE_COLOR}
     # and ${NO_COLOR}.  If ${FORCE_COLOR} is given and not set to the
@@ -11447,6 +11479,16 @@ function argparser_main() {
         styles["script_name"]="${ARGPARSER_HELP_STYLE}"
         styles["short_options"]="${ARGPARSER_HELP_STYLE}"
         styles["value_names"]="${ARGPARSER_HELP_STYLE}"
+    fi
+
+    # If ${ARGPARSER_USE_UNICODE} is now set to "true", enable the
+    # Unicode characters for the frame styles.
+    if [[ "${ARGPARSER_USE_UNICODE}" == true ]]; then
+        styles["error_frame"]="red,rounded"
+        styles["help_frame"]="cyan,rounded"
+        styles["usage_frame"]="green,rounded"
+        styles["version_frame"]="magenta,rounded"
+        styles["warning_frame"]="yellow,rounded"
     fi
 
     # If ${ARGPARSER_CREATE_ARG_DEF} is set to "true", create the
