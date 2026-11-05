@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-09-30
+# Last Modification: 2026-11-05
 # License: Public Domain
 
 # 1.    Define the general translations.
@@ -252,23 +252,15 @@ Error env var delimiters identical:
     "ARGPARSER_ARG_DELIMITER_2" müssen unterschiedliche Werte haben, sind aber
     beide "$1".
 
-Error env var short name empty:
+Error env var option name empty:
   en: >
     Error: The environment variable "$1" has an empty string given as one of
-    the $2 short option names, instead of a legit name.
+    the $2 option names, instead of a legit name.
   de: >
     Fehler: Die Umgebungsvariable "$1" hat einen Leerstring als einen der $2
-    kurzen Optionsnamen gegeben statt einen zulässigen Namen.
+    Optionsnamen gegeben, statt einen zulässigen Namen.
 
-Error env var short name length:
-  en: >
-    Error: The environment variable "$1" has the short option "-$2" defined
-    with more than 1 character length.
-  de: >
-    Fehler: Die Umgebungsvariable "$1" hat die kurze Option "-$2" mit mehr als
-    einem Zeichen Länge definiert.
-
-Error env var short name duplication 1:
+Error env var option name duplication 1:
   en: >
     Error: The environment variable "$1" has the short option "-$2" given $3
     times.
@@ -276,12 +268,28 @@ Error env var short name duplication 1:
     Fehler: Die Umgebungsvariable "$1" hat die kurze Option "-$2" $3-mal
     gegeben.
 
-Error env var short name duplication 2:
+Error env var option name duplication 2:
+  en: >
+    Error: The environment variable "$1" has the long option "--$2" given $3
+    times.
+  de: >
+    Fehler: Die Umgebungsvariable "$1" hat die lange Option "--$2" $3-mal
+    gegeben.
+
+Error env var option name duplication 3:
   en: >
     Error: The environment variable "$1" has the short option "-$2" given, but
     that is already in use by "$3".
   de: >
     Fehler: Die Umgebungsvariable "$1" hat die kurze Option "-$2" gegeben,
+    diese wird aber bereits von "$3" genutzt.
+
+Error env var option name duplication 4:
+  en: >
+    Error: The environment variable "$1" has the long option "--$2" given, but
+    that is already in use by "$3".
+  de: >
+    Fehler: Die Umgebungsvariable "$1" hat die lange Option "--$2" gegeben,
     diese wird aber bereits von "$3" genutzt.
 
 Error env var short options:
@@ -414,7 +422,7 @@ Error arg def short name empty:
     as one of the $2 short option names, instead of a legit name.
   de: >
     Fehler: Die kurze Option mit dem Identifikator "$1" hat einen Leerstring
-    als einen der $2 kurzen Optionsnamen gegeben statt einen zulässigen Namen.
+    als einen der $2 kurzen Optionsnamen gegeben, statt einen zulässigen Namen.
 
 Error arg def short name help:
   en: >
@@ -470,31 +478,31 @@ Error arg def long name empty:
     as one of the $2 long option names, instead of a legit name.
   de: >
     Fehler: Die lange Option mit dem Identifikator "$1" hat einen Leerstring
-    als einen der $2 langen Optionsnamen gegeben statt einen zulässigen Namen.
+    als einen der $2 langen Optionsnamen gegeben, statt einen zulässigen Namen.
 
 Error arg def long name help:
   en: >
-    Error: The long option with the identifier "$1" has the long option
-    "--help" defined, which is reserved for invoking the help message.
+    Error: The long option with the identifier "$1" has the long option "--$2"
+    defined, which is reserved for invoking the help message.
   de: >
     Fehler: Die lange Option mit dem Identifikator "$1" hat die lange Option
-    "--help" definiert, die zum Aufruf der Hilfsnachricht reserviert ist.
+    "--$2" definiert, die zum Aufruf der Hilfsnachricht reserviert ist.
 
 Error arg def long name usage:
   en: >
-    Error: The long option with the identifier "$1" has the long option
-    "--usage" defined, which is reserved for invoking the usage message.
+    Error: The long option with the identifier "$1" has the long option "--$2"
+    defined, which is reserved for invoking the usage message.
   de: >
     Fehler: Die lange Option mit dem Identifikator "$1" hat die lange Option
-    "--usage" definiert, die zum Aufruf der Benutzungsnachricht reserviert ist.
+    "--$2" definiert, die zum Aufruf der Benutzungsnachricht reserviert ist.
 
 Error arg def long name version:
   en: >
-    Error: The long option with the identifier "$1" has the long option
-    "--version" defined, which is reserved for invoking the version message.
+    Error: The long option with the identifier "$1" has the long option "--$2"
+    defined, which is reserved for invoking the version message.
   de: >
     Fehler: Die lange Option mit dem Identifikator "$1" hat die lange Option
-    "--version" definiert, die zum Aufruf der Versionsnachricht reserviert ist.
+    "--$2" definiert, die zum Aufruf der Versionsnachricht reserviert ist.
 
 Error arg def long name length:
   en: >

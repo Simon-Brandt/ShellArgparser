@@ -23,21 +23,21 @@
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to add the [`ARGPARSER_HELP_OPTIONS`](#9429-argparser_help_options) and `--help` as flags to call the help message.
+- ***Description:*** Whether to add the [`ARGPARSER_HELP_OPTIONS`](#9429-argparser_help_options) as flags to call the help message.
 
 #### 9.4.3. `ARGPARSER_ADD_USAGE`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to add the [`ARGPARSER_USAGE_OPTIONS`](#9454-argparser_usage_options) and `--usage` as flags to call the usage message.
+- ***Description:*** Whether to add the [`ARGPARSER_USAGE_OPTIONS`](#9454-argparser_usage_options) as flags to call the usage message.
 
 #### 9.4.4. `ARGPARSER_ADD_VERSION`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to add the [`ARGPARSER_VERSION_OPTIONS`](#9463-argparser_version_options) and `--version` as flags to call the version message.
+- ***Description:*** Whether to add the [`ARGPARSER_VERSION_OPTIONS`](#9463-argparser_version_options) as flags to call the version message.
 
 #### 9.4.5. `ARGPARSER_ALLOW_ARG_INTERMIXING`
 
@@ -190,14 +190,14 @@
 - ***Type:*** *int* (Integer)
 - ***Allowed values:*** Any integer, usually zero
 - ***Default value:*** `0`
-- ***Description:*** The exit code when a help message was requested using the [`ARGPARSER_HELP_OPTIONS`](#9429-argparser_help_options)  or the `--help` flag.
+- ***Description:*** The exit code when a help message was requested using the [`ARGPARSER_HELP_OPTIONS`](#9429-argparser_help_options).
 
 #### 9.4.26. `ARGPARSER_HELP_FILE`
 
 - ***Type:*** *file* (Filepath)
 - ***Allowed values:*** Any legit filepath or the empty string `""`
 - ***Default value:*** `""`
-- ***Description:*** The path to a file holding the extended help message. This file may be used by multiple scripts, even if they share no arguments. By this, the default structure and content of the auto-generated help message (invoked with the [`ARGPARSER_HELP_OPTIONS`](#9429-argparser_help_options)  or `--help`) can be overridden for all scripts in a project in the same way, without repeating yourself upon specifying the look.
+- ***Description:*** The path to a file holding the extended help message. This file may be used by multiple scripts, even if they share no arguments. By this, the default structure and content of the auto-generated help message (invoked with the [`ARGPARSER_HELP_OPTIONS`](#9429-argparser_help_options)) can be overridden for all scripts in a project in the same way, without repeating yourself upon specifying the look.
 
 #### 9.4.27. `ARGPARSER_HELP_FILE_INCLUDE_CHAR`
 
@@ -215,10 +215,10 @@
 
 #### 9.4.29. `ARGPARSER_HELP_OPTIONS`
 
-- ***Type:*** *char* (Character)
-- ***Allowed values:*** Any unique short-option character that's not used in the arguments definition
-- ***Default value:*** `"h,?"`
-- ***Description:*** The short option names used to call the help message. This is only evaluated if [`ARGPARSER_ADD_HELP`](#942-argparser_add_help) is `true`.
+- ***Type:*** *str* (String)
+- ***Allowed values:*** Any unique short and long option name that's not used in the arguments definition
+- ***Default value:*** `"h,?,help"`
+- ***Description:*** The option names used to call the help message. This is only evaluated if [`ARGPARSER_ADD_HELP`](#942-argparser_add_help) is `true`.
 
 #### 9.4.30. `ARGPARSER_HELP_STYLE`
 
@@ -360,14 +360,14 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 - ***Type:*** *int* (Integer)
 - ***Allowed values:*** Any integer, usually zero
 - ***Default value:*** `0`
-- ***Description:*** The exit code when a usage message was requested using the [`ARGPARSER_USAGE_OPTIONS`](#9454-argparser_usage_options) or the `--usage` flag.
+- ***Description:*** The exit code when a usage message was requested using the [`ARGPARSER_USAGE_OPTIONS`](#9454-argparser_usage_options).
 
 #### 9.4.49. `ARGPARSER_USAGE_FILE`
 
 - ***Type:*** *file* (Filepath)
 - ***Allowed values:*** Any legit filepath or the empty string `""`
 - ***Default value:*** `""`
-- ***Description:*** The path to a file holding the extended usage message. This file may be used by multiple scripts, even if they share no arguments. By this, the default structure and content of the auto-generated usage message (invoked with the [`ARGPARSER_USAGE_OPTIONS`](#9454-argparser_usage_options) or `--usage`) can be overridden for all scripts in a project in the same way, without repeating yourself upon specifying the look.
+- ***Description:*** The path to a file holding the extended usage message. This file may be used by multiple scripts, even if they share no arguments. By this, the default structure and content of the auto-generated usage message (invoked with the [`ARGPARSER_USAGE_OPTIONS`](#9454-argparser_usage_options)) can be overridden for all scripts in a project in the same way, without repeating yourself upon specifying the look.
 
 #### 9.4.50. `ARGPARSER_USAGE_FILE_INCLUDE_CHAR`
 
@@ -399,10 +399,10 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 
 #### 9.4.54. `ARGPARSER_USAGE_OPTIONS`
 
-- ***Type:*** *char* (Character)
-- ***Allowed values:*** Any unique short-option character that's not used in the arguments definition
-- ***Default value:*** `"u"`
-- ***Description:*** The short option names used to call the usage message. This is only evaluated if [`ARGPARSER_ADD_USAGE`](#943-argparser_add_usage) is `true`.
+- ***Type:*** *str* (String)
+- ***Allowed values:*** Any unique short and long option name that's not used in the arguments definition
+- ***Default value:*** `"u,usage"`
+- ***Description:*** The option names used to call the usage message. This is only evaluated if [`ARGPARSER_ADD_USAGE`](#943-argparser_add_usage) is `true`.
 
 #### 9.4.55. `ARGPARSER_USAGE_STYLE`
 
@@ -426,7 +426,7 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to accept long option names upon parsing and creating the help and usage messages. If your script doesn't take any long option, it may be practical to disable also the long options the Argparser sets, *viz.* `--help`, `--usage`, and `--version` (given that [`ARGPARSER_ADD_HELP`](#942-argparser_add_help), [`ARGPARSER_ADD_USAGE`](#943-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](#944-argparser_add_version), respectively, are set). Additionally, the help message will only have two columns (the short option names and the help texts), then.
+- ***Description:*** Whether to accept long option names upon parsing and creating the help and usage messages. If your script doesn't take any long option, it may be practical to disable also the long options the Argparser sets, *viz.* the [`ARGPARSER_HELP_OPTIONS`](#9429-argparser_help_options), the [`ARGPARSER_USAGE_OPTIONS`](#9454-argparser_usage_options), and the [`ARGPARSER_VERSION_OPTIONS`](#9463-argparser_version_options) (given that [`ARGPARSER_ADD_HELP`](#942-argparser_add_help), [`ARGPARSER_ADD_USAGE`](#943-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](#944-argparser_add_version), respectively, are set). Additionally, the help message will only have two columns (the short option names and the help texts), then.
 
 #### 9.4.58. `ARGPARSER_USE_SHORT_OPTIONS`
 
@@ -457,7 +457,7 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 - ***Type:*** *int* (Integer)
 - ***Allowed values:*** Any integer, usually zero
 - ***Default value:*** `0`
-- ***Description:*** The exit code when a version message was requested using the [`ARGPARSER_VERSION_OPTIONS`](#9463-argparser_version_options) or the `--version` flag.
+- ***Description:*** The exit code when a version message was requested using the [`ARGPARSER_VERSION_OPTIONS`](#9463-argparser_version_options).
 
 #### 9.4.62. `ARGPARSER_VERSION_NUMBER`
 
@@ -468,10 +468,10 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 
 #### 9.4.63. `ARGPARSER_VERSION_OPTIONS`
 
-- ***Type:*** *char* (Character)
-- ***Allowed values:*** Any unique short-option character that's not used in the arguments definition
-- ***Default value:*** `"V"`
-- ***Description:*** The short option names used to call the version message. This is only evaluated if [`ARGPARSER_ADD_VERSION`](#944-argparser_add_version) is `true`.
+- ***Type:*** *str* (String)
+- ***Allowed values:*** Any unique short and long option name that's not used in the arguments definition
+- ***Default value:*** `"V,version"`
+- ***Description:*** The option names used to call the version message. This is only evaluated if [`ARGPARSER_ADD_VERSION`](#944-argparser_add_version) is `true`.
 
 #### 9.4.64. `ARGPARSER_VERSION_STYLE`
 

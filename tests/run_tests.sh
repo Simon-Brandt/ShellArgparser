@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-11-03
+# Last Modification: 2026-11-05
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -2221,7 +2221,7 @@ output="$(cat << EOF
 |           [--help-file=FILE]                         |
 |           [--help-file-include-char=CHAR]            |
 |           [--help-file-keep-comments]                |
-|           [--help-options=CHAR...]                   |
+|           [--help-options=OPTION...]                 |
 |           [--help-style=STYLE...]                    |
 |           [--language=LANG]                          |
 |           [--max-col-width-1=INT]                    |
@@ -2246,7 +2246,7 @@ output="$(cat << EOF
 |           [--usage-file-keep-comments]               |
 |           [--usage-message-option-type={long,short}] |
 |           [--usage-message-orientation={row,column}] |
-|           [--usage-options=CHAR...]                  |
+|           [--usage-options=OPTION...]                |
 |           [--usage-style=STYLE...]                   |
 |           [--use-colors]                             |
 |           [--use-long-options]                       |
@@ -2255,7 +2255,7 @@ output="$(cat << EOF
 |           [--use-styles-in-files]                    |
 |           [--version-exit-code=INT]                  |
 |           [--version-number=VERSION]                 |
-|           [--version-options=CHAR...]                |
+|           [--version-options=OPTION...]              |
 |           [--version-style=STYLE...]                 |
 |           [--warning-style=STYLE...]                 |
 |           [--write-args]                             |
@@ -2291,14 +2291,12 @@ Mandatory arguments to long options are mandatory for short options too.
 +---------------------------------------------------------------------------------+
 
 +- General options ---------------------------------------------------------------+
-| [--add-help]                     add ARGPARSER_HELP_OPTIONS and --help as flags |
-|                                  to call the help message (default: true)       |
-| [--add-usage]                    add ARGPARSER_USAGE_OPTIONS and --usage as     |
-|                                  flags to call the usage message (default:      |
-|                                  true)                                          |
-| [--add-version]                  add ARGPARSER_VERSION_OPTIONS and --version as |
-|                                  flags to call the version message (default:    |
-|                                  true)                                          |
+| [--add-help]                     add ARGPARSER_HELP_OPTIONS as flags to call    |
+|                                  the help message (default: true)               |
+| [--add-usage]                    add ARGPARSER_USAGE_OPTIONS as flags to call   |
+|                                  the usage message (default: true)              |
+| [--add-version]                  add ARGPARSER_VERSION_OPTIONS as flags to call |
+|                                  the version message (default: true)            |
 | [--arg-def-file=FILE]            the path to a file holding the definition of   |
 |                                  the arguments (default: "''")                  |
 | [--arg-delimiter-1=CHAR]         the primary delimiter that separates the       |
@@ -2353,8 +2351,8 @@ Mandatory arguments to long options are mandatory for short options too.
 |                                  "@")                                           |
 | [--help-file-keep-comments]      keep commented lines in the help file          |
 |                                  (default: false)                               |
-| [--help-options=CHAR...]         the short (single-character) option names to   |
-|                                  invoke the help message (default: "h","?")     |
+| [--help-options=OPTION...]       the short and long option names to invoke the  |
+|                                  help message (default: "h","?","help")         |
 | [--usage-exit-code=INT]          the exit code for usage messages (default: 0)  |
 | [--usage-file=FILE]              the path to a file holding the extended usage  |
 |                                  message (default: "''")                        |
@@ -2368,8 +2366,8 @@ Mandatory arguments to long options are mandatory for short options too.
 | [--usage-message-orientation=    output the positional and keyword arguments in |
 |     {row,column}]                usage messages in a row or in a column         |
 |                                  (default: "row")                               |
-| [--usage-options=CHAR...]        the short (single-character) option names to   |
-|                                  invoke the usage message (default: "u")        |
+| [--usage-options=OPTION...]      the short and long option names to invoke the  |
+|                                  usage message (default: "u","usage")           |
 +---------------------------------------------------------------------------------+
 
 +- Localization options ----------------------------------------------------------+
@@ -2454,8 +2452,8 @@ Mandatory arguments to long options are mandatory for short options too.
 |                                  0)                                             |
 | [--version-number=VERSION]       the script's version number for the version    |
 |                                  message (default: "1.0.0")                     |
-| [--version-options=CHAR...]      the short (single-character) option names to   |
-|                                  invoke the version message (default: "V")      |
+| [--version-options=OPTION...]    the short and long option names to invoke the  |
+|                                  version message (default: "V","version")       |
 +---------------------------------------------------------------------------------+
 
 +- Help options ------------------------------------------------------------------+
