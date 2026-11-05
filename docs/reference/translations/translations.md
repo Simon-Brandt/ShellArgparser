@@ -723,9 +723,9 @@
 
 #### 9.5.87. `Error arg def pos note`
 
-- ***Message:*** `Error: The positional argument with the identifier "$1" has "$2" given as note, but only "deprecated" is supported.`
+- ***Message:*** `Error: The positional argument with the identifier "$1" has "$2" given as note, but only "deprecated" and "hidden" are supported.`
 - ***Description:*** The error that in the arguments definition of a positional argument, an unsupported note is given.
-- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined with a note other than `"deprecated"`. Currently, the Argparser doesn't support any other note, but may do so in the future.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined with a note other than `"deprecated"` and `"hidden"`. Currently, the Argparser doesn't support any other note, but may do so in the future, so any other value is reserved for future usage.
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
   - `$2`: The note.
@@ -842,9 +842,9 @@
 
 #### 9.5.100. `Error arg def option note`
 
-- ***Message:*** `Error: The option with the identifier "$1" has "$2" given as note, but only "deprecated" is supported.`
+- ***Message:*** `Error: The option with the identifier "$1" has "$2" given as note, but only "deprecated" and "hidden" are supported.`
 - ***Description:*** The error that in the arguments definition of a keyword argument, an unsupported note is given.
-- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined with a note other than `"deprecated"`. Currently, the Argparser doesn't support any other note, but may do so in the future.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined with a note other than `"deprecated"` and `"hidden"`. Currently, the Argparser doesn't support any other note, but may do so in the future, so any other value is reserved for future usage.
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
   - `$2`: The note.

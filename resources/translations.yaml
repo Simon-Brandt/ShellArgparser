@@ -685,10 +685,11 @@ Error arg def pos uint:
 Error arg def pos note:
   en: >
     Error: The positional argument with the identifier "$1" has "$2" given as
-    note, but only "deprecated" is supported.
+    note, but only "deprecated" and "hidden" are supported.
   de: >
     Fehler: Das positionale Argument mit dem Identifikator "$1" hat "$2" als
-    Anmerkung gegeben, aber nur "deprecated" ("veraltet") wird unterstützt.
+    Anmerkung gegeben, aber nur "deprecated" ("veraltet") und "hidden"
+    ("versteckt") werden unterstützt.
 
 # 3.6.  Define the translations for checking the values of the keyword
 #       arguments in the arguments definition.
@@ -801,10 +802,11 @@ Error arg def option uint:
 Error arg def option note:
   en: >
     Error: The option with the identifier "$1" has "$2" given as note, but only
-    "deprecated" is supported.
+    "deprecated" and "hidden" are supported.
   de: >
     Fehler: Die Option mit dem Identifikator "$1" hat "$2" als Anmerkung
-    gegeben, aber nur "deprecated" ("veraltet") wird unterstützt.
+    gegeben, aber nur "deprecated" ("veraltet") und "hidden" ("versteckt")
+    werden unterstützt.
 
 # 3.7.  Define the translations for parsing the arguments.
 Error arg double hyphen:
