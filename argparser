@@ -6716,7 +6716,7 @@ function argparser_get_option_names() {
     #   option names (read-only)
     # - all_value_names: the associative array holding the value names
     #   (read-only)
-    # - option_names: the name of all short and long options as
+    # - option_names_str: the name of all short and long options as
     #   ${ARGPARSER_ARG_DELIMITER_2}-separated string
     # - styles: the associative array containing the styles (read-only)
     #
@@ -6728,11 +6728,11 @@ function argparser_get_option_names() {
     local colorize
     local -a colorized_array
     local joined_array
-    local long_option_names
-    local -a long_options
+    local -a long_options_arr
+    local long_options_str
     local order
-    local short_option_names
-    local -a short_options
+    local -a short_options_arr
+    local short_options_str
     local value_names
 
     # Read the arguments.
@@ -6746,13 +6746,13 @@ function argparser_get_option_names() {
     # For the option name below, use the value name, of which positional
     # arguments can only have one (thus using a string, not an array).
     if [[ -n "${all_short_options[${arg_key}]+set}" ]]; then
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a short_options \
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a short_options_arr \
             <<< "${all_short_options[${arg_key}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a long_options \
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a long_options_arr \
             <<< "${all_long_options[${arg_key}]}"
     else
-        short_options=("")
-        long_options=("")
+        short_options_arr=("")
+        long_options_arr=("")
     fi
     value_names="${all_value_names[${arg_key}]}"
 
@@ -6761,45 +6761,47 @@ function argparser_get_option_names() {
     # names.
     if [[ "${colorize}" == true ]]; then
         argparser_colorize "${styles["short_options"]}" 1 "array" \
-            "${short_options[@]/#/-}"
+            "${short_options_arr[@]/#/-}"
         argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
-        short_option_names="${joined_array}"
+        short_options_str="${joined_array}"
 
         argparser_colorize "${styles["long_options"]}" 1 "array" \
-            "${long_options[@]/#/--}"
+            "${long_options_arr[@]/#/--}"
         argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
-        long_option_names="${joined_array}"
+        long_options_str="${joined_array}"
 
         argparser_colorize "${styles["value_names"]}" 1 value_names \
             "${value_names}"
     else
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${short_options[@]/#/-}"
-        short_option_names="${joined_array}"
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
+            "${short_options_arr[@]/#/-}"
+        short_options_str="${joined_array}"
 
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${long_options[@]/#/--}"
-        long_option_names="${joined_array}"
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
+            "${long_options_arr[@]/#/--}"
+        long_options_str="${joined_array}"
     fi
 
     # Merge the names of all short and long options, if any is given, or
     # use the value names as fallback.
-    if [[ -n "${short_options[0]}" && -n "${long_options[0]}" ]]; then
+    if [[ -n "${short_options_arr[0]}" && -n "${long_options_arr[0]}" ]]; then
         if [[ "${order}" == "short-long" ]]; then
-            option_names="${short_option_names}${ARGPARSER_ARG_DELIMITER_2}"
-            option_names+="${long_option_names}"
+            option_names_str="${short_options_str}${ARGPARSER_ARG_DELIMITER_2}"
+            option_names_str+="${long_options_str}"
         elif [[ "${order}" == "long-short" ]]; then
-            option_names="${long_option_names}${ARGPARSER_ARG_DELIMITER_2}"
-            option_names+="${short_option_names}"
+            option_names_str="${long_options_str}${ARGPARSER_ARG_DELIMITER_2}"
+            option_names_str+="${short_options_str}"
         elif [[ "${order}" == "short" ]]; then
-            option_names="${short_option_names}"
+            option_names_str="${short_options_str}"
         elif [[ "${order}" == "long" ]]; then
-            option_names="${long_option_names}"
+            option_names_str="${long_options_str}"
         fi
-    elif [[ -n "${short_options[0]}" ]]; then
-        option_names="${short_option_names}"
-    elif [[ -n "${long_options[0]}" ]]; then
-        option_names="${long_option_names}"
+    elif [[ -n "${short_options_arr[0]}" ]]; then
+        option_names_str="${short_options_str}"
+    elif [[ -n "${long_options_arr[0]}" ]]; then
+        option_names_str="${long_options_str}"
     else
-        option_names="${value_names}"
+        option_names_str="${value_names}"
     fi
 }
 
@@ -7494,7 +7496,7 @@ function argparser_check_arg_values() {
     local joined_array
     local note
     local -a notes
-    local option_names
+    local option_names_str
     local prefix
     local -a prefixes
     local -a resolved_choice_values_arr
@@ -7580,7 +7582,7 @@ function argparser_check_arg_values() {
             warning_message+="will be removed in the future."
 
             argparser_translate "Warning deprecation" "${warning_message}" \
-                "${option_names}"
+                "${option_names_str}"
             warning_message="${translation}"
             warning_messages+=("${warning_message}")
         fi
@@ -7597,7 +7599,7 @@ function argparser_check_arg_values() {
             error_message+="needs a value after the option name."
 
             argparser_translate "Error arg no flag 1" "${error_message}" \
-                "${option_names}"
+                "${option_names_str}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -7632,7 +7634,7 @@ function argparser_check_arg_values() {
             error_message+="with a \"+\" or \"no-\" prefix."
 
             argparser_translate "Error arg no flag 2" "${error_message}" \
-                "${option_names}"
+                "${option_names_str}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -7641,7 +7643,7 @@ function argparser_check_arg_values() {
             error_message+="cannot be given with a \"+\" or \"no-\" prefix."
 
             argparser_translate "Error arg no flag 3" "${error_message}" \
-                "${option_names}"
+                "${option_names_str}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -7661,7 +7663,7 @@ function argparser_check_arg_values() {
             error_message+="given."
 
             argparser_translate "Error mandatory arg" "${error_message}" \
-                "${option_names}"
+                "${option_names_str}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -7700,7 +7702,7 @@ function argparser_check_arg_values() {
             error_message+="value, but has \$2 given."
 
             argparser_translate "Error wrong arg number 1" "${error_message}" \
-                "${option_names}" "${#values_arr[@]}"
+                "${option_names_str}" "${#values_arr[@]}"
             error_message="${translation}"
             error_messages+=("${error_message}")
         else
@@ -7713,8 +7715,8 @@ function argparser_check_arg_values() {
             warning_message+="the default (\$3) is used."
 
             argparser_translate "Warning wrong arg number 1" \
-                "${warning_message}" "${option_names}" "${#values_arr[@]}" \
-                "${default_values_str}"
+                "${warning_message}" "${option_names_str}" \
+                "${#values_arr[@]}" "${default_values_str}"
             warning_message="${translation}"
             warning_messages+=("${warning_message}")
 
@@ -7731,7 +7733,7 @@ function argparser_check_arg_values() {
             error_message+="but has \$2 given."
 
             argparser_translate "Error wrong arg number 2" \
-                "${error_message}" "${option_names}" "${#values_arr[@]}"
+                "${error_message}" "${option_names_str}" "${#values_arr[@]}"
             error_message="${translation}"
             error_messages+=("${error_message}")
         else
@@ -7744,8 +7746,8 @@ function argparser_check_arg_values() {
             warning_message+="default (\$3) is used."
 
             argparser_translate "Warning wrong arg number 2" \
-                "${warning_message}" "${option_names}" "${#values_arr[@]}" \
-                "${default_values_str}"
+                "${warning_message}" "${option_names_str}" \
+                "${#values_arr[@]}" "${default_values_str}"
             warning_message="${translation}"
             warning_messages+=("${warning_message}")
 
@@ -7762,7 +7764,7 @@ function argparser_check_arg_values() {
             error_message+="has \$2 given."
 
             argparser_translate "Error wrong arg number 3" \
-                "${error_message}" "${option_names}" "${#values_arr[@]}"
+                "${error_message}" "${option_names_str}" "${#values_arr[@]}"
             error_message="${translation}"
             error_messages+=("${error_message}")
         else
@@ -7775,8 +7777,8 @@ function argparser_check_arg_values() {
             warning_message+="default (\$3) is used."
 
             argparser_translate "Warning wrong arg number 3" \
-                "${warning_message}" "${option_names}" "${#values_arr[@]}" \
-                "${default_values_str}"
+                "${warning_message}" "${option_names_str}" \
+                "${#values_arr[@]}" "${default_values_str}"
             warning_message="${translation}"
             warning_messages+=("${warning_message}")
 
@@ -7823,7 +7825,7 @@ function argparser_check_arg_values() {
             error_message+="but has \$3 given."
 
             argparser_translate "Error wrong arg number 4" "${error_message}" \
-                "${option_names}" "${arg_number}" "${#values_arr[@]}"
+                "${option_names_str}" "${arg_number}" "${#values_arr[@]}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -7837,7 +7839,7 @@ function argparser_check_arg_values() {
             warning_message+="the default (\$4) is used."
 
             argparser_translate "Warning wrong arg number 4" \
-                "${warning_message}" "${option_names}" "${arg_number}" \
+                "${warning_message}" "${option_names_str}" "${arg_number}" \
                 "${#values_arr[@]}" "${default_values_str}"
             warning_message="${translation}"
             warning_messages+=("${warning_message}")
@@ -7859,7 +7861,8 @@ function argparser_check_arg_values() {
                 error_message+="but is {\$3}."
 
                 argparser_translate "Error arg choice" "${error_message}" \
-                    "${option_names}" "${choice_values_str}" "${values_str}"
+                    "${option_names_str}" "${choice_values_str}" \
+                    "${values_str}"
                 error_message="${translation}"
                 error_messages+=("${error_message}")
                 return
@@ -7875,7 +7878,7 @@ function argparser_check_arg_values() {
             error_message+="must be a Boolean, i.e., \"true\" or \"false\"."
 
             argparser_translate "Error arg bool" "${error_message}" \
-                "${option_names}" "${value}"
+                "${option_names_str}" "${value}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -7886,7 +7889,7 @@ function argparser_check_arg_values() {
             error_message+="one printable ASCII character."
 
             argparser_translate "Error arg char" "${error_message}" \
-                "${option_names}" "${value}"
+                "${option_names_str}" "${value}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -7898,7 +7901,7 @@ function argparser_check_arg_values() {
             error_message+="only digits, a dot, and possibly a leading sign."
 
             argparser_translate "Error arg float" "${error_message}" \
-                "${option_names}" "${value}"
+                "${option_names_str}" "${value}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -7909,7 +7912,7 @@ function argparser_check_arg_values() {
             error_message+="and possibly a leading sign."
 
             argparser_translate "Error arg int" "${error_message}" \
-                "${option_names}" "${value}"
+                "${option_names_str}" "${value}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -7920,7 +7923,7 @@ function argparser_check_arg_values() {
             error_message+="digits and no sign."
 
             argparser_translate "Error arg uint" "${error_message}" \
-                "${option_names}" "${value}"
+                "${option_names_str}" "${value}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -8466,7 +8469,7 @@ function argparser_create_help_message() {
     local new_col_3_value
     local note
     local -a notes
-    local -a option_names
+    local option_names_str
     local optional_arguments_hint
     local pad_width
     local -a padded_array
@@ -8755,7 +8758,7 @@ function argparser_create_help_message() {
             # Concatenate the name of all short and long options for the
             # sorting of all arguments, later.
             argparser_get_option_names "${arg_key}" "long-short" false
-            all_option_names+=("${option_names}")
+            all_option_names+=("${option_names_str}")
 
             # If there are less value names than short or long option
             # names, create the remaining value names by capitalizing
@@ -9615,7 +9618,7 @@ function argparser_create_usage_message() {
     local long_options_str
     local -a positional_default_args
     local -a positional_required_args
-    local option_names
+    local option_names_str
     local -a padded_array
     local script_name
     local short_option
@@ -9663,13 +9666,13 @@ function argparser_create_usage_message() {
             || "${ARGPARSER_USE_LONG_OPTIONS}" == false ]]
         then
             argparser_get_option_names "${arg_key}" "short" true
-            help_options+="${option_names}"
+            help_options+="${option_names_str}"
         elif [[ ("${ARGPARSER_USAGE_MESSAGE_OPTION_TYPE}" == "long" \
                 && "${ARGPARSER_USE_LONG_OPTIONS}" == true) \
             || "${ARGPARSER_USE_SHORT_OPTIONS}" == false ]]
         then
             argparser_get_option_names "${arg_key}" "long" true
-            help_options+="${option_names}"
+            help_options+="${option_names_str}"
         fi
     done
 
@@ -9798,7 +9801,7 @@ function argparser_create_usage_message() {
         # Concatenate and colorize the short option names, value names,
         # and choice values.
         argparser_get_option_names "${arg_key}" "short" true
-        short_options_str="${option_names}"
+        short_options_str="${option_names_str}"
 
         argparser_colorize "${styles["value_names"]}" 1 "array" \
             "${value_names_arr[@]}"
@@ -9892,7 +9895,7 @@ function argparser_create_usage_message() {
         # Concatenate and colorize the long option names, value names,
         # and choice values.
         argparser_get_option_names "${arg_key}" "long" true
-        long_options_str="${option_names}"
+        long_options_str="${option_names_str}"
 
         argparser_colorize "${styles["value_names"]}" 1 "array" \
             "${value_names_arr[@]}"
@@ -9986,7 +9989,7 @@ function argparser_create_usage_message() {
         # Concatenate and colorize the short option names, value names,
         # and choice values.
         argparser_get_option_names "${arg_key}" "short" true
-        short_options_str="${option_names}"
+        short_options_str="${option_names_str}"
 
         argparser_colorize "${styles["value_names"]}" 1 "array" \
             "${value_names_arr[@]}"
@@ -10080,7 +10083,7 @@ function argparser_create_usage_message() {
         # Concatenate and colorize the long option names, value names,
         # and choice values.
         argparser_get_option_names "${arg_key}" "long" true
-        long_options_str="${option_names}"
+        long_options_str="${option_names_str}"
 
         argparser_colorize "${styles["value_names"]}" 1 "array" \
             "${value_names_arr[@]}"
