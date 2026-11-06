@@ -1789,6 +1789,7 @@ function argparser_cleanup() {
             ARGPARSER_DEBUG \
             ARGPARSER_ERROR_EXIT_CODE \
             ARGPARSER_ERROR_STYLE \
+            ARGPARSER_FLAG_NEGATION_PREFIXES \
             ARGPARSER_HELP_ARG_GROUP \
             ARGPARSER_HELP_DESCRIPTION \
             ARGPARSER_HELP_EXIT_CODE \
@@ -1863,6 +1864,7 @@ function argparser_read_configuration() {
     # ARGPARSER_COUNT_FLAGS
     # ARGPARSER_ERROR_EXIT_CODE
     # ARGPARSER_ERROR_STYLE
+    # ARGPARSER_FLAG_NEGATION_PREFIXES
     # ARGPARSER_HELP_ARG_GROUP
     # ARGPARSER_HELP_DESCRIPTION
     # ARGPARSER_HELP_EXIT_CODE
@@ -2116,7 +2118,7 @@ function argparser_define_env_vars() {
                all_arg_numbers["ARGPARSER_ALLOW_FLAG_NEGATION"]="0"
                 all_arg_groups["ARGPARSER_ALLOW_FLAG_NEGATION"]="Parsing options"
                      all_notes["ARGPARSER_ALLOW_FLAG_NEGATION"]=""
-                all_help_texts["ARGPARSER_ALLOW_FLAG_NEGATION"]="allow the user to negate long-option flags by prefixing them with \"no-\""
+                all_help_texts["ARGPARSER_ALLOW_FLAG_NEGATION"]="allow the user to negate long-option flags by prefixing them with one of the \"ARGPARSER_FLAG_NEGATION_PREFIXES\""
 
     # Define ${ARGPARSER_ALLOW_OPTION_ABBREVIATION}.
              all_short_options["ARGPARSER_ALLOW_OPTION_ABBREVIATION"]=""
@@ -2299,6 +2301,19 @@ function argparser_define_env_vars() {
                 all_arg_groups["ARGPARSER_ERROR_STYLE"]="Stylization options"
                      all_notes["ARGPARSER_ERROR_STYLE"]="deprecated"
                 all_help_texts["ARGPARSER_ERROR_STYLE"]="the color and style specification for error messages, deprecated in favor of \"--style-file=FILE\""
+
+    # Define ${ARGPARSER_FLAG_NEGATION_PREFIXES}.
+             all_short_options["ARGPARSER_FLAG_NEGATION_PREFIXES"]=""
+              all_long_options["ARGPARSER_FLAG_NEGATION_PREFIXES"]="flag-negation-prefixes"
+               all_value_names["ARGPARSER_FLAG_NEGATION_PREFIXES"]="PREFIX"
+            all_default_values["ARGPARSER_FLAG_NEGATION_PREFIXES"]="no"
+             all_choice_values["ARGPARSER_FLAG_NEGATION_PREFIXES"]=""
+    all_resolved_choice_values["ARGPARSER_FLAG_NEGATION_PREFIXES"]=""
+                     all_types["ARGPARSER_FLAG_NEGATION_PREFIXES"]="str"
+               all_arg_numbers["ARGPARSER_FLAG_NEGATION_PREFIXES"]="+"
+                all_arg_groups["ARGPARSER_FLAG_NEGATION_PREFIXES"]="Parsing options"
+                     all_notes["ARGPARSER_FLAG_NEGATION_PREFIXES"]=""
+                all_help_texts["ARGPARSER_FLAG_NEGATION_PREFIXES"]="the prefixes to consider as negating long-option flags"
 
     # Define ${ARGPARSER_HELP_ARG_GROUP}.
              all_short_options["ARGPARSER_HELP_ARG_GROUP"]=""
@@ -2986,6 +3001,7 @@ function argparser_set_env_vars() {
     # ARGPARSER_DEBUG
     # ARGPARSER_ERROR_EXIT_CODE
     # ARGPARSER_ERROR_STYLE
+    # ARGPARSER_FLAG_NEGATION_PREFIXES
     # ARGPARSER_HELP_ARG_GROUP
     # ARGPARSER_HELP_DESCRIPTION
     # ARGPARSER_HELP_EXIT_CODE
@@ -3090,6 +3106,7 @@ function argparser_set_env_vars() {
         ARGPARSER_COUNT_FLAGS=false \
         ARGPARSER_CREATE_ARG_DEF=false \
         ARGPARSER_ERROR_EXIT_CODE=1 \
+        ARGPARSER_FLAG_NEGATION_PREFIXES="no" \
         ARGPARSER_HELP_ARG_GROUP="Help options" \
         ARGPARSER_HELP_DESCRIPTION="" \
         ARGPARSER_HELP_EXIT_CODE=0 \
@@ -3224,6 +3241,7 @@ function argparser_set_env_var_defaults() {
     # ARGPARSER_COUNT_FLAGS
     # ARGPARSER_CREATE_ARG_DEF
     # ARGPARSER_ERROR_EXIT_CODE
+    # ARGPARSER_FLAG_NEGATION_PREFIXES
     # ARGPARSER_HELP_ARG_GROUP
     # ARGPARSER_HELP_DESCRIPTION
     # ARGPARSER_HELP_EXIT_CODE
@@ -3283,6 +3301,7 @@ function argparser_set_env_var_defaults() {
     ARGPARSER_COUNT_FLAGS=false
     ARGPARSER_CREATE_ARG_DEF=false
     ARGPARSER_ERROR_EXIT_CODE=1
+    ARGPARSER_FLAG_NEGATION_PREFIXES="no"
     ARGPARSER_HELP_ARG_GROUP="Help options"
     ARGPARSER_HELP_DESCRIPTION=""
     ARGPARSER_HELP_EXIT_CODE=0
@@ -3393,8 +3412,9 @@ function argparser_check_env_vars() {
     # - ARGPARSER_COUNT_FLAGS (read-only)
     # - ARGPARSER_CREATE_ARG_DEF (read-only)
     # - ARGPARSER_DEBUG (read-only)
-    # - ARGPARSER_ERROR_EXIT_CODE
-    # - ARGPARSER_ERROR_STYLE
+    # - ARGPARSER_ERROR_EXIT_CODE (read-only)
+    # - ARGPARSER_ERROR_STYLE (read-only)
+    # - ARGPARSER_FLAG_NEGATION_PREFIXES (read-only)
     # - ARGPARSER_HELP_EXIT_CODE (read-only)
     # - ARGPARSER_HELP_FILE (read-only)
     # - ARGPARSER_HELP_FILE_INCLUDE_CHAR (read-only)
@@ -3974,6 +3994,30 @@ function argparser_check_env_vars() {
             fi
         done
     done
+
+    # Then, check that at least one flag negation prefix is given, and
+    # none is empty.
+    if [[ -z "${ARGPARSER_FLAG_NEGATION_PREFIXES}" ]]; then
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -d "" -r -a prefixes \
+            <<< "${ARGPARSER_FLAG_NEGATION_PREFIXES}"
+        prefixes[-1]="${prefixes[-1]%$'\n'}"  # '\n' from herestring.
+
+        if [[ -z "${prefixes[-1]}" ]]; then
+            unset 'prefixes[-1]'
+        fi
+
+        if argparser_in_array "" "${prefixes[@]}"; then
+            error_message="Error: The environment variable "
+            error_message+="\"ARGPARSER_FLAG_NEGATION_PREFIXES\" has an "
+            error_message+="empty string given as prefix, instead of a legit "
+            error_message+="prefix."
+
+            argparser_translate "Error env var negation prefix empty" \
+                "${error_message}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        fi
+    fi
 
     # If there are error messages, sort, filter, colorize, and print
     # them, then exit, as parsing the arguments with a faulty
@@ -6990,6 +7034,8 @@ function argparser_parse_long_option() {
     local is_negated
     local long_option
     local -a long_options
+    local negation_prefix
+    local -a negation_prefixes
     local option_name
     local prefix
     local translation
@@ -7019,23 +7065,28 @@ function argparser_parse_long_option() {
     argparser_get_arg_id "long" "${option_name}"
 
     # If no argument identifier for the entire option name has been
-    # found, the option name starts with "no-", and flag negation is
-    # enabled, strip the "no-" prefix, convert it to a "+", and set the
-    # option name's remainder as new option name.
-    if [[ "${ARGPARSER_ALLOW_FLAG_NEGATION}" == true \
-        && -z "${arg_id}" \
-        && "${option_name::3}" == "no-" ]]
-    then
-        is_negated=true
-        option_name="${option_name:3}"
-        argparser_get_arg_id "long" "${option_name}"
+    # found, the option name starts with one of the
+    # ${ARGPARSER_FLAG_NEGATION_PREFIXES}, and flag negation is enabled,
+    # strip the negating prefix, convert it to a "+", and set the option
+    # name's remainder as new option name.
+    if [[ "${ARGPARSER_ALLOW_FLAG_NEGATION}" == true && -z "${arg_id}" ]]; then
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a negation_prefixes \
+            <<< "${ARGPARSER_FLAG_NEGATION_PREFIXES}"
 
-        actual_prefix="${prefix}"
-        if [[ "${prefix}" == "-" ]]; then
-            prefix="+"
-        else
-            prefix="-"
-        fi
+        for negation_prefix in "${negation_prefixes[@]}"; do
+            if [[ "${option_name}" == "${negation_prefix}-"* ]]; then
+                is_negated=true
+                option_name="${option_name#"${negation_prefix}-"}"
+                argparser_get_arg_id "long" "${option_name}"
+
+                actual_prefix="${prefix}"
+                if [[ "${prefix}" == "-" ]]; then
+                    prefix="+"
+                else
+                    prefix="-"
+                fi
+            fi
+        done
     fi
 
     # Output the argument, split into the option name and values, or an
@@ -7650,8 +7701,9 @@ function argparser_check_arg_values() {
     argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${values_arr[@]}"
     values_str="${joined_array}"
 
-    # If a "+" (or equivalent "no-") prefix is given and the argument is
-    # no flag (or not used as such), output an error message.
+    # If a "+" prefix or one of the ${ARGPARSER_FLAG_NEGATION_PREFIXES}
+    # is given and the argument is no flag (or not used as such), output
+    # an error message.
     for prefix in "${prefixes[@]}"; do
         if [[ "${prefix}" == "-" || "${arg_number}" == 0 ]]; then
             continue
@@ -7662,19 +7714,19 @@ function argparser_check_arg_values() {
         then
             error_message="Error: The option \"\$1\" is not used as a flag "
             error_message+="(it has a value given) and thus cannot be given "
-            error_message+="with a \"+\" or \"no-\" prefix."
+            error_message+="with a \"+\" or \"{\$2}-\" prefix."
 
             argparser_translate "Error arg no flag 2" "${error_message}" \
-                "${option_names_str}"
+                "${option_names_str}" "${ARGPARSER_FLAG_NEGATION_PREFIXES}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
         elif ! argparser_in_array "${arg_number}" "*" "?" 0; then
             error_message="Error: The option \"\$1\" is no flag and thus "
-            error_message+="cannot be given with a \"+\" or \"no-\" prefix."
+            error_message+="cannot be given with a \"+\" or \"{\$2}-\" prefix."
 
             argparser_translate "Error arg no flag 3" "${error_message}" \
-                "${option_names_str}"
+                "${option_names_str}" "${ARGPARSER_FLAG_NEGATION_PREFIXES}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
