@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-11-05
+# Last Modification: 2026-11-06
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -2935,6 +2935,20 @@ function argparser_define_env_vars() {
                 all_arg_groups["version"]="Help options"
                      all_notes["version"]=""
                 all_help_texts["version"]="display the version and exit"
+
+    # Define ${logo}, the Argparser's hidden logo option with the magic
+    # string "--argparser".
+             all_short_options["logo"]=""
+              all_long_options["logo"]="argparser"
+               all_value_names["logo"]=""
+            all_default_values["logo"]="false"
+             all_choice_values["logo"]=""
+    all_resolved_choice_values["logo"]=""
+                     all_types["logo"]="bool"
+               all_arg_numbers["logo"]="0"
+                all_arg_groups["logo"]="Miscellaneous options"
+                     all_notes["logo"]="hidden"
+                all_help_texts["logo"]="display the logo and exit"
 }
 
 function argparser_set_env_vars() {
@@ -6836,8 +6850,6 @@ function argparser_parse_arg() {
     # Nonlocals:
     # - error_messages: the error messages, starting with "Error: "
     #   (translated), as indexed array
-    # - is_logo: whether the argument is the magic string for the
-    #   Argparser
     # - is_positional: whether the arguments are to be interpreted as
     #   positional
     # - is_positional_only: whether the positional-only arguments
@@ -6907,14 +6919,6 @@ function argparser_parse_arg() {
         error_message="${translation}"
         error_messages+=("${error_message}")
         messages+=("Argument: ${given_arg}")
-    elif [[ "${given_arg}" == "--argparser" && "${is_self_parsing}" == true ]]
-    then
-        # The argument is the magic string for the Argparser, which was
-        # directly called and not run from another script.  Since the
-        # Argparser accepts only long options by design, no test for
-        # ${ARGPARSER_USE_LONG_OPTIONS} is necessary.  Set the flag that
-        # the magic string has been set.
-        is_logo=true
     elif [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true \
         && ("${given_arg::2}" == "--" \
             || ("${ARGPARSER_ALLOW_FLAG_INVERSION}" == true \
@@ -7972,6 +7976,8 @@ function argparser_parse_args() {
     #   argument names (read-only)
     # - all_short_options: the associative array holding the short
     #   option names (read-only)
+    # - is_self_parsing: whether the Argparser currently parses its own
+    #   arguments (read-only)
     #
     # Globals:
     # - ${ARGPARSER_ARG_ARRAY_NAME}: the parsed and checked arguments
@@ -8017,7 +8023,6 @@ function argparser_parse_args() {
     unset args
     local -A args
 
-    is_logo=false
     is_positional=true
     is_positional_only=false
     error_messages=( )
@@ -8150,16 +8155,16 @@ function argparser_parse_args() {
 
     # If the help, usage, or version message, or the logo was requested
     # (in this order of priority), print it.  To this end, check whether
-    # the respective argument identifier (except for the logo, which was
-    # parsed earlier) is given and has a prefix of "-", since "+" should
-    # deactivate it.  To respect the priority of help > usage > version,
-    # use intermediate variables as flags to be assigned to "true", and
-    # check their values afterwards in the intended order (since the
-    # associative array ${prefixes[@]} is unordered, just as the
-    # command-line arguments may be).
+    # the respective argument identifier is given and has a prefix of
+    # "-", since "+" should deactivate it.  To respect the priority of
+    # help > usage > version > logo, use intermediate variables as flags
+    # to be assigned to "true", and check their values afterwards in the
+    # intended order (since the associative array ${prefixes[@]} is
+    # unordered, just as the command-line arguments may be).
     is_help=false
     is_usage=false
     is_version=false
+    is_logo=false
     for arg_key in "${!prefixes[@]}"; do
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a arg_prefixes \
             <<< "${prefixes[${arg_key}]}"
@@ -8173,6 +8178,9 @@ function argparser_parse_args() {
                 is_usage=true
             elif [[ "${arg_key}" == "version" ]]; then
                 is_version=true
+            elif [[ "${arg_key}" == "logo" && "${is_self_parsing}" == true ]]
+            then
+                is_logo=true
             fi
         done
     done
