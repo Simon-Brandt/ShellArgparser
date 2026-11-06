@@ -927,6 +927,14 @@
 
 #### 9.5.111. `Error pos arg count 2`
 
+- ***Message:*** `Error: $1 positional arguments are required, but 1 is given.`
+- ***Description:*** The error that on the command line, the number of given positional arguments, which is one, doesn't match the number of required positional arguments.
+- ***Reasons for error:*** When parsing the command line, the Argparser found more or less positional arguments being given than required.
+- ***Interpolated variables:***
+  - `$1`: The number of required positional arguments.
+
+#### 9.5.112. `Error pos arg count 3`
+
 - ***Message:*** `Error: $1 positional arguments are required, but $2 are given.`
 - ***Description:*** The error that on the command line, the number of given positional arguments doesn't match the number of required positional arguments.
 - ***Reasons for error:*** When parsing the command line, the Argparser found more or less positional arguments being given than required.
@@ -934,7 +942,7 @@
   - `$1`: The number of required positional arguments.
   - `$2`: The number of given positional arguments.
 
-#### 9.5.112. `Error arg no flag 1`
+#### 9.5.113. `Error arg no flag 1`
 
 - ***Message:*** `Error: Error: The option "$1" is no flag and thus needs a value after the option name.`
 - ***Description:*** The error that on the command line, a non-flag is given without a value.
@@ -942,7 +950,7 @@
 - ***Interpolated variables:***
   - `$1`: The argument's option or value names.
 
-#### 9.5.113. `Error arg no flag 2`
+#### 9.5.114. `Error arg no flag 2`
 
 - ***Message:*** `Error: The option "$1" is not used as a flag (it has a value given) and thus cannot be given with a "+" or "no-" prefix.`
 - ***Description:*** The error that on the command line, a flag-like argument with value is inverted or negated.
@@ -950,7 +958,7 @@
 - ***Interpolated variables:***
   - `$1`: The argument's option or value names.
 
-#### 9.5.114. `Error arg no flag 3`
+#### 9.5.115. `Error arg no flag 3`
 
 - ***Message:*** `Error: The option "$1" is no flag and thus cannot be given with a "+" or "no-" prefix.`
 - ***Description:*** The error that on the command line, a non-flag is inverted or negated.
@@ -958,7 +966,7 @@
 - ***Interpolated variables:***
   - `$1`: The argument's option or value names.
 
-#### 9.5.115. `Error mandatory arg`
+#### 9.5.116. `Error mandatory arg`
 
 - ***Message:*** `Error: The argument "$1" is mandatory, but not given.`
 - ***Description:*** The error that on the command line, a mandatory argument is not given.
@@ -966,7 +974,7 @@
 - ***Interpolated variables:***
   - `$1`: The argument's option or value names.
 
-#### 9.5.116. `Error wrong arg number 1`
+#### 9.5.117. `Error wrong arg number 1`
 
 - ***Message:*** `Error: The argument "$1" requires at least 1 value, but has $2 given.`
 - ***Description:*** The error that on the command line, an argument has a wrong number of values given, while requiring at least one.
@@ -975,7 +983,7 @@
   - `$1`: The argument's option or value names.
   - `$2`: The number of given values.
 
-#### 9.5.117. `Error wrong arg number 2`
+#### 9.5.118. `Error wrong arg number 2`
 
 - ***Message:*** `Error: The argument "$1" requires 0 or 1 value, but has $2 given.`
 - ***Description:*** The error that on the command line, an argument has a wrong number of values given, while requiring zero or one.
@@ -984,7 +992,7 @@
   - `$1`: The argument's option or value names.
   - `$2`: The number of given values.
 
-#### 9.5.118. `Error wrong arg number 3`
+#### 9.5.119. `Error wrong arg number 3`
 
 - ***Message:*** `Error: The argument "$1" requires 1 value, but has $2 given.`
 - ***Description:*** The error that on the command line, an argument has a wrong number of values given, while requiring one.
@@ -993,7 +1001,7 @@
   - `$1`: The argument's option or value names.
   - `$2`: The number of given values.
 
-#### 9.5.119. `Error wrong arg number 4`
+#### 9.5.120. `Error wrong arg number 4`
 
 - ***Message:*** `Error: The argument "$1" requires $2 values, but has $3 given.`
 - ***Description:*** The error that on the command line, an argument has a wrong number of values given.
@@ -1003,7 +1011,7 @@
   - `$2`: The number of required values.
   - `$3`: The number of given values.
 
-#### 9.5.120. `Error arg choice`
+#### 9.5.121. `Error arg choice`
 
 - ***Message:*** `Error: The argument "$1" must be in {$2}, but is {$3}.`
 - ***Description:*** The error that a given arguments' values aren't a subset of the choice values.
@@ -1013,7 +1021,7 @@
   - `$2`: The choice values.
   - `$3`: The given values.
 
-#### 9.5.121. `Error arg bool`
+#### 9.5.122. `Error arg bool`
 
 - ***Message:*** `Error: The argument "$1" is set to "$2", but must be a Boolean, i.e., "true" or "false".`
 - ***Description:*** The error that a given argument's value's data type is not a Boolean.
@@ -1022,7 +1030,7 @@
   - `$1`: The argument's option or value names.
   - `$2`: The given value.
 
-#### 9.5.122. `Error arg char`
+#### 9.5.123. `Error arg char`
 
 - ***Message:*** `Error: The argument "$1" is set to "$2", but must be a character, i.e., a string comprising one printable ASCII character.`
 - ***Description:*** The error that a given argument's value's data type is not a character.
@@ -1031,7 +1039,7 @@
   - `$1`: The argument's option or value names.
   - `$2`: The given value.
 
-#### 9.5.123. `Error arg float`
+#### 9.5.124. `Error arg float`
 
 - ***Message:*** `Error: The argument "$1" is set to "$2", but must be a floating-point number, i.e., comprise only digits, a dot, and possibly a leading sign.`
 - ***Description:*** The error that a given argument's value's data type is not a floating-point number.
@@ -1040,7 +1048,7 @@
   - `$1`: The argument's option or value names.
   - `$2`: The given value.
 
-#### 9.5.124. `Error arg int`
+#### 9.5.125. `Error arg int`
 
 - ***Message:*** `Error: The argument "$1" is set to "$2", but must be an integer, i.e., comprise only digits and possibly a leading sign.`
 - ***Description:*** The error that a given argument's value's data type is not an integer.
@@ -1049,7 +1057,7 @@
   - `$1`: The argument's option or value names.
   - `$2`: The given value.
 
-#### 9.5.125. `Error arg uint`
+#### 9.5.126. `Error arg uint`
 
 - ***Message:*** `Error: The argument "$1" is set to "$2", but must be an unsigned integer, i.e., comprise only digits and no sign.`
 - ***Description:*** The error that a given argument's value's data type is not an unsigned integer.
@@ -1058,7 +1066,7 @@
   - `$1`: The argument's option or value names.
   - `$2`: The given value.
 
-#### 9.5.126. `Error YAML`
+#### 9.5.127. `Error YAML`
 
 - ***Message:*** `Error: The YAML line "$1" could not be recognized.`
 - ***Description:*** The error that a translation file's [YAML](https://en.wikipedia.org/wiki/YAML "wikipedia.org &rightarrow; YAML") line cannot be parsed.
@@ -1066,7 +1074,7 @@
 - ***Interpolated variables:***
   - `$1`: The YAML line.
 
-#### 9.5.127. `Error style file equals sign`
+#### 9.5.128. `Error style file equals sign`
 
 - ***Message:*** `Error: In the style file "$1", the line "$2" doesn't contain an equals sign ("="), nor is it empty or commented.`
 - ***Description:*** The error that a style file's line cannot be parsed.
@@ -1075,7 +1083,7 @@
   - `$1`: The style file.
   - `$2`: The line.
 
-#### 9.5.128. `Error style file frame styles`
+#### 9.5.129. `Error style file frame styles`
 
 - ***Message:*** `Error: The style "$1" is set to "$2", but the values must lie in {$3} for colors and in {$4} for frame styles.  Colors, only, may be prefixed by \"bright_\" or suffixed by \"_fg\" or \"_bg\".`
 - ***Description:*** The error that a style file's line refers to an undefined [color or frame style](../colors_and_styles.md#92-colors-and-styles).
@@ -1086,7 +1094,7 @@
   - `$3`: The available colors.
   - `$4`: The available frame styles.
 
-#### 9.5.129. `Error style file text styles`
+#### 9.5.130. `Error style file text styles`
 
 - ***Message:*** `Error: The style "$1" is set to "$2", but the values must lie in {$3} for colors and in {$4} for text styles.  Colors, only, may be prefixed by "bright_" or suffixed by "_fg" or "_bg".`
 - ***Description:*** The error that a style file's line refers to an undefined [color or text style](../colors_and_styles.md#92-colors-and-styles).
@@ -1097,7 +1105,7 @@
   - `$3`: The available colors.
   - `$4`: The available text styles.
 
-#### 9.5.130. `Error include directive`
+#### 9.5.131. `Error include directive`
 
 - ***Message:*** `Error: The include directive "$1" could not be recognized.`
 - ***Description:*** The error that an include directive cannot be parsed.
@@ -1105,7 +1113,7 @@
 - ***Interpolated variables:***
   - `$1`: The include directive.
 
-#### 9.5.131. `Warning no identifier`
+#### 9.5.132. `Warning no identifier`
 
 - ***Message:*** `Warning: In the translation file "$1", the identifier "$2" is missing.  For convenience, the untranslated string is used, instead.`
 - ***Description:*** The warning that in a translation file, an identifier is missing.
@@ -1114,7 +1122,7 @@
   - `$1`: The [`ARGPARSER_TRANSLATION_FILE`](../environment_variables/environment_variables.md#9444-argparser_translation_file).
   - `$2`: The missing identifier.
 
-#### 9.5.132. `Warning no translation`
+#### 9.5.133. `Warning no translation`
 
 - ***Message:*** `Warning: In the translation file "$1", the translation to "$2" for the identifier "$3" is missing.  For convenience, the untranslated string is used, instead.`
 - ***Description:*** The warning that in a translation file, an identifier's translation is missing.
@@ -1124,7 +1132,7 @@
   - `$2`: The [`ARGPARSER_LANGUAGE`](../environment_variables/environment_variables.md#9431-argparser_language).
   - `$3`: The identifier with missing translation.
 
-#### 9.5.133. `Warning style file message key`
+#### 9.5.134. `Warning style file message key`
 
 - ***Message:*** `Warning: In the style file "$1", the line "$2" sets a non-existent message key.`
 - ***Description:*** The warning that a style file's line sets a non-existent message key.
@@ -1133,7 +1141,7 @@
   - `$1`: The style file.
   - `$2`: The line.
 
-#### 9.5.134. `Warning deprecation`
+#### 9.5.135. `Warning deprecation`
 
 - ***Message:*** `Warning: The argument "$1" is deprecated and will be removed in the future.`
 - ***Description:*** The warning that on the command line, a deprecated argument is given.
@@ -1141,7 +1149,7 @@
 - ***Interpolated variables:***
   - `$1`: The argument's option or value names.
 
-#### 9.5.135. `Warning wrong arg number 1`
+#### 9.5.136. `Warning wrong arg number 1`
 
 - ***Message:*** `Warning: The argument "$1" requires at least 1 value, but has $2 given.  For convenience, the default ($3) is used.`
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring at least one.
@@ -1151,7 +1159,7 @@
   - `$2`: The number of given values.
   - `$3`: The default values.
 
-#### 9.5.136. `Warning wrong arg number 2`
+#### 9.5.137. `Warning wrong arg number 2`
 
 - ***Message:*** `Warning: The argument "$1" requires at 0 or 1 value, but has $2 given.  For convenience, the default ($3) is used.`
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring zero or one.
@@ -1161,7 +1169,7 @@
   - `$2`: The number of given values.
   - `$3`: The default values.
 
-#### 9.5.137. `Warning wrong arg number 3`
+#### 9.5.138. `Warning wrong arg number 3`
 
 - ***Message:*** `Warning: The argument "$1" requires 1 value, but has $2 given.  For convenience, the default ($3) is used.`
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring one.
@@ -1171,7 +1179,7 @@
   - `$2`: The number of given values.
   - `$3`: The default values.
 
-#### 9.5.138. `Warning wrong arg number 4`
+#### 9.5.139. `Warning wrong arg number 4`
 
 - ***Message:*** `Warning: The argument "$1" requires $2 values, but has $3 given.  For convenience, the default ($4) is used.`
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given.

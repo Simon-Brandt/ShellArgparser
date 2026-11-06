@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-11-05
+# Last Modification: 2026-11-06
 # License: Public Domain
 
 # 1.    Define the general translations.
@@ -872,6 +872,12 @@ Error pos arg count 1:
     Fehler: 1 positionales Argument ist erforderlich, aber $1 sind gegeben.
 
 Error pos arg count 2:
+  en: >
+    Error: $1 positional arguments are required, but 1 is given.
+  de: >
+    Fehler: $1 positionale Argumente sind erforderlich, aber 1 ist gegeben.
+
+Error pos arg count 3:
   en: >
     Error: $1 positional arguments are required, but $2 are given.
   de: >

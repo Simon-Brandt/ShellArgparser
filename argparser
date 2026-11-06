@@ -7462,11 +7462,18 @@ function argparser_parse_positional_args() {
             argparser_translate "Error pos arg count 1" "${error_message}" \
                 "${args_count}"
             error_message="${translation}"
+        elif (( args_count == 1 )); then
+            error_message="Error: \$1 positional arguments are required, but "
+            error_message+="1 is given."
+
+            argparser_translate "Error pos arg count 2" "${error_message}" \
+                "${index}"
+            error_message="${translation}"
         else
             error_message="Error: \$1 positional arguments are required, but "
             error_message+="\$2 are given."
 
-            argparser_translate "Error pos arg count 2" "${error_message}" \
+            argparser_translate "Error pos arg count 3" "${error_message}" \
                 "${index}" "${args_count}"
             error_message="${translation}"
         fi
