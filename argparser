@@ -1776,6 +1776,8 @@ function argparser_cleanup() {
             ARGPARSER_ALLOW_FLAG_NEGATION \
             ARGPARSER_ALLOW_OPTION_ABBREVIATION \
             ARGPARSER_ALLOW_OPTION_MERGING \
+            ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END \
+            ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START \
             ARGPARSER_ARG_ARRAY_NAME \
             ARGPARSER_ARG_DEF_FILE \
             ARGPARSER_ARG_DELIMITER_1 \
@@ -1854,6 +1856,8 @@ function argparser_read_configuration() {
     # ARGPARSER_ALLOW_FLAG_NEGATION
     # ARGPARSER_ALLOW_OPTION_ABBREVIATION
     # ARGPARSER_ALLOW_OPTION_MERGING
+    # ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END
+    # ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START
     # ARGPARSER_ARG_ARRAY_NAME
     # ARGPARSER_ARG_DEF_FILE
     # ARGPARSER_ARG_DELIMITER_1
@@ -2145,6 +2149,32 @@ function argparser_define_env_vars() {
                 all_arg_groups["ARGPARSER_ALLOW_OPTION_MERGING"]="Parsing options"
                      all_notes["ARGPARSER_ALLOW_OPTION_MERGING"]=""
                 all_help_texts["ARGPARSER_ALLOW_OPTION_MERGING"]="allow the user to give short option names in merged (concatenated) form"
+
+    # Define ${ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END}.
+             all_short_options["ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END"]=""
+              all_long_options["ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END"]="allow-positional-delimiter-end"
+               all_value_names["ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END"]=""
+            all_default_values["ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END"]="true"
+             all_choice_values["ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END"]=""
+    all_resolved_choice_values["ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END"]=""
+                     all_types["ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END"]="bool"
+               all_arg_numbers["ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END"]="0"
+                all_arg_groups["ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END"]="Parsing options"
+                     all_notes["ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END"]=""
+                all_help_texts["ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END"]="allow the user to mark the end of the positional-arguments-only part by a doubled plus sign (\"++\")"
+
+    # Define ${ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START}.
+             all_short_options["ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START"]=""
+              all_long_options["ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START"]="allow-positional-delimiter-start"
+               all_value_names["ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START"]=""
+            all_default_values["ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START"]="true"
+             all_choice_values["ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START"]=""
+    all_resolved_choice_values["ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START"]=""
+                     all_types["ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START"]="bool"
+               all_arg_numbers["ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START"]="0"
+                all_arg_groups["ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START"]="Parsing options"
+                     all_notes["ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START"]=""
+                all_help_texts["ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START"]="allow the user to mark the start of the positional-arguments-only part by a doubled hyphen (\"--\")"
 
     # Define ${ARGPARSER_ARG_ARRAY_NAME}.
              all_short_options["ARGPARSER_ARG_ARRAY_NAME"]=""
@@ -2988,6 +3018,8 @@ function argparser_set_env_vars() {
     # ARGPARSER_ALLOW_FLAG_NEGATION
     # ARGPARSER_ALLOW_OPTION_ABBREVIATION
     # ARGPARSER_ALLOW_OPTION_MERGING
+    # ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END
+    # ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START
     # ARGPARSER_ARG_ARRAY_NAME
     # ARGPARSER_ARG_DEF_FILE
     # ARGPARSER_ARG_DELIMITER_1
@@ -3096,6 +3128,8 @@ function argparser_set_env_vars() {
         ARGPARSER_ALLOW_FLAG_NEGATION=true \
         ARGPARSER_ALLOW_OPTION_ABBREVIATION=false \
         ARGPARSER_ALLOW_OPTION_MERGING=false \
+        ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END=true \
+        ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START=true \
         ARGPARSER_ARG_ARRAY_NAME="ARGPARSER_ARGS" \
         ARGPARSER_ARG_DEF_FILE="" \
         ARGPARSER_ARG_DELIMITER_1="|" \
@@ -3231,6 +3265,8 @@ function argparser_set_env_var_defaults() {
     # ARGPARSER_ALLOW_FLAG_NEGATION
     # ARGPARSER_ALLOW_OPTION_ABBREVIATION
     # ARGPARSER_ALLOW_OPTION_MERGING
+    # ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END
+    # ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START
     # ARGPARSER_ARG_ARRAY_NAME
     # ARGPARSER_ARG_DEF_FILE
     # ARGPARSER_ARG_DELIMITER_1
@@ -3291,6 +3327,8 @@ function argparser_set_env_var_defaults() {
     ARGPARSER_ALLOW_FLAG_NEGATION=true
     ARGPARSER_ALLOW_OPTION_ABBREVIATION=false
     ARGPARSER_ALLOW_OPTION_MERGING=false
+    ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END=true
+    ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START=true
     ARGPARSER_ARG_ARRAY_NAME="ARGPARSER_ARGS"
     ARGPARSER_ARG_DEF_FILE=""
     ARGPARSER_ARG_DELIMITER_1="|"
@@ -3403,6 +3441,8 @@ function argparser_check_env_vars() {
     # - ARGPARSER_ALLOW_FLAG_NEGATION (read-only)
     # - ARGPARSER_ALLOW_OPTION_ABBREVIATION (read-only)
     # - ARGPARSER_ALLOW_OPTION_MERGING (read-only)
+    # - ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END (read-only)
+    # - ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START (read-only)
     # - ARGPARSER_ARG_ARRAY_NAME (read-only)
     # - ARGPARSER_ARG_DEF_FILE (read-only)
     # - ARGPARSER_ARG_DELIMITER_1 (read-only)
@@ -3486,6 +3526,8 @@ function argparser_check_env_vars() {
         ARGPARSER_ALLOW_FLAG_NEGATION
         ARGPARSER_ALLOW_OPTION_ABBREVIATION
         ARGPARSER_ALLOW_OPTION_MERGING
+        ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END
+        ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START
         ARGPARSER_CHECK_ARG_DEF
         ARGPARSER_CHECK_ENV_VARS
         ARGPARSER_COUNT_FLAGS
@@ -6923,61 +6965,106 @@ function argparser_parse_arg() {
     # error message.  In the latter case, also output the given
     # argument, such that values following the unknown argument are
     # assigned to this argument, not the last known one that got parsed.
-    if [[ "${given_arg}" != "++"* \
-        && ("${given_arg}" != [-+]* || "${is_positional_only}" == true) ]]
-    then
+    if [[ "${given_arg}" != [-+]* ]]; then
         # The argument doesn't start with a hyphen ("-") or plus sign
         # ("+"), so deem it a value to a previous keyword argument or a
-        # positional argument.  Likewise, if the positional-only
-        # arguments delimiter "--" has already been set and has neither
-        # been unset by "++" nor the current argument is this "++", then
-        # deem any value a positional argument.
+        # positional argument.
         messages+=("Value: ${given_arg}")
-    elif [[ "${given_arg}" == "--" ]]; then
-        # The argument is the positional-only arguments delimiter "--".
-        # Set the flag that it has been set, such that all following
-        # arguments are interpreted as positional.
+    elif [[ "${ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END}" == true \
+        && "${is_positional_only}" == true \
+        && "${given_arg}" != "++" \
+        && "${given_arg}" != "++="* ]]
+    then
+        # The positional-only arguments delimiter "--" has already been
+        # set and not been unset by the allowed "++", and the current
+        # argument isn't this "++", so deem the value a positional
+        # argument.
+        messages+=("Value: ${given_arg}")
+    elif [[ "${ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END}" == false \
+        && "${is_positional_only}" == true ]]
+    then
+        # The positional-only arguments delimiter "--" has already been
+        # set and cannot be unset by the disallowed "++", so deem the
+        # value a positional argument.
+        messages+=("Value: ${given_arg}")
+    elif [[ "${ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START}" == true \
+        && "${given_arg}" == "--" ]]
+    then
+        # The argument is the (allowed) positional-only arguments
+        # delimiter "--".  Set the flag that it has been set, such that
+        # all following arguments are interpreted as positional.
         is_positional=true
         is_positional_only=true
-    elif [[ "${given_arg}" == "--="* ]]; then
-        # The argument is the positional-only arguments delimiter "--",
-        # but followed by an illegal equals sign ("=").
+    elif [[ "${ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START}" == true \
+        && "${given_arg}" == "--="* ]]
+    then
+        # The argument is the (allowed) positional-only arguments
+        # delimiter "--", but followed by an illegal equals sign ("=").
         error_message="Error: The special option \"--\" takes no value."
         argparser_translate "Error arg double hyphen" "${error_message}"
         error_message="${translation}"
         error_messages+=("${error_message}")
         messages+=("Argument: ${given_arg}")
-    elif [[ "${given_arg}" == "++" ]]; then
-        # The argument is the positional-only arguments delimiter "++".
-        # Set the flag that it has been set (and thus "--" has been
-        # unset), such that all following arguments are interpreted as
-        # usual.
+    elif [[ "${ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START}" == false \
+        && ("${given_arg}" == "--" || "${given_arg}" == "--="*) ]]
+    then
+        # The argument is the positional-only arguments delimiter "--",
+        # which is disallowed, so deem the value a positional
+        # argument.
+        messages+=("Value: ${given_arg}")
+    elif [[ "${ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END}" == true \
+        && "${given_arg}" == "++" ]]
+    then
+        # The argument is the (allowed) positional-only arguments
+        # delimiter "++".  Set the flag that it has been set (and thus
+        # "--" has been unset), such that all following arguments are
+        # interpreted as usual.
         is_positional=true
         is_positional_only=false
-    elif [[ "${given_arg}" == "++="* ]]; then
-        # The argument is the positional-only arguments delimiter "++",
-        # but followed by an illegal equals sign ("=").
+    elif [[ "${ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END}" == true \
+        && "${given_arg}" == "++="* ]]
+    then
+        # The argument is the (allowed) positional-only arguments
+        # delimiter "++", but followed by an illegal equals sign ("=").
         error_message="Error: The special option \"++\" takes no value."
         argparser_translate "Error arg double plus" "${error_message}"
         error_message="${translation}"
         error_messages+=("${error_message}")
         messages+=("Argument: ${given_arg}")
-    elif [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true \
-        && ("${given_arg::2}" == "--" \
-            || ("${ARGPARSER_ALLOW_FLAG_INVERSION}" == true \
-                && "${given_arg::2}" == "++")) ]]
+    elif [[ "${ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END}" == false \
+        && ("${given_arg}" == "++" || "${given_arg}" == "++="*) ]]
     then
-        # The argument is a long option, with a double hyphen or an
-        # activated doubled plus sign as prefix, so check whether the
-        # given argument is defined.
+        # The argument is the positional-only arguments delimiter "++",
+        # which is disallowed, so deem the value a positional
+        # argument.
+        messages+=("Value: ${given_arg}")
+    elif [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true \
+        && "${given_arg::2}" == "--" ]]
+    then
+        # The argument is a long option with a double hyphen as prefix,
+        # so check whether the given argument is defined.
+        argparser_parse_long_option "${given_arg}"
+    elif [[ "${ARGPARSER_USE_LONG_OPTIONS}" == true \
+        && "${ARGPARSER_ALLOW_FLAG_INVERSION}" == true \
+        && "${given_arg::2}" == "++" ]]
+    then
+        # The argument is a long option with an (allowed) doubled plus
+        # sign as prefix, so check whether the given argument is
+        # defined.
         argparser_parse_long_option "${given_arg}"
     elif [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true \
-        && ("${given_arg::2}" == -[!-+] \
-            || ("${ARGPARSER_ALLOW_FLAG_INVERSION}" == true \
-                && "${given_arg::2}" == +[!-+])) ]]
+        && "${given_arg::2}" == -[!-+] ]]
     then
-        # The argument is a short option, so check whether the given
-        # argument is defined.
+        # The argument is a short option with a single hyphen as prefix,
+        # so check whether the given argument is defined.
+        argparser_parse_short_option "${given_arg}"
+    elif [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true \
+        && "${ARGPARSER_ALLOW_FLAG_INVERSION}" == true \
+        && "${given_arg::2}" == +[!-+] ]]
+    then
+        # The argument is a short option with an (allowed) doubled plus
+        # sign as prefix, so check whether the given argument is
+        # defined.
         argparser_parse_short_option "${given_arg}"
     elif [[ "${given_arg::2}" == +[!-] ]]; then
         # The argument is given with a deactivated plus sign (possibly
