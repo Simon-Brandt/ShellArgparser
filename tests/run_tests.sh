@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-11-05
+# Last Modification: 2026-11-06
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -2316,6 +2316,7 @@ output="$(cat << EOF
 |           [--debug]                                  |
 |           [--error-exit-code=INT]                    |
 |           [--error-style=STYLE...]                   |
+|           [--flag-negation-prefixes=PREFIX...]       |
 |           [--help-arg-group=NAME]                    |
 |           [--help-description=TEXT]                  |
 |           [--help-exit-code=INT]                     |
@@ -2493,7 +2494,9 @@ Mandatory arguments to long options are mandatory for short options too.
 |                                  them with "+" (short options) or "++" (long    |
 |                                  options) (default: true)                       |
 | [--allow-flag-negation]          allow the user to negate long-option flags by  |
-|                                  prefixing them with "no-" (default: true)      |
+|                                  prefixing them with one of the                 |
+|                                  "ARGPARSER_FLAG_NEGATION_PREFIXES" (default:   |
+|                                  true)                                          |
 | [--allow-option-abbreviation]    allow the user to give long option names in    |
 |                                  abbreviated form (default: false)              |
 | [--allow-option-merging]         allow the user to give short option names in   |
@@ -2504,6 +2507,8 @@ Mandatory arguments to long options are mandatory for short options too.
 | [--count-flags]                  count flags instead of setting them to "true"  |
 |                                  or "false" based on the last prefix used on    |
 |                                  the command line (default: false)              |
+| [--flag-negation-prefixes=       the prefixes to consider as negating           |
+|     PREFIX...]                   long-option flags (default: "no")              |
 | [--use-long-options]             use the long option names for parsing          |
 |                                  (default: true)                                |
 | [--use-short-options]            use the short option names for parsing         |

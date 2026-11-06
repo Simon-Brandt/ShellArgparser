@@ -318,6 +318,14 @@ Error env var files:
   de: >
     Fehler: Die Umgebungsvariablen "$1" und "$2" verweisen auf dieselbe Datei.
 
+Error env var negation prefix empty:
+  en: >
+    Error: The environment variable "ARGPARSER_FLAG_NEGATION_PREFIXES" has an
+    empty string given as prefix, instead of a legit prefix.
+  de: >
+    Fehler: Die Umgebungsvariable "ARGPARSER_FLAG_NEGATION_PREFIXES" hat einen
+    Leerstring als Präfix gegeben, statt ein zulässiges Präfix.
+
 # 3.2.  Define the translations for reading the arguments definition.
 Error arg array 1:
   en: >
@@ -896,19 +904,19 @@ Error arg no flag 1:
 Error arg no flag 2:
   en: >
     Error: The option "$1" is not used as a flag (it has a value given) and
-    thus cannot be given with a "+" or "no-" prefix.
+    thus cannot be given with a "+" or "{$2}-" prefix.
   de: >
     Fehler: Die Option "$1" wird nicht als Flag genutzt (sie hat einen Wert
-    gegeben) und kann daher nicht mit einem "+"- oder "no-"-Präfix gegeben
+    gegeben) und kann daher nicht mit einem "+"- oder "{$2}-"-Präfix gegeben
     werden.
 
 Error arg no flag 3:
   en: >
     Error: The option "$1" is no flag and thus cannot be given with a "+" or
-    "no-" prefix.
+    "{$2}-" prefix.
   de: >
     Fehler: Die Option "$1" ist kein Flag und kann daher nicht mit einem
-    "+"- oder "no-"-Präfix gegeben werden.
+    "+"- oder "{$2}-"-Präfix gegeben werden.
 
 Error mandatory arg:
   en: >
