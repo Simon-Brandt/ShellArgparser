@@ -1833,7 +1833,8 @@ function argparser_cleanup() {
             ARGPARSER_VERSION_OPTIONS \
             ARGPARSER_VERSION_STYLE \
             ARGPARSER_WARNING_STYLE \
-            ARGPARSER_WRITE_ARGS
+            ARGPARSER_WRITE_ARGS \
+            argparser_logo
     fi
 }
 
@@ -2936,19 +2937,19 @@ function argparser_define_env_vars() {
                      all_notes["version"]=""
                 all_help_texts["version"]="display the version and exit"
 
-    # Define ${logo}, the Argparser's hidden logo option with the magic
-    # string "--argparser".
-             all_short_options["logo"]=""
-              all_long_options["logo"]="argparser"
-               all_value_names["logo"]=""
-            all_default_values["logo"]="false"
-             all_choice_values["logo"]=""
-    all_resolved_choice_values["logo"]=""
-                     all_types["logo"]="bool"
-               all_arg_numbers["logo"]="0"
-                all_arg_groups["logo"]="Miscellaneous options"
-                     all_notes["logo"]="hidden"
-                all_help_texts["logo"]="display the logo and exit"
+    # Define ${argparser_logo}, the Argparser's hidden logo option with
+    # the magic string "--argparser".
+             all_short_options["argparser_logo"]=""
+              all_long_options["argparser_logo"]="argparser"
+               all_value_names["argparser_logo"]=""
+            all_default_values["argparser_logo"]="false"
+             all_choice_values["argparser_logo"]=""
+    all_resolved_choice_values["argparser_logo"]=""
+                     all_types["argparser_logo"]="bool"
+               all_arg_numbers["argparser_logo"]="0"
+                all_arg_groups["argparser_logo"]="Miscellaneous options"
+                     all_notes["argparser_logo"]="hidden"
+                all_help_texts["argparser_logo"]="display the logo and exit"
 }
 
 function argparser_set_env_vars() {
@@ -8009,7 +8010,6 @@ function argparser_parse_args() {
     local -a given_args
     local -a given_positional_args
     local is_help
-    local is_logo
     local is_positional
     local is_positional_only
     local is_usage
@@ -8157,18 +8157,17 @@ function argparser_parse_args() {
         done
     done
 
-    # If the help, usage, or version message, or the logo was requested
-    # (in this order of priority), print it.  To this end, check whether
-    # the respective argument identifier is given and has a prefix of
-    # "-", since "+" should deactivate it.  To respect the priority of
-    # help > usage > version > logo, use intermediate variables as flags
-    # to be assigned to "true", and check their values afterwards in the
-    # intended order (since the associative array ${prefixes[@]} is
-    # unordered, just as the command-line arguments may be).
+    # If the help, usage, or version message was requested (in this
+    # order of priority), print it.  To this end, check whether the
+    # respective argument identifier is given and has a prefix of "-",
+    # since "+" should deactivate it.  To respect the priority of
+    # help > usage > version, use intermediate variables as flags to be
+    # set to "true", and check their values afterwards in the intended
+    # order (since the associative array ${prefixes[@]} is unordered,
+    # just as the command-line arguments may be).
     is_help=false
     is_usage=false
     is_version=false
-    is_logo=false
     for arg_id in "${!prefixes[@]}"; do
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a arg_prefixes \
             <<< "${prefixes[${arg_id}]}"
@@ -8182,9 +8181,6 @@ function argparser_parse_args() {
                 is_usage=true
             elif [[ "${arg_id}" == "version" ]]; then
                 is_version=true
-            elif [[ "${arg_id}" == "logo" && "${is_self_parsing}" == true ]]
-            then
-                is_logo=true
             fi
         done
     done
@@ -8195,7 +8191,11 @@ function argparser_parse_args() {
         argparser_print_usage_message true
     elif [[ "${is_version}" == true ]]; then
         argparser_print_version_message true
-    elif [[ "${is_logo}" == true ]]; then
+    fi
+
+    # If the Argparser logo was requested, and the Argparser is parsing
+    # its own command line, print the logo.
+    if [[ "${argparser_logo}" == true && "${is_self_parsing}" == true  ]]; then
         argparser_print_logo
         exit 0
     fi
@@ -11343,9 +11343,10 @@ function argparser_main() {
     local translation
 
     # Declare the remaining internal variables.  Since ${ARGPARSER_ARGS}
-    # must be set in global scope, later, it cannot be declared local,
-    # here.
+    # and ${argparser_logo} must be set in global scope, later, they
+    # cannot be declared local, here.
     declare -g -A ARGPARSER_ARGS
+    declare -g argparser_logo
     local argparser_version="1.3.2 \"Dasyprocta fuliginosa\""
 
     # Detect whether the Argparser is sourced or run as standalone
