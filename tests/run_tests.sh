@@ -2304,6 +2304,8 @@ output="$(cat << EOF
 |           [--allow-flag-negation]                    |
 |           [--allow-option-abbreviation]              |
 |           [--allow-option-merging]                   |
+|           [--allow-positional-delimiter-end]         |
+|           [--allow-positional-delimiter-start]       |
 |           [--arg-array-name=NAME]                    |
 |           [--arg-def-file=FILE]                      |
 |           [--arg-delimiter-1=CHAR]                   |
@@ -2501,6 +2503,12 @@ Mandatory arguments to long options are mandatory for short options too.
 |                                  abbreviated form (default: false)              |
 | [--allow-option-merging]         allow the user to give short option names in   |
 |                                  merged (concatenated) form (default: false)    |
+| [--allow-positional-delimiter-   allow the user to mark the end of the          |
+|     end]                         positional-arguments-only part by a doubled    |
+|                                  plus sign ("++") (default: true)               |
+| [--allow-positional-delimiter-   allow the user to mark the start of the        |
+|     start]                       positional-arguments-only part by a doubled    |
+|                                  hyphen ("--") (default: true)                  |
 | [--arg-array-name=NAME]          the indexed array for the raw arguments and    |
 |                                  the associative array for the parsed arguments |
 |                                  (default: "args")                              |

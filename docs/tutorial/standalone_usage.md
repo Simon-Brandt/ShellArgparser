@@ -156,6 +156,12 @@ Mandatory arguments to long options are mandatory for short options too.
 |                                  abbreviated form (default: false)              |
 | [--allow-option-merging]         allow the user to give short option names in   |
 |                                  merged (concatenated) form (default: false)    |
+| [--allow-positional-delimiter-   allow the user to mark the end of the          |
+|     end]                         positional-arguments-only part by a doubled    |
+|                                  plus sign ("++") (default: true)               |
+| [--allow-positional-delimiter-   allow the user to mark the start of the        |
+|     start]                       positional-arguments-only part by a doubled    |
+|                                  hyphen ("--") (default: true)                  |
 | [--arg-array-name=NAME]          the indexed array for the raw arguments and    |
 |                                  the associative array for the parsed arguments |
 |                                  (default: "args")                              |
@@ -229,7 +235,7 @@ Mandatory arguments to long options are mandatory for short options too.
 ```
 <!-- </include> -->
 
-When the first option of the Argparser-invoking command is `--debug` or [`ARGPARSER_DEBUG`](../reference/environment_variables/environment_variables.md#9420-argparser_debug) is set to `true`, the Argparser will write each command to be executed to `STDERR`, including the command's line number and function. This allows logging the internal workings for debugging purposes, and is not designed for normal usage, but rather deemed an "expert option".
+When the first option of the Argparser-invoking command is `--debug` or [`ARGPARSER_DEBUG`](../reference/environment_variables/environment_variables.md#9422-argparser_debug) is set to `true`, the Argparser will write each command to be executed to `STDERR`, including the command's line number and function. This allows logging the internal workings for debugging purposes, and is not designed for normal usage, but rather deemed an "expert option".
 
 #### 5.11.2. Invocation from other shells
 
@@ -294,13 +300,13 @@ fi | sort
 
 </details>
 
-As you can see, the script is written POSIX conformantly and by this already executable by `sh` or `dash`. Since POSIX doesn't specify useful programming constructs like arrays, the arguments definition must be a single string, delimited by linefeeds. By passing this string to the Argparser via its `STDIN` stream (piping from [`printf`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-printf "gnu.org &rightarrow; Bash Builtins &rightarrow; printf") to `argparser`), it is possible to feed the arguments definition to the Argparser without requiring the usual [`ARGPARSER_ARG_ARRAY_NAME`](../reference/environment_variables/environment_variables.md#9410-argparser_arg_array_name). Just as when sourcing, the Argparser requires your script's command line as argument, separated from its own arguments by a double hyphen.
+As you can see, the script is written POSIX conformantly and by this already executable by `sh` or `dash`. Since POSIX doesn't specify useful programming constructs like arrays, the arguments definition must be a single string, delimited by linefeeds. By passing this string to the Argparser via its `STDIN` stream (piping from [`printf`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-printf "gnu.org &rightarrow; Bash Builtins &rightarrow; printf") to `argparser`), it is possible to feed the arguments definition to the Argparser without requiring the usual [`ARGPARSER_ARG_ARRAY_NAME`](../reference/environment_variables/environment_variables.md#9412-argparser_arg_array_name). Just as when sourcing, the Argparser requires your script's command line as argument, separated from its own arguments by a double hyphen.
 
-It is important to set [`ARGPARSER_WRITE_ARGS`](../reference/environment_variables/environment_variables.md#9468-argparser_write_args) to `true`. By this, the Argparser will write the parsed arguments as key&ndash;value pairs to its `STDOUT` stream, since setting them as variables to the environment would result in them being lost when the child process the Argparser is running in terminates.
+It is important to set [`ARGPARSER_WRITE_ARGS`](../reference/environment_variables/environment_variables.md#9470-argparser_write_args) to `true`. By this, the Argparser will write the parsed arguments as key&ndash;value pairs to its `STDOUT` stream, since setting them as variables to the environment would result in them being lost when the child process the Argparser is running in terminates.
 
 In our example script, the whole pipeline is run in a subshell, such that `STDOUT` gets captured by `eval`. This facilitates the setting of the variables to the main environment, as the Argparser outputs one argument per line, with an `=` sign as delimiter between key and value. In other terms, the Argparser produces output which may be re-used as input to `eval`&mdash;here assuming that no special shell characters are included. For the purpose of this example, calls for the help, usage, and version message are caught in a separate branch to circumvent the parsing by `eval`&mdash;after all, these messages are also written to `STDOUT`, while the usual error and warning messages end in `STDERR`. Depending on your shell, you may find more sophisticated solutions that can also handle the occurrence of these help options among other (regular) options on the command line.
 
-Another point to notice is the need to set the [`ARGPARSER_SCRIPT_NAME`](../reference/environment_variables/environment_variables.md#9439-argparser_script_name) prior running the Argparser, since from within its child process, it cannot access your script's name without requiring non-builtin commands like [`ps`](https://man7.org/linux/man-pages/man1/ps.1.html "man7.org &rightarrow; man pages &rightarrow; ps(1)"). This would violate the design decision to only use Bash builtins, both for speed (no forks) and portability (few dependencies).
+Another point to notice is the need to set the [`ARGPARSER_SCRIPT_NAME`](../reference/environment_variables/environment_variables.md#9441-argparser_script_name) prior running the Argparser, since from within its child process, it cannot access your script's name without requiring non-builtin commands like [`ps`](https://man7.org/linux/man-pages/man1/ps.1.html "man7.org &rightarrow; man pages &rightarrow; ps(1)"). This would violate the design decision to only use Bash builtins, both for speed (no forks) and portability (few dependencies).
 
 In short, it is possible to run the Argparser in standalone mode from other shells, but this comes with the caveats of subprocesses&mdash;which the sourcing in Bash overcomes. Still, the only feature that your shell must support is calling processes in pipes or *via* process substitutions to pass data to the Argparser's `STDIN` and read its `STDOUT`. Since pipes are defined by POSIX, most shells should support this feature. It's just the *parsing* of the Argparser's output that may cause some headache.
 
