@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-11-06
+# Last Modification: 2026-11-09
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -7525,17 +7525,21 @@ function argparser_parse_positional_args() {
     # arguments, judge whether values for arguments with default values
     # are given.  Since there cannot be arguments with an arbitrary
     # number of values defined when there are arguments with default
-    # values defined, a higher number of given values than required
-    # means that either some values for arguments with default values
-    # are given (then, their count exceeds zero), or that an argument
-    # accepting an arbitrary number of values is given as last one
-    # (then, the count of arguments with default values is zero).  This
-    # allows to distinguish these two cases.
+    # values defined, except if both are the same, single argument, a
+    # higher number of given values than required means that either some
+    # values for arguments with default values are given (then, their
+    # count exceeds zero), or that an argument accepting an arbitrary
+    # number of values is given as last one (then, the count of
+    # arguments with default values is zero, or there is only one
+    # argument defined).  This allows to distinguish these two cases.
     args_count="${#values[@]}"
-    if (( args_count > required_args_count && default_args_count > 0 )); then
-        # There are arguments having default values given.  Get the
-        # argument identifiers for all given arguments and pass them
-        # their values.
+    if (( args_count > required_args_count \
+        && default_args_count > 0 \
+        && "${#all_positional_args[@]}" > 1 ))
+    then
+        # There are arguments having default values given, and there are
+        # at least two arguments defined.  Get the argument identifiers
+        # for all given arguments and pass them their values.
         index=0
         for arg_id in "${all_positional_args[@]}"; do
             # Read the argument's definition.
@@ -7548,9 +7552,10 @@ function argparser_parse_positional_args() {
             (( index += arg_number ))
         done
     else
-        # There are no arguments having default values given.  Get the
-        # argument identifiers for all given arguments and pass them
-        # their values.
+        # There are no arguments having default values given, or there
+        # is only one argument defined, that may have a default value.
+        # Get the argument identifiers for all given arguments and pass
+        # them their values.
         index=0
         for arg_id in "${all_positional_args[@]}"; do
             # Read the argument's definition.
@@ -7559,8 +7564,11 @@ function argparser_parse_positional_args() {
             arg_number="${all_arg_numbers[${arg_id}]}"
 
             # Skip the defined arguments having default values, but
-            # which aren't given.
-            if [[ -n "${default_values_arr[0]}" ]]; then
+            # which aren't (and cannot be) given, as long as there is
+            # only one positional argument.
+            if [[ -n "${default_values_arr[0]}" ]] \
+                && (( "${#all_positional_args[@]}" > 1 ))
+            then
                 continue
             fi
 
