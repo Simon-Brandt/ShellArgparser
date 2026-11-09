@@ -29,14 +29,14 @@ By invoking the Argparser, you can obtain the help, usage, and version message f
 <!-- <include command="argparser --help" lang="console"> -->
 ```console
 $ argparser --help
-Usage: argparser [OPTIONS] [--] command_line
+Usage: argparser [OPTIONS] [--] [command_line]
 
 Mandatory arguments to long options are mandatory for short options too.
 
 +- Positional arguments ----------------------------------------------------------+
-| command_line...                  the indexed array in which the Argparser       |
+| [command_line...]                the indexed array in which the Argparser       |
 |                                  stores the script's command line upon parsing  |
-|                                  its own arguments                              |
+|                                  its own arguments (default: "--")              |
 +---------------------------------------------------------------------------------+
 
 +- Error/warning message options -------------------------------------------------+

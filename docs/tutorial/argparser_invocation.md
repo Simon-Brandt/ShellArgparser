@@ -76,7 +76,7 @@ This call is central to the script as it is the line that runs the Argparser. So
 source argparser -- "$@"
 ```
 
-Shells other than Bash require a slightly different approach, the [standalone usage](standalone_usage.md#5112-invocation-from-other-shells) in a pipe, but most things still hold for this case. As a result of the Argparser's configurability (see below), it is necessary to give cour script's command line after a double hyphen, *i.e.*, using `-- "$@"`.
+Shells other than Bash require a slightly different approach, the [standalone usage](standalone_usage.md#5112-invocation-from-other-shells) in a pipe, but most things still hold for this case. As a result of the Argparser's configurability (see below), it is necessary to give your script's command line after a double hyphen, *i.e.*, using `-- "$@"`.
 
 Alternatively to `source`, but not recommended for the lack of the command's clearness, you could use the synonymous [dot operator](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-_002e "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; dot operator") inherited from the Bourne shell (which shell could not run the Argparser, being a Bash script):
 

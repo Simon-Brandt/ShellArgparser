@@ -2934,11 +2934,11 @@ function argparser_define_env_vars() {
     # command line.
                          all_positional_args+=("script_args")
                all_value_names["script_args"]="command_line"
-            all_default_values["script_args"]=""
+            all_default_values["script_args"]="--"
              all_choice_values["script_args"]=""
     all_resolved_choice_values["script_args"]=""
                      all_types["script_args"]="str"
-               all_arg_numbers["script_args"]="+"
+               all_arg_numbers["script_args"]="*"
                 all_arg_groups["script_args"]="Positional arguments"
                      all_notes["script_args"]=""
                 all_help_texts["script_args"]="the indexed array in which the Argparser stores the script's command line upon parsing its own arguments"
@@ -3086,40 +3086,19 @@ function argparser_set_env_vars() {
     local -a args
     local value
 
-    # As the Argparser can be sourced with command-line arguments,
-    # separate them from the script's command line.  Any argument until
-    # the first "--" is seen as argument to the Argparser.  Lastly,
-    # shift also the "--" and set ${script_args} to the remainder of the
-    # command line.
-    # In order to show the need for the script's command line in the
-    # Argparser's help and usage message, ${script_args} is added to the
-    # Argparser's arguments definition as mandatory positional argument.
-    # Since using its actual value would mean that upon parsing, a "++"
-    # in the script's arguments would be interpreted as sign to
-    # re-evaluate the arguments as keyword arguments for the Argparser
-    # (and not for the script), set the string "argparser" as dummy
-    # value for the positional argument.  As only keyword arguments are
-    # set as environment variables, below, the actual value of
-    # ${script_args} won't be overridden and kept as the script's
-    # command line.
-    args=( )
+    # Read the arguments.
 
     # shellcheck disable=SC2190  # Indexed, not associative array.
-    while (( "$#" > 0 )) && [[ -n "$1" && "$1" != "--" ]]; do
-        args+=("$1")
-        shift
-    done
-    if (( "$#" > 0 )) && [[ -n "$1" && "$1" == "--" ]]; then
-        shift
-    fi
-    script_args=("$@")
-    # shellcheck disable=SC2190  # Indexed, not associative array.
-    args+=("--" "argparser")
+    args=("$@")
 
     # Set all non-internal environment variables by reading the
     # Argparser's command line given upon sourcing the Argparser, using
     # the Argparser itself with default values for all environment
     # variables (which are yet to be set).
+    # As ${ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START} is set to "true",
+    # all arguments after the first "--" are deemed the script's command
+    # line.  As ${ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END} is set to
+    # "false", a "++" later on cannot reset this.
     ARGPARSER_ADD_HELP=true \
         ARGPARSER_ADD_USAGE=true \
         ARGPARSER_ADD_VERSION=true \
@@ -3128,7 +3107,7 @@ function argparser_set_env_vars() {
         ARGPARSER_ALLOW_FLAG_NEGATION=true \
         ARGPARSER_ALLOW_OPTION_ABBREVIATION=false \
         ARGPARSER_ALLOW_OPTION_MERGING=false \
-        ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END=true \
+        ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END=false \
         ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START=true \
         ARGPARSER_ARG_ARRAY_NAME="ARGPARSER_ARGS" \
         ARGPARSER_ARG_DEF_FILE="" \
@@ -3196,8 +3175,15 @@ function argparser_set_env_vars() {
     # empty string.
     for arg_id in "${!ARGPARSER_ARGS[@]}"; do
         if [[ "${arg_id}" == "script_args" ]]; then
-            # Skip ${script_args}, i.e., the command line.
-            continue
+            # Set ${script_args} (the command line) as array.
+            IFS="," read -d "" -r -a script_args \
+                <<< "${ARGPARSER_ARGS[${arg_id}]}"
+
+            script_args[-1]="${script_args[-1]%$'\n'}"  # '\n' from herestring.
+
+            if [[ -z "${script_args[-1]}" ]]; then
+                unset 'script_args[-1]'
+            fi
         elif argparser_in_array "${arg_id}" "ARGPARSER_USE_STYLES_IN_FILES" \
             "ARGPARSER_HELP_STYLE" "ARGPARSER_USAGE_STYLE" \
             "ARGPARSER_VERSION_STYLE" "ARGPARSER_ERROR_STYLE" \
