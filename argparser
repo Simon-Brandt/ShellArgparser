@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-11-09
+# Last Modification: 2026-11-10
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -5057,6 +5057,7 @@ function argparser_parse_args_definition() {
     #   resolved (range-expanded) choice values
     # - all_short_options: the associative array holding the short
     #   option names
+    # - all_subcommands: the associative array holding the subcommands
     # - all_types: the associative array holding the argument types
     # - all_value_names: the associative array holding the value names
     #
@@ -5096,6 +5097,7 @@ function argparser_parse_args_definition() {
     local resolved_choice_values_str
     local sequence
     local short_options
+    local subcommand
     local translation
     local type
     local value_names
@@ -5117,6 +5119,7 @@ function argparser_parse_args_definition() {
     # Get the column indices of all fields.
     column_indices=(
         [id]=""
+        [subcommand]=""
         [short_opts]=""
         [long_opts]=""
         [val_names]=""
@@ -5167,7 +5170,8 @@ function argparser_parse_args_definition() {
     # an associative array per column, using the argument identifier as
     # key and the definition in the field (or a default value) as value.
     # If neither a short nor a long option name is given, interpret the
-    # argument as positional and add it to the respective indexed array.
+    # argument as positional (or as subcommand, which will be removed
+    # from the array later) and add it to the respective indexed array.
     # If only short or long option names shall be accepted, set the
     # respective other value to the empty string, indicating absence of
     # an option name.  Skip arguments that have no short or long option
@@ -5206,6 +5210,14 @@ function argparser_parse_args_definition() {
 
         # Get the argument identifier.
         arg_id="${fields[${column_indices["id"]}]}"
+
+        # Get the subcommand.
+        if [[ -n "${column_indices["subcommand"]}" ]]; then
+            subcommand="${fields[${column_indices["subcommand"]}]}"
+        else
+            subcommand=""
+        fi
+        all_subcommands[${arg_id}]="${subcommand}"
 
         # Get the short option names.
         if [[ -n "${column_indices["short_opts"]}" ]]; then
@@ -6548,6 +6560,10 @@ function argparser_get_args_definition() {
     # it.
     #
     # Nonlocals:
+    # - all_positional_args: the indexed array holding the positional
+    #   argument names
+    # - all_subcommands: the associative array holding the subcommands
+    #   (read-only)
     # - is_sourced: whether the Argparser has been sourced (read-only)
     #
     # Environment:
@@ -6566,6 +6582,7 @@ function argparser_get_args_definition() {
     local -a messages
     local name
     local -a names
+    local subcommand
     local translated_error
     local translation
 
@@ -6727,6 +6744,19 @@ function argparser_get_args_definition() {
         # definition is useless or even impossible.
         argparser_print_error_messages true true "${error_messages[@]}"
     fi
+
+    # Remove the subcommands from the positional arguments.
+    for i in "${!all_positional_args[@]}"; do
+        for subcommand in "${all_subcommands[@]}"; do
+            if [[ -n "${subcommand}" \
+                && "${all_positional_args[i]}" == "${subcommand}" ]]
+            then
+                unset 'all_positional_args[i]'
+            fi
+        done
+    done
+
+    all_positional_args=("${all_positional_args[@]}")  # Remove empty fields.
 
     # Add the help, usage, and version message options to the arguments
     # definition.
@@ -6953,8 +6983,8 @@ function argparser_parse_arg() {
     # assigned to this argument, not the last known one that got parsed.
     if [[ "${given_arg}" != [-+]* ]]; then
         # The argument doesn't start with a hyphen ("-") or plus sign
-        # ("+"), so deem it a value to a previous keyword argument or a
-        # positional argument.
+        # ("+"), so deem it a value to a previous keyword argument, a
+        # positional argument, or a subcommand.
         messages+=("Value: ${given_arg}")
     elif [[ "${ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END}" == true \
         && "${is_positional_only}" == true \
@@ -7446,6 +7476,8 @@ function argparser_parse_positional_args() {
     # - args: the associative array holding the parsed arguments' values
     # - error_messages: the error messages, starting with "Error: "
     #   (translated), as indexed array
+    # - given_subcommand: the active subcommand, if given, or the empty
+    #   string, else
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
@@ -7462,7 +7494,10 @@ function argparser_parse_positional_args() {
     local -a given_args
     local index
     local joined_array
+    local -a positional_args
+    local positional_args_count
     local required_args_count
+    local subcommand
     local translation
     local -a values
 
@@ -7482,13 +7517,21 @@ function argparser_parse_positional_args() {
     done
 
     # Count the defined positional arguments with default values and
-    # those without.
+    # those without for the given subcommand (if any).
     default_args_count=0
     required_args_count=0
     for arg_id in "${all_positional_args[@]}"; do
         # Read the argument's definition.
+        subcommand="${all_subcommands[${arg_id}]}"
         default_values_str="${all_default_values[${arg_id}]}"
         arg_number="${all_arg_numbers[${arg_id}]}"
+
+        # Skip those arguments that belong to a different subcommand
+        # than given.
+        if [[ "${subcommand}" != "${given_subcommand}" ]]; then
+            continue
+        fi
+        positional_args+=("${arg_id}")
 
         # For the counting, consider the number of values for "+" as 1
         # and for "*" or "?" as 0, i.e., the minimum number that can be
@@ -7509,19 +7552,21 @@ function argparser_parse_positional_args() {
 
     # Based on the number of given, default, and required positional
     # arguments, judge whether values for arguments with default values
-    # are given.  Since there cannot be arguments with an arbitrary
-    # number of values defined when there are arguments with default
-    # values defined, except if both are the same, single argument, a
-    # higher number of given values than required means that either some
-    # values for arguments with default values are given (then, their
-    # count exceeds zero), or that an argument accepting an arbitrary
-    # number of values is given as last one (then, the count of
-    # arguments with default values is zero, or there is only one
-    # argument defined).  This allows to distinguish these two cases.
+    # are given.  Since, for a given subcommand (if any), there cannot
+    # be arguments with an arbitrary number of values defined when there
+    # are arguments with default values defined, except if both are the
+    # same, single argument, a higher number of given values than
+    # required means that either some values for arguments with default
+    # values are given (then, their count exceeds zero), or that an
+    # argument accepting an arbitrary number of values is given as last
+    # one (then, the count of arguments with default values is zero, or
+    # there is only one argument defined).  This allows to distinguish
+    # these two cases.
     args_count="${#values[@]}"
+    positional_args_count="${#positional_args[@]}"
     if (( args_count > required_args_count \
         && default_args_count > 0 \
-        && "${#all_positional_args[@]}" > 1 ))
+        && positional_args_count > 1 ))
     then
         # There are arguments having default values given, and there are
         # at least two arguments defined.  Get the argument identifiers
@@ -7529,7 +7574,14 @@ function argparser_parse_positional_args() {
         index=0
         for arg_id in "${all_positional_args[@]}"; do
             # Read the argument's definition.
+            subcommand="${all_subcommands[${arg_id}]}"
             arg_number="${all_arg_numbers[${arg_id}]}"
+
+            # Skip those arguments that belong to a different subcommand
+            # than given.
+            if [[ "${subcommand}" != "${given_subcommand}" ]]; then
+                continue
+            fi
 
             # Pass the positional argument as many values as requested.
             argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
@@ -7545,15 +7597,22 @@ function argparser_parse_positional_args() {
         index=0
         for arg_id in "${all_positional_args[@]}"; do
             # Read the argument's definition.
+            subcommand="${all_subcommands[${arg_id}]}"
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a default_values_arr \
                 <<< "${all_default_values[${arg_id}]}"
             arg_number="${all_arg_numbers[${arg_id}]}"
+
+            # Skip those arguments that belong to a different subcommand
+            # than given.
+            if [[ "${subcommand}" != "${given_subcommand}" ]]; then
+                continue
+            fi
 
             # Skip the defined arguments having default values, but
             # which aren't (and cannot be) given, as long as there is
             # only one positional argument.
             if [[ -n "${default_values_arr[0]}" ]] \
-                && (( "${#all_positional_args[@]}" > 1 ))
+                && (( positional_args_count > 1 ))
             then
                 continue
             fi
@@ -7634,9 +7693,13 @@ function argparser_check_arg_values() {
     #   argument names (read-only)
     # - all_resolved_choice_values: the associative array holding the
     #   resolved (range-expanded) choice values (read-only)
+    # - all_subcommands: the associative array holding the subcommands
+    #   (read-only)
     # - all_types: the associative array holding the argument types
     #   (read-only)
     # - arg_values: the parsed argument's value
+    # - given_subcommand: the active subcommand, if given, or the empty
+    #   string, else
     # - error_messages: the error messages, starting with "Error: "
     #   (translated), as indexed array
     # - warning_messages: the warning messages, starting with
@@ -7664,6 +7727,7 @@ function argparser_check_arg_values() {
     local -a prefixes
     local -a resolved_choice_values_arr
     local resolved_choice_values_str
+    local subcommand
     local translation
     local type
     local value
@@ -7691,6 +7755,7 @@ function argparser_check_arg_values() {
         fi
 
         # Read the argument's definition.
+        subcommand="${all_subcommands[${arg_id}]}"
         default_values_str="${all_default_values[${arg_id}]}"
         choice_values_str="${all_choice_values[${arg_id}]}"
         resolved_choice_values_str="${all_resolved_choice_values[${arg_id}]}"
@@ -7719,6 +7784,7 @@ function argparser_check_arg_values() {
         fi
 
         # Read the argument's definition.
+        subcommand="${all_subcommands[${arg_id}]}"
         default_values_str="${all_default_values[${arg_id}]}"
         choice_values_str="${all_choice_values[${arg_id}]}"
         resolved_choice_values_str="${all_resolved_choice_values[${arg_id}]}"
@@ -7734,6 +7800,35 @@ function argparser_check_arg_values() {
     # Concatenate the name of all short and long options for the error
     # and warning messages.
     argparser_get_option_names "${arg_id}" "short-long" false
+
+    # If the argument doesn't belong to the given subcommand (if any),
+    # but was given, output an error message.  If it wasn't given, skip
+    # the subsequent checks.
+    if [[ "${subcommand}" != "${given_subcommand}" ]]; then
+        if [[ -z "${values_str}" ]]; then
+            return
+        fi
+
+        if [[ -z "${given_subcommand}" ]]; then
+            error_message="Error: The argument \"\$1\" is known, but defined "
+            error_message+="for the subcommand \"\$2\", which is not given."
+
+            argparser_translate "Error arg subcommand 1" "${error_message}" \
+                "${option_names_str}" "${subcommand}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+            return
+        else
+            error_message="Error: The argument \"\$1\" is known, but not "
+            error_message+="defined for the given subcommand \"\$2\"."
+
+            argparser_translate "Error arg subcommand 2" "${error_message}" \
+                "${option_names_str}" "${given_subcommand}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+            return
+        fi
+    fi
 
     # Check the notes.
     for note in "${notes[@]}"; do
@@ -8114,6 +8209,8 @@ function argparser_parse_args() {
     #   argument names (read-only)
     # - all_short_options: the associative array holding the short
     #   option names (read-only)
+    # - all_subcommands: the associative array holding the subcommands
+    #   (read-only)
     # - is_self_parsing: whether the Argparser currently parses its own
     #   arguments (read-only)
     #
@@ -8142,15 +8239,18 @@ function argparser_parse_args() {
     local given_arg
     local -a given_args
     local -a given_positional_args
+    local given_subcommand
     local is_help
     local is_positional
     local is_positional_only
+    local is_positional_start
     local is_usage
     local is_version
     local message
     local -a messages
     local prefix
     local -A prefixes
+    local subcommand
     local -a warning_messages
 
     # Read the arguments.
@@ -8162,6 +8262,11 @@ function argparser_parse_args() {
 
     is_positional=true
     is_positional_only=false
+    is_positional_start=true
+
+    given_positional_args=( )
+    given_subcommand=""
+
     error_messages=( )
 
     for given_arg in "${given_args[@]}"; do
@@ -8203,7 +8308,17 @@ function argparser_parse_args() {
                 # empty string value, iff the previous value is indeed
                 # empty.
                 arg_value="${message#Value: }"
-                if [[ "${is_positional}" == true ]]; then
+                if [[ "${is_positional_start}" == true ]]; then
+                    # The value is given in the initial positional
+                    # location and could be a positional argument or a
+                    # subcommand.
+                    if argparser_in_array "${arg_value}" "${all_subcommands[@]}"
+                    then
+                        given_subcommand="${arg_value}"
+                    else
+                        given_positional_args+=("${arg_value}")
+                    fi
+                elif [[ "${is_positional}" == true ]]; then
                     # The value is given in a positional-only location.
                     given_positional_args+=("${arg_value}")
                 elif [[ "${ARGPARSER_ALLOW_ARG_INTERMIXING}" == true ]]; then
@@ -8288,6 +8403,8 @@ function argparser_parse_args() {
                 fi
             fi
         done
+
+        is_positional_start=false
     done
 
     # If the help, usage, or version message was requested (in this
@@ -8351,6 +8468,18 @@ function argparser_parse_args() {
 
         exit "${ARGPARSER_ERROR_EXIT_CODE}"
     fi >&2
+
+    # If a subcommand is given, set it to "true", while setting all
+    # others always to "false".
+    for subcommand in "${all_subcommands[@]}"; do
+        if [[ -n "${subcommand}" ]]; then
+            args[${subcommand}]=false
+        fi
+    done
+
+    if [[ -n "${given_subcommand}" ]]; then
+        args[${given_subcommand}]=true
+    fi
 
     # Check the arguments' values.
     error_messages=( )
@@ -11465,6 +11594,7 @@ function argparser_main() {
     local -a all_positional_args
     local -A all_resolved_choice_values
     local -A all_short_options
+    local -A all_subcommands
     local -A all_types
     local -A all_value_names
     local -A dictionary
@@ -11584,6 +11714,7 @@ function argparser_main() {
     all_positional_args=( )
     all_resolved_choice_values=( )
     all_short_options=( )
+    all_subcommands=( )
     all_types=( )
     all_value_names=( )
 
