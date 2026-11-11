@@ -20,13 +20,13 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-28
+# Last Modification: 2026-11-11
 
 # Usage: Source this argument definition file from test_getopt.sh.
 
 # Purpose: Define the arguments for the argument definition file test.
 
-args=( )
+args=()
 i=1
 while (( i <= "$#" )); do
     arg="${!i}"

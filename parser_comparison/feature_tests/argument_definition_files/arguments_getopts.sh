@@ -20,13 +20,13 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-28
+# Last Modification: 2026-11-11
 
 # Usage: Source this argument definition file from test_getopts.sh.
 
 # Purpose: Define the arguments for the argument definition file test.
 
-args=( )
+args=()
 while getopts ":a:" arg "$@" &> /dev/null; do
     # shellcheck disable=SC2034  # Variable used in sourcing script.
     case "${arg}" in

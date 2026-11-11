@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-28
+# Last Modification: 2026-11-11
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -32,7 +32,7 @@
 
 # Parse the arguments.  The final check for the variables sets the
 # test's result as exit code.
-var=( )
+var=()
 
 while getopts "v:V:" arg "$@" &> /dev/null; do
     case "${arg}" in

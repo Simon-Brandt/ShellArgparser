@@ -610,7 +610,7 @@ function argparser_fold() {
     if (( "${#FUNCNAME[@]}" >= 1 )) \
         && [[ "${FUNCNAME[0]}" != "${FUNCNAME[1]}" ]]
     then
-        folded_array=( )
+        folded_array=()
     elif (( "${#FUNCNAME[@]}" >= 2 )) \
         && [[ "${FUNCNAME[0]}" != "${FUNCNAME[2]}" ]]
     then
@@ -928,7 +928,7 @@ function argparser_seq() {
     # Create the actual sequence by iterating from the start to the stop
     # value, incrementing or decrementing by the given step size as
     # appropriate for the numerical order.
-    sequence=( )
+    sequence=()
     if (( start <= stop )); then
         for (( i = start; i <= stop; i += step )); do
             sequence+=("${i}")
@@ -1168,7 +1168,7 @@ function argparser_sort() {
     # Sort the array and output it, possibly after reversing it.
     argparser_quicksort 0 "$(( "${#array[@]}" - 1 ))"
     if [[ "${reverse}" == true ]]; then
-        sorted_array=( )
+        sorted_array=()
         for (( i = "${#array[@]}" - 1; i >= 0; i-- )); do
             sorted_array+=("${array[i]}")
         done
@@ -1505,7 +1505,7 @@ function argparser_draw_frame() {
     # characters and separate them by their purpose as corner style,
     # line style, line width modifier, or color.  Later styles override
     # the respective category's style specified earlier.
-    colors_arr=( )
+    colors_arr=()
     IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a style_requests \
         <<< "${style_requests}"
     for style_request in "${style_requests[@]}"; do
@@ -1849,69 +1849,69 @@ function argparser_read_configuration() {
     # environment variables.
     #
     # Environment:
-    # ARGPARSER_ADD_HELP
-    # ARGPARSER_ADD_USAGE
-    # ARGPARSER_ADD_VERSION
-    # ARGPARSER_ALLOW_ARG_INTERMIXING
-    # ARGPARSER_ALLOW_FLAG_INVERSION
-    # ARGPARSER_ALLOW_FLAG_NEGATION
-    # ARGPARSER_ALLOW_OPTION_ABBREVIATION
-    # ARGPARSER_ALLOW_OPTION_MERGING
-    # ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END
-    # ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START
-    # ARGPARSER_ARG_ARRAY_NAME
-    # ARGPARSER_ARG_DEF_FILE
-    # ARGPARSER_ARG_DELIMITER_1
-    # ARGPARSER_ARG_DELIMITER_2
-    # ARGPARSER_CHECK_ARG_DEF
-    # ARGPARSER_CHECK_ENV_VARS
-    # ARGPARSER_CONFIG_FILE (read-only)
-    # ARGPARSER_COUNT_FLAGS
-    # ARGPARSER_ERROR_EXIT_CODE
-    # ARGPARSER_ERROR_STYLE
-    # ARGPARSER_FLAG_NEGATION_PREFIXES
-    # ARGPARSER_HELP_ARG_GROUP
-    # ARGPARSER_HELP_DESCRIPTION
-    # ARGPARSER_HELP_EXIT_CODE
-    # ARGPARSER_HELP_FILE
-    # ARGPARSER_HELP_FILE_INCLUDE_CHAR
-    # ARGPARSER_HELP_FILE_KEEP_COMMENTS
-    # ARGPARSER_HELP_STYLE
-    # ARGPARSER_LANGUAGE
-    # ARGPARSER_MAX_COL_WIDTH_1
-    # ARGPARSER_MAX_COL_WIDTH_2
-    # ARGPARSER_MAX_COL_WIDTH_3
-    # ARGPARSER_MAX_WIDTH
-    # ARGPARSER_POSITIONAL_ARG_GROUP
-    # ARGPARSER_READ_ARGS
-    # ARGPARSER_SCRIPT_NAME
-    # ARGPARSER_SET_ARGS
-    # ARGPARSER_SET_ARRAYS
-    # ARGPARSER_SILENCE_ERRORS
-    # ARGPARSER_SILENCE_WARNINGS
-    # ARGPARSER_STYLE_FILE
-    # ARGPARSER_SUBCOMMAND_GROUP
-    # ARGPARSER_TRANSLATION_FILE
-    # ARGPARSER_UNSET_ARGS
-    # ARGPARSER_UNSET_ENV_VARS
-    # ARGPARSER_UNSET_FUNCTIONS
-    # ARGPARSER_USAGE_EXIT_CODE
-    # ARGPARSER_USAGE_FILE
-    # ARGPARSER_USAGE_FILE_INCLUDE_CHAR
-    # ARGPARSER_USAGE_FILE_KEEP_COMMENTS
-    # ARGPARSER_USAGE_MESSAGE_OPTION_TYPE
-    # ARGPARSER_USAGE_MESSAGE_ORIENTATION
-    # ARGPARSER_USAGE_STYLE
-    # ARGPARSER_USE_COLORS
-    # ARGPARSER_USE_LONG_OPTIONS
-    # ARGPARSER_USE_SHORT_OPTIONS
-    # ARGPARSER_USE_STYLES
-    # ARGPARSER_USE_STYLES_IN_FILES
-    # ARGPARSER_USE_UNICODE
-    # ARGPARSER_VERSION_EXIT_CODE
-    # ARGPARSER_VERSION_NUMBER
-    # ARGPARSER_VERSION_STYLE
-    # ARGPARSER_WARNING_STYLE
+    # - ARGPARSER_ADD_HELP
+    # - ARGPARSER_ADD_USAGE
+    # - ARGPARSER_ADD_VERSION
+    # - ARGPARSER_ALLOW_ARG_INTERMIXING
+    # - ARGPARSER_ALLOW_FLAG_INVERSION
+    # - ARGPARSER_ALLOW_FLAG_NEGATION
+    # - ARGPARSER_ALLOW_OPTION_ABBREVIATION
+    # - ARGPARSER_ALLOW_OPTION_MERGING
+    # - ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END
+    # - ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START
+    # - ARGPARSER_ARG_ARRAY_NAME
+    # - ARGPARSER_ARG_DEF_FILE
+    # - ARGPARSER_ARG_DELIMITER_1
+    # - ARGPARSER_ARG_DELIMITER_2
+    # - ARGPARSER_CHECK_ARG_DEF
+    # - ARGPARSER_CHECK_ENV_VARS
+    # - ARGPARSER_CONFIG_FILE (read-only)
+    # - ARGPARSER_COUNT_FLAGS
+    # - ARGPARSER_ERROR_EXIT_CODE
+    # - ARGPARSER_ERROR_STYLE
+    # - ARGPARSER_FLAG_NEGATION_PREFIXES
+    # - ARGPARSER_HELP_ARG_GROUP
+    # - ARGPARSER_HELP_DESCRIPTION
+    # - ARGPARSER_HELP_EXIT_CODE
+    # - ARGPARSER_HELP_FILE
+    # - ARGPARSER_HELP_FILE_INCLUDE_CHAR
+    # - ARGPARSER_HELP_FILE_KEEP_COMMENTS
+    # - ARGPARSER_HELP_STYLE
+    # - ARGPARSER_LANGUAGE
+    # - ARGPARSER_MAX_COL_WIDTH_1
+    # - ARGPARSER_MAX_COL_WIDTH_2
+    # - ARGPARSER_MAX_COL_WIDTH_3
+    # - ARGPARSER_MAX_WIDTH
+    # - ARGPARSER_POSITIONAL_ARG_GROUP
+    # - ARGPARSER_READ_ARGS
+    # - ARGPARSER_SCRIPT_NAME
+    # - ARGPARSER_SET_ARGS
+    # - ARGPARSER_SET_ARRAYS
+    # - ARGPARSER_SILENCE_ERRORS
+    # - ARGPARSER_SILENCE_WARNINGS
+    # - ARGPARSER_STYLE_FILE
+    # - ARGPARSER_SUBCOMMAND_GROUP
+    # - ARGPARSER_TRANSLATION_FILE
+    # - ARGPARSER_UNSET_ARGS
+    # - ARGPARSER_UNSET_ENV_VARS
+    # - ARGPARSER_UNSET_FUNCTIONS
+    # - ARGPARSER_USAGE_EXIT_CODE
+    # - ARGPARSER_USAGE_FILE
+    # - ARGPARSER_USAGE_FILE_INCLUDE_CHAR
+    # - ARGPARSER_USAGE_FILE_KEEP_COMMENTS
+    # - ARGPARSER_USAGE_MESSAGE_OPTION_TYPE
+    # - ARGPARSER_USAGE_MESSAGE_ORIENTATION
+    # - ARGPARSER_USAGE_STYLE
+    # - ARGPARSER_USE_COLORS
+    # - ARGPARSER_USE_LONG_OPTIONS
+    # - ARGPARSER_USE_SHORT_OPTIONS
+    # - ARGPARSER_USE_STYLES
+    # - ARGPARSER_USE_STYLES_IN_FILES
+    # - ARGPARSER_USE_UNICODE
+    # - ARGPARSER_VERSION_EXIT_CODE
+    # - ARGPARSER_VERSION_NUMBER
+    # - ARGPARSER_VERSION_STYLE
+    # - ARGPARSER_WARNING_STYLE
 
     # Define the local variables.
     local error_message
@@ -1958,10 +1958,10 @@ function argparser_read_configuration() {
 
     # Read the configuration file.
     mapfile -t lines < "${ARGPARSER_CONFIG_FILE}"
-    error_messages=( )
+    error_messages=()
 
     for line in "${lines[@]}"; do
-        if [[ -z "${line}" || "${line}" == \#* ]]; then
+        if [[ -z "${line}" || "${line}" == "#"* ]]; then
             # Ignore the empty or commented line.
             continue
         elif [[ "${line}" == *( )"args"*( )=* ]]; then
@@ -3025,76 +3025,76 @@ function argparser_set_env_vars() {
     # - script_args: the script's command line
     #
     # Environment:
-    # ARGPARSER_ADD_HELP
-    # ARGPARSER_ADD_USAGE
-    # ARGPARSER_ADD_VERSION
-    # ARGPARSER_ALLOW_ARG_INTERMIXING
-    # ARGPARSER_ALLOW_FLAG_INVERSION
-    # ARGPARSER_ALLOW_FLAG_NEGATION
-    # ARGPARSER_ALLOW_OPTION_ABBREVIATION
-    # ARGPARSER_ALLOW_OPTION_MERGING
-    # ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END
-    # ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START
-    # ARGPARSER_ARG_ARRAY_NAME
-    # ARGPARSER_ARG_DEF_FILE
-    # ARGPARSER_ARG_DELIMITER_1
-    # ARGPARSER_ARG_DELIMITER_2
-    # ARGPARSER_ARGS
-    # ARGPARSER_CHECK_ARG_DEF
-    # ARGPARSER_CHECK_ENV_VARS
-    # ARGPARSER_CONFIG_FILE
-    # ARGPARSER_COUNT_FLAGS
-    # ARGPARSER_CREATE_ARG_DEF
-    # ARGPARSER_DEBUG
-    # ARGPARSER_ERROR_EXIT_CODE
-    # ARGPARSER_ERROR_STYLE
-    # ARGPARSER_FLAG_NEGATION_PREFIXES
-    # ARGPARSER_HELP_ARG_GROUP
-    # ARGPARSER_HELP_DESCRIPTION
-    # ARGPARSER_HELP_EXIT_CODE
-    # ARGPARSER_HELP_FILE
-    # ARGPARSER_HELP_FILE_INCLUDE_CHAR
-    # ARGPARSER_HELP_FILE_KEEP_COMMENTS
-    # ARGPARSER_HELP_OPTIONS
-    # ARGPARSER_HELP_STYLE
-    # ARGPARSER_LANGUAGE
-    # ARGPARSER_MAX_COL_WIDTH_1
-    # ARGPARSER_MAX_COL_WIDTH_2
-    # ARGPARSER_MAX_COL_WIDTH_3
-    # ARGPARSER_MAX_WIDTH
-    # ARGPARSER_POSITIONAL_ARG_GROUP
-    # ARGPARSER_READ_ARGS
-    # ARGPARSER_SCRIPT_NAME
-    # ARGPARSER_SET_ARGS
-    # ARGPARSER_SET_ARRAYS
-    # ARGPARSER_SILENCE_ERRORS
-    # ARGPARSER_SILENCE_WARNINGS
-    # ARGPARSER_STYLE_FILE
-    # ARGPARSER_SUBCOMMAND_GROUP
-    # ARGPARSER_TRANSLATION_FILE
-    # ARGPARSER_UNSET_ARGS
-    # ARGPARSER_UNSET_ENV_VARS
-    # ARGPARSER_UNSET_FUNCTIONS
-    # ARGPARSER_USAGE_EXIT_CODE
-    # ARGPARSER_USAGE_FILE
-    # ARGPARSER_USAGE_FILE_INCLUDE_CHAR
-    # ARGPARSER_USAGE_FILE_KEEP_COMMENTS
-    # ARGPARSER_USAGE_MESSAGE_OPTION_TYPE
-    # ARGPARSER_USAGE_MESSAGE_ORIENTATION
-    # ARGPARSER_USAGE_OPTIONS
-    # ARGPARSER_USAGE_STYLE
-    # ARGPARSER_USE_COLORS
-    # ARGPARSER_USE_LONG_OPTIONS
-    # ARGPARSER_USE_SHORT_OPTIONS
-    # ARGPARSER_USE_STYLES
-    # ARGPARSER_USE_STYLES_IN_FILES
-    # ARGPARSER_USE_UNICODE
-    # ARGPARSER_VERSION_EXIT_CODE
-    # ARGPARSER_VERSION_NUMBER
-    # ARGPARSER_VERSION_OPTIONS
-    # ARGPARSER_VERSION_STYLE
-    # ARGPARSER_WARNING_STYLE
-    # ARGPARSER_WRITE_ARGS
+    # - ARGPARSER_ADD_HELP
+    # - ARGPARSER_ADD_USAGE
+    # - ARGPARSER_ADD_VERSION
+    # - ARGPARSER_ALLOW_ARG_INTERMIXING
+    # - ARGPARSER_ALLOW_FLAG_INVERSION
+    # - ARGPARSER_ALLOW_FLAG_NEGATION
+    # - ARGPARSER_ALLOW_OPTION_ABBREVIATION
+    # - ARGPARSER_ALLOW_OPTION_MERGING
+    # - ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END
+    # - ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START
+    # - ARGPARSER_ARG_ARRAY_NAME
+    # - ARGPARSER_ARG_DEF_FILE
+    # - ARGPARSER_ARG_DELIMITER_1
+    # - ARGPARSER_ARG_DELIMITER_2
+    # - ARGPARSER_ARGS
+    # - ARGPARSER_CHECK_ARG_DEF
+    # - ARGPARSER_CHECK_ENV_VARS
+    # - ARGPARSER_CONFIG_FILE
+    # - ARGPARSER_COUNT_FLAGS
+    # - ARGPARSER_CREATE_ARG_DEF
+    # - ARGPARSER_DEBUG
+    # - ARGPARSER_ERROR_EXIT_CODE
+    # - ARGPARSER_ERROR_STYLE
+    # - ARGPARSER_FLAG_NEGATION_PREFIXES
+    # - ARGPARSER_HELP_ARG_GROUP
+    # - ARGPARSER_HELP_DESCRIPTION
+    # - ARGPARSER_HELP_EXIT_CODE
+    # - ARGPARSER_HELP_FILE
+    # - ARGPARSER_HELP_FILE_INCLUDE_CHAR
+    # - ARGPARSER_HELP_FILE_KEEP_COMMENTS
+    # - ARGPARSER_HELP_OPTIONS
+    # - ARGPARSER_HELP_STYLE
+    # - ARGPARSER_LANGUAGE
+    # - ARGPARSER_MAX_COL_WIDTH_1
+    # - ARGPARSER_MAX_COL_WIDTH_2
+    # - ARGPARSER_MAX_COL_WIDTH_3
+    # - ARGPARSER_MAX_WIDTH
+    # - ARGPARSER_POSITIONAL_ARG_GROUP
+    # - ARGPARSER_READ_ARGS
+    # - ARGPARSER_SCRIPT_NAME
+    # - ARGPARSER_SET_ARGS
+    # - ARGPARSER_SET_ARRAYS
+    # - ARGPARSER_SILENCE_ERRORS
+    # - ARGPARSER_SILENCE_WARNINGS
+    # - ARGPARSER_STYLE_FILE
+    # - ARGPARSER_SUBCOMMAND_GROUP
+    # - ARGPARSER_TRANSLATION_FILE
+    # - ARGPARSER_UNSET_ARGS
+    # - ARGPARSER_UNSET_ENV_VARS
+    # - ARGPARSER_UNSET_FUNCTIONS
+    # - ARGPARSER_USAGE_EXIT_CODE
+    # - ARGPARSER_USAGE_FILE
+    # - ARGPARSER_USAGE_FILE_INCLUDE_CHAR
+    # - ARGPARSER_USAGE_FILE_KEEP_COMMENTS
+    # - ARGPARSER_USAGE_MESSAGE_OPTION_TYPE
+    # - ARGPARSER_USAGE_MESSAGE_ORIENTATION
+    # - ARGPARSER_USAGE_OPTIONS
+    # - ARGPARSER_USAGE_STYLE
+    # - ARGPARSER_USE_COLORS
+    # - ARGPARSER_USE_LONG_OPTIONS
+    # - ARGPARSER_USE_SHORT_OPTIONS
+    # - ARGPARSER_USE_STYLES
+    # - ARGPARSER_USE_STYLES_IN_FILES
+    # - ARGPARSER_USE_UNICODE
+    # - ARGPARSER_VERSION_EXIT_CODE
+    # - ARGPARSER_VERSION_NUMBER
+    # - ARGPARSER_VERSION_OPTIONS
+    # - ARGPARSER_VERSION_STYLE
+    # - ARGPARSER_WARNING_STYLE
+    # - ARGPARSER_WRITE_ARGS
 
     # Define the local variables.
     local arg
@@ -3260,68 +3260,68 @@ function argparser_set_env_var_defaults() {
     # work as intended.
     #
     # Environment:
-    # ARGPARSER_ADD_HELP
-    # ARGPARSER_ADD_USAGE
-    # ARGPARSER_ADD_VERSION
-    # ARGPARSER_ALLOW_ARG_INTERMIXING
-    # ARGPARSER_ALLOW_FLAG_INVERSION
-    # ARGPARSER_ALLOW_FLAG_NEGATION
-    # ARGPARSER_ALLOW_OPTION_ABBREVIATION
-    # ARGPARSER_ALLOW_OPTION_MERGING
-    # ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END
-    # ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START
-    # ARGPARSER_ARG_ARRAY_NAME
-    # ARGPARSER_ARG_DEF_FILE
-    # ARGPARSER_ARG_DELIMITER_1
-    # ARGPARSER_ARG_DELIMITER_2
-    # ARGPARSER_CHECK_ARG_DEF
-    # ARGPARSER_CHECK_ENV_VARS
-    # ARGPARSER_CONFIG_FILE
-    # ARGPARSER_COUNT_FLAGS
-    # ARGPARSER_CREATE_ARG_DEF
-    # ARGPARSER_ERROR_EXIT_CODE
-    # ARGPARSER_FLAG_NEGATION_PREFIXES
-    # ARGPARSER_HELP_ARG_GROUP
-    # ARGPARSER_HELP_DESCRIPTION
-    # ARGPARSER_HELP_EXIT_CODE
-    # ARGPARSER_HELP_FILE
-    # ARGPARSER_HELP_FILE_INCLUDE_CHAR
-    # ARGPARSER_HELP_FILE_KEEP_COMMENTS
-    # ARGPARSER_HELP_OPTIONS
-    # ARGPARSER_LANGUAGE
-    # ARGPARSER_MAX_COL_WIDTH_1
-    # ARGPARSER_MAX_COL_WIDTH_2
-    # ARGPARSER_MAX_COL_WIDTH_3
-    # ARGPARSER_MAX_WIDTH
-    # ARGPARSER_POSITIONAL_ARG_GROUP
-    # ARGPARSER_READ_ARGS
-    # ARGPARSER_SCRIPT_NAME
-    # ARGPARSER_SET_ARGS
-    # ARGPARSER_SET_ARRAYS
-    # ARGPARSER_SILENCE_ERRORS
-    # ARGPARSER_SILENCE_WARNINGS
-    # ARGPARSER_STYLE_FILE
-    # ARGPARSER_SUBCOMMAND_GROUP
-    # ARGPARSER_TRANSLATION_FILE
-    # ARGPARSER_UNSET_ARGS
-    # ARGPARSER_UNSET_ENV_VARS
-    # ARGPARSER_UNSET_FUNCTIONS
-    # ARGPARSER_USAGE_EXIT_CODE
-    # ARGPARSER_USAGE_FILE
-    # ARGPARSER_USAGE_FILE_INCLUDE_CHAR
-    # ARGPARSER_USAGE_FILE_KEEP_COMMENTS
-    # ARGPARSER_USAGE_MESSAGE_OPTION_TYPE
-    # ARGPARSER_USAGE_MESSAGE_ORIENTATION
-    # ARGPARSER_USAGE_OPTIONS
-    # ARGPARSER_USE_COLORS
-    # ARGPARSER_USE_LONG_OPTIONS
-    # ARGPARSER_USE_SHORT_OPTIONS
-    # ARGPARSER_USE_STYLES
-    # ARGPARSER_USE_UNICODE
-    # ARGPARSER_VERSION_EXIT_CODE
-    # ARGPARSER_VERSION_NUMBER
-    # ARGPARSER_VERSION_OPTIONS
-    # ARGPARSER_WRITE_ARGS
+    # - ARGPARSER_ADD_HELP
+    # - ARGPARSER_ADD_USAGE
+    # - ARGPARSER_ADD_VERSION
+    # - ARGPARSER_ALLOW_ARG_INTERMIXING
+    # - ARGPARSER_ALLOW_FLAG_INVERSION
+    # - ARGPARSER_ALLOW_FLAG_NEGATION
+    # - ARGPARSER_ALLOW_OPTION_ABBREVIATION
+    # - ARGPARSER_ALLOW_OPTION_MERGING
+    # - ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END
+    # - ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START
+    # - ARGPARSER_ARG_ARRAY_NAME
+    # - ARGPARSER_ARG_DEF_FILE
+    # - ARGPARSER_ARG_DELIMITER_1
+    # - ARGPARSER_ARG_DELIMITER_2
+    # - ARGPARSER_CHECK_ARG_DEF
+    # - ARGPARSER_CHECK_ENV_VARS
+    # - ARGPARSER_CONFIG_FILE
+    # - ARGPARSER_COUNT_FLAGS
+    # - ARGPARSER_CREATE_ARG_DEF
+    # - ARGPARSER_ERROR_EXIT_CODE
+    # - ARGPARSER_FLAG_NEGATION_PREFIXES
+    # - ARGPARSER_HELP_ARG_GROUP
+    # - ARGPARSER_HELP_DESCRIPTION
+    # - ARGPARSER_HELP_EXIT_CODE
+    # - ARGPARSER_HELP_FILE
+    # - ARGPARSER_HELP_FILE_INCLUDE_CHAR
+    # - ARGPARSER_HELP_FILE_KEEP_COMMENTS
+    # - ARGPARSER_HELP_OPTIONS
+    # - ARGPARSER_LANGUAGE
+    # - ARGPARSER_MAX_COL_WIDTH_1
+    # - ARGPARSER_MAX_COL_WIDTH_2
+    # - ARGPARSER_MAX_COL_WIDTH_3
+    # - ARGPARSER_MAX_WIDTH
+    # - ARGPARSER_POSITIONAL_ARG_GROUP
+    # - ARGPARSER_READ_ARGS
+    # - ARGPARSER_SCRIPT_NAME
+    # - ARGPARSER_SET_ARGS
+    # - ARGPARSER_SET_ARRAYS
+    # - ARGPARSER_SILENCE_ERRORS
+    # - ARGPARSER_SILENCE_WARNINGS
+    # - ARGPARSER_STYLE_FILE
+    # - ARGPARSER_SUBCOMMAND_GROUP
+    # - ARGPARSER_TRANSLATION_FILE
+    # - ARGPARSER_UNSET_ARGS
+    # - ARGPARSER_UNSET_ENV_VARS
+    # - ARGPARSER_UNSET_FUNCTIONS
+    # - ARGPARSER_USAGE_EXIT_CODE
+    # - ARGPARSER_USAGE_FILE
+    # - ARGPARSER_USAGE_FILE_INCLUDE_CHAR
+    # - ARGPARSER_USAGE_FILE_KEEP_COMMENTS
+    # - ARGPARSER_USAGE_MESSAGE_OPTION_TYPE
+    # - ARGPARSER_USAGE_MESSAGE_ORIENTATION
+    # - ARGPARSER_USAGE_OPTIONS
+    # - ARGPARSER_USE_COLORS
+    # - ARGPARSER_USE_LONG_OPTIONS
+    # - ARGPARSER_USE_SHORT_OPTIONS
+    # - ARGPARSER_USE_STYLES
+    # - ARGPARSER_USE_UNICODE
+    # - ARGPARSER_VERSION_EXIT_CODE
+    # - ARGPARSER_VERSION_NUMBER
+    # - ARGPARSER_VERSION_OPTIONS
+    # - ARGPARSER_WRITE_ARGS
 
     ARGPARSER_ADD_HELP=true
     ARGPARSER_ADD_USAGE=true
@@ -3393,9 +3393,9 @@ function argparser_modify_env_vars() {
     # script, or in the environment.
     #
     # Environment:
-    # ARGPARSER_SCRIPT_NAME
-    # ARGPARSER_USE_STYLES
-    # ARGPARSER_USE_STYLES_IN_FILES (read-only)
+    # - ARGPARSER_SCRIPT_NAME
+    # - ARGPARSER_USE_STYLES
+    # - ARGPARSER_USE_STYLES_IN_FILES (read-only)
 
     # For the deprecated ${ARGPARSER_USE_STYLES_IN_FILES}, set
     # ${ARGPARSER_USE_STYLES} to "always" or "tty".  Should the
@@ -3522,7 +3522,7 @@ function argparser_check_env_vars() {
 
     # Check if all environment variables expected to be Booleans are
     # "true" or "false".  Else, output an error message.
-    error_messages=( )
+    error_messages=()
     vars=(
         ARGPARSER_ADD_HELP
         ARGPARSER_ADD_USAGE
@@ -4147,11 +4147,11 @@ function argparser_read_translation() {
     language=""
     translation="?"
     is_continued=false
-    error_lines=( )
-    error_messages=( )
+    error_lines=()
+    error_messages=()
 
     for line in "${lines[@]}"; do
-        if [[ -z "${line}" || "${line}" == \#* ]]; then
+        if [[ -z "${line}" || "${line}" == "#"* ]]; then
             # The line is empty or commented.
             continue
         elif [[ "${line}" == "---" || "${line}" == "..." ]]; then
@@ -4420,10 +4420,10 @@ function argparser_read_styles() {
 
     # Read the style file.
     mapfile -t lines < "${ARGPARSER_STYLE_FILE}"
-    error_messages=( )
+    error_messages=()
 
     for line in "${lines[@]}"; do
-        if [[ -z "${line}" || "${line}" == \#* ]]; then
+        if [[ -z "${line}" || "${line}" == "#"* ]]; then
             # Ignore the empty or commented line.
             continue
         elif [[ "${line}" == *=* ]]; then
@@ -4912,7 +4912,7 @@ function argparser_create_args_definition() {
     # POSIX multi-line string with subsequent help/usage/version flag
     # checking.  Possibly, precede the table with the needed environment
     # variables.
-    args_definition=( )
+    args_definition=()
     if [[ "${shell}" == "Bash" ]]; then
         if [[ "${delimiter}" != "${ARGPARSER_ARG_DELIMITER_1}" ]]; then
             args_definition+=("ARGPARSER_ARG_DELIMITER_1=\"${delimiter}\"")
@@ -5162,7 +5162,7 @@ function argparser_parse_args_definition() {
 
     # If the column with the argument identifiers isn't given, output an
     # error message.
-    error_messages=( )
+    error_messages=()
     if [[ -z "${column_indices[id]}" ]]; then
         if [[ "${definition_type}" == "script" ]]; then
             error_message="Error: In the arguments definition in \"\$1\", "
@@ -5298,7 +5298,7 @@ function argparser_parse_args_definition() {
 
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values_arr \
                 <<< "${choice_values_str}"
-            resolved_choice_values_arr=( )
+            resolved_choice_values_arr=()
             for range in "${choice_values_arr[@]}"; do
                 if [[ "${range}" == *-*-*-* ]]; then
                     error_message="Error: The argument with the identifier "
@@ -6474,8 +6474,8 @@ function argparser_add_args_definition_help_options() {
         "usage"
         "version"
     )
-    short_options=( )
-    long_options=( )
+    short_options=()
+    long_options=()
 
     IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a option_names_arr \
         <<< "${ARGPARSER_HELP_OPTIONS}"
@@ -6718,14 +6718,14 @@ function argparser_get_args_definition() {
     fi
 
     # Read the arguments definition.
-    args_definition_file=( )
-    args_definition_script=( )
-    error_messages=( )
+    args_definition_file=()
+    args_definition_script=()
+    error_messages=()
 
     argparser_translate "Error" "Error"
     translated_error="${translation}"
 
-    messages=( )
+    messages=()
     argparser_read_args_definition "${args[@]}"
     for message in "${messages[@]}"; do
         # Append the arguments definition to those for the file or
@@ -6752,7 +6752,7 @@ function argparser_get_args_definition() {
 
     # If ${ARGPARSER_CHECK_ARG_DEF} is set to "true", check the
     # consistency of the arguments definition.
-    error_messages=( )
+    error_messages=()
     if [[ "${ARGPARSER_CHECK_ARG_DEF}" == true ]]; then
         # Check the arguments definition, first the short and long
         # option names, then the default and choice values.
@@ -7221,7 +7221,7 @@ function argparser_parse_long_option() {
     then
         # Check if the argument is an abbreviated long option, since no
         # argument identifier for the entire option name has been found.
-        abbr_long_options=( )
+        abbr_long_options=()
         for arg_id in "${!all_long_options[@]}"; do
             # Read the argument's definition.
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a long_options \
@@ -7524,7 +7524,7 @@ function argparser_parse_positional_args() {
 
     # Read the arguments and split the values on
     # ${ARGPARSER_ARG_DELIMITER_2} characters.
-    values=( )
+    values=()
     for given_arg in "$@"; do
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -d "" -r -a given_args \
             <<< "${given_arg}"
@@ -7761,7 +7761,7 @@ function argparser_check_arg_values() {
     # value is possible, below.
     arg_id="$1"
     if argparser_in_array "${arg_id}" "${all_positional_args[@]}"; then
-        prefixes=( )
+        prefixes=()
     else
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a prefixes <<< "$2"
     fi
@@ -7772,7 +7772,7 @@ function argparser_check_arg_values() {
             values_arr=("${values_str}")
         else
             values_str=""
-            values_arr=( )
+            values_arr=()
         fi
 
         # Read the argument's definition.
@@ -8285,10 +8285,10 @@ function argparser_parse_args() {
     is_positional_only=false
     is_positional_start=true
 
-    given_positional_args=( )
+    given_positional_args=()
     given_subcommand=""
 
-    error_messages=( )
+    error_messages=()
 
     for given_arg in "${given_args[@]}"; do
         # Parse the argument, then read the output message and set the
@@ -8296,7 +8296,7 @@ function argparser_parse_args() {
         # multiple times, i.e., when the identifier already exists in
         # ${!args[@]}, add the new value or prefix to the previously
         # given ones.
-        messages=( )
+        messages=()
         argparser_parse_arg "${given_arg}"
 
         for message in "${messages[@]}"; do
@@ -8476,7 +8476,7 @@ function argparser_parse_args() {
     # Parse the script's given positional arguments, that are yet only
     # assigned to a single indexed array.  Thereby, set each argument's
     # value.
-    messages=( )
+    messages=()
     argparser_parse_positional_args "${given_positional_args[@]}"
 
     # Sort, filter, colorize, and print all error messages, a blank
@@ -8505,8 +8505,8 @@ function argparser_parse_args() {
     fi
 
     # Check the arguments' values.
-    error_messages=( )
-    warning_messages=( )
+    error_messages=()
+    warning_messages=()
     for arg_id in "${!all_short_options[@]}" "${all_positional_args[@]}"; do
         # Check which defined argument is given to the script.  Omitted
         # arguments or those without value are assigned the empty string
@@ -8687,7 +8687,7 @@ function argparser_write_args() {
     fi
 
     # Sort and print the arguments.
-    args_repr=( )
+    args_repr=()
     for arg_id in "${!args[@]}"; do
         args_repr+=("${arg_id}=${args[${arg_id}]}")
     done
@@ -8819,7 +8819,7 @@ function argparser_create_help_message() {
     local value_names_str
 
     # Sort the defined subcommands.
-    subcommands=( )
+    subcommands=()
     for subcommand in "${all_subcommands[@]}"; do
         if [[ -n "${subcommand}" ]] \
             && ! argparser_in_array "${subcommand}" "${subcommands[@]}"
@@ -8834,7 +8834,7 @@ function argparser_create_help_message() {
     # Read the arguments' groups to sort the keyword arguments by group
     # in the help message.  To this end, compare each argument's group
     # later upon iterating over them.
-    arg_groups=( )
+    arg_groups=()
     for arg_group in "${all_arg_groups[@]}"; do
         if [[ "${arg_group}" != "${ARGPARSER_SUBCOMMAND_GROUP}" \
             && "${arg_group}" != "${ARGPARSER_POSITIONAL_ARG_GROUP}" \
@@ -8848,9 +8848,9 @@ function argparser_create_help_message() {
     # The help message is structured in three columns: short options,
     # long options and the help text.  Populate these columns with the
     # entries for each argument.
-    col_1=( )
-    col_2=( )
-    col_3=( )
+    col_1=()
+    col_2=()
+    col_3=()
 
     has_default_args=false
     has_required_args=false
@@ -9145,10 +9145,10 @@ function argparser_create_help_message() {
     # Compute the columns for the keyword arguments, with the help
     # options last.
     for arg_group in "${arg_groups[@]}" "${ARGPARSER_HELP_ARG_GROUP}"; do
-        new_col_1=( )
-        new_col_2=( )
-        new_col_3=( )
-        all_option_names=( )
+        new_col_1=()
+        new_col_2=()
+        new_col_3=()
+        all_option_names=()
 
         for arg_id in "${!all_short_options[@]}"; do
             # Read the argument's group to check whether it belongs to
@@ -9808,9 +9808,9 @@ function argparser_create_help_message() {
     # folded line to the same number of line breaks, to keep the lines
     # synchronized with each other, despite likely needing a different
     # number of rows in the final help message.
-    new_col_1=( )
-    new_col_2=( )
-    new_col_3=( )
+    new_col_1=()
+    new_col_2=()
+    new_col_3=()
     for i in "${!col_1[@]}"; do
         # Limit the width of the first two columns of the help message
         # to ${ARGPARSER_MAX_COL_WIDTH_*}, and of the third column to
@@ -9984,7 +9984,7 @@ function argparser_create_help_message() {
         # For any argument line, output the three columns and their
         # delimiting whitespace.  If all three columns are empty, the
         # end of the current argument group has been reached.
-        help_message=( )
+        help_message=()
         while [[ "${col_1[i]} ${col_2[i]} ${col_3[i]}" != +( ) ]]; do
             if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true \
                 && "${ARGPARSER_USE_LONG_OPTIONS}" == true ]]
@@ -10119,7 +10119,7 @@ function argparser_create_usage_message() {
     local whitespace
 
     # Get the defined subcommands.
-    subcommands=( )
+    subcommands=()
     for subcommand in "${all_subcommands[@]}"; do
         if [[ -n "${subcommand}" ]] \
             && ! argparser_in_array "${subcommand}" "${subcommands[@]}"
@@ -10132,7 +10132,7 @@ function argparser_create_usage_message() {
     # colorized subcommands to the usage message, forming a separate
     # line.  If a subcommand is given, it will be added later (between
     # the script name and the help options).
-    usage_message=( )
+    usage_message=()
 
     if (( "${#subcommands[@]}" > 0 )) && [[ -z "${given_subcommand}" ]]; then
         argparser_colorize "${styles["subcommand"]}" 1 "array" \
@@ -10143,7 +10143,7 @@ function argparser_create_usage_message() {
 
     # Get the help options and sort them by the argument identifier,
     # such that the order is always "help", "usage", "version".
-    help_option_args=( )
+    help_option_args=()
     for arg_id in "${!all_short_options[@]}"; do
         if [[ "${all_arg_groups[${arg_id}]}" == "${ARGPARSER_HELP_ARG_GROUP}" ]]
         then
@@ -10158,7 +10158,7 @@ function argparser_create_usage_message() {
 
     # Concatenate the short or long option names of each help option and
     # colorize them, then add the help options to the usage message.
-    help_options=( )
+    help_options=()
     for arg_id in "${help_option_args[@]}"; do
         if [[ ("${ARGPARSER_USAGE_MESSAGE_OPTION_TYPE}" == "short" \
                 && "${ARGPARSER_USE_SHORT_OPTIONS}" == true) \
@@ -10190,10 +10190,10 @@ function argparser_create_usage_message() {
     # same for the long options and short option-only arguments.  In
     # both cases, having both short and long option names does not
     # matter as only one sort gets printed.
-    short_option_default_args=( )
-    short_option_required_args=( )
-    long_option_default_args=( )
-    long_option_required_args=( )
+    short_option_default_args=()
+    short_option_required_args=()
+    long_option_default_args=()
+    long_option_required_args=()
     if [[ "${ARGPARSER_USAGE_MESSAGE_OPTION_TYPE}" == "short" ]]; then
         for arg_id in "${!all_short_options[@]}"; do
             # Skip the help options.
@@ -10276,8 +10276,8 @@ function argparser_create_usage_message() {
 
     # Likewise, separate positional arguments with default values from
     # those without.
-    positional_default_args=( )
-    positional_required_args=( )
+    positional_default_args=()
+    positional_required_args=()
     for arg_id in "${all_positional_args[@]}"; do
         # Read the argument's definition.
         subcommand="${all_subcommands[${arg_id}]}"
@@ -10303,7 +10303,7 @@ function argparser_create_usage_message() {
 
     # Output each keyword argument with short options and default values
     # and sort them alphabetically.
-    lines=( )
+    lines=()
     for arg_id in "${short_option_default_args[@]}"; do
         # Read the argument's definition.
         short_options_str="${all_short_options[${arg_id}]}"
@@ -10397,7 +10397,7 @@ function argparser_create_usage_message() {
 
     # Output each keyword argument with long options and default values
     # and sort them alphabetically.
-    lines=( )
+    lines=()
     for arg_id in "${long_option_default_args[@]}"; do
         # Read the argument's definition.
         long_options_str="${all_long_options[${arg_id}]}"
@@ -10491,7 +10491,7 @@ function argparser_create_usage_message() {
 
     # Output each keyword argument with short options and without
     # default values and sort them alphabetically.
-    lines=( )
+    lines=()
     for arg_id in "${short_option_required_args[@]}"; do
         # Read the argument's definition.
         short_options_str="${all_short_options[${arg_id}]}"
@@ -10585,7 +10585,7 @@ function argparser_create_usage_message() {
 
     # Output each keyword argument with long options and without default
     # values and sort them alphabetically.
-    lines=( )
+    lines=()
     for arg_id in "${long_option_required_args[@]}"; do
         # Read the argument's definition.
         long_options_str="${all_long_options[${arg_id}]}"
@@ -10678,7 +10678,7 @@ function argparser_create_usage_message() {
     fi
 
     # Output each positional argument with default values.
-    lines=( )
+    lines=()
     for arg_id in "${positional_default_args[@]}"; do
         # Read the argument's definition.
         value_names_str="${all_value_names[${arg_id}]}"
@@ -10727,7 +10727,7 @@ function argparser_create_usage_message() {
     usage_message+=("${lines[@]}")
 
     # Output each positional argument without default values.
-    lines=( )
+    lines=()
     for arg_id in "${positional_required_args[@]}"; do
         # Read the argument's definition.
         value_names_str="${all_value_names[${arg_id}]}"
@@ -10924,7 +10924,7 @@ function argparser_print_help_message() {
     exit="$1"
 
     # Get the defined subcommands.
-    subcommands=( )
+    subcommands=()
     for subcommand in "${all_subcommands[@]}"; do
         if [[ -n "${subcommand}" ]] \
             && ! argparser_in_array "${subcommand}" "${subcommands[@]}"
@@ -10935,7 +10935,7 @@ function argparser_print_help_message() {
 
     # Get the positional arguments for the given subcommand, if any, or
     # the general program.
-    positional_args=( )
+    positional_args=()
     for arg_id in "${all_positional_args[@]}"; do
         # Read the argument's definition.
         subcommand="${all_subcommands[${arg_id}]}"
@@ -10949,7 +10949,7 @@ function argparser_print_help_message() {
 
     # Read the keyword arguments' groups to sort them for the help
     # message.
-    arg_groups=( )
+    arg_groups=()
     for arg_group in "${all_arg_groups[@]}"; do
         if [[ "${arg_group}" != "${ARGPARSER_SUBCOMMAND_GROUP}" \
             && "${arg_group}" != "${ARGPARSER_POSITIONAL_ARG_GROUP}" \
@@ -11019,7 +11019,7 @@ function argparser_print_help_message() {
 
     # Resolve the summarizing include directives by replacing them with
     # the individual include directives and separating blank lines.
-    resolved_lines=( )
+    resolved_lines=()
     for line in "${lines[@]}"; do
         if [[ "${line::1}" != "${include_char}" ]]; then
             resolved_lines+=("${line}")
@@ -11182,7 +11182,7 @@ function argparser_print_help_message() {
                 error_message="${translation}"
                 error_messages+=("${error_message}")
             fi
-        elif [[ "${line::1}" == \# \
+        elif [[ "${line::1}" == "#" \
             && "${ARGPARSER_HELP_FILE_KEEP_COMMENTS}" == false ]]
         then
             line_type="comment"
@@ -11268,7 +11268,7 @@ function argparser_print_usage_message() {
 
     # Resolve the summarizing include directives by replacing them with
     # the individual include directives and separating blank lines.
-    resolved_lines=( )
+    resolved_lines=()
     for line in "${lines[@]}"; do
         if [[ "${line::1}" != "${ARGPARSER_USAGE_FILE_INCLUDE_CHAR}" ]]; then
             resolved_lines+=("${line}")
@@ -11317,7 +11317,7 @@ function argparser_print_usage_message() {
                 error_message="${translation}"
                 error_messages+=("${error_message}")
             fi
-        elif [[ "${line::1}" == \# \
+        elif [[ "${line::1}" == "#" \
             && "${ARGPARSER_USAGE_FILE_KEEP_COMMENTS}" == false ]]
         then
             line_type="comment"
@@ -11971,19 +11971,19 @@ function argparser_main() {
     set -- "${script_args[@]}"
     is_self_parsing=false
 
-    all_arg_groups=( )
-    all_arg_numbers=( )
-    all_choice_values=( )
-    all_default_values=( )
-    all_help_texts=( )
-    all_long_options=( )
-    all_notes=( )
-    all_positional_args=( )
-    all_resolved_choice_values=( )
-    all_short_options=( )
-    all_subcommands=( )
-    all_types=( )
-    all_value_names=( )
+    all_arg_groups=()
+    all_arg_numbers=()
+    all_choice_values=()
+    all_default_values=()
+    all_help_texts=()
+    all_long_options=()
+    all_notes=()
+    all_positional_args=()
+    all_resolved_choice_values=()
+    all_short_options=()
+    all_subcommands=()
+    all_types=()
+    all_value_names=()
 
     # If ${ARGPARSER_TRANSLATION_FILE} isn't set to the empty string,
     # read the translation file.  To be able to use the localized names

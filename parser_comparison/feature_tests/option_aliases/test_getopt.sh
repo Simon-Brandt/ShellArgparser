@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-10-22
+# Last Modification: 2026-11-11
 
 # Usage: Run this script from test_features.sh as
 # bash test_features.sh \
@@ -37,7 +37,7 @@ if ! args="$(getopt --options="v:V:" -- "$@" 2> /dev/null)"; then
 fi
 eval set -- "${args}"
 
-var=( )
+var=()
 
 while true; do
     case "$1" in

@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-11-09
+# Last Modification: 2026-11-11
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -289,8 +289,8 @@ function print_failed_commands() {
 test_section=0
 failed_cmd_count=0
 succeeded_cmd_count=0
-failed_cmds=( )
-failure_reasons=( )
+failed_cmds=()
+failure_reasons=()
 
 ###############################################################################
 
