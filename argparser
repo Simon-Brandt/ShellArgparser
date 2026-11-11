@@ -10056,8 +10056,12 @@ function argparser_create_usage_message() {
     #   argument names (read-only)
     # - all_short_options: the associative array holding the short
     #   option names (read-only)
+    # - all_subcommands: the associative array holding the subcommands
+    #   (read-only)
     # - all_value_names: the associative array holding the value names
     #   (read-only)
+    # - given_subcommand: the active subcommand, if given, or the empty
+    #   string, else
     # - styles: the associative array containing the styles (read-only)
     # - usage_message_blocks: the associative array holding the usage
     #   message's groups usable as include directive
@@ -10083,7 +10087,7 @@ function argparser_create_usage_message() {
     local -a framed_array
     local header
     local -a help_option_args
-    local help_options
+    local -a help_options
     local joined_array
     local length
     local -a lines
@@ -10104,6 +10108,8 @@ function argparser_create_usage_message() {
     local -a short_options_arr
     local short_options_str
     local -a sorted_array
+    local subcommand
+    local -a subcommands
     local translation
     local -a usage_message
     local uncolorized_line
@@ -10111,6 +10117,29 @@ function argparser_create_usage_message() {
     local -a value_names_arr
     local value_names_str
     local whitespace
+
+    # Get the defined subcommands.
+    subcommands=( )
+    for subcommand in "${all_subcommands[@]}"; do
+        if [[ -n "${subcommand}" ]] \
+            && ! argparser_in_array "${subcommand}" "${subcommands[@]}"
+        then
+            subcommands+=("${subcommand}")
+        fi
+    done
+
+    # If there are subcommands defined, but none is given, add the
+    # colorized subcommands to the usage message, forming a separate
+    # line.  If a subcommand is given, it will be added later (between
+    # the script name and the help options).
+    usage_message=( )
+
+    if (( "${#subcommands[@]}" > 0 )) && [[ -z "${given_subcommand}" ]]; then
+        argparser_colorize "${styles["subcommand"]}" 1 "array" \
+            "${subcommands[@]}"
+        argparser_join " | " "${colorized_array[@]}"
+        usage_message+=("[${joined_array}]")
+    fi
 
     # Get the help options and sort them by the argument identifier,
     # such that the order is always "help", "usage", "version".
@@ -10127,34 +10156,28 @@ function argparser_create_usage_message() {
         help_option_args=("${sorted_array[@]}")
     fi
 
-    # Concatenate the short or long option names of each help option.
-    help_options=""
+    # Concatenate the short or long option names of each help option and
+    # colorize them, then add the help options to the usage message.
+    help_options=( )
     for arg_id in "${help_option_args[@]}"; do
-        # Separate the help options' names by pipes.
-        if [[ -n "${help_options}" ]]; then
-            help_options+=" | "
-        fi
-
-        # Set the help options' names.
         if [[ ("${ARGPARSER_USAGE_MESSAGE_OPTION_TYPE}" == "short" \
                 && "${ARGPARSER_USE_SHORT_OPTIONS}" == true) \
             || "${ARGPARSER_USE_LONG_OPTIONS}" == false ]]
         then
             argparser_get_option_names "${arg_id}" "short" true
-            help_options+="${option_names_str}"
+            help_options+=("${option_names_str}")
         elif [[ ("${ARGPARSER_USAGE_MESSAGE_OPTION_TYPE}" == "long" \
                 && "${ARGPARSER_USE_LONG_OPTIONS}" == true) \
             || "${ARGPARSER_USE_SHORT_OPTIONS}" == false ]]
         then
             argparser_get_option_names "${arg_id}" "long" true
-            help_options+="${option_names_str}"
+            help_options+=("${option_names_str}")
         fi
     done
 
-    # Add the help options to the usage message.
-    usage_message=( )
-    if [[ -n "${help_options}" ]]; then
-        usage_message+=("[${help_options}]")
+    if (( "${#help_options[@]}" > 0 )); then
+        argparser_join " | " "${help_options[@]}"
+        usage_message+=("[${joined_array}]")
     fi
 
     # If ${ARGPARSER_USAGE_MESSAGE_OPTION_TYPE} is set to "short",
@@ -10181,13 +10204,17 @@ function argparser_create_usage_message() {
             fi
 
             # Read the argument's definition.
+            subcommand="${all_subcommands[${arg_id}]}"
             short_options_str="${all_short_options[${arg_id}]}"
             default_values="${all_default_values[${arg_id}]}"
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
                 <<< "${all_notes[${arg_id}]}"
 
-            # If the argument shall be hidden, skip it.
-            if argparser_in_array "hidden" "${notes[@]}"; then
+            # If the argument belongs to a different subcommand than
+            # given or shall be hidden, skip it.
+            if [[ "${subcommand}" != "${given_subcommand}" ]] \
+                || argparser_in_array "hidden" "${notes[@]}"
+            then
                 continue
             fi
 
@@ -10216,13 +10243,17 @@ function argparser_create_usage_message() {
             fi
 
             # Read the argument's definition.
+            subcommand="${all_subcommands[${arg_id}]}"
             long_options_str="${all_long_options[${arg_id}]}"
             default_values="${all_default_values[${arg_id}]}"
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
                 <<< "${all_notes[${arg_id}]}"
 
-            # If the argument shall be hidden, skip it.
-            if argparser_in_array "hidden" "${notes[@]}"; then
+            # If the argument belongs to a different subcommand than
+            # given or shall be hidden, skip it.
+            if [[ "${subcommand}" != "${given_subcommand}" ]] \
+                || argparser_in_array "hidden" "${notes[@]}"
+            then
                 continue
             fi
 
@@ -10249,12 +10280,16 @@ function argparser_create_usage_message() {
     positional_required_args=( )
     for arg_id in "${all_positional_args[@]}"; do
         # Read the argument's definition.
+        subcommand="${all_subcommands[${arg_id}]}"
         default_values="${all_default_values[${arg_id}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
             <<< "${all_notes[${arg_id}]}"
 
-        # If the argument shall be hidden, skip it.
-        if argparser_in_array "hidden" "${notes[@]}"; then
+        # If the argument belongs to a different subcommand than given
+        # or shall be hidden, skip it.
+        if [[ "${subcommand}" != "${given_subcommand}" ]] \
+            || argparser_in_array "hidden" "${notes[@]}"
+        then
             continue
         fi
 
@@ -10742,20 +10777,29 @@ function argparser_create_usage_message() {
 
     # To keep all arguments aligned in columnar orientation, prepend
     # whitespace to the usage message's lines.  Its length equals the
-    # length of the header with the script name, and, if no usage frame
-    # is given, the (translated) caption.  For the first line, where the
-    # header will be added, below, remove the whitespace afterwards.
-    # For a row-like orientation, join the lines using one space,
-    # instead.  Even if a row-like orientation is preferred, use a
-    # columnar orientation if the (uncolorized) usage message's length,
-    # when joined to a row, exceeds ${ARGPARSER_MAX_WIDTH}.
+    # length of the (translated) caption (if no usage frame is given),
+    # the header with the script name, and the given subcommand's name.
+    # For the first line, where the header will be added, below, remove
+    # the whitespace afterwards.  For a row-like orientation, join the
+    # lines using one space, instead.  Even if a row-like orientation is
+    # preferred, use a columnar orientation if the (uncolorized) usage
+    # message's length, when joined to a row, exceeds
+    # ${ARGPARSER_MAX_WIDTH}.
     argparser_translate "Usage" "Usage"
     caption="${translation}"
 
     if [[ -n "${styles["usage_frame"]}" ]]; then
-        header="${ARGPARSER_SCRIPT_NAME} "
+        if [[ -n "${given_subcommand}" ]]; then
+            header="${ARGPARSER_SCRIPT_NAME} ${given_subcommand} "
+        else
+            header="${ARGPARSER_SCRIPT_NAME} "
+        fi
     else
-        header="${caption}: ${ARGPARSER_SCRIPT_NAME} "
+        if [[ -n "${given_subcommand}" ]]; then
+            header="${caption}: ${ARGPARSER_SCRIPT_NAME} ${given_subcommand} "
+        else
+            header="${caption}: ${ARGPARSER_SCRIPT_NAME} "
+        fi
     fi
 
     length=0
@@ -10775,26 +10819,46 @@ function argparser_create_usage_message() {
         usage_message=("${joined_array}")
     fi
 
-    # Colorize the caption and script name.  If a usage frame style is
-    # given, prepend the script name to the first option line, right-pad
-    # the messages and draw a frame around the block, containing the
-    # colorized usage caption as heading.  Otherwise, print the usage
-    # message with script name, heading, and the first option line in
-    # one line.  Finally, join the lines into a single string.
-    argparser_colorize "${styles["script_name"]}" 1 script_name \
-        "${ARGPARSER_SCRIPT_NAME}"
-
+    # Colorize the caption, the script name, and the given subcommand's
+    # name, (if any).  If a usage frame style is given, prepend the
+    # script and given subcommand's names to the first option line,
+    # right-pad the messages and draw a frame around the block,
+    # containing the colorized usage caption as heading.  Otherwise,
+    # print the usage message with script and subcommand names, heading,
+    # and the first option line in one line.  Finally, join the lines
+    # into a single string.
     if [[ -n "${styles["usage_frame"]}" ]]; then
         argparser_colorize "${styles["usage_caption"]}" 1 caption \
             " ${caption} "
-        usage_message[0]="${script_name} ${usage_message[0]}"
+    else
+        argparser_colorize "${styles["usage_caption"]}" 1 caption "${caption}:"
+    fi
+
+    argparser_colorize "${styles["script_name"]}" 1 script_name \
+        "${ARGPARSER_SCRIPT_NAME}"
+
+    if [[ -n "${given_subcommand}" ]]; then
+        argparser_colorize "${styles["subcommand"]}" 1 subcommand \
+            "${given_subcommand}"
+    fi
+
+    if [[ -n "${styles["usage_frame"]}" ]]; then
+        if [[ -n "${given_subcommand}" ]]; then
+            usage_message[0]="${script_name} ${subcommand} ${usage_message[0]}"
+        else
+            usage_message[0]="${script_name} ${usage_message[0]}"
+        fi
+
         argparser_pad "right" "auto" "${usage_message[@]}"
         argparser_draw_frame "${styles["usage_frame"]}" 1 "array" \
             "${caption}" "${padded_array[@]}"
         usage_message=("${framed_array[@]}")
     else
-        argparser_colorize "${styles["usage_caption"]}" 1 caption "${caption}:"
-        usage_message[0]="${caption} ${script_name} ${usage_message[0]}"
+        if [[ -n "${given_subcommand}" ]]; then
+            usage_message[0]="${caption} ${script_name} ${subcommand} ${usage_message[0]}"
+        else
+            usage_message[0]="${caption} ${script_name} ${usage_message[0]}"
+        fi
     fi
 
     argparser_join $'\n' "${usage_message[@]}"
