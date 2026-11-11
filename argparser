@@ -8329,7 +8329,9 @@ function argparser_parse_args() {
                 # empty string value, iff the previous value is indeed
                 # empty.
                 arg_value="${message#Value: }"
-                if [[ "${is_positional_start}" == true ]]; then
+                if [[ "${is_positional_start}" == true \
+                    && "${is_positional}" == true ]]
+                then
                     # The value is given in the initial positional
                     # location and could be a positional argument or a
                     # subcommand.
