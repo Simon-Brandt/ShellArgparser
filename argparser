@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-11-10
+# Last Modification: 2026-11-11
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -6578,6 +6578,7 @@ function argparser_get_args_definition() {
     # defined later.
     local error_message
     local -a error_messages
+    local i
     local message
     local -a messages
     local name
@@ -8696,8 +8697,12 @@ function argparser_create_help_message() {
     #   argument names (read-only)
     # - all_short_options: the associative array holding the short
     #   option names (read-only)
+    # - all_subcommands: the associative array holding the subcommands
+    #   (read-only)
     # - all_value_names: the associative array holding the value names
     #   (read-only)
+    # - given_subcommand: the active subcommand, if given, or the empty
+    #   string, else
     # - help_message_blocks: the associative array holding the help
     #   message's groups usable as include directive
     # - styles: the associative array containing the styles (read-only)
@@ -8770,6 +8775,7 @@ function argparser_create_help_message() {
     local optional_arguments_hint
     local pad_width
     local -a padded_array
+    local -a positional_args
     local remark
     local script_name
     local short_option
@@ -8779,6 +8785,8 @@ function argparser_create_help_message() {
     local -A sorted_col_1
     local -A sorted_col_2
     local -A sorted_col_3
+    local subcommand
+    local -a subcommands
     local translation
     local type
     local -a uncolorized_array
@@ -8787,12 +8795,26 @@ function argparser_create_help_message() {
     local -a value_names_arr
     local value_names_str
 
+    # Sort the defined subcommands.
+    subcommands=( )
+    for subcommand in "${all_subcommands[@]}"; do
+        if [[ -n "${subcommand}" ]] \
+            && ! argparser_in_array "${subcommand}" "${subcommands[@]}"
+        then
+            subcommands+=("${subcommand}")
+        fi
+    done
+
+    argparser_sort false "${subcommands[@]}"
+    subcommands=("${sorted_array[@]}")
+
     # Read the arguments' groups to sort the keyword arguments by group
     # in the help message.  To this end, compare each argument's group
     # later upon iterating over them.
     arg_groups=( )
     for arg_group in "${all_arg_groups[@]}"; do
-        if [[ "${arg_group}" != "${ARGPARSER_POSITIONAL_ARG_GROUP}" \
+        if [[ "${arg_group}" != "${ARGPARSER_SUBCOMMAND_GROUP}" \
+            && "${arg_group}" != "${ARGPARSER_POSITIONAL_ARG_GROUP}" \
             && "${arg_group}" != "${ARGPARSER_HELP_ARG_GROUP}" ]] \
             && ! argparser_in_array "${arg_group}" "${arg_groups[@]}"
         then
@@ -8810,9 +8832,84 @@ function argparser_create_help_message() {
     has_default_args=false
     has_required_args=false
 
+    # Compute the columns for the subcommands.
+    for subcommand in "${subcommands[@]}"; do
+        # Read the subcommand's definition.
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
+            <<< "${all_notes[${subcommand}]}"
+        help_text="${all_help_texts[${subcommand}]}"
+
+        # Set a flag whether the subcommand is deprecated or hidden.
+        is_deprecated=false
+        is_hidden=false
+        for note in "${notes[@]}"; do
+            if [[ "${note}" == "deprecated" ]]; then
+                is_deprecated=true
+            elif [[ "${note}" == "hidden" ]]; then
+                is_hidden=true
+            fi
+        done
+
+        # If a subcommand is given or the subcommand shall be hidden,
+        # skip it.
+        if [[ -n "${given_subcommand}" || "${is_hidden}" == true ]]; then
+            continue
+        fi
+
+        # Colorize the subcommand name and the help text.
+        argparser_colorize "${styles["subcommand"]}" 1 subcommand \
+            "${subcommand}"
+        argparser_colorize "${styles["help_text"]}" 1 help_text "${help_text}"
+
+        # Define the columns' next line, for the current subcommand.
+        # Depending on whether there are short options, i.e., the first
+        # column may or may not be used, put the subcommand into the
+        # first or second column.
+        if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
+            # Set the first column's value.
+            new_col_1_value="${subcommand}"
+            col_1+=("${new_col_1_value}")
+
+            # Set the second column's value.
+            col_2+=("")
+        else
+            # Set the first column's value.
+            col_1+=("")
+
+            # Set the second column's value.
+            new_col_2_value="${subcommand}"
+            col_2+=("${new_col_2_value}")
+        fi
+
+        # Set the third column's value.
+        if [[ "${is_deprecated}" == true ]]; then
+            # Deprecated.
+            argparser_translate "Deprecated" "DEPRECATED"
+            argparser_colorize "${styles["deprecation_note"]}" 1 note \
+                "${translation}"
+            new_col_3_value="(${note}) ${help_text}"
+        else
+            # Not deprecated.
+            new_col_3_value="${help_text}"
+        fi
+        col_3+=("${new_col_3_value}")
+    done
+
+    # To mark the end of an argument group later upon printing, add an
+    # empty line in all three columns.  This cannot appear by chance,
+    # whereas empty lines for single columns emerge from the line break
+    # insertion when they are differently long.  Thus, a completely
+    # empty line can be used as safe argument group delimiter.
+    if (( "${#subcommands[@]}" > 0 )) && [[ -z "${given_subcommand}" ]]; then
+        col_1+=("")
+        col_2+=("")
+        col_3+=("")
+    fi
+
     # Compute the columns for the positional arguments.
     for arg_id in "${all_positional_args[@]}"; do
         # Read the argument's definition.
+        subcommand="${all_subcommands[${arg_id}]}"
         value_names_str="${all_value_names[${arg_id}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a value_names_arr \
             <<< "${value_names_str}"
@@ -8827,6 +8924,26 @@ function argparser_create_help_message() {
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
             <<< "${all_notes[${arg_id}]}"
         help_text="${all_help_texts[${arg_id}]}"
+
+        # Set a flag whether the argument is deprecated or hidden.
+        is_deprecated=false
+        is_hidden=false
+        for note in "${notes[@]}"; do
+            if [[ "${note}" == "deprecated" ]]; then
+                is_deprecated=true
+            elif [[ "${note}" == "hidden" ]]; then
+                is_hidden=true
+            fi
+        done
+
+        # If the argument belongs to a different subcommand than given
+        # or shall be hidden, skip it.
+        if [[ "${subcommand}" != "${given_subcommand}" \
+            || "${is_hidden}" == true ]]
+        then
+            continue
+        fi
+        positional_args+=("${arg_id}")
 
         # For character, file, and string arguments, wrap the default
         # values in quotes.
@@ -8858,28 +8975,12 @@ function argparser_create_help_message() {
 
         argparser_colorize "${styles["help_text"]}" 1 help_text "${help_text}"
 
-        # Set a flag whether the argument is deprecated or hidden.
-        is_deprecated=false
-        is_hidden=false
-        for note in "${notes[@]}"; do
-            if [[ "${note}" == "deprecated" ]]; then
-                is_deprecated=true
-            elif [[ "${note}" == "hidden" ]]; then
-                is_hidden=true
-            fi
-        done
-
-        # If the argument shall be hidden, skip it.
-        if [[ "${is_hidden}" == true ]]; then
-            continue
-        fi
-
         # Define the columns' next line, for the current argument.  The
         # argument may have some default and some choice values or an
         # arbitrary argument number, with the existence of each changing
-        # the look of the first or second column (depending on whether
-        # there are short options, so the first column may or may not be
-        # used).
+        # the look of the first or second column.  Depending on whether
+        # there are short options, i.e., the first column may or may not
+        # be used, put the argument into the first or second column.
         if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
             # Set the first column's value.
             if [[ "${arg_number}" == "+" || "${arg_number}" == "*" ]]; then
@@ -9012,7 +9113,7 @@ function argparser_create_help_message() {
     # whereas empty lines for single columns emerge from the line break
     # insertion when they are differently long.  Thus, a completely
     # empty line can be used as safe argument group delimiter.
-    if (( "${#all_positional_args[@]}" > 0 )); then
+    if (( "${#positional_args[@]}" > 0 )); then
         col_1+=("")
         col_2+=("")
         col_3+=("")
@@ -9034,6 +9135,7 @@ function argparser_create_help_message() {
             fi
 
             # Read the argument's remaining definition.
+            subcommand="${all_subcommands[${arg_id}]}"
             short_options_str="${all_short_options[${arg_id}]}"
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a short_options_arr \
                 <<< "${short_options_str}"
@@ -9059,6 +9161,28 @@ function argparser_create_help_message() {
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
                 <<< "${all_notes[${arg_id}]}"
             help_text="${all_help_texts[${arg_id}]}"
+
+            # Set a flag whether the option is deprecated or hidden.
+            is_deprecated=false
+            is_hidden=false
+            for note in "${notes[@]}"; do
+                if [[ "${note}" == "deprecated" ]]; then
+                    is_deprecated=true
+                elif [[ "${note}" == "hidden" ]]; then
+                    is_hidden=true
+                fi
+            done
+
+            # If the argument belongs to a different subcommand than
+            # given, and is no help option, or if it shall be hidden,
+            # skip it.
+            if [[ "${subcommand}" != "${given_subcommand}" \
+                && "${arg_group}" != "${ARGPARSER_HELP_ARG_GROUP}" ]]
+            then
+                continue
+            elif [[ "${is_hidden}" == true ]]; then
+                continue
+            fi
 
             # If there are less value names than short or long option
             # names, create the remaining value names by capitalizing
@@ -9153,22 +9277,6 @@ function argparser_create_help_message() {
                 else
                     has_required_args=true
                 fi
-            fi
-
-            # Set a flag whether the option is deprecated or hidden.
-            is_deprecated=false
-            is_hidden=false
-            for note in "${notes[@]}"; do
-                if [[ "${note}" == "deprecated" ]]; then
-                    is_deprecated=true
-                elif [[ "${note}" == "hidden" ]]; then
-                    is_hidden=true
-                fi
-            done
-
-            # If the argument shall be hidden, skip it.
-            if [[ "${is_hidden}" == true ]]; then
-                continue
             fi
 
             # Concatenate the name of all short and long options for the
@@ -9613,12 +9721,23 @@ function argparser_create_help_message() {
         col_3+=("")
     done
 
-    # If there are positional arguments, include the positional argument
-    # group as first one.  If there are keyword arguments, add them
-    # afterwards.  Finally, add the help options' group, if existing.
-    if (( "${#all_positional_args[@]}" > 0 )); then
+    # If there are subcommands, and none is given, include the
+    # subcommand argument group as first one.  If there are positional
+    # arguments defined for the given subcommand (or the general program
+    # if no subcommand is given), include the positional argument group
+    # as next one (by possibly setting the subcommand argument group
+    # before the positional argument group).  Then, add the help
+    # options' group, if existing, as last one.
+    if (( "${#positional_args[@]}" > 0 )); then
         arg_groups=(
             "${ARGPARSER_POSITIONAL_ARG_GROUP}"
+            "${arg_groups[@]}"
+        )
+    fi
+
+    if (( "${#subcommands[@]}" > 0 )) && [[ -z "${given_subcommand}" ]]; then
+        arg_groups=(
+            "${ARGPARSER_SUBCOMMAND_GROUP}"
             "${arg_groups[@]}"
         )
     fi
@@ -9741,13 +9860,26 @@ function argparser_create_help_message() {
     argparser_get_max "${max_col_width}" "$(( max_width + 2 ))"
     pad_width="${max_value}"
 
-    # Set the help message's usage line with the caption and the script
-    # name.
+    # Set the help message's usage line with the caption, the script
+    # name, and either the given subcommand, if any, or all subcommands.
     argparser_translate "Usage" "Usage"
     argparser_colorize "${styles["help_caption"]}" 1 caption "${translation}:"
     argparser_colorize "${styles["script_name"]}" 1 script_name \
         "${ARGPARSER_SCRIPT_NAME}"
     usage="${caption} ${script_name}"
+
+    if (( "${#subcommands[@]}" > 0 )); then
+        if [[ -n "${given_subcommand}" ]]; then
+            argparser_colorize "${styles["subcommand"]}" 1 subcommand \
+                "${given_subcommand}"
+            usage+=" ${subcommand}"
+        else
+            argparser_colorize "${styles["subcommand"]}" 1 "array" \
+                "${subcommands[@]}"
+            argparser_join " | " "${colorized_array[@]}"
+            usage+=" [${joined_array}]"
+        fi
+    fi
 
     # Add a hint for the optional keyword arguments (as summary), if
     # existing.
@@ -9767,34 +9899,36 @@ function argparser_create_help_message() {
         usage+=" ${mandatory_arguments_hint}"
     fi
 
-    # Add the names of the positional arguments, if existing.
-    if (( "${#all_positional_args[@]}" > 0 )); then
+    # Add the positional argument delimiter and the names of the
+    # positional arguments for the given subcommand (if any), if
+    # existing.
+    if (( "${#positional_args[@]}" > 0 )); then
         if [[ "${has_required_args}" == true ]]; then
             usage+=" --"
         elif [[ "${has_default_args}" == true ]]; then
             usage+=" [--]"
         fi
-
-        for arg_id in "${all_positional_args[@]}"; do
-            value_names_str="${all_value_names[${arg_id}]}"
-            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a value_names_arr \
-                <<< "${value_names_str}"
-            default_values_str="${all_default_values[${arg_id}]}"
-
-            argparser_colorize "${styles["value_names"]}" 1 "array" \
-                "${value_names_arr[@]}"
-            value_names_arr=("${colorized_array[@]}")
-            argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
-                "${value_names_arr[@]}"
-            value_names_str="${joined_array}"
-
-            if [[ -n "${default_values_str}" ]]; then
-                usage+=" [${value_names_str}]"
-            else
-                usage+=" ${value_names_str}"
-            fi
-        done
     fi
+
+    for arg_id in "${positional_args[@]}"; do
+        value_names_str="${all_value_names[${arg_id}]}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a value_names_arr \
+            <<< "${value_names_str}"
+        default_values_str="${all_default_values[${arg_id}]}"
+
+        argparser_colorize "${styles["value_names"]}" 1 "array" \
+            "${value_names_arr[@]}"
+        value_names_arr=("${colorized_array[@]}")
+        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
+            "${value_names_arr[@]}"
+        value_names_str="${joined_array}"
+
+        if [[ -n "${default_values_str}" ]]; then
+            usage+=" [${value_names_str}]"
+        else
+            usage+=" ${value_names_str}"
+        fi
+    done
 
     usage+=$'\n'
     help_message_blocks["Usage"]="${usage}"
@@ -10691,20 +10825,47 @@ function argparser_print_help_message() {
     local line
     local -a lines
     local line_type
+    local -a positional_args
     local -a resolved_lines
     local skip_blank_line
     local -a sorted_array
+    local -a subcommands
     local translation
     local uncolorized_caption
 
     # Read the argument.
     exit="$1"
 
+    # Get the defined subcommands.
+    subcommands=( )
+    for subcommand in "${all_subcommands[@]}"; do
+        if [[ -n "${subcommand}" ]] \
+            && ! argparser_in_array "${subcommand}" "${subcommands[@]}"
+        then
+            subcommands+=("${subcommand}")
+        fi
+    done
+
+    # Get the positional arguments for the given subcommand, if any, or
+    # the general program.
+    positional_args=( )
+    for arg_id in "${all_positional_args[@]}"; do
+        # Read the argument's definition.
+        subcommand="${all_subcommands[${arg_id}]}"
+
+        # If the argument belongs to a different subcommand than given
+        # or shall be hidden, skip it.
+        if [[ "${subcommand}" == "${given_subcommand}" ]]; then
+            positional_args+=("${arg_id}")
+        fi
+    done
+
     # Read the keyword arguments' groups to sort them for the help
     # message.
     arg_groups=( )
     for arg_group in "${all_arg_groups[@]}"; do
-        if [[ "${arg_group}" != "${ARGPARSER_POSITIONAL_ARG_GROUP}" \
+        if [[ "${arg_group}" != "${ARGPARSER_SUBCOMMAND_GROUP}" \
+            && "${arg_group}" != "${ARGPARSER_POSITIONAL_ARG_GROUP}" \
             && "${arg_group}" != "${ARGPARSER_HELP_ARG_GROUP}" ]] \
             && ! argparser_in_array "${arg_group}" "${arg_groups[@]}"
         then
@@ -10712,12 +10873,29 @@ function argparser_print_help_message() {
         fi
     done
 
-    # Sort the argument groups, prepend the positional argument group
-    # and append the help options' group.
+    # Sort the argument groups.
     argparser_sort false "${arg_groups[@]}"
     arg_groups=("${sorted_array[@]}")
-    if (( "${#all_positional_args[@]}" > 0 )); then
-        arg_groups=("${ARGPARSER_POSITIONAL_ARG_GROUP}" "${arg_groups[@]}")
+
+    # If there are subcommands, and none is given, include the
+    # subcommand argument group as first one.  If there are positional
+    # arguments defined for the given subcommand (or the general program
+    # if no subcommand is given), include the positional argument group
+    # as next one (by possibly setting the subcommand argument group
+    # before the positional argument group).  Then, add the help
+    # options' group, if existing, as last one.
+    if (( "${#positional_args[@]}" > 0 )); then
+        arg_groups=(
+            "${ARGPARSER_POSITIONAL_ARG_GROUP}"
+            "${arg_groups[@]}"
+        )
+    fi
+
+    if (( "${#subcommands[@]}" > 0 )) && [[ -z "${given_subcommand}" ]]; then
+        arg_groups=(
+            "${ARGPARSER_SUBCOMMAND_GROUP}"
+            "${arg_groups[@]}"
+        )
     fi
 
     if [[ "${ARGPARSER_ADD_HELP}" == true \
@@ -11648,6 +11826,7 @@ function argparser_main() {
         ["remark_text"]="italic"
         ["script_name"]="bold"
         ["short_options"]="green,bold"
+        ["subcommand"]="blue,bold"
         ["usage_caption"]="green,bold,reverse"
         ["value_names"]="blue"
         ["version_caption"]="magenta,bold,reverse"
@@ -11729,6 +11908,9 @@ function argparser_main() {
 
         argparser_translate "Help description" "${ARGPARSER_HELP_DESCRIPTION}"
         ARGPARSER_HELP_DESCRIPTION="${translation}"
+
+        argparser_translate "Subcommands" "${ARGPARSER_SUBCOMMAND_GROUP}"
+        ARGPARSER_SUBCOMMAND_GROUP="${translation}"
 
         argparser_translate "Positional arguments" \
             "${ARGPARSER_POSITIONAL_ARG_GROUP}"
