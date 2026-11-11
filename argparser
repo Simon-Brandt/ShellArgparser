@@ -1813,6 +1813,7 @@ function argparser_cleanup() {
             ARGPARSER_SILENCE_ERRORS \
             ARGPARSER_SILENCE_WARNINGS \
             ARGPARSER_STYLE_FILE \
+            ARGPARSER_SUBCOMMAND_GROUP \
             ARGPARSER_TRANSLATION_FILE \
             ARGPARSER_UNSET_ARGS \
             ARGPARSER_UNSET_ENV_VARS \
@@ -1889,6 +1890,7 @@ function argparser_read_configuration() {
     # ARGPARSER_SILENCE_ERRORS
     # ARGPARSER_SILENCE_WARNINGS
     # ARGPARSER_STYLE_FILE
+    # ARGPARSER_SUBCOMMAND_GROUP
     # ARGPARSER_TRANSLATION_FILE
     # ARGPARSER_UNSET_ARGS
     # ARGPARSER_UNSET_ENV_VARS
@@ -2523,7 +2525,7 @@ function argparser_define_env_vars() {
     all_resolved_choice_values["ARGPARSER_POSITIONAL_ARG_GROUP"]=""
                      all_types["ARGPARSER_POSITIONAL_ARG_GROUP"]="str"
                all_arg_numbers["ARGPARSER_POSITIONAL_ARG_GROUP"]="1"
-                all_arg_groups["ARGPARSER_POSITIONAL_ARG_GROUP"]="General options"
+                all_arg_groups["ARGPARSER_POSITIONAL_ARG_GROUP"]="Help/usage message options"
                      all_notes["ARGPARSER_POSITIONAL_ARG_GROUP"]=""
                 all_help_texts["ARGPARSER_POSITIONAL_ARG_GROUP"]="the name of the argument group holding all positional arguments"
 
@@ -2617,6 +2619,19 @@ function argparser_define_env_vars() {
                 all_arg_groups["ARGPARSER_STYLE_FILE"]="Stylization options"
                      all_notes["ARGPARSER_STYLE_FILE"]=""
                 all_help_texts["ARGPARSER_STYLE_FILE"]="the path to a file holding the style definitions for the messages"
+
+    # Define ${ARGPARSER_SUBCOMMAND_GROUP}.
+             all_short_options["ARGPARSER_SUBCOMMAND_GROUP"]=""
+              all_long_options["ARGPARSER_SUBCOMMAND_GROUP"]="subcommand-group"
+               all_value_names["ARGPARSER_SUBCOMMAND_GROUP"]="NAME"
+            all_default_values["ARGPARSER_SUBCOMMAND_GROUP"]="Subcommands"
+             all_choice_values["ARGPARSER_SUBCOMMAND_GROUP"]=""
+    all_resolved_choice_values["ARGPARSER_SUBCOMMAND_GROUP"]=""
+                     all_types["ARGPARSER_SUBCOMMAND_GROUP"]="str"
+               all_arg_numbers["ARGPARSER_SUBCOMMAND_GROUP"]="1"
+                all_arg_groups["ARGPARSER_SUBCOMMAND_GROUP"]="Help/usage message options"
+                     all_notes["ARGPARSER_SUBCOMMAND_GROUP"]=""
+                all_help_texts["ARGPARSER_SUBCOMMAND_GROUP"]="the name of the argument group holding all subcommands"
 
     # Define ${ARGPARSER_TRANSLATION_FILE}.
              all_short_options["ARGPARSER_TRANSLATION_FILE"]=""
@@ -3055,6 +3070,7 @@ function argparser_set_env_vars() {
     # ARGPARSER_SILENCE_ERRORS
     # ARGPARSER_SILENCE_WARNINGS
     # ARGPARSER_STYLE_FILE
+    # ARGPARSER_SUBCOMMAND_GROUP
     # ARGPARSER_TRANSLATION_FILE
     # ARGPARSER_UNSET_ARGS
     # ARGPARSER_UNSET_ENV_VARS
@@ -3140,6 +3156,7 @@ function argparser_set_env_vars() {
         ARGPARSER_SILENCE_ERRORS=false \
         ARGPARSER_SILENCE_WARNINGS=false \
         ARGPARSER_STYLE_FILE="" \
+        ARGPARSER_SUBCOMMAND_GROUP="Subcommands" \
         ARGPARSER_TRANSLATION_FILE="" \
         ARGPARSER_UNSET_ARGS=true \
         ARGPARSER_UNSET_ENV_VARS=false \
@@ -3284,6 +3301,7 @@ function argparser_set_env_var_defaults() {
     # ARGPARSER_SILENCE_ERRORS
     # ARGPARSER_SILENCE_WARNINGS
     # ARGPARSER_STYLE_FILE
+    # ARGPARSER_SUBCOMMAND_GROUP
     # ARGPARSER_TRANSLATION_FILE
     # ARGPARSER_UNSET_ARGS
     # ARGPARSER_UNSET_ENV_VARS
@@ -3346,6 +3364,7 @@ function argparser_set_env_var_defaults() {
     ARGPARSER_SILENCE_ERRORS=false
     ARGPARSER_SILENCE_WARNINGS=false
     ARGPARSER_STYLE_FILE=""
+    ARGPARSER_SUBCOMMAND_GROUP="Subcommands"
     ARGPARSER_TRANSLATION_FILE=""
     ARGPARSER_UNSET_ARGS=true
     ARGPARSER_UNSET_ENV_VARS=false
@@ -3411,6 +3430,7 @@ function argparser_check_env_vars() {
     # - ARGPARSER_LANGUAGE (arbitrary value)
     # - ARGPARSER_POSITIONAL_ARG_GROUP (arbitrary value)
     # - ARGPARSER_SCRIPT_NAME (arbitrary value)
+    # - ARGPARSER_SUBCOMMAND_GROUP (arbitrary value)
     # - ARGPARSER_VERSION_NUMBER (arbitrary value)
     #
     # The following environment variables are only checked for mutual
@@ -8720,6 +8740,7 @@ function argparser_create_help_message() {
     # - ARGPARSER_MAX_WIDTH (read-only)
     # - ARGPARSER_POSITIONAL_ARG_GROUP (read-only)
     # - ARGPARSER_SCRIPT_NAME (read-only)
+    # - ARGPARSER_SUBCOMMAND_GROUP (read-only)
     # - ARGPARSER_USE_LONG_OPTIONS (read-only)
     # - ARGPARSER_USE_SHORT_OPTIONS (read-only)
 
@@ -11742,6 +11763,7 @@ function argparser_main() {
     # - ARGPARSER_READ_ARGS (read-only)
     # - ARGPARSER_SET_ARGS (read-only)
     # - ARGPARSER_STYLE_FILE (read-only)
+    # - ARGPARSER_SUBCOMMAND_GROUP
     # - ARGPARSER_TRANSLATION_FILE (read-only)
     # - ARGPARSER_UNSET_ARGS (read-only)
     # - ARGPARSER_UNSET_ENV_VARS (read-only)
@@ -11899,7 +11921,7 @@ function argparser_main() {
 
     # If ${ARGPARSER_TRANSLATION_FILE} isn't set to the empty string,
     # read the translation file.  To be able to use the localized names
-    # of ${ARGPARSER_HELP_DESCRIPTION},
+    # of ${ARGPARSER_HELP_DESCRIPTION}, ${ARGPARSER_SUBCOMMAND_GROUP},
     # ${ARGPARSER_POSITIONAL_ARG_GROUP}, and ${ARGPARSER_HELP_ARG_GROUP}
     # in the arguments definition and help message, translate them
     # in-place.
