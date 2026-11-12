@@ -7769,6 +7769,7 @@ function argparser_check_arg_values() {
 
     # Define the local variables.
     local arg_id
+    local arg_names
     local arg_number
     local choice_values_str
     local count
@@ -7787,6 +7788,7 @@ function argparser_check_arg_values() {
     local -a resolved_choice_values_arr
     local resolved_choice_values_str
     local subcommand
+    local subcommand_names_str
     local translation
     local type
     local value
@@ -7859,6 +7861,7 @@ function argparser_check_arg_values() {
     # Concatenate the name of all short and long options for the error
     # and warning messages.
     argparser_get_display_names "${arg_id}" "short+long" false
+    arg_names="${display_names_str}"
 
     # If the argument doesn't belong to the given subcommand (if any),
     # but was given, output an error message.  If it wasn't given, skip
@@ -7869,20 +7872,26 @@ function argparser_check_arg_values() {
         fi
 
         if [[ -z "${given_subcommand}" ]]; then
+            argparser_get_display_names "${subcommand}" "value" false
+            subcommand_names_str="${display_names_str}"
+
             error_message="Error: The argument \"\$1\" is known, but defined "
             error_message+="for the subcommand \"\$2\", which is not given."
 
             argparser_translate "Error arg subcommand 1" "${error_message}" \
-                "${display_names_str}" "${subcommand}"
+                "${arg_names}" "${subcommand_names_str}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
         else
+            argparser_get_display_names "${given_subcommand}" "value" false
+            subcommand_names_str="${display_names_str}"
+
             error_message="Error: The argument \"\$1\" is known, but not "
             error_message+="defined for the given subcommand \"\$2\"."
 
             argparser_translate "Error arg subcommand 2" "${error_message}" \
-                "${display_names_str}" "${given_subcommand}"
+                "${arg_names}" "${subcommand_names_str}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -7899,7 +7908,7 @@ function argparser_check_arg_values() {
             warning_message+="will be removed in the future."
 
             argparser_translate "Warning deprecation" "${warning_message}" \
-                "${display_names_str}"
+                "${arg_names}"
             warning_message="${translation}"
             warning_messages+=("${warning_message}")
         fi
@@ -7916,7 +7925,7 @@ function argparser_check_arg_values() {
             error_message+="needs a value after the option name."
 
             argparser_translate "Error arg no flag 1" "${error_message}" \
-                "${display_names_str}"
+                "${arg_names}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -7952,7 +7961,7 @@ function argparser_check_arg_values() {
             error_message+="with a \"+\" or \"{\$2}-\" prefix."
 
             argparser_translate "Error arg no flag 2" "${error_message}" \
-                "${display_names_str}" "${ARGPARSER_FLAG_NEGATION_PREFIXES}"
+                "${arg_names}" "${ARGPARSER_FLAG_NEGATION_PREFIXES}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -7961,7 +7970,7 @@ function argparser_check_arg_values() {
             error_message+="cannot be given with a \"+\" or \"{\$2}-\" prefix."
 
             argparser_translate "Error arg no flag 3" "${error_message}" \
-                "${display_names_str}" "${ARGPARSER_FLAG_NEGATION_PREFIXES}"
+                "${arg_names}" "${ARGPARSER_FLAG_NEGATION_PREFIXES}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -7981,7 +7990,7 @@ function argparser_check_arg_values() {
             error_message+="given."
 
             argparser_translate "Error mandatory arg" "${error_message}" \
-                "${display_names_str}"
+                "${arg_names}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -8020,7 +8029,7 @@ function argparser_check_arg_values() {
             error_message+="value, but has \$2 given."
 
             argparser_translate "Error wrong arg number 1" "${error_message}" \
-                "${display_names_str}" "${#values_arr[@]}"
+                "${arg_names}" "${#values_arr[@]}"
             error_message="${translation}"
             error_messages+=("${error_message}")
         else
@@ -8033,8 +8042,8 @@ function argparser_check_arg_values() {
             warning_message+="the default (\$3) is used."
 
             argparser_translate "Warning wrong arg number 1" \
-                "${warning_message}" "${display_names_str}" \
-                "${#values_arr[@]}" "${default_values_str}"
+                "${warning_message}" "${arg_names}" "${#values_arr[@]}" \
+                "${default_values_str}"
             warning_message="${translation}"
             warning_messages+=("${warning_message}")
 
@@ -8051,7 +8060,7 @@ function argparser_check_arg_values() {
             error_message+="but has \$2 given."
 
             argparser_translate "Error wrong arg number 2" \
-                "${error_message}" "${display_names_str}" "${#values_arr[@]}"
+                "${error_message}" "${arg_names}" "${#values_arr[@]}"
             error_message="${translation}"
             error_messages+=("${error_message}")
         else
@@ -8064,8 +8073,8 @@ function argparser_check_arg_values() {
             warning_message+="default (\$3) is used."
 
             argparser_translate "Warning wrong arg number 2" \
-                "${warning_message}" "${display_names_str}" \
-                "${#values_arr[@]}" "${default_values_str}"
+                "${warning_message}" "${arg_names}" "${#values_arr[@]}" \
+                "${default_values_str}"
             warning_message="${translation}"
             warning_messages+=("${warning_message}")
 
@@ -8082,7 +8091,7 @@ function argparser_check_arg_values() {
             error_message+="has \$2 given."
 
             argparser_translate "Error wrong arg number 3" \
-                "${error_message}" "${display_names_str}" "${#values_arr[@]}"
+                "${error_message}" "${arg_names}" "${#values_arr[@]}"
             error_message="${translation}"
             error_messages+=("${error_message}")
         else
@@ -8095,8 +8104,8 @@ function argparser_check_arg_values() {
             warning_message+="default (\$3) is used."
 
             argparser_translate "Warning wrong arg number 3" \
-                "${warning_message}" "${display_names_str}" \
-                "${#values_arr[@]}" "${default_values_str}"
+                "${warning_message}" "${arg_names}" "${#values_arr[@]}" \
+                "${default_values_str}"
             warning_message="${translation}"
             warning_messages+=("${warning_message}")
 
@@ -8143,7 +8152,7 @@ function argparser_check_arg_values() {
             error_message+="but has \$3 given."
 
             argparser_translate "Error wrong arg number 4" "${error_message}" \
-                "${display_names_str}" "${arg_number}" "${#values_arr[@]}"
+                "${arg_names}" "${arg_number}" "${#values_arr[@]}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -8157,7 +8166,7 @@ function argparser_check_arg_values() {
             warning_message+="the default (\$4) is used."
 
             argparser_translate "Warning wrong arg number 4" \
-                "${warning_message}" "${display_names_str}" "${arg_number}" \
+                "${warning_message}" "${arg_names}" "${arg_number}" \
                 "${#values_arr[@]}" "${default_values_str}"
             warning_message="${translation}"
             warning_messages+=("${warning_message}")
@@ -8179,8 +8188,7 @@ function argparser_check_arg_values() {
                 error_message+="but is {\$3}."
 
                 argparser_translate "Error arg choice" "${error_message}" \
-                    "${display_names_str}" "${choice_values_str}" \
-                    "${values_str}"
+                    "${arg_names}" "${choice_values_str}" "${values_str}"
                 error_message="${translation}"
                 error_messages+=("${error_message}")
                 return
@@ -8196,7 +8204,7 @@ function argparser_check_arg_values() {
             error_message+="must be a Boolean, i.e., \"true\" or \"false\"."
 
             argparser_translate "Error arg bool" "${error_message}" \
-                "${display_names_str}" "${value}"
+                "${arg_names}" "${value}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -8207,7 +8215,7 @@ function argparser_check_arg_values() {
             error_message+="one printable ASCII character."
 
             argparser_translate "Error arg char" "${error_message}" \
-                "${display_names_str}" "${value}"
+                "${arg_names}" "${value}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -8219,7 +8227,7 @@ function argparser_check_arg_values() {
             error_message+="only digits, a dot, and possibly a leading sign."
 
             argparser_translate "Error arg float" "${error_message}" \
-                "${display_names_str}" "${value}"
+                "${arg_names}" "${value}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -8230,7 +8238,7 @@ function argparser_check_arg_values() {
             error_message+="and possibly a leading sign."
 
             argparser_translate "Error arg int" "${error_message}" \
-                "${display_names_str}" "${value}"
+                "${arg_names}" "${value}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -8241,7 +8249,7 @@ function argparser_check_arg_values() {
             error_message+="digits and no sign."
 
             argparser_translate "Error arg uint" "${error_message}" \
-                "${display_names_str}" "${value}"
+                "${arg_names}" "${value}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -8846,6 +8854,8 @@ function argparser_create_help_message() {
     local -A sorted_col_2
     local -A sorted_col_3
     local subcommand
+    local -a subcommand_names_arr
+    local subcommand_names_str
     local -a subcommands
     local translation
     local type
@@ -8914,9 +8924,11 @@ function argparser_create_help_message() {
             continue
         fi
 
-        # Colorize the subcommand name and the help text.
-        argparser_colorize "${styles["subcommand"]}" 1 subcommand \
-            "${subcommand}"
+        # Get the (colorized) subcommand name and colorize the help
+        # text.
+        argparser_get_display_names "${subcommand}" "value" true
+        subcommand_names_str="${display_names_str}"
+
         argparser_colorize "${styles["help_text"]}" 1 help_text "${help_text}"
 
         # Define the columns' next line, for the current subcommand.
@@ -8925,7 +8937,7 @@ function argparser_create_help_message() {
         # first or second column.
         if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
             # Set the first column's value.
-            new_col_1_value="${subcommand}"
+            new_col_1_value="${subcommand_names_str}"
             col_1+=("${new_col_1_value}")
 
             # Set the second column's value.
@@ -8935,7 +8947,7 @@ function argparser_create_help_message() {
             col_1+=("")
 
             # Set the second column's value.
-            new_col_2_value="${subcommand}"
+            new_col_2_value="${subcommand_names_str}"
             col_2+=("${new_col_2_value}")
         fi
 
@@ -9879,13 +9891,17 @@ function argparser_create_help_message() {
 
     if (( "${#subcommands[@]}" > 0 )); then
         if [[ -n "${given_subcommand}" ]]; then
-            argparser_colorize "${styles["subcommand"]}" 1 subcommand \
-                "${given_subcommand}"
-            usage+=" ${subcommand}"
+            argparser_get_display_names "${given_subcommand}" "value" true
+            subcommand_names_str="${display_names_str}"
+            usage+=" ${subcommand_names_str}"
         else
-            argparser_colorize "${styles["subcommand"]}" 1 "array" \
-                "${subcommands[@]}"
-            argparser_join " | " "${colorized_array[@]}"
+            subcommand_names_arr=()
+            for subcommand in "${subcommands[@]}"; do
+                argparser_get_display_names "${subcommand}" "value" true
+                subcommand_names_arr+=("${display_names_arr[@]}")
+            done
+
+            argparser_join " | " "${subcommand_names_arr[@]}"
             usage+=" [${joined_array}]"
         fi
     fi
@@ -10086,6 +10102,8 @@ function argparser_create_usage_message() {
     local short_options
     local -a sorted_array
     local subcommand
+    local -a subcommand_names_arr
+    local subcommand_names_str
     local -a subcommands
     local translation
     local -a usage_message
@@ -10110,9 +10128,13 @@ function argparser_create_usage_message() {
     usage_message=()
 
     if (( "${#subcommands[@]}" > 0 )) && [[ -z "${given_subcommand}" ]]; then
-        argparser_colorize "${styles["subcommand"]}" 1 "array" \
-            "${subcommands[@]}"
-        argparser_join " | " "${colorized_array[@]}"
+        subcommand_names_arr=()
+        for subcommand in "${subcommands[@]}"; do
+            argparser_get_display_names "${subcommand}" "value" true
+            subcommand_names_arr+=("${display_names_arr[@]}")
+        done
+
+        argparser_join " | " "${subcommand_names_arr[@]}"
         usage_message+=("[${joined_array}]")
     fi
 
@@ -10723,13 +10745,13 @@ function argparser_create_usage_message() {
         "${ARGPARSER_SCRIPT_NAME}"
 
     if [[ -n "${given_subcommand}" ]]; then
-        argparser_colorize "${styles["subcommand"]}" 1 subcommand \
-            "${given_subcommand}"
+        argparser_get_display_names "${given_subcommand}" "value" true
+        subcommand_names_str="${display_names_str}"
     fi
 
     if [[ -n "${styles["usage_frame"]}" ]]; then
         if [[ -n "${given_subcommand}" ]]; then
-            usage_message[0]="${script_name} ${subcommand} ${usage_message[0]}"
+            usage_message[0]="${script_name} ${subcommand_names_str} ${usage_message[0]}"
         else
             usage_message[0]="${script_name} ${usage_message[0]}"
         fi
@@ -10740,7 +10762,7 @@ function argparser_create_usage_message() {
         usage_message=("${framed_array[@]}")
     else
         if [[ -n "${given_subcommand}" ]]; then
-            usage_message[0]="${caption} ${script_name} ${subcommand} ${usage_message[0]}"
+            usage_message[0]="${caption} ${script_name} ${subcommand_names_str} ${usage_message[0]}"
         else
             usage_message[0]="${caption} ${script_name} ${usage_message[0]}"
         fi
