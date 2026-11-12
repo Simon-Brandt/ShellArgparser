@@ -7917,20 +7917,18 @@ function argparser_check_arg_values() {
     # If the argument is used as flag, but is none (nor can be used as
     # such), output an error message.  In this case, there are empty
     # strings among the values.
-    for value in "${values_arr[@]}"; do
-        if ! argparser_in_array "${arg_number}" "*" "?" 0 \
-            && [[ -z "${value}" ]]
-        then
-            error_message="Error: The option \"\$1\" is no flag and thus "
-            error_message+="needs a value after the option name."
+    if argparser_in_array "" "${values_arr[@]}" \
+        && ! argparser_in_array "${arg_number}" "*" "?" 0
+    then
+        error_message="Error: The option \"\$1\" is no flag and thus needs a "
+        error_message+="value after the option name."
 
-            argparser_translate "Error arg no flag 1" "${error_message}" \
-                "${arg_names}"
-            error_message="${translation}"
-            error_messages+=("${error_message}")
-            return
-        fi
-    done
+        argparser_translate "Error arg no flag 1" "${error_message}" \
+            "${arg_names}"
+        error_message="${translation}"
+        error_messages+=("${error_message}")
+        return
+    fi
 
     # Remove the empty fields.  This is necessary to allow true flags to
     # be given multiple times without considering the empty field an
