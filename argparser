@@ -7867,7 +7867,7 @@ function argparser_check_arg_values() {
     # but was given, output an error message.  If it wasn't given, skip
     # the subsequent checks.
     if [[ "${subcommand}" != "${given_subcommand}" ]]; then
-        if [[ -z "${values_str}" ]]; then
+        if (( "${#values_arr[@]}" == 0 && "${#prefixes[@]}" == 0 )); then
             return
         fi
 
