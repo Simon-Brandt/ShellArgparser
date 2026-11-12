@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-11-11
+# Last Modification: 2026-11-12
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -1721,9 +1721,9 @@ function argparser_cleanup() {
             argparser_fold \
             argparser_get_arg_id \
             argparser_get_args_definition \
+            argparser_get_display_names \
             argparser_get_max \
             argparser_get_max_width \
-            argparser_get_option_names \
             argparser_in_array \
             argparser_is_alpha \
             argparser_is_bool \
@@ -6858,24 +6858,32 @@ function argparser_get_arg_id() {
     arg_id=""
 }
 
-function argparser_get_option_names() {
-    # Concatenate the name of all short and long options.
+function argparser_get_display_names() {
+    # Get the argument's display names formatted for pretty-printing.
+    # For subcommands and positional arguments, these are the value
+    # names.  For keyword arguments, these are the short and/or long
+    # option names, or the value names.  In the latter case, these need
+    # to be explicitly requested.
     #
     # Arguments:
     # - $1: the argument identifier
-    # - $2: the order of the options ("short-long", "long-short",
-    #       "short", or "long")
-    # - $3: whether to colorize the option names by argparser_colorize
+    # - $2: which names to use ("short+long", "long+short", "short",
+    #       "long", or "value")
+    # - $3: whether to colorize the display names by argparser_colorize
     #
     # Nonlocals:
+    # - all_arg_numbers: the associative array holding the argument
+    #   numbers (read-only)
     # - all_long_options: the associative array holding the long option
     #   names (read-only)
     # - all_short_options: the associative array holding the short
     #   option names (read-only)
     # - all_value_names: the associative array holding the value names
     #   (read-only)
-    # - option_names_str: the name of all short and long options as
-    #   ${ARGPARSER_ARG_DELIMITER_2}-separated string
+    # - display_names_arr: all short and/or long option names or all
+    #   value names as indexed array
+    # - display_names_str: all short and/or long option names or all
+    #   value names as ${ARGPARSER_ARG_DELIMITER_2}-separated string
     # - styles: the associative array containing the styles (read-only)
     #
     # Environment:
@@ -6883,84 +6891,113 @@ function argparser_get_option_names() {
 
     # Define the local variables.
     local arg_id
+    local arg_number
     local colorize
     local -a colorized_array
     local joined_array
-    local -a long_options_arr
-    local long_options_str
-    local order
-    local -a short_options_arr
-    local short_options_str
-    local value_names
+    local long_option
+    local -a long_options
+    local names
+    local short_option
+    local -a short_options
+    local value_name
+    local -a value_names
 
     # Read the arguments.
     arg_id="$1"
-    order="$2"
+    names="$2"
     colorize="$3"
 
-    # Read the argument's definition.  As positional arguments aren't
-    # included in ${all_short_options} and ${all_long_options}, assign
-    # them the default value of the empty string, indicating absence.
-    # For the option name below, use the value name, of which positional
-    # arguments can only have one (thus using a string, not an array).
-    if [[ -n "${all_short_options[${arg_id}]+set}" ]]; then
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a short_options_arr \
-            <<< "${all_short_options[${arg_id}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a long_options_arr \
-            <<< "${all_long_options[${arg_id}]}"
-    else
-        short_options_arr=("")
-        long_options_arr=("")
-    fi
-    value_names="${all_value_names[${arg_id}]}"
+    # Read the argument's definition.
+    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a short_options \
+        <<< "${all_short_options[${arg_id}]}"
+    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a long_options \
+        <<< "${all_long_options[${arg_id}]}"
+    IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a value_names \
+        <<< "${all_value_names[${arg_id}]}"
+    arg_number="${all_arg_numbers[${arg_id}]}"
 
-    # Concatenate the names of all short and long options, including the
-    # leading hyphen(s).  Possibly, colorize them, including the value
+    # If no value name is given, create one by capitalizing the first
+    # long option name, if existing, or else from the first short option
+    # name.
+    if (( "${#value_names[@]}" == 0 )); then
+        if (( "${#long_options[@]}" > 0 )); then
+            value_name="${long_options[0]//-/_}"
+        else
+            value_name="${short_options[0]//-/_}"
+        fi
+        value_names=("${value_name^^}")
+    fi
+
+    # If there are now less value names than the argument number
+    # suggests (and the argument is not variadic), create the remaining
+    # value names by repeating the last value name.
+    if ! argparser_in_array "${arg_number}" "+" "*" "?"; then
+        while (( "${#value_names[@]}" < arg_number )); do
+            value_names+=("${value_names[-1]}")
+        done
+    fi
+
+    # Add the leading hyphen(s) to the short and long option names.
+    # This needs to be done after possibly having created the value
+    # names from them, as otherwise, the latter would start with the
+    # underscore-turned hyphens, which would need to be stripped, again.
+    short_options=("${short_options[@]/#/-}")
+    long_options=("${long_options[@]/#/--}")
+
+    # Possibly colorize the short and long option names, and the value
     # names.
     if [[ "${colorize}" == true ]]; then
         argparser_colorize "${styles["short_options"]}" 1 "array" \
-            "${short_options_arr[@]/#/-}"
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
-        short_options_str="${joined_array}"
+            "${short_options[@]}"
+        short_options=("${colorized_array[@]}")
 
         argparser_colorize "${styles["long_options"]}" 1 "array" \
-            "${long_options_arr[@]/#/--}"
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
-        long_options_str="${joined_array}"
+            "${long_options[@]}"
+        long_options=("${colorized_array[@]}")
 
-        argparser_colorize "${styles["value_names"]}" 1 value_names \
-            "${value_names}"
-    else
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
-            "${short_options_arr[@]/#/-}"
-        short_options_str="${joined_array}"
-
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
-            "${long_options_arr[@]/#/--}"
-        long_options_str="${joined_array}"
+        argparser_colorize "${styles["value_names"]}" 1 "array" \
+            "${value_names[@]}"
+        value_names=("${colorized_array[@]}")
     fi
 
-    # Merge the names of all short and long options, if any is given, or
-    # use the value names as fallback.
-    if [[ -n "${short_options_arr[0]}" && -n "${long_options_arr[0]}" ]]; then
-        if [[ "${order}" == "short-long" ]]; then
-            option_names_str="${short_options_str}${ARGPARSER_ARG_DELIMITER_2}"
-            option_names_str+="${long_options_str}"
-        elif [[ "${order}" == "long-short" ]]; then
-            option_names_str="${long_options_str}${ARGPARSER_ARG_DELIMITER_2}"
-            option_names_str+="${short_options_str}"
-        elif [[ "${order}" == "short" ]]; then
-            option_names_str="${short_options_str}"
-        elif [[ "${order}" == "long" ]]; then
-            option_names_str="${long_options_str}"
+    # Merge and concatenate the short and/or long option names or the
+    # value names.
+    if (( "${#short_options[@]}" > 0 && "${#long_options[@]}" > 0 )); then
+        if [[ "${names}" == "short+long" ]]; then
+            display_names_arr=("${short_options[@]}" "${long_options[@]}")
+        elif [[ "${names}" == "long+short" ]]; then
+            display_names_arr=("${long_options[@]}" "${short_options[@]}")
+        elif [[ "${names}" == "short" ]]; then
+            display_names_arr=("${short_options[@]}")
+        elif [[ "${names}" == "long" ]]; then
+            display_names_arr=("${long_options[@]}")
+        else
+            display_names_arr=("${value_names[@]}")
         fi
-    elif [[ -n "${short_options_arr[0]}" ]]; then
-        option_names_str="${short_options_str}"
-    elif [[ -n "${long_options_arr[0]}" ]]; then
-        option_names_str="${long_options_str}"
+    elif (( "${#short_options[@]}" > 0 )); then
+        if argparser_in_array "${names}" "short+long" "long+short" "short"
+        then
+            display_names_arr=("${short_options[@]}")
+        elif [[ "${names}" == "value" ]]; then
+            display_names_arr=("${value_names[@]}")
+        else
+            display_names_arr=()
+        fi
+    elif (( "${#long_options[@]}" > 0 )); then
+        if argparser_in_array "${names}" "short+long" "long+short" "long"; then
+            display_names_arr=("${long_options[@]}")
+        elif [[ "${names}" == "value" ]]; then
+            display_names_arr=("${value_names[@]}")
+        else
+            display_names_arr=()
+        fi
     else
-        option_names_str="${value_names}"
+        display_names_arr=("${value_names[@]}")
     fi
+
+    argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${display_names_arr[@]}"
+    display_names_str="${joined_array}"
 }
 
 function argparser_parse_arg() {
@@ -7738,12 +7775,13 @@ function argparser_check_arg_values() {
     local count_hyphen
     local count_plus
     local default_values_str
+    local -a display_names_arr
+    local display_names_str
     local error_message
     local i
     local joined_array
     local note
     local -a notes
-    local option_names_str
     local prefix
     local -a prefixes
     local -a resolved_choice_values_arr
@@ -7820,7 +7858,7 @@ function argparser_check_arg_values() {
 
     # Concatenate the name of all short and long options for the error
     # and warning messages.
-    argparser_get_option_names "${arg_id}" "short-long" false
+    argparser_get_display_names "${arg_id}" "short+long" false
 
     # If the argument doesn't belong to the given subcommand (if any),
     # but was given, output an error message.  If it wasn't given, skip
@@ -7835,7 +7873,7 @@ function argparser_check_arg_values() {
             error_message+="for the subcommand \"\$2\", which is not given."
 
             argparser_translate "Error arg subcommand 1" "${error_message}" \
-                "${option_names_str}" "${subcommand}"
+                "${display_names_str}" "${subcommand}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -7844,7 +7882,7 @@ function argparser_check_arg_values() {
             error_message+="defined for the given subcommand \"\$2\"."
 
             argparser_translate "Error arg subcommand 2" "${error_message}" \
-                "${option_names_str}" "${given_subcommand}"
+                "${display_names_str}" "${given_subcommand}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -7861,7 +7899,7 @@ function argparser_check_arg_values() {
             warning_message+="will be removed in the future."
 
             argparser_translate "Warning deprecation" "${warning_message}" \
-                "${option_names_str}"
+                "${display_names_str}"
             warning_message="${translation}"
             warning_messages+=("${warning_message}")
         fi
@@ -7878,7 +7916,7 @@ function argparser_check_arg_values() {
             error_message+="needs a value after the option name."
 
             argparser_translate "Error arg no flag 1" "${error_message}" \
-                "${option_names_str}"
+                "${display_names_str}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -7914,7 +7952,7 @@ function argparser_check_arg_values() {
             error_message+="with a \"+\" or \"{\$2}-\" prefix."
 
             argparser_translate "Error arg no flag 2" "${error_message}" \
-                "${option_names_str}" "${ARGPARSER_FLAG_NEGATION_PREFIXES}"
+                "${display_names_str}" "${ARGPARSER_FLAG_NEGATION_PREFIXES}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -7923,7 +7961,7 @@ function argparser_check_arg_values() {
             error_message+="cannot be given with a \"+\" or \"{\$2}-\" prefix."
 
             argparser_translate "Error arg no flag 3" "${error_message}" \
-                "${option_names_str}" "${ARGPARSER_FLAG_NEGATION_PREFIXES}"
+                "${display_names_str}" "${ARGPARSER_FLAG_NEGATION_PREFIXES}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -7943,7 +7981,7 @@ function argparser_check_arg_values() {
             error_message+="given."
 
             argparser_translate "Error mandatory arg" "${error_message}" \
-                "${option_names_str}"
+                "${display_names_str}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -7982,7 +8020,7 @@ function argparser_check_arg_values() {
             error_message+="value, but has \$2 given."
 
             argparser_translate "Error wrong arg number 1" "${error_message}" \
-                "${option_names_str}" "${#values_arr[@]}"
+                "${display_names_str}" "${#values_arr[@]}"
             error_message="${translation}"
             error_messages+=("${error_message}")
         else
@@ -7995,7 +8033,7 @@ function argparser_check_arg_values() {
             warning_message+="the default (\$3) is used."
 
             argparser_translate "Warning wrong arg number 1" \
-                "${warning_message}" "${option_names_str}" \
+                "${warning_message}" "${display_names_str}" \
                 "${#values_arr[@]}" "${default_values_str}"
             warning_message="${translation}"
             warning_messages+=("${warning_message}")
@@ -8013,7 +8051,7 @@ function argparser_check_arg_values() {
             error_message+="but has \$2 given."
 
             argparser_translate "Error wrong arg number 2" \
-                "${error_message}" "${option_names_str}" "${#values_arr[@]}"
+                "${error_message}" "${display_names_str}" "${#values_arr[@]}"
             error_message="${translation}"
             error_messages+=("${error_message}")
         else
@@ -8026,7 +8064,7 @@ function argparser_check_arg_values() {
             warning_message+="default (\$3) is used."
 
             argparser_translate "Warning wrong arg number 2" \
-                "${warning_message}" "${option_names_str}" \
+                "${warning_message}" "${display_names_str}" \
                 "${#values_arr[@]}" "${default_values_str}"
             warning_message="${translation}"
             warning_messages+=("${warning_message}")
@@ -8044,7 +8082,7 @@ function argparser_check_arg_values() {
             error_message+="has \$2 given."
 
             argparser_translate "Error wrong arg number 3" \
-                "${error_message}" "${option_names_str}" "${#values_arr[@]}"
+                "${error_message}" "${display_names_str}" "${#values_arr[@]}"
             error_message="${translation}"
             error_messages+=("${error_message}")
         else
@@ -8057,7 +8095,7 @@ function argparser_check_arg_values() {
             warning_message+="default (\$3) is used."
 
             argparser_translate "Warning wrong arg number 3" \
-                "${warning_message}" "${option_names_str}" \
+                "${warning_message}" "${display_names_str}" \
                 "${#values_arr[@]}" "${default_values_str}"
             warning_message="${translation}"
             warning_messages+=("${warning_message}")
@@ -8105,7 +8143,7 @@ function argparser_check_arg_values() {
             error_message+="but has \$3 given."
 
             argparser_translate "Error wrong arg number 4" "${error_message}" \
-                "${option_names_str}" "${arg_number}" "${#values_arr[@]}"
+                "${display_names_str}" "${arg_number}" "${#values_arr[@]}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -8119,7 +8157,7 @@ function argparser_check_arg_values() {
             warning_message+="the default (\$4) is used."
 
             argparser_translate "Warning wrong arg number 4" \
-                "${warning_message}" "${option_names_str}" "${arg_number}" \
+                "${warning_message}" "${display_names_str}" "${arg_number}" \
                 "${#values_arr[@]}" "${default_values_str}"
             warning_message="${translation}"
             warning_messages+=("${warning_message}")
@@ -8141,7 +8179,7 @@ function argparser_check_arg_values() {
                 error_message+="but is {\$3}."
 
                 argparser_translate "Error arg choice" "${error_message}" \
-                    "${option_names_str}" "${choice_values_str}" \
+                    "${display_names_str}" "${choice_values_str}" \
                     "${values_str}"
                 error_message="${translation}"
                 error_messages+=("${error_message}")
@@ -8158,7 +8196,7 @@ function argparser_check_arg_values() {
             error_message+="must be a Boolean, i.e., \"true\" or \"false\"."
 
             argparser_translate "Error arg bool" "${error_message}" \
-                "${option_names_str}" "${value}"
+                "${display_names_str}" "${value}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -8169,7 +8207,7 @@ function argparser_check_arg_values() {
             error_message+="one printable ASCII character."
 
             argparser_translate "Error arg char" "${error_message}" \
-                "${option_names_str}" "${value}"
+                "${display_names_str}" "${value}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -8181,7 +8219,7 @@ function argparser_check_arg_values() {
             error_message+="only digits, a dot, and possibly a leading sign."
 
             argparser_translate "Error arg float" "${error_message}" \
-                "${option_names_str}" "${value}"
+                "${display_names_str}" "${value}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -8192,7 +8230,7 @@ function argparser_check_arg_values() {
             error_message+="and possibly a leading sign."
 
             argparser_translate "Error arg int" "${error_message}" \
-                "${option_names_str}" "${value}"
+                "${display_names_str}" "${value}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -8203,7 +8241,7 @@ function argparser_check_arg_values() {
             error_message+="digits and no sign."
 
             argparser_translate "Error arg uint" "${error_message}" \
-                "${option_names_str}" "${value}"
+                "${display_names_str}" "${value}"
             error_message="${translation}"
             error_messages+=("${error_message}")
             return
@@ -8767,6 +8805,8 @@ function argparser_create_help_message() {
     local -a default_values_arr
     local default_values_str
     local description
+    local -a display_names_arr
+    local display_names_str
     local -a folded_array
     local -a framed_array
     local has_default_args
@@ -8779,8 +8819,7 @@ function argparser_create_help_message() {
     local -a joined_array
     local line
     local long_option
-    local -a long_options_arr
-    local long_options_str
+    local -a long_options
     local mandatory_arguments_hint
     local max_col_width
     local max_col_width_3
@@ -8794,7 +8833,6 @@ function argparser_create_help_message() {
     local new_col_3_value
     local note
     local -a notes
-    local option_names_str
     local optional_arguments_hint
     local pad_width
     local -a padded_array
@@ -8802,8 +8840,7 @@ function argparser_create_help_message() {
     local remark
     local script_name
     local short_option
-    local -a short_options_arr
-    local short_options_str
+    local -a short_options
     local -a sorted_array
     local -A sorted_col_1
     local -A sorted_col_2
@@ -8814,9 +8851,7 @@ function argparser_create_help_message() {
     local type
     local -a uncolorized_array
     local usage
-    local value_name
-    local -a value_names_arr
-    local value_names_str
+    local value_names
 
     # Sort the defined subcommands.
     subcommands=()
@@ -8933,9 +8968,6 @@ function argparser_create_help_message() {
     for arg_id in "${all_positional_args[@]}"; do
         # Read the argument's definition.
         subcommand="${all_subcommands[${arg_id}]}"
-        value_names_str="${all_value_names[${arg_id}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a value_names_arr \
-            <<< "${value_names_str}"
         default_values_str="${all_default_values[${arg_id}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a default_values_arr \
             <<< "${default_values_str}"
@@ -8975,13 +9007,11 @@ function argparser_create_help_message() {
             default_values_arr=("${default_values_arr[@]/%/\"}")
         fi
 
-        # Concatenate and colorize the value names, default values, and
-        # choice values.  Then, colorize the help text.
-        argparser_colorize "${styles["value_names"]}" 1 "array" \
-            "${value_names_arr[@]}"
-        value_names_arr=("${colorized_array[@]}")
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${value_names_arr[@]}"
-        value_names_str="${joined_array}"
+        # Get the colorized value names.  Concatenate and colorize the 
+        # default values and choice values.  Then, colorize the help
+        # text.
+        argparser_get_display_names "${arg_id}" "value" true
+        value_names="${display_names_str}"
 
         argparser_colorize "${styles["default_values"]}" 1 "array" \
             "${default_values_arr[@]}"
@@ -9012,18 +9042,18 @@ function argparser_create_help_message() {
                     && -n "${default_values_str}" ]]
                 then
                     # Choice and default.
-                    new_col_1_value="[${value_names_str}"
+                    new_col_1_value="[${value_names}"
                     new_col_1_value+="={${choice_values_str}}...]"
                 elif [[ -n "${choice_values_str}" ]]; then
                     # Choice only.
-                    new_col_1_value="${value_names_str}"
+                    new_col_1_value="${value_names}"
                     new_col_1_value+="={${choice_values_str}}..."
                 elif [[ -n "${default_values_str}" ]]; then
                     # Default only.
-                    new_col_1_value="[${value_names_str}...]"
+                    new_col_1_value="[${value_names}...]"
                 else
                     # No choice nor default.
-                    new_col_1_value="${value_names_str}..."
+                    new_col_1_value="${value_names}..."
                 fi
             else
                 # Integer-count or [0, 1] values.
@@ -9031,18 +9061,18 @@ function argparser_create_help_message() {
                     && -n "${default_values_str}" ]]
                 then
                     # Choice and default.
-                    new_col_1_value="[${value_names_str}"
+                    new_col_1_value="[${value_names}"
                     new_col_1_value+="={${choice_values_str}}]"
                 elif [[ -n "${choice_values_str}" ]]; then
                     # Choice only.
-                    new_col_1_value="${value_names_str}"
+                    new_col_1_value="${value_names}"
                     new_col_1_value+="={${choice_values_str}}"
                 elif [[ -n "${default_values_str}" ]]; then
                     # Default only.
-                    new_col_1_value="[${value_names_str}]"
+                    new_col_1_value="[${value_names}]"
                 else
                     # No choice nor default.
-                    new_col_1_value="${value_names_str}"
+                    new_col_1_value="${value_names}"
                 fi
             fi
             col_1+=("${new_col_1_value}")
@@ -9060,18 +9090,18 @@ function argparser_create_help_message() {
                     && -n "${default_values_str}" ]]
                 then
                     # Choice and default.
-                    new_col_2_value="[${value_names_str}"
+                    new_col_2_value="[${value_names}"
                     new_col_2_value+="={${choice_values_str}}...]"
                 elif [[ -n "${choice_values_str}" ]]; then
                     # Choice only.
-                    new_col_2_value="${value_names_str}"
+                    new_col_2_value="${value_names}"
                     new_col_2_value+="={${choice_values_str}}..."
                 elif [[ -n "${default_values_str}" ]]; then
                     # Default only.
-                    new_col_2_value="[${value_names_str}...]"
+                    new_col_2_value="[${value_names}...]"
                 else
                     # No choice nor default.
-                    new_col_2_value="${value_names_str}..."
+                    new_col_2_value="${value_names}..."
                 fi
             else
                 # Integer-count or [0, 1] values.
@@ -9079,18 +9109,18 @@ function argparser_create_help_message() {
                     && -n "${default_values_str}" ]]
                 then
                     # Choice and default.
-                    new_col_2_value="[${value_names_str}"
+                    new_col_2_value="[${value_names}"
                     new_col_2_value+="={${choice_values_str}}]"
                 elif [[ -n "${choice_values_str}" ]]; then
                     # Choice only.
-                    new_col_2_value="${value_names_str}"
+                    new_col_2_value="${value_names}"
                     new_col_2_value+="={${choice_values_str}}"
                 elif [[ -n "${default_values_str}" ]]; then
                     # Default only.
-                    new_col_2_value="[${value_names_str}]"
+                    new_col_2_value="[${value_names}]"
                 else
                     # No choice nor default.
-                    new_col_2_value="${value_names_str}"
+                    new_col_2_value="${value_names}"
                 fi
             fi
             col_2+=("${new_col_2_value}")
@@ -9159,15 +9189,6 @@ function argparser_create_help_message() {
 
             # Read the argument's remaining definition.
             subcommand="${all_subcommands[${arg_id}]}"
-            short_options_str="${all_short_options[${arg_id}]}"
-            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a short_options_arr \
-                <<< "${short_options_str}"
-            long_options_str="${all_long_options[${arg_id}]}"
-            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a long_options_arr \
-                <<< "${long_options_str}"
-            value_names_str="${all_value_names[${arg_id}]}"
-            IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a value_names_arr \
-                <<< "${value_names_str}"
             default_values_str="${all_default_values[${arg_id}]}"
             if [[ "${arg_id}" == "ARGPARSER_ARG_DELIMITER_2" ]]; then
                 default_values_arr=("${default_values_str}")
@@ -9207,34 +9228,6 @@ function argparser_create_help_message() {
                 continue
             fi
 
-            # If there are less value names than short or long option
-            # names, create the remaining value names by capitalizing
-            # the respective option names.  If the argument has long
-            # option names, use them, and only else the short option
-            # names, as the value names are preferentially appended to
-            # the long option names.
-            if [[ -n "${long_options_str}" ]]; then
-                # Long option.
-                if (( "${#value_names_arr[@]}" < "${#long_options_arr[@]}" ))
-                then
-                    for long_option in "${long_options_arr[@]:${#value_names_arr[@]}}"
-                    do
-                        value_name="${long_option//-/_}"
-                        value_names_arr+=("${value_name^^}")
-                    done
-                fi
-            else
-                # No long option.
-                if (( "${#value_names_arr[@]}" < "${#short_options_arr[@]}" ))
-                then
-                    for short_option in "${short_options_arr[@]:${#value_names_arr[@]}}"
-                    do
-                        value_name="${short_option//-/_}"
-                        value_names_arr+=("${value_name^^}")
-                    done
-                fi
-            fi
-
             # For character, file, and string arguments, wrap the
             # default values in quotes.
             if argparser_in_array "${type}" "char" "file" "str"; then
@@ -9245,35 +9238,28 @@ function argparser_create_help_message() {
             # Translate the default value of "true" or "false" for
             # flags.
             if [[ "${arg_number}" == 0 ]]; then
-                argparser_translate "${default_values_str}" \
-                    "${default_values_str}"
+                if [[ "${default_values_str}" == true ]]; then
+                    argparser_translate "true" "${default_values_str}"
+                else
+                    argparser_translate "false" "${default_values_str}"
+                fi
+
                 default_values_arr=("${translation}")
                 default_values_str="${translation}"
             fi
 
-            # Concatenate and colorize the short and long option names,
-            # the value names, default values, and choice values.  Then,
-            # colorize the help text.
-            argparser_colorize "${styles["short_options"]}" 1 "array" \
-                "${short_options_arr[@]/#/-}"
-            short_options_arr=("${colorized_array[@]}")
-            argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
-                "${short_options_arr[@]}"
-            short_options_str="${joined_array}"
+            # Get the colorized short and long option names, and the
+            # colorized value names.  Concatenate and colorize the
+            # default values and choice values.  Then, colorize the help
+            # text.
+            argparser_get_display_names "${arg_id}" "short" true
+            short_options=("${display_names_arr[@]}")
 
-            argparser_colorize "${styles["long_options"]}" 1 "array" \
-                "${long_options_arr[@]/#/--}"
-            long_options_arr=("${colorized_array[@]}")
-            argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
-                "${long_options_arr[@]}"
-            long_options_str="${joined_array}"
+            argparser_get_display_names "${arg_id}" "long" true
+            long_options=("${display_names_arr[@]}")
 
-            argparser_colorize "${styles["value_names"]}" 1 "array" \
-                "${value_names_arr[@]}"
-            value_names_arr=("${colorized_array[@]}")
-            argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
-                "${value_names_arr[@]}"
-            value_names_str="${joined_array}"
+            argparser_get_display_names "${arg_id}" "value" true
+            value_names="${display_names_str}"
 
             argparser_colorize "${styles["default_values"]}" 1 "array" \
                 "${default_values_arr[@]}"
@@ -9304,8 +9290,8 @@ function argparser_create_help_message() {
 
             # Concatenate the name of all short and long options for the
             # sorting of all arguments, later.
-            argparser_get_option_names "${arg_id}" "long-short" false
-            all_option_names+=("${option_names_str}")
+            argparser_get_display_names "${arg_id}" "long+short" false
+            all_option_names+=("${display_names_str}")
 
             # Define the columns' next line, for the current argument.
             # The argument may have some short and long options, along
@@ -9315,17 +9301,17 @@ function argparser_create_help_message() {
             # short or no long option is given, use the empty string
             # instead.
             # Set the first column's value.
-            if [[ -z "${short_options_str}" ]]; then
+            if (( "${#short_options}" == 0 )); then
                 # No short option.
                 new_col_1_value=""
-            elif [[ -z "${long_options_str}" ]]; then
+            elif (( "${#long_options}" == 0 )); then
                 # No long option.
                 if [[ "${arg_number}" == 0 ]]; then
                     # Flag.
                     if [[ -n "${default_values_str}" ]]; then
                         # Default.
                         new_col_1_value="["
-                        for short_option in "${short_options_arr[@]}"; do
+                        for short_option in "${short_options[@]}"; do
                             new_col_1_value+="${short_option}, "
                         done
                         new_col_1_value="${new_col_1_value%, }"
@@ -9333,7 +9319,7 @@ function argparser_create_help_message() {
                     else
                         # No default.
                         new_col_1_value=""
-                        for short_option in "${short_options_arr[@]}"; do
+                        for short_option in "${short_options[@]}"; do
                             new_col_1_value+="${short_option}, "
                         done
                         new_col_1_value="${new_col_1_value%, }"
@@ -9345,7 +9331,7 @@ function argparser_create_help_message() {
                     then
                         # Choice and default.
                         new_col_1_value=""
-                        for short_option in "${short_options_arr[@]}"; do
+                        for short_option in "${short_options[@]}"; do
                             new_col_1_value+="[${short_option}"
                             new_col_1_value+="={${choice_values_str}}...], "
                         done
@@ -9353,7 +9339,7 @@ function argparser_create_help_message() {
                     elif [[ -n "${choice_values_str}" ]]; then
                         # Choice only.
                         new_col_1_value=""
-                        for short_option in "${short_options_arr[@]}"; do
+                        for short_option in "${short_options[@]}"; do
                             new_col_1_value+="${short_option}"
                             new_col_1_value+="={${choice_values_str}}..., "
                         done
@@ -9361,17 +9347,17 @@ function argparser_create_help_message() {
                     elif [[ -n "${default_values_str}" ]]; then
                         # Default only.
                         new_col_1_value=""
-                        for i in "${!short_options_arr[@]}"; do
-                            new_col_1_value+="[${short_options_arr[i]}"
-                            new_col_1_value+="=${value_names_arr[i]}...], "
+                        for i in "${!short_options[@]}"; do
+                            new_col_1_value+="[${short_options[i]}"
+                            new_col_1_value+="=${value_names}...], "
                         done
                         new_col_1_value="${new_col_1_value%, }"
                     else
                         # No choice nor default.
                         new_col_1_value=""
-                        for i in "${!short_options_arr[@]}"; do
-                            new_col_1_value+="${short_options_arr[i]}"
-                            new_col_1_value+="=${value_names_arr[i]}..., "
+                        for i in "${!short_options[@]}"; do
+                            new_col_1_value+="${short_options[i]}"
+                            new_col_1_value+="=${value_names}..., "
                         done
                         new_col_1_value="${new_col_1_value%, }"
                     fi
@@ -9382,7 +9368,7 @@ function argparser_create_help_message() {
                     then
                         # Choice and default.
                         new_col_1_value=""
-                        for short_option in "${short_options_arr[@]}"; do
+                        for short_option in "${short_options[@]}"; do
                             new_col_1_value+="[${short_option}"
                             new_col_1_value+="[={${choice_values_str}}...]], "
                         done
@@ -9390,7 +9376,7 @@ function argparser_create_help_message() {
                     elif [[ -n "${choice_values_str}" ]]; then
                         # Choice only.
                         new_col_1_value=""
-                        for short_option in "${short_options_arr[@]}"; do
+                        for short_option in "${short_options[@]}"; do
                             new_col_1_value+="${short_option}"
                             new_col_1_value+="[={${choice_values_str}}...], "
                         done
@@ -9398,17 +9384,17 @@ function argparser_create_help_message() {
                     elif [[ -n "${default_values_str}" ]]; then
                         # Default only.
                         new_col_1_value=""
-                        for i in "${!short_options_arr[@]}"; do
-                            new_col_1_value+="[${short_options_arr[i]}"
-                            new_col_1_value+="[=${value_names_arr[i]}...]], "
+                        for i in "${!short_options[@]}"; do
+                            new_col_1_value+="[${short_options[i]}"
+                            new_col_1_value+="[=${value_names}...]], "
                         done
                         new_col_1_value="${new_col_1_value%, }"
                     else
                         # No choice nor default.
                         new_col_1_value=""
-                        for i in "${!short_options_arr[@]}"; do
-                            new_col_1_value+="${short_options_arr[i]}"
-                            new_col_1_value+="[=${value_names_arr[i]}...], "
+                        for i in "${!short_options[@]}"; do
+                            new_col_1_value+="${short_options[i]}"
+                            new_col_1_value+="[=${value_names}...], "
                         done
                         new_col_1_value="${new_col_1_value%, }"
                     fi
@@ -9419,7 +9405,7 @@ function argparser_create_help_message() {
                     then
                         # Choice and default.
                         new_col_1_value=""
-                        for short_option in "${short_options_arr[@]}"; do
+                        for short_option in "${short_options[@]}"; do
                             new_col_1_value+="[${short_option}"
                             new_col_1_value+="[={${choice_values_str}}]], "
                         done
@@ -9427,7 +9413,7 @@ function argparser_create_help_message() {
                     elif [[ -n "${choice_values_str}" ]]; then
                         # Choice only.
                         new_col_1_value=""
-                        for short_option in "${short_options_arr[@]}"; do
+                        for short_option in "${short_options[@]}"; do
                             new_col_1_value+="${short_option}"
                             new_col_1_value+="[={${choice_values_str}}], "
                         done
@@ -9435,17 +9421,17 @@ function argparser_create_help_message() {
                     elif [[ -n "${default_values_str}" ]]; then
                         # Default only.
                         new_col_1_value=""
-                        for i in "${!short_options_arr[@]}"; do
-                            new_col_1_value+="[${short_options_arr[i]}"
-                            new_col_1_value+="[=${value_names_arr[i]}]], "
+                        for i in "${!short_options[@]}"; do
+                            new_col_1_value+="[${short_options[i]}"
+                            new_col_1_value+="[=${value_names}]], "
                         done
                         new_col_1_value="${new_col_1_value%, }"
                     else
                         # No choice nor default.
                         new_col_1_value=""
-                        for i in "${!short_options_arr[@]}"; do
-                            new_col_1_value+="${short_options_arr[i]}"
-                            new_col_1_value+="[=${value_names_arr[i]}], "
+                        for i in "${!short_options[@]}"; do
+                            new_col_1_value+="${short_options[i]}"
+                            new_col_1_value+="[=${value_names}], "
                         done
                         new_col_1_value="${new_col_1_value%, }"
                     fi
@@ -9456,7 +9442,7 @@ function argparser_create_help_message() {
                     then
                         # Choice and default.
                         new_col_1_value=""
-                        for short_option in "${short_options_arr[@]}"; do
+                        for short_option in "${short_options[@]}"; do
                             new_col_1_value+="[${short_option}"
                             new_col_1_value+="={${choice_values_str}}], "
                         done
@@ -9464,7 +9450,7 @@ function argparser_create_help_message() {
                     elif [[ -n "${choice_values_str}" ]]; then
                         # Choice only.
                         new_col_1_value=""
-                        for short_option in "${short_options_arr[@]}"; do
+                        for short_option in "${short_options[@]}"; do
                             new_col_1_value+="${short_option}"
                             new_col_1_value+="={${choice_values_str}}, "
                         done
@@ -9472,17 +9458,17 @@ function argparser_create_help_message() {
                     elif [[ -n "${default_values_str}" ]]; then
                         # Default only.
                         new_col_1_value=""
-                        for i in "${!short_options_arr[@]}"; do
-                            new_col_1_value+="[${short_options_arr[i]}"
-                            new_col_1_value+="=${value_names_arr[i]}], "
+                        for i in "${!short_options[@]}"; do
+                            new_col_1_value+="[${short_options[i]}"
+                            new_col_1_value+="=${value_names}], "
                         done
                         new_col_1_value="${new_col_1_value%, }"
                     else
                         # No choice nor default.
                         new_col_1_value=""
-                        for i in "${!short_options_arr[@]}"; do
-                            new_col_1_value+="${short_options_arr[i]}"
-                            new_col_1_value+="=${value_names_arr[i]}, "
+                        for i in "${!short_options[@]}"; do
+                            new_col_1_value+="${short_options[i]}"
+                            new_col_1_value+="=${value_names}, "
                         done
                         new_col_1_value="${new_col_1_value%, }"
                     fi
@@ -9490,7 +9476,7 @@ function argparser_create_help_message() {
             elif [[ -n "${default_values_str}" ]]; then
                 # Long option, default.
                 new_col_1_value="["
-                for short_option in "${short_options_arr[@]}"; do
+                for short_option in "${short_options[@]}"; do
                     new_col_1_value+="${short_option}, "
                 done
                 new_col_1_value="${new_col_1_value%, }"
@@ -9498,7 +9484,7 @@ function argparser_create_help_message() {
             else
                 # Long option, no default.
                 new_col_1_value=""
-                for short_option in "${short_options_arr[@]}"; do
+                for short_option in "${short_options[@]}"; do
                     new_col_1_value+="${short_option}, "
                 done
                 new_col_1_value="${new_col_1_value% }"
@@ -9506,7 +9492,7 @@ function argparser_create_help_message() {
             new_col_1+=("${new_col_1_value}")
 
             # Set the second column's value.
-            if [[ -z "${long_options_str}" ]]; then
+            if (( "${#long_options}" == 0 )); then
                 # No long option.
                 new_col_2_value=""
             elif [[ "${arg_number}" == 0 ]]; then
@@ -9514,7 +9500,7 @@ function argparser_create_help_message() {
                 if [[ -n "${default_values_str}" ]]; then
                     # Default.
                     new_col_2_value="["
-                    for long_option in "${long_options_arr[@]}"; do
+                    for long_option in "${long_options[@]}"; do
                         new_col_2_value+="${long_option}, "
                     done
                     new_col_2_value="${new_col_2_value%, }"
@@ -9522,7 +9508,7 @@ function argparser_create_help_message() {
                 else
                     # No default.
                     new_col_2_value=""
-                    for long_option in "${long_options_arr[@]}"; do
+                    for long_option in "${long_options[@]}"; do
                         new_col_2_value+="${long_option}, "
                     done
                     new_col_2_value="${new_col_2_value%, }"
@@ -9533,7 +9519,7 @@ function argparser_create_help_message() {
                 then
                     # Choice and default.
                     new_col_2_value=""
-                    for long_option in "${long_options_arr[@]}"; do
+                    for long_option in "${long_options[@]}"; do
                         new_col_2_value+="[${long_option}"
                         new_col_2_value+="={${choice_values_str}}...], "
                     done
@@ -9541,7 +9527,7 @@ function argparser_create_help_message() {
                 elif [[ -n "${choice_values_str}" ]]; then
                     # Choice only.
                     new_col_2_value=""
-                    for long_option in "${long_options_arr[@]}"; do
+                    for long_option in "${long_options[@]}"; do
                         new_col_2_value+="${long_option}"
                         new_col_2_value+="={${choice_values_str}}..., "
                     done
@@ -9549,17 +9535,17 @@ function argparser_create_help_message() {
                 elif [[ -n "${default_values_str}" ]]; then
                     # Default only.
                     new_col_2_value=""
-                    for i in "${!long_options_arr[@]}"; do
-                        new_col_2_value+="[${long_options_arr[i]}"
-                        new_col_2_value+="=${value_names_arr[i]}...], "
+                    for i in "${!long_options[@]}"; do
+                        new_col_2_value+="[${long_options[i]}"
+                        new_col_2_value+="=${value_names}...], "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                 else
                     # No choice nor default.
                     new_col_2_value=""
-                    for i in "${!long_options_arr[@]}"; do
-                        new_col_2_value+="${long_options_arr[i]}"
-                        new_col_2_value+="=${value_names_arr[i]}..., "
+                    for i in "${!long_options[@]}"; do
+                        new_col_2_value+="${long_options[i]}"
+                        new_col_2_value+="=${value_names}..., "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                 fi
@@ -9569,7 +9555,7 @@ function argparser_create_help_message() {
                 then
                     # Choice and default.
                     new_col_2_value=""
-                    for long_option in "${long_options_arr[@]}"; do
+                    for long_option in "${long_options[@]}"; do
                         new_col_2_value+="[${long_option}"
                         new_col_2_value+="[={${choice_values_str}}...]], "
                     done
@@ -9577,7 +9563,7 @@ function argparser_create_help_message() {
                 elif [[ -n "${choice_values_str}" ]]; then
                     # Choice only.
                     new_col_2_value=""
-                    for long_option in "${long_options_arr[@]}"; do
+                    for long_option in "${long_options[@]}"; do
                         new_col_2_value+="${long_option}"
                         new_col_2_value+="={${choice_values_str}}...], "
                     done
@@ -9585,17 +9571,17 @@ function argparser_create_help_message() {
                 elif [[ -n "${default_values_str}" ]]; then
                     # Default only.
                     new_col_2_value=""
-                    for i in "${!long_options_arr[@]}"; do
-                        new_col_2_value+="[${long_options_arr[i]}"
-                        new_col_2_value+="[=${value_names_arr[i]}...]], "
+                    for i in "${!long_options[@]}"; do
+                        new_col_2_value+="[${long_options[i]}"
+                        new_col_2_value+="[=${value_names}...]], "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                 else
                     # No choice nor default.
                     new_col_2_value=""
-                    for i in "${!long_options_arr[@]}"; do
-                        new_col_2_value+="${long_options_arr[i]}"
-                        new_col_2_value+="[=${value_names_arr[i]}...], "
+                    for i in "${!long_options[@]}"; do
+                        new_col_2_value+="${long_options[i]}"
+                        new_col_2_value+="[=${value_names}...], "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                 fi
@@ -9605,7 +9591,7 @@ function argparser_create_help_message() {
                 then
                     # Choice and default.
                     new_col_2_value=""
-                    for long_option in "${long_options_arr[@]}"; do
+                    for long_option in "${long_options[@]}"; do
                         new_col_2_value+="[${long_option}"
                         new_col_2_value+="[={${choice_values_str}}]], "
                     done
@@ -9613,7 +9599,7 @@ function argparser_create_help_message() {
                 elif [[ -n "${choice_values_str}" ]]; then
                     # Choice only.
                     new_col_2_value=""
-                    for long_option in "${long_options_arr[@]}"; do
+                    for long_option in "${long_options[@]}"; do
                         new_col_2_value+="${long_option}"
                         new_col_2_value+="[={${choice_values_str}}], "
                     done
@@ -9621,17 +9607,17 @@ function argparser_create_help_message() {
                 elif [[ -n "${default_values_str}" ]]; then
                     # Default only.
                     new_col_2_value=""
-                    for i in "${!long_options_arr[@]}"; do
-                        new_col_2_value+="[${long_options_arr[i]}"
-                        new_col_2_value+="[=${value_names_arr[i]}]], "
+                    for i in "${!long_options[@]}"; do
+                        new_col_2_value+="[${long_options[i]}"
+                        new_col_2_value+="[=${value_names}]], "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                 else
                     # No choice nor default.
                     new_col_2_value=""
-                    for i in "${!long_options_arr[@]}"; do
-                        new_col_2_value+="${long_options_arr[i]}"
-                        new_col_2_value+="[=${value_names_arr[i]}], "
+                    for i in "${!long_options[@]}"; do
+                        new_col_2_value+="${long_options[i]}"
+                        new_col_2_value+="[=${value_names}], "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                 fi
@@ -9641,31 +9627,31 @@ function argparser_create_help_message() {
                 then
                     # Choice and default.
                     new_col_2_value=""
-                    for long_option in "${long_options_arr[@]}"; do
+                    for long_option in "${long_options[@]}"; do
                         new_col_2_value+="[${long_option}={${choice_values_str}}], "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                 elif [[ -n "${choice_values_str}" ]]; then
                     # Choice only.
                     new_col_2_value=""
-                    for long_option in "${long_options_arr[@]}"; do
+                    for long_option in "${long_options[@]}"; do
                         new_col_2_value+="${long_option}={${choice_values_str}}, "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                 elif [[ -n "${default_values_str}" ]]; then
                     # Default only.
                     new_col_2_value=""
-                    for i in "${!long_options_arr[@]}"; do
-                        new_col_2_value+="[${long_options_arr[i]}"
-                        new_col_2_value+="=${value_names_arr[i]}], "
+                    for i in "${!long_options[@]}"; do
+                        new_col_2_value+="[${long_options[i]}"
+                        new_col_2_value+="=${value_names}], "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                 else
                     # No choice nor default.
                     new_col_2_value=""
-                    for i in "${!long_options_arr[@]}"; do
-                        new_col_2_value+="${long_options_arr[i]}"
-                        new_col_2_value+="=${value_names_arr[i]}, "
+                    for i in "${!long_options[@]}"; do
+                        new_col_2_value+="${long_options[i]}"
+                        new_col_2_value+="=${value_names}, "
                     done
                     new_col_2_value="${new_col_2_value%, }"
                 fi
@@ -9934,22 +9920,14 @@ function argparser_create_help_message() {
     fi
 
     for arg_id in "${positional_args[@]}"; do
-        value_names_str="${all_value_names[${arg_id}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a value_names_arr \
-            <<< "${value_names_str}"
+        argparser_get_display_names "${arg_id}" "value" true
+        value_names="${display_names_str}"
+
         default_values_str="${all_default_values[${arg_id}]}"
-
-        argparser_colorize "${styles["value_names"]}" 1 "array" \
-            "${value_names_arr[@]}"
-        value_names_arr=("${colorized_array[@]}")
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" \
-            "${value_names_arr[@]}"
-        value_names_str="${joined_array}"
-
         if [[ -n "${default_values_str}" ]]; then
-            usage+=" [${value_names_str}]"
+            usage+=" [${value_names}]"
         else
-            usage+=" ${value_names_str}"
+            usage+=" ${value_names}"
         fi
     done
 
@@ -10084,6 +10062,8 @@ function argparser_create_usage_message() {
     local choice_values_str
     local -a colorized_array
     local default_values
+    local -a display_names_arr
+    local display_names_str
     local -a framed_array
     local header
     local -a help_option_args
@@ -10094,28 +10074,23 @@ function argparser_create_usage_message() {
     local long_option
     local -a long_option_default_args
     local -a long_option_required_args
-    local -a long_options_arr
-    local long_options_str
+    local long_options
     local -a notes
     local -a positional_default_args
     local -a positional_required_args
-    local option_names_str
     local -a padded_array
     local script_name
     local short_option
     local -a short_option_default_args
     local -a short_option_required_args
-    local -a short_options_arr
-    local short_options_str
+    local short_options
     local -a sorted_array
     local subcommand
     local -a subcommands
     local translation
     local -a usage_message
     local uncolorized_line
-    local value_name
-    local -a value_names_arr
-    local value_names_str
+    local value_names
     local whitespace
 
     # Get the defined subcommands.
@@ -10164,14 +10139,14 @@ function argparser_create_usage_message() {
                 && "${ARGPARSER_USE_SHORT_OPTIONS}" == true) \
             || "${ARGPARSER_USE_LONG_OPTIONS}" == false ]]
         then
-            argparser_get_option_names "${arg_id}" "short" true
-            help_options+=("${option_names_str}")
+            argparser_get_display_names "${arg_id}" "short" true
+            help_options+=("${display_names_str}")
         elif [[ ("${ARGPARSER_USAGE_MESSAGE_OPTION_TYPE}" == "long" \
                 && "${ARGPARSER_USE_LONG_OPTIONS}" == true) \
             || "${ARGPARSER_USE_SHORT_OPTIONS}" == false ]]
         then
-            argparser_get_option_names "${arg_id}" "long" true
-            help_options+=("${option_names_str}")
+            argparser_get_display_names "${arg_id}" "long" true
+            help_options+=("${display_names_str}")
         fi
     done
 
@@ -10205,7 +10180,7 @@ function argparser_create_usage_message() {
 
             # Read the argument's definition.
             subcommand="${all_subcommands[${arg_id}]}"
-            short_options_str="${all_short_options[${arg_id}]}"
+            short_options="${all_short_options[${arg_id}]}"
             default_values="${all_default_values[${arg_id}]}"
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
                 <<< "${all_notes[${arg_id}]}"
@@ -10220,13 +10195,13 @@ function argparser_create_usage_message() {
 
             # Add the argument to the respective array.
             if [[ -z "${default_values}" ]]; then
-                if [[ -z "${short_options_str}" ]]; then
+                if [[ -z "${short_options}" ]]; then
                     long_option_required_args+=("${arg_id}")
                 else
                     short_option_required_args+=("${arg_id}")
                 fi
             else
-                if [[ -z "${short_options_str}" ]]; then
+                if [[ -z "${short_options}" ]]; then
                     long_option_default_args+=("${arg_id}")
                 else
                     short_option_default_args+=("${arg_id}")
@@ -10244,7 +10219,7 @@ function argparser_create_usage_message() {
 
             # Read the argument's definition.
             subcommand="${all_subcommands[${arg_id}]}"
-            long_options_str="${all_long_options[${arg_id}]}"
+            long_options="${all_long_options[${arg_id}]}"
             default_values="${all_default_values[${arg_id}]}"
             IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
                 <<< "${all_notes[${arg_id}]}"
@@ -10259,13 +10234,13 @@ function argparser_create_usage_message() {
 
             # Add the argument to the respective array.
             if [[ -z "${default_values}" ]]; then
-                if [[ -z "${long_options_str}" ]]; then
+                if [[ -z "${long_options}" ]]; then
                     short_option_required_args+=("${arg_id}")
                 else
                     long_option_required_args+=("${arg_id}")
                 fi
             else
-                if [[ -z "${long_options_str}" ]]; then
+                if [[ -z "${long_options}" ]]; then
                     short_option_default_args+=("${arg_id}")
                 else
                     long_option_default_args+=("${arg_id}")
@@ -10306,38 +10281,18 @@ function argparser_create_usage_message() {
     lines=()
     for arg_id in "${short_option_default_args[@]}"; do
         # Read the argument's definition.
-        short_options_str="${all_short_options[${arg_id}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a short_options_arr \
-            <<< "${short_options_str}"
-        value_names_str="${all_value_names[${arg_id}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a value_names_arr \
-            <<< "${value_names_str}"
         choice_values_str="${all_choice_values[${arg_id}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values_arr \
             <<< "${choice_values_str}"
         arg_number="${all_arg_numbers[${arg_id}]}"
 
-        # If there are less value names than short option names, create
-        # the remaining value names by capitalizing the short option
-        # names.
-        if (( "${#value_names_arr[@]}" < "${#short_options_arr[@]}" ))
-        then
-            for short_option in "${short_options_arr[@]:${#value_names_arr[@]}}"
-            do
-                value_name="${short_option//-/_}"
-                value_names_arr+=("${value_name^^}")
-            done
-        fi
-
         # Concatenate and colorize the short option names, value names,
         # and choice values.
-        argparser_get_option_names "${arg_id}" "short" true
-        short_options_str="${option_names_str}"
+        argparser_get_display_names "${arg_id}" "short" true
+        short_options="${display_names_str}"
 
-        argparser_colorize "${styles["value_names"]}" 1 "array" \
-            "${value_names_arr[@]}"
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
-        value_names_str="${joined_array}"
+        argparser_get_display_names "${arg_id}" "value" true
+        value_names="${display_names_str}"
 
         argparser_colorize "${styles["choice_values"]}" 1 "array" \
             "${choice_values_arr[@]}"
@@ -10350,42 +10305,42 @@ function argparser_create_usage_message() {
         # changing the look of the line.
         if [[ "${arg_number}" == 0 ]]; then
             # Flag.
-            lines+=("[${short_options_str}]")
+            lines+=("[${short_options}]")
         elif [[ "${arg_number}" == "+" ]]; then
             # [1, inf) values.
             if [[ -n "${choice_values_str}" ]]; then
                 # Choice and default.
-                lines+=("[${short_options_str}={${choice_values_str}}...]")
+                lines+=("[${short_options}={${choice_values_str}}...]")
             else
                 # Default only.
-                lines+=("[${short_options_str}=${value_names_str}...]")
+                lines+=("[${short_options}=${value_names}...]")
             fi
         elif [[ "${arg_number}" == "*" ]]; then
             # [0, inf) values.
             if [[ -n "${choice_values_str}" ]]; then
                 # Choice and default.
-                lines+=("[${short_options_str}[={${choice_values_str}}...]]")
+                lines+=("[${short_options}[={${choice_values_str}}...]]")
             else
                 # Default only.
-                lines+=("[${short_options_str}[=${value_names_str}...]]")
+                lines+=("[${short_options}[=${value_names}...]]")
             fi
         elif [[ "${arg_number}" == "?" ]]; then
             # [0, 1] values.
             if [[ -n "${choice_values_str}" ]]; then
                 # Choice and default.
-                lines+=("[${short_options_str}[={${choice_values_str}}]]")
+                lines+=("[${short_options}[={${choice_values_str}}]]")
             else
                 # Default only.
-                lines+=("[${short_options_str}[=${value_names_str}]]")
+                lines+=("[${short_options}[=${value_names}]]")
             fi
         else
             # Integer-count values.
             if [[ -n "${choice_values_str}" ]]; then
                 # Choice and default.
-                lines+=("[${short_options_str}={${choice_values_str}}]")
+                lines+=("[${short_options}={${choice_values_str}}]")
             else
                 # Default only.
-                lines+=("[${short_options_str}=${value_names_str}]")
+                lines+=("[${short_options}=${value_names}]")
             fi
         fi
     done
@@ -10400,38 +10355,18 @@ function argparser_create_usage_message() {
     lines=()
     for arg_id in "${long_option_default_args[@]}"; do
         # Read the argument's definition.
-        long_options_str="${all_long_options[${arg_id}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a long_options_arr \
-            <<< "${long_options_str}"
-        value_names_str="${all_value_names[${arg_id}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a value_names_arr \
-            <<< "${value_names_str}"
         choice_values_str="${all_choice_values[${arg_id}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values_arr \
             <<< "${choice_values_str}"
         arg_number="${all_arg_numbers[${arg_id}]}"
 
-        # If there are less value names than long option names, create
-        # the remaining value names by capitalizing the long option
-        # names.
-        if (( "${#value_names_arr[@]}" < "${#long_options_arr[@]}" ))
-        then
-            for long_option in "${long_options_arr[@]:${#value_names_arr[@]}}"
-            do
-                value_name="${long_option//-/_}"
-                value_names_arr+=("${value_name^^}")
-            done
-        fi
-
         # Concatenate and colorize the long option names, value names,
         # and choice values.
-        argparser_get_option_names "${arg_id}" "long" true
-        long_options_str="${option_names_str}"
+        argparser_get_display_names "${arg_id}" "long" true
+        long_options="${display_names_str}"
 
-        argparser_colorize "${styles["value_names"]}" 1 "array" \
-            "${value_names_arr[@]}"
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
-        value_names_str="${joined_array}"
+        argparser_get_display_names "${arg_id}" "value" true
+        value_names="${display_names_str}"
 
         argparser_colorize "${styles["choice_values"]}" 1 "array" \
             "${choice_values_arr[@]}"
@@ -10444,42 +10379,42 @@ function argparser_create_usage_message() {
         # changing the look of the line.
         if [[ "${arg_number}" == 0 ]]; then
             # Flag.
-            lines+=("[${long_options_str}]")
+            lines+=("[${long_options}]")
         elif [[ "${arg_number}" == "+" ]]; then
             # [1, inf) values.
             if [[ -n "${choice_values_str}" ]]; then
                 # Choice and default.
-                lines+=("[${long_options_str}={${choice_values_str}}...]")
+                lines+=("[${long_options}={${choice_values_str}}...]")
             else
                 # Default only.
-                lines+=("[${long_options_str}=${value_names_str}...]")
+                lines+=("[${long_options}=${value_names}...]")
             fi
         elif [[ "${arg_number}" == "*" ]]; then
             # [0, inf) values.
             if [[ -n "${choice_values_str}" ]]; then
                 # Choice and default.
-                lines+=("[${long_options_str}[={${choice_values_str}}...]]")
+                lines+=("[${long_options}[={${choice_values_str}}...]]")
             else
                 # Default only.
-                lines+=("[${long_options_str}[=${value_names_str}...]]")
+                lines+=("[${long_options}[=${value_names}...]]")
             fi
         elif [[ "${arg_number}" == "?" ]]; then
             # [0, 1] values.
             if [[ -n "${choice_values_str}" ]]; then
                 # Choice and default.
-                lines+=("[${long_options_str}[={${choice_values_str}}]]")
+                lines+=("[${long_options}[={${choice_values_str}}]]")
             else
                 # Default only.
-                lines+=("[${long_options_str}[=${value_names_str}]]")
+                lines+=("[${long_options}[=${value_names}]]")
             fi
         else
             # Integer-count values.
             if [[ -n "${choice_values_str}" ]]; then
                 # Choice and default.
-                lines+=("[${long_options_str}={${choice_values_str}}]")
+                lines+=("[${long_options}={${choice_values_str}}]")
             else
                 # Default only.
-                lines+=("[${long_options_str}=${value_names_str}]")
+                lines+=("[${long_options}=${value_names}]")
             fi
         fi
     done
@@ -10494,38 +10429,18 @@ function argparser_create_usage_message() {
     lines=()
     for arg_id in "${short_option_required_args[@]}"; do
         # Read the argument's definition.
-        short_options_str="${all_short_options[${arg_id}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a short_options_arr \
-            <<< "${short_options_str}"
-        value_names_str="${all_value_names[${arg_id}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a value_names_arr \
-            <<< "${value_names_str}"
         choice_values_str="${all_choice_values[${arg_id}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values_arr \
             <<< "${choice_values_str}"
         arg_number="${all_arg_numbers[${arg_id}]}"
 
-        # If there are less value names than short option names, create
-        # the remaining value names by capitalizing the short option
-        # names.
-        if (( "${#value_names_arr[@]}" < "${#short_options_arr[@]}" ))
-        then
-            for short_option in "${short_options_arr[@]:${#value_names_arr[@]}}"
-            do
-                value_name="${short_option//-/_}"
-                value_names_arr+=("${value_name^^}")
-            done
-        fi
-
         # Concatenate and colorize the short option names, value names,
         # and choice values.
-        argparser_get_option_names "${arg_id}" "short" true
-        short_options_str="${option_names_str}"
+        argparser_get_display_names "${arg_id}" "short" true
+        short_options="${display_names_str}"
 
-        argparser_colorize "${styles["value_names"]}" 1 "array" \
-            "${value_names_arr[@]}"
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
-        value_names_str="${joined_array}"
+        argparser_get_display_names "${arg_id}" "value" true
+        value_names="${display_names_str}"
 
         argparser_colorize "${styles["choice_values"]}" 1 "array" \
             "${choice_values_arr[@]}"
@@ -10538,42 +10453,42 @@ function argparser_create_usage_message() {
         # property changing the look of the line.
         if [[ "${arg_number}" == 0 ]]; then
             # Flag.
-            lines+=("${short_options_str}")
+            lines+=("${short_options}")
         elif [[ "${arg_number}" == "+" ]]; then
             # [1, inf) values.
             if [[ -n "${choice_values_str}" ]]; then
                 # Choice only.
-                lines+=("${short_options_str}={${choice_values_str}}...")
+                lines+=("${short_options}={${choice_values_str}}...")
             else
                 # No choice nor default.
-                lines+=("${short_options_str}=${value_names_str}...")
+                lines+=("${short_options}=${value_names}...")
             fi
         elif [[ "${arg_number}" == "*" ]]; then
             # [0, inf) values.
             if [[ -n "${choice_values_str}" ]]; then
                 # Choice only.
-                lines+=("${short_options_str}[={${choice_values_str}}...]")
+                lines+=("${short_options}[={${choice_values_str}}...]")
             else
                 # No choice nor default.
-                lines+=("${short_options_str}[=${value_names_str}...]")
+                lines+=("${short_options}[=${value_names}...]")
             fi
         elif [[ "${arg_number}" == "?" ]]; then
             # [0, 1] values.
             if [[ -n "${choice_values_str}" ]]; then
                 # Choice only.
-                lines+=("${short_options_str}[={${choice_values_str}}]")
+                lines+=("${short_options}[={${choice_values_str}}]")
             else
                 # No choice nor default.
-                lines+=("${short_options_str}[=${value_names_str}]")
+                lines+=("${short_options}[=${value_names}]")
             fi
         else
             # Integer-count values.
             if [[ -n "${choice_values_str}" ]]; then
                 # Choice only.
-                lines+=("${short_options_str}={${choice_values_str}}")
+                lines+=("${short_options}={${choice_values_str}}")
             else
                 # No choice nor default.
-                lines+=("${short_options_str}=${value_names_str}")
+                lines+=("${short_options}=${value_names}")
             fi
         fi
     done
@@ -10588,38 +10503,18 @@ function argparser_create_usage_message() {
     lines=()
     for arg_id in "${long_option_required_args[@]}"; do
         # Read the argument's definition.
-        long_options_str="${all_long_options[${arg_id}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a long_options_arr \
-            <<< "${long_options_str}"
-        value_names_str="${all_value_names[${arg_id}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a value_names_arr \
-            <<< "${value_names_str}"
         choice_values_str="${all_choice_values[${arg_id}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values_arr \
             <<< "${choice_values_str}"
         arg_number="${all_arg_numbers[${arg_id}]}"
 
-        # If there are less value names than long option names, create
-        # the remaining value names by capitalizing the long option
-        # names.
-        if (( "${#value_names_arr[@]}" < "${#long_options_arr[@]}" ))
-        then
-            for long_option in "${long_options_arr[@]:${#value_names_arr[@]}}"
-            do
-                value_name="${long_option//-/_}"
-                value_names_arr+=("${value_name^^}")
-            done
-        fi
-
         # Concatenate and colorize the long option names, value names,
         # and choice values.
-        argparser_get_option_names "${arg_id}" "long" true
-        long_options_str="${option_names_str}"
+        argparser_get_display_names "${arg_id}" "long" true
+        long_options="${display_names_str}"
 
-        argparser_colorize "${styles["value_names"]}" 1 "array" \
-            "${value_names_arr[@]}"
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
-        value_names_str="${joined_array}"
+        argparser_get_display_names "${arg_id}" "value" true
+        value_names="${display_names_str}"
 
         argparser_colorize "${styles["choice_values"]}" 1 "array" \
             "${choice_values_arr[@]}"
@@ -10632,42 +10527,42 @@ function argparser_create_usage_message() {
         # changing the look of the line.
         if [[ "${arg_number}" == 0 ]]; then
             # Flag.
-            lines+=("${long_options_str}")
+            lines+=("${long_options}")
         elif [[ "${arg_number}" == "+" ]]; then
             # [1, inf) values.
             if [[ -n "${choice_values_str}" ]]; then
                 # Choice only.
-                lines+=("${long_options_str}={${choice_values_str}}...")
+                lines+=("${long_options}={${choice_values_str}}...")
             else
                 # No choice nor default.
-                lines+=("${long_options_str}=${value_names_str}...")
+                lines+=("${long_options}=${value_names}...")
             fi
         elif [[ "${arg_number}" == "*" ]]; then
             # [0, inf) values.
             if [[ -n "${choice_values_str}" ]]; then
                 # Choice only.
-                lines+=("${long_options_str}[={${choice_values_str}}...]")
+                lines+=("${long_options}[={${choice_values_str}}...]")
             else
                 # No choice nor default.
-                lines+=("${long_options_str}[=${value_names_str}...]")
+                lines+=("${long_options}[=${value_names}...]")
             fi
         elif [[ "${arg_number}" == "?" ]]; then
             # [0, 1] values.
             if [[ -n "${choice_values_str}" ]]; then
                 # Choice only.
-                lines+=("${long_options_str}[={${choice_values_str}}]")
+                lines+=("${long_options}[={${choice_values_str}}]")
             else
                 # No choice nor default.
-                lines+=("${long_options_str}[=${value_names_str}]")
+                lines+=("${long_options}[=${value_names}]")
             fi
         else
             # Integer-count values.
             if [[ -n "${choice_values_str}" ]]; then
                 # Choice only.
-                lines+=("${long_options_str}={${choice_values_str}}")
+                lines+=("${long_options}={${choice_values_str}}")
             else
                 # No choice nor default.
-                lines+=("${long_options_str}=${value_names_str}")
+                lines+=("${long_options}=${value_names}")
             fi
         fi
     done
@@ -10681,19 +10576,14 @@ function argparser_create_usage_message() {
     lines=()
     for arg_id in "${positional_default_args[@]}"; do
         # Read the argument's definition.
-        value_names_str="${all_value_names[${arg_id}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a value_names_arr \
-            <<< "${value_names_str}"
         choice_values_str="${all_choice_values[${arg_id}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values_arr \
             <<< "${choice_values_str}"
         arg_number="${all_arg_numbers[${arg_id}]}"
 
         # Concatenate and colorize the value names and choice values.
-        argparser_colorize "${styles["value_names"]}" 1 "array" \
-            "${value_names_arr[@]}"
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
-        value_names_str="${joined_array}"
+        argparser_get_display_names "${arg_id}" "value" true
+        value_names="${display_names_str}"
 
         argparser_colorize "${styles["choice_values"]}" 1 "array" \
             "${choice_values_arr[@]}"
@@ -10710,7 +10600,7 @@ function argparser_create_usage_message() {
                 lines+=("[{${choice_values_str}}...]")
             else
                 # Default only.
-                lines+=("[${value_names_str}...]")
+                lines+=("[${value_names}...]")
             fi
         else
             # Integer-count or [0, 1] values.
@@ -10719,7 +10609,7 @@ function argparser_create_usage_message() {
                 lines+=("[{${choice_values_str}}]")
             else
                 # Default only.
-                lines+=("[${value_names_str}]")
+                lines+=("[${value_names}]")
             fi
         fi
     done
@@ -10730,19 +10620,14 @@ function argparser_create_usage_message() {
     lines=()
     for arg_id in "${positional_required_args[@]}"; do
         # Read the argument's definition.
-        value_names_str="${all_value_names[${arg_id}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a value_names_arr \
-            <<< "${value_names_str}"
         choice_values_str="${all_choice_values[${arg_id}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a choice_values_arr \
             <<< "${choice_values_str}"
         arg_number="${all_arg_numbers[${arg_id}]}"
 
         # Concatenate and colorize the value names and choice values.
-        argparser_colorize "${styles["value_names"]}" 1 "array" \
-            "${value_names_arr[@]}"
-        argparser_join "${ARGPARSER_ARG_DELIMITER_2}" "${colorized_array[@]}"
-        value_names_str="${joined_array}"
+        argparser_get_display_names "${arg_id}" "value" true
+        value_names="${display_names_str}"
 
         argparser_colorize "${styles["choice_values"]}" 1 "array" \
             "${choice_values_arr[@]}"
@@ -10759,7 +10644,7 @@ function argparser_create_usage_message() {
                 lines+=("{${choice_values_str}}...")
             else
                 # No choice nor default.
-                lines+=("${value_names_str}...")
+                lines+=("${value_names}...")
             fi
         else
             # Integer-count or [0, 1] values.
@@ -10768,7 +10653,7 @@ function argparser_create_usage_message() {
                 lines+=("{${choice_values_str}}")
             else
                 # No choice nor default.
-                lines+=("${value_names_str}")
+                lines+=("${value_names}")
             fi
         fi
     done
