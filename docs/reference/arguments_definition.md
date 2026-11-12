@@ -58,7 +58,7 @@ The long option names must comprise more than one character, thereby, no leading
 
 #### 9.1.4. Value names (`val_names`)
 
-The value names are used as substitute for the uppercased option names in help and usage messages for non-flag options, *i.e.*, those requiring at least one argument. Setting a value name may render the help message clearer or more concise, like when having an option `--in-file` whose argument just needs to be shown as `FILE`. If no value name is given, or less than there are short or long option names, the remaining argument texts are filled with the respective option name in "screaming snake&ndash;cased" form, *i.e.*, uppercased with underscores instead of hyphens. For positional arguments, the value name is the only name that can be shown, thus, it is required in this case.
+The value names are used as substitute for the uppercased option names in help and usage messages for non-flag options, *i.e.*, those requiring at least one argument. Setting a value name may render the help message clearer or more concise, like when having an option `--in-file` whose argument just needs to be shown as `FILE`. If no value name is given, it is created from the first long option name (or the first short option name, if no long option name is defined) in "screaming snake&ndash;cased" form, *i.e.*, uppercased with underscores instead of hyphens. If less value names are given than the argument number suggests, the remaining value names are filled by duplicating the last defined value name. For positional arguments, the value name is the only name that can be shown, thus, it is required in this case.
 
 #### 9.1.5. Default values (`defaults`)
 

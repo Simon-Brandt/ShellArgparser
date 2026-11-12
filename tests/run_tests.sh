@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-11-11
+# Last Modification: 2026-11-12
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -487,7 +487,7 @@ EOF
 error=""
 print_diff "${cmd}" "${output}" "${error}"
 
-# 1.11. Test the usage using the short option name.
+# 1.11. Test the usage message using the short option name.
 test_number="${test_section}.11"
 test_type="usage"
 cmd="bash test_basic.sh -u"
@@ -495,14 +495,14 @@ output="$(cat << EOF
 +- Usage -------------------------+
 | test_basic.sh [-h,-? | -u | -V] |
 |               [-d,-D={A-C}]     |
-|               [-e,-E=VAL_5,E]   |
+|               [-e,-E=VAL_5]     |
 |               [-f,-F]           |
 |               [-g,-G]           |
-|               -a,-A=VAL_1,A     |
-|               -b,-B=VAL_2,B...  |
+|               -a,-A=VAL_1       |
+|               -b,-B=VAL_2...    |
 |               -c,-C={A,B}...    |
 |               [{1,2}]           |
-|               pos_2             |
+|               pos_2,pos_2       |
 +---------------------------------+
 EOF
 )"
@@ -517,14 +517,14 @@ output="$(cat << EOF
 +- Usage -------------------------+
 | test_basic.sh [-h,-? | -u | -V] |
 |               [-d,-D={A-C}]     |
-|               [-e,-E=VAL_5,E]   |
+|               [-e,-E=VAL_5]     |
 |               [-f,-F]           |
 |               [-g,-G]           |
-|               -a,-A=VAL_1,A     |
-|               -b,-B=VAL_2,B...  |
+|               -a,-A=VAL_1       |
+|               -b,-B=VAL_2...    |
 |               -c,-C={A,B}...    |
 |               [{1,2}]           |
-|               pos_2             |
+|               pos_2,pos_2       |
 +---------------------------------+
 EOF
 )"
@@ -540,14 +540,14 @@ output="$(cat << EOF
 +- Usage -------------------------+
 | test_basic.sh [-h,-? | -u | -V] |
 |               [-d,-D={A-C}]     |
-|               [-e,-E=VAL_5,E]   |
+|               [-e,-E=VAL_5]     |
 |               [-f,-F]           |
 |               [-g,-G]           |
-|               -a,-A=VAL_1,A     |
-|               -b,-B=VAL_2,B...  |
+|               -a,-A=VAL_1       |
+|               -b,-B=VAL_2...    |
 |               -c,-C={A,B}...    |
 |               [{1,2}]           |
-|               pos_2             |
+|               pos_2,pos_2       |
 +---------------------------------+
 EOF
 )"
@@ -562,14 +562,14 @@ output="$(cat << EOF
 +- Usage -------------------------+
 | test_basic.sh [-h,-? | -u | -V] |
 |               [-d,-D={A-C}]     |
-|               [-e,-E=VAL_5,E]   |
+|               [-e,-E=VAL_5]     |
 |               [-f,-F]           |
 |               [-g,-G]           |
-|               -a,-A=VAL_1,A     |
-|               -b,-B=VAL_2,B...  |
+|               -a,-A=VAL_1       |
+|               -b,-B=VAL_2...    |
 |               -c,-C={A,B}...    |
 |               [{1,2}]           |
-|               pos_2             |
+|               pos_2,pos_2       |
 +---------------------------------+
 EOF
 )"
@@ -584,14 +584,14 @@ output="$(cat << EOF
 +- Usage -------------------------+
 | test_basic.sh [-h,-? | -u | -V] |
 |               [-d,-D={A-C}]     |
-|               [-e,-E=VAL_5,E]   |
+|               [-e,-E=VAL_5]     |
 |               [-f,-F]           |
 |               [-g,-G]           |
-|               -a,-A=VAL_1,A     |
-|               -b,-B=VAL_2,B...  |
+|               -a,-A=VAL_1       |
+|               -b,-B=VAL_2...    |
 |               -c,-C={A,B}...    |
 |               [{1,2}]           |
-|               pos_2             |
+|               pos_2,pos_2       |
 +---------------------------------+
 EOF
 )"
@@ -606,14 +606,14 @@ output="$(cat << EOF
 +- Usage --------------------------------------+
 | test_basic.sh [--help | --usage | --version] |
 |               [--var-4,--var-d={A-C}]        |
-|               [--var-5,--var-e=VAL_5,VAR_E]  |
+|               [--var-5,--var-e=VAL_5]        |
 |               [--var-6,--var-f]              |
 |               [--var-7,--var-g]              |
-|               --var-1,--var-a=VAL_1,VAR_A    |
-|               --var-2,--var-b=VAL_2,VAR_B... |
+|               --var-1,--var-a=VAL_1          |
+|               --var-2,--var-b=VAL_2...       |
 |               --var-3,--var-c={A,B}...       |
 |               [{1,2}]                        |
-|               pos_2                          |
+|               pos_2,pos_2                    |
 +----------------------------------------------+
 EOF
 )"
@@ -625,21 +625,21 @@ test_number="${test_section}.17"
 test_type="help"
 cmd="bash test_basic.sh -h"
 output="$(cat << EOF
-Usage: test_basic.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
+Usage: test_basic.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2,pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
 +- Positional arguments ----------------------------------------------------------+
 | [pos_1=                                     one positional argument with        |
 |     {1,2}]                                  default and choice (default: 2)     |
-| pos_2                                       two positional arguments without    |
-|                                             default or choice                   |
+| pos_2,                                      two positional arguments without    |
+|     pos_2                                   default or choice                   |
 +---------------------------------------------------------------------------------+
 
 +- Mandatory options -------------------------------------------------------------+
-| -a, -A,    --var-1=VAL_1, --var-a=VAR_A     one value without default or choice |
+| -a, -A,    --var-1=VAL_1, --var-a=VAL_1     one value without default or choice |
 | -b, -B,    --var-2=VAL_2...,                at least one value without default  |
-|            --var-b=VAR_B...                 or choice                           |
+|            --var-b=VAL_2...                 or choice                           |
 | -c, -C,    --var-3={A,B}...,                at least one value with choice      |
 |            --var-c={A,B}...                                                     |
 +---------------------------------------------------------------------------------+
@@ -647,7 +647,7 @@ Mandatory arguments to long options are mandatory for short options too.
 +- Optional options --------------------------------------------------------------+
 | [-d, -D],  [--var-4={A-C}], [--var-d={A-C}] one value with default and choice   |
 |                                             (default: "A")                      |
-| [-e, -E],  [--var-5=VAL_5], [--var-e=VAR_E] one value with default (default:    |
+| [-e, -E],  [--var-5=VAL_5], [--var-e=VAL_5] one value with default (default:    |
 |                                             "E")                                |
 | [-f, -F],  [--var-6, --var-f]               no value (flag) with default        |
 |                                             (default: false)                    |
@@ -673,21 +673,21 @@ test_number="${test_section}.18"
 test_type="help"
 cmd="bash test_basic.sh --help"
 output="$(cat << EOF
-Usage: test_basic.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
+Usage: test_basic.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2,pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
 +- Positional arguments ----------------------------------------------------------+
 | [pos_1=                                     one positional argument with        |
 |     {1,2}]                                  default and choice (default: 2)     |
-| pos_2                                       two positional arguments without    |
-|                                             default or choice                   |
+| pos_2,                                      two positional arguments without    |
+|     pos_2                                   default or choice                   |
 +---------------------------------------------------------------------------------+
 
 +- Mandatory options -------------------------------------------------------------+
-| -a, -A,    --var-1=VAL_1, --var-a=VAR_A     one value without default or choice |
+| -a, -A,    --var-1=VAL_1, --var-a=VAL_1     one value without default or choice |
 | -b, -B,    --var-2=VAL_2...,                at least one value without default  |
-|            --var-b=VAR_B...                 or choice                           |
+|            --var-b=VAL_2...                 or choice                           |
 | -c, -C,    --var-3={A,B}...,                at least one value with choice      |
 |            --var-c={A,B}...                                                     |
 +---------------------------------------------------------------------------------+
@@ -695,7 +695,7 @@ Mandatory arguments to long options are mandatory for short options too.
 +- Optional options --------------------------------------------------------------+
 | [-d, -D],  [--var-4={A-C}], [--var-d={A-C}] one value with default and choice   |
 |                                             (default: "A")                      |
-| [-e, -E],  [--var-5=VAL_5], [--var-e=VAR_E] one value with default (default:    |
+| [-e, -E],  [--var-5=VAL_5], [--var-e=VAL_5] one value with default (default:    |
 |                                             "E")                                |
 | [-f, -F],  [--var-6, --var-f]               no value (flag) with default        |
 |                                             (default: false)                    |
@@ -767,14 +767,14 @@ error="$(cat << EOF
 +- Usage ---------------------------------+
 | test_short_options.sh [-h,-? | -u | -V] |
 |                       [-d,-D={A-C}]     |
-|                       [-e,-E=VAL_5,E]   |
+|                       [-e,-E=VAL_5]     |
 |                       [-f,-F]           |
 |                       [-g,-G]           |
-|                       -a,-A=VAL_1,A     |
-|                       -b,-B=VAL_2,B...  |
+|                       -a,-A=VAL_1       |
+|                       -b,-B=VAL_2...    |
 |                       -c,-C={A,B}...    |
 |                       [{1,2}]           |
-|                       pos_2             |
+|                       pos_2,pos_2       |
 +-----------------------------------------+
 EOF
 )"
@@ -788,14 +788,14 @@ output="$(cat << EOF
 +- Usage ---------------------------------+
 | test_short_options.sh [-h,-? | -u | -V] |
 |                       [-d,-D={A-C}]     |
-|                       [-e,-E=VAL_5,E]   |
+|                       [-e,-E=VAL_5]     |
 |                       [-f,-F]           |
 |                       [-g,-G]           |
-|                       -a,-A=VAL_1,A     |
-|                       -b,-B=VAL_2,B...  |
+|                       -a,-A=VAL_1       |
+|                       -b,-B=VAL_2...    |
 |                       -c,-C={A,B}...    |
 |                       [{1,2}]           |
-|                       pos_2             |
+|                       pos_2,pos_2       |
 +-----------------------------------------+
 EOF
 )"
@@ -815,14 +815,14 @@ error="$(cat << EOF
 +- Usage ---------------------------------+
 | test_short_options.sh [-h,-? | -u | -V] |
 |                       [-d,-D={A-C}]     |
-|                       [-e,-E=VAL_5,E]   |
+|                       [-e,-E=VAL_5]     |
 |                       [-f,-F]           |
 |                       [-g,-G]           |
-|                       -a,-A=VAL_1,A     |
-|                       -b,-B=VAL_2,B...  |
+|                       -a,-A=VAL_1       |
+|                       -b,-B=VAL_2...    |
 |                       -c,-C={A,B}...    |
 |                       [{1,2}]           |
-|                       pos_2             |
+|                       pos_2,pos_2       |
 +-----------------------------------------+
 EOF
 )"
@@ -833,19 +833,19 @@ test_number="${test_section}.6"
 test_type="help"
 cmd="bash test_short_options.sh -h"
 output="$(cat << EOF
-Usage: test_short_options.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
+Usage: test_short_options.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2,pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
 +- Positional arguments ----------------------------------------------------------+
 | [pos_1={1,2}]      one positional argument with default and choice (default: 2) |
-| pos_2              two positional arguments without default or choice           |
+| pos_2,pos_2        two positional arguments without default or choice           |
 +---------------------------------------------------------------------------------+
 
 +- Mandatory options -------------------------------------------------------------+
-| -a=VAL_1, -A=A     one value without default or choice                          |
+| -a=VAL_1, -A=VAL_1 one value without default or choice                          |
 | -b=VAL_2...,       at least one value without default or choice                 |
-| -B=B...                                                                         |
+| -B=VAL_2...                                                                     |
 | -c={A,B}...,       at least one value with choice                               |
 | -C={A,B}...                                                                     |
 +---------------------------------------------------------------------------------+
@@ -853,7 +853,8 @@ Mandatory arguments to long options are mandatory for short options too.
 +- Optional options --------------------------------------------------------------+
 | [-d={A-C}],        one value with default and choice (default: "A")             |
 | [-D={A-C}]                                                                      |
-| [-e=VAL_5], [-E=E] one value with default (default: "E")                        |
+| [-e=VAL_5],        one value with default (default: "E")                        |
+| [-E=VAL_5]                                                                      |
 | [-f, -F]           no value (flag) with default (default: false)                |
 | [-g, -G]           (DEPRECATED) no value (flag) with default (default: true)    |
 +---------------------------------------------------------------------------------+
@@ -881,14 +882,14 @@ error="$(cat << EOF
 +- Usage ---------------------------------+
 | test_short_options.sh [-h,-? | -u | -V] |
 |                       [-d,-D={A-C}]     |
-|                       [-e,-E=VAL_5,E]   |
+|                       [-e,-E=VAL_5]     |
 |                       [-f,-F]           |
 |                       [-g,-G]           |
-|                       -a,-A=VAL_1,A     |
-|                       -b,-B=VAL_2,B...  |
+|                       -a,-A=VAL_1       |
+|                       -b,-B=VAL_2...    |
 |                       -c,-C={A,B}...    |
 |                       [{1,2}]           |
-|                       pos_2             |
+|                       pos_2,pos_2       |
 +-----------------------------------------+
 EOF
 )"
@@ -932,14 +933,14 @@ error="$(cat << EOF
 +- Usage ---------------------------------------------+
 | test_long_options.sh [--help | --usage | --version] |
 |                      [--var-4,--var-d={A-C}]        |
-|                      [--var-5,--var-e=VAL_5,VAR_E]  |
+|                      [--var-5,--var-e=VAL_5]        |
 |                      [--var-6,--var-f]              |
 |                      [--var-7,--var-g]              |
-|                      --var-1,--var-a=VAL_1,VAR_A    |
-|                      --var-2,--var-b=VAL_2,VAR_B... |
+|                      --var-1,--var-a=VAL_1          |
+|                      --var-2,--var-b=VAL_2...       |
 |                      --var-3,--var-c={A,B}...       |
 |                      [{1,2}]                        |
-|                      pos_2                          |
+|                      pos_2,pos_2                    |
 +-----------------------------------------------------+
 EOF
 )"
@@ -971,14 +972,14 @@ error="$(cat << EOF
 +- Usage ---------------------------------------------+
 | test_long_options.sh [--help | --usage | --version] |
 |                      [--var-4,--var-d={A-C}]        |
-|                      [--var-5,--var-e=VAL_5,VAR_E]  |
+|                      [--var-5,--var-e=VAL_5]        |
 |                      [--var-6,--var-f]              |
 |                      [--var-7,--var-g]              |
-|                      --var-1,--var-a=VAL_1,VAR_A    |
-|                      --var-2,--var-b=VAL_2,VAR_B... |
+|                      --var-1,--var-a=VAL_1          |
+|                      --var-2,--var-b=VAL_2...       |
 |                      --var-3,--var-c={A,B}...       |
 |                      [{1,2}]                        |
-|                      pos_2                          |
+|                      pos_2,pos_2                    |
 +-----------------------------------------------------+
 EOF
 )"
@@ -992,14 +993,14 @@ output="$(cat << EOF
 +- Usage ---------------------------------------------+
 | test_long_options.sh [--help | --usage | --version] |
 |                      [--var-4,--var-d={A-C}]        |
-|                      [--var-5,--var-e=VAL_5,VAR_E]  |
+|                      [--var-5,--var-e=VAL_5]        |
 |                      [--var-6,--var-f]              |
 |                      [--var-7,--var-g]              |
-|                      --var-1,--var-a=VAL_1,VAR_A    |
-|                      --var-2,--var-b=VAL_2,VAR_B... |
+|                      --var-1,--var-a=VAL_1          |
+|                      --var-2,--var-b=VAL_2...       |
 |                      --var-3,--var-c={A,B}...       |
 |                      [{1,2}]                        |
-|                      pos_2                          |
+|                      pos_2,pos_2                    |
 +-----------------------------------------------------+
 EOF
 )"
@@ -1019,14 +1020,14 @@ error="$(cat << EOF
 +- Usage ---------------------------------------------+
 | test_long_options.sh [--help | --usage | --version] |
 |                      [--var-4,--var-d={A-C}]        |
-|                      [--var-5,--var-e=VAL_5,VAR_E]  |
+|                      [--var-5,--var-e=VAL_5]        |
 |                      [--var-6,--var-f]              |
 |                      [--var-7,--var-g]              |
-|                      --var-1,--var-a=VAL_1,VAR_A    |
-|                      --var-2,--var-b=VAL_2,VAR_B... |
+|                      --var-1,--var-a=VAL_1          |
+|                      --var-2,--var-b=VAL_2...       |
 |                      --var-3,--var-c={A,B}...       |
 |                      [{1,2}]                        |
-|                      pos_2                          |
+|                      pos_2,pos_2                    |
 +-----------------------------------------------------+
 EOF
 )"
@@ -1037,21 +1038,21 @@ test_number="${test_section}.7"
 test_type="help"
 cmd="bash test_long_options.sh --help"
 output="$(cat << EOF
-Usage: test_long_options.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
+Usage: test_long_options.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2,pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
 +- Positional arguments ---------------------------------------------------------+
 | [pos_1={1,2}]                    one positional argument with default and      |
 |                                  choice (default: 2)                           |
-| pos_2                            two positional arguments without default or   |
+| pos_2,pos_2                      two positional arguments without default or   |
 |                                  choice                                        |
 +--------------------------------------------------------------------------------+
 
 +- Mandatory options ------------------------------------------------------------+
-| --var-1=VAL_1, --var-a=VAR_A     one value without default or choice           |
+| --var-1=VAL_1, --var-a=VAL_1     one value without default or choice           |
 | --var-2=VAL_2...,                at least one value without default or choice  |
-| --var-b=VAR_B...                                                               |
+| --var-b=VAL_2...                                                               |
 | --var-3={A,B}...,                at least one value with choice                |
 | --var-c={A,B}...                                                               |
 +--------------------------------------------------------------------------------+
@@ -1059,7 +1060,7 @@ Mandatory arguments to long options are mandatory for short options too.
 +- Optional options -------------------------------------------------------------+
 | [--var-4={A-C}], [--var-d={A-C}] one value with default and choice (default:   |
 |                                  "A")                                          |
-| [--var-5=VAL_5], [--var-e=VAR_E] one value with default (default: "E")         |
+| [--var-5=VAL_5], [--var-e=VAL_5] one value with default (default: "E")         |
 | [--var-6, --var-f]               no value (flag) with default (default: false) |
 | [--var-7, --var-g]               (DEPRECATED) no value (flag) with default     |
 |                                  (default: true)                               |
@@ -1201,9 +1202,9 @@ test_number="${test_section}.3"
 test_type="usage"
 cmd="bash test_positional_arguments.sh --usage"
 output="$(cat << EOF
-+- Usage ------------------------------------------------------+
-| test_positional_arguments.sh [-h,-? | -u | -V] [{1,2}] pos_2 |
-+--------------------------------------------------------------+
++- Usage ------------------------------------------------------------+
+| test_positional_arguments.sh [-h,-? | -u | -V] [{1,2}] pos_2,pos_2 |
++--------------------------------------------------------------------+
 EOF
 )"
 error=""
@@ -1217,7 +1218,7 @@ output="$(cat << EOF
 +- Usage ----------------------------------------+
 | test_positional_arguments.sh [-h,-? | -u | -V] |
 |                              [{1,2}]           |
-|                              pos_2             |
+|                              pos_2,pos_2       |
 +------------------------------------------------+
 EOF
 )"
@@ -1229,12 +1230,13 @@ test_number="${test_section}.4"
 test_type="help"
 cmd="bash test_positional_arguments.sh --help"
 output="$(cat << EOF
-Usage: test_positional_arguments.sh [pos_1] pos_2
+Usage: test_positional_arguments.sh [pos_1] pos_2,pos_2
 
 +- Positional arguments ----------------------------------------------------+
 | [pos_1=                one positional argument with default and choice    |
 |     {1,2}]             (default: 2)                                       |
-| pos_2                  two positional arguments without default or choice |
+| pos_2,                 two positional arguments without default or choice |
+|     pos_2                                                                 |
 +---------------------------------------------------------------------------+
 
 +- Help options ------------------------------------------------------------+
@@ -1326,14 +1328,14 @@ output="$(cat << EOF
 +- Usage -------------------------------+
 | test_arg_number.sh [-h,-? | -u | -V]  |
 |                    [-d,-D[={A-C}...]] |
-|                    [-e,-E[=VAL_5,E]]  |
+|                    [-e,-E[=VAL_5]]    |
 |                    [-f,-F]            |
 |                    [-g,-G]            |
-|                    -a,-A=VAL_1,A      |
-|                    -b,-B=VAL_2,B...   |
+|                    -a,-A=VAL_1        |
+|                    -b,-B=VAL_2...     |
 |                    -c,-C={A,B}...     |
 |                    [{1,2}]            |
-|                    pos_2              |
+|                    pos_2,pos_2        |
 +---------------------------------------+
 EOF
 )"
@@ -1345,21 +1347,21 @@ test_number="${test_section}.4"
 test_type="help"
 cmd="bash test_arg_number.sh --help"
 output="$(cat << EOF
-Usage: test_arg_number.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
+Usage: test_arg_number.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2,pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
 +- Positional arguments ---------------------------------------------------------+
 | [pos_1=                                 one positional argument with default   |
 |     {1,2}]                              and choice (default: 2)                |
-| pos_2                                   two positional arguments without       |
-|                                         default or choice                      |
+| pos_2,                                  two positional arguments without       |
+|     pos_2                               default or choice                      |
 +--------------------------------------------------------------------------------+
 
 +- Mandatory options ------------------------------------------------------------+
-| -a, -A,    --var-1=VAL_1, --var-a=VAR_A one value without default or choice    |
+| -a, -A,    --var-1=VAL_1, --var-a=VAL_1 one value without default or choice    |
 | -b, -B,    --var-2=VAL_2...,            at least one value without default or  |
-|            --var-b=VAR_B...             choice                                 |
+|            --var-b=VAL_2...             choice                                 |
 | -c, -C,    --var-3={A,B}...,            at least one value with choice         |
 |            --var-c={A,B}...                                                    |
 +--------------------------------------------------------------------------------+
@@ -1368,7 +1370,7 @@ Mandatory arguments to long options are mandatory for short options too.
 | [-d, -D],  [--var-4[={A-C}...]],        arbitrarily many values with default   |
 |            [--var-d[={A-C}...]]         and choice (default: "false")          |
 | [-e, -E],  [--var-5[=VAL_5]],           one optional value with default        |
-|            [--var-e[=VAR_E]]            (default: "true")                      |
+|            [--var-e[=VAL_5]]            (default: "true")                      |
 | [-f, -F],  [--var-6, --var-f]           no value (flag) with default (default: |
 |                                         false)                                 |
 | [-g, -G],  [--var-7, --var-g]           (DEPRECATED) no value (flag) with      |
@@ -1442,7 +1444,7 @@ output="$(cat << EOF
 |                          -b=VAL_2...       |
 |                          -c={A,B}...       |
 |                          [{1,2}]           |
-|                          pos_2             |
+|                          pos_2,pos_2       |
 +--------------------------------------------+
 EOF
 )"
@@ -1454,14 +1456,15 @@ test_number="${test_section}.4"
 test_type="help"
 cmd="bash test_hidden_arguments.sh --help"
 output="$(cat << EOF
-Usage: test_hidden_arguments.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
+Usage: test_hidden_arguments.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2,pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
 +- Positional arguments ----------------------------------------------------------+
 | [pos_1=                     one positional argument with default and choice     |
 |     {1,2}]                  (default: 2)                                        |
-| pos_2                       two positional arguments without default or choice  |
+| pos_2,                      two positional arguments without default or choice  |
+|     pos_2                                                                       |
 +---------------------------------------------------------------------------------+
 
 +- Mandatory options -------------------------------------------------------------+
@@ -1542,7 +1545,7 @@ output="$(cat << EOF
 |                     -b=VAL_2...       |
 |                     -c={A,B}...       |
 |                     [{1,2}]           |
-|                     pos_2             |
+|                     pos_2,pos_2       |
 +---------------------------------------+
 EOF
 )"
@@ -1554,14 +1557,15 @@ test_number="${test_section}.4"
 test_type="help"
 cmd="bash test_config_file.sh --help"
 output="$(cat << EOF
-Usage: test_config_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
+Usage: test_config_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2,pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
 +- Positional arguments ----------------------------------------------------------+
 | [pos_1=                     one positional argument with default and choice     |
 |     {1,2}]                  (default: 2)                                        |
-| pos_2                       two positional arguments without default or choice  |
+| pos_2,                      two positional arguments without default or choice  |
+|     pos_2                                                                       |
 +---------------------------------------------------------------------------------+
 
 +- Mandatory options -------------------------------------------------------------+
@@ -1642,7 +1646,7 @@ output="$(cat << EOF
 |                      -b=VAL_2...       |
 |                      -c={A,B}...       |
 |                      [{1,2}]           |
-|                      pos_2             |
+|                      pos_2,pos_2       |
 +----------------------------------------+
 EOF
 )"
@@ -1654,14 +1658,15 @@ test_number="${test_section}.4"
 test_type="help"
 cmd="bash test_arg_def_file.sh --help"
 output="$(cat << EOF
-Usage: test_arg_def_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
+Usage: test_arg_def_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2,pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
 +- Positional arguments ----------------------------------------------------------+
 | [pos_1=                     one positional argument with default and choice     |
 |     {1,2}]                  (default: 2)                                        |
-| pos_2                       two positional arguments without default or choice  |
+| pos_2,                      two positional arguments without default or choice  |
+|     pos_2                                                                       |
 +---------------------------------------------------------------------------------+
 
 +- Mandatory options -------------------------------------------------------------+
@@ -1742,7 +1747,7 @@ output="$(cat << EOF
 |                   -b=VAL_2...       |
 |                   -c={A,B}...       |
 |                   [{1,2}]           |
-|                   pos_2             |
+|                   pos_2,pos_2       |
 +-------------------------------------+
 EOF
 )"
@@ -1755,7 +1760,7 @@ test_type="help"
 cmd="bash test_help_file.sh --help"
 output="$(cat << EOF
 A brief header summarizes the way how to interpret the help message.
-Usage: test_help_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
+Usage: test_help_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2,pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
@@ -1763,7 +1768,8 @@ The following arguments are positional:
 +---------------------------------------------------------------------------------+
 | [pos_1=                     one positional argument with default and choice     |
 |     {1,2}]                  (default: 2)                                        |
-| pos_2                       two positional arguments without default or choice  |
+| pos_2,                      two positional arguments without default or choice  |
+|     pos_2                                                                       |
 +---------------------------------------------------------------------------------+
 
 The following options have no default value:
@@ -1835,17 +1841,17 @@ output="$(cat << EOF
 │                    -b=VAL_2...       │
 │                    -c={A,B}...       │
 │                    [{1,2}]           │
-│                    pos_2             │
+│                    pos_2,pos_2       │
 ╰──────────────────────────────────────╯
 EOF
 )"
 error="$(cat << EOF
-╭─ Errors ───────────────────────────────────────────────────────────────────╮
-│ test_style_file.sh: The argument "-a,--var-1" is mandatory, but not given. │
-│ test_style_file.sh: The argument "-b,--var-2" is mandatory, but not given. │
-│ test_style_file.sh: The argument "-c,--var-3" is mandatory, but not given. │
-│ test_style_file.sh: The argument "pos_2" is mandatory, but not given.      │
-╰────────────────────────────────────────────────────────────────────────────╯
+╭─ Errors ────────────────────────────────────────────────────────────────────╮
+│ test_style_file.sh: The argument "-a,--var-1" is mandatory, but not given.  │
+│ test_style_file.sh: The argument "-b,--var-2" is mandatory, but not given.  │
+│ test_style_file.sh: The argument "-c,--var-3" is mandatory, but not given.  │
+│ test_style_file.sh: The argument "pos_2,pos_2" is mandatory, but not given. │
+╰─────────────────────────────────────────────────────────────────────────────╯
 
 ╭─ Warning ───────────────────────────────────────────────────────────────╮
 │ test_style_file.sh: The argument "-g,--var-7" is deprecated and will be │
@@ -1883,7 +1889,7 @@ output="$(cat << EOF
 │                    -b=VAL_2...       │
 │                    -c={A,B}...       │
 │                    [{1,2}]           │
-│                    pos_2             │
+│                    pos_2,pos_2       │
 ╰──────────────────────────────────────╯
 EOF
 )"
@@ -1895,15 +1901,15 @@ test_number="${test_section}.6"
 test_type="help"
 cmd="bash test_style_file.sh --help"
 output="$(cat << EOF
-Usage: test_style_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
+Usage: test_style_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2,pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
 ╭─ Positional arguments ──────────────────────────────────────────────────────╮
 │ [pos_1=                     one positional argument with default and choice │
 │     {1,2}]                  (default: 2)                                    │
-│ pos_2                       two positional arguments without default or     │
-│                             choice                                          │
+│ pos_2,                      two positional arguments without default or     │
+│     pos_2                   choice                                          │
 ╰─────────────────────────────────────────────────────────────────────────────╯
 
 ╭─ Mandatory options ─────────────────────────────────────────────────────────╮
@@ -2016,7 +2022,7 @@ output="$(cat << EOF
 |                      -b=VAL_2...       |
 |                      -c={A,B}...       |
 |                      [{1,2}]           |
-|                      pos_2             |
+|                      pos_2,pos_2       |
 +----------------------------------------+
 EOF
 )"
@@ -2038,7 +2044,7 @@ output="$(cat << EOF
 |                      -b=VAL_2...       |
 |                      -c={A,B}...       |
 |                      [{1,2}]           |
-|                      pos_2             |
+|                      pos_2,pos_2       |
 +----------------------------------------+
 EOF
 )"
@@ -2051,7 +2057,7 @@ test_type="help"
 cmd="LANG=en_US.UTF-8 bash test_localization.sh --help"
 output="$(cat << EOF
 A brief header summarizes the way how to interpret the help message.
-Usage: test_localization.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
+Usage: test_localization.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2,pos_2
 
 Command-line program.
 
@@ -2061,7 +2067,8 @@ The following arguments are positional:
 +---------------------------------------------------------------------------------+
 | [pos_1=                     one positional argument with default and choice     |
 |     {1,2}]                  (default: 2)                                        |
-| pos_2                       two positional arguments without default or choice  |
+| pos_2,                      two positional arguments without default or choice  |
+|     pos_2                                                                       |
 +---------------------------------------------------------------------------------+
 
 The following options have no default value:
@@ -2099,7 +2106,7 @@ cmd="LANG=de_DE.UTF-8 bash test_localization.sh --help"
 output="$(cat << EOF
 Eine kurze Kopfzeile fasst zusammen, wie die Hilfe-Meldung zu interpretieren
 ist.
-Aufruf: test_localization.sh [OPTIONEN] ARGUMENTE -- [pos_1] pos_2
+Aufruf: test_localization.sh [OPTIONEN] ARGUMENTE -- [pos_1] pos_2,pos_2
 
 Kommandozeilenprogramm.
 
@@ -2109,8 +2116,8 @@ Die folgenden Argumente sind positional:
 +--------------------------------------------------------------------------------+
 | [pos_1=                     ein positionales Argument mit Vorgabe und Auswahl  |
 |     {1,2}]                  (Vorgabe: 2)                                       |
-| pos_2                       zwei positionale Argumente ohne Vorgabe oder       |
-|                             Auswahl                                            |
+| pos_2,                      zwei positionale Argumente ohne Vorgabe oder       |
+|     pos_2                   Auswahl                                            |
 +--------------------------------------------------------------------------------+
 
 Die folgenden Optionen haben keinen Vorgabewert:
@@ -2206,7 +2213,7 @@ output="$(cat << EOF
 |                  -b=VAL_2...       |
 |                  -c={A,B}...       |
 |                  [{1,2}]           |
-|                  pos_2             |
+|                  pos_2,pos_2       |
 +------------------------------------+
 EOF
 )"
@@ -2218,14 +2225,15 @@ test_number="${test_section}.4"
 test_type="help"
 cmd="dash test_pipeline.sh --help"
 output="$(cat << EOF
-Usage: test_pipeline.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
+Usage: test_pipeline.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2,pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
 +- Positional arguments ----------------------------------------------------------+
 | [pos_1=                     one positional argument with default and choice     |
 |     {1,2}]                  (default: 2)                                        |
-| pos_2                       two positional arguments without default or choice  |
+| pos_2,                      two positional arguments without default or choice  |
+|     pos_2                                                                       |
 +---------------------------------------------------------------------------------+
 
 +- Mandatory options -------------------------------------------------------------+

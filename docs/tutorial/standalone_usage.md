@@ -71,9 +71,6 @@ Mandatory arguments to long options are mandatory for short options too.
 |                                  configuration (default: "''")                  |
 | [--create-arg-def]               create the arguments definition for a script   |
 |                                  (default: false)                               |
-| [--positional-arg-group=NAME]    the name of the argument group holding all     |
-|                                  positional arguments (default: "Positional     |
-|                                  arguments")                                    |
 | [--read-args]                    read the arguments and parse them to           |
 |                                  ARGPARSER_ARG_ARRAY_NAME (default: true)       |
 | [--script-name=NAME]             the script's name for the help, usage,         |
@@ -111,6 +108,11 @@ Mandatory arguments to long options are mandatory for short options too.
 |                                  (default: false)                               |
 | [--help-options=OPTION...]       the short and long option names to invoke the  |
 |                                  help message (default: "h","?","help")         |
+| [--positional-arg-group=NAME]    the name of the argument group holding all     |
+|                                  positional arguments (default: "Positional     |
+|                                  arguments")                                    |
+| [--subcommand-group=NAME]        the name of the argument group holding all     |
+|                                  subcommands (default: "Subcommands")           |
 | [--usage-exit-code=INT]          the exit code for usage messages (default: 0)  |
 | [--usage-file=FILE]              the path to a file holding the extended usage  |
 |                                  message (default: "''")                        |

@@ -954,7 +954,7 @@
 - ***Description:*** The error that on the command line, a non-flag is given without a value.
 - ***Reasons for error:*** When parsing the command line, the Argparser found an option given multiple times and at least once without a value, without being defined as flag in the arguments definition.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names.
+  - `$1`: The argument's display (option or value) names.
 
 #### 9.5.115. `Error arg no flag 2`
 
@@ -962,7 +962,7 @@
 - ***Description:*** The error that on the command line, a flag-like argument with value is inverted or negated.
 - ***Reasons for error:*** When parsing the command line and either [`ARGPARSER_ALLOW_FLAG_INVERSION`](../environment_variables/environment_variables.md#946-argparser_allow_flag_inversion) or [`ARGPARSER_ALLOW_FLAG_NEGATION`](../environment_variables/environment_variables.md#947-argparser_allow_flag_negation) is set to `true`, the Argparser found an option, defined as usable as a flag (*i.e.*, having an arguments count of `"*"` or `"?"`) and given with a `+` prefix or one of the [`ARGPARSER_FLAG_NEGATION_PREFIXES`](../environment_variables/environment_variables.md#9425-argparser_flag_negation_prefixes), but which is followed by a value, *i.e.*, not used as a flag.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names.
+  - `$1`: The argument's display (option or value) names.
 
 #### 9.5.116. `Error arg no flag 3`
 
@@ -970,7 +970,7 @@
 - ***Description:*** The error that on the command line, a non-flag is inverted or negated.
 - ***Reasons for error:*** When parsing the command line and either [`ARGPARSER_ALLOW_FLAG_INVERSION`](../environment_variables/environment_variables.md#946-argparser_allow_flag_inversion) or [`ARGPARSER_ALLOW_FLAG_NEGATION`](../environment_variables/environment_variables.md#947-argparser_allow_flag_negation) is set to `true`, the Argparser found an option given with a `+` prefix or one of the [`ARGPARSER_FLAG_NEGATION_PREFIXES`](../environment_variables/environment_variables.md#9425-argparser_flag_negation_prefixes), but which has not been defined as flag in the arguments definition.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names.
+  - `$1`: The argument's display (option or value) names.
 
 #### 9.5.117. `Error mandatory arg`
 
@@ -978,7 +978,7 @@
 - ***Description:*** The error that on the command line, a mandatory argument is not given.
 - ***Reasons for error:*** When parsing the command line, the Argparser found an argument defined to be required, but not given on the command line.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names.
+  - `$1`: The argument's display (option or value) names.
 
 #### 9.5.118. `Error wrong arg number 1`
 
@@ -986,7 +986,7 @@
 - ***Description:*** The error that on the command line, an argument has a wrong number of values given, while requiring at least one.
 - ***Reasons for error:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values, which is at least one.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names.
+  - `$1`: The argument's display (option or value) names.
   - `$2`: The number of given values.
 
 #### 9.5.119. `Error wrong arg number 2`
@@ -995,7 +995,7 @@
 - ***Description:*** The error that on the command line, an argument has a wrong number of values given, while requiring zero or one.
 - ***Reasons for error:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values, which is zero or one.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names.
+  - `$1`: The argument's display (option or value) names.
   - `$2`: The number of given values.
 
 #### 9.5.120. `Error wrong arg number 3`
@@ -1004,7 +1004,7 @@
 - ***Description:*** The error that on the command line, an argument has a wrong number of values given, while requiring one.
 - ***Reasons for error:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values, which is one.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names.
+  - `$1`: The argument's display (option or value) names.
   - `$2`: The number of given values.
 
 #### 9.5.121. `Error wrong arg number 4`
@@ -1013,7 +1013,7 @@
 - ***Description:*** The error that on the command line, an argument has a wrong number of values given.
 - ***Reasons for error:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names.
+  - `$1`: The argument's display (option or value) names.
   - `$2`: The number of required values.
   - `$3`: The number of given values.
 
@@ -1023,7 +1023,7 @@
 - ***Description:*** The error that a given arguments' values aren't a subset of the choice values.
 - ***Reasons for error:*** When parsing the command line, the Argparser found an argument whose given values aren't completely included in the choice values.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names.
+  - `$1`: The argument's display (option or value) names.
   - `$2`: The choice values.
   - `$3`: The given values.
 
@@ -1033,7 +1033,7 @@
 - ***Description:*** The error that a given argument's value's data type is not a Boolean.
 - ***Reasons for error:*** When parsing the command line, the Argparser found a given value whose data type doesn't accord to the argument's data type, `bool`. These Boolean values must be either `true` or `false`.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names.
+  - `$1`: The argument's display (option or value) names.
   - `$2`: The given value.
 
 #### 9.5.124. `Error arg char`
@@ -1042,7 +1042,7 @@
 - ***Description:*** The error that a given argument's value's data type is not a character.
 - ***Reasons for error:*** When parsing the command line, the Argparser found a given value whose data type doesn't accord to the argument's data type, `char`. These characters must be strings comprising one printable ASCII character.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names.
+  - `$1`: The argument's display (option or value) names.
   - `$2`: The given value.
 
 #### 9.5.125. `Error arg float`
@@ -1051,7 +1051,7 @@
 - ***Description:*** The error that a given argument's value's data type is not a floating-point number.
 - ***Reasons for error:*** When parsing the command line, the Argparser found a given value whose data type doesn't accord to the argument's data type, `float`. These floating-point numbers must comprise only digits, a dot, and possibly a leading sign.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names.
+  - `$1`: The argument's display (option or value) names.
   - `$2`: The given value.
 
 #### 9.5.126. `Error arg int`
@@ -1060,7 +1060,7 @@
 - ***Description:*** The error that a given argument's value's data type is not an integer.
 - ***Reasons for error:*** When parsing the command line, the Argparser found a given value whose data type doesn't accord to the argument's data type, `int`. These integers must comprise only digits and possibly a leading sign.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names.
+  - `$1`: The argument's display (option or value) names.
   - `$2`: The given value.
 
 #### 9.5.127. `Error arg uint`
@@ -1069,7 +1069,7 @@
 - ***Description:*** The error that a given argument's value's data type is not an unsigned integer.
 - ***Reasons for error:*** When parsing the command line, the Argparser found a given value whose data type doesn't accord to the argument's data type, `uint`. These unsigned integers must comprise only digits and no sign.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names.
+  - `$1`: The argument's display (option or value) names.
   - `$2`: The given value.
 
 #### 9.5.128. `Error YAML`
@@ -1153,7 +1153,7 @@
 - ***Description:*** The warning that on the command line, a deprecated argument is given.
 - ***Reasons for warning:*** When parsing the command line, the Argparser found an argument which is defined as deprecated. Thus, it warns your script's user to adapt the workflow.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names.
+  - `$1`: The argument's display (option or value) names.
 
 #### 9.5.137. `Warning wrong arg number 1`
 
@@ -1161,7 +1161,7 @@
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring at least one.
 - ***Reasons for warning:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values, which is at least one. Thus, it falls back to the default values.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names.
+  - `$1`: The argument's display (option or value) names.
   - `$2`: The number of given values.
   - `$3`: The default values.
 
@@ -1171,7 +1171,7 @@
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring zero or one.
 - ***Reasons for warning:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values, which is zero or one. Thus, it falls back to the default values.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names.
+  - `$1`: The argument's display (option or value) names.
   - `$2`: The number of given values.
   - `$3`: The default values.
 
@@ -1181,7 +1181,7 @@
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given, while requiring one.
 - ***Reasons for warning:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values, which is one. Thus, it falls back to the default values.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names.
+  - `$1`: The argument's display (option or value) names.
   - `$2`: The number of given values.
   - `$3`: The default values.
 
@@ -1191,7 +1191,7 @@
 - ***Description:*** The warning that on the command line, an argument has a wrong number of values given.
 - ***Reasons for warning:*** When parsing the command line, the Argparser found an argument whose number of given values doesn't match the number of required values. Thus, it falls back to the default values.
 - ***Interpolated variables:***
-  - `$1`: The argument's option or value names.
+  - `$1`: The argument's display (option or value) names.
   - `$2`: The number of required values.
   - `$3`: The number of given values.
   - `$4`: The default values.

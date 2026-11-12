@@ -124,9 +124,13 @@ Finally, we need a translation file (here [`translations.yaml`](../../resources/
 
 <summary>Beginning of <code>translations.yaml</code></summary>
 
-<!-- <include command="sed '1,5d;37q' ../resources/translations.yaml" lang="yaml"> -->
+<!-- <include command="sed '1,5d;41q' ../resources/translations.yaml" lang="yaml"> -->
 ```yaml
 # 1.    Define the general translations.
+Subcommands:
+  en: Subcommands
+  de: Subkommandos
+
 Positional arguments:
   en: Positional arguments
   de: Positionale Argumente
@@ -187,7 +191,7 @@ The former command prints the American English help message, the latter its Germ
 $ LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -h
 Eine kurze Kopfzeile fasst zusammen, wie die Hilfe-Meldung zu interpretieren
 ist.
-Aufruf: try_localization.sh [OPTIONEN] ARGUMENTE -- [pos_1] pos_2
+Aufruf: try_localization.sh [OPTIONEN] ARGUMENTE -- [pos_1] pos_2,pos_2
 
 Kommandozeilenprogramm.
 
@@ -197,8 +201,8 @@ Die folgenden Argumente sind positional:
 +--------------------------------------------------------------------------------+
 | [pos_1=                     ein positionales Argument mit Vorgabe und Auswahl  |
 |     {1,2}]                  (Vorgabe: 2)                                       |
-| pos_2                       zwei positionale Argumente ohne Vorgabe oder       |
-|                             Auswahl                                            |
+| pos_2,                      zwei positionale Argumente ohne Vorgabe oder       |
+|     pos_2                   Auswahl                                            |
 +--------------------------------------------------------------------------------+
 
 Die folgenden Optionen haben keinen Vorgabewert:
@@ -242,7 +246,7 @@ $ LANG=de_DE.UTF-8 bash ../tutorial/try_localization.sh -u
 |                     -b=VAL_2...       |
 |                     -c={A,B}...       |
 |                     [{1,2}]           |
-|                     pos_2             |
+|                     pos_2,pos_2       |
 +---------------------------------------+
 ```
 <!-- </include> -->

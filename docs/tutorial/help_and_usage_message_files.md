@@ -87,7 +87,7 @@ Now, we get the following help message:
 ```console
 $ bash ../tutorial/try_help_file.sh -h
 A brief header summarizes the way how to interpret the help message.
-Usage: try_help_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2
+Usage: try_help_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2,pos_2
 
 Mandatory arguments to long options are mandatory for short options too.
 
@@ -95,7 +95,8 @@ The following arguments are positional:
 +---------------------------------------------------------------------------------+
 | [pos_1=                     one positional argument with default and choice     |
 |     {1,2}]                  (default: 2)                                        |
-| pos_2                       two positional arguments without default or choice  |
+| pos_2,                      two positional arguments without default or choice  |
+|     pos_2                                                                       |
 +---------------------------------------------------------------------------------+
 
 The following options have no default value:
