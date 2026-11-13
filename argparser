@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-11-12
+# Last Modification: 2026-11-13
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -9904,6 +9904,25 @@ function argparser_create_help_message() {
         fi
     fi
 
+    # If ${ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START} is set to
+    # "false", add the names of the positional arguments for the given
+    # subcommand (if any) before the keyword arguments.
+    if [[ "${ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START}" == false ]] \
+        && (( "${#positional_args[@]}" > 0 ))
+    then
+        for arg_id in "${positional_args[@]}"; do
+            argparser_get_display_names "${arg_id}" "value" true
+            value_names="${display_names_str}"
+
+            default_values_str="${all_default_values[${arg_id}]}"
+            if [[ -n "${default_values_str}" ]]; then
+                usage+=" [${value_names}]"
+            else
+                usage+=" ${value_names}"
+            fi
+        done
+    fi
+
     # Add a hint for the optional keyword arguments (as summary), if
     # existing.
     if [[ "${has_default_args}" == true ]]; then
@@ -9922,28 +9941,31 @@ function argparser_create_help_message() {
         usage+=" ${mandatory_arguments_hint}"
     fi
 
-    # Add the positional argument delimiter and the names of the
-    # positional arguments for the given subcommand (if any), if
-    # existing.
-    if (( "${#positional_args[@]}" > 0 )); then
+    # If ${ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START} is set to "true",
+    # add the positional argument delimiter and the names of the
+    # positional arguments for the given subcommand (if any) after the
+    # keyword arguments.
+    if [[ "${ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START}" == true ]] \
+        && (( "${#positional_args[@]}" > 0 ))
+    then
         if [[ "${has_required_args}" == true ]]; then
             usage+=" --"
         elif [[ "${has_default_args}" == true ]]; then
             usage+=" [--]"
         fi
+
+        for arg_id in "${positional_args[@]}"; do
+            argparser_get_display_names "${arg_id}" "value" true
+            value_names="${display_names_str}"
+
+            default_values_str="${all_default_values[${arg_id}]}"
+            if [[ -n "${default_values_str}" ]]; then
+                usage+=" [${value_names}]"
+            else
+                usage+=" ${value_names}"
+            fi
+        done
     fi
-
-    for arg_id in "${positional_args[@]}"; do
-        argparser_get_display_names "${arg_id}" "value" true
-        value_names="${display_names_str}"
-
-        default_values_str="${all_default_values[${arg_id}]}"
-        if [[ -n "${default_values_str}" ]]; then
-            usage+=" [${value_names}]"
-        else
-            usage+=" ${value_names}"
-        fi
-    done
 
     usage+=$'\n'
     help_message_blocks["Usage"]="${usage}"
