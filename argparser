@@ -6582,8 +6582,11 @@ function argparser_get_args_definition() {
     # Nonlocals:
     # - all_positional_args: the indexed array holding the positional
     #   argument names
+    # - all_subcommand_names: the associative array mapping the value
+    #   names of subcommands to their identifiers
     # - all_subcommands: the associative array holding the subcommands
     #   (read-only)
+    # - all_value_names: the associative array holding the value names
     # - is_sourced: whether the Argparser has been sourced (read-only)
     #
     # Environment:
@@ -6604,6 +6607,7 @@ function argparser_get_args_definition() {
     local name
     local -a names
     local subcommand
+    local subcommand_name
     local translated_error
     local translation
 
@@ -6766,12 +6770,16 @@ function argparser_get_args_definition() {
         argparser_print_error_messages true true "${error_messages[@]}"
     fi
 
-    # Remove the subcommands from the positional arguments.
+    # Map the value names of subcommands to their identifiers for easier
+    # parsing, later, and remove the subcommands from the positional
+    # arguments.
     for i in "${!all_positional_args[@]}"; do
         for subcommand in "${all_subcommands[@]}"; do
             if [[ -n "${subcommand}" \
                 && "${all_positional_args[i]}" == "${subcommand}" ]]
             then
+                subcommand_name="${all_value_names[${subcommand}]}"
+                all_subcommand_names[${subcommand_name}]="${subcommand}"
                 unset 'all_positional_args[i]'
             fi
         done
@@ -8282,6 +8290,8 @@ function argparser_parse_args() {
     #   argument names (read-only)
     # - all_short_options: the associative array holding the short
     #   option names (read-only)
+    # - all_subcommand_names: the associative array mapping the value
+    #   names of subcommands to their identifiers (read-only)
     # - all_subcommands: the associative array holding the subcommands
     #   (read-only)
     # - is_self_parsing: whether the Argparser currently parses its own
@@ -8387,9 +8397,9 @@ function argparser_parse_args() {
                     # The value is given in the initial positional
                     # location and could be a positional argument or a
                     # subcommand.
-                    if argparser_in_array "${arg_value}" "${all_subcommands[@]}"
+                    if [[ -n "${all_subcommand_names[${arg_value}]+set}" ]]
                     then
-                        given_subcommand="${arg_value}"
+                        given_subcommand="${all_subcommand_names[${arg_value}]}"
                     else
                         given_positional_args+=("${arg_value}")
                     fi
@@ -8771,6 +8781,8 @@ function argparser_create_help_message() {
     #   argument names (read-only)
     # - all_short_options: the associative array holding the short
     #   option names (read-only)
+    # - all_subcommand_names: the associative array mapping the value
+    #   names of subcommands to their identifiers
     # - all_subcommands: the associative array holding the subcommands
     #   (read-only)
     # - all_value_names: the associative array holding the value names
@@ -8870,16 +8882,7 @@ function argparser_create_help_message() {
     local value_names
 
     # Sort the defined subcommands.
-    subcommands=()
-    for subcommand in "${all_subcommands[@]}"; do
-        if [[ -n "${subcommand}" ]] \
-            && ! argparser_in_array "${subcommand}" "${subcommands[@]}"
-        then
-            subcommands+=("${subcommand}")
-        fi
-    done
-
-    argparser_sort false "${subcommands[@]}"
+    argparser_sort false "${all_subcommand_names[@]}"
     subcommands=("${sorted_array[@]}")
 
     # Read the arguments' groups to sort the keyword arguments by group
@@ -10078,6 +10081,8 @@ function argparser_create_usage_message() {
     #   argument names (read-only)
     # - all_short_options: the associative array holding the short
     #   option names (read-only)
+    # - all_subcommand_names: the associative array mapping the value
+    #   names of subcommands to their identifiers
     # - all_subcommands: the associative array holding the subcommands
     #   (read-only)
     # - all_value_names: the associative array holding the value names
@@ -10139,15 +10144,9 @@ function argparser_create_usage_message() {
     local value_names
     local whitespace
 
-    # Get the defined subcommands.
-    subcommands=()
-    for subcommand in "${all_subcommands[@]}"; do
-        if [[ -n "${subcommand}" ]] \
-            && ! argparser_in_array "${subcommand}" "${subcommands[@]}"
-        then
-            subcommands+=("${subcommand}")
-        fi
-    done
+    # Sort the defined subcommands.
+    argparser_sort false "${all_subcommand_names[@]}"
+    subcommands=("${sorted_array[@]}")
 
     # If there are subcommands defined, but none is given, add the
     # colorized subcommands to the usage message, forming a separate
@@ -10818,6 +10817,8 @@ function argparser_print_help_message() {
     #   argument names (read-only)
     # - all_short_options: the associative array holding the short
     #   option names (read-only)
+    # - all_subcommand_names: the associative array mapping the value
+    #   names of subcommands to their identifiers
     # - styles: the associative array containing the styles
     #
     # Environment:
@@ -10858,18 +10859,9 @@ function argparser_print_help_message() {
     # Read the argument.
     exit="$1"
 
-    # Get the defined subcommands.
-    subcommands=()
-    for subcommand in "${all_subcommands[@]}"; do
-        if [[ -n "${subcommand}" ]] \
-            && ! argparser_in_array "${subcommand}" "${subcommands[@]}"
-        then
-            subcommands+=("${subcommand}")
-        fi
-    done
-
     # Get the positional arguments for the given subcommand, if any, or
     # the general program.
+    subcommands=("${all_subcommand_names[@]}")
     positional_args=()
     for arg_id in "${all_positional_args[@]}"; do
         # Read the argument's definition.
@@ -11795,6 +11787,7 @@ function argparser_main() {
     local -a all_positional_args
     local -A all_resolved_choice_values
     local -A all_short_options
+    local -A all_subcommand_names
     local -A all_subcommands
     local -A all_types
     local -A all_value_names
@@ -11916,6 +11909,7 @@ function argparser_main() {
     all_positional_args=()
     all_resolved_choice_values=()
     all_short_options=()
+    all_subcommand_names=()
     all_subcommands=()
     all_types=()
     all_value_names=()
