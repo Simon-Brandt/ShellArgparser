@@ -6859,16 +6859,16 @@ function argparser_get_arg_id() {
 }
 
 function argparser_get_display_names() {
-    # Get the argument's display names formatted for pretty-printing.
-    # For subcommands and positional arguments, these are the value
-    # names.  For keyword arguments, these are the short and/or long
-    # option names, or the value names.  In the latter case, these need
-    # to be explicitly requested.
+    # Get the (possibly colorized) argument's display names formatted
+    # for pretty-printing.  For subcommands and positional arguments,
+    # these are the value names.  For keyword arguments, these are the
+    # short and/or long option names, or the value names.  In the latter
+    # case, these need to be explicitly requested.
     #
     # Arguments:
     # - $1: the argument identifier
     # - $2: which names to use ("short+long", "long+short", "short",
-    #       "long", or "value")
+    #       "long", "subcommand", or "value")
     # - $3: whether to colorize the display names by argparser_colorize
     #
     # Nonlocals:
@@ -6929,7 +6929,7 @@ function argparser_get_display_names() {
         value_names=("${value_name^^}")
     fi
 
-    # If there are now less value names than the argument number
+    # If there are still less value names than the argument number
     # suggests (and the argument is not variadic), create the remaining
     # value names by repeating the last value name.
     if ! argparser_in_array "${arg_number}" "+" "*" "?"; then
@@ -6946,7 +6946,8 @@ function argparser_get_display_names() {
     long_options=("${long_options[@]/#/--}")
 
     # Possibly colorize the short and long option names, and the value
-    # names.
+    # names.  For subcommands, colorize the value names in the style for
+    # subcommands, otherwise, in the normal style for value names.
     if [[ "${colorize}" == true ]]; then
         argparser_colorize "${styles["short_options"]}" 1 "array" \
             "${short_options[@]}"
@@ -6956,9 +6957,15 @@ function argparser_get_display_names() {
             "${long_options[@]}"
         long_options=("${colorized_array[@]}")
 
-        argparser_colorize "${styles["value_names"]}" 1 "array" \
-            "${value_names[@]}"
-        value_names=("${colorized_array[@]}")
+        if [[ "${names}" == "subcommand" ]]; then
+            argparser_colorize "${styles["subcommand"]}" 1 "array" \
+                "${value_names[@]}"
+            value_names=("${colorized_array[@]}")
+        else
+            argparser_colorize "${styles["value_names"]}" 1 "array" \
+                "${value_names[@]}"
+            value_names=("${colorized_array[@]}")
+        fi
     fi
 
     # Merge and concatenate the short and/or long option names or the
@@ -7872,7 +7879,7 @@ function argparser_check_arg_values() {
         fi
 
         if [[ -z "${given_subcommand}" ]]; then
-            argparser_get_display_names "${subcommand}" "value" false
+            argparser_get_display_names "${subcommand}" "subcommand" false
             subcommand_names_str="${display_names_str}"
 
             error_message="Error: The argument \"\$1\" is known, but defined "
@@ -7884,7 +7891,8 @@ function argparser_check_arg_values() {
             error_messages+=("${error_message}")
             return
         else
-            argparser_get_display_names "${given_subcommand}" "value" false
+            argparser_get_display_names "${given_subcommand}" "subcommand" \
+                false
             subcommand_names_str="${display_names_str}"
 
             error_message="Error: The argument \"\$1\" is known, but not "
@@ -8924,7 +8932,7 @@ function argparser_create_help_message() {
 
         # Get the (colorized) subcommand name and colorize the help
         # text.
-        argparser_get_display_names "${subcommand}" "value" true
+        argparser_get_display_names "${subcommand}" "subcommand" true
         subcommand_names_str="${display_names_str}"
 
         argparser_colorize "${styles["help_text"]}" 1 help_text "${help_text}"
@@ -9889,13 +9897,13 @@ function argparser_create_help_message() {
 
     if (( "${#subcommands[@]}" > 0 )); then
         if [[ -n "${given_subcommand}" ]]; then
-            argparser_get_display_names "${given_subcommand}" "value" true
+            argparser_get_display_names "${given_subcommand}" "subcommand" true
             subcommand_names_str="${display_names_str}"
             usage+=" ${subcommand_names_str}"
         else
             subcommand_names_arr=()
             for subcommand in "${subcommands[@]}"; do
-                argparser_get_display_names "${subcommand}" "value" true
+                argparser_get_display_names "${subcommand}" "subcommand" true
                 subcommand_names_arr+=("${display_names_arr[@]}")
             done
 
@@ -10150,7 +10158,7 @@ function argparser_create_usage_message() {
     if (( "${#subcommands[@]}" > 0 )) && [[ -z "${given_subcommand}" ]]; then
         subcommand_names_arr=()
         for subcommand in "${subcommands[@]}"; do
-            argparser_get_display_names "${subcommand}" "value" true
+            argparser_get_display_names "${subcommand}" "subcommand" true
             subcommand_names_arr+=("${display_names_arr[@]}")
         done
 
@@ -10765,7 +10773,7 @@ function argparser_create_usage_message() {
         "${ARGPARSER_SCRIPT_NAME}"
 
     if [[ -n "${given_subcommand}" ]]; then
-        argparser_get_display_names "${given_subcommand}" "value" true
+        argparser_get_display_names "${given_subcommand}" "subcommand" true
         subcommand_names_str="${display_names_str}"
     fi
 
