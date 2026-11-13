@@ -736,7 +736,7 @@ function argparser_fold() {
                     if [[ "${delimiters::1}" == " " ]]; then
                         folded_array[-1]+=$'\e[0m'
                     else
-                        folded_array[-1]+=$'\e[0m'"${delimiters::1}"
+                        folded_array[-1]+="${delimiters::1}"$'\e[0m'
                     fi
                     folded_array+=("${whitespace}${style}${word}")
                 else
