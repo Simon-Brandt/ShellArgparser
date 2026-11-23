@@ -1702,8 +1702,7 @@ function argparser_cleanup() {
         unset -f \
             argparser_add_args_definition_help_options \
             argparser_check_arg_values \
-            argparser_check_args_definition_names \
-            argparser_check_args_definition_option_values \
+            argparser_check_args_definition_options \
             argparser_check_args_definition_positional_values \
             argparser_check_args_definition_subcommands \
             argparser_check_bash_version \
@@ -5655,18 +5654,37 @@ function argparser_check_args_definition_subcommands() {
     done
 }
 
-function argparser_check_args_definition_names() {
+function argparser_check_args_definition_options() {
     # Check if the script's arguments' definition is consistent
     # regarding the short and long option names.  This should always be
     # true for production scripts, but maybe not while testing.
     #
     # Nonlocals:
+    # - all_arg_groups: the associative array holding the argument
+    #   groups (read-only)
+    # - all_arg_numbers: the associative array holding the argument
+    #   numbers (read-only)
+    # - all_choice_values: the associative array holding the choice
+    #   values (read-only)
+    # - all_default_values: the associative array holding the default
+    #   values (read-only)
+    # - all_help_texts: the associative array holding the help texts
+    #   (read-only)
     # - all_long_options: the associative array holding the long option
     #   names (read-only)
+    # - all_notes: the associative array holding the notes (read-only)
+    # - all_resolved_choice_values: the associative array holding the
+    #   resolved (range-expanded) choice values (read-only)
     # - all_short_options: the associative array holding the short
     #   option names (read-only)
+    # - all_subcommands: the associative array holding the subcommands
+    #   (read-only)
+    # - all_types: the associative array holding the argument types
+    #   (read-only)
     # - error_messages: the error messages, starting with "Error: "
     #   (translated), as indexed array
+    # - warning_messages: the warning messages, starting with
+    #   "Warning: " (translated), as indexed array
     #
     # Environment:
     # - ARGPARSER_ADD_HELP (read-only)
@@ -5675,31 +5693,43 @@ function argparser_check_args_definition_names() {
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
     # - ARGPARSER_HELP_OPTIONS (read-only)
     # - ARGPARSER_USAGE_OPTIONS (read-only)
-    # - ARGPARSER_USE_LONG_OPTIONS (read-only)
-    # - ARGPARSER_USE_SHORT_OPTIONS (read-only)
     # - ARGPARSER_VERSION_OPTIONS (read-only)
 
     # Define the local variables.
+    local arg_group
     local arg_id
     local -a arg_ids
-    local count
+    local arg_number
     local -A checked_long_options
     local -A checked_short_options
+    local choice_value
+    local choice_values_str
+    local count
+    local default_value
+    local -a default_values_arr
+    local default_values_str
     local error_message
-    local long_option
+    local help_text
     local -a long_help_options
+    local long_option
     local -a long_options
     local -a long_usage_options
     local -a long_version_options
+    local note
+    local -a notes
     local option_name
     local -a option_names_arr
-    local short_option
+    local -a resolved_choice_values_arr
+    local resolved_choice_values_str
     local -a short_help_options
+    local short_option
     local -a short_options
     local -a short_usage_options
     local -a short_version_options
     local -a sorted_array
+    local -a subcommands
     local translation
+    local type
 
     # Read the help, usage, and version option names and separate them
     # by short and long names.
@@ -5743,268 +5773,532 @@ function argparser_check_args_definition_names() {
     argparser_sort false "${!all_short_options[@]}"
     arg_ids=("${sorted_array[@]}")
 
-    # Check that no short or long option is given twice for the same
-    # argument or among multiples.
+    # Check each argument's definition.
     for arg_id in "${arg_ids[@]}"; do
         # Read the argument's definition.
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a subcommands \
+            <<< "${all_subcommands[${arg_id}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a short_options \
             <<< "${all_short_options[${arg_id}]}"
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a long_options \
             <<< "${all_long_options[${arg_id}]}"
+        default_values_str="${all_default_values[${arg_id}]}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a default_values_arr \
+            <<< "${default_values_str}"
+        choice_values_str="${all_choice_values[${arg_id}]}"
+        resolved_choice_values_str="${all_resolved_choice_values[${arg_id}]}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a \
+            resolved_choice_values_arr \
+                <<< "${resolved_choice_values_str}"
+        type="${all_types[${arg_id}]}"
+        arg_number="${all_arg_numbers[${arg_id}]}"
+        arg_group="${all_arg_groups[${arg_id}]}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
+            <<< "${all_notes[${arg_id}]}"
+        help_text="${all_help_texts[${arg_id}]}"
 
-        # If more than one short option name is given, check if any is
-        # the empty string, which must only once be used as placeholder
-        # for missing short options.  Then, check if any short option
-        # name uses a character reserved for the help, usage, or version
-        # message, if it is longer than one character, and if it is
-        # given multiple times in the current argument's definition or
-        # across all yet investigated arguments' definitions.  If only
-        # one short option name is given, the empty string is a legit
-        # value, so don't check this.
-        if (( "${#short_options[@]}" > 1 )) \
-            && argparser_in_array "" "${short_options[@]}"
-        then
-            # Check if the empty string is included in the short option
-            # names.
-            error_message="Error: The short option with the identifier "
-            error_message+="\"\$1\" has an empty string given as one of the "
-            error_message+="\$2 short option names, instead of a legit name."
+        # Check that the argument identifier is a valid identifier.
+        if ! argparser_is_identifier "${arg_id}"; then
+            error_message="Error: The option with the identifier \"\$1\" does "
+            error_message+="not use a valid Bash identifier."
 
-            argparser_translate "Error arg def short name empty" \
+            argparser_translate "Error arg def option id" "${error_message}" \
+                "${arg_id}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        fi
+
+        # Check that at most one subcommand is defined.
+        if (( "${#subcommands[@]}" > 1 )); then
+            error_message="Error: The option with the identifier \"\$1\" has "
+            error_message+="more than one subcommand defined, which is not "
+            error_message+="supported."
+
+            argparser_translate "Error arg def option subcommand" \
+                "${error_message}" "${arg_id}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        fi
+
+        # Check the short option names.  First, check that the empty
+        # string, which may only once be used as placeholder for missing
+        # short options, is not part of the short option names.
+        if argparser_in_array "" "${short_options[@]}"; then
+            error_message="Error: The option with the identifier \"\$1\" has "
+            error_message+="an empty string given as one of the \$2 short "
+            error_message+="option names, instead of a legit name."
+
+            argparser_translate "Error arg def option short name empty" \
                 "${error_message}" "${arg_id}" "${#short_options[@]}"
             error_message="${translation}"
             error_messages+=("${error_message}")
         fi
 
+        # Then, check the individual short option names.
         for short_option in "${short_options[@]}"; do
-            if [[ "${ARGPARSER_ADD_HELP}" == true \
-                && "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]] \
+            # Skip the already checked placeholders.
+            if [[ -z "${short_option}" ]]; then
+                continue
+            fi
+
+            # Check that the short option name doesn't use the reserved
+            # flags for the help, usage, or version message.
+            if [[ "${ARGPARSER_ADD_HELP}" == true ]] \
                 && argparser_in_array "${short_option}" \
                     "${short_help_options[@]}"
             then
-                # Check if a short option name uses the reserved flag
-                # for the help message.
-                error_message="Error: The short option with the identifier "
-                error_message+="\"\$1\" has the short option \"-\$2\" "
-                error_message+="defined, which is reserved for invoking the "
-                error_message+="help message."
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="has the short option name \"-\$2\" defined, "
+                error_message+="which is reserved for invoking the help "
+                error_message+="message."
 
-                argparser_translate "Error arg def short name help" \
+                argparser_translate "Error arg def option short name help" \
                     "${error_message}" "${arg_id}" "${short_option}"
                 error_message="${translation}"
                 error_messages+=("${error_message}")
-            elif [[ "${ARGPARSER_ADD_USAGE}" == true \
-                && "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]] \
+            elif [[ "${ARGPARSER_ADD_USAGE}" == true ]] \
                 && argparser_in_array "${short_option}" \
                     "${short_usage_options[@]}"
             then
-                # Check if a short option name uses the reserved flag
-                # for the usage message.
-                error_message="Error: The short option with the identifier "
-                error_message+="\"\$1\" has the short option \"-\$2\" "
-                error_message+="defined, which is reserved for invoking the "
-                error_message+="usage message."
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="has the short option name \"-\$2\" defined, "
+                error_message+="which is reserved for invoking the usage "
+                error_message+="message."
 
-                argparser_translate "Error arg def short name usage" \
+                argparser_translate "Error arg def option short name usage" \
                     "${error_message}" "${arg_id}" "${short_option}"
                 error_message="${translation}"
                 error_messages+=("${error_message}")
-            elif [[ "${ARGPARSER_ADD_VERSION}" == true \
-                && "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]] \
+            elif [[ "${ARGPARSER_ADD_VERSION}" == true ]] \
                 && argparser_in_array "${short_option}" \
                     "${short_version_options[@]}"
             then
-                # Check if a short option name uses the reserved flag
-                # for the version message.
-                error_message="Error: The short option with the identifier "
-                error_message+="\"\$1\" has the short option \"-\$2\" "
-                error_message+="defined, which is reserved for invoking the "
-                error_message+="version message."
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="has the short option name \"-\$2\" defined, "
+                error_message+="which is reserved for invoking the version "
+                error_message+="message."
 
-                argparser_translate "Error arg def short name version" \
+                argparser_translate "Error arg def option short name version" \
                     "${error_message}" "${arg_id}" "${short_option}"
                 error_message="${translation}"
                 error_messages+=("${error_message}")
-            elif [[ -n "${short_option}" ]]; then
-                # Check if a short option name is more than one
-                # character long.
-                if (( "${#short_option}" > 1 )); then
-                    error_message="Error: The short option with the "
-                    error_message+="identifier \"\$1\" has the short option "
-                    error_message+="\"-\$2\" defined with more than 1 "
-                    error_message+="character length."
-
-                    argparser_translate "Error arg def short name length" \
-                        "${error_message}" "${arg_id}" "${short_option}"
-                    error_message="${translation}"
-                    error_messages+=("${error_message}")
-                fi
-
-                # Check if the short option name is given multiple times
-                # in the current argument's definition.
-                argparser_count "${short_option}" "${short_options[@]}"
-                if (( count > 1 )); then
-                    error_message="Error: The short option with the "
-                    error_message+="identifier \"\$1\" has the short option "
-                    error_message+="\"-\$2\" given \$3 times."
-
-                    argparser_translate \
-                        "Error arg def short name duplication 1" \
-                        "${error_message}" "${arg_id}" "${short_option}" \
-                        "${count}"
-                    error_message="${translation}"
-                    error_messages+=("${error_message}")
-                fi
-
-                # Check if the short option name is already given in
-                # another argument's definition.
-                if [[ -n "${checked_short_options[${short_option}]+set}" \
-                    && "${checked_short_options[${short_option}]}" \
-                        != "${arg_id}" ]]
-                then
-                    error_message="Error: The short option with the "
-                    error_message+="identifier \"\$1\" has the short option "
-                    error_message+="\"-\$2\" given, but that is already in "
-                    error_message+="use by \"\$3\"."
-
-                    argparser_translate \
-                        "Error arg def short name duplication 2" \
-                        "${error_message}" "${arg_id}" "${short_option}" \
-                        "${checked_short_options[${short_option}]}"
-                    error_message="${translation}"
-                    error_messages+=("${error_message}")
-                fi
-
-                # Add the short option name to the associative array of
-                # all short option names.
-                checked_short_options[${short_option}]="${arg_id}"
             fi
+
+            # Check that the short option name is exactly one character
+            # long.
+            if (( "${#short_option}" > 1 )); then
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="has the short option name \"-\$2\" defined "
+                error_message+="with more than 1 character length."
+
+                argparser_translate "Error arg def option short name length" \
+                    "${error_message}" "${arg_id}" "${short_option}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            fi
+
+            # Check that the short option name isn't given multiple
+            # times in the current argument's definition.
+            argparser_count "${short_option}" "${short_options[@]}"
+            if (( count > 1 )); then
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="has the short option name \"-\$2\" given \$3 "
+                error_message+="times."
+
+                argparser_translate \
+                    "Error arg def option short name duplication 1" \
+                    "${error_message}" "${arg_id}" "${short_option}" "${count}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            fi
+
+            # Check that the short option name isn't already given in
+            # another argument's definition.
+            if [[ -n "${checked_short_options[${short_option}]+set}" \
+                && "${checked_short_options[${short_option}]}" != "${arg_id}" ]]
+            then
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="has the short option name \"-\$2\" given, but "
+                error_message+="that is already in use by \"\$3\"."
+
+                argparser_translate \
+                    "Error arg def option short name duplication 2" \
+                    "${error_message}" "${arg_id}" "${short_option}" \
+                    "${checked_short_options[${short_option}]}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            fi
+
+            # Add the short option name to the associative array of all
+            # checked short option names.
+            checked_short_options[${short_option}]="${arg_id}"
         done
 
-        # Perform the same tests for the long option names for having
-        # the empty string among the long option names or if any long
-        # option name uses a string reserved for the help, usage, or
-        # version message, if it is shorter than two characters, and if
-        # it is given multiple times in the current argument's
-        # definition or across all yet investigated arguments'
-        # definitions.
-        if (( "${#long_options[@]}" > 1 )) \
-            && argparser_in_array "" "${long_options[@]}"
-        then
-            # Check if the empty string is included in the long option
-            # names.
-            error_message="Error: The long option with the identifier \"\$1\" "
-            error_message+="has an empty string given as one of the \$2 long "
+        # Likewise, check the long option names, starting with the
+        # placeholder empty string.
+        if argparser_in_array "" "${long_options[@]}"; then
+            error_message="Error: The option with the identifier \"\$1\" has "
+            error_message+="an empty string given as one of the \$2 long "
             error_message+="option names, instead of a legit name."
 
-            argparser_translate "Error arg def long name empty" \
+            argparser_translate "Error arg def option long name empty" \
                 "${error_message}" "${arg_id}" "${#long_options[@]}"
             error_message="${translation}"
             error_messages+=("${error_message}")
         fi
 
+        # Then, check the individual long option names.
         for long_option in "${long_options[@]}"; do
-            if [[ "${ARGPARSER_ADD_HELP}" == true \
-                && "${ARGPARSER_USE_LONG_OPTIONS}" == true ]] \
+            # Skip the already checked placeholders.
+            if [[ -z "${long_option}" ]]; then
+                continue
+            fi
+
+            # Check that the long option name doesn't use the reserved
+            # flags for the help, usage, or version message.
+            if [[ "${ARGPARSER_ADD_HELP}" == true ]] \
                 && argparser_in_array "${long_option}" \
                     "${long_help_options[@]}"
             then
-                # Check if a long option name uses the reserved flag for
-                # the help message.
-                error_message="Error: The long option with the identifier "
-                error_message+="\"\$1\" has the long option \"--\$2\" "
-                error_message+="defined, which is reserved for invoking the "
-                error_message+="help message."
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="has the long option name \"-\$2\" defined, "
+                error_message+="which is reserved for invoking the help "
+                error_message+="message."
 
-                argparser_translate "Error arg def long name help" \
+                argparser_translate "Error arg def option long name help" \
                     "${error_message}" "${arg_id}" "${long_option}"
                 error_message="${translation}"
                 error_messages+=("${error_message}")
-            elif [[ "${ARGPARSER_ADD_USAGE}" == true \
-                && "${ARGPARSER_USE_LONG_OPTIONS}" == true ]] \
+            elif [[ "${ARGPARSER_ADD_USAGE}" == true ]] \
                 && argparser_in_array "${long_option}" \
                     "${long_usage_options[@]}"
             then
-                # Check if a long option name uses the reserved flag for
-                # the usage message.
-                error_message="Error: The long option with the identifier "
-                error_message+="\"\$1\" has the long option \"--\$2\" "
-                error_message+="defined, which is reserved for invoking the "
-                error_message+="usage message."
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="has the long option name \"-\$2\" defined, "
+                error_message+="which is reserved for invoking the usage "
+                error_message+="message."
 
-                argparser_translate "Error arg def long name usage" \
+                argparser_translate "Error arg def option long name usage" \
                     "${error_message}" "${arg_id}" "${long_option}"
                 error_message="${translation}"
                 error_messages+=("${error_message}")
-            elif [[ "${ARGPARSER_ADD_VERSION}" == true \
-                && "${ARGPARSER_USE_LONG_OPTIONS}" == true ]] \
+            elif [[ "${ARGPARSER_ADD_VERSION}" == true ]] \
                 && argparser_in_array "${long_option}" \
                     "${long_version_options[@]}"
             then
-                # Check if a long option name uses the reserved flag for
-                # the version message.
-                error_message="Error: The long option with the identifier "
-                error_message+="\"\$1\" has the long option \"--\$2\" "
-                error_message+="defined, which is reserved for invoking the "
-                error_message+="version message."
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="has the long option name \"-\$2\" defined, "
+                error_message+="which is reserved for invoking the version "
+                error_message+="message."
 
-                argparser_translate "Error arg def long name version" \
+                argparser_translate "Error arg def option long name version" \
                     "${error_message}" "${arg_id}" "${long_option}"
                 error_message="${translation}"
                 error_messages+=("${error_message}")
-            elif [[ -n "${long_option}" ]]; then
-                # Check if a long option name is less than two
-                # characters long.
-                if (( "${#long_option}" < 2 )); then
-                    error_message="Error: The long option with the identifier "
-                    error_message+="\"\$1\" has the long option \"--\$2\" "
-                    error_message+="defined with less than 2 characters "
-                    error_message+="length."
+            fi
 
-                    argparser_translate "Error arg def long name length" \
-                        "${error_message}" "${arg_id}" "${long_option}"
-                    error_message="${translation}"
-                    error_messages+=("${error_message}")
+            # Check that the long option name is at least two characters
+            # long.
+            if (( "${#long_option}" < 2 )); then
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="has the long option name \"-\$2\" defined "
+                error_message+="with less than 2 characters length."
+
+                argparser_translate "Error arg def option long name length" \
+                    "${error_message}" "${arg_id}" "${long_option}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            fi
+
+            # Check that the long option name isn't given multiple times
+            # in the current argument's definition.
+            argparser_count "${long_option}" "${long_options[@]}"
+            if (( count > 1 )); then
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="has the long option name \"-\$2\" given \$3 "
+                error_message+="times."
+
+                argparser_translate \
+                    "Error arg def option long name duplication 1" \
+                    "${error_message}" "${arg_id}" "${long_option}" "${count}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            fi
+
+            # Check that the long option name isn't already given in
+            # another argument's definition.
+            if [[ -n "${checked_long_options[${long_option}]+set}" \
+                && "${checked_long_options[${long_option}]}" != "${arg_id}" ]]
+            then
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="has the long option name \"-\$2\" given, but "
+                error_message+="that is already in use by \"\$3\"."
+
+                argparser_translate \
+                    "Error arg def option long name duplication 2" \
+                    "${error_message}" "${arg_id}" "${long_option}" \
+                    "${checked_long_options[${long_option}]}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            fi
+
+            # Add the long option name to the associative array of all
+            # checked long option names.
+            checked_long_options[${long_option}]="${arg_id}"
+        done
+
+        # Check that the default value for flags (or arguments that can
+        # be used as such), if given, is either "true" or "false".
+        if argparser_in_array "${arg_number}" "*" "?" 0 \
+            && ! argparser_in_array "${default_values_str}" "" true false
+        then
+            error_message="Error: The option with the identifier \"\$1\" must "
+            error_message+="have its default value set to \"true\" or "
+            error_message+="\"false\", but has {\$2} defined."
+
+            argparser_translate "Error arg def option default value flag" \
+                "${error_message}" "${arg_id}" "${default_values_str}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        fi
+
+        # Check that the number of default values equals the number of
+        # required values.
+        if ! argparser_in_array "${arg_number}" "+" "*" "?" 0 \
+            && [[ -n "${default_values_str}" \
+                && "${#default_values_arr[@]}" != "${arg_number}" ]]
+        then
+            if [[ "${arg_number}" == 1 ]]; then
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="requires 1 value, but has \$2 given as "
+                error_message+="default."
+
+                argparser_translate "Error arg def option default value 1" \
+                    "${error_message}" "${arg_id}" "${#default_values_arr[@]}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            else
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="requires \$2 values, but has \$3 given as "
+                error_message+="default."
+
+                argparser_translate "Error arg def option default value 2" \
+                    "${error_message}" "${arg_id}" "${arg_number}" \
+                    "${#default_values_arr[@]}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            fi
+        fi
+
+        # Check the choice values.
+        if [[ -n "${resolved_choice_values_str}" ]]; then
+            # Check that flags have no choice values.
+            if [[ "${arg_number}" == 0 ]]; then
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="accepts no choice values, but has {\$2} given."
+
+                argparser_translate "Error arg def option choice value flag" \
+                    "${error_message}" "${arg_id}" "${choice_values_str}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            fi
+
+            # Check that "true" and "false" aren't given as choice
+            # values.
+            if argparser_in_array true "${resolved_choice_values_arr[@]}" \
+                || argparser_in_array false "${resolved_choice_values_arr[@]}"
+            then
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="has {\$2} given as choice values, while "
+                error_message+="\"true\" and \"false\" cannot be any."
+
+                argparser_translate "Error arg def option choice value bool" \
+                    "${error_message}" "${arg_id}" "${choice_values_str}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            fi
+
+            # Check that the default values accord to the choice values,
+            # i.e., if each default value lies within the array of
+            # choice values.
+            for default_value in "${default_values_arr[@]}"; do
+                if [[ -z "${default_value}" ]]; then
+                    continue
                 fi
 
-                # Check if the long option name is given multiple times
-                # in the current argument's definition.
-                argparser_count "${long_option}" "${long_options[@]}"
-                if (( count > 1 )); then
-                    error_message="Error: The long option with the identifier "
-                    error_message+="\"\$1\" has the long option \"--\$2\" "
-                    error_message+="given \$3 times."
+                if argparser_in_array "${arg_number}" "*" "?"; then
+                    if ! argparser_in_array "${default_value}" \
+                        "${resolved_choice_values_arr[@]}" true false
+                    then
+                        error_message="Error: The option with the identifier "
+                        error_message+="\"\$1\" accepts only the choice "
+                        error_message+="values {\$2}, but has {\$3} given as "
+                        error_message+="default values."
 
-                    argparser_translate \
-                        "Error arg def long name duplication 1" \
-                        "${error_message}" "${arg_id}" "${long_option}" \
-                        "${count}"
-                    error_message="${translation}"
-                    error_messages+=("${error_message}")
+                        argparser_translate \
+                            "Error arg def option choice value default" \
+                            "${error_message}" "${arg_id}" \
+                            "${choice_values_str}" "${default_values_str}"
+                        error_message="${translation}"
+                        error_messages+=("${error_message}")
+                        break
+                    fi
+                else
+                    if ! argparser_in_array "${default_value}" \
+                        "${resolved_choice_values_arr[@]}"
+                    then
+                        error_message="Error: The option with the identifier "
+                        error_message+="\"\$1\" accepts only the choice "
+                        error_message+="values {\$2}, but has {\$3} given as "
+                        error_message+="default values."
+
+                        argparser_translate \
+                            "Error arg def option choice value default" \
+                            "${error_message}" "${arg_id}" \
+                            "${choice_values_str}" "${default_values_str}"
+                        error_message="${translation}"
+                        error_messages+=("${error_message}")
+                        break
+                    fi
                 fi
+            done
+        fi
 
-                # Check if the long option name is already given in
-                # another argument's definition.
-                if [[ -n "${checked_long_options[${long_option}]+set}"
-                    && "${checked_long_options[${long_option}]}" \
-                        != "${arg_id}" ]]
-                then
-                    error_message="Error: The long option with the identifier "
-                    error_message+="\"\$1\" has the long option \"--\$2\" "
-                    error_message+="given, but that is already in use by "
-                    error_message+="\"\$3\"."
+        # Check the data type.
+        if ! argparser_in_array "${type}" "bool" "char" "float" "file" "int" \
+            "str" "uint"
+        then
+            error_message="Error: The option with the identifier \"\$1\" has "
+            error_message+="\"\$2\" given as data type, but only \"bool\", "
+            error_message+="\"char\", \"float\", \"file\", \"int\", \"str\", "
+            error_message+="and \"uint\" are supported."
 
-                    argparser_translate \
-                        "Error arg def long name duplication 2" \
-                        "${error_message}" "${arg_id}" "${long_option}" \
-                        "${checked_long_options[${long_option}]}"
-                    error_message="${translation}"
-                    error_messages+=("${error_message}")
-                fi
+            argparser_translate "Error arg def option type" \
+                "${error_message}" "${arg_id}" "${type}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        fi
 
-                # Add the long option name to the associative array of
-                # all long option names.
-                checked_long_options[${long_option}]="${arg_id}"
+        # Check that the choice values accord to the data type.
+        for choice_value in "${resolved_choice_values_arr[@]}"; do
+            if [[ -z "${choice_value}" ]]; then
+                # No choice value is given, so abort the loop.
+                break
+            fi
+
+            if [[ "${type}" == "bool" ]] \
+                && ! argparser_is_bool "${choice_value}"
+            then
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="has \"\$2\" given as choice value, which must "
+                error_message+="be a Boolean, i.e., \"true\" or \"false\"."
+
+                argparser_translate "Error arg def option type bool" \
+                    "${error_message}" "${arg_id}" "${choice_value}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            elif [[ "${type}" == "char" ]] \
+                && ! argparser_is_char "${choice_value}"
+            then
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="has \"\$2\" given as choice value, which must "
+                error_message+="be a character, i.e., a string comprising one "
+                error_message+="printable ASCII character."
+
+                argparser_translate "Error arg def option type char" \
+                    "${error_message}" "${arg_id}" "${choice_value}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            elif [[ "${type}" == "float" ]] \
+                && ! argparser_is_float "${choice_value}"
+            then
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="has \"\$2\" given as choice value, which must "
+                error_message+="be a floating-point number, i.e., comprise "
+                error_message+="only digits, a dot, and possibly a leading "
+                error_message+="sign."
+
+                argparser_translate "Error arg def option type float" \
+                    "${error_message}" "${arg_id}" "${choice_value}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            elif [[ "${type}" == "int" ]] \
+                && ! argparser_is_int "${choice_value}"
+            then
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="has \"\$2\" given as choice value, which must "
+                error_message+="be an integer, i.e., comprise only digits and "
+                error_message+="possibly a leading sign."
+
+                argparser_translate "Error arg def option type int" \
+                    "${error_message}" "${arg_id}" "${choice_value}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            elif [[ "${type}" == "uint" ]] \
+                && ! argparser_is_uint "${choice_value}"
+            then
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="has \"\$2\" given as choice value, which must "
+                error_message+="be an unsigned integer, i.e., comprise only "
+                error_message+="digits and no sign."
+
+                argparser_translate "Error arg def option type uint" \
+                    "${error_message}" "${arg_id}" "${choice_value}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            fi
+        done
+
+        # Check that the argument number is either an integer or one of
+        # the special values for flag-like arguments.
+        if ! argparser_is_uint "${arg_number}" \
+            && ! argparser_in_array "${arg_number}" "+" "*" "?"
+        then
+            error_message="Error: The option with the identifier \"\$1\" "
+            error_message+="has \"\$2\" given as argument number, which must "
+            error_message+="be an unsigned integer or either of \"+\", \"*\", "
+            error_message+="and \"?\"."
+
+            argparser_translate "Error arg def option arg number" \
+                "${error_message}" "${arg_id}" "${choice_value}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        fi
+
+        # Check that the argument group is neither of the ones for the
+        # subcommands (${ARGPARSER_SUBCOMMAND_GROUP}), positional
+        # arguments (${ARGPARSER_POSITIONAL_ARG_GROUP}), or help options
+        # (${ARGPARSER_HELP_ARG_GROUP}).
+        if argparser_in_array "${arg_group}" "${ARGPARSER_SUBCOMMAND_GROUP}" \
+            "${ARGPARSER_POSITIONAL_ARG_GROUP}" "${ARGPARSER_HELP_ARG_GROUP}"
+        then
+            error_message="Error: The option with the identifier \"\$1\" is "
+            error_message+="defined for the argument group \"\$2\", but must "
+            error_message+="not belong to neither \"\$3\", as defined by the "
+            error_message+="ARGPARSER_SUBCOMMAND_GROUP, nor to \"\$4\", as "
+            error_message+="defined by the ARGPARSER_POSITIONAL_ARG_GROUP, "
+            error_message+="nor to \"\$5\", as defined by the "
+            error_message+="ARGPARSER_HELP_ARG_GROUP."
+
+            argparser_translate "Error arg def option arg group" \
+                "${error_message}" "${arg_id}" "${arg_group}" \
+                "${ARGPARSER_SUBCOMMAND_GROUP}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        fi
+
+        # Check that the notes, if given, are set to "deprecated" and/or
+        # "hidden".
+        for note in "${notes[@]}"; do
+            if ! argparser_in_array "${note}" "deprecated" "hidden"; then
+                error_message="Error: The option with the identifier \"\$1\" "
+                error_message+="has \"\$2\" given as note, but only "
+                error_message+="\"deprecated\" and \"hidden\" are supported."
+
+                argparser_translate "Error arg def option note" \
+                    "${error_message}" "${arg_id}" "${note}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
             fi
         done
     done
@@ -6390,295 +6684,6 @@ function argparser_check_args_definition_positional_values() {
     done
 }
 
-function argparser_check_args_definition_option_values() {
-    # Check if the script's arguments' definition is consistent
-    # regarding the default and choice values, as well as the number of
-    # arguments for options (keyword arguments).  This should always be
-    # true for production scripts, but maybe not while testing.
-    #
-    # Nonlocals:
-    # - all_arg_numbers: the associative array holding the argument
-    #   numbers (read-only)
-    # - all_choice_values: the associative array holding the choice
-    #   values (read-only)
-    # - all_default_values: the associative array holding the default
-    #   values (read-only)
-    # - all_notes: the associative array holding the notes (read-only)
-    # - all_resolved_choice_values: the associative array holding the
-    #   resolved (range-expanded) choice values (read-only)
-    # - all_short_options: the associative array holding the short
-    #   option names (read-only)
-    # - all_types: the associative array holding the argument types
-    #   (read-only)
-    # - error_messages: the error messages, starting with "Error: "
-    #   (translated), as indexed array
-    #
-    # Environment:
-    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
-
-    # Define the local variables.
-    local arg_id
-    local arg_number
-    local choice_value
-    local choice_values_str
-    local default_value
-    local -a default_values_arr
-    local default_values_str
-    local error_message
-    local note
-    local -a notes
-    local -a resolved_choice_values_arr
-    local resolved_choice_values_str
-    local translation
-    local type
-
-    # Check the consistency of all keyword arguments.
-    for arg_id in "${!all_short_options[@]}"; do
-        # Read the argument's definition.
-        default_values_str="${all_default_values[${arg_id}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a default_values_arr \
-            <<< "${default_values_str}"
-        choice_values_str="${all_choice_values[${arg_id}]}"
-        resolved_choice_values_str="${all_resolved_choice_values[${arg_id}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a \
-            resolved_choice_values_arr \
-                <<< "${resolved_choice_values_str}"
-        type="${all_types[${arg_id}]}"
-        arg_number="${all_arg_numbers[${arg_id}]}"
-        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
-            <<< "${all_notes[${arg_id}]}"
-
-        # Check if the default value for flags (or arguments that can be
-        # used as such), if given, is either "true" or "false".
-        if argparser_in_array "${arg_number}" "*" "?" 0 \
-            && [[ -n "${default_values_str}" ]] \
-            && ! argparser_in_array "${default_values_str}" true false
-        then
-            error_message="Error: The option with the identifier \"\$1\" must "
-            error_message+="be \"true\" or \"false\", but has {\$2} given as "
-            error_message+="default."
-
-            argparser_translate "Error arg def option default flag" \
-                "${error_message}" "${arg_id}" "${default_values_str}"
-            error_message="${translation}"
-            error_messages+=("${error_message}")
-        fi
-
-        # Check if the number of default values equals the number of
-        # required values.  Else, output an error message.
-        if ! argparser_in_array "${arg_number}" "+" "*" "?" 0 \
-            && [[ -n "${default_values_str}" \
-                && "${#default_values_arr[@]}" != "${arg_number}" ]]
-        then
-            if [[ "${arg_number}" == 1 ]]; then
-                error_message="Error: The option with the identifier \"\$1\" "
-                error_message+="requires 1 value, but has \$2 given as "
-                error_message+="default."
-
-                argparser_translate "Error arg def option default 1" \
-                    "${error_message}" "${arg_id}" "${#default_values_arr[@]}"
-                error_message="${translation}"
-                error_messages+=("${error_message}")
-            else
-                error_message="Error: The option with the identifier \"\$1\" "
-                error_message+="requires \$2 values, but has \$3 given as "
-                error_message+="default."
-
-                argparser_translate "Error arg def option default 2" \
-                    "${error_message}" "${arg_id}" "${arg_number}" \
-                    "${#default_values_arr[@]}"
-                error_message="${translation}"
-                error_messages+=("${error_message}")
-            fi
-        fi
-
-        # Check if the default values accord to the choice values, i.e.,
-        # if each default value lies within the array of choice values.
-        # Else, output an error message.
-        if [[ -n "${resolved_choice_values_str}" ]]; then
-            # Check that flags have no choice value and that "true" and
-            # "false" aren't choice values.
-            if [[ "${arg_number}" == 0 ]]; then
-                error_message="Error: The option with the identifier \"\$1\" "
-                error_message+="accepts no choice values, but has {\$2} given."
-
-                argparser_translate "Error arg def option choice flag" \
-                    "${error_message}" "${arg_id}" "${choice_values_str}"
-                error_message="${translation}"
-                error_messages+=("${error_message}")
-            else
-                for choice_value in "${resolved_choice_values_arr[@]}"; do
-                    if [[ "${choice_value}" == true \
-                        || "${choice_value}" == false ]]
-                    then
-                        error_message="Error: The option with the identifier "
-                        error_message+="\"\$1\" has {\$2} given as choice "
-                        error_message+="values, while \"true\" and \"false\" "
-                        error_message+="cannot be any."
-
-                        argparser_translate \
-                            "Error arg def option choice true" \
-                            "${error_message}" "${arg_id}" \
-                            "${choice_values_str}"
-                        error_message="${translation}"
-                        error_messages+=("${error_message}")
-                        break
-                    fi
-                done
-
-            fi
-
-            # Check the default values, separately for flag-like and
-            # "normal" arguments.
-            for default_value in "${default_values_arr[@]}"; do
-                if [[ -z "${default_value}" ]]; then
-                    continue
-                fi
-
-                if argparser_in_array "${arg_number}" "*" "?"; then
-                    if ! argparser_in_array "${default_value}" \
-                        "${resolved_choice_values_arr[@]}" true false
-                    then
-                        error_message="Error: The option with the identifier "
-                        error_message+="\"\$1\" accepts only the choice "
-                        error_message+="values {\$2}, but has {\$3} given as "
-                        error_message+="default."
-
-                        argparser_translate \
-                            "Error arg def option choice default" \
-                            "${error_message}" "${arg_id}" \
-                            "${choice_values_str}" "${default_values_str}"
-                        error_message="${translation}"
-                        error_messages+=("${error_message}")
-                        break
-                    fi
-                else
-                    if ! argparser_in_array "${default_value}" \
-                        "${resolved_choice_values_arr[@]}"
-                    then
-                        error_message="Error: The option with the identifier "
-                        error_message+="\"\$1\" accepts only the choice "
-                        error_message+="values {\$2}, but has {\$3} given as "
-                        error_message+="default."
-
-                        argparser_translate \
-                            "Error arg def option choice default" \
-                            "${error_message}" "${arg_id}" \
-                            "${choice_values_str}" "${default_values_str}"
-                        error_message="${translation}"
-                        error_messages+=("${error_message}")
-                        break
-                    fi
-                fi
-            done
-        fi
-
-        # Check the data type.
-        if ! argparser_in_array "${type}" "bool" "char" "float" "file" "int" \
-            "str" "uint"
-        then
-            error_message="Error: The option with the identifier \"\$1\" has "
-            error_message+="\"\$2\" given as data type, but only \"bool\", "
-            error_message+="\"char\", \"float\", \"file\", \"int\", \"str\", "
-            error_message+="and \"uint\" are supported."
-
-            argparser_translate "Error arg def option type" \
-                "${error_message}" "${arg_id}" "${type}"
-            error_message="${translation}"
-            error_messages+=("${error_message}")
-        fi
-
-        # Check if the choice values accord to the type.
-        for choice_value in "${resolved_choice_values_arr[@]}"; do
-            if [[ -z "${choice_value}" ]]; then
-                # No choice value is given, so abort the loop.
-                break
-            fi
-
-            if [[ "${type}" == "bool" ]] \
-                && ! argparser_is_bool "${choice_value}"
-            then
-                # Check if the choice value is a Boolean.
-                error_message="Error: The option with the identifier \"\$1\" "
-                error_message+="has \"\$2\" given as choice value, which must "
-                error_message+="be a Boolean, i.e., \"true\" or \"false\"."
-
-                argparser_translate "Error arg def option bool" \
-                    "${error_message}" "${arg_id}" "${choice_value}"
-                error_message="${translation}"
-                error_messages+=("${error_message}")
-            elif [[ "${type}" == "char" ]] \
-                && ! argparser_is_char "${choice_value}"
-            then
-                # Check if the choice value is a character.
-                error_message="Error: The option with the identifier \"\$1\" "
-                error_message+="has \"\$2\" given as choice value, which must "
-                error_message+="be a character, i.e., a string comprising one "
-                error_message+="printable ASCII character."
-
-                argparser_translate "Error arg def option char" \
-                    "${error_message}" "${arg_id}" "${choice_value}"
-                error_message="${translation}"
-                error_messages+=("${error_message}")
-            elif [[ "${type}" == "float" ]] \
-                && ! argparser_is_float "${choice_value}"
-            then
-                # Check if the choice value is a floating-point number.
-                error_message="Error: The option with the identifier \"\$1\" "
-                error_message+="has \"\$2\" given as choice value, which must "
-                error_message+="be a floating-point number, i.e., comprise "
-                error_message+="only digits, a dot, and possibly a leading "
-                error_message+="sign."
-
-                argparser_translate "Error arg def option float" \
-                    "${error_message}" "${arg_id}" "${choice_value}"
-                error_message="${translation}"
-                error_messages+=("${error_message}")
-            elif [[ "${type}" == "int" ]] \
-                && ! argparser_is_int "${choice_value}"
-            then
-                # Check if the choice value is an integer.
-                error_message="Error: The option with the identifier \"\$1\" "
-                error_message+="has \"\$2\" given as choice value, which must "
-                error_message+="be an integer, i.e., comprise only digits and "
-                error_message+="possibly a leading sign."
-
-                argparser_translate "Error arg def option int" \
-                    "${error_message}" "${arg_id}" "${choice_value}"
-                error_message="${translation}"
-                error_messages+=("${error_message}")
-            elif [[ "${type}" == "uint" ]] \
-                && ! argparser_is_uint "${choice_value}"
-            then
-                # Check if the choice value is an unsigned integer.
-                error_message="Error: The option with the identifier \"\$1\" "
-                error_message+="has \"\$2\" given as choice value, which must "
-                error_message+="be an unsigned integer, i.e., comprise only "
-                error_message+="digits and no sign."
-
-                argparser_translate "Error arg def option uint" \
-                    "${error_message}" "${arg_id}" "${choice_value}"
-                error_message="${translation}"
-                error_messages+=("${error_message}")
-            fi
-        done
-
-        # Check the notes.
-        for note in "${notes[@]}"; do
-            if ! argparser_in_array "${note}" "" "deprecated" "hidden"; then
-                error_message="Error: The option with the identifier \"\$1\" "
-                error_message+="has \"\$2\" given as note, but only "
-                error_message+="\"deprecated\" and \"hidden\" are supported."
-
-                argparser_translate "Error arg def option note" \
-                    "${error_message}" "${arg_id}" "${note}"
-                error_message="${translation}"
-                error_messages+=("${error_message}")
-            fi
-        done
-    done
-}
-
 function argparser_add_args_definition_help_options() {
     # Add the help, usage, and/or version message options to the
     # arguments definition's associative arrays.
@@ -7046,9 +7051,8 @@ function argparser_get_args_definition() {
         # the short and long option names, then the default and choice
         # values.
         argparser_check_args_definition_subcommands
-        argparser_check_args_definition_names
+        argparser_check_args_definition_options
         argparser_check_args_definition_positional_values
-        argparser_check_args_definition_option_values
 
         # If there are error or warning messages, sort, filter,
         # colorize, and print them, and, in case of errors, exit, as
