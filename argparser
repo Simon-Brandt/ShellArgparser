@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-11-13
+# Last Modification: 2026-11-23
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -1705,6 +1705,7 @@ function argparser_cleanup() {
             argparser_check_args_definition_names \
             argparser_check_args_definition_option_values \
             argparser_check_args_definition_positional_values \
+            argparser_check_args_definition_subcommands \
             argparser_check_bash_version \
             argparser_check_env_vars \
             argparser_check_file \
@@ -5385,6 +5386,275 @@ function argparser_parse_args_definition() {
     argparser_print_error_messages false true "${error_messages[@]}"
 }
 
+function argparser_check_args_definition_subcommands() {
+    # Check if the script's arguments' definition is correct and
+    # consistent regarding the subcommands.  This should always be true
+    # for production scripts, but maybe not while testing.
+    #
+    # Nonlocals:
+    # - all_arg_groups: the associative array holding the argument
+    #   groups (read-only)
+    # - all_arg_numbers: the associative array holding the argument
+    #   numbers (read-only)
+    # - all_choice_values: the associative array holding the choice
+    #   values (read-only)
+    # - all_default_values: the associative array holding the default
+    #   values (read-only)
+    # - all_help_texts: the associative array holding the help texts
+    #   (read-only)
+    # - all_long_options: the associative array holding the long option
+    #   names (read-only)
+    # - all_notes: the associative array holding the notes (read-only)
+    # - all_short_options: the associative array holding the short
+    #   option names (read-only)
+    # - all_subcommands: the associative array holding the subcommands
+    #   (read-only)
+    # - all_types: the associative array holding the argument types
+    #   (read-only)
+    # - all_value_names: the associative array holding the value names
+    #   (read-only)
+    # - error_messages: the error messages, starting with "Error: "
+    #   (translated), as indexed array
+    # - warning_messages: the warning messages, starting with
+    #   "Warning: " (translated), as indexed array
+    #
+    # Environment:
+    # - ARGPARSER_ARG_DELIMITER_2 (read-only)
+
+    # Define the local variables.
+    local arg_group
+    local arg_id
+    local -a arg_ids
+    local arg_number
+    local -A checked_value_names
+    local choice_values
+    local default_values
+    local error_message
+    local -a filtered_array
+    local help_text
+    local long_options
+    local note
+    local -a notes
+    local short_options
+    local -a sorted_array
+    local subcommand
+    local -a subcommands
+    local translation
+    local type
+    local value_name
+    local -a value_names
+    local warning_message
+
+    # Get and sort all argument identifiers for the subcommands, such
+    # that the following loop is performed in alphabetical order of the
+    # arguments.
+    for subcommand in "${all_subcommands[@]}"; do
+        if [[ -n "${subcommand}" ]]; then
+            subcommands+=("${subcommand}")
+        fi
+    done
+
+    argparser_sort false "${subcommands[@]}"
+    argparser_uniq "${sorted_array[@]}"
+    arg_ids=("${filtered_array[@]}")
+
+    # Check each subcommand's definition.
+    for arg_id in "${arg_ids[@]}"; do
+        # Read the argument's definition.
+        subcommand="${all_subcommands[${arg_id}]}"
+        short_options="${all_short_options[${arg_id}]}"
+        long_options="${all_long_options[${arg_id}]}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a value_names \
+            <<< "${all_value_names[${arg_id}]}"
+        default_values="${all_default_values[${arg_id}]}"
+        choice_values="${all_choice_values[${arg_id}]}"
+        type="${all_types[${arg_id}]}"
+        arg_number="${all_arg_numbers[${arg_id}]}"
+        arg_group="${all_arg_groups[${arg_id}]}"
+        IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a notes \
+            <<< "${all_notes[${arg_id}]}"
+        help_text="${all_help_texts[${arg_id}]}"
+
+        # Check that the argument identifier is a valid identifier.
+        if ! argparser_is_identifier "${arg_id}"; then
+            error_message="Error: The subcommand with the identifier \"\$1\" "
+            error_message+="does not use a valid Bash identifier."
+
+            argparser_translate "Error arg def subcommand id" \
+                "${error_message}" "${arg_id}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        fi
+
+        # Check that no (nested) subcommand is defined.
+        if [[ -n "${subcommand}" ]]; then
+            error_message="Error: The subcommand with the identifier \"\$1\" "
+            error_message+="has a nested subcommand defined, which is not "
+            error_message+="supported."
+
+            argparser_translate "Error arg def subcommand subcommand" \
+                "${error_message}" "${arg_id}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        fi
+
+        # Check that no short option name is defined.
+        if [[ -n "${short_options}" ]]; then
+            error_message="Error: The subcommand with the identifier \"\$1\" "
+            error_message+="has a short option name defined, while only value "
+            error_message+="names are supported."
+
+            argparser_translate "Error arg def subcommand short name" \
+                "${error_message}" "${arg_id}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        fi
+
+        # Check that no long option name is defined.
+        if [[ -n "${long_options}" ]]; then
+            error_message="Error: The subcommand with the identifier \"\$1\" "
+            error_message+="has a long option name defined, while only value "
+            error_message+="names are supported."
+
+            argparser_translate "Error arg def subcommand long name" \
+                "${error_message}" "${arg_id}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        fi
+
+        # Check that there is exactly one value name defined.
+        if (( "${#value_names[@]}" == 0 )); then
+            error_message="Error: The subcommand with the identifier \"\$1\" "
+            error_message+="has no value name defined, while 1 is required."
+
+            argparser_translate "Error arg def subcommand value name 1" \
+                "${error_message}" "${arg_id}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        elif (( "${#value_names[@]}" > 1 )); then
+            error_message="Error: The subcommand with the identifier \"\$1\" "
+            error_message+="has \$2 value names defined, while 1 is required."
+
+            argparser_translate "Error arg def subcommand value name 2" \
+                "${error_message}" "${arg_id}" "${#value_names[@]}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        fi
+
+        # Check that the value name is not already defined in another
+        # subcommand's definition.  Skip subcommands with a wrong value
+        # name count, as these already trigger the error regarding the
+        # count.
+        if (( "${#value_names[@]}" == 1 )); then
+            value_name="${value_names[0]}"
+            if [[ -n "${checked_value_names[${value_name}]+set}" ]]; then
+                error_message="Error: The subcommand with the identifier "
+                error_message+="\"\$1\" has the value name \"\$2\" defined, "
+                error_message+="but that is already in use by \"\$3\"."
+
+                argparser_translate \
+                    "Error arg def subcommand value name duplication" \
+                    "${error_message}" "${arg_id}" "${value_name}" \
+                    "${checked_value_names[${value_name}]}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            fi
+
+            checked_value_names[${value_name}]="${arg_id}"
+        fi
+
+        # Check that no default value is defined.
+        if [[ -n "${default_values}" ]]; then
+            error_message="Error: The subcommand with the identifier \"\$1\" "
+            error_message+="has a default value defined, but cannot take a "
+            error_message+="value."
+
+            argparser_translate "Error arg def subcommand default value" \
+                "${error_message}" "${arg_id}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        fi
+
+        # Check that no choice value is defined.
+        if [[ -n "${default_values}" ]]; then
+            error_message="Error: The subcommand with the identifier \"\$1\" "
+            error_message+="has a choice value defined, but cannot take a "
+            error_message+="value."
+
+            argparser_translate "Error arg def subcommand choice value" \
+                "${error_message}" "${arg_id}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        fi
+
+        # Check that no data type is defined.
+        if [[ -n "${type}" ]]; then
+            error_message="Error: The subcommand with the identifier \"\$1\" "
+            error_message+="has a data type defined, but cannot take a "
+            error_message+="value."
+
+            argparser_translate "Error arg def subcommand type" \
+                "${error_message}" "${arg_id}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        fi
+
+        # Check that no argument number is defined.
+        if [[ -n "${arg_number}" ]]; then
+            error_message="Error: The subcommand with the identifier \"\$1\" "
+            error_message+="has an argument number defined, but cannot take a "
+            error_message+="value."
+
+            argparser_translate "Error arg def subcommand arg number" \
+                "${error_message}" "${arg_id}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        fi
+
+        # Check that the argument group is the one for the subcommands,
+        # i.e., ${ARGPARSER_SUBCOMMAND_GROUP}.
+        if [[ "${arg_group}" != "${ARGPARSER_SUBCOMMAND_GROUP}" ]]; then
+            error_message="Error: The subcommand with the identifier \"\$1\" "
+            error_message+="is defined for the argument group \"\$2\", while "
+            error_message+="all subcommands must belong to \"\$3\", as "
+            error_message+="defined by the ARGPARSER_SUBCOMMAND_GROUP."
+
+            argparser_translate "Error arg def subcommand arg group" \
+                "${error_message}" "${arg_id}" "${arg_group}" \
+                "${ARGPARSER_SUBCOMMAND_GROUP}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        fi
+
+        # Check that the notes, if given, are set to "deprecated" and/or
+        # "hidden".
+        for note in "${notes[@]}"; do
+            if ! argparser_in_array "${note}" "deprecated" "hidden"; then
+                error_message="Error: The subcommand with the identifier "
+                error_message+="\"\$1\" has \"\$2\" defined as note, but only "
+                error_message+="\"deprecated\" and \"hidden\" are supported."
+
+                argparser_translate "Error arg def subcommand note" \
+                    "${error_message}" "${arg_id}" "${note}"
+                error_message="${translation}"
+                error_messages+=("${error_message}")
+            fi
+        done
+
+        # Check that a help text is defined.
+        if [[ -z "${help_text}" ]]; then
+            warning_message="Warning: The subcommand with the identifier "
+            warning_message+="\"\$1\" has no help text defined, but for "
+            warning_message+="user-friendliness, having one is recommended."
+
+            argparser_translate "Warning arg def subcommand help text" \
+                "${warning_message}" "${arg_id}"
+            warning_message="${translation}"
+            warning_messages+=("${warning_message}")
+        fi
+    done
+}
+
 function argparser_check_args_definition_names() {
     # Check if the script's arguments' definition is consistent
     # regarding the short and long option names.  This should always be
@@ -6610,6 +6880,7 @@ function argparser_get_args_definition() {
     local subcommand_name
     local translated_error
     local translation
+    local -a warning_messages
 
     # Get the arguments definition.
     if [[ "${is_sourced}" == false ]]; then
@@ -6771,16 +7042,20 @@ function argparser_get_args_definition() {
     # consistency of the arguments definition.
     error_messages=()
     if [[ "${ARGPARSER_CHECK_ARG_DEF}" == true ]]; then
-        # Check the arguments definition, first the short and long
-        # option names, then the default and choice values.
+        # Check the arguments definition, first the subcommands, then
+        # the short and long option names, then the default and choice
+        # values.
+        argparser_check_args_definition_subcommands
         argparser_check_args_definition_names
         argparser_check_args_definition_positional_values
         argparser_check_args_definition_option_values
 
-        # If there are error messages, sort, filter, colorize, and print
-        # them, then exit, as parsing the arguments with a faulty
-        # definition is useless or even impossible.
+        # If there are error or warning messages, sort, filter,
+        # colorize, and print them, and, in case of errors, exit, as
+        # parsing the arguments with a faulty definition is useless or
+        # even impossible.
         argparser_print_error_messages true true "${error_messages[@]}"
+        argparser_print_warning_messages true "${warning_messages[@]}"
     fi
 
     # Map the (now checked, i.e., safe to use) value names of
