@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-11-23
+# Last Modification: 2026-11-24
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -4173,8 +4173,8 @@ function argparser_read_translation() {
             translation="${line#*: }"
         elif [[ "${line}" == "  "*": >" ]]; then
             # The line start the translation to another language, which
-            # can be ignored, along all following lines until the start
-            # of a new YAML key.
+            # can be ignored, along with all following lines until the
+            # start of a new YAML key.
             language="${line#* }"
             language="${language%:*}"
             is_continued=true
@@ -5656,7 +5656,7 @@ function argparser_check_args_definition_subcommands() {
 
 function argparser_check_args_definition_options() {
     # Check if the script's arguments' definition is consistent
-    # regarding the short and long option names.  This should always be
+    # regarding the keyword arguments (options).  This should always be
     # true for production scripts, but maybe not while testing.
     #
     # Nonlocals:
@@ -5730,6 +5730,7 @@ function argparser_check_args_definition_options() {
     local -a subcommands
     local translation
     local type
+    local warning_message
 
     # Read the help, usage, and version option names and separate them
     # by short and long names.
@@ -5773,7 +5774,7 @@ function argparser_check_args_definition_options() {
     argparser_sort false "${!all_short_options[@]}"
     arg_ids=("${sorted_array[@]}")
 
-    # Check each argument's definition.
+    # Check each keyword argument's definition.
     for arg_id in "${arg_ids[@]}"; do
         # Read the argument's definition.
         IFS="${ARGPARSER_ARG_DELIMITER_2}" read -r -a subcommands \
@@ -6119,7 +6120,7 @@ function argparser_check_args_definition_options() {
             fi
 
             # Check that the default values accord to the choice values,
-            # i.e., if each default value lies within the array of
+            # i.e., that each default value lies within the array of
             # choice values.
             for default_value in "${default_values_arr[@]}"; do
                 if [[ -z "${default_value}" ]]; then
@@ -6189,6 +6190,7 @@ function argparser_check_args_definition_options() {
             if [[ "${type}" == "bool" ]] \
                 && ! argparser_is_bool "${choice_value}"
             then
+                # The choice value must be a Boolean.
                 error_message="Error: The option with the identifier \"\$1\" "
                 error_message+="has \"\$2\" given as choice value, which must "
                 error_message+="be a Boolean, i.e., \"true\" or \"false\"."
@@ -6200,6 +6202,7 @@ function argparser_check_args_definition_options() {
             elif [[ "${type}" == "char" ]] \
                 && ! argparser_is_char "${choice_value}"
             then
+                # The choice value must be a character.
                 error_message="Error: The option with the identifier \"\$1\" "
                 error_message+="has \"\$2\" given as choice value, which must "
                 error_message+="be a character, i.e., a string comprising one "
@@ -6212,6 +6215,7 @@ function argparser_check_args_definition_options() {
             elif [[ "${type}" == "float" ]] \
                 && ! argparser_is_float "${choice_value}"
             then
+                # The choice value must be a floating-point number.
                 error_message="Error: The option with the identifier \"\$1\" "
                 error_message+="has \"\$2\" given as choice value, which must "
                 error_message+="be a floating-point number, i.e., comprise "
@@ -6225,6 +6229,7 @@ function argparser_check_args_definition_options() {
             elif [[ "${type}" == "int" ]] \
                 && ! argparser_is_int "${choice_value}"
             then
+                # The choice value must be an integer.
                 error_message="Error: The option with the identifier \"\$1\" "
                 error_message+="has \"\$2\" given as choice value, which must "
                 error_message+="be an integer, i.e., comprise only digits and "
@@ -6237,6 +6242,7 @@ function argparser_check_args_definition_options() {
             elif [[ "${type}" == "uint" ]] \
                 && ! argparser_is_uint "${choice_value}"
             then
+                # The choice value must be an unsigned integer.
                 error_message="Error: The option with the identifier \"\$1\" "
                 error_message+="has \"\$2\" given as choice value, which must "
                 error_message+="be an unsigned integer, i.e., comprise only "
@@ -6260,7 +6266,7 @@ function argparser_check_args_definition_options() {
             error_message+="and \"?\"."
 
             argparser_translate "Error arg def option arg number" \
-                "${error_message}" "${arg_id}" "${choice_value}"
+                "${error_message}" "${arg_id}" "${arg_number}"
             error_message="${translation}"
             error_messages+=("${error_message}")
         fi
@@ -6282,7 +6288,9 @@ function argparser_check_args_definition_options() {
 
             argparser_translate "Error arg def option arg group" \
                 "${error_message}" "${arg_id}" "${arg_group}" \
-                "${ARGPARSER_SUBCOMMAND_GROUP}"
+                "${ARGPARSER_SUBCOMMAND_GROUP}" \
+                "${ARGPARSER_POSITIONAL_ARG_GROUP}" \
+                "${ARGPARSER_HELP_ARG_GROUP}"
             error_message="${translation}"
             error_messages+=("${error_message}")
         fi
@@ -6301,6 +6309,18 @@ function argparser_check_args_definition_options() {
                 error_messages+=("${error_message}")
             fi
         done
+
+        # Check that a help text is defined.
+        if [[ -z "${help_text}" ]]; then
+            warning_message="Warning: The option with the identifier \"\$1\" "
+            warning_message+="has no help text defined, but for "
+            warning_message+="user-friendliness, having one is recommended."
+
+            argparser_translate "Warning arg def option help text" \
+                "${warning_message}" "${arg_id}"
+            warning_message="${translation}"
+            warning_messages+=("${warning_message}")
+        fi
     done
 }
 
