@@ -523,7 +523,7 @@ function argparser_pad() {
     # - $@: the array whose elements to pad
     #
     # Nonlocals:
-    # - padded_array: the array with padded elements.
+    # - padded_array: the array with padded elements
 
     # Define the local variables.
     local i
@@ -793,8 +793,7 @@ function argparser_seq() {
     # - $4: the step size (as integer, default: 1)
     #
     # Nonlocals:
-    # - error_messages: the error messages, starting with "Error: "
-    #   (translated), as indexed array
+    # - error_messages: the indexed array holding the error messages
     # - sequence: the created sequence
 
     # Define the local variables.
@@ -1193,7 +1192,7 @@ function argparser_colorize() {
     #
     # Nonlocals:
     # - $3: the joined colorized array (if $3 is neither set to "array"
-    #       nor to "print")
+    #   nor to "print")
     # - colorized_array: the colorized array (if $3 is set to "array")
     #
     # Environment:
@@ -1362,9 +1361,9 @@ function argparser_uncolorize() {
     #
     # Nonlocals:
     # - $1: the joined uncolorized array (if $1 is neither set to
-    #       "array" nor to "print")
+    #   "array" nor to "print")
     # - uncolorized_array: the uncolorized array (if $1 is set to
-    #       "array")
+    #   "array")
     #
     # Output:
     # - the uncolorized string (if $1 is set to "print")
@@ -1425,7 +1424,7 @@ function argparser_draw_frame() {
     #
     # Nonlocals:
     # - $3: the joined framed array (if $3 is neither set to "array" nor
-    #       to "print")
+    #   to "print")
     # - framed_array: the framed array (if $3 is set to "array")
     #
     # Environment:
@@ -4972,9 +4971,9 @@ function argparser_read_args_definition() {
     # - $@: the arguments known to the script
     #
     # Nonlocals:
-    # - messages: the read arguments definition as message or an error
-    #   message, starting with "File: ", "Script: ", or "Error: "
-    #   (translated), as indexed array
+    # - messages: the indexed array holding the read arguments
+    #   definition or an error message, with each message starting with
+    #   "File: ", "Script: ", or "Error: " (translated)
     #
     # Environment:
     # - ARGPARSER_ARG_DEF_FILE (read-only)
@@ -5412,10 +5411,8 @@ function argparser_check_args_definition_subcommands() {
     #   (read-only)
     # - all_value_names: the associative array holding the value names
     #   (read-only)
-    # - error_messages: the error messages, starting with "Error: "
-    #   (translated), as indexed array
-    # - warning_messages: the warning messages, starting with
-    #   "Warning: " (translated), as indexed array
+    # - error_messages: the indexed array holding the error messages
+    # - warning_messages: the indexed array holding the warning messages
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
@@ -5679,10 +5676,8 @@ function argparser_check_args_definition_positional_args() {
     #   (read-only)
     # - all_types: the associative array holding the argument types
     #   (read-only)
-    # - error_messages: the error messages, starting with "Error: "
-    #   (translated), as indexed array
-    # - warning_messages: the warning messages, starting with
-    #   "Warning: " (translated), as indexed array
+    # - error_messages: the indexed array holding the error messages
+    # - warning_messages: the indexed array holding the warning messages
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
@@ -6136,10 +6131,8 @@ function argparser_check_args_definition_options() {
     #   (read-only)
     # - all_types: the associative array holding the argument types
     #   (read-only)
-    # - error_messages: the error messages, starting with "Error: "
-    #   (translated), as indexed array
-    # - warning_messages: the warning messages, starting with
-    #   "Warning: " (translated), as indexed array
+    # - error_messages: the indexed array holding the error messages
+    # - warning_messages: the indexed array holding the warning messages
     #
     # Environment:
     # - ARGPARSER_ADD_HELP (read-only)
@@ -7266,10 +7259,11 @@ function argparser_get_display_names() {
     #   option names (read-only)
     # - all_value_names: the associative array holding the value names
     #   (read-only)
-    # - display_names_arr: all short and/or long option names or all
-    #   value names as indexed array
-    # - display_names_str: all short and/or long option names or all
-    #   value names as ${ARGPARSER_ARG_DELIMITER_2}-separated string
+    # - display_names_arr: the indexed array holding all short and/or
+    #   long option names or all value names
+    # - display_names_str: the ${ARGPARSER_ARG_DELIMITER_2}-separated
+    #   string holding all short and/or long option names or all value
+    #   names
     # - styles: the associative array containing the styles (read-only)
     #
     # Environment:
@@ -7400,8 +7394,7 @@ function argparser_parse_arg() {
     # - $1: the argument to parse
     #
     # Nonlocals:
-    # - error_messages: the error messages, starting with "Error: "
-    #   (translated), as indexed array
+    # - error_messages: the indexed array holding the error messages
     # - is_positional: whether the arguments are to be interpreted as
     #   positional
     # - is_positional_only: whether the positional-only arguments
@@ -7409,8 +7402,8 @@ function argparser_parse_arg() {
     #   "++"
     # - is_self_parsing: whether the Argparser currently parses its own
     #   arguments (read-only)
-    # - messages: the parsed argument as message, starting with
-    #   "Argument: " or "Value: ", as indexed array
+    # - messages: the indexed array holding the parsed argument, with
+    #   each message starting with "Argument: " or "Value: "
     #
     # Environment:
     # - ARGPARSER_ADD_HELP (read-only)
@@ -7566,11 +7559,10 @@ function argparser_parse_long_option() {
     # Nonlocals:
     # - all_long_options: the associative array holding the long option
     #   names (read-only)
-    # - error_messages: the error messages, starting with "Error: "
-    #   (translated), as indexed array
-    # - messages: the parsed argument as message, starting with
-    #   starting with "Argument: ", "Prefix: ", or "Value: ", as indexed
-    #   array
+    # - error_messages: the indexed array holding the error messages
+    # - messages: the indexed array holding the parsed argument, with
+    #   each message starting with "Argument: ", "Prefix: ", or
+    #   "Value: "
     #
     # Environment:
     # - ARGPARSER_ALLOW_FLAG_NEGATION (read-only)
@@ -7790,11 +7782,10 @@ function argparser_parse_short_option() {
     # Nonlocals:
     # - all_arg_numbers: the associative array holding the argument
     #   numbers (read-only)
-    # - error_messages: the error messages, starting with "Error: "
-    #   (translated), as indexed array
-    # - messages: the parsed argument as message, starting with
-    #   starting with "Argument: ", "Prefix: ", or "Value: ", as indexed
-    #   array
+    # - error_messages: the indexed array holding the error messages
+    # - messages: the indexed array holding the parsed argument, with
+    #   each message starting with "Argument: ", "Prefix: ", or
+    #   "Value: "
     #
     # Environment:
     # - ARGPARSER_ALLOW_OPTION_MERGING (read-only)
@@ -7925,8 +7916,7 @@ function argparser_parse_positional_args() {
     # - all_positional_args: the indexed array holding the positional
     #   argument names (read-only)
     # - args: the associative array holding the parsed arguments' values
-    # - error_messages: the error messages, starting with "Error: "
-    #   (translated), as indexed array
+    # - error_messages: the indexed array holding the error messages
     # - given_subcommand: the active subcommand, if given, or the empty
     #   string, else
     #
@@ -8151,10 +8141,8 @@ function argparser_check_arg_values() {
     # - arg_values: the parsed argument's value
     # - given_subcommand: the active subcommand, if given, or the empty
     #   string, else
-    # - error_messages: the error messages, starting with "Error: "
-    #   (translated), as indexed array
-    # - warning_messages: the warning messages, starting with
-    #   "Warning: " (translated), as indexed array
+    # - error_messages: the indexed array holding the error messages
+    # - warning_messages: the indexed array holding the warning messages
     #
     # Environment:
     # - ARGPARSER_ARG_DELIMITER_2 (read-only)
