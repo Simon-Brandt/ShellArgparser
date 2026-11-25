@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-11-13
+# Last Modification: 2026-11-25
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -1541,7 +1541,7 @@ cmd="bash test_arg_number.sh --usage"
 output="$(cat << EOF
 +- Usage -------------------------------+
 | test_arg_number.sh [-h,-? | -u | -V]  |
-|                    [-d,-D[={A-C}...]] |
+|                    [-d,-D[=VAL_4...]] |
 |                    [-e,-E[=VAL_5]]    |
 |                    [-f,-F]            |
 |                    [-g,-G]            |
@@ -1581,8 +1581,8 @@ Mandatory arguments to long options are mandatory for short options too.
 +--------------------------------------------------------------------------------+
 
 +- Optional options -------------------------------------------------------------+
-| [-d, -D],  [--var-4[={A-C}...]],        arbitrarily many values with default   |
-|            [--var-d[={A-C}...]]         and choice (default: "false")          |
+| [-d, -D],  [--var-4[=VAL_4...]],        arbitrarily many values with default   |
+|            [--var-d[=VAL_4...]]         (default: "false")                     |
 | [-e, -E],  [--var-5[=VAL_5]],           one optional value with default        |
 |            [--var-e[=VAL_5]]            (default: "true")                      |
 | [-f, -F],  [--var-6, --var-f]           no value (flag) with default (default: |

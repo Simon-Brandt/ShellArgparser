@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-01
+# Last Modification: 2026-11-25
 
 # Usage: Run this script with "bash test_arg_number.sh".
 
@@ -35,7 +35,7 @@ args=(
     "var_1 | a,A        | var-1,var-a | VAL_1     |          |         | uint | 1      | Mandatory options    |            | one value without default or choice               "
     "var_2 | b,B        | var-2,var-b | VAL_2     |          |         | int  | +      | Mandatory options    |            | at least one value without default or choice      "
     "var_3 | c,C        | var-3,var-c | VAL_3     |          | A,B     | char | +      | Mandatory options    |            | at least one value with choice                    "
-    "var_4 | d,D        | var-4,var-d | VAL_4     | false    | A-C     | char | *      | Optional options     |            | arbitrarily many values with default and choice   "
+    "var_4 | d,D        | var-4,var-d | VAL_4     | false    |         | str  | *      | Optional options     |            | arbitrarily many values with default              "
     "var_5 | e,E        | var-5,var-e | VAL_5     | true     |         | str  | ?      | Optional options     |            | one optional value with default                   "
     "var_6 | f,F        | var-6,var-f | VAL_6     | false    |         | bool | 0      | Optional options     |            | no value (flag) with default                      "
     "var_7 | g,G        | var-7,var-g | VAL_7     | true     |         | bool | 0      | Optional options     | deprecated | no value (flag) with default                      "
