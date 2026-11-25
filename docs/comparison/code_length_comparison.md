@@ -41,7 +41,7 @@ The code length statistics are given in the following table:
 | Shell Argparser | 16 | 1.0 |
 <!-- </include> -->
 
-As you can see, the parsers' number of code lines ranges from 87 to 131 lines, with the Argparser requiring just 16 lines, one fifth to one eighth of the others. So, owing to the Argparser's sophisticated set of features, only very few manual parsing steps are required, and even them are fast to implement.
+As you can see, the parsers' number of code lines ranges from 87 to 131 lines, with the Argparser requiring just 16 lines, one fifth to one eighth of the others. So, owing to the Argparser's sophisticated set of features, only very few manual parsing steps are required, and even they are fast to implement.
 
 
 [&#129092;&nbsp;6.3. Runtime comparison](runtime_comparison.md)

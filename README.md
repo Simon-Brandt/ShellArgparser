@@ -22,7 +22,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17037185.svg)](https://doi.org/10.5281/zenodo.17037185)
 
-The Argparser is designed to be an easy-to-use, yet powerful command-line argument parser for your shell scripts. It is mainly targeting Bash, but other shells are supported, as well.
+The Shell Argparser (or just "Argparser" for short) is designed to be an easy-to-use, yet powerful command-line argument parser for your shell scripts. It is mainly targeting Bash, but other shells are supported, as well.
 
 Applying the Argparser should lead to shorter and more concise code than the traditional [`getopt`](https://man7.org/linux/man-pages/man1/getopt.1.html "man7.org &rightarrow; man pages &rightarrow; getopt(1)") and [`getopts`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html#index-getopts "gnu.org &rightarrow; Bourne Shell Builtins &rightarrow; getopts") allow. More importantly, the user-friendliness of Argparser-powered command-line parsing is far superior thanks to a wide range of checked conditions with meaningful error messages. The Argparser is inspired by the Python [`argparse`](https://docs.python.org/3/library/argparse.html "python.org &rightarrow; Python documentation &rightarrow; argparse module") module.
 
@@ -39,19 +39,19 @@ Applying the Argparser should lead to shorter and more concise code than the tra
 
 ## 1. Features
 
-- Parsing of positional and keyword (option) arguments
+- Parsing of positional and keyword (option) arguments, as well as subcommands
 - Any number of short and long option names for the same option (as aliases)
-- Default and choice values, type checking, deprecation note
-- Error and warning messages for wrongly or not set arguments
+- Default and choice values, type checking, variable argument count, deprecated and/or hidden arguments
+- Error and warning messages for wrongly set, unset, or wrongly defined arguments
 - Assignment of arguments' values to corresponding script variables
-- Automatic creation of help, usage, and version message
+- Automatic creation of stylized help, usage, and version message
 - Full internationalization / localization support
 - Inheritable arguments definition across multiple scripts
 - Large configurability by environment variables and companion files to your script
 
 ## 2. Quick start
 
-No installation of the Argparser is necessary, just clone the repository and add its location to the [`PATH`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Variables.html#index-PATH "gnu.org &rightarrow; Bourne Shell Variables &rightarrow; PATH") variable. Alternatively, you may move the [Argparser executable](argparser) into a directory which is already covered by your `PATH`. All other files within the repository serve documentation and testing purposes, and you don't need to keep them.
+No installation of the Argparser is necessary, just clone the repository and add its location to the [`PATH`](https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Variables.html#index-PATH "gnu.org &rightarrow; Bourne Shell Variables &rightarrow; PATH") variable. Alternatively, you may move the [Argparser executable](argparser) into a directory which is already covered by your `PATH`. All other files within the repository serve documentation and testing purposes, and you don't need to keep them (except when re-distributing, then including the [license](LICENSE) is mandatory).
 
 ```bash
 # Switch to the installation directory of your choice, e.g., /usr/local/bin.
@@ -120,13 +120,13 @@ If you want to read the documentation end-to-end, start with the [introduction](
 
 The Argparser is a plain Bash script that does not invoke external commands (only Bash builtins) by design decision. This allows running your script on multiple platforms, as long as Bash is installed, without adding further dependencies to your script. When [contributing](#6-contributions), you may need several other software tools listed and explained in the [documentation](docs/dependencies.md).
 
-For simply running the Argparser, only Bash is required. **Bash&nbsp;&ge;&#8239;4.4** is known to be mandatory, but testing occurred mainly on Bash&nbsp;5.2. Thus, please file an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues") if you encounter errors for versions earlier than 5.2, such that the minimum version can be updated, here (or the bug can be fixed).
+For simply running the Argparser, only Bash is required. **Bash&nbsp;&ge;&#8239;4.4** is known to be mandatory, but testing occurred mainly on Bash&nbsp;5.2 and 5.3. Thus, please file an [issue](https://github.com/Simon-Brandt/ShellArgparser/issues/new "github.com &rightarrow; Simon-Brandt &rightarrow; ShellArgparser &rightarrow; Issues") if you encounter errors for versions earlier than 5.2, such that the minimum version can be updated, here (or the bug can be fixed).
 
 ## 5. License
 
 The Argparser is licensed under the terms and conditions of the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0 "apache.org &rightarrow; Licenses &rightarrow; Apache License, Version 2.0"). This applies to all source code files (all shell scripts and [Julia](https://julialang.org/ "julialang.org") files) and the documentation (all Markdown files), but not to the HTML, SVG, TeX, PDF, and CSV files in the [comparison](comparison) directory, any file in the [resources](resources) directory, as well as the Argparser's [Dockerfile](tests/argparser.dockerfile), the [`.shellcheckrc`](.shellcheckrc), and the [`.gitignore`](.gitignore), which are all placed in the Public Domain.
 
-The Apache License v2.0 allows running, modifying, and distributing the Argparser, even in commercial settings, provided that the license is distributed along the source code or compiled objects. *(This is not legal advice. Read the [license](LICENSE) for the exact terms.)*
+The Apache License v2.0 allows running, modifying, and distributing the Argparser, even in commercial settings, provided that the license is distributed along with the source code or compiled objects. *(This is not legal advice. Read the [license](LICENSE) for the exact terms.)*
 
 ## 6. Contributions
 

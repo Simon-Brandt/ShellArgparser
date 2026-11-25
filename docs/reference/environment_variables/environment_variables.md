@@ -30,14 +30,14 @@
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to add the [`ARGPARSER_USAGE_OPTIONS`](#9457-argparser_usage_options) as flags to call the usage message.
+- ***Description:*** Whether to add the [`ARGPARSER_USAGE_OPTIONS`](#9458-argparser_usage_options) as flags to call the usage message.
 
 #### 9.4.4. `ARGPARSER_ADD_VERSION`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to add the [`ARGPARSER_VERSION_OPTIONS`](#9467-argparser_version_options) as flags to call the version message.
+- ***Description:*** Whether to add the [`ARGPARSER_VERSION_OPTIONS`](#9468-argparser_version_options) as flags to call the version message.
 
 #### 9.4.5. `ARGPARSER_ALLOW_ARG_INTERMIXING`
 
@@ -256,7 +256,7 @@
 - ***Type:*** *str* (String)
 - ***Allowed values:*** Any string
 - ***Default value:*** `"en"`
-- ***Description:*** The language in which to localize the help, usage, error, and warning messages. This is only evaluated if an [`ARGPARSER_TRANSLATION_FILE`](#9447-argparser_translation_file) is given.
+- ***Description:*** The language in which to localize the help, usage, error, and warning messages. This is only evaluated if an [`ARGPARSER_TRANSLATION_FILE`](#9448-argparser_translation_file) is given.
 
 #### 9.4.35. `ARGPARSER_MAX_COL_WIDTH_1`
 
@@ -292,7 +292,7 @@ It is recommendable to have a total width of all messages, including the help me
 - ***Type:*** *str* (String)
 - ***Allowed values:*** Any string
 - ***Default value:*** `"Positional arguments"`
-- ***Description:*** The name of the argument group holding all positional arguments. This group is usually the first in the help message.
+- ***Description:*** The name of the argument group holding all positional arguments. This group is usually the second in the help message (after the subcommands from the [`ARGPARSER_SUBCOMMAND_GROUP`](#9447-argparser_subcommand_group)).
 
 #### 9.4.40. `ARGPARSER_READ_ARGS`
 
@@ -348,84 +348,91 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 - ***Default value:*** `""`
 - ***Description:*** The path to a file holding the style definitions for the messages. This file can be used by multiple scripts.
 
-#### 9.4.47. `ARGPARSER_TRANSLATION_FILE`
+#### 9.4.47. `ARGPARSER_SUBCOMMAND_GROUP`
+
+- ***Type:*** *str* (String)
+- ***Allowed values:*** Any string
+- ***Default value:*** `"Subcommands"`
+- ***Description:*** The name of the argument group holding all subcommands. This group is usually the first in the help message.
+
+#### 9.4.48. `ARGPARSER_TRANSLATION_FILE`
 
 - ***Type:*** *file* (Filepath)
 - ***Allowed values:*** Any legit filepath or the empty string `""`
 - ***Default value:*** `""`
 - ***Description:*** The path to a simplified [YAML](https://en.wikipedia.org/wiki/YAML "wikipedia.org &rightarrow; YAML") file holding the translation of (mostly) auto-generated parts in the help, usage, error, and warning messages. This file can be used by multiple scripts. As a YAML file, it contains the translation in a key&ndash;value layout, separated by colons and using significant indentation. Each group key must specify the language identifier used for the [`ARGPARSER_LANGUAGE`](#9434-argparser_language). As many languages as desired can be given, which allows the localization for multiple languages with just one `ARGPARSER_TRANSLATION_FILE`. The rows can be in any order, since they are read into an associative array, which, by definition, has no order.
 
-#### 9.4.48. `ARGPARSER_UNSET_ARGS`
+#### 9.4.49. `ARGPARSER_UNSET_ARGS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
 - ***Description:*** Whether to unset (remove) all command-line arguments given to the script. This is usually what you want, as the Argparser re-sets these values in parsed form. Note that this has no effect when the Argparser is called from shells other than Bash, since it would run in a child environment.
 
-#### 9.4.49. `ARGPARSER_UNSET_ENV_VARS`
+#### 9.4.50. `ARGPARSER_UNSET_ENV_VARS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
 - ***Description:*** Whether to unset (remove) the Argparser environment variables from the environment. As long as you don't need these variables anymore or want to reset them prior to the next Argparser invocation, this is usually what you want. This prevents accidental (but also deliberate) inheritance to child scripts when passing the entire environment to them.
 
-#### 9.4.50. `ARGPARSER_UNSET_FUNCTIONS`
+#### 9.4.51. `ARGPARSER_UNSET_FUNCTIONS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
 - ***Description:*** Whether to unset (remove) the Argparser functions from the environment. You should not need them separated from an Argparser invocation, where they're automatically defined (set) upon sourcing it. By unsetting them, the namespace is kept clean.
 
-#### 9.4.51. `ARGPARSER_USAGE_EXIT_CODE`
+#### 9.4.52. `ARGPARSER_USAGE_EXIT_CODE`
 
 - ***Type:*** *int* (Integer)
 - ***Allowed values:*** Any integer, usually zero
 - ***Default value:*** `0`
-- ***Description:*** The exit code when a usage message was requested using the [`ARGPARSER_USAGE_OPTIONS`](#9457-argparser_usage_options).
+- ***Description:*** The exit code when a usage message was requested using the [`ARGPARSER_USAGE_OPTIONS`](#9458-argparser_usage_options).
 
-#### 9.4.52. `ARGPARSER_USAGE_FILE`
+#### 9.4.53. `ARGPARSER_USAGE_FILE`
 
 - ***Type:*** *file* (Filepath)
 - ***Allowed values:*** Any legit filepath or the empty string `""`
 - ***Default value:*** `""`
-- ***Description:*** The path to a file holding the extended usage message. This file may be used by multiple scripts, even if they share no arguments. By this, the default structure and content of the auto-generated usage message (invoked with the [`ARGPARSER_USAGE_OPTIONS`](#9457-argparser_usage_options)) can be overridden for all scripts in a project in the same way, without repeating yourself upon specifying the look.
+- ***Description:*** The path to a file holding the extended usage message. This file may be used by multiple scripts, even if they share no arguments. By this, the default structure and content of the auto-generated usage message (invoked with the [`ARGPARSER_USAGE_OPTIONS`](#9458-argparser_usage_options)) can be overridden for all scripts in a project in the same way, without repeating yourself upon specifying the look.
 
-#### 9.4.53. `ARGPARSER_USAGE_FILE_INCLUDE_CHAR`
+#### 9.4.54. `ARGPARSER_USAGE_FILE_INCLUDE_CHAR`
 
 - ***Type:*** *char* (Character)
-- ***Allowed values:*** Any unique character that's not used as a line's first character in an [`ARGPARSER_USAGE_FILE`](#9452-argparser_usage_file)
+- ***Allowed values:*** Any unique character that's not used as a line's first character in an [`ARGPARSER_USAGE_FILE`](#9453-argparser_usage_file)
 - ***Default value:*** `"@"`
-- ***Description:*** The character that introduces an include directive in an [`ARGPARSER_USAGE_FILE`](#9452-argparser_usage_file). You must ensure that it is set to a character or glyph that does not occur as any line's first character in the usage file, where it should not mean an include directive. This is only evaluated if an `ARGPARSER_USAGE_FILE` is given.
+- ***Description:*** The character that introduces an include directive in an [`ARGPARSER_USAGE_FILE`](#9453-argparser_usage_file). You must ensure that it is set to a character or glyph that does not occur as any line's first character in the usage file, where it should not mean an include directive. This is only evaluated if an `ARGPARSER_USAGE_FILE` is given.
 
-#### 9.4.54. `ARGPARSER_USAGE_FILE_KEEP_COMMENTS`
+#### 9.4.55. `ARGPARSER_USAGE_FILE_KEEP_COMMENTS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
-- ***Description:*** Whether to keep commented lines (and their trailing blank lines) in the usage file. By this, you can choose whether you want to include lines serving as a comment (starting with a hashmark, *i.e.*, `#`) in the usage file also in the usage message. This is only evaluated if an [`ARGPARSER_USAGE_FILE`](#9452-argparser_usage_file) is given.
+- ***Description:*** Whether to keep commented lines (and their trailing blank lines) in the usage file. By this, you can choose whether you want to include lines serving as a comment (starting with a hashmark, *i.e.*, `#`) in the usage file also in the usage message. This is only evaluated if an [`ARGPARSER_USAGE_FILE`](#9453-argparser_usage_file) is given.
 
-#### 9.4.55. `ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`
+#### 9.4.56. `ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`
 
 - ***Type:*** *str* (String)
 - ***Allowed values:*** `"long"` and `"short"`
 - ***Default value:*** `"short"`
 - ***Description:*** Whether to use short or long option names in usage messages. If an option doesn't have short option names, its long option names are used, and *vice versa*.
 
-#### 9.4.56. `ARGPARSER_USAGE_MESSAGE_ORIENTATION`
+#### 9.4.57. `ARGPARSER_USAGE_MESSAGE_ORIENTATION`
 
 - ***Type:*** *str* (String)
 - ***Allowed values:*** `"row"` and `"column"`
 - ***Default value:*** `"row"`
 - ***Description:*** Whether to output the positional and keyword arguments in usage messages in a row-like or in a column-like fashion.
 
-#### 9.4.57. `ARGPARSER_USAGE_OPTIONS`
+#### 9.4.58. `ARGPARSER_USAGE_OPTIONS`
 
 - ***Type:*** *str* (String)
 - ***Allowed values:*** Any unique short and long option name that's not used in the arguments definition
 - ***Default value:*** `"u,usage"`
 - ***Description:*** The option names used to call the usage message. This is only evaluated if [`ARGPARSER_ADD_USAGE`](#943-argparser_add_usage) is `true`.
 
-#### 9.4.58. `ARGPARSER_USAGE_STYLE`
+#### 9.4.59. `ARGPARSER_USAGE_STYLE`
 
 > [!WARNING]
 > Deprecated in favor of [`ARGPARSER_STYLE_FILE`](#9446-argparser_style_file). Scheduled for removal in `v2.0.0`.
@@ -435,73 +442,73 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 - ***Default value:*** `"italic"`
 - ***Description:*** The color and style specification to use for usage messages, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters").
 
-#### 9.4.59. `ARGPARSER_USE_COLORS`
+#### 9.4.60. `ARGPARSER_USE_COLORS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to use colors, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters"), for help, usage, version, error, and warning messages. This requires [`ARGPARSER_USE_STYLES`](#9462-argparser_use_styles) to be set to `"always"`, `"file"`, or `"tty"` to take effect. `ARGPARSER_USE_COLORS` overrides [`NO_COLOR`](https://no-color.org/ "no-color.org") and [`FORCE_COLOR`](https://force-color.org/ "force-color.org").
+- ***Description:*** Whether to use colors, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters"), for help, usage, version, error, and warning messages. This requires [`ARGPARSER_USE_STYLES`](#9463-argparser_use_styles) to be set to `"always"`, `"file"`, or `"tty"` to take effect. `ARGPARSER_USE_COLORS` overrides [`NO_COLOR`](https://no-color.org/ "no-color.org") and [`FORCE_COLOR`](https://force-color.org/ "force-color.org").
 
-#### 9.4.60. `ARGPARSER_USE_LONG_OPTIONS`
-
-- ***Type:*** *bool* (Boolean)
-- ***Allowed values:*** `true` and `false`
-- ***Default value:*** `true`
-- ***Description:*** Whether to accept long option names upon parsing and creating the help and usage messages. If your script doesn't take any long option, it may be practical to disable also the long options the Argparser sets, *viz.* the [`ARGPARSER_HELP_OPTIONS`](#9432-argparser_help_options), the [`ARGPARSER_USAGE_OPTIONS`](#9457-argparser_usage_options), and the [`ARGPARSER_VERSION_OPTIONS`](#9467-argparser_version_options) (given that [`ARGPARSER_ADD_HELP`](#942-argparser_add_help), [`ARGPARSER_ADD_USAGE`](#943-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](#944-argparser_add_version), respectively, are set). Additionally, the help message will only have two columns (the short option names and the help texts), then.
-
-#### 9.4.61. `ARGPARSER_USE_SHORT_OPTIONS`
+#### 9.4.61. `ARGPARSER_USE_LONG_OPTIONS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to accept short option names upon parsing and creating the help and usage messages. If your script doesn't take any short option, it may be practical to disable also the short options the Argparser sets, *viz.* the [`ARGPARSER_HELP_OPTIONS`](#9432-argparser_help_options), the [`ARGPARSER_USAGE_OPTIONS`](#9457-argparser_usage_options), and the [`ARGPARSER_VERSION_OPTIONS`](#9467-argparser_version_options) (given that [`ARGPARSER_ADD_HELP`](#942-argparser_add_help), [`ARGPARSER_ADD_USAGE`](#943-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](#944-argparser_add_version), respectively, are set). Additionally, the help message will only have two columns (the long option names and the help texts), then.
+- ***Description:*** Whether to accept long option names upon parsing and creating the help and usage messages. If your script doesn't take any long option, it may be practical to disable also the long options the Argparser sets, *viz.* the [`ARGPARSER_HELP_OPTIONS`](#9432-argparser_help_options), the [`ARGPARSER_USAGE_OPTIONS`](#9458-argparser_usage_options), and the [`ARGPARSER_VERSION_OPTIONS`](#9468-argparser_version_options) (given that [`ARGPARSER_ADD_HELP`](#942-argparser_add_help), [`ARGPARSER_ADD_USAGE`](#943-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](#944-argparser_add_version), respectively, are set). Additionally, the help message will only have two columns (the short option names and the help texts), then.
 
-#### 9.4.62. `ARGPARSER_USE_STYLES`
+#### 9.4.62. `ARGPARSER_USE_SHORT_OPTIONS`
+
+- ***Type:*** *bool* (Boolean)
+- ***Allowed values:*** `true` and `false`
+- ***Default value:*** `true`
+- ***Description:*** Whether to accept short option names upon parsing and creating the help and usage messages. If your script doesn't take any short option, it may be practical to disable also the short options the Argparser sets, *viz.* the [`ARGPARSER_HELP_OPTIONS`](#9432-argparser_help_options), the [`ARGPARSER_USAGE_OPTIONS`](#9458-argparser_usage_options), and the [`ARGPARSER_VERSION_OPTIONS`](#9468-argparser_version_options) (given that [`ARGPARSER_ADD_HELP`](#942-argparser_add_help), [`ARGPARSER_ADD_USAGE`](#943-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](#944-argparser_add_version), respectively, are set). Additionally, the help message will only have two columns (the long option names and the help texts), then.
+
+#### 9.4.63. `ARGPARSER_USE_STYLES`
 
 - ***Type:*** *str* (String)
 - ***Allowed values:*** `"always"`, `"never"`, `"file"`, and `"tty"`
 - ***Default value:*** `"tty"`
 - ***Description:*** When to use the message colors and styles. `"always"` adds the styles on any occasion, `"never"` on none, and `"tty"` and `"file"` only when `STDOUT`/`STDERR` is or is not a terminal (and thus a file). Deactivating the styles is useful to get plain ASCII text output for files, while in interactive sessions, the escape sequences offer more user-friendly formatting and possibilities for highlighting. By this, you can parse your files afterwards more easily. Still, using *e.g.* [`less --raw-control-chars <filename>`](https://man7.org/linux/man-pages/man1/less.1.html "man7.org &rightarrow; man pages &rightarrow; less(1)"), these escape sequences can be displayed from files, when included.
 
-#### 9.4.63. `ARGPARSER_USE_STYLES_IN_FILES`
+#### 9.4.64. `ARGPARSER_USE_STYLES_IN_FILES`
 
 > [!WARNING]
-> Deprecated in favor of [`ARGPARSER_USE_STYLES="always"`](#9462-argparser_use_styles). Scheduled for removal in `v2.0.0`.
+> Deprecated in favor of [`ARGPARSER_USE_STYLES="always"`](#9463-argparser_use_styles). Scheduled for removal in `v2.0.0`.
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
 - ***Description:*** Whether to use the message colors and styles when `STDOUT`/`STDERR` is not a terminal (and thus perhaps a file).
 
-#### 9.4.64. `ARGPARSER_USE_UNICODE`
+#### 9.4.65. `ARGPARSER_USE_UNICODE`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
 - ***Description:*** Whether to use Unicode characters in the help, usage, version, error, and warning messages. This allows for prettier frame styles, without needing to resort to an [`ARGPARSER_STYLE_FILE](#9446-argparser_style_file).
 
-#### 9.4.65. `ARGPARSER_VERSION_EXIT_CODE`
+#### 9.4.66. `ARGPARSER_VERSION_EXIT_CODE`
 
 - ***Type:*** *int* (Integer)
 - ***Allowed values:*** Any integer, usually zero
 - ***Default value:*** `0`
-- ***Description:*** The exit code when a version message was requested using the [`ARGPARSER_VERSION_OPTIONS`](#9467-argparser_version_options).
+- ***Description:*** The exit code when a version message was requested using the [`ARGPARSER_VERSION_OPTIONS`](#9468-argparser_version_options).
 
-#### 9.4.66. `ARGPARSER_VERSION_NUMBER`
+#### 9.4.67. `ARGPARSER_VERSION_NUMBER`
 
 - ***Type:*** *str* (String)
 - ***Allowed values:*** Any string
 - ***Default value:*** `"1.0.0"`
 - ***Description:*** The version number of your script to be used in the version message. Consider using [semantic versioning](https://semver.org/ "semver.org") or [calendar versioning](https://calver.org/ "calver.org"), *i.e.*, give version numbers by major version, minor version, and patch, separated by dots, or by year, month, and/or day of release, again separated by dots.
 
-#### 9.4.67. `ARGPARSER_VERSION_OPTIONS`
+#### 9.4.68. `ARGPARSER_VERSION_OPTIONS`
 
 - ***Type:*** *str* (String)
 - ***Allowed values:*** Any unique short and long option name that's not used in the arguments definition
 - ***Default value:*** `"V,version"`
 - ***Description:*** The option names used to call the version message. This is only evaluated if [`ARGPARSER_ADD_VERSION`](#944-argparser_add_version) is `true`.
 
-#### 9.4.68. `ARGPARSER_VERSION_STYLE`
+#### 9.4.69. `ARGPARSER_VERSION_STYLE`
 
 > [!WARNING]
 > Deprecated in favor of [`ARGPARSER_STYLE_FILE`](#9446-argparser_style_file). Scheduled for removal in `v2.0.0`.
@@ -511,7 +518,7 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 - ***Default value:*** `"bold"`
 - ***Description:*** The color and style specification to use for version messages, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters").
 
-#### 9.4.69. `ARGPARSER_WARNING_STYLE`
+#### 9.4.70. `ARGPARSER_WARNING_STYLE`
 
 > [!WARNING]
 > Deprecated in favor of [`ARGPARSER_STYLE_FILE`](#9446-argparser_style_file). Scheduled for removal in `v2.0.0`.
@@ -521,7 +528,7 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 - ***Default value:*** `"red,bold"`
 - ***Description:*** The color and style specification to use for warning messages, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters").
 
-#### 9.4.70. `ARGPARSER_WRITE_ARGS`
+#### 9.4.71. `ARGPARSER_WRITE_ARGS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`

@@ -21,12 +21,13 @@
 <!-- <toc title="Table of contents (Tutorial)"> -->
 ### Table of contents (Tutorial)
 
-1. [Argument passing](argument_passing.md#51-argument-passing)
-   1. [Positional and keyword arguments](argument_passing.md#511-positional-and-keyword-arguments)
-   1. [Special options](argument_passing.md#512-special-options)
-   1. [Option name aliases and modifications](argument_passing.md#513-option-name-aliases-and-modifications)
-   1. [Argument value delimiters and intermixing](argument_passing.md#514-argument-value-delimiters-and-intermixing)
-   1. [Flags](argument_passing.md#515-flags)
+1. [Argument parsing](argument_parsing.md#51-argument-parsing)
+   1. [Positional and keyword arguments](argument_parsing.md#511-positional-and-keyword-arguments)
+   1. [Special options](argument_parsing.md#512-special-options)
+   1. [Option name aliases and modifications](argument_parsing.md#513-option-name-aliases-and-modifications)
+   1. [Argument intermixing and delimiters](argument_parsing.md#514-argument-intermixing-and-delimiters)
+   1. [Flags](argument_parsing.md#515-flags)
+   1. [Subcommands](argument_parsing.md#516-subcommands)
 1. [Argparser invocation](argparser_invocation.md#52-argparser-invocation)
    1. [Argparser sourcing](argparser_invocation.md#521-argparser-sourcing)
    1. [Arguments definition and retrieval](argparser_invocation.md#522-arguments-definition-and-retrieval)
@@ -49,4 +50,4 @@
 <!-- </toc> -->
 
 [&#129092;&nbsp;5. Tutorial](introduction.md)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.1. Argument passing&nbsp;&#129094;](argument_passing.md)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[5.1. Argument parsing&nbsp;&#129094;](argument_parsing.md)

@@ -20,7 +20,7 @@
 
 #### 9.4.1. Overview
 
-The following table shall give a brief overview over the expected data types and the default values for the Argparser's environment variables.
+The following table shall give a brief overview over the expected data types and the default values for the Argparser's environment variables. Deprecated variables are struck through.
 
 Note that [`ARGPARSER_ARGS`](environment_variables.md#9416-argparser_args) is for internal usage only and thus locally declared. It is *not* part of the Argparser's command line, but listed here for reference, like when you erroneously have it set in a configuration file. Its default value is seen as implementation detail and thus shown as *"None"* here.
 
@@ -74,30 +74,31 @@ Note that [`ARGPARSER_ARGS`](environment_variables.md#9416-argparser_args) is fo
 | [`ARGPARSER_SILENCE_ERRORS`](environment_variables.md#9444-argparser_silence_errors)                                     | *bool*     | `false`                  |
 | [`ARGPARSER_SILENCE_WARNINGS`](environment_variables.md#9445-argparser_silence_warnings)                                 | *bool*     | `false`                  |
 | [`ARGPARSER_STYLE_FILE`](environment_variables.md#9446-argparser_style_file)                                             | *file*     | `""`                     |
-| [`ARGPARSER_TRANSLATION_FILE`](environment_variables.md#9447-argparser_translation_file)                                 | *file*     | `""`                     |
-| [`ARGPARSER_UNSET_ARGS`](environment_variables.md#9448-argparser_unset_args)                                             | *bool*     | `true`                   |
-| [`ARGPARSER_UNSET_ENV_VARS`](environment_variables.md#9449-argparser_unset_env_vars)                                     | *bool*     | `true`                   |
-| [`ARGPARSER_UNSET_FUNCTIONS`](environment_variables.md#9450-argparser_unset_functions)                                   | *bool*     | `true`                   |
-| [`ARGPARSER_USAGE_EXIT_CODE`](environment_variables.md#9451-argparser_usage_exit_code)                                   | *int*      | `0`                      |
-| [`ARGPARSER_USAGE_FILE`](environment_variables.md#9452-argparser_usage_file)                                             | *file*     | `""`                     |
-| [`ARGPARSER_USAGE_FILE_INCLUDE_CHAR`](environment_variables.md#9453-argparser_usage_file_include_char)                   | *char*     | `"@"`                    |
-| [`ARGPARSER_USAGE_FILE_KEEP_COMMENTS`](environment_variables.md#9454-argparser_usage_file_keep_comments)                 | *bool*     | `false`                  |
-| [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](environment_variables.md#9455-argparser_usage_message_option_type)               | *str*      | `"short"`                |
-| [`ARGPARSER_USAGE_MESSAGE_ORIENTATION`](environment_variables.md#9456-argparser_usage_message_orientation)               | *str*      | `"row"`                  |
-| [`ARGPARSER_USAGE_OPTIONS`](environment_variables.md#9457-argparser_usage_options)                                       | *str*      | `"u,usage"`              |
-| ~~[`ARGPARSER_USAGE_STYLE`](environment_variables.md#9458-argparser_usage_style)~~ [^19]                                 | ~~*str*~~  | ~~`"italic"`~~           |
-| [`ARGPARSER_USE_COLORS`](environment_variables.md#9459-argparser_use_colors)                                             | *bool*     | `true`                   |
-| [`ARGPARSER_USE_LONG_OPTIONS`](environment_variables.md#9460-argparser_use_long_options)                                 | *bool*     | `true`                   |
-| [`ARGPARSER_USE_SHORT_OPTIONS`](environment_variables.md#9461-argparser_use_short_options)                               | *bool*     | `true`                   |
-| [`ARGPARSER_USE_STYLES`](environment_variables.md#9462-argparser_use_styles)                                             | *str*      | `"tty"`                  |
-| ~~[`ARGPARSER_USE_STYLES_IN_FILES`](environment_variables.md#9463-argparser_use_styles_in_files)~~ [^19]                 | ~~*bool*~~ | ~~`false`~~              |
-| [`ARGPARSER_USE_UNICODE`](environment_variables.md#9464-argparser_use_unicode)                                           | *bool*     | `false`                  |
-| [`ARGPARSER_VERSION_EXIT_CODE`](environment_variables.md#9465-argparser_version_exit_code)                               | *int*      | `0`                      |
-| [`ARGPARSER_VERSION_NUMBER`](environment_variables.md#9466-argparser_version_number)                                     | *str*      | `"1.0.0"`                |
-| [`ARGPARSER_VERSION_OPTIONS`](environment_variables.md#9467-argparser_version_options)                                   | *str*      | `"V,version"`            |
-| ~~[`ARGPARSER_VERSION_STYLE`](environment_variables.md#9468-argparser_version_style)~~ [^19]                             | ~~*str*~~  | ~~`"bold"`~~             |
-| ~~[`ARGPARSER_WARNING_STYLE`](environment_variables.md#9469-argparser_warning_style)~~ [^19]                             | ~~*str*~~  | ~~`"red,bold"`~~         |
-| [`ARGPARSER_WRITE_ARGS`](environment_variables.md#9470-argparser_write_args)                                             | *bool*     | `false`                  |
+| [`ARGPARSER_SUBCOMMAND_GROUP`](environment_variables.md#9447-argparser_subcommand_group)                                 | *str*      | `"Subcommands"`          |
+| [`ARGPARSER_TRANSLATION_FILE`](environment_variables.md#9448-argparser_translation_file)                                 | *file*     | `""`                     |
+| [`ARGPARSER_UNSET_ARGS`](environment_variables.md#9449-argparser_unset_args)                                             | *bool*     | `true`                   |
+| [`ARGPARSER_UNSET_ENV_VARS`](environment_variables.md#9450-argparser_unset_env_vars)                                     | *bool*     | `true`                   |
+| [`ARGPARSER_UNSET_FUNCTIONS`](environment_variables.md#9451-argparser_unset_functions)                                   | *bool*     | `true`                   |
+| [`ARGPARSER_USAGE_EXIT_CODE`](environment_variables.md#9452-argparser_usage_exit_code)                                   | *int*      | `0`                      |
+| [`ARGPARSER_USAGE_FILE`](environment_variables.md#9453-argparser_usage_file)                                             | *file*     | `""`                     |
+| [`ARGPARSER_USAGE_FILE_INCLUDE_CHAR`](environment_variables.md#9454-argparser_usage_file_include_char)                   | *char*     | `"@"`                    |
+| [`ARGPARSER_USAGE_FILE_KEEP_COMMENTS`](environment_variables.md#9455-argparser_usage_file_keep_comments)                 | *bool*     | `false`                  |
+| [`ARGPARSER_USAGE_MESSAGE_OPTION_TYPE`](environment_variables.md#9456-argparser_usage_message_option_type)               | *str*      | `"short"`                |
+| [`ARGPARSER_USAGE_MESSAGE_ORIENTATION`](environment_variables.md#9457-argparser_usage_message_orientation)               | *str*      | `"row"`                  |
+| [`ARGPARSER_USAGE_OPTIONS`](environment_variables.md#9458-argparser_usage_options)                                       | *str*      | `"u,usage"`              |
+| ~~[`ARGPARSER_USAGE_STYLE`](environment_variables.md#9459-argparser_usage_style)~~ [^19]                                 | ~~*str*~~  | ~~`"italic"`~~           |
+| [`ARGPARSER_USE_COLORS`](environment_variables.md#9460-argparser_use_colors)                                             | *bool*     | `true`                   |
+| [`ARGPARSER_USE_LONG_OPTIONS`](environment_variables.md#9461-argparser_use_long_options)                                 | *bool*     | `true`                   |
+| [`ARGPARSER_USE_SHORT_OPTIONS`](environment_variables.md#9462-argparser_use_short_options)                               | *bool*     | `true`                   |
+| [`ARGPARSER_USE_STYLES`](environment_variables.md#9463-argparser_use_styles)                                             | *str*      | `"tty"`                  |
+| ~~[`ARGPARSER_USE_STYLES_IN_FILES`](environment_variables.md#9464-argparser_use_styles_in_files)~~ [^19]                 | ~~*bool*~~ | ~~`false`~~              |
+| [`ARGPARSER_USE_UNICODE`](environment_variables.md#9465-argparser_use_unicode)                                           | *bool*     | `false`                  |
+| [`ARGPARSER_VERSION_EXIT_CODE`](environment_variables.md#9466-argparser_version_exit_code)                               | *int*      | `0`                      |
+| [`ARGPARSER_VERSION_NUMBER`](environment_variables.md#9467-argparser_version_number)                                     | *str*      | `"1.0.0"`                |
+| [`ARGPARSER_VERSION_OPTIONS`](environment_variables.md#9468-argparser_version_options)                                   | *str*      | `"V,version"`            |
+| ~~[`ARGPARSER_VERSION_STYLE`](environment_variables.md#9469-argparser_version_style)~~ [^19]                             | ~~*str*~~  | ~~`"bold"`~~             |
+| ~~[`ARGPARSER_WARNING_STYLE`](environment_variables.md#9470-argparser_warning_style)~~ [^19]                             | ~~*str*~~  | ~~`"red,bold"`~~         |
+| [`ARGPARSER_WRITE_ARGS`](environment_variables.md#9471-argparser_write_args)                                             | *bool*     | `false`                  |
 
 [^14]: Bash is weakly typed, hence the denoted types are just a guidance.
 [^15]: Strings can optionally be enclosed by quotes.
