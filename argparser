@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-11-25
+# Last Modification: 2026-11-26
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -5174,7 +5174,7 @@ function argparser_parse_args_definition() {
             error_message="${translation}"
         else
             error_message="Error: In the arguments definition file "
-            error_message+="\"\$1\", the column \"\$2\" is missing."
+            error_message+="\"\$1\", the column \"id\" is missing."
 
             argparser_translate "Error arg def file id" \
                 "${error_message}" "${ARGPARSER_ARG_DEF_FILE}"
@@ -5807,7 +5807,8 @@ function argparser_check_args_definition_positional_args() {
                 error_message+="values, while \"true\" and \"false\" cannot "
                 error_message+="be any."
 
-                argparser_translate "Error arg def pos choice value bool" \
+                argparser_translate \
+                    "Error arg def pos choice value true false" \
                     "${error_message}" "${arg_id}" "${choice_values_str}"
                 error_message="${translation}"
                 error_messages+=("${error_message}")
@@ -6644,7 +6645,8 @@ function argparser_check_args_definition_options() {
                 error_message+="has {\$2} given as choice values, while "
                 error_message+="\"true\" and \"false\" cannot be any."
 
-                argparser_translate "Error arg def option choice value bool" \
+                argparser_translate \
+                    "Error arg def option choice value true false" \
                     "${error_message}" "${arg_id}" "${choice_values_str}"
                 error_message="${translation}"
                 error_messages+=("${error_message}")
