@@ -5629,7 +5629,7 @@ function argparser_check_args_definition_subcommands() {
         for note in "${notes[@]}"; do
             if ! argparser_in_array "${note}" "deprecated" "hidden"; then
                 error_message="Error: The subcommand with the identifier "
-                error_message+="\"\$1\" has \"\$2\" defined as note, but only "
+                error_message+="\"\$1\" has \"\$2\" given as note, but only "
                 error_message+="\"deprecated\" and \"hidden\" are supported."
 
                 argparser_translate "Error arg def subcommand note" \
@@ -5643,7 +5643,7 @@ function argparser_check_args_definition_subcommands() {
         if [[ -z "${help_text}" ]]; then
             warning_message="Warning: The subcommand with the identifier "
             warning_message+="\"\$1\" has no help text defined, but for "
-            warning_message+="user-friendliness, having one is recommended."
+            warning_message+="user-friendliness, defining one is recommended."
 
             argparser_translate "Warning arg def subcommand help text" \
                 "${warning_message}" "${arg_id}"
@@ -5776,7 +5776,7 @@ function argparser_check_args_definition_positional_args() {
             if [[ "${arg_number}" == 1 ]]; then
                 error_message="Error: The positional argument with the "
                 error_message+="identifier \"\$1\" requires 1 value, but has "
-                error_message+="\$2 given as default."
+                error_message+="\$2 given as default values."
 
                 argparser_translate "Error arg def pos default value 1" \
                     "${error_message}" "${arg_id}" "${#default_values_arr[@]}"
@@ -5785,7 +5785,7 @@ function argparser_check_args_definition_positional_args() {
             else
                 error_message="Error: The positional argument with the "
                 error_message+="identifier \"\$1\" requires \$2 values, but "
-                error_message+="has \$3 given as default."
+                error_message+="has \$3 given as default values."
 
                 argparser_translate "Error arg def pos default value 2" \
                     "${error_message}" "${arg_id}" "${arg_number}" \
@@ -6176,7 +6176,7 @@ function argparser_check_args_definition_positional_args() {
         if [[ -z "${help_text}" ]]; then
             warning_message="Warning: The positional argument with the "
             warning_message+="identifier \"\$1\" has no help text defined, "
-            warning_message+="but for user-friendliness, having one is "
+            warning_message+="but for user-friendliness, defining one is "
             error_message+="recommended."
 
             argparser_translate "Warning arg def pos help text" \
@@ -6493,7 +6493,7 @@ function argparser_check_args_definition_options() {
                     "${long_help_options[@]}"
             then
                 error_message="Error: The option with the identifier \"\$1\" "
-                error_message+="has the long option name \"-\$2\" defined, "
+                error_message+="has the long option name \"--\$2\" defined, "
                 error_message+="which is reserved for invoking the help "
                 error_message+="message."
 
@@ -6506,7 +6506,7 @@ function argparser_check_args_definition_options() {
                     "${long_usage_options[@]}"
             then
                 error_message="Error: The option with the identifier \"\$1\" "
-                error_message+="has the long option name \"-\$2\" defined, "
+                error_message+="has the long option name \"--\$2\" defined, "
                 error_message+="which is reserved for invoking the usage "
                 error_message+="message."
 
@@ -6519,7 +6519,7 @@ function argparser_check_args_definition_options() {
                     "${long_version_options[@]}"
             then
                 error_message="Error: The option with the identifier \"\$1\" "
-                error_message+="has the long option name \"-\$2\" defined, "
+                error_message+="has the long option name \"--\$2\" defined, "
                 error_message+="which is reserved for invoking the version "
                 error_message+="message."
 
@@ -6533,7 +6533,7 @@ function argparser_check_args_definition_options() {
             # long.
             if (( "${#long_option}" < 2 )); then
                 error_message="Error: The option with the identifier \"\$1\" "
-                error_message+="has the long option name \"-\$2\" defined "
+                error_message+="has the long option name \"--\$2\" defined "
                 error_message+="with less than 2 characters length."
 
                 argparser_translate "Error arg def option long name length" \
@@ -6547,7 +6547,7 @@ function argparser_check_args_definition_options() {
             argparser_count "${long_option}" "${long_options[@]}"
             if (( count > 1 )); then
                 error_message="Error: The option with the identifier \"\$1\" "
-                error_message+="has the long option name \"-\$2\" given \$3 "
+                error_message+="has the long option name \"--\$2\" given \$3 "
                 error_message+="times."
 
                 argparser_translate \
@@ -6563,7 +6563,7 @@ function argparser_check_args_definition_options() {
                 && "${checked_long_options[${long_option}]}" != "${arg_id}" ]]
             then
                 error_message="Error: The option with the identifier \"\$1\" "
-                error_message+="has the long option name \"-\$2\" given, but "
+                error_message+="has the long option name \"--\$2\" given, but "
                 error_message+="that is already in use by \"\$3\"."
 
                 argparser_translate \
@@ -6604,7 +6604,7 @@ function argparser_check_args_definition_options() {
             if [[ "${arg_number}" == 1 ]]; then
                 error_message="Error: The option with the identifier \"\$1\" "
                 error_message+="requires 1 value, but has \$2 given as "
-                error_message+="default."
+                error_message+="default values."
 
                 argparser_translate "Error arg def option default value 1" \
                     "${error_message}" "${arg_id}" "${#default_values_arr[@]}"
@@ -6613,7 +6613,7 @@ function argparser_check_args_definition_options() {
             else
                 error_message="Error: The option with the identifier \"\$1\" "
                 error_message+="requires \$2 values, but has \$3 given as "
-                error_message+="default."
+                error_message+="default values."
 
                 argparser_translate "Error arg def option default value 2" \
                     "${error_message}" "${arg_id}" "${arg_number}" \
@@ -6924,7 +6924,7 @@ function argparser_check_args_definition_options() {
         if [[ -z "${help_text}" ]]; then
             warning_message="Warning: The option with the identifier \"\$1\" "
             warning_message+="has no help text defined, but for "
-            warning_message+="user-friendliness, having one is recommended."
+            warning_message+="user-friendliness, defining one is recommended."
 
             argparser_translate "Warning arg def option help text" \
                 "${warning_message}" "${arg_id}"
