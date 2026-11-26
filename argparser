@@ -3936,14 +3936,16 @@ function argparser_check_env_vars() {
                     error_message+="has the short option \"-\$2\" given \$3 "
                     error_message+="times."
 
-                    argparser_translate "Error env var option name duplication 1" \
+                    argparser_translate \
+                        "Error env var option name duplication 1" \
                         "${error_message}" "${var}" "${option_name}" "${count}"
                 else
                     error_message="Error: The environment variable \"\$1\" "
                     error_message+="has the long option \"--\$2\" given \$3 "
                     error_message+="times."
 
-                    argparser_translate "Error env var option name duplication 2" \
+                    argparser_translate \
+                        "Error env var option name duplication 2" \
                         "${error_message}" "${var}" "${option_name}" "${count}"
                 fi
                 error_message="${translation}"
@@ -4548,7 +4550,7 @@ function argparser_read_styles() {
                 argparser_join "${ARGPARSER_ARG_DELIMITER_2:-","}" \
                     "${text_styles_arr[@]}"
                 text_styles_str="${joined_array}"
-                
+
                 error_message="Error: The style \"\$1\" is set to \"\$2\", "
                 error_message+="but the values must lie in {\$3} for colors "
                 error_message+="and in {\$4} for text styles.  Colors, only, "
@@ -7623,6 +7625,7 @@ function argparser_parse_arg() {
         # The argument is the (allowed) positional-only arguments
         # delimiter "--", but followed by an illegal equals sign ("=").
         error_message="Error: The special option \"--\" takes no value."
+
         argparser_translate "Error arg double hyphen" "${error_message}"
         error_message="${translation}"
         error_messages+=("${error_message}")
@@ -7649,6 +7652,7 @@ function argparser_parse_arg() {
         # The argument is the (allowed) positional-only arguments
         # delimiter "++", but followed by an illegal equals sign ("=").
         error_message="Error: The special option \"++\" takes no value."
+
         argparser_translate "Error arg double plus" "${error_message}"
         error_message="${translation}"
         error_messages+=("${error_message}")
@@ -7693,6 +7697,7 @@ function argparser_parse_arg() {
         # doubled) as prefix.
         error_message="Error: Inverting flags with a \"+\" prefix is "
         error_message+="deactivated."
+
         argparser_translate "Error arg inversion" "${error_message}"
         error_message="${translation}"
         error_messages+=("${error_message}")
@@ -7704,6 +7709,7 @@ function argparser_parse_arg() {
         # also true if the argument is a short option, but only long
         # options shall be accepted, or vice versa.
         error_message="Error: The argument \"\$1\" is unknown."
+
         argparser_translate "Error arg unknown" "${error_message}" \
             "${given_arg%%=*}"
         error_message="${translation}"
@@ -7881,6 +7887,7 @@ function argparser_parse_long_option() {
             if [[ "${is_negated}" == true ]]; then
                 error_message="Error: The long option \"\$1\" is negated, but "
                 error_message+="its affirmative version \"\$2\" is unknown."
+
                 argparser_translate "Error long option negation" \
                     "${error_message}" "${given_arg%%=*}" \
                     "${actual_prefix}${actual_prefix}${option_name}"
@@ -7889,6 +7896,7 @@ function argparser_parse_long_option() {
                 messages+=("Argument: ${given_arg}")
             else
                 error_message="Error: The long option \"\$1\" is unknown."
+
                 argparser_translate "Error long option unknown" \
                     "${error_message}" "${given_arg%%=*}"
                 error_message="${translation}"
@@ -7917,6 +7925,7 @@ function argparser_parse_long_option() {
             if [[ "${is_negated}" == true ]]; then
                 error_message="Error: The long option \"\$1\" is negated, but "
                 error_message+="its affirmative version \"\$2\" is unknown."
+
                 argparser_translate "Error long option negation" \
                     "${error_message}" "${given_arg%%=*}" \
                     "${actual_prefix}${actual_prefix}${option_name}"
@@ -7925,6 +7934,7 @@ function argparser_parse_long_option() {
                 messages+=("Argument: ${given_arg}")
             else
                 error_message="Error: The long option \"\$1\" is unknown."
+
                 argparser_translate "Error long option unknown" \
                     "${error_message}" "${given_arg%%=*}"
                 error_message="${translation}"
@@ -8001,6 +8011,7 @@ function argparser_parse_short_option() {
                 # Since the argument hasn't been found in the
                 # definition, output an error message and the argument.
                 error_message="Error: The short option \"\$1\$2\" is unknown."
+
                 argparser_translate "Error short option merge" \
                     "${error_message}" "${prefix}" "${char}"
                 error_message="${translation}"
@@ -8055,6 +8066,7 @@ function argparser_parse_short_option() {
             # Since the argument hasn't been found in the definition,
             # output an error message and the argument.
             error_message="Error: The short option \"\$1\" is unknown."
+
             argparser_translate "Error short option unknown" \
                 "${error_message}" "${given_arg%%=*}"
             error_message="${translation}"
@@ -9556,7 +9568,7 @@ function argparser_create_help_message() {
             default_values_arr=("${default_values_arr[@]/%/\"}")
         fi
 
-        # Get the colorized value names.  Concatenate and colorize the 
+        # Get the colorized value names.  Concatenate and colorize the
         # default values and choice values.  Then, colorize the help
         # text.
         argparser_get_display_names "${arg_id}" "value" true
