@@ -57,7 +57,8 @@ Now, we can investigate the help message, just as we did above, with the very sa
 $ bash ../tutorial/try_argparser.sh --help
 Usage: try_argparser.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2,pos_2
 
-Mandatory arguments to long options are mandatory for short options too.
+Mandatory or optional arguments to long options are mandatory or optional for
+short options too.
 
 +- Positional arguments ----------------------------------------------------------+
 | [pos_1=                                     one positional argument with        |

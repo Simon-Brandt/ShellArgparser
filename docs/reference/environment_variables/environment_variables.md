@@ -72,7 +72,7 @@
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
-- ***Description:*** Whether to allow the user to give short option names in merged (concatenated) form, *e.g.*, `-ab1` or `-ab=1` for `-a -b 1`. The individual characters are interpreted as option names until an option has a number of required arguments greater than zero, *i.e.*, until an option is no flag. Long option names span multiple characters and thus cannot be merged in a meaningful way.
+- ***Description:*** Whether to allow the user to give short option names in merged (concatenated) form, *e.g.*, `-ab1` or `-ab=1` for `-a -b 1`. The individual characters are interpreted as option names until a keyword argument has a number of required arguments greater than zero, *i.e.*, until a keyword argument is no flag. Long option names span multiple characters and thus cannot be merged in a meaningful way.
 
 #### 9.4.10. `ARGPARSER_ALLOW_POSITIONAL_DELIMITER_END`
 
@@ -416,7 +416,7 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 - ***Type:*** *str* (String)
 - ***Allowed values:*** `"long"` and `"short"`
 - ***Default value:*** `"short"`
-- ***Description:*** Whether to use short or long option names in usage messages. If an option doesn't have short option names, its long option names are used, and *vice versa*.
+- ***Description:*** Whether to use short or long option names in usage messages. If a keyword argument doesn't have short option names, its long option names are used, and *vice versa*.
 
 #### 9.4.57. `ARGPARSER_USAGE_MESSAGE_ORIENTATION`
 

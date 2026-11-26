@@ -124,9 +124,12 @@ Finally, we need a translation file (here [`translations.yaml`](../../resources/
 
 <summary>Beginning of <code>translations.yaml</code></summary>
 
-<!-- <include command="sed '1,5d;41q' ../resources/translations.yaml" lang="yaml"> -->
+<!-- <include command="sed '1,6d;45q' ../resources/translations.yaml" lang="yaml"> -->
 ```yaml
-# 1.    Define the general translations.
+Help description:
+  en: Command-line program.
+  de: Kommandozeilenprogramm.
+
 Subcommands:
   en: Subcommands
   de: Subkommandos
@@ -139,9 +142,9 @@ Help options:
   en: Help options
   de: Hilfsoptionen
 
-Help description:
-  en: Command-line program.
-  de: Kommandozeilenprogramm.
+Usage:
+  en: Usage
+  de: Aufruf
 
 Version:
   en: Version

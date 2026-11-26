@@ -89,7 +89,8 @@ $ bash ../tutorial/try_help_file.sh -h
 A brief header summarizes the way how to interpret the help message.
 Usage: try_help_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2,pos_2
 
-Mandatory arguments to long options are mandatory for short options too.
+Mandatory or optional arguments to long options are mandatory or optional for
+short options too.
 
 The following arguments are positional:
 +---------------------------------------------------------------------------------+

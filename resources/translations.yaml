@@ -1,9 +1,17 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-11-06
+# Last Modification: 2026-11-26
 # License: Public Domain
 
-# 1.    Define the general translations.
+# General translations.
+Help description:
+  en: Command-line program.
+  de: Kommandozeilenprogramm.
+
+Subcommands:
+  en: Subcommands
+  de: Subkommandos
+
 Positional arguments:
   en: Positional arguments
   de: Positionale Argumente
@@ -12,9 +20,9 @@ Help options:
   en: Help options
   de: Hilfsoptionen
 
-Help description:
-  en: Command-line program.
-  de: Kommandozeilenprogramm.
+Usage:
+  en: Usage
+  de: Aufruf
 
 Version:
   en: Version
@@ -36,12 +44,7 @@ Warnings:
   en: Warnings
   de: Warnungen
 
-# 2.    Define the translations for help messages.
-# 2.1.  Define the translations for the usage line (part of the header).
-Usage:
-  en: Usage
-  de: Aufruf
-
+# Translations for help messages.
 Arguments:
   en: ARGUMENTS
   de: ARGUMENTE
@@ -50,7 +53,6 @@ Options:
   en: OPTIONS
   de: OPTIONEN
 
-# 2.2.  Define the translations for the remark (part of the header).
 Mandatory arguments:
   en: >
     Mandatory arguments to long options are mandatory for short options too.
@@ -58,7 +60,6 @@ Mandatory arguments:
     Erforderliche Argumente für lange Optionen sind auch für kurze
     erforderlich.
 
-# 2.3.  Define the translations for the help column.
 Deprecated:
   en: DEPRECATED
   de: VERALTET
@@ -66,6 +67,14 @@ Deprecated:
 Default:
   en: default
   de: Vorgabe
+
+true:
+  en: true
+  de: wahr
+
+false:
+  en: false
+  de: falsch
 
 --help:
   en: display this help and exit
@@ -79,16 +88,13 @@ Default:
   en: display the version and exit
   de: die Version anzeigen und beenden
 
-false:
-  en: false
-  de: falsch
+Error include directive:
+  en: >
+    Error: The include directive "$1" could not be recognized.
+  de: >
+    Fehler: Die Include-Anweisung "$1" konnte nicht erkannt werden.
 
-true:
-  en: true
-  de: wahr
-
-# 3.    Define the translations for error messages.
-# 3.1.  Define the translations for checking the environment variables.
+# Translations for checking the environment variables.
 Error env var bool:
   en: >
     Error: The environment variable "$1" is set to "$2", but must be a Boolean,
@@ -326,7 +332,72 @@ Error env var negation prefix empty:
     Fehler: Die Umgebungsvariable "ARGPARSER_FLAG_NEGATION_PREFIXES" hat einen
     Leerstring als Präfix gegeben, statt ein zulässiges Präfix.
 
-# 3.2.  Define the translations for reading the arguments definition.
+# Translations for reading and translating from the translation file.
+Error YAML:
+  en: >
+    Error: The YAML line "$1" could not be recognized.
+  de: >
+    Fehler: Die YAML-Zeile "$1" konnte nicht erkannt werden.
+
+Warning no identifier:
+  en: >
+    Warning: In the translation file "$1", the identifier "$2" is missing.  For
+    convenience, the untranslated string is used, instead.
+  de: >
+    Warnung: In der Übersetzungsdatei "$1" fehlt der Identifikator
+    "$2".  Zwecks Benutzerfreundlichkeit wird stattdessen die nicht übersetzte
+    Zeichenkette genutzt.
+
+Warning no translation:
+  en: >
+    Warning: In the translation file "$1", the translation to "$2" for the
+    identifier "$3" is missing.  For convenience, the untranslated string is
+    used, instead.
+  de: >
+    Warnung: In der Übersetzungsdatei "$1" fehlt die Übersetzung nach "$2" für
+    den Identifikator "$3".  Zwecks Benutzerfreundlichkeit wird stattdessen die
+    nicht übersetzte Zeichenkette genutzt.
+
+# Translations for reading the style file.
+Warning style file message key:
+  en: >
+    Warning: In the style file "$1", the line "$2" sets a non-existent message
+    key.
+  de: >
+    Warnung: In der Stildatei "$1" setzt die Zeile "$2" einen inexistenten
+    Nachrichten-Schlüssel.
+
+Error style file equals sign:
+  en: >
+    Error: In the style file "$1", the line "$2" doesn't contain an equals sign
+    ("="), nor is it empty or commented.
+  de: >
+    Fehler: In der Stildatei "$1" enthält die Zeile "$2" kein
+    Gleichheitszeichen ("=") und ist auch nicht leer oder auskommentiert.
+
+Error style file frame styles:
+  en: >
+    Error: The style "$1" is set to "$2", but the values must lie in {$3} for
+    colors and in {$4} for frame styles.  Colors, only, may be prefixed by
+    "bright_" or suffixed by "_fg" or "_bg".
+  de: >
+    Fehler: Der Stil "$1" ist auf "$2" gesetzt, die Werte müssen aber in
+    {$3} für Farben und in {$4} für Rahmenstile liegen.  Ausschließlich Farben
+    können mit dem Präfix "bright_" ("hell_") oder dem Suffix "_fg"
+    (Vordergrund) oder "_bg" (Hintergrund) gegeben werden.
+
+Error style file text styles:
+  en: >
+    Error: The style "$1" is set to "$2", but the values must lie in {$3} for
+    colors and in {$4} for text styles.  Colors, only, may be prefixed by
+    "bright_" or suffixed by "_fg" or "_bg".
+  de: >
+    Fehler: Der Stil "$1" ist auf "$2" gesetzt, die Werte müssen aber in
+    {$3} für Farben und in {$4} für Textstile liegen.  Ausschließlich Farben
+    können mit dem Präfix "bright_" ("hell_") oder dem Suffix "_fg"
+    (Vordergrund) oder "_bg" (Hintergrund) gegeben werden.
+
+# Translations for reading the arguments definition.
 Error arg array 1:
   en: >
     Error: Calling (instead of sourcing) the Argparser requires the arguments
@@ -373,7 +444,7 @@ Error no arg def:
   de: >
     Fehler: Keine Argumentdefinition für "$1".
 
-# 3.3.  Define the translations for parsing the arguments definition.
+# Translations for parsing the arguments definition.
 Error arg def id:
   en: >
     Error: In the arguments definition in "$1", the column "id" is missing.
@@ -422,147 +493,167 @@ Error arg def choice range:
     mit "$2" als Start, "$3" als Stopp, und "$4" als Schrittweite, während nur
     Ganzzahl-, Gleitkommazahl- und Buchstaben-Sequenzen unterstützt werden.
 
-# 3.4.  Define the translations for checking the names of the arguments
-#       in the arguments definition.
-Error arg def short name empty:
+# Translations for checking the arguments definition for subcommands.
+Error arg def subcommand id:
   en: >
-    Error: The short option with the identifier "$1" has an empty string given
-    as one of the $2 short option names, instead of a legit name.
+    Error: The subcommand with the identifier "$1" does not use a valid Bash
+    identifier.
   de: >
-    Fehler: Die kurze Option mit dem Identifikator "$1" hat einen Leerstring
-    als einen der $2 kurzen Optionsnamen gegeben, statt einen zulässigen Namen.
+    Fehler: Das Subkommando mit dem Identifikator "$1" nutzt keinen validen
+    Bash-Identifikator.
 
-Error arg def short name help:
+Error arg def subcommand subcommand:
   en: >
-    Error: The short option with the identifier "$1" has the short option "-$2"
-    defined, which is reserved for invoking the help message.
+    Error: The subcommand with the identifier "$1" has a nested subcommand
+    defined, which is not supported.
   de: >
-    Fehler: Die kurze Option mit dem Identifikator "$1" hat die kurze Option
-    "-$2" definiert, die zum Aufruf der Hilfsnachricht reserviert ist.
+    Fehler: Das Subkommando mit dem Identifikator "$1" hat ein verschachteltes
+    Subkommando definiert, was nicht unterstützt wird.
 
-Error arg def short name usage:
+Error arg def subcommand short name:
   en: >
-    Error: The short option with the identifier "$1" has the short option "-$2"
-    defined, which is reserved for invoking the usage message.
+    Error: The subcommand with the identifier "$1" has a short option name
+    defined, while only value names are supported.
   de: >
-    Fehler: Die kurze Option mit dem Identifikator "$1" hat die kurze Option
-    "-$2" definiert, die zum Aufruf der Benutzungsnachricht reserviert ist.
+    Fehler: Das Subkommando mit dem Identifikator "$1" hat einen kurzen
+    Optionsnamen definiert, während nur Wertnamen unterstützt werden.
 
-Error arg def short name version:
+Error arg def subcommand long name:
   en: >
-    Error: The short option with the identifier "$1" has the short option "-$2"
-    defined, which is reserved for invoking the version message.
+    Error: The subcommand with the identifier "$1" has a long option name
+    defined, while only value names are supported.
   de: >
-    Fehler: Die kurze Option mit dem Identifikator "$1" hat die kurze Option
-    "-$2" definiert, die zum Aufruf der Versionsnachricht reserviert ist.
+    Fehler: Das Subkommando mit dem Identifikator "$1" hat einen langen
+    Optionsnamen definiert, während nur Wertnamen unterstützt werden.
 
-Error arg def short name length:
+Error arg def subcommand value name 1:
   en: >
-    Error: The short option with the identifier "$1" has the short option "-$2"
-    defined with more than 1 character length.
+    Error: The subcommand with the identifier "$1" has no value name defined,
+    while 1 is required.
   de: >
-    Fehler: Die kurze Option mit dem Identifikator "$1" hat die kurze Option
-    "-$2" mit mehr als einem Zeichen Länge definiert.
+    Fehler: Das Subkommando mit dem Identifikator "$1" hat keinen Wertnamen
+    definiert, während 1 erforderlich ist.
 
-Error arg def short name duplication 1:
+Error arg def subcommand value name 2:
   en: >
-    Error: The short option with the identifier "$1" has the short option "-$2"
-    given $3 times.
+    Error: The subcommand with the identifier "$1" has $2 value names defined,
+    while 1 is required.
   de: >
-    Fehler: Die kurze Option mit dem Identifikator "$1" hat die kurze Option
-    "-$2" $3-mal gegeben.
+    Fehler: Das Subkommando mit dem Identifikator "$1" hat "$2" Wertnamen
+    definiert, während 1 erforderlich ist.
 
-Error arg def short name duplication 2:
+Error arg def subcommand value name duplication:
   en: >
-    Error: The short option with the identifier "$1" has the short option "-$2"
-    given, but that is already in use by "$3".
+    Error: The subcommand with the identifier "$1" has the value name "$2"
+    defined, but that is already in use by "$3".
   de: >
-    Fehler: Die kurze Option mit dem Identifikator "$1" hat die kurze Option
-    "-$2" gegeben, diese wird aber bereits von "$3" genutzt.
+    Fehler: Das Subkommando mit dem Identifikator "$1" hat den Wertnamen "$2"
+    definiert, dieser wird aber bereits von "$3" genutzt.
 
-Error arg def long name empty:
+Error arg def subcommand default value:
   en: >
-    Error: The long option with the identifier "$1" has an empty string given
-    as one of the $2 long option names, instead of a legit name.
+    Error: The subcommand with the identifier "$1" has a default value defined,
+    but cannot take a value.
   de: >
-    Fehler: Die lange Option mit dem Identifikator "$1" hat einen Leerstring
-    als einen der $2 langen Optionsnamen gegeben, statt einen zulässigen Namen.
+    Fehler: Das Subkommando mit dem Identifikator "$1" hat einen Vorgabewert
+    definiert, kann aber keine Werte nehmen.
 
-Error arg def long name help:
+Error arg def subcommand choice value:
   en: >
-    Error: The long option with the identifier "$1" has the long option "--$2"
-    defined, which is reserved for invoking the help message.
+    Error: The subcommand with the identifier "$1" has a choice value defined,
+    but cannot take a value.
   de: >
-    Fehler: Die lange Option mit dem Identifikator "$1" hat die lange Option
-    "--$2" definiert, die zum Aufruf der Hilfsnachricht reserviert ist.
+    Fehler: Das Subkommando mit dem Identifikator "$1" hat einen Auswahlwert
+    definiert, kann aber keine Werte nehmen.
 
-Error arg def long name usage:
+Error arg def subcommand type:
   en: >
-    Error: The long option with the identifier "$1" has the long option "--$2"
-    defined, which is reserved for invoking the usage message.
+    Error: The subcommand with the identifier "$1" has a data type defined, but
+    cannot take a value.
   de: >
-    Fehler: Die lange Option mit dem Identifikator "$1" hat die lange Option
-    "--$2" definiert, die zum Aufruf der Benutzungsnachricht reserviert ist.
+    Fehler: Das Subkommando mit dem Identifikator "$1" hat einen Datentyp
+    definiert, kann aber keine Werte nehmen.
 
-Error arg def long name version:
+Error arg def subcommand arg number:
   en: >
-    Error: The long option with the identifier "$1" has the long option "--$2"
-    defined, which is reserved for invoking the version message.
+    Error: The subcommand with the identifier "$1" has an argument number
+    defined, but cannot take a value.
   de: >
-    Fehler: Die lange Option mit dem Identifikator "$1" hat die lange Option
-    "--$2" definiert, die zum Aufruf der Versionsnachricht reserviert ist.
+    Fehler: Das Subkommando mit dem Identifikator "$1" hat eine Argumentanzahl
+    definiert, kann aber keine Werte nehmen.
 
-Error arg def long name length:
+Error arg def subcommand arg group:
   en: >
-    Error: The long option with the identifier "$1" has the long option "--$2"
-    defined with less than 2 characters length.
+    Error: The subcommand with the identifier "$1" is defined for the argument
+    group "$2", while all subcommands must belong to "$3", as defined by the
+    ARGPARSER_SUBCOMMAND_GROUP.
   de: >
-    Fehler: Die lange Option mit dem Identifikator "$1" hat die lange Option
-    "--$2" mit weniger als zwei Zeichen Länge definiert.
+    Fehler: Das Subkommando mit dem Identifikator "$1" ist für die
+    Argumentgruppe "$2" definiert, während alle Subkommandos zu "$3" gehören
+    müssen, wie durch die ARGPARSER_SUBCOMMAND_GROUP definiert ist.
 
-Error arg def long name duplication 1:
+Error arg def subcommand note:
   en: >
-    Error: The long option with the identifier "$1" has the long option "--$2"
-    given $3 times.
+    Error: The subcommand with the identifier "$1" has "$2" given as note,
+    but only "deprecated" and "hidden" are supported.
   de: >
-    Fehler: Die lange Option mit dem Identifikator "$1" hat die lange Option
-    "--$2" $3-mal gegeben.
+    Fehler: Das Subkommando mit dem Identifikator "$1" hat "$2" als Anmerkung
+    gegeben, aber nur "deprecated" ("veraltet") und "hidden" ("versteckt")
+    werden unterstützt.
 
-Error arg def long name duplication 2:
+Warning arg def subcommand help text:
   en: >
-    Error: The long option with the identifier "$1" has the long option "--$2"
-    given, but that is already in use by "$3".
+    Warning: The subcommand with the identifier "$1" has no help text defined,
+    but for user-friendliness, defining one is recommended.
   de: >
-    Fehler: Die lange Option mit dem Identifikator "$1" hat die lange Option
-    "--$2" gegeben, diese wird aber bereits von "$3" genutzt.
+    Warnung: Das Subkommando mit dem Identifikator "$1" hat keinen Hilfetext
+    definiert, zwecks Benutzerfreundlichkeit ist es aber empfohlen, einen zu
+    definieren.
 
-# 3.5.  Define the translations for checking the values of the
-#       positional arguments in the arguments definition.
-Error arg def pos default flag:
+# Translations for checking the arguments definition for positional arguments.
+Error arg def pos id:
   en: >
-    Error: The positional argument with the identifier "$1" must be "true" or
-    "false", but has {$2} given as default.
+    Error: The positional argument with the identifier "$1" does not use a
+    valid Bash identifier.
   de: >
-    Fehler: Das positionale Argument mit dem Identifikator "$1" muss "wahr"
-    ("true") oder "falsch" ("false") sein, hat aber "$2" als Vorgabe gegeben.
+    Fehler: Das positionale Argument mit dem Identifikator "$1" nutzt keinen
+    validen Bash-Identifikator.
 
-Error arg def pos default 1:
+Error arg def pos subcommand:
+  en: >
+    Error: The positional argument with the identifier "$1" has more than one
+    subcommand defined, which is not supported.
+  de: >
+    Fehler: Das positionale Argument mit dem Identifikator "$1" hat mehr als
+    ein Subkommando definiert, was nicht unterstützt wird.
+
+Error arg def pos default value flag:
+  en: >
+    Error: The positional argument with the identifier "$1" must have its
+    default value set to "true" or "false" (as it is allowed to take 0 values),
+    but has {$2} defined.
+  de: >
+    Fehler: Das positionale Argument mit dem Identifikator "$1" muss den
+    Vorgabewert auf "wahr" ("true") oder "falsch" ("false") gesetzt haben (da
+    es 0 Werte nehmen darf), hat aber {$2} definiert.
+
+Error arg def pos default value 1:
   en: >
     Error: The positional argument with the identifier "$1" requires 1 value,
-    but has $2 given as default.
+    but has $2 given as default values.
   de: >
     Fehler: Das positionale Argument mit dem Identifikator "$1" erfordert 1
-    Wert, hat aber $2 als Vorgabe gegeben.
+    Wert, hat aber $2 als Vorgabewerte gegeben.
 
-Error arg def pos default 2:
+Error arg def pos default value 2:
   en: >
     Error: The positional argument with the identifier "$1" requires $2 values,
-    but has $3 given as default.
+    but has $3 given as default values.
   de: >
     Fehler: Das positionale Argument mit dem Identifikator "$1" erfordert $2
-    Werte, hat aber $3 als Vorgabe gegeben.
+    Werte, hat aber $3 als Vorgabewerte gegeben.
 
-Error arg def pos choice true:
+Error arg def pos choice value true false:
   en: >
     Error: The positional argument with the identifier "$1" has {$2} given as
     choice values, while "true" and "false" cannot be any.
@@ -571,65 +662,13 @@ Error arg def pos choice true:
     Auswahlwerte gegeben, während "wahr" ("true") und "falsch" ("false") keine
     sein können.
 
-Error arg def pos choice default:
+Error arg def pos choice value default:
   en: >
     Error: The positional argument with the identifier "$1" accepts only the
-    choice values {$2}, but has {$3} given as default.
+    choice values {$2}, but has {$3} given as default values.
   de: >
     Fehler: Das positionale Argument mit dem Identifikator "$1" nimmt nur die
-    Auswahlwerte {$2}, hat aber {$3} als Vorgabe gegeben.
-
-Error arg def pos optionals:
-  en: >
-    Error: The positional argument with the identifier "$1" is optional, as is
-    "$2", which renders parsing impossible.
-  de: >
-    Fehler: Das positionale Argument mit dem Identifikator "$1" ist optional,
-    wie auch "$2", was das Parsen verunmöglicht.
-
-Error arg def pos optional infinite:
-  en: >
-    Error: The positional argument with the identifier "$1" is optional, while
-    "$2" accepts an infinite number of values, which renders parsing
-    impossible.
-  de: >
-    Fehler: Das positionale Argument mit dem Identifikator "$1" ist optional,
-    während "$2" eine unbegrenzte Anzahl Werte nimmt, was das Parsen
-    verunmöglicht.
-
-Error arg def pos flag:
-  en: >
-    Error: The positional argument with the identifier "$1" accepts 0 arguments
-    and thus can never be given on the command line.
-  de: >
-    Fehler: Das positionale Argument mit dem Identifikator "$1" nimmt 0
-    Argumente und kann daher nie auf der Kommandozeile gegeben werden.
-
-Error arg def pos infinites:
-  en: >
-    Error: The positional argument with the identifier "$1" accepts an infinite
-    number of values, as does "$2", which renders parsing impossible.
-  de: >
-    Fehler: Das positionale Argument mit dem Identifikator "$1" nimmt eine
-    unbegrenzte Anzahl Werte, wie auch "$2", was das Parsen verunmöglicht.
-
-Error arg def pos infinite optional 1:
-  en: >
-    Error: The positional argument with the identifier "$1" accepts an infinite
-    number of values, while being optional, which is not supported.
-  de: >
-    Fehler: Das positionale Argument mit dem Identifikator "$1" nimmt eine
-    unbegrenzte Anzahl Werte, während es optional ist, was nicht unterstützt
-    wird.
-
-Error arg def pos infinite optional 2:
-  en: >
-    Error: The positional argument with the identifier "$1" accepts an infinite
-    number of values, while "$2" is optional, which renders parsing impossible.
-  de: >
-    Fehler: Das positionale Argument mit dem Identifikator "$1" nimmt eine
-    unbegrenzte Anzahl Werte, während "$2" optional ist, was das Parsen
-    verunmöglicht.
+    Auswahlwerte {$2}, hat aber {$3} als Vorgabewerte gegeben.
 
 Error arg def pos type:
   en: >
@@ -641,7 +680,56 @@ Error arg def pos type:
     Datentyp gegeben, aber nur "bool", "char", "float", "file", "int", "str",
     und "uint" werden unterstützt.
 
-Error arg def pos bool:
+Error arg def pos default value bool:
+  en: >
+    Error: The positional argument with the identifier "$1" has "$2" given as
+    default value, which must be a Boolean, i.e., "true" or "false".
+  de: >
+    Fehler: Das positionale Argument mit dem Identifikator "$1" hat "$2" als
+    Vorgabewert gegeben, welcher ein boolscher Wert (Boolean) sein muss, d. h.
+    "wahr" ("true") oder "falsch" ("false").
+
+Error arg def pos default value char:
+  en: >
+    Error: The positional argument with the identifier "$1" has "$2" given as
+    default value, which must be a character, i.e., a string comprising one
+    printable ASCII character.
+  de: >
+    Fehler: Das positionale Argument mit dem Identifikator "$1" hat "$2" als
+    Vorgabewert gegeben, welcher ein einzelnes Zeichen sein muss, d. h. eine
+    Zeichenkette aus einem druckbaren ASCII-Zeichen.
+
+Error arg def pos default value float:
+  en: >
+    Error: The positional argument with the identifier "$1" has "$2" given as
+    default value, which must be a floating-point number, i.e., comprise only
+    digits, a dot, and possibly a leading sign.
+  de: >
+    Fehler: Das positionale Argument mit dem Identifikator "$1" hat "$2" als
+    Vorgabewert gegeben, welcher eine Gleitkommazahl sein muss, d. h. nur
+    Ziffern, einen Punkt, und ggf. ein Vorzeichen umfassen kann.
+
+Error arg def pos default value int:
+  en: >
+    Error: The positional argument with the identifier "$1" has "$2" given as
+    default value, which must be an integer, i.e., comprise only digits and
+    possibly a leading sign.
+  de: >
+    Fehler: Das positionale Argument mit dem Identifikator "$1" hat "$2" als
+    Vorgabewert gegeben, welcher eine Ganzzahl sein muss, d. h. nur Ziffern und
+    ggf. ein Vorzeichen umfassen kann.
+
+Error arg def pos default value uint:
+  en: >
+    Error: The positional argument with the identifier "$1" has "$2" given as
+    default value, which must be an unsigned integer, i.e., comprise only
+    digits and no sign.
+  de: >
+    Fehler: Das positionale Argument mit dem Identifikator "$1" hat "$2" als
+    Vorgabewert gegeben, welcher eine natürliche Zahl sein muss, d. h. nur
+    Ziffern und kein Vorzeichen umfassen kann.
+
+Error arg def pos choice value bool:
   en: >
     Error: The positional argument with the identifier "$1" has "$2" given as
     choice value, which must be a Boolean, i.e., "true" or "false".
@@ -650,7 +738,7 @@ Error arg def pos bool:
     Auswahlwert gegeben, welcher ein boolscher Wert (Boolean) sein muss, d. h.
     "wahr" ("true") oder "falsch" ("false").
 
-Error arg def pos char:
+Error arg def pos choice value char:
   en: >
     Error: The positional argument with the identifier "$1" has "$2" given as
     choice value, which must be a character, i.e., a string comprising one
@@ -660,7 +748,7 @@ Error arg def pos char:
     Auswahlwert gegeben, welcher ein einzelnes Zeichen sein muss, d. h. eine
     Zeichenkette aus einem druckbaren ASCII-Zeichen.
 
-Error arg def pos float:
+Error arg def pos choice value float:
   en: >
     Error: The positional argument with the identifier "$1" has "$2" given as
     choice value, which must be a floating-point number, i.e., comprise only
@@ -670,7 +758,7 @@ Error arg def pos float:
     Auswahlwert gegeben, welcher eine Gleitkommazahl sein muss, d. h. nur
     Ziffern, einen Punkt, und ggf. ein Vorzeichen umfassen kann.
 
-Error arg def pos int:
+Error arg def pos choice value int:
   en: >
     Error: The positional argument with the identifier "$1" has "$2" given as
     choice value, which must be an integer, i.e., comprise only digits and
@@ -680,7 +768,7 @@ Error arg def pos int:
     Auswahlwert gegeben, welcher eine Ganzzahl sein muss, d. h. nur Ziffern und
     ggf. ein Vorzeichen umfassen kann.
 
-Error arg def pos uint:
+Error arg def pos choice value uint:
   en: >
     Error: The positional argument with the identifier "$1" has "$2" given as
     choice value, which must be an unsigned integer, i.e., comprise only digits
@@ -689,6 +777,82 @@ Error arg def pos uint:
     Fehler: Das positionale Argument mit dem Identifikator "$1" hat "$2" als
     Auswahlwert gegeben, welcher eine natürliche Zahl sein muss, d. h. nur
     Ziffern und kein Vorzeichen umfassen kann.
+
+Error arg def pos optionals:
+  en: >
+    Error: The positional argument with the identifier "$1" is optional, as is
+    "$2", which renders parsing impossible.
+  de: >
+    Fehler: Das positionale Argument mit dem Identifikator "$1" ist optional,
+    wie auch "$2", was das Parsen verunmöglicht.
+
+Error arg def pos optional variadic:
+  en: >
+    Error: The positional argument with the identifier "$1" is optional, while
+    "$2" is variadic (it accepts an infinite number of values), which renders
+    parsing impossible.
+  de: >
+    Fehler: Das positionale Argument mit dem Identifikator "$1" ist optional,
+    während "$2" variadisch ist (es nimmt eine unbegrenzte Anzahl Werte), was
+    das Parsen verunmöglicht.
+
+Error arg def pos flag:
+  en: >
+    Error: The positional argument with the identifier "$1" accepts 0 arguments
+    and thus can never be given on the command line.
+  de: >
+    Fehler: Das positionale Argument mit dem Identifikator "$1" nimmt 0
+    Argumente und kann daher nie auf der Kommandozeile gegeben werden.
+
+Error arg def pos variadic:
+  en: >
+    Error: The positional argument with the identifier "$1" is variadic (it
+    accepts an infinite number of values), as is "$2", which renders parsing
+    impossible.
+  de: >
+    Fehler: Das positionale Argument mit dem Identifikator "$1" ist variadisch
+    (es nimmt eine unbegrenzte Anzahl Werte), wie auch "$2", was das Parsen
+    verunmöglicht.
+
+Error arg def pos variadic optional 1:
+  en: >
+    Error: The positional argument with the identifier "$1" is variadic (it
+    accepts an infinite number of values), while being optional, which is not
+    supported.
+  de: >
+    Fehler: Das positionale Argument mit dem Identifikator "$1" ist variadisch
+    (es nimmt eine unbegrenzte Anzahl Werte), während es optional ist, was
+    nicht unterstützt wird.
+
+Error arg def pos variadic optional 2:
+  en: >
+    Error: The positional argument with the identifier "$1" is variadic (it
+    accepts an infinite number of values), while "$2" is optional, which
+    renders parsing impossible.
+  de: >
+    Fehler: Das positionale Argument mit dem Identifikator "$1" ist variadisch
+    (es nimmt eine unbegrenzte Anzahl Werte, während "$2" optional ist, was das
+    Parsen verunmöglicht.
+
+Error arg def pos arg number:
+  en: >
+    Error: The positional argument with the identifier "$1" has "$2" given as
+    argument number, which must be an unsigned integer or either of "+", "*",
+    and "?".
+  de: >
+    Fehler: Das positionale Argument mit dem Identifikator "$1" hat "$2" als
+    Argumentanzahl gegeben, die eine natürliche Zahl oder "+", "*", oder "?"
+    sein muss.
+
+Error arg def pos arg group:
+  en: >
+    Error: The positional argument with the identifier "$1" is defined for the
+    argument group "$2", while all positional arguments must belong to "$3", as
+    defined by the ARGPARSER_POSITIONAL_ARG_GROUP.
+  de: >
+    Fehler: Das positionale Argument mit dem Identifikator "$1" ist für die
+    Argumentgruppe "$2" definiert, während alle positionalen Argumente zu "$3"
+    gehören müssen, wie durch die ARGPARSER_POSITIONAL_ARG_GROUP definiert ist.
 
 Error arg def pos note:
   en: >
@@ -699,33 +863,171 @@ Error arg def pos note:
     Anmerkung gegeben, aber nur "deprecated" ("veraltet") und "hidden"
     ("versteckt") werden unterstützt.
 
-# 3.6.  Define the translations for checking the values of the keyword
-#       arguments in the arguments definition.
-Error arg def option default flag:
+Warning arg def pos help text:
   en: >
-    Error: The option with the identifier "$1" must be "true" or "false", but
-    has {$2} given as default.
+    Warning: The positional argument with the identifier "$1" has no help text
+    defined, but for user-friendliness, defining one is recommended.
   de: >
-    Fehler: Die Option mit dem Identifikator "$1" muss "wahr" ("true") oder
-    "falsch" ("false") sein, hat aber "$2" als Vorgabe gegeben.
+    Warnung: Das positionale Argument mit dem Identifikator "$1" hat keinen
+    Hilfetext definiert, zwecks Benutzerfreundlichkeit ist es aber empfohlen,
+    einen zu definieren.
 
-Error arg def option default 1:
+# Translations for checking the arguments definition for keyword arguments.
+Error arg def option id:
+  en: >
+    Error: The option with the identifier "$1" does not use a valid Bash
+    identifier.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" nutzt keinen validen
+    Bash-Identifikator.
+
+Error arg def option subcommand:
+  en: >
+    Error: The option with the identifier "$1" has more than one subcommand
+    defined, which is not supported.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" hat mehr als ein Subkommando
+    definiert, was nicht unterstützt wird.
+
+Error arg def option short name empty:
+  en: >
+    Error: The option with the identifier "$1" has an empty string given as one
+    of the $2 short option names, instead of a legit name.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" hat einen Leerstring als
+    einen der $2 kurzen Optionsnamen gegeben, statt einen zulässigen Namen.
+
+Error arg def option short name help:
+  en: >
+    Error: The option with the identifier "$1" has the short option name "-$2"
+    defined, which is reserved for invoking the help message.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" hat den kurzen Optionsnamen
+    "-$2" definiert, der zum Aufruf der Hilfsnachricht reserviert ist.
+
+Error arg def option short name usage:
+  en: >
+    Error: The option with the identifier "$1" has the short option name "-$2"
+    defined, which is reserved for invoking the usage message.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" hat den kurzen Optionsnamen
+    "-$2" definiert, der zum Aufruf der Benutzungsnachricht reserviert ist.
+
+Error arg def option short name version:
+  en: >
+    Error: The option with the identifier "$1" has the short option name "-$2"
+    defined, which is reserved for invoking the version message.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" hat den kurzen Optionsnamen
+    "-$2" definiert, der zum Aufruf der Versionsnachricht reserviert ist.
+
+Error arg def option short name length:
+  en: >
+    Error: The option with the identifier "$1" has the short option name "-$2"
+    defined with more than 1 character length.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" hat den kurzen Optionsnamen
+    "-$2" mit mehr als einem Zeichen Länge definiert.
+
+Error arg def option short name duplication 1:
+  en: >
+    Error: The option with the identifier "$1" has the short option name "-$2"
+    given $3 times.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" hat den kurzen Optionsnamen
+    "-$2" $3-mal gegeben.
+
+Error arg def option short name duplication 2:
+  en: >
+    Error: The option with the identifier "$1" has the short option name "-$2"
+    given, but that is already in use by "$3".
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" hat den kurzen Optionsnamen
+    "-$2" gegeben, dieser wird aber bereits von "$3" genutzt.
+
+Error arg def option long name empty:
+  en: >
+    Error: The option with the identifier "$1" has an empty string given as one
+    of the $2 long option names, instead of a legit name.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" hat einen Leerstring als
+    einen der $2 langen Optionsnamen gegeben, statt einen zulässigen Namen.
+
+Error arg def option long name help:
+  en: >
+    Error: The option with the identifier "$1" has the long option name "--$2"
+    defined, which is reserved for invoking the help message.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" hat den langen Optionsnamen
+    "--$2" definiert, der zum Aufruf der Hilfsnachricht reserviert ist.
+
+Error arg def option long name usage:
+  en: >
+    Error: The option with the identifier "$1" has the long option name "--$2"
+    defined, which is reserved for invoking the usage message.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" hat den langen Optionsnamen
+    "--$2" definiert, der zum Aufruf der Benutzungsnachricht reserviert ist.
+
+Error arg def option long name version:
+  en: >
+    Error: The option with the identifier "$1" has the long option name "--$2"
+    defined, which is reserved for invoking the version message.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" hat den langen Optionsnamen
+    "--$2" definiert, der zum Aufruf der Versionsnachricht reserviert ist.
+
+Error arg def option long name length:
+  en: >
+    Error: The option with the identifier "$1" has the long option name "--$2"
+    defined with less than 2 characters length.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" hat den langen Optionsnamen
+    "--$2" mit weniger als zwei Zeichen Länge definiert.
+
+Error arg def option long name duplication 1:
+  en: >
+    Error: The option with the identifier "$1" has the long option name "--$2"
+    given $3 times.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" hat den langen Optionsnamen
+    "--$2" $3-mal gegeben.
+
+Error arg def option long name duplication 2:
+  en: >
+    Error: The option with the identifier "$1" has the long option name "--$2"
+    given, but that is already in use by "$3".
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" hat den langen Optionsnamen
+    "--$2" gegeben, dieser wird aber bereits von "$3" genutzt.
+
+Error arg def option default value flag:
+  en: >
+    Error: The option with the identifier "$1" must have its default value set
+    to "true" or "false" (as it is allowed to take 0 values), but has {$2}
+    defined.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" muss den Vorgabewert auf
+    "wahr" ("true") oder "falsch" ("false") gesetzt haben (da sie 0 Werte
+    nehmen darf), hat aber {$2} definiert.
+
+Error arg def option default value 1:
   en: >
     Error: The option with the identifier "$1" requires 1 value, but has $2
-    given as default.
+    given as default values.
   de: >
     Fehler: Die Option mit dem Identifikator "$1" erfordert 1 Wert, hat aber $2
-    als Vorgabe gegeben.
+    als Vorgabewerte gegeben.
 
-Error arg def option default 2:
+Error arg def option default value 2:
   en: >
     Error: The option with the identifier "$1" requires $2 values, but has $3
-    given as default.
+    given as default values.
   de: >
     Fehler: Die Option mit dem Identifikator "$1" erfordert $2 Werte, hat aber
-    $3 als Vorgabe gegeben.
+    $3 als Vorgabewerte gegeben.
 
-Error arg def option choice flag:
+Error arg def option choice value flag:
   en: >
     Error: The option with the identifier "$1" accepts no choice values, but
     has {$2} given.
@@ -733,7 +1035,7 @@ Error arg def option choice flag:
     Fehler: Die Option mit dem Identifikator "$1" nimmt keine Auswahlwerte, hat
     aber {$2} gegeben.
 
-Error arg def option choice true:
+Error arg def option choice value true false:
   en: >
     Error: The option with the identifier "$1" has {$2} given as choice values,
     while "true" and "false" cannot be any.
@@ -741,13 +1043,13 @@ Error arg def option choice true:
     Fehler: Die Option mit dem Identifikator "$1" hat {$2} als Auswahlwerte
     gegeben, während "wahr" ("true") und "falsch" ("false") keine sein können.
 
-Error arg def option choice default:
+Error arg def option choice value default:
   en: >
     Error: The option with the identifier "$1" accepts only the choice values
-    {$2}, but has {$3} given as default.
+    {$2}, but has {$3} given as default values.
   de: >
     Fehler: Die Option mit dem Identifikator "$1" nimmt nur die Auswahlwerte
-    {$2}, hat aber {$3} als Vorgabe gegeben.
+    {$2}, hat aber {$3} als Vorgabewerte gegeben.
 
 Error arg def option type:
   en: >
@@ -759,7 +1061,55 @@ Error arg def option type:
     gegeben, aber nur "bool", "char", "float", "file", "int", "str", und "uint"
     werden unterstützt.
 
-Error arg def option bool:
+Error arg def option default value bool:
+  en: >
+    Error: The option with the identifier "$1" has "$2" given as default value,
+    which must be a Boolean, i.e., "true" or "false".
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" hat "$2" als Vorgabewert
+    gegeben, welcher ein boolscher Wert (Boolean) sein muss, d. h. "wahr"
+    ("true") oder "falsch" ("false").
+
+Error arg def option default value char:
+  en: >
+    Error: The option with the identifier "$1" has "$2" given as default value,
+    which must be a character, i.e., a string comprising one printable ASCII
+    character.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" hat "$2" als Vorgabewert
+    gegeben, welcher ein einzelnes Zeichen sein muss, d. h. eine Zeichenkette
+    aus einem druckbaren ASCII-Zeichen.
+
+Error arg def option default value float:
+  en: >
+    Error: The option with the identifier "$1" has "$2" given as default value,
+    which must be a floating-point number, i.e., comprise only digits, a dot,
+    and possibly a leading sign.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" hat "$2" als Vorgabewert
+    gegeben, welcher eine Gleitkommazahl sein muss, d. h. nur Ziffern, einen
+    Punkt, und ggf. ein Vorzeichen umfassen kann.
+
+Error arg def option default value int:
+  en: >
+    Error: The option with the identifier "$1" has "$2" given as default value,
+    which must be an integer, i.e., comprise only digits and possibly a leading
+    sign.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" hat "$2" als Vorgabewert
+    gegeben, welcher eine Ganzzahl sein muss, d. h. nur Ziffern und ggf. ein
+    Vorzeichen umfassen kann.
+
+Error arg def option default value uint:
+  en: >
+    Error: The option with the identifier "$1" has "$2" given as default value,
+    which must be an unsigned integer, i.e., comprise only digits and no sign.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" hat "$2" als Vorgabewert
+    gegeben, welcher eine natürliche Zahl sein muss, d. h. nur Ziffern und kein
+    Vorzeichen umfassen kann.
+
+Error arg def option choice value bool:
   en: >
     Error: The option with the identifier "$1" has "$2" given as choice value,
     which must be a Boolean, i.e., "true" or "false".
@@ -768,17 +1118,17 @@ Error arg def option bool:
     gegeben, welcher ein boolscher Wert (Boolean) sein muss, d. h. "wahr"
     ("true") oder "falsch" ("false").
 
-Error arg def option char:
+Error arg def option choice value char:
   en: >
     Error: The option with the identifier "$1" has "$2" given as choice value,
-    which must be a character, i.e., a string comprising one printable
-    ASCII character.
+    which must be a character, i.e., a string comprising one printable ASCII
+    character.
   de: >
     Fehler: Die Option mit dem Identifikator "$1" hat "$2" als Auswahlwert
     gegeben, welcher ein einzelnes Zeichen sein muss, d. h. eine Zeichenkette
     aus einem druckbaren ASCII-Zeichen.
 
-Error arg def option float:
+Error arg def option choice value float:
   en: >
     Error: The option with the identifier "$1" has "$2" given as choice value,
     which must be a floating-point number, i.e., comprise only digits, a dot,
@@ -788,7 +1138,7 @@ Error arg def option float:
     gegeben, welcher eine Gleitkommazahl sein muss, d. h. nur Ziffern, einen
     Punkt, und ggf. ein Vorzeichen umfassen kann.
 
-Error arg def option int:
+Error arg def option choice value int:
   en: >
     Error: The option with the identifier "$1" has "$2" given as choice value,
     which must be an integer, i.e., comprise only digits and possibly a leading
@@ -798,7 +1148,7 @@ Error arg def option int:
     gegeben, welcher eine Ganzzahl sein muss, d. h. nur Ziffern und ggf. ein
     Vorzeichen umfassen kann.
 
-Error arg def option uint:
+Error arg def option choice value uint:
   en: >
     Error: The option with the identifier "$1" has "$2" given as choice value,
     which must be an unsigned integer, i.e., comprise only digits and no sign.
@@ -806,6 +1156,28 @@ Error arg def option uint:
     Fehler: Die Option mit dem Identifikator "$1" hat "$2" als Auswahlwert
     gegeben, welcher eine natürliche Zahl sein muss, d. h. nur Ziffern und kein
     Vorzeichen umfassen kann.
+
+Error arg def option arg number:
+  en: >
+    Error: The option with the identifier "$1" has "$2" given as argument
+    number, which must be an unsigned integer or either of "+", "*", and "?".
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" hat "$2" als Argumentanzahl
+    gegeben, die eine natürliche Zahl oder "+", "*", oder "?" sein muss.
+
+Error arg def option arg group:
+  en: >
+    Error: The option with the identifier "$1" is defined for the argument
+    group "$2", but must not belong to neither "$3", as defined by the
+    ARGPARSER_SUBCOMMAND_GROUP, nor to "$4", as defined by the
+    ARGPARSER_POSITIONAL_ARG_GROUP, nor to "$5", as defined by the
+    ARGPARSER_HELP_ARG_GROUP.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" ist für die Argumentgruppe
+    "$2" definiert, darf aber weder zu "$3" gehören, wie durch die
+    ARGPARSER_SUBCOMMAND_GROUP definiert ist, noch zu "$4", wie durch die
+    ARGPARSER_POSITIONAL_ARG_GROUP definiert ist, noch zu "$5", wie durch die
+    ARGPARSER_HELP_ARG_GROUP definiert ist.
 
 Error arg def option note:
   en: >
@@ -816,7 +1188,16 @@ Error arg def option note:
     gegeben, aber nur "deprecated" ("veraltet") und "hidden" ("versteckt")
     werden unterstützt.
 
-# 3.7.  Define the translations for parsing the arguments.
+Warning arg def option help text:
+  en: >
+    Warning: The option with the identifier "$1" has no help text defined, but
+    for user-friendliness, defining one is recommended.
+  de: >
+    Warnung: Die Option mit dem Identifikator "$1" hat keinen Hilfetext
+    definiert, zwecks Benutzerfreundlichkeit ist es aber empfohlen, einen zu
+    definieren.
+
+# Translations for parsing the arguments.
 Error arg double hyphen:
   en: >
     Error: The special option "--" takes no value.
@@ -841,6 +1222,7 @@ Error arg unknown:
   de: >
     Fehler: Das Argument "$1" ist unbekannt.
 
+# Translations for parsing the long options.
 Error long option match:
   en: >
     Error: The long option "$1" matches multiple long options.
@@ -861,6 +1243,7 @@ Error long option unknown:
   de: >
     Fehler: Die lange Option "$1" ist unbekannt.
 
+# Translations for parsing the short options.
 Error short option merge:
   en: >
     Error: The short option "$1$2" is unknown.
@@ -873,6 +1256,7 @@ Error short option unknown:
   de: >
     Fehler: Die kurze Option "$1" ist unbekannt.
 
+# Translations for parsing the positional arguments.
 Error pos arg count 1:
   en: >
     Error: 1 positional argument is required, but $1 are given.
@@ -891,12 +1275,33 @@ Error pos arg count 3:
   de: >
     Fehler: $1 positionale Argumente sind erforderlich, aber $2 sind gegeben.
 
-# 3.8.  Define the translations for checking the values of the
-#       arguments.
+# Translations for checking the values of the arguments.
+Error arg subcommand 1:
+  en: >
+    Error: The argument "$1" is known, but defined for the subcommand "$2",
+    which is not given.
+  de: >
+    Fehler: Das Argument "$1" ist bekannt, aber für das Subkommando "$2"
+    definiert, das nicht gegeben ist.
+
+Error arg subcommand 2:
+  en: >
+    Error: The argument "$1" is known, but not defined for the given subcommand
+    "$2".
+  de: >
+    Fehler: Das Argument "$1" ist bekannt, aber für das gegebene Subkommando
+    "$2" nicht definiert.
+
+Warning deprecation:
+  en: >
+    Warning: The argument "$1" is deprecated and will be removed in the future.
+  de: >
+    Warnung: Das Argument "$1" ist veraltet und wird in Zukunft entfernt.
+
 Error arg no flag 1:
   en: >
-    Error: Error: The option "$1" is no flag and thus needs a value
-    after the option name.
+    Error: The option "$1" is no flag and thus needs a value after the option
+    name.
   de: >
     Fehler: Die Option "$1" ist kein Flag und kann benötigt daher einen Wert
     nach dem Optionsnamen.
@@ -930,11 +1335,27 @@ Error wrong arg number 1:
   de: >
     Fehler: Das Argument "$1" erfordert mindestens 1 Wert, hat aber $2 gegeben.
 
+Warning wrong arg number 1:
+  en: >
+    Warning: The argument "$1" requires at least 1 value, but has $2
+    given.  For convenience, the default ($3) is used.
+  de: >
+    Warnung: Das Argument "$1" erfordert mindestens 1 Wert, hat aber $2
+    gegeben.  Zwecks Benutzerfreundlichkeit wird die Vorgabe ($3) genutzt.
+
 Error wrong arg number 2:
   en: >
     Error: The argument "$1" requires 0 or 1 value, but has $2 given.
   de: >
     Fehler: Das Argument "$1" erfordert 0 oder 1 Wert, hat aber $2 gegeben.
+
+Warning wrong arg number 2:
+  en: >
+    Warning: The argument "$1" requires 0 or 1 value, but has $2 given.  For
+    convenience, the default ($3) is used.
+  de: >
+    Warnung: Das Argument "$1" erfordert 0 oder 1 Wert, hat aber $2
+    gegeben.  Zwecks Benutzerfreundlichkeit wird die Vorgabe ($3) genutzt.
 
 Error wrong arg number 3:
   en: >
@@ -942,11 +1363,27 @@ Error wrong arg number 3:
   de: >
     Fehler: Das Argument "$1" erfordert 1 Wert, hat aber $2 gegeben.
 
+Warning wrong arg number 3:
+  en: >
+    Warning: The argument "$1" requires 1 value, but has $2 given.  For
+    convenience, the default ($3) is used.
+  de: >
+    Warnung: Das Argument "$1" erfordert 1 Wert, hat aber $2 gegeben.  Zwecks
+    Benutzerfreundlichkeit wird die Vorgabe ($3) genutzt.
+
 Error wrong arg number 4:
   en: >
     Error: The argument "$1" requires $2 values, but has $3 given.
   de: >
     Fehler: Das Argument "$1" erfordert $2 Werte, hat aber $3 gegeben.
+
+Warning wrong arg number 4:
+  en: >
+    Warning: The argument "$1" requires $2 values, but has $3 given.  For
+    convenience, the default ($4) is used.
+  de: >
+    Warnung: Das Argument "$1" erfordert $2 Werte, hat aber $3 gegeben.  Zwecks
+    Benutzerfreundlichkeit wird die Vorgabe ($4) genutzt.
 
 Error arg choice:
   en: >
@@ -995,119 +1432,3 @@ Error arg uint:
   de: >
     Fehler: Das Argument "$1" ist auf "$2" gesetzt, muss aber eine
     natürliche Zahl sein, d. h. nur Ziffern und kein Vorzeichen umfassen.
-
-# 3.9.  Define the translations for reading the translation file.
-Error YAML:
-  en: >
-    Error: The YAML line "$1" could not be recognized.
-  de: >
-    Fehler: Die YAML-Zeile "$1" konnte nicht erkannt werden.
-
-# 3.10. Define the translations for reading the style file.
-Error style file equals sign:
-  en: >
-    Error: In the style file "$1", the line "$2" doesn't contain an equals sign
-    ("="), nor is it empty or commented.
-  de: >
-    Fehler: In der Stildatei "$1" enthält die Zeile "$2" kein
-    Gleichheitszeichen ("=") und ist auch nicht leer oder auskommentiert.
-
-Error style file frame styles:
-  en: >
-    Error: The style "$1" is set to "$2", but the values must lie in {$3} for
-    colors and in {$4} for frame styles.  Colors, only, may be prefixed by
-    \"bright_\" or suffixed by \"_fg\" or \"_bg\".
-  de: >
-    Fehler: Der Stil "$1" ist auf "$2" gesetzt, die Werte müssen aber in
-    {$3} für Farben und in {$4} für Rahmenstile liegen.  Ausschließlich Farben
-    können mit dem Präfix "bright_" ("hell_") oder dem Suffix "_fg"
-    (Vordergrund) oder "_bg" (Hintergrund) gegeben werden.
-
-Error style file text styles:
-  en: >
-    Error: The style "$1" is set to "$2", but the values must lie in {$3} for
-    colors and in {$4} for text styles.  Colors, only, may be prefixed by
-    "bright_" or suffixed by "_fg" or "_bg".
-  de: >
-    Fehler: Der Stil "$1" ist auf "$2" gesetzt, die Werte müssen aber in
-    {$3} für Farben und in {$4} für Textstile liegen.  Ausschließlich Farben
-    können mit dem Präfix "bright_" ("hell_") oder dem Suffix "_fg"
-    (Vordergrund) oder "_bg" (Hintergrund) gegeben werden.
-
-# 3.10. Define the translations for creating the help or usage messages.
-Error include directive:
-  en: >
-    Error: The include directive "$1" could not be recognized.
-  de: >
-    Fehler: Die Include-Anweisung "$1" konnte nicht erkannt werden.
-
-# 4.    Define the translations for warning messages.
-# 4.1.  Define the translations for translating from the translation
-#       file.
-Warning no identifier:
-  en: >
-    Warning: In the translation file "$1", the identifier "$2" is missing.  For
-    convenience, the untranslated string is used, instead.
-  de: >
-    Warnung: In der Übersetzungsdatei "$1" fehlt der Identifikator "$2". 
-    Zwecks Einfachheit wird stattdessen die nicht übersetzte Zeichenkette
-    genutzt.
-
-Warning no translation:
-  en: >
-    Warning: In the translation file "$1", the translation to "$2" for the
-    identifier "$3" is missing.  For convenience, the untranslated string is
-    used, instead.
-  de: >
-    Warnung: In der Übersetzungsdatei "$1" fehlt die Übersetzung nach "$2" für
-    den Identifikator "$3".  Zwecks Einfachheit wird stattdessen die nicht
-    übersetzte Zeichenkette genutzt.
-
-# 4.2.  Define the translations for reading the style file.
-Warning style file message key:
-  en: >
-    Warning: In the style file "$1", the line "$2" sets a non-existent message
-    key.
-  de: >
-    Warnung: In der Stildatei "$1" setzt die Zeile "$2" einen inexistenten
-    Nachrichten-Schlüssel.
-
-# 4.3.  Define the translations for checking the values of the
-#       arguments.
-Warning deprecation:
-  en: >
-    Warning: The argument "$1" is deprecated and will be removed in the future.
-  de: >
-    Warnung: Das Argument "$1" ist veraltet und wird in Zukunft entfernt.
-
-Warning wrong arg number 1:
-  en: >
-    Warning: The argument "$1" requires at least 1 value, but has $2 given. 
-    For convenience, the default ($3) is used.
-  de: >
-    Warnung: Das Argument "$1" erfordert mindestens 1 Wert, hat aber $2
-    gegeben.  Zwecks Einfachheit wird die Vorgabe ($3) genutzt.
-
-Warning wrong arg number 2:
-  en: >
-    Warning: The argument "$1" requires at 0 or 1 value, but has $2 given.  For
-    convenience, the default ($3) is used.
-  de: >
-    Warnung: Das Argument "$1" erfordert 0 oder 1 Wert, hat aber $2 gegeben. 
-    Zwecks Einfachheit wird die Vorgabe ($3) genutzt.
-
-Warning wrong arg number 3:
-  en: >
-    Warning: The argument "$1" requires 1 value, but has $2 given.  For
-    convenience, the default ($3) is used.
-  de: >
-    Warnung: Das Argument "$1" erfordert 1 Wert, hat aber $2 gegeben.  Zwecks
-    Einfachheit wird die Vorgabe ($3) genutzt.
-
-Warning wrong arg number 4:
-  en: >
-    Warning: The argument "$1" requires $2 values, but has $3 given.  For
-    convenience, the default ($4) is used.
-  de: >
-    Warnung: Das Argument "$1" erfordert $2 Werte, hat aber $3 gegeben.  Zwecks
-    Einfachheit wird die Vorgabe ($4) genutzt.

@@ -73,7 +73,8 @@ When you (as a user) have to deal with unknown scripts or programs, maybe the fi
 $ bash ../tutorial/try_argparser.sh --help
 Usage: try_argparser.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2,pos_2
 
-Mandatory arguments to long options are mandatory for short options too.
+Mandatory or optional arguments to long options are mandatory or optional for
+short options too.
 
 +- Positional arguments ----------------------------------------------------------+
 | [pos_1=                                     one positional argument with        |
@@ -261,7 +262,7 @@ You may have noticed that we didn't use an equals sign (`=`) to delimit option n
 
 This has the additional advantage that it's clear to a user (reading *e.g.* your script's manual) that the value belongs to the option before, and that it's not a flag followed by a positional argument. This may confuse even further since setting [`ARGPARSER_ALLOW_ARG_INTERMIXING`](../reference/environment_variables/environment_variables.md#945-argparser_allow_arg_intermixing) to `false` instructs the Argparser to treat values following option names only as positional arguments when they're separated by a double hyphen or doubled plus sign, rendering the latter interpretation only in some cases valid, but not even in all.
 
-Moreover, using an equals sign is the only way of providing arguments starting with a hyphen to an option, since a whitespace-separated word would be interpreted as (possibly nonexistent) option name. By this, you can give negative numbers on the command line.
+Moreover, using an equals sign is the only way of providing arguments starting with a hyphen to a keyword argument, since a whitespace-separated word would be interpreted as (possibly nonexistent) option name. By this, you can give negative numbers on the command line.
 
 Let's have a look at another example invocation:
 
@@ -507,7 +508,8 @@ First, let's see how the help message has changed by defining subcommands:
 $ bash ../tutorial/try_subcommands.sh --help
 Usage: try_subcommands.sh [cmd_1 | cmd_2] [OPTIONS] ARGUMENTS -- [pos_1]
 
-Mandatory arguments to long options are mandatory for short options too.
+Mandatory or optional arguments to long options are mandatory or optional for
+short options too.
 
 +- Subcommands -------------------------------------------------------------------+
 | cmd_1                       first subcommand                                    |
@@ -569,7 +571,7 @@ Mandatory arguments to long options are mandatory for short options too.
 $ bash ../tutorial/try_subcommands.sh cmd_2 --help
 Usage: try_subcommands.sh cmd_2 [OPTIONS]
 
-Mandatory arguments to long options are mandatory for short options too.
+Optional arguments to long options are optional for short options too.
 
 +- Optional options ------------------------------------------------------+
 | [-d=                   one value with default and choice (default: "A") |
