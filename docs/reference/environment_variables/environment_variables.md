@@ -142,17 +142,17 @@
 - ***Type:*** *file* (Filepath)
 - ***Allowed values:*** Any legit filepath or the empty string `""`
 - ***Default value:*** `""`
-- ***Description:*** The path to a file holding the Argparser configuration. The lines will be read into environment variables, but those that are already defined within your script or environment override the specification in the `ARGPARSER_CONFIG_FILE`. This file may be used by multiple scripts.
+- ***Description:*** The path to a file holding the Argparser configuration. The lines will be read into environment variables, but those that are already defined within your script or environment override the specification in the [`ARGPARSER_CONFIG_FILE`](#9419-argparser_config_file). This file may be used by multiple scripts.
 
 > [!CAUTION]
-> The Argparser reads the lines into variables without checking them! If the user can modify the `ARGPARSER_CONFIG_FILE` (either the variable's value or the referenced file), this is prone to command injection!
+> The Argparser reads the lines into variables without checking them! If the user can modify the [`ARGPARSER_CONFIG_FILE`](#9419-argparser_config_file) (either the variable's value or the referenced file), this is prone to command injection!
 
 #### 9.4.20. `ARGPARSER_COUNT_FLAGS`
 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `false`
-- ***Description:*** Whether to count flags instead of setting them to `true` or `false` based on the last prefix used on the command line. When `ARGPARSER_COUNT_FLAGS` is set to `false`, `-a -a +a` would result in `a` being set to `false`, since the last prefix was a plus sign. When `ARGPARSER_COUNT_FLAGS` is set to `true` instead, `a` would be set to `1`, as any `true` (hyphen) increases the count by `1` and any `false` (plus sign) decreases it by `1`. Flags that are absent from the command line are assigned `1` if their default value is `true`, and `-1` if their default value is `false`. This results in the same behavior when a flag is `true` per default and absent, or set with `-a` (yielding `a == 1`); or when a flag is `false` per default and absent, or set with `+a` (yielding `a == -1`). Counting flags can be helpful when, *e.g.*, different levels of verbosity are allowed. If [`ARGPARSER_ALLOW_OPTION_MERGING`](#949-argparser_allow_option_merging) is also set to `true`, the user can give `-vvv` on the command line for the third level of verbosity (given it's handled by your script).
+- ***Description:*** Whether to count flags instead of setting them to `true` or `false` based on the last prefix used on the command line. When [`ARGPARSER_COUNT_FLAGS`](#9420-argparser_count_flags) is set to `false`, `-a -a +a` would result in `a` being set to `false`, since the last prefix was a plus sign. When [`ARGPARSER_COUNT_FLAGS`](#9420-argparser_count_flags) is set to `true` instead, `a` would be set to `1`, as any `true` (hyphen) increases the count by `1` and any `false` (plus sign) decreases it by `1`. Flags that are absent from the command line are assigned `1` if their default value is `true`, and `-1` if their default value is `false`. This results in the same behavior when a flag is `true` per default and absent, or set with `-a` (yielding `a == 1`); or when a flag is `false` per default and absent, or set with `+a` (yielding `a == -1`). Counting flags can be helpful when, *e.g.*, different levels of verbosity are allowed. If [`ARGPARSER_ALLOW_OPTION_MERGING`](#949-argparser_allow_option_merging) is also set to `true`, the user can give `-vvv` on the command line for the third level of verbosity (given it's handled by your script).
 
 #### 9.4.21. `ARGPARSER_CREATE_ARG_DEF`
 
@@ -225,7 +225,7 @@
 - ***Type:*** *char* (Character)
 - ***Allowed values:*** Any unique character that's not used as a line's first character in an [`ARGPARSER_HELP_FILE`](#9429-argparser_help_file)
 - ***Default value:*** `"@"`
-- ***Description:*** The character that introduces an include directive in an [`ARGPARSER_HELP_FILE`](#9429-argparser_help_file). You must ensure that it is set to a character or glyph that does not occur as any line's first character in the help file, where it should not mean an include directive. This is only evaluated if an `ARGPARSER_HELP_FILE` is given.
+- ***Description:*** The character that introduces an include directive in an [`ARGPARSER_HELP_FILE`](#9429-argparser_help_file). You must ensure that it is set to a character or glyph that does not occur as any line's first character in the help file, where it should not mean an include directive. This is only evaluated if an [`ARGPARSER_HELP_FILE`](#9429-argparser_help_file) is given.
 
 #### 9.4.31. `ARGPARSER_HELP_FILE_KEEP_COMMENTS`
 
@@ -277,15 +277,15 @@
 - ***Type:*** *uint* (Unsigned integer)
 - ***Allowed values:*** Any non-negative integer, including `0`
 - ***Default value:*** `0`
-- ***Description:*** The maximum column width of the third column in the generated help message. This column holds the help text of the arguments, hence, it usually should be rather wide. The column's content gets wrapped by line breaks if its width exceeds the `ARGPARSER_MAX_COL_WIDTH_3`. If it is less wide, the column is shrunk accordingly. A value of `0` disables this variable in favor of [`ARGPARSER_MAX_WIDTH`](#9438-argparser_max_width). For details, refer to `ARGPARSER_MAX_WIDTH`.
+- ***Description:*** The maximum column width of the third column in the generated help message. This column holds the help text of the arguments, hence, it usually should be rather wide. The column's content gets wrapped by line breaks if its width exceeds the `ARGPARSER_MAX_COL_WIDTH_3`. If it is less wide, the column is shrunk accordingly. A value of `0` disables this variable in favor of [`ARGPARSER_MAX_WIDTH`](#9438-argparser_max_width). For details, refer to [`ARGPARSER_MAX_WIDTH`](#9438-argparser_max_width).
 
 #### 9.4.38. `ARGPARSER_MAX_WIDTH`
 
 - ***Type:*** *uint* (Unsigned integer)
 - ***Allowed values:*** Any positive integer
 - ***Default value:*** `79`
-- ***Description:*** The maximum width of help, usage, error, and warning messages. For help messages, the widths of the first two columns are controlled by [`ARGPARSER_MAX_COL_WIDTH_1`](#9435-argparser_max_col_width_1) and [`ARGPARSER_MAX_COL_WIDTH_2`](#9436-argparser_max_col_width_2), respectively, whose contents are always wrapped by line breaks to fit this width, and shrunk if less wide. For the third column, [`ARGPARSER_MAX_COL_WIDTH_3`](#9437-argparser_max_col_width_3) may be set to `0` to disable this behavior in favor of a fixed width, set by `ARGPARSER_MAX_WIDTH`. Thereby, the third column takes up as much space as left, *i.e.*, the help message's maximum width minus the actual (not maximum) widths of the first two columns.  
-It is recommendable to have a total width of all messages, including the help message, of 79 characters. As one space is always inserted as separation between the first and second column, as well as between the second and third column, the sum of `ARGPARSER_MAX_COL_WIDTH_1`, `ARGPARSER_MAX_COL_WIDTH_2`, and `ARGPARSER_MAX_COL_WIDTH_3` should equal 77. As long options are longer than short options, the second column should be far wider than the first. The help text in the third column consists of human-readable words and is thus less bound to word wrapping restrictions. By this, it is easier to set the third column's maximum width to 77 characters minus the total maximum width of the unwrapped first two columns to get an optimized help message layout&mdash;or use `ARGPARSER_MAX_WIDTH` for an actual, not maximum, width.
+- ***Description:*** The maximum width of help, usage, error, and warning messages. For help messages, the widths of the first two columns are controlled by [`ARGPARSER_MAX_COL_WIDTH_1`](#9435-argparser_max_col_width_1) and [`ARGPARSER_MAX_COL_WIDTH_2`](#9436-argparser_max_col_width_2), respectively, whose contents are always wrapped by line breaks to fit this width, and shrunk if less wide. For the third column, [`ARGPARSER_MAX_COL_WIDTH_3`](#9437-argparser_max_col_width_3) may be set to `0` to disable this behavior in favor of a fixed width, set by [`ARGPARSER_MAX_WIDTH`](#9438-argparser_max_width). Thereby, the third column takes up as much space as left, *i.e.*, the help message's maximum width minus the actual (not maximum) widths of the first two columns.  
+It is recommendable to have a total width of all messages, including the help message, of 79 characters. As one space is always inserted as separation between the first and second column, as well as between the second and third column, the sum of `ARGPARSER_MAX_COL_WIDTH_1`, `ARGPARSER_MAX_COL_WIDTH_2`, and `ARGPARSER_MAX_COL_WIDTH_3` should equal 77. As long options are longer than short options, the second column should be far wider than the first. The help text in the third column consists of human-readable words and is thus less bound to word wrapping restrictions. By this, it is easier to set the third column's maximum width to 77 characters minus the total maximum width of the unwrapped first two columns to get an optimized help message layout&mdash;or use [`ARGPARSER_MAX_WIDTH`](#9438-argparser_max_width) for an actual, not maximum, width.
 
 #### 9.4.39. `ARGPARSER_POSITIONAL_ARG_GROUP`
 
@@ -307,8 +307,8 @@ It is recommendable to have a total width of all messages, including the help me
 - ***Allowed values:*** Any string
 - ***Default value:*** `"${0##*/}"`
 - ***Description:*** The name of your script as it should appear in the help, usage, version, error, and warning messages. By default, it is the name used upon invoking your script (`"$0"`), trimmed by everything before the last slash character (mimicking the behavior of [`basename`](https://man7.org/linux/man-pages/man1/basename.1.html "man7.org &rightarrow; man pages &rightarrow; basename(1)")).  
-If, for example, you want to give your script a symlink, but don't want this symlink's name to be used in the help and usage messages, then you can provide a custom, canonicalized `ARGPARSER_SCRIPT_NAME`. Alternatively, if your script forms a sub-part of a larger program, it may be named `program_part.sh`, but should be called as `program name [ARGUMENTS]`. Then, `program.sh` could parse its positional argument `name` and call `program_part.sh`, but on the command line, you want to hide this implementation detail and refer to `program_part.sh` as `program name`, so you set `ARGPARSER_SCRIPT_NAME` accordingly.  
-Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the Argparser from shells other than Bash, using pipes or process substitution. Then, it is impossible to obtain the caller's name using only Bash builtins and commands like [`ps`](https://man7.org/linux/man-pages/man1/ps.1.html "man7.org &rightarrow; man pages &rightarrow; ps(1)") would be needed&mdash;violating one of the Argparser's central design principles of no dependencies but Bash.
+If, for example, you want to give your script a symlink, but don't want this symlink's name to be used in the help and usage messages, then you can provide a custom, canonicalized [`ARGPARSER_SCRIPT_NAME`](#9441-argparser_script_name). Alternatively, if your script forms a sub-part of a larger program, it may be named `program_part.sh`, but should be called as `program name [ARGUMENTS]`. Then, `program.sh` could parse its positional argument `name` and call `program_part.sh`, but on the command line, you want to hide this implementation detail and refer to `program_part.sh` as `program name`, so you set [`ARGPARSER_SCRIPT_NAME`](#9441-argparser_script_name) accordingly.  
+Further, setting [`ARGPARSER_SCRIPT_NAME`](#9441-argparser_script_name) is strictly necessary when running the Argparser from shells other than Bash, using pipes or process substitution. Then, it is impossible to obtain the caller's name using only Bash builtins and commands like [`ps`](https://man7.org/linux/man-pages/man1/ps.1.html "man7.org &rightarrow; man pages &rightarrow; ps(1)") would be needed&mdash;violating one of the Argparser's central design principles of no dependencies but Bash.
 
 #### 9.4.42. `ARGPARSER_SET_ARGS`
 
@@ -360,7 +360,7 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 - ***Type:*** *file* (Filepath)
 - ***Allowed values:*** Any legit filepath or the empty string `""`
 - ***Default value:*** `""`
-- ***Description:*** The path to a simplified [YAML](https://en.wikipedia.org/wiki/YAML "wikipedia.org &rightarrow; YAML") file holding the translation of (mostly) auto-generated parts in the help, usage, error, and warning messages. This file can be used by multiple scripts. As a YAML file, it contains the translation in a key&ndash;value layout, separated by colons and using significant indentation. Each group key must specify the language identifier used for the [`ARGPARSER_LANGUAGE`](#9434-argparser_language). As many languages as desired can be given, which allows the localization for multiple languages with just one `ARGPARSER_TRANSLATION_FILE`. The rows can be in any order, since they are read into an associative array, which, by definition, has no order.
+- ***Description:*** The path to a simplified [YAML](https://en.wikipedia.org/wiki/YAML "wikipedia.org &rightarrow; YAML") file holding the translation of (mostly) auto-generated parts in the help, usage, error, and warning messages. This file can be used by multiple scripts. As a YAML file, it contains the translation in a key&ndash;value layout, separated by colons and using significant indentation. Each group key must specify the language identifier used for the [`ARGPARSER_LANGUAGE`](#9434-argparser_language). As many languages as desired can be given, which allows the localization for multiple languages with just one [`ARGPARSER_TRANSLATION_FILE`](#9448-argparser_translation_file). The rows can be in any order, since they are read into an associative array, which, by definition, has no order.
 
 #### 9.4.49. `ARGPARSER_UNSET_ARGS`
 
@@ -402,7 +402,7 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 - ***Type:*** *char* (Character)
 - ***Allowed values:*** Any unique character that's not used as a line's first character in an [`ARGPARSER_USAGE_FILE`](#9453-argparser_usage_file)
 - ***Default value:*** `"@"`
-- ***Description:*** The character that introduces an include directive in an [`ARGPARSER_USAGE_FILE`](#9453-argparser_usage_file). You must ensure that it is set to a character or glyph that does not occur as any line's first character in the usage file, where it should not mean an include directive. This is only evaluated if an `ARGPARSER_USAGE_FILE` is given.
+- ***Description:*** The character that introduces an include directive in an [`ARGPARSER_USAGE_FILE`](#9453-argparser_usage_file). You must ensure that it is set to a character or glyph that does not occur as any line's first character in the usage file, where it should not mean an include directive. This is only evaluated if an [`ARGPARSER_USAGE_FILE`](#9453-argparser_usage_file) is given.
 
 #### 9.4.55. `ARGPARSER_USAGE_FILE_KEEP_COMMENTS`
 
@@ -447,7 +447,7 @@ Further, setting `ARGPARSER_SCRIPT_NAME` is strictly necessary when running the 
 - ***Type:*** *bool* (Boolean)
 - ***Allowed values:*** `true` and `false`
 - ***Default value:*** `true`
-- ***Description:*** Whether to use colors, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters"), for help, usage, version, error, and warning messages. This requires [`ARGPARSER_USE_STYLES`](#9463-argparser_use_styles) to be set to `"always"`, `"file"`, or `"tty"` to take effect. `ARGPARSER_USE_COLORS` overrides [`NO_COLOR`](https://no-color.org/ "no-color.org") and [`FORCE_COLOR`](https://force-color.org/ "force-color.org").
+- ***Description:*** Whether to use colors, internally implemented as [Select Graphic Rendition (SGR) ANSI escape sequence codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Select_Graphic_Rendition_parameters "wikipedia.org &rightarrow; ANSI escape code &rightarrow; Select Graphic Rendition parameters"), for help, usage, version, error, and warning messages. This requires [`ARGPARSER_USE_STYLES`](#9463-argparser_use_styles) to be set to `"always"`, `"file"`, or `"tty"` to take effect. [`ARGPARSER_USE_COLORS`](#9460-argparser_use_colors) overrides [`NO_COLOR`](https://no-color.org/ "no-color.org") and [`FORCE_COLOR`](https://force-color.org/ "force-color.org").
 
 #### 9.4.61. `ARGPARSER_USE_LONG_OPTIONS`
 

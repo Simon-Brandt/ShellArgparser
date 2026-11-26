@@ -46,7 +46,7 @@ help try_argparser.sh
 
 won't work as the [`help`](https://www.gnu.org/software/bash/manual/html_node/Bash-Builtins.html#index-help "gnu.org &rightarrow; Bash Builtins &rightarrow; help") command only recognizes Bash builtins.
 
-As a huge convenience, the Argparser will build the help and usage messages from the defined arguments for your script, if either of the options from `ARGPARSER_HELP_OPTIONS` or `ARGPARSER_USAGE_OPTIONS` is given on the command line (even along with others, with the help message taking precedence over the usage message). These messages indicate the subcommand names, the positional arguments' names, and the short and/or long option names, as well as the default and choice values. In the case of the help message, the argument group, the notes, and the help text from the arguments' definitions are printed, too.
+As a huge convenience, the Argparser will build the help and usage messages from the defined arguments for your script, if either of the options from [`ARGPARSER_HELP_OPTIONS`](../reference/environment_variables/environment_variables.md#9432-argparser_help_options) or [`ARGPARSER_USAGE_OPTIONS`](../reference/environment_variables/environment_variables.md#9458-argparser_usage_options) is given on the command line (even along with others, with the help message taking precedence over the usage message). These messages indicate the subcommand names, the positional arguments' names, and the short and/or long option names, as well as the default and choice values. In the case of the help message, the argument group, the notes, and the help text from the arguments' definitions are printed, too.
 
 #### 5.5.1. Help messages
 

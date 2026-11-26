@@ -34,7 +34,7 @@ $ ls -1 ../resources/arguments_*.csv ../resources/help_message_*.txt
 ```
 <!-- </include> -->
 
-then, in your script, you can set the `ARGPARSER_ARG_DEF_FILE` and `ARGPARSER_HELP_FILE` accordingly, as in our new script [`try_localization.sh`](../../tutorial/try_localization.sh). There, we dynamically extract the language as the first two characters of the `LANG` (or, alternatively, `LC_ALL` or `LANGUAGE`) environment variable. Its value is defined as the language, the country or territory, and the codeset, like `"en_US.UTF-8"` or `"de_DE.UTF-8"`.
+then, in your script, you can set the [`ARGPARSER_ARG_DEF_FILE`](../reference/environment_variables/environment_variables.md#9413-argparser_arg_def_file) and [`ARGPARSER_HELP_FILE`](../reference/environment_variables/environment_variables.md#9429-argparser_help_file) accordingly, as in our new script [`try_localization.sh`](../../tutorial/try_localization.sh). There, we dynamically extract the language as the first two characters of the `LANG` (or, alternatively, `LC_ALL` or `LANGUAGE`) environment variable. Its value is defined as the language, the country or territory, and the codeset, like `"en_US.UTF-8"` or `"de_DE.UTF-8"`.
 
 <details open>
 

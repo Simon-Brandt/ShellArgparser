@@ -72,7 +72,7 @@ By using one [`ARGPARSER_HELP_FILE_INCLUDE_CHAR`](environment_variables/environm
 
 #### 9.3.3. `@Description` directive
 
-The `@Description` directive prints the contents of [`ARGPARSER_HELP_DESCRIPTION`](environment_variables/environment_variables.md#9427-argparser_help_description), wrapped to fit [`ARGPARSER_MAX_WIDTH`](environment_variables/environment_variables.md#9438-argparser_max_width). If `ARGPARSER_HELP_DESCRIPTION` is empty (the default), nothing is printed.
+The `@Description` directive prints the contents of [`ARGPARSER_HELP_DESCRIPTION`](environment_variables/environment_variables.md#9427-argparser_help_description), wrapped to fit [`ARGPARSER_MAX_WIDTH`](environment_variables/environment_variables.md#9438-argparser_max_width). If [`ARGPARSER_HELP_DESCRIPTION`](environment_variables/environment_variables.md#9427-argparser_help_description) is empty (the default), nothing is printed.
 
 #### 9.3.4. `@Header` directive
 
