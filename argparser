@@ -9415,6 +9415,8 @@ function argparser_create_help_message() {
     local -a subcommand_names_arr
     local subcommand_names_str
     local -a subcommands
+    local translated_default
+    local translated_deprecation
     local translation
     local type
     local -a uncolorized_array
@@ -9438,6 +9440,13 @@ function argparser_create_help_message() {
             arg_groups+=("${arg_group}")
         fi
     done
+
+    # Translate the texts for the "default" and "DEPRECATED" notes.
+    argparser_translate "Default" "default"
+    translated_default="${translation}"
+
+    argparser_translate "Deprecated" "DEPRECATED"
+    translated_deprecation="${translation}"
 
     # The help message is structured in three columns: short options,
     # long options and the help text.  Populate these columns with the
@@ -9503,9 +9512,8 @@ function argparser_create_help_message() {
         # Set the third column's value.
         if [[ "${is_deprecated}" == true ]]; then
             # Deprecated.
-            argparser_translate "Deprecated" "DEPRECATED"
             argparser_colorize "${styles["deprecation_note"]}" 1 note \
-                "${translation}"
+                "${translated_deprecation}"
             new_col_3_value="(${note}) ${help_text}"
         else
             # Not deprecated.
@@ -9690,30 +9698,26 @@ function argparser_create_help_message() {
         # Set the third column's value.
         if [[ -n "${default_values_str}" && "${is_deprecated}" == true ]]; then
             # Default and deprecated.
-            argparser_translate "Deprecated" "DEPRECATED"
             argparser_colorize "${styles["deprecation_note"]}" 1 note \
-                "${translation}"
-            argparser_translate "Default" "default"
+                "${translated_deprecation}"
             argparser_colorize "${styles["default_text"]}" 1 \
-                default_text_start "(${translation}:"
+                default_text_start "(${translated_default}:"
             argparser_colorize "${styles["default_text"]}" 1 default_text_end \
                 ")"
             new_col_3_value="(${note}) ${help_text} ${default_text_start} "
             new_col_3_value+="${default_values_str}${default_text_end}"
         elif [[ -n "${default_values_str}" ]]; then
             # Default only.
-            argparser_translate "Default" "default"
             argparser_colorize "${styles["default_text"]}" 1 \
-                default_text_start "(${translation}:"
+                default_text_start "(${translated_default}:"
             argparser_colorize "${styles["default_text"]}" 1 default_text_end \
                 ")"
             new_col_3_value="${help_text} ${default_text_start} "
             new_col_3_value+="${default_values_str}${default_text_end}"
         elif [[ "${is_deprecated}" == true ]]; then
             # Deprecated only.
-            argparser_translate "Deprecated" "DEPRECATED"
             argparser_colorize "${styles["deprecation_note"]}" 1 note \
-                "${translation}"
+                "${translated_deprecation}"
             new_col_3_value="(${note}) ${help_text}"
         else
             # No default nor deprecated.
@@ -9800,9 +9804,9 @@ function argparser_create_help_message() {
             # flags.
             if [[ "${arg_number}" == 0 ]]; then
                 if [[ "${default_values_str}" == true ]]; then
-                    argparser_translate "true" "${default_values_str}"
+                    argparser_translate "true" "true"
                 else
-                    argparser_translate "false" "${default_values_str}"
+                    argparser_translate "false" "false"
                 fi
 
                 default_values_arr=("${translation}")
@@ -10223,30 +10227,26 @@ function argparser_create_help_message() {
             if [[ -n "${default_values_str}" && "${is_deprecated}" == true ]]
             then
                 # Default and deprecated.
-                argparser_translate "Deprecated" "DEPRECATED"
                 argparser_colorize "${styles["deprecation_note"]}" 1 note \
-                    "${translation}"
-                argparser_translate "Default" "default"
+                    "${translated_deprecation}"
                 argparser_colorize "${styles["default_text"]}" 1 \
-                    default_text_start "(${translation}:"
+                    default_text_start "(${translated_default}:"
                 argparser_colorize "${styles["default_text"]}" 1 \
                     default_text_end ")"
                 new_col_3_value="(${note}) ${help_text} ${default_text_start} "
                 new_col_3_value+="${default_values_str}${default_text_end}"
             elif [[ -n "${default_values_str}" ]]; then
                 # Default only.
-                argparser_translate "Default" "default"
                 argparser_colorize "${styles["default_text"]}" 1 \
-                    default_text_start "(${translation}:"
+                    default_text_start "(${translated_default}:"
                 argparser_colorize "${styles["default_text"]}" 1 \
                     default_text_end ")"
                 new_col_3_value="${help_text} ${default_text_start} "
                 new_col_3_value+="${default_values_str}${default_text_end}"
             elif [[ "${is_deprecated}" == true ]]; then
                 # Deprecated only.
-                argparser_translate "Deprecated" "DEPRECATED"
                 argparser_colorize "${styles["deprecation_note"]}" 1 note \
-                    "${translation}"
+                    "${translated_deprecation}"
                 new_col_3_value="(${note}) ${help_text}"
             else
                 # No default nor deprecated.
