@@ -107,11 +107,11 @@ Error env var bool:
 Error env var char:
   en: >
     Error: The environment variable "$1" is set to "$2", but must be a
-    character, i.e., a string comprising one printable ASCII character.
+    character, i.e., a string comprising one printable symbol.
   de: >
     Fehler: Die Umgebungsvariable "$1" ist auf "$2" gesetzt, muss aber ein
-    einzelnes Zeichen sein, d. h. eine Zeichenkette aus einem druckbaren
-    ASCII-Zeichen.
+    Zeichen ("Character") sein, d. h. eine Zeichenkette aus einem druckbaren
+    Symbol.
 
 Error env var identifier:
   en: >
@@ -693,11 +693,11 @@ Error arg def pos default value char:
   en: >
     Error: The positional argument with the identifier "$1" has "$2" given as
     default value, which must be a character, i.e., a string comprising one
-    printable ASCII character.
+    printable symbol.
   de: >
     Fehler: Das positionale Argument mit dem Identifikator "$1" hat "$2" als
-    Vorgabewert gegeben, welcher ein einzelnes Zeichen sein muss, d. h. eine
-    Zeichenkette aus einem druckbaren ASCII-Zeichen.
+    Vorgabewert gegeben, welcher ein Zeichen ("Character") sein muss, d. h.
+    eine Zeichenkette aus einem druckbaren Symbol.
 
 Error arg def pos default value float:
   en: >
@@ -742,11 +742,11 @@ Error arg def pos choice value char:
   en: >
     Error: The positional argument with the identifier "$1" has "$2" given as
     choice value, which must be a character, i.e., a string comprising one
-    printable ASCII character.
+    printable symbol.
   de: >
     Fehler: Das positionale Argument mit dem Identifikator "$1" hat "$2" als
-    Auswahlwert gegeben, welcher ein einzelnes Zeichen sein muss, d. h. eine
-    Zeichenkette aus einem druckbaren ASCII-Zeichen.
+    Auswahlwert gegeben, welcher ein Zeichen ("Character") sein muss, d. h.
+    eine Zeichenkette aus einem druckbaren Symbol.
 
 Error arg def pos choice value float:
   en: >
@@ -1073,12 +1073,11 @@ Error arg def option default value bool:
 Error arg def option default value char:
   en: >
     Error: The option with the identifier "$1" has "$2" given as default value,
-    which must be a character, i.e., a string comprising one printable ASCII
-    character.
+    which must be a character, i.e., a string comprising one printable symbol.
   de: >
     Fehler: Die Option mit dem Identifikator "$1" hat "$2" als Vorgabewert
-    gegeben, welcher ein einzelnes Zeichen sein muss, d. h. eine Zeichenkette
-    aus einem druckbaren ASCII-Zeichen.
+    gegeben, welcher ein Zeichen ("Character") sein muss, d. h. eine
+    Zeichenkette aus einem druckbaren Symbol.
 
 Error arg def option default value float:
   en: >
@@ -1121,12 +1120,11 @@ Error arg def option choice value bool:
 Error arg def option choice value char:
   en: >
     Error: The option with the identifier "$1" has "$2" given as choice value,
-    which must be a character, i.e., a string comprising one printable ASCII
-    character.
+    which must be a character, i.e., a string comprising one printable symbol.
   de: >
     Fehler: Die Option mit dem Identifikator "$1" hat "$2" als Auswahlwert
-    gegeben, welcher ein einzelnes Zeichen sein muss, d. h. eine Zeichenkette
-    aus einem druckbaren ASCII-Zeichen.
+    gegeben, welcher ein Zeichen ("Character") sein muss, d. h. eine
+    Zeichenkette aus einem druckbaren Symbol.
 
 Error arg def option choice value float:
   en: >
@@ -1402,11 +1400,11 @@ Error arg bool:
 Error arg char:
   en: >
     Error: The argument "$1" is set to "$2", but must be a character, i.e., a
-    string comprising one printable ASCII character.
+    string comprising one printable symbol.
   de: >
     Fehler: Das Argument "$1" ist auf "$2" gesetzt, muss aber ein
-    einzelnes Zeichen sein, d. h. eine Zeichenkette aus einem druckbaren
-    ASCII-Zeichen.
+    Zeichen ("Character") sein, d. h. eine Zeichenkette aus einem druckbaren
+    Symbol.
 
 Error arg float:
   en: >

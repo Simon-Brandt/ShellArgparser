@@ -137,9 +137,9 @@
 
 #### 9.5.23. `Error env var char`
 
-- ***Message:*** `Error: The environment variable "$1" is set to "$2", but must be a character, i.e., a string comprising one printable ASCII character.`
+- ***Message:*** `Error: The environment variable "$1" is set to "$2", but must be a character, i.e., a string comprising one printable symbol.`
 - ***Description:*** The error that an environment variable is not a character.
-- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9418-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9419-argparser_config_file), on the Argparser invocation command line, or as an environment variable, has a value not according to the data type `char`. These characters must be strings comprising one printable ASCII character.
+- ***Reasons for error:*** When [`ARGPARSER_CHECK_ENV_VARS`](../environment_variables/environment_variables.md#9418-argparser_check_env_vars) is set to `true`, the Argparser detected that an environment variable, provided by either an option from the [`ARGPARSER_CONFIG_FILE`](../environment_variables/environment_variables.md#9419-argparser_config_file), on the Argparser invocation command line, or as an environment variable, has a value not according to the data type `char`. These characters must be strings comprising one printable symbol.
 - ***Interpolated variables:***
   - `$1`: The environment variable's name.
   - `$2`: The environment variable's value.
@@ -730,9 +730,9 @@
 
 #### 9.5.90. `Error arg def pos default value char`
 
-- ***Message:*** `Error: The positional argument with the identifier "$1" has "$2" given as default value, which must be a character, i.e., a string comprising one printable ASCII character.`
+- ***Message:*** `Error: The positional argument with the identifier "$1" has "$2" given as default value, which must be a character, i.e., a string comprising one printable symbol.`
 - ***Description:*** The error that in the arguments definition, a positional argument's default value's data type is not a character.
-- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined with a default value whose data type doesn't accord to the argument's data type, `char`. These characters must be strings comprising one printable ASCII character.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined with a default value whose data type doesn't accord to the argument's data type, `char`. These characters must be strings comprising one printable symbol.
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
   - `$2`: The default value.
@@ -775,9 +775,9 @@
 
 #### 9.5.95. `Error arg def pos choice value char`
 
-- ***Message:*** `Error: The positional argument with the identifier "$1" has "$2" given as choice value, which must be a character, i.e., a string comprising one printable ASCII character.`
+- ***Message:*** `Error: The positional argument with the identifier "$1" has "$2" given as choice value, which must be a character, i.e., a string comprising one printable symbol.`
 - ***Description:*** The error that in the arguments definition, a positional argument's choice value's data type is not a character.
-- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined with a choice value whose data type doesn't accord to the argument's data type, `char`. These characters must be strings comprising one printable ASCII character.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a positional argument defined with a choice value whose data type doesn't accord to the argument's data type, `char`. These characters must be strings comprising one printable symbol.
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
   - `$2`: The choice value.
@@ -1118,9 +1118,9 @@
 
 #### 9.5.133. `Error arg def option default value char`
 
-- ***Message:*** `Error: The option with the identifier "$1" has "$2" given as default value, which must be a character, i.e., a string comprising one printable ASCII character.`
+- ***Message:*** `Error: The option with the identifier "$1" has "$2" given as default value, which must be a character, i.e., a string comprising one printable symbol.`
 - ***Description:*** The error that in the arguments definition, a keyword argument's a default value's data type is not a character.
-- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined with a default value whose data type doesn't accord to the argument's data type, `char`. These characters must be strings comprising one printable ASCII character.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined with a default value whose data type doesn't accord to the argument's data type, `char`. These characters must be strings comprising one printable symbol.
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
   - `$2`: The default value.
@@ -1163,9 +1163,9 @@
 
 #### 9.5.138. `Error arg def option choice value char`
 
-- ***Message:*** `Error: The option with the identifier "$1" has "$2" given as choice value, which must be a character, i.e., a string comprising one printable ASCII character.`
+- ***Message:*** `Error: The option with the identifier "$1" has "$2" given as choice value, which must be a character, i.e., a string comprising one printable symbol.`
 - ***Description:*** The error that in the arguments definition, a keyword argument's choice value's data type is not a character.
-- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined with a choice value whose data type doesn't accord to the argument's data type, `char`. These characters must be strings comprising one printable ASCII character.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined with a choice value whose data type doesn't accord to the argument's data type, `char`. These characters must be strings comprising one printable symbol.
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
   - `$2`: The choice value.
@@ -1484,9 +1484,9 @@
 
 #### 9.5.175. `Error arg char`
 
-- ***Message:*** `Error: The argument "$1" is set to "$2", but must be a character, i.e., a string comprising one printable ASCII character.`
+- ***Message:*** `Error: The argument "$1" is set to "$2", but must be a character, i.e., a string comprising one printable symbol.`
 - ***Description:*** The error that a given argument's value's data type is not a character.
-- ***Reasons for error:*** When parsing the command line, the Argparser found a given value whose data type doesn't accord to the argument's data type, `char`. These characters must be strings comprising one printable ASCII character.
+- ***Reasons for error:*** When parsing the command line, the Argparser found a given value whose data type doesn't accord to the argument's data type, `char`. These characters must be strings comprising one printable symbol.
 - ***Interpolated variables:***
   - `$1`: The argument's display (option or value) names.
   - `$2`: The given value.

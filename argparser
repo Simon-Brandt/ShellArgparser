@@ -3604,8 +3604,7 @@ function argparser_check_env_vars() {
             if ! argparser_is_char "${value}"; then
                 error_message="Error: The environment variable \"\$1\" is set "
                 error_message+="to \"\$2\", but must be a character, i.e., a "
-                error_message+="string comprising one printable ASCII "
-                error_message+="character."
+                error_message+="string comprising one printable symbol."
 
                 argparser_translate "Error env var char" "${error_message}" \
                     "${var}" "${!var}"
@@ -5904,8 +5903,8 @@ function argparser_check_args_definition_positional_args() {
                 error_message="Error: The positional argument with the "
                 error_message+="identifier \"\$1\" has \"\$2\" given as "
                 error_message+="default value, which must be a character, "
-                error_message+="i.e., a string comprising one printable ASCII "
-                error_message+="character."
+                error_message+="i.e., a string comprising one printable "
+                error_message+="symbol."
 
                 argparser_translate "Error arg def pos default value char" \
                     "${error_message}" "${arg_id}" "${default_value}"
@@ -5983,8 +5982,8 @@ function argparser_check_args_definition_positional_args() {
                 error_message="Error: The positional argument with the "
                 error_message+="identifier \"\$1\" has \"\$2\" given as "
                 error_message+="choice value, which must be a character, "
-                error_message+="i.e., a string comprising one printable ASCII "
-                error_message+="character."
+                error_message+="i.e., a string comprising one printable "
+                error_message+="symbol."
 
                 argparser_translate "Error arg def pos choice value char" \
                     "${error_message}" "${arg_id}" "${choice_value}"
@@ -6742,7 +6741,7 @@ function argparser_check_args_definition_options() {
                 error_message="Error: The option with the identifier \"\$1\" "
                 error_message+="has \"\$2\" given as default value, which "
                 error_message+="must be a character, i.e., a string "
-                error_message+="comprising one printable ASCII character."
+                error_message+="comprising one printable symbol."
 
                 argparser_translate "Error arg def option default value char" \
                     "${error_message}" "${arg_id}" "${default_value}"
@@ -6818,7 +6817,7 @@ function argparser_check_args_definition_options() {
                 error_message="Error: The option with the identifier \"\$1\" "
                 error_message+="has \"\$2\" given as choice value, which must "
                 error_message+="be a character, i.e., a string comprising one "
-                error_message+="printable ASCII character."
+                error_message+="printable symbol."
 
                 argparser_translate "Error arg def option choice value char" \
                     "${error_message}" "${arg_id}" "${choice_value}"
@@ -8766,7 +8765,7 @@ function argparser_check_arg_values() {
             # Check if the value is a character.
             error_message="Error: The argument \"\$1\" is set to \"\$2\", but "
             error_message+="must be a character, i.e., a string comprising "
-            error_message+="one printable ASCII character."
+            error_message+="one printable symbol."
 
             argparser_translate "Error arg char" "${error_message}" \
                 "${arg_names}" "${value}"
