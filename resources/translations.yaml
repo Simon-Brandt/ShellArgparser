@@ -1210,14 +1210,12 @@ Error arg def option arg group:
     Error: The option with the identifier "$1" is defined for the argument
     group "$2", but must not belong to neither "$3", as defined by the
     ARGPARSER_SUBCOMMAND_GROUP, nor to "$4", as defined by the
-    ARGPARSER_POSITIONAL_ARG_GROUP, nor to "$5", as defined by the
-    ARGPARSER_HELP_ARG_GROUP.
+    ARGPARSER_POSITIONAL_ARG_GROUP.
   de: >
     Fehler: Die Option mit dem Identifikator "$1" ist für die Argumentgruppe
     "$2" definiert, darf aber weder zu "$3" gehören, wie durch die
     ARGPARSER_SUBCOMMAND_GROUP definiert ist, noch zu "$4", wie durch die
-    ARGPARSER_POSITIONAL_ARG_GROUP definiert ist, noch zu "$5", wie durch die
-    ARGPARSER_HELP_ARG_GROUP definiert ist.
+    ARGPARSER_POSITIONAL_ARG_GROUP definiert ist.
 
 Error arg def option note:
   en: >

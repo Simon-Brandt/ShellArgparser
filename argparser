@@ -6917,25 +6917,21 @@ function argparser_check_args_definition_options() {
         fi
 
         # Check that the argument group is neither of the ones for the
-        # subcommands (${ARGPARSER_SUBCOMMAND_GROUP}), positional
-        # arguments (${ARGPARSER_POSITIONAL_ARG_GROUP}), or help options
-        # (${ARGPARSER_HELP_ARG_GROUP}).
+        # subcommands (${ARGPARSER_SUBCOMMAND_GROUP}) and positional
+        # arguments (${ARGPARSER_POSITIONAL_ARG_GROUP}).
         if argparser_in_array "${arg_group}" "${ARGPARSER_SUBCOMMAND_GROUP}" \
-            "${ARGPARSER_POSITIONAL_ARG_GROUP}" "${ARGPARSER_HELP_ARG_GROUP}"
+            "${ARGPARSER_POSITIONAL_ARG_GROUP}"
         then
             error_message="Error: The option with the identifier \"\$1\" is "
             error_message+="defined for the argument group \"\$2\", but must "
             error_message+="not belong to neither \"\$3\", as defined by the "
             error_message+="ARGPARSER_SUBCOMMAND_GROUP, nor to \"\$4\", as "
-            error_message+="defined by the ARGPARSER_POSITIONAL_ARG_GROUP, "
-            error_message+="nor to \"\$5\", as defined by the "
-            error_message+="ARGPARSER_HELP_ARG_GROUP."
+            error_message+="defined by the ARGPARSER_POSITIONAL_ARG_GROUP."
 
             argparser_translate "Error arg def option arg group" \
                 "${error_message}" "${arg_id}" "${arg_group}" \
                 "${ARGPARSER_SUBCOMMAND_GROUP}" \
-                "${ARGPARSER_POSITIONAL_ARG_GROUP}" \
-                "${ARGPARSER_HELP_ARG_GROUP}"
+                "${ARGPARSER_POSITIONAL_ARG_GROUP}"
             error_message="${translation}"
             error_messages+=("${error_message}")
         fi

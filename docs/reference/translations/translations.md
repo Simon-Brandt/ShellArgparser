@@ -1241,15 +1241,14 @@
 
 #### 9.5.148. `Error arg def option arg group`
 
-- ***Message:*** `Error: The option with the identifier "$1" is defined for the argument group "$2", but must not belong to neither "$3", as defined by the ARGPARSER_SUBCOMMAND_GROUP, nor to "$4", as defined by the ARGPARSER_POSITIONAL_ARG_GROUP, nor to "$5", as defined by the ARGPARSER_HELP_ARG_GROUP.`
+- ***Message:*** `Error: The option with the identifier "$1" is defined for the argument group "$2", but must not belong to neither "$3", as defined by the ARGPARSER_SUBCOMMAND_GROUP, nor to "$4", as defined by the ARGPARSER_POSITIONAL_ARG_GROUP.`
 - ***Description:*** The error that in the arguments definition, a keyword argument is defined for a wrong argument group.
-- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined for the [`ARGPARSER_SUBCOMMAND_GROUP`](../environment_variables/environment_variables.md#9447-argparser_subcommand_group), the [`ARGPARSER_POSITIONAL_ARG_GROUP`](../environment_variables/environment_variables.md#9439-argparser_positional_arg_group), or the [`ARGPARSER_HELP_ARG_GROUP`](../environment_variables/environment_variables.md#9426-argparser_help_arg_group). For grouping purposes in the help message, the keyword arguments must not belong to either of these groups.
+- ***Reasons for error:*** When parsing the arguments definition, the Argparser found a line in the definition having a keyword argument defined for the [`ARGPARSER_SUBCOMMAND_GROUP`](../environment_variables/environment_variables.md#9447-argparser_subcommand_group) or the [`ARGPARSER_POSITIONAL_ARG_GROUP`](../environment_variables/environment_variables.md#9439-argparser_positional_arg_group). For grouping purposes in the help message, the keyword arguments must not belong to either of these groups (whereas the [`ARGPARSER_HELP_ARG_GROUP`](../environment_variables/environment_variables.md#9426-argparser_help_arg_group) is allowed).
 - ***Interpolated variables:***
   - `$1`: The argument identifier.
   - `$2`: The argument group.
   - `$3`: The [`ARGPARSER_SUBCOMMAND_GROUP`](../environment_variables/environment_variables.md#9447-argparser_subcommand_group).
   - `$4`: The [`ARGPARSER_POSITIONAL_ARG_GROUP`](../environment_variables/environment_variables.md#9439-argparser_positional_arg_group).
-  - `$5`: The [`ARGPARSER_HELP_ARG_GROUP`](../environment_variables/environment_variables.md#9426-argparser_help_arg_group).
 
 #### 9.5.149. `Error arg def option note`
 
