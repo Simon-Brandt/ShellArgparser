@@ -73,8 +73,7 @@ When you (as a user) have to deal with unknown scripts or programs, maybe the fi
 $ bash ../tutorial/try_argparser.sh --help
 Usage: try_argparser.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2,pos_2
 
-Mandatory or optional arguments to long options are mandatory or optional for
-short options too.
+Mandatory arguments to long options are mandatory for short options too.
 
 +- Positional arguments ----------------------------------------------------------+
 | [pos_1=                                     one positional argument with        |
@@ -508,8 +507,7 @@ First, let's see how the help message has changed by defining subcommands:
 $ bash ../tutorial/try_subcommands.sh --help
 Usage: try_subcommands.sh [cmd_1 | cmd_2] [OPTIONS] ARGUMENTS -- [pos_1]
 
-Mandatory or optional arguments to long options are mandatory or optional for
-short options too.
+Mandatory arguments to long options are mandatory for short options too.
 
 +- Subcommands -------------------------------------------------------------------+
 | cmd_1                       first subcommand                                    |
@@ -571,7 +569,7 @@ Mandatory arguments to long options are mandatory for short options too.
 $ bash ../tutorial/try_subcommands.sh cmd_2 --help
 Usage: try_subcommands.sh cmd_2 [OPTIONS]
 
-Optional arguments to long options are optional for short options too.
+Mandatory arguments to long options are mandatory for short options too.
 
 +- Optional options ------------------------------------------------------+
 | [-d=                   one value with default and choice (default: "A") |

@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-11-25
+# Last Modification: 2026-11-27
 
 # TODO: Add tests for errors in the the general arguments parsing.
 
@@ -835,8 +835,6 @@ cmd="bash test_short_options.sh -h"
 output="$(cat << EOF
 Usage: test_short_options.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2,pos_2
 
-Mandatory arguments to long options are mandatory for short options too.
-
 +- Positional arguments ----------------------------------------------------------+
 | [pos_1={1,2}]      one positional argument with default and choice (default: 2) |
 | pos_2,pos_2        two positional arguments without default or choice           |
@@ -1039,8 +1037,6 @@ test_type="help"
 cmd="bash test_long_options.sh --help"
 output="$(cat << EOF
 Usage: test_long_options.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2,pos_2
-
-Mandatory arguments to long options are mandatory for short options too.
 
 +- Positional arguments ---------------------------------------------------------+
 | [pos_1={1,2}]                    one positional argument with default and      |
@@ -1563,7 +1559,8 @@ cmd="bash test_arg_number.sh --help"
 output="$(cat << EOF
 Usage: test_arg_number.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2,pos_2
 
-Mandatory arguments to long options are mandatory for short options too.
+Mandatory or optional arguments to long options are mandatory or optional for
+short options too.
 
 +- Positional arguments ---------------------------------------------------------+
 | [pos_1=                                 one positional argument with default   |
@@ -2324,7 +2321,8 @@ Aufruf: test_localization.sh [OPTIONEN] ARGUMENTE -- [pos_1] pos_2,pos_2
 
 Kommandozeilenprogramm.
 
-Erforderliche Argumente für lange Optionen sind auch für kurze erforderlich.
+Erforderliche Argumente für lange Optionen sind auch für kurze Optionen
+erforderlich.
 
 Die folgenden Argumente sind positional:
 +--------------------------------------------------------------------------------+
@@ -2600,8 +2598,6 @@ test_type="help"
 cmd="bash ../argparser --help"
 output="$(cat << EOF
 Usage: argparser [OPTIONS] [--] [command_line]
-
-Mandatory arguments to long options are mandatory for short options too.
 
 +- Positional arguments ----------------------------------------------------------+
 | [command_line...]                the indexed array in which the Argparser       |

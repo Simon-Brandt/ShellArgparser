@@ -84,7 +84,7 @@ The `@Help` directive prints the help text for the `--help`, `--usage`, and `--v
 
 #### 9.3.6. `@Remark` directive
 
-The `@Remark` directive prints the note that mandatory arguments to long options are mandatory for short options too, wrapped to fit [`ARGPARSER_MAX_WIDTH`](environment_variables/environment_variables.md#9438-argparser_max_width). This should be given just before all arguments.
+The `@Remark` directive prints the note that mandatory/optional arguments to long options are mandatory/optional for short options too, wrapped to fit [`ARGPARSER_MAX_WIDTH`](environment_variables/environment_variables.md#9438-argparser_max_width). This should be given just before all arguments. There are three versions of this note, depending on whether there are options defined that can take mandatory (argument count of greater than zero, or `+`) or optional values (argument count of `*` or `?`). No remark is printed when no option has both short and long option names, as then, the mandatory/optional values are already given after the short/long option names.
 
 #### 9.3.7. `@Usage` directive
 

@@ -89,8 +89,7 @@ $ bash ../tutorial/try_help_file.sh -h
 A brief header summarizes the way how to interpret the help message.
 Usage: try_help_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2,pos_2
 
-Mandatory or optional arguments to long options are mandatory or optional for
-short options too.
+Mandatory arguments to long options are mandatory for short options too.
 
 The following arguments are positional:
 +---------------------------------------------------------------------------------+
@@ -138,7 +137,7 @@ The following section names (include directives) are supported, explained in gre
 - [`@Remark`](../reference/include_directives.md#936-remark-directive)
 - [`@Usage`](../reference/include_directives.md#937-usage-directive)
 
-Thereby, `<ArgumentGroup>` can be the name of any argument group given in the arguments definition, like `"Mandatory options"` for the include directive `@Mandatory options` or `"Positional arguments"` for the include directive `@Positional arguments`. `@Description` prints the [`ARGPARSER_HELP_DESCRIPTION`](../reference/environment_variables/environment_variables.md#9427-argparser_help_description), `@Help` prints the help, usage, and version options (depending on which of them are defined by [`ARGPARSER_ADD_HELP`](../reference/environment_variables/environment_variables.md#942-argparser_add_help), [`ARGPARSER_ADD_USAGE`](../reference/environment_variables/environment_variables.md#943-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](../reference/environment_variables/environment_variables.md#944-argparser_add_version)), `@Remark` prints the remark that mandatory arguments to long options are mandatory for short options too, and `@Usage` prints the usage line. Finally, the shorthand `@All` means to print the usage line, the description, the remark, all argument groups, and the help options, in this order, while `@Header` prints the usage line, the description, and the remark.
+Thereby, `<ArgumentGroup>` can be the name of any argument group given in the arguments definition, like `"Mandatory options"` for the include directive `@Mandatory options` or `"Positional arguments"` for the include directive `@Positional arguments`. `@Description` prints the [`ARGPARSER_HELP_DESCRIPTION`](../reference/environment_variables/environment_variables.md#9427-argparser_help_description), `@Help` prints the help, usage, and version options (depending on which of them are defined by [`ARGPARSER_ADD_HELP`](../reference/environment_variables/environment_variables.md#942-argparser_add_help), [`ARGPARSER_ADD_USAGE`](../reference/environment_variables/environment_variables.md#943-argparser_add_usage), or [`ARGPARSER_ADD_VERSION`](../reference/environment_variables/environment_variables.md#944-argparser_add_version)), `@Remark` prints the remark that mandatory/optional arguments to long options are mandatory/optional for short options too, and `@Usage` prints the usage line. Finally, the shorthand `@All` means to print the usage line, the description, the remark, all argument groups, and the help options, in this order, while `@Header` prints the usage line, the description, and the remark.
 
 If the include character is doubled (as in `@@Section`), the section name (the respective argument group) is suppressed, like in our example above. Since we wrote introductory sentences for the sections, there is no need to have them given, as well. Likewise, given that we had just one arguments group, we likely wouldn't need to list its name, since the sections serve structuring purposes which would be rather superfluous for a single group.
 

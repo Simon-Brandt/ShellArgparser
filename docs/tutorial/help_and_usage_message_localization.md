@@ -198,7 +198,8 @@ Aufruf: try_localization.sh [OPTIONEN] ARGUMENTE -- [pos_1] pos_2,pos_2
 
 Kommandozeilenprogramm.
 
-Erforderliche Argumente für lange Optionen sind auch für kurze erforderlich.
+Erforderliche Argumente für lange Optionen sind auch für kurze Optionen
+erforderlich.
 
 Die folgenden Argumente sind positional:
 +--------------------------------------------------------------------------------+

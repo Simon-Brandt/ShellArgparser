@@ -1,6 +1,6 @@
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-11-26
+# Last Modification: 2026-11-27
 # License: Public Domain
 
 # General translations.
@@ -53,13 +53,6 @@ Options:
   en: OPTIONS
   de: OPTIONEN
 
-Mandatory arguments:
-  en: >
-    Mandatory arguments to long options are mandatory for short options too.
-  de: >
-    Erforderliche Argumente für lange Optionen sind auch für kurze
-    erforderlich.
-
 Deprecated:
   en: DEPRECATED
   de: VERALTET
@@ -87,6 +80,28 @@ false:
 --version:
   en: display the version and exit
   de: die Version anzeigen und beenden
+
+Remark mandatory optional arguments:
+  en: >
+    Mandatory or optional arguments to long options are mandatory or optional
+    for short options too.
+  de: >
+    Erforderliche oder optionale Argumente für lange Optionen sind auch für
+    kurze Optionen erforderlich.
+
+Remark mandatory arguments:
+  en: >
+    Mandatory arguments to long options are mandatory for short options too.
+  de: >
+    Erforderliche Argumente für lange Optionen sind auch für kurze Optionen
+    erforderlich.
+
+Remark optional arguments:
+  en: >
+    Optional arguments to long options are optional for short options too.
+  de: >
+    Optionale Argumente für lange Optionen sind auch für kurze Optionen
+    optional.
 
 Error include directive:
   en: >

@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-11-26
+# Last Modification: 2026-11-27
 
 # TODO: Output a warning message when options in the configuration file
 #       are set that don't correspond to Argparser environment
@@ -9372,10 +9372,13 @@ function argparser_create_help_message() {
     local description
     local -a display_names_arr
     local display_names_str
+    local exist_mandatory_args
+    local exist_mandatory_values
+    local exist_optional_args
+    local exist_optional_values
+    local exist_short_long_option_args
     local -a folded_array
     local -a framed_array
-    local has_default_args
-    local has_required_args
     local -a help_message
     local help_text
     local i
@@ -9454,8 +9457,11 @@ function argparser_create_help_message() {
     col_2=()
     col_3=()
 
-    has_default_args=false
-    has_required_args=false
+    exist_mandatory_args=false
+    exist_mandatory_values=false
+    exist_optional_args=false
+    exist_optional_values=false
+    exist_short_long_option_args=false
 
     # Compute the columns for the subcommands.
     for subcommand in "${subcommands[@]}"; do
@@ -9548,7 +9554,8 @@ function argparser_create_help_message() {
             <<< "${all_notes[${arg_id}]}"
         help_text="${all_help_texts[${arg_id}]}"
 
-        # Set a flag whether the argument is deprecated or hidden.
+        # Set a flag whether the positional argument is deprecated or
+        # hidden.
         is_deprecated=false
         is_hidden=false
         for note in "${notes[@]}"; do
@@ -9559,8 +9566,8 @@ function argparser_create_help_message() {
             fi
         done
 
-        # If the argument belongs to a different subcommand than given
-        # or shall be hidden, skip it.
+        # If the positional argument belongs to a different subcommand
+        # than given or shall be hidden, skip it.
         if [[ "${subcommand}" != "${given_subcommand}" \
             || "${is_hidden}" == true ]]
         then
@@ -9596,12 +9603,13 @@ function argparser_create_help_message() {
 
         argparser_colorize "${styles["help_text"]}" 1 help_text "${help_text}"
 
-        # Define the columns' next line, for the current argument.  The
-        # argument may have some default and some choice values or an
-        # arbitrary argument number, with the existence of each changing
-        # the look of the first or second column.  Depending on whether
-        # there are short options, i.e., the first column may or may not
-        # be used, put the argument into the first or second column.
+        # Define the columns' next line, for the current positional
+        # argument.  The positional argument may have some default and
+        # some choice values or an arbitrary argument number, with the
+        # existence of each changing the look of the first or second
+        # column.  Depending on whether there are short options, i.e.,
+        # the first column may or may not be used, put the argument into
+        # the first or second column.
         if [[ "${ARGPARSER_USE_SHORT_OPTIONS}" == true ]]; then
             # Set the first column's value.
             if [[ "${arg_number}" == "+" || "${arg_number}" == "*" ]]; then
@@ -9781,7 +9789,7 @@ function argparser_create_help_message() {
                 fi
             done
 
-            # If the argument belongs to a different subcommand than
+            # If the option belongs to a different subcommand than
             # given, and is no help option, or if it shall be hidden,
             # skip it.
             if [[ "${subcommand}" != "${given_subcommand}" \
@@ -9842,13 +9850,28 @@ function argparser_create_help_message() {
             argparser_colorize "${styles["help_text"]}" 1 help_text \
                 "${help_text}"
 
-            # Set a flag whether the option has default values for
-            # adjustment of the help message header, later.
+            # Set flags for adjustment of the help message header,
+            # later, skipping the help options.
             if [[ "${arg_group}" != "${ARGPARSER_HELP_ARG_GROUP}" ]]; then
-                if [[ -n "${default_values_str}" ]]; then
-                    has_default_args=true
+                # Set a flag whether the option has both short and long
+                # option names.
+                if (( "${#short_options}" > 0 && "${#long_options}" > 0 ))
+                then
+                    exist_short_long_option_args=true
+                fi
+
+                # Set a flag whether the option has default values.
+                if (( "${#default_values_arr}" > 0 )); then
+                    exist_optional_args=true
                 else
-                    has_required_args=true
+                    exist_mandatory_args=true
+                fi
+
+                # Set a flag whether the option takes optional values.
+                if argparser_in_array "${arg_number}" "*" "?"; then
+                    exist_optional_values=true
+                elif [[ "${arg_number}" == "+" ]] || (( arg_number > 0 )); then
+                    exist_mandatory_values=true
                 fi
             fi
 
@@ -9857,8 +9880,8 @@ function argparser_create_help_message() {
             argparser_get_display_names "${arg_id}" "long+short" false
             all_option_names+=("${display_names_str}")
 
-            # Define the columns' next line, for the current argument.
-            # The argument may have some short and long options, along
+            # Define the columns' next line, for the current option.
+            # The option may have some short and long options, along
             # with value names, some default and some choice values or
             # an arbitrary argument number, with the existence of each
             # changing the look of the respective column.  If either no
@@ -10254,7 +10277,7 @@ function argparser_create_help_message() {
             new_col_3+=("${new_col_3_value}")
         done
 
-        # Sort the arguments by the option names.  To this end, three
+        # Sort the options by the option names.  To this end, three
         # associative arrays are defined that use the option names as
         # keys and the first, second, or third column's values as
         # values.  Then, the option names' indexed array gets sorted and
@@ -10475,7 +10498,7 @@ function argparser_create_help_message() {
 
     # Add a hint for the optional keyword arguments (as summary), if
     # existing.
-    if [[ "${has_default_args}" == true ]]; then
+    if [[ "${exist_optional_args}" == true ]]; then
         argparser_translate "Options" "OPTIONS"
         argparser_colorize "${styles["value_names"]}" 1 \
             optional_arguments_hint "${translation}"
@@ -10484,7 +10507,7 @@ function argparser_create_help_message() {
 
     # Add a hint for the mandatory keyword arguments (as summary), if
     # existing.
-    if [[ "${has_required_args}" == true ]]; then
+    if [[ "${exist_mandatory_args}" == true ]]; then
         argparser_translate "Arguments" "ARGUMENTS"
         argparser_colorize "${styles["value_names"]}" 1 \
             mandatory_arguments_hint "${translation}"
@@ -10498,9 +10521,9 @@ function argparser_create_help_message() {
     if [[ "${ARGPARSER_ALLOW_POSITIONAL_DELIMITER_START}" == true ]] \
         && (( "${#positional_args[@]}" > 0 ))
     then
-        if [[ "${has_required_args}" == true ]]; then
+        if [[ "${exist_mandatory_args}" == true ]]; then
             usage+=" --"
-        elif [[ "${has_default_args}" == true ]]; then
+        elif [[ "${exist_optional_args}" == true ]]; then
             usage+=" [--]"
         fi
 
@@ -10532,14 +10555,45 @@ function argparser_create_help_message() {
     fi
     help_message_blocks["Description"]="${description}"
 
-    # Set the remark.
-    remark="Mandatory arguments to long options are mandatory for short "
-    remark+="options too."
+    # Set the remark for mandatory and/or optional values to keyword
+    # arguments (options).
+    if [[ "${exist_short_long_option_args}" == true ]]; then
+        if [[ "${exist_mandatory_values}" == true \
+            && "${exist_optional_values}" == true ]]
+        then
+            remark="Mandatory or optional arguments to long options are "
+            remark+="mandatory or optional for short options too."
 
-    argparser_translate "Mandatory arguments" "${remark}"
-    argparser_fold " " "${ARGPARSER_MAX_WIDTH}" 0 "${translation}"
-    argparser_colorize "${styles["remark_text"]}" 1 remark "${folded_array[@]}"
-    remark+=$'\n'
+            argparser_translate "Remark mandatory optional arguments" \
+                "${remark}"
+            argparser_fold " " "${ARGPARSER_MAX_WIDTH}" 0 "${translation}"
+            argparser_colorize "${styles["remark_text"]}" 1 remark \
+                "${folded_array[@]}"
+            remark+=$'\n'
+        elif [[ "${exist_mandatory_values}" == true ]]; then
+            remark="Mandatory arguments to long options are mandatory for "
+            remark+="short options too."
+
+            argparser_translate "Remark mandatory arguments" "${remark}"
+            argparser_fold " " "${ARGPARSER_MAX_WIDTH}" 0 "${translation}"
+            argparser_colorize "${styles["remark_text"]}" 1 remark \
+                "${folded_array[@]}"
+            remark+=$'\n'
+        elif [[ "${exist_optional_values}" == true ]]; then
+            remark="Optional arguments to long options are optional for short "
+            remark+="options too."
+
+            argparser_translate "Remark optional arguments" "${remark}"
+            argparser_fold " " "${ARGPARSER_MAX_WIDTH}" 0 "${translation}"
+            argparser_colorize "${styles["remark_text"]}" 1 remark \
+                "${folded_array[@]}"
+            remark+=$'\n'
+        else
+            remark=""
+        fi
+    else
+        remark=""
+    fi
     help_message_blocks["Remark"]="${remark}"
 
     # For each argument group, print its arguments.
