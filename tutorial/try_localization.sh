@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-01
+# Last Modification: 2026-11-27
 
 # Usage: Run this script with "bash try_localization.sh".
 
@@ -35,6 +35,7 @@ ARGPARSER_ARG_DEF_FILE="${dir}/arguments_${LANG::2}.csv"
 ARGPARSER_HELP_FILE="${dir}/help_message_${LANG::2}.txt"
 ARGPARSER_LANGUAGE="${LANG::2}"
 ARGPARSER_TRANSLATION_FILE="${dir}/translations.yaml"
+ARGPARSER_USE_UNICODE=true
 
 # Set the arguments.
 # shellcheck disable=SC2190  # Indexed, not associative array.

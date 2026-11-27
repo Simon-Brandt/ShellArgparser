@@ -20,12 +20,13 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2026-11-24
+# Last Modification: 2026-11-27
 
 # Usage: Run this script with "bash try_subcommands.sh".
 
 # Purpose: Demonstrate the functionality of the Argparser regarding
 # subcommands.
+ARGPARSER_USE_UNICODE=true
 
 # Define the arguments.
 # shellcheck disable=SC2190  # Indexed, not associative array.

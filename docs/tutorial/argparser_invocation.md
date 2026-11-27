@@ -31,6 +31,8 @@ Now that you have seen how the Argparser serves in parsing and interpreting the 
 #!/usr/bin/env bash
 
 # Define the arguments.
+ARGPARSER_USE_UNICODE=true
+
 args=(
     "id    | short_opts | long_opts   | val_names | defaults | choices | type | arg_no | arg_group            | notes      | help                                              "
     "pos_1 |            |             | pos_1     | 2        | 1,2     | int  | 1      | Positional arguments |            | one positional argument with default and choice   "
@@ -66,7 +68,7 @@ done
 
 As you can see, there are two (or, with [environment variables](../reference/environment_variables/introduction.md#94-environment-variables), three) sections in the code that are specific to the Argparser. The accession at the end only serves us to gain insights into the values of the arguments and are not necessary to include&mdash;you would replace this by the actual workings of your script.
 
-The first section (here omitted as not necessary) sets Argparser-specific environment variables to optimize the visual output, which we'll investigate later. Then, the arguments are defined, and finally, the Argparser is called.
+The&mdash;optional&mdash;first section sets Argparser-specific environment variables to optimize the visual output, which we'll investigate later. Then, the arguments are defined, and finally, the Argparser is called.
 
 #### 5.2.1. Argparser sourcing
 

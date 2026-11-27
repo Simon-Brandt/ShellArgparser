@@ -36,6 +36,7 @@ Using a separate arguments definition file allows you to share the definition ac
 dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
 dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
 ARGPARSER_ARG_DEF_FILE="${dir}/arguments.csv"
+ARGPARSER_USE_UNICODE=true
 
 # Set the arguments.
 args=(
@@ -113,18 +114,18 @@ Likewise, the [usage (and help) message](help_and_usage_messages.md#55-help-and-
 <!-- <include command="bash ../tutorial/try_arg_def_file.sh -u" lang="console"> -->
 ```console
 $ bash ../tutorial/try_arg_def_file.sh -u
-+- Usage -------------------------------+
-| try_arg_def_file.sh [-h,-? | -u | -V] |
-|                     [-d={A-C}]        |
-|                     [-f]              |
-|                     [-g]              |
-|                     [--var-5=VAL_5]   |
-|                     -a=VAL_1          |
-|                     -b=VAL_2...       |
-|                     -c={A,B}...       |
-|                     [{1,2}]           |
-|                     pos_2,pos_2       |
-+---------------------------------------+
+╭─ Usage ───────────────────────────────╮
+│ try_arg_def_file.sh [-h,-? | -u | -V] │
+│                     [-d={A-C}]        │
+│                     [-f]              │
+│                     [-g]              │
+│                     [--var-5=VAL_5]   │
+│                     -a=VAL_1          │
+│                     -b=VAL_2...       │
+│                     -c={A,B}...       │
+│                     [{1,2}]           │
+│                     pos_2,pos_2       │
+╰───────────────────────────────────────╯
 ```
 <!-- </include> -->
 

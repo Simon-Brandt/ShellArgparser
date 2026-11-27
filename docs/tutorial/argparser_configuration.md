@@ -65,6 +65,7 @@ For demonstration, we take a stripped-down version of our [`try_argparser.sh`](.
 dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
 dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
 ARGPARSER_CONFIG_FILE="${dir}/options.cfg"
+ARGPARSER_USE_UNICODE=true
 
 # Define the arguments.
 args=(

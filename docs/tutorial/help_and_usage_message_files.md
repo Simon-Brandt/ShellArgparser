@@ -34,6 +34,7 @@ The Argparser is not only able to compile a help message, but can also be guided
 dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
 dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
 ARGPARSER_HELP_FILE="${dir}/help_message.txt"
+ARGPARSER_USE_UNICODE=true
 
 # Define the arguments.
 args=(
@@ -92,36 +93,36 @@ Usage: try_help_file.sh [OPTIONS] ARGUMENTS -- [pos_1] pos_2,pos_2
 Mandatory arguments to long options are mandatory for short options too.
 
 The following arguments are positional:
-+---------------------------------------------------------------------------------+
-| [pos_1=                     one positional argument with default and choice     |
-|     {1,2}]                  (default: 2)                                        |
-| pos_2,                      two positional arguments without default or choice  |
-|     pos_2                                                                       |
-+---------------------------------------------------------------------------------+
+╭─────────────────────────────────────────────────────────────────────────────────╮
+│ [pos_1=                     one positional argument with default and choice     │
+│     {1,2}]                  (default: 2)                                        │
+│ pos_2,                      two positional arguments without default or choice  │
+│     pos_2                                                                       │
+╰─────────────────────────────────────────────────────────────────────────────────╯
 
 The following options have no default value:
-+---------------------------------------------------------------------------------+
-| -a,        --var-1=VAL_1    one value without default or choice                 |
-| -b,        --var-2=VAL_2... at least one value without default or choice        |
-| -c,        --var-3={A,B}... at least one value with choice                      |
-+---------------------------------------------------------------------------------+
+╭─────────────────────────────────────────────────────────────────────────────────╮
+│ -a,        --var-1=VAL_1    one value without default or choice                 │
+│ -b,        --var-2=VAL_2... at least one value without default or choice        │
+│ -c,        --var-3={A,B}... at least one value with choice                      │
+╰─────────────────────────────────────────────────────────────────────────────────╯
 
 The following options have a default value:
-+---------------------------------------------------------------------------------+
-| [-d=                        one value with default and choice (default: "A")    |
-|     {A-C}]                                                                      |
-|            [--var-5=VAL_5]  one value with default (default: "E")               |
-| [-f],      [--var-6]        no value (flag) with default (default: false)       |
-| [-g],      [--var-7]        (DEPRECATED) no value (flag) with default (default: |
-|                             true)                                               |
-+---------------------------------------------------------------------------------+
+╭─────────────────────────────────────────────────────────────────────────────────╮
+│ [-d=                        one value with default and choice (default: "A")    │
+│     {A-C}]                                                                      │
+│            [--var-5=VAL_5]  one value with default (default: "E")               │
+│ [-f],      [--var-6]        no value (flag) with default (default: false)       │
+│ [-g],      [--var-7]        (DEPRECATED) no value (flag) with default (default: │
+│                             true)                                               │
+╰─────────────────────────────────────────────────────────────────────────────────╯
 
 There are always three options for the help messages:
-+---------------------------------------------------------------------------------+
-| [-h, -?],  [--help]         display this help and exit (default: false)         |
-| [-u],      [--usage]        display the usage and exit (default: false)         |
-| [-V],      [--version]      display the version and exit (default: false)       |
-+---------------------------------------------------------------------------------+
+╭─────────────────────────────────────────────────────────────────────────────────╮
+│ [-h, -?],  [--help]         display this help and exit (default: false)         │
+│ [-u],      [--usage]        display the usage and exit (default: false)         │
+│ [-V],      [--version]      display the version and exit (default: false)       │
+╰─────────────────────────────────────────────────────────────────────────────────╯
 ```
 <!-- </include> -->
 

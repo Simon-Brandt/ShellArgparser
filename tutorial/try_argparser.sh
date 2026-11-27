@@ -20,13 +20,15 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-01
+# Last Modification: 2026-11-27
 
 # Usage: Run this script with "bash try_argparser.sh".
 
 # Purpose: Demonstrate the basic functionality of the Argparser.
 
 # Define the arguments.
+ARGPARSER_USE_UNICODE=true
+
 # shellcheck disable=SC2190  # Indexed, not associative array.
 args=(
     "id    | short_opts | long_opts   | val_names | defaults | choices | type | arg_no | arg_group            | notes      | help                                              "

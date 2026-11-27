@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-01
+# Last Modification: 2026-11-27
 
 # Usage: Run this script with "bash try_arg_def_file.sh".
 
@@ -31,6 +31,7 @@
 dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
 dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
 ARGPARSER_ARG_DEF_FILE="${dir}/arguments.csv"
+ARGPARSER_USE_UNICODE=true
 
 # Set the arguments.
 # shellcheck disable=SC2190  # Indexed, not associative array.

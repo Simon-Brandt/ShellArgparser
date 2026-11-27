@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-09
+# Last Modification: 2026-11-27
 
 # Usage: Run this script with "sh test_pipeline.sh".
 
@@ -31,6 +31,7 @@
 # writing to a pipe.
 export ARGPARSER_SCRIPT_NAME="${0##*/}"
 export ARGPARSER_WRITE_ARGS=true
+export ARGPARSER_USE_UNICODE=true
 
 # Define the arguments.
 # shellcheck disable=SC2190  # Indexed, not associative array.

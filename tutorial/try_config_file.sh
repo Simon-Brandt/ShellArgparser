@@ -20,7 +20,7 @@
 
 # Author: Simon Brandt
 # E-Mail: simon.brandt@uni-greifswald.de
-# Last Modification: 2025-09-01
+# Last Modification: 2026-11-27
 
 # Usage: Run this script with "bash try_config_file.sh".
 
@@ -31,6 +31,7 @@
 dir="$(dirname "$(readlink --canonicalize-existing "$0")")"
 dir="$(readlink --canonicalize-existing "${dir}/../resources/")"
 ARGPARSER_CONFIG_FILE="${dir}/options.cfg"
+ARGPARSER_USE_UNICODE=true
 
 # Define the arguments.
 # shellcheck disable=SC2190  # Indexed, not associative array.

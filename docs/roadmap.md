@@ -48,12 +48,12 @@ The following table lists all versions released so far:
 
 You can obtain the version number of your Argparser copy by querying `argparser --version`:
 
-<!-- <include command="argparser --version" lang="console"> -->
+<!-- <include command="ARGPARSER_USE_UNICODE=true argparser --version" lang="console"> -->
 ```console
-$ argparser --version
-+- Version --------------------------------+
-| argparser v1.3.2 "Dasyprocta fuliginosa" |
-+------------------------------------------+
+$ ARGPARSER_USE_UNICODE=true argparser --version
+╭─ Version ────────────────────────────────╮
+│ argparser v1.3.2 "Dasyprocta fuliginosa" │
+╰──────────────────────────────────────────╯
 ```
 <!-- </include> -->
 
