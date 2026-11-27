@@ -9618,12 +9618,10 @@ function argparser_create_help_message() {
                     && -n "${default_values_str}" ]]
                 then
                     # Choice and default.
-                    new_col_1_value="[${value_names}"
-                    new_col_1_value+="={${choice_values_str}}...]"
+                    new_col_1_value="[${value_names}={${choice_values_str}}...]"
                 elif [[ -n "${choice_values_str}" ]]; then
                     # Choice only.
-                    new_col_1_value="${value_names}"
-                    new_col_1_value+="={${choice_values_str}}..."
+                    new_col_1_value="${value_names}={${choice_values_str}}..."
                 elif [[ -n "${default_values_str}" ]]; then
                     # Default only.
                     new_col_1_value="[${value_names}...]"
@@ -9637,12 +9635,10 @@ function argparser_create_help_message() {
                     && -n "${default_values_str}" ]]
                 then
                     # Choice and default.
-                    new_col_1_value="[${value_names}"
-                    new_col_1_value+="={${choice_values_str}}]"
+                    new_col_1_value="[${value_names}={${choice_values_str}}]"
                 elif [[ -n "${choice_values_str}" ]]; then
                     # Choice only.
-                    new_col_1_value="${value_names}"
-                    new_col_1_value+="={${choice_values_str}}"
+                    new_col_1_value="${value_names}={${choice_values_str}}"
                 elif [[ -n "${default_values_str}" ]]; then
                     # Default only.
                     new_col_1_value="[${value_names}]"
@@ -9666,12 +9662,10 @@ function argparser_create_help_message() {
                     && -n "${default_values_str}" ]]
                 then
                     # Choice and default.
-                    new_col_2_value="[${value_names}"
-                    new_col_2_value+="={${choice_values_str}}...]"
+                    new_col_2_value="[${value_names}={${choice_values_str}}...]"
                 elif [[ -n "${choice_values_str}" ]]; then
                     # Choice only.
-                    new_col_2_value="${value_names}"
-                    new_col_2_value+="={${choice_values_str}}..."
+                    new_col_2_value="${value_names}={${choice_values_str}}..."
                 elif [[ -n "${default_values_str}" ]]; then
                     # Default only.
                     new_col_2_value="[${value_names}...]"
@@ -9685,12 +9679,10 @@ function argparser_create_help_message() {
                     && -n "${default_values_str}" ]]
                 then
                     # Choice and default.
-                    new_col_2_value="[${value_names}"
-                    new_col_2_value+="={${choice_values_str}}]"
+                    new_col_2_value="[${value_names}={${choice_values_str}}]"
                 elif [[ -n "${choice_values_str}" ]]; then
                     # Choice only.
-                    new_col_2_value="${value_names}"
-                    new_col_2_value+="={${choice_values_str}}"
+                    new_col_2_value="${value_names}={${choice_values_str}}"
                 elif [[ -n "${default_values_str}" ]]; then
                     # Default only.
                     new_col_2_value="[${value_names}]"
@@ -9892,24 +9884,17 @@ function argparser_create_help_message() {
                 # No short option.
                 new_col_1_value=""
             elif (( "${#long_options}" == 0 )); then
-                # No long option.
+                # Short option, no long option.
                 if [[ "${arg_number}" == 0 ]]; then
                     # Flag.
                     if [[ -n "${default_values_str}" ]]; then
                         # Default.
-                        new_col_1_value="["
-                        for short_option in "${short_options[@]}"; do
-                            new_col_1_value+="${short_option}, "
-                        done
-                        new_col_1_value="${new_col_1_value%, }"
-                        new_col_1_value+="]"
+                        argparser_join ", " "${short_options[@]}"
+                        new_col_1_value="[${joined_array}]"
                     else
                         # No default.
-                        new_col_1_value=""
-                        for short_option in "${short_options[@]}"; do
-                            new_col_1_value+="${short_option}, "
-                        done
-                        new_col_1_value="${new_col_1_value%, }"
+                        argparser_join ", " "${short_options[@]}"
+                        new_col_1_value="${joined_array}"
                     fi
                 elif [[ "${arg_number}" == "+" ]]; then
                     # [1, inf) values.
@@ -9917,36 +9902,24 @@ function argparser_create_help_message() {
                         && -n "${default_values_str}" ]]
                     then
                         # Choice and default.
-                        new_col_1_value=""
-                        for short_option in "${short_options[@]}"; do
-                            new_col_1_value+="[${short_option}"
-                            new_col_1_value+="={${choice_values_str}}...], "
-                        done
-                        new_col_1_value="${new_col_1_value%, }"
+                        argparser_join ", " \
+                            "${short_options[@]/*/"["&"={${choice_values_str}}...]"}"
+                        new_col_1_value="${joined_array}"
                     elif [[ -n "${choice_values_str}" ]]; then
                         # Choice only.
-                        new_col_1_value=""
-                        for short_option in "${short_options[@]}"; do
-                            new_col_1_value+="${short_option}"
-                            new_col_1_value+="={${choice_values_str}}..., "
-                        done
-                        new_col_1_value="${new_col_1_value%, }"
+                        argparser_join ", " \
+                            "${short_options[@]/%/"={${choice_values_str}}..."}"
+                        new_col_1_value="${joined_array}"
                     elif [[ -n "${default_values_str}" ]]; then
                         # Default only.
-                        new_col_1_value=""
-                        for i in "${!short_options[@]}"; do
-                            new_col_1_value+="[${short_options[i]}"
-                            new_col_1_value+="=${value_names}...], "
-                        done
-                        new_col_1_value="${new_col_1_value%, }"
+                        argparser_join ", " \
+                            "${short_options[@]/*/"["&"=${value_names}...]"}"
+                        new_col_1_value="${joined_array}"
                     else
                         # No choice nor default.
-                        new_col_1_value=""
-                        for i in "${!short_options[@]}"; do
-                            new_col_1_value+="${short_options[i]}"
-                            new_col_1_value+="=${value_names}..., "
-                        done
-                        new_col_1_value="${new_col_1_value%, }"
+                        argparser_join ", " \
+                            "${short_options[@]/%/"=${value_names}..."}"
+                        new_col_1_value="${joined_array}"
                     fi
                 elif [[ "${arg_number}" == "*" ]]; then
                     # [0, inf) values.
@@ -9954,36 +9927,24 @@ function argparser_create_help_message() {
                         && -n "${default_values_str}" ]]
                     then
                         # Choice and default.
-                        new_col_1_value=""
-                        for short_option in "${short_options[@]}"; do
-                            new_col_1_value+="[${short_option}"
-                            new_col_1_value+="[={${choice_values_str}}...]], "
-                        done
-                        new_col_1_value="${new_col_1_value%, }"
+                        argparser_join ", " \
+                            "${short_options[@]/*/"["&"[={${choice_values_str}}...]]"}"
+                        new_col_1_value="${joined_array}"
                     elif [[ -n "${choice_values_str}" ]]; then
                         # Choice only.
-                        new_col_1_value=""
-                        for short_option in "${short_options[@]}"; do
-                            new_col_1_value+="${short_option}"
-                            new_col_1_value+="[={${choice_values_str}}...], "
-                        done
-                        new_col_1_value="${new_col_1_value%, }"
+                        argparser_join ", " \
+                            "${short_options[@]/%/"[={${choice_values_str}}...]"}"
+                        new_col_1_value="${joined_array}"
                     elif [[ -n "${default_values_str}" ]]; then
                         # Default only.
-                        new_col_1_value=""
-                        for i in "${!short_options[@]}"; do
-                            new_col_1_value+="[${short_options[i]}"
-                            new_col_1_value+="[=${value_names}...]], "
-                        done
-                        new_col_1_value="${new_col_1_value%, }"
+                        argparser_join ", " \
+                            "${short_options[@]/*/"["&"[=${value_names}...]]"}"
+                        new_col_1_value="${joined_array}"
                     else
                         # No choice nor default.
-                        new_col_1_value=""
-                        for i in "${!short_options[@]}"; do
-                            new_col_1_value+="${short_options[i]}"
-                            new_col_1_value+="[=${value_names}...], "
-                        done
-                        new_col_1_value="${new_col_1_value%, }"
+                        argparser_join ", " \
+                            "${short_options[@]/%/"[=${value_names}...]"}"
+                        new_col_1_value="${joined_array}"
                     fi
                 elif [[ "${arg_number}" == "?" ]]; then
                     # [0, 1] values.
@@ -9991,36 +9952,24 @@ function argparser_create_help_message() {
                         && -n "${default_values_str}" ]]
                     then
                         # Choice and default.
-                        new_col_1_value=""
-                        for short_option in "${short_options[@]}"; do
-                            new_col_1_value+="[${short_option}"
-                            new_col_1_value+="[={${choice_values_str}}]], "
-                        done
-                        new_col_1_value="${new_col_1_value%, }"
+                        argparser_join ", " \
+                            "${short_options[@]/*/"["&"[={${choice_values_str}}]]"}"
+                        new_col_1_value="${joined_array}"
                     elif [[ -n "${choice_values_str}" ]]; then
                         # Choice only.
-                        new_col_1_value=""
-                        for short_option in "${short_options[@]}"; do
-                            new_col_1_value+="${short_option}"
-                            new_col_1_value+="[={${choice_values_str}}], "
-                        done
-                        new_col_1_value="${new_col_1_value%, }"
+                        argparser_join ", " \
+                            "${short_options[@]/%/"[={${choice_values_str}}]"}"
+                        new_col_1_value="${joined_array}"
                     elif [[ -n "${default_values_str}" ]]; then
                         # Default only.
-                        new_col_1_value=""
-                        for i in "${!short_options[@]}"; do
-                            new_col_1_value+="[${short_options[i]}"
-                            new_col_1_value+="[=${value_names}]], "
-                        done
-                        new_col_1_value="${new_col_1_value%, }"
+                        argparser_join ", " \
+                            "${short_options[@]/*/"["&"[=${value_names}]]"}"
+                        new_col_1_value="${joined_array}"
                     else
                         # No choice nor default.
-                        new_col_1_value=""
-                        for i in "${!short_options[@]}"; do
-                            new_col_1_value+="${short_options[i]}"
-                            new_col_1_value+="[=${value_names}], "
-                        done
-                        new_col_1_value="${new_col_1_value%, }"
+                        argparser_join ", " \
+                            "${short_options[@]/%/"[=${value_names}]"}"
+                        new_col_1_value="${joined_array}"
                     fi
                 else
                     # Integer-count values.
@@ -10028,53 +9977,37 @@ function argparser_create_help_message() {
                         && -n "${default_values_str}" ]]
                     then
                         # Choice and default.
-                        new_col_1_value=""
-                        for short_option in "${short_options[@]}"; do
-                            new_col_1_value+="[${short_option}"
-                            new_col_1_value+="={${choice_values_str}}], "
-                        done
-                        new_col_1_value="${new_col_1_value%, }"
+                        argparser_join ", " \
+                            "${short_options[@]/*/"["&"={${choice_values_str}}]"}"
+                        new_col_1_value="${joined_array}"
                     elif [[ -n "${choice_values_str}" ]]; then
                         # Choice only.
-                        new_col_1_value=""
-                        for short_option in "${short_options[@]}"; do
-                            new_col_1_value+="${short_option}"
-                            new_col_1_value+="={${choice_values_str}}, "
-                        done
-                        new_col_1_value="${new_col_1_value%, }"
+                        argparser_join ", " \
+                            "${short_options[@]/%/"={${choice_values_str}}"}"
+                        new_col_1_value="${joined_array}"
                     elif [[ -n "${default_values_str}" ]]; then
                         # Default only.
-                        new_col_1_value=""
-                        for i in "${!short_options[@]}"; do
-                            new_col_1_value+="[${short_options[i]}"
-                            new_col_1_value+="=${value_names}], "
-                        done
-                        new_col_1_value="${new_col_1_value%, }"
+                        argparser_join ", " \
+                            "${short_options[@]/*/"["&"=${value_names}]"}"
+                        new_col_1_value="${joined_array}"
                     else
                         # No choice nor default.
-                        new_col_1_value=""
-                        for i in "${!short_options[@]}"; do
-                            new_col_1_value+="${short_options[i]}"
-                            new_col_1_value+="=${value_names}, "
-                        done
-                        new_col_1_value="${new_col_1_value%, }"
+                        argparser_join ", " \
+                            "${short_options[@]/%/"=${value_names}"}"
+                        new_col_1_value="${joined_array}"
                     fi
                 fi
-            elif [[ -n "${default_values_str}" ]]; then
-                # Long option, default.
-                new_col_1_value="["
-                for short_option in "${short_options[@]}"; do
-                    new_col_1_value+="${short_option}, "
-                done
-                new_col_1_value="${new_col_1_value%, }"
-                new_col_1_value+="],"
             else
-                # Long option, no default.
-                new_col_1_value=""
-                for short_option in "${short_options[@]}"; do
-                    new_col_1_value+="${short_option}, "
-                done
-                new_col_1_value="${new_col_1_value% }"
+                # Short and long option.
+                if [[ -n "${default_values_str}" ]]; then
+                    # Default.
+                    argparser_join ", " "${short_options[@]}"
+                    new_col_1_value="[${joined_array}],"
+                else
+                    # No default.
+                    argparser_join ", " "${short_options[@]}"
+                    new_col_1_value="${joined_array},"
+                fi
             fi
             new_col_1+=("${new_col_1_value}")
 
@@ -10082,165 +10015,119 @@ function argparser_create_help_message() {
             if (( "${#long_options}" == 0 )); then
                 # No long option.
                 new_col_2_value=""
-            elif [[ "${arg_number}" == 0 ]]; then
-                # Flag.
-                if [[ -n "${default_values_str}" ]]; then
-                    # Default.
-                    new_col_2_value="["
-                    for long_option in "${long_options[@]}"; do
-                        new_col_2_value+="${long_option}, "
-                    done
-                    new_col_2_value="${new_col_2_value%, }"
-                    new_col_2_value+="]"
-                else
-                    # No default.
-                    new_col_2_value=""
-                    for long_option in "${long_options[@]}"; do
-                        new_col_2_value+="${long_option}, "
-                    done
-                    new_col_2_value="${new_col_2_value%, }"
-                fi
-            elif [[ "${arg_number}" == "+" ]]; then
-                # [1, inf) values.
-                if [[ -n "${choice_values_str}" && -n "${default_values_str}" ]]
-                then
-                    # Choice and default.
-                    new_col_2_value=""
-                    for long_option in "${long_options[@]}"; do
-                        new_col_2_value+="[${long_option}"
-                        new_col_2_value+="={${choice_values_str}}...], "
-                    done
-                    new_col_2_value="${new_col_2_value%, }"
-                elif [[ -n "${choice_values_str}" ]]; then
-                    # Choice only.
-                    new_col_2_value=""
-                    for long_option in "${long_options[@]}"; do
-                        new_col_2_value+="${long_option}"
-                        new_col_2_value+="={${choice_values_str}}..., "
-                    done
-                    new_col_2_value="${new_col_2_value%, }"
-                elif [[ -n "${default_values_str}" ]]; then
-                    # Default only.
-                    new_col_2_value=""
-                    for i in "${!long_options[@]}"; do
-                        new_col_2_value+="[${long_options[i]}"
-                        new_col_2_value+="=${value_names}...], "
-                    done
-                    new_col_2_value="${new_col_2_value%, }"
-                else
-                    # No choice nor default.
-                    new_col_2_value=""
-                    for i in "${!long_options[@]}"; do
-                        new_col_2_value+="${long_options[i]}"
-                        new_col_2_value+="=${value_names}..., "
-                    done
-                    new_col_2_value="${new_col_2_value%, }"
-                fi
-            elif [[ "${arg_number}" == "*" ]]; then
-                # [0, inf) values.
-                if [[ -n "${choice_values_str}" && -n "${default_values_str}" ]]
-                then
-                    # Choice and default.
-                    new_col_2_value=""
-                    for long_option in "${long_options[@]}"; do
-                        new_col_2_value+="[${long_option}"
-                        new_col_2_value+="[={${choice_values_str}}...]], "
-                    done
-                    new_col_2_value="${new_col_2_value%, }"
-                elif [[ -n "${choice_values_str}" ]]; then
-                    # Choice only.
-                    new_col_2_value=""
-                    for long_option in "${long_options[@]}"; do
-                        new_col_2_value+="${long_option}"
-                        new_col_2_value+="={${choice_values_str}}...], "
-                    done
-                    new_col_2_value="${new_col_2_value%, }"
-                elif [[ -n "${default_values_str}" ]]; then
-                    # Default only.
-                    new_col_2_value=""
-                    for i in "${!long_options[@]}"; do
-                        new_col_2_value+="[${long_options[i]}"
-                        new_col_2_value+="[=${value_names}...]], "
-                    done
-                    new_col_2_value="${new_col_2_value%, }"
-                else
-                    # No choice nor default.
-                    new_col_2_value=""
-                    for i in "${!long_options[@]}"; do
-                        new_col_2_value+="${long_options[i]}"
-                        new_col_2_value+="[=${value_names}...], "
-                    done
-                    new_col_2_value="${new_col_2_value%, }"
-                fi
-            elif [[ "${arg_number}" == "?" ]]; then
-                # [0, 1] values.
-                if [[ -n "${choice_values_str}" && -n "${default_values_str}" ]]
-                then
-                    # Choice and default.
-                    new_col_2_value=""
-                    for long_option in "${long_options[@]}"; do
-                        new_col_2_value+="[${long_option}"
-                        new_col_2_value+="[={${choice_values_str}}]], "
-                    done
-                    new_col_2_value="${new_col_2_value%, }"
-                elif [[ -n "${choice_values_str}" ]]; then
-                    # Choice only.
-                    new_col_2_value=""
-                    for long_option in "${long_options[@]}"; do
-                        new_col_2_value+="${long_option}"
-                        new_col_2_value+="[={${choice_values_str}}], "
-                    done
-                    new_col_2_value="${new_col_2_value%, }"
-                elif [[ -n "${default_values_str}" ]]; then
-                    # Default only.
-                    new_col_2_value=""
-                    for i in "${!long_options[@]}"; do
-                        new_col_2_value+="[${long_options[i]}"
-                        new_col_2_value+="[=${value_names}]], "
-                    done
-                    new_col_2_value="${new_col_2_value%, }"
-                else
-                    # No choice nor default.
-                    new_col_2_value=""
-                    for i in "${!long_options[@]}"; do
-                        new_col_2_value+="${long_options[i]}"
-                        new_col_2_value+="[=${value_names}], "
-                    done
-                    new_col_2_value="${new_col_2_value%, }"
-                fi
             else
-                # Integer-count values.
-                if [[ -n "${choice_values_str}" && -n "${default_values_str}" ]]
-                then
-                    # Choice and default.
-                    new_col_2_value=""
-                    for long_option in "${long_options[@]}"; do
-                        new_col_2_value+="[${long_option}={${choice_values_str}}], "
-                    done
-                    new_col_2_value="${new_col_2_value%, }"
-                elif [[ -n "${choice_values_str}" ]]; then
-                    # Choice only.
-                    new_col_2_value=""
-                    for long_option in "${long_options[@]}"; do
-                        new_col_2_value+="${long_option}={${choice_values_str}}, "
-                    done
-                    new_col_2_value="${new_col_2_value%, }"
-                elif [[ -n "${default_values_str}" ]]; then
-                    # Default only.
-                    new_col_2_value=""
-                    for i in "${!long_options[@]}"; do
-                        new_col_2_value+="[${long_options[i]}"
-                        new_col_2_value+="=${value_names}], "
-                    done
-                    new_col_2_value="${new_col_2_value%, }"
+                # Long option, maybe short option.
+                if [[ "${arg_number}" == 0 ]]; then
+                    # Flag.
+                    if [[ -n "${default_values_str}" ]]; then
+                        # Default.
+                        argparser_join ", " "${long_options[@]}"
+                        new_col_2_value="[${joined_array}]"
+                    else
+                        # No default.
+                        argparser_join ", " "${long_options[@]}"
+                        new_col_2_value="${joined_array}"
+                    fi
+                elif [[ "${arg_number}" == "+" ]]; then
+                    # [1, inf) values.
+                    if [[ -n "${choice_values_str}" \
+                        && -n "${default_values_str}" ]]
+                    then
+                        # Choice and default.
+                        argparser_join ", " \
+                            "${long_options[@]/*/"["&"={${choice_values_str}}...]"}"
+                        new_col_2_value="${joined_array}"
+                    elif [[ -n "${choice_values_str}" ]]; then
+                        # Choice only.
+                        argparser_join ", " \
+                            "${long_options[@]/%/"={${choice_values_str}}..."}"
+                        new_col_2_value="${joined_array}"
+                    elif [[ -n "${default_values_str}" ]]; then
+                        # Default only.
+                        argparser_join ", " \
+                            "${long_options[@]/*/"["&"=${value_names}...]"}"
+                        new_col_2_value="${joined_array}"
+                    else
+                        # No choice nor default.
+                        argparser_join ", " \
+                            "${long_options[@]/%/"=${value_names}..."}"
+                        new_col_2_value="${joined_array}"
+                    fi
+                elif [[ "${arg_number}" == "*" ]]; then
+                    # [0, inf) values.
+                    if [[ -n "${choice_values_str}" \
+                        && -n "${default_values_str}" ]]
+                    then
+                        # Choice and default.
+                        argparser_join ", " \
+                            "${long_options[@]/*/"["&"[={${choice_values_str}}...]]"}"
+                        new_col_2_value="${joined_array}"
+                    elif [[ -n "${choice_values_str}" ]]; then
+                        # Choice only.
+                        argparser_join ", " \
+                            "${long_options[@]/%/"[={${choice_values_str}}...]"}"
+                        new_col_2_value="${joined_array}"
+                    elif [[ -n "${default_values_str}" ]]; then
+                        # Default only.
+                        argparser_join ", " \
+                            "${long_options[@]/*/"["&"[=${value_names}...]]"}"
+                        new_col_2_value="${joined_array}"
+                    else
+                        # No choice nor default.
+                        argparser_join ", " \
+                            "${long_options[@]/%/"[=${value_names}...]"}"
+                        new_col_2_value="${joined_array}"
+                    fi
+                elif [[ "${arg_number}" == "?" ]]; then
+                    # [0, 1] values.
+                    if [[ -n "${choice_values_str}" \
+                        && -n "${default_values_str}" ]]
+                    then
+                        # Choice and default.
+                        argparser_join ", " \
+                            "${long_options[@]/*/"["&"[={${choice_values_str}}]]"}"
+                        new_col_2_value="${joined_array}"
+                    elif [[ -n "${choice_values_str}" ]]; then
+                        # Choice only.
+                        argparser_join ", " \
+                            "${long_options[@]/%/"[={${choice_values_str}}]"}"
+                        new_col_2_value="${joined_array}"
+                    elif [[ -n "${default_values_str}" ]]; then
+                        # Default only.
+                        argparser_join ", " \
+                            "${long_options[@]/*/"["&"[=${value_names}]]"}"
+                        new_col_2_value="${joined_array}"
+                    else
+                        # No choice nor default.
+                        argparser_join ", " \
+                            "${long_options[@]/%/"[=${value_names}]"}"
+                        new_col_2_value="${joined_array}"
+                    fi
                 else
-                    # No choice nor default.
-                    new_col_2_value=""
-                    for i in "${!long_options[@]}"; do
-                        new_col_2_value+="${long_options[i]}"
-                        new_col_2_value+="=${value_names}, "
-                    done
-                    new_col_2_value="${new_col_2_value%, }"
+                    # Integer-count values.
+                    if [[ -n "${choice_values_str}" \
+                        && -n "${default_values_str}" ]]
+                    then
+                        # Choice and default.
+                        argparser_join ", " \
+                            "${long_options[@]/*/"["&"={${choice_values_str}}]"}"
+                        new_col_2_value="${joined_array}"
+                    elif [[ -n "${choice_values_str}" ]]; then
+                        # Choice only.
+                        argparser_join ", " \
+                            "${long_options[@]/%/"={${choice_values_str}}"}"
+                        new_col_2_value="${joined_array}"
+                    elif [[ -n "${default_values_str}" ]]; then
+                        # Default only.
+                        argparser_join ", " \
+                            "${long_options[@]/*/"["&"=${value_names}]"}"
+                        new_col_2_value="${joined_array}"
+                    else
+                        # No choice nor default.
+                        argparser_join ", " \
+                            "${long_options[@]/%/"=${value_names}"}"
+                        new_col_2_value="${joined_array}"
+                    fi
                 fi
             fi
             new_col_2+=("${new_col_2_value}")
@@ -11435,6 +11322,7 @@ function argparser_print_help_message() {
     local frame_char
     local help_message
     local -A help_message_blocks
+    local i
     local include_char
     local include_directive
     local line
@@ -11557,16 +11445,13 @@ function argparser_print_help_message() {
 
             # Add the include directives for each argument group.
             # Terminate all but the last by a blank line.
-            for i in "${!arg_groups[@]}"; do
-                if (( i < "${#arg_groups[@]}" - 1 )); then
-                    resolved_lines+=(
-                        "${include_char}${arg_groups[i]}"
-                        ""
-                    )
-                else
-                    resolved_lines+=("${include_char}${arg_groups[i]}")
-                fi
+            for (( i = 0; i < "${#arg_groups[@]}" - 1; i++ )); do
+                resolved_lines+=(
+                    "${include_char}${arg_groups[i]}"
+                    ""
+                )
             done
+            resolved_lines+=("${include_char}${arg_groups[-1]}")
         elif [[ "${include_directive}" == "Header" ]]; then
             # Add the usage, description, and remark include directives,
             # separated by blank lines.
@@ -12373,6 +12258,7 @@ function argparser_main() {
     local -A all_value_names
     local -A dictionary
     local is_extglob_set
+    local is_patsub_replacement_set
     local is_self_parsing
     local is_sourced
     local -a script_args
@@ -12396,13 +12282,18 @@ function argparser_main() {
     fi
 
     # Locally disable errexit, nounset, and pipefail, and enable
-    # extglob.  Since all functions are called from argparser_main, they
-    # inherit the options.
+    # extglob and patsub_replacement.  Since all functions are called
+    # from argparser_main, they inherit the options.
     local -
     set +o errexit +o nounset +o pipefail
+
     shopt -q extglob
     is_extglob_set="$?"
     shopt -s extglob
+
+    shopt -q patsub_replacement
+    is_patsub_replacement_set="$?"
+    shopt -s patsub_replacement
 
     # Define the default styles.  If ${ARGPARSER_USE_UNICODE} is set to
     # "true", use Unicode characters for the frame styles, else, use
@@ -12641,9 +12532,14 @@ function argparser_main() {
     # Clean up the Argparser functions and environment variables.
     argparser_cleanup
 
-    # Possibly disable extglob, if it was previously unset.
+    # Possibly disable extglob and/or patsub_replacement, if either was
+    # previously unset.
     if (( is_extglob_set == 1 )); then
         shopt -u extglob
+    fi
+
+    if (( is_patsub_replacement_set == 1 )); then
+        shopt -u patsub_replacement
     fi
 }
 
