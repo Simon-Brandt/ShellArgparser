@@ -11428,7 +11428,6 @@ function argparser_print_help_message() {
     local -a arg_groups
     local block
     local caption
-    local count
     local error_message
     local -a error_messages
     local exit
@@ -11511,18 +11510,6 @@ function argparser_print_help_message() {
     then
         arg_groups+=("${ARGPARSER_HELP_ARG_GROUP}")
     fi
-
-    # Count the keyword arguments that aren't used for the help, usage,
-    # or version message.  This count is used to conditionally add the
-    # remark to the help message, below.  By counting the number of
-    # "true" values in ${ARGPARSER_ADD_HELP}, ${ARGPARSER_ADD_USAGE},
-    # and ${ARGPARSER_ADD_VERSION}, it is possible to check which help
-    # options are defined.  All other arguments that have an entry in
-    # ${!all_short_options[@]} are actual keyword arguments needed for
-    # the remark.
-    argparser_count "true" "${ARGPARSER_ADD_HELP}" "${ARGPARSER_ADD_USAGE}" \
-        "${ARGPARSER_ADD_VERSION}"
-    (( keyword_args_count = "${#all_short_options[@]}" - count ))
 
     # Create the help message groups, which are saved in an associative
     # array using the include directives as keys.
@@ -11645,7 +11632,7 @@ function argparser_print_help_message() {
                 fi
             elif [[ "${include_directive}" == "Remark" ]]; then
                 # Add the remark.
-                if (( keyword_args_count > 0 )); then
+                if [[ -n "${help_message_blocks["Remark"]}" ]]; then
                     help_message+="${help_message_blocks["Remark"]}"
                 else
                     skip_blank_line=true
