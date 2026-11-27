@@ -18,7 +18,7 @@ Positional arguments:
 
 Help options:
   en: Help options
-  de: Hilfsoptionen
+  de: Hilfeoptionen
 
 Usage:
   en: Usage
@@ -425,7 +425,7 @@ Error arg array 1:
     dass die Argumentdefinition per STDIN gegeben wird, getrennt durch
     Zeilenvorschübe.  Entweder lege eine Pipe zum Argparser oder nutze
     Prozesssubstitution für die Eingabe.  Probiere alternativ "$1 --help", um
-    eine Hilfsnachricht mit weiterer Information zu erhalten.
+    eine Hilfenachricht mit weiterer Information zu erhalten.
 
 Error arg array 2:
   en: >
@@ -888,13 +888,40 @@ Warning arg def pos help text:
     einen zu definieren.
 
 # Translations for checking the arguments definition for keyword arguments.
-Error arg def option id:
+Error arg def option id invalid:
   en: >
     Error: The option with the identifier "$1" does not use a valid Bash
     identifier.
   de: >
     Fehler: Die Option mit dem Identifikator "$1" nutzt keinen validen
     Bash-Identifikator.
+
+Error arg def option id help:
+  en: >
+    Error: The option with the identifier "$1" uses the identifier reserved for
+    the help option, while ARGPARSER_ADD_HELP is activated.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" nutzt den Identifikator, der
+    für die Hilfeoption reserviert ist, während ARGPARSER_ADD_HELP aktiviert
+    ist.
+
+Error arg def option id usage:
+  en: >
+    Error: The option with the identifier "$1" uses the identifier reserved for
+    the usage option, while ARGPARSER_ADD_USAGE is activated.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" nutzt den Identifikator, der
+    für die Benutzungsoption reserviert ist, während ARGPARSER_ADD_USAGE
+    aktiviert ist.
+
+Error arg def option id version:
+  en: >
+    Error: The option with the identifier "$1" uses the identifier reserved for
+    the version option, while ARGPARSER_ADD_VERSION is activated.
+  de: >
+    Fehler: Die Option mit dem Identifikator "$1" nutzt den Identifikator, der
+    für die Versionsoption reserviert ist, während ARGPARSER_ADD_VERSION
+    aktiviert ist.
 
 Error arg def option subcommand:
   en: >
@@ -918,7 +945,7 @@ Error arg def option short name help:
     defined, which is reserved for invoking the help message.
   de: >
     Fehler: Die Option mit dem Identifikator "$1" hat den kurzen Optionsnamen
-    "-$2" definiert, der zum Aufruf der Hilfsnachricht reserviert ist.
+    "-$2" definiert, der zum Aufruf der Hilfenachricht reserviert ist.
 
 Error arg def option short name usage:
   en: >
@@ -974,7 +1001,7 @@ Error arg def option long name help:
     defined, which is reserved for invoking the help message.
   de: >
     Fehler: Die Option mit dem Identifikator "$1" hat den langen Optionsnamen
-    "--$2" definiert, der zum Aufruf der Hilfsnachricht reserviert ist.
+    "--$2" definiert, der zum Aufruf der Hilfenachricht reserviert ist.
 
 Error arg def option long name usage:
   en: >

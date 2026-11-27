@@ -6335,8 +6335,42 @@ function argparser_check_args_definition_options() {
             error_message="Error: The option with the identifier \"\$1\" does "
             error_message+="not use a valid Bash identifier."
 
-            argparser_translate "Error arg def option id" "${error_message}" \
-                "${arg_id}"
+            argparser_translate "Error arg def option id invalid" \
+                "${error_message}" "${arg_id}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        fi
+
+        # Check that the argument identifier is none of the ones for the
+        # help options, if the Argparser-added help options are used.
+        if [[ "${ARGPARSER_ADD_HELP}" == true && "${arg_id}" == "help" ]]; then
+            error_message="Error: The option with the identifier \"\$1\" uses "
+            error_message+="the identifier reserved for the help option, "
+            error_message+="while ARGPARSER_ADD_HELP is activated."
+
+            argparser_translate "Error arg def option id help" \
+                "${error_message}" "${arg_id}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        elif [[ "${ARGPARSER_ADD_USAGE}" == true && "${arg_id}" == "usage" ]]
+        then
+            error_message="Error: The option with the identifier \"\$1\" uses "
+            error_message+="the identifier reserved for the usage option, "
+            error_message+="while ARGPARSER_ADD_USAGE is activated."
+
+            argparser_translate "Error arg def option id usage" \
+                "${error_message}" "${arg_id}"
+            error_message="${translation}"
+            error_messages+=("${error_message}")
+        elif [[ "${ARGPARSER_ADD_VERSION}" == true \
+            && "${arg_id}" == "version" ]]
+        then
+            error_message="Error: The option with the identifier \"\$1\" uses "
+            error_message+="the identifier reserved for the version option, "
+            error_message+="while ARGPARSER_ADD_VERSION is activated."
+
+            argparser_translate "Error arg def option id version" \
+                "${error_message}" "${arg_id}"
             error_message="${translation}"
             error_messages+=("${error_message}")
         fi

@@ -140,7 +140,7 @@ Positional arguments:
 
 Help options:
   en: Help options
-  de: Hilfsoptionen
+  de: Hilfeoptionen
 
 Usage:
   en: Usage
